@@ -8,17 +8,17 @@ classdef CallbackEdit
         ComponentId string
         % Name - Callback property name.
         Name string
-        % Action - Current addition or deletion intention.
+        % Action - Binding creation, connection, disconnection, or legacy body-edit intention.
         Action string
-        % HandlerName - Generated handler name for an addition.
+        % HandlerName - Method referenced by a creation or connection.
         HandlerName string
-        % MethodText - Complete generated method for an addition.
+        % MethodText - Complete generated method for a creation.
         MethodText string
         % BindingExpression - Proven callback expression for an existing target.
         BindingExpression string = ""
         % BindingSpan - Original assignment replaced or removed by this edit.
         BindingSpan macd.model.SourceSpan
-        % MethodSpan - Original handler removed by this edit.
+        % MethodSpan - Original handler span for legacy body-edit commands.
         MethodSpan macd.model.SourceSpan
         % BindingAnchor - Original creation offset used for insertion.
         BindingAnchor double

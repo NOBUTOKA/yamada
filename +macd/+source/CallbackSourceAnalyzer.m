@@ -1,8 +1,9 @@
 classdef CallbackSourceAnalyzer
     % CallbackSourceAnalyzer Prove callback assignment and method ownership without execution.
     %   The analyzer recognizes direct initialization assignments and whole instance
-    %   methods. Unsupported scope, constructor bindings, sharing, and dynamic
-    %   references remain visible with both mutation actions unavailable.
+    %   methods. Binding-only discovery proves assignment ownership independently
+    %   of shared method bodies. Legacy body edits require exclusive ownership;
+    %   unsupported scopes, expressions and dynamic references remain protected.
 
     methods (Static, Access = ?macd.source.SourceAnalysis)
         function indices = sourceCallbackCandidates(statements, name)
@@ -55,7 +56,7 @@ classdef CallbackSourceAnalyzer
         end
 
         function states = analyze(document, componentId, registry, bindingOnly)
-            % analyze Return catalog-ordered callback states for the current source snapshot.
+            % analyze Discover current callbacks, optionally proving assignment-only editability.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
                 componentId (1, 1) string
