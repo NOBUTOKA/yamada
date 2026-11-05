@@ -1,5 +1,5 @@
 function evidence = verifyCallbackWorkflow(outputDirectory)
-% verifyCallbackWorkflow Exercise visible mixed-source callback editing and lifecycle cleanup.
+% verifyCallbackWorkflow Exercise visible callback editing and accept each default name popup.
 %   This developer-only verification uses native context-menu gestures and exports
 %   popup images for visual inspection. Input apps and their handlers are not run.
 arguments (Input)
@@ -330,34 +330,11 @@ end
 control = findall(popup, "Tag", "macd-callback-target", "UserData", name);
 if action == "New"
     control.Value = "<New...>";
-    responder = timer("ExecutionMode", "fixedSpacing", "Period", 0.2, ...
-        "TasksToExecute", 50, "TimerFcn", @acceptCallbackName);
-    cleanup = onCleanup(@() delete(responder));
-    start(responder);
+    fprintf("NATIVE_VERIFICATION Accept the default method name in the New callback dialog.\n");
 else
     control.Value = "<" + action + ">";
 end
 control.ValueChangedFcn(control, []);
-end
-
-function acceptCallbackName(responder, ~)
-% acceptCallbackName Accept the actual name popup with its collision-aware default unchanged.
-arguments (Input)
-    responder (1, 1) timer
-    ~
-end
-window = findall(0, "Type", "figure", "Name", "New callback");
-if isempty(window), return, end
-button = findall(window, "Style", "pushbutton", "String", "OK");
-if ~isscalar(button), return, end
-callback = button.Callback;
-stop(responder);
-if isa(callback, "function_handle")
-    callback(button, []);
-else
-    assert(iscell(callback) && isa(callback{1}, "function_handle"));
-    callback{1}(button, [], callback{2:end});
-end
 end
 
 %{
