@@ -28,6 +28,29 @@ classdef (TestTags = {'fast', 'parser'}) CallbackMethodSignatureTest < matlab.un
             testCase.verifyEqual(analysis.Layout.Methods.Signature.Inputs, ["app", "source", "event"]);
         end
 
+        function ignoredArgumentsInValidationBlocksRetainTheirPositions(testCase)
+            % ignoredArgumentsInValidationBlocksRetainTheirPositions Accept ignored receivers and repeated ignored callback inputs.
+            cases = {["function run(app, ~, event)"; "arguments"; "app Example"; "~"; ...
+                "event matlab.ui.eventdata.ButtonPushedData"; "end"; "end"]; ...
+                ["function run(app, source, ~)"; "arguments"; "app Example"; ...
+                "source matlab.ui.control.Button"; "~"; "end"; "end"]; ...
+                ["function run(~, ~, ~)"; "arguments"; "~"; "~"; "~"; "end"; "end"]};
+            for index = 1:numel(cases)
+                analysis = CallbackMethodSignatureTest.compile(cases{index});
+                signature = analysis.Layout.Methods.Signature;
+                testCase.verifyTrue(signature.Eligible);
+                testCase.verifyEqual(signature.binding("run"), "@app.run");
+            end
+            signature = CallbackMethodSignatureTest.compile(cases{1}).Layout.Methods.Signature;
+            testCase.verifyEqual(signature.Classes, ["Example", "", "matlab.ui.eventdata.ButtonPushedData"]);
+            invalid = {["function run(app, event)"; "arguments"; "app"; "~"; "end"; "end"]; ...
+                ["function run(app, ~)"; "arguments"; "app"; "~ double"; "end"; "end"]};
+            for index = 1:numel(invalid)
+                analysis = CallbackMethodSignatureTest.compile(invalid{index});
+                testCase.verifyFalse(analysis.Layout.Methods.Signature.Eligible);
+            end
+        end
+
         function unsupportedInputsStayOutOfTheIndex(testCase)
             % unsupportedInputsStayOutOfTheIndex Reject uncertain and nonpositional declarations conservatively.
             cases = {["function run(app, src, event, optional)"; "arguments"; ...

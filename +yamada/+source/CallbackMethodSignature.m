@@ -40,6 +40,7 @@ classdef CallbackMethodSignature
 
             % Only argument blocks immediately following the declaration describe its inputs.
             index = 2;
+            inputPosition = 0;
             while index < numel(statements) && startsWith(strtrim(statements(index).Text), "arguments")
                 declaration = strtrim(statements(index).Text);
                 output = ~isempty(regexp(declaration, '^arguments\s*\(\s*Output\s*\)$', 'once'));
@@ -50,11 +51,18 @@ classdef CallbackMethodSignature
                 while index < numel(statements) && strtrim(statements(index).Text) ~= "end"
                     if ~output
                         text = strtrim(statements(index).Text);
+                        inputPosition = inputPosition + 1;
+                        if inputPosition > numel(inputs), obj.Eligible = false; return, end
+                        if text == "~"
+                            if inputs(inputPosition) ~= "~", obj.Eligible = false; return, end
+                            index = index + 1;
+                            continue
+                        end
                         argument = regexp(text, '^(?<name>[A-Za-z]\w*)(?<rest>.*)$', 'names', 'once');
                         if isempty(argument), obj.Eligible = false; return, end
                         position = find(inputs == string(argument.name));
                         rest = strtrim(string(argument.rest));
-                        if ~isscalar(position) || startsWith(rest, ".")
+                        if ~isscalar(position) || position ~= inputPosition || startsWith(rest, ".")
                             obj.Eligible = false; return
                         end
                         % Dimensions and validators are retained as unchecked constraints, never executed.

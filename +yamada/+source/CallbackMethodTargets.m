@@ -96,7 +96,8 @@ classdef CallbackMethodTargets
                 end
                 if ~accepted, continue, end
                 parameters = signature.Inputs;
-                for index = find(signature.Classes ~= "")
+                % The implicit receiver's class adds no useful information to the label.
+                for index = find(signature.Classes ~= "" & (1:numel(parameters)) > 1)
                     parameters(index) = parameters(index) + " " + signature.Classes(index);
                 end
                 label = method.Name + "(" + strjoin(parameters, ", ") + ")";
