@@ -137,9 +137,9 @@ Implementation sequence and checkpoints:
 
 ## Select Existing Methods for Callback Bindings
 
-Status: planning only. Implement after `Generate Documented Event Argument Types` has supplied the audited event contracts through the runtime catalog. Reuse the shared default-name resolver from `Avoid Duplicated Component Words in Handler Names`; if that naming follow-up is not yet implemented, use its existing naming behavior rather than duplicating the policy in the popup.
+Status: implementation in progress in the isolated callback integration branch. Cached fixed-input signatures, binding-only New/Connect/Disconnect transactions and selector UI integration are implemented. All 59 focused callback, cache, rename, UI, convention and test-selection checks pass. Full-suite integration verification and native keyboard/name-popup verification remain pending.
 
-Replace both Add and Delete buttons with one binding-target dropdown per callback row. Its entries are `<New...>`, `<Disconnect>`, and eligible existing methods; no separate Add/Delete buttons remain. Display the current method when its binding is recognized, and use `<Disconnect>` as the unbound selection. This is a future change to the current callback manager, not a claim that the selector is already available.
+Replace both Add and Delete buttons with one binding-target dropdown per callback row. Its entries are `<New...>`, `<Disconnect>`, and eligible existing methods; no separate Add/Delete buttons remain. Display the current method when its binding is recognized, and use `<Disconnect>` as the unbound selection. The selector is implemented in the integration branch and remains under verification.
 
 ### Define binding and method-creation behavior
 

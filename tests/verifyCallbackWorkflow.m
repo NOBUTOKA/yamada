@@ -44,34 +44,33 @@ for node = nodes(:)', expand(node); end
 test = matlab.uitest.TestCase.forInteractiveUse;
 selected = app.SelectedComponentId;
 
-% Native right-click must leave selection untouched and show both actions disabled for sharing.
+% Native right-click leaves selection untouched while shared bindings remain editable.
 left = app.Document.getComponentByName(leftName);
 popup = openPopup(test, tree, left.Id);
-add = findall(popup, "Tag", "macd-callback-add", "UserData", "ButtonPushedFcn");
-remove = findall(popup, "Tag", "macd-callback-delete", "UserData", "ButtonPushedFcn");
-assert(string(add.Enable) == "off" && string(remove.Enable) == "off");
+control = findall(popup, "Tag", "macd-callback-target", "UserData", "ButtonPushedFcn");
+assert(string(control.Enable) == "on");
 assert(app.SelectedComponentId == selected);
 exportapp(popup, fullfile(outputDirectory, "callback-shared-popup.png"));
+clickAction(popup, "Disconnect", "ButtonPushedFcn");
 close(popup);
 
 % Anonymous bindings are visible but do not permit either mutation action.
 drop = app.Document.Components([app.Document.Components.Factory] == "uidropdown");
 popup = openPopup(test, tree, drop.Id);
-add = findall(popup, "Tag", "macd-callback-add", "UserData", "ValueChangedFcn");
-remove = findall(popup, "Tag", "macd-callback-delete", "UserData", "ValueChangedFcn");
-assert(string(add.Enable) == "off" && string(remove.Enable) == "off");
+control = findall(popup, "Tag", "macd-callback-target", "UserData", "ValueChangedFcn");
+assert(string(control.Enable) == "off");
 close(popup);
 
 % A root's complete catalog list exercises scrolling and immediate atomic source changes.
 popup = openPopup(test, tree, app.Document.RootComponentId);
-rows = findall(popup, "Tag", "macd-callback-add");
+rows = findall(popup, "Tag", "macd-callback-target");
 assert(numel(rows) == numel(registry.getEffectiveCallbacks("uifigure")));
 grids = findall(popup, "Type", "uigridlayout");
 assert(any(arrayfun(@(grid) string(grid.Scrollable) == "on", grids)));
 exportapp(popup, fullfile(outputDirectory, "callback-root-popup.png"));
-clickAction(popup, "Add", "SizeChangedFcn");
+clickAction(popup, "New", "SizeChangedFcn");
 assert(contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
-clickAction(popup, "Delete", "SizeChangedFcn");
+clickAction(popup, "Disconnect", "SizeChangedFcn");
 assert(~contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
 
 % Deleting the actual target closes its popup and undo restores the component record.
@@ -98,7 +97,7 @@ redo.MenuSelectedFcn(redo, []);
 assert(~contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
 
 % Reload externally saved method bodies through F5 while the modal popup has focus.
-clickAction(popup, "Add", "SizeChangedFcn");
+clickAction(popup, "New", "SizeChangedFcn");
 saved = replace(app.Document.GeneratedText, "% Add callback behavior here.", ...
     "disp('macdReloadedBody');");
 macd.source.SourceWriter.write(path, saved, "CRLF");
@@ -108,8 +107,8 @@ assert(contains(app.Document.OriginalText, "macdReloadedBody"));
 assert(~app.Document.canUndo() && ~app.Document.IsDirty);
 tree = findall(window, "Type", "uitree");
 popup = openPopup(test, tree, app.Document.RootComponentId);
-clickAction(popup, "Delete", "SizeChangedFcn");
-assert(~contains(app.Document.GeneratedText, "macdReloadedBody"));
+clickAction(popup, "Disconnect", "SizeChangedFcn");
+assert(contains(app.Document.GeneratedText, "macdReloadedBody"));
 undo.MenuSelectedFcn(undo, []);
 assert(contains(app.Document.GeneratedText, "macdReloadedBody"));
 
@@ -154,7 +153,7 @@ end
 % Further callback changes can be saved and reopened after source replacement.
 tree = findall(window, "Type", "uitree");
 popup = openPopup(test, tree, app.Document.RootComponentId);
-clickAction(popup, "Add", "SizeChangedFcn");
+clickAction(popup, "New", "SizeChangedFcn");
 save = findall(window, "Type", "uimenu", "Text", "&Save");
 save.MenuSelectedFcn(save, []);
 assert(~app.Document.IsDirty);
@@ -257,11 +256,14 @@ drop = document.insertComponent(registry, "uidropdown", grid.Id);
 document.insertComponent(registry, "uitable", grid.Id);
 document.insertComponent(registry, "uitextarea", grid.Id);
 document.applyCallbackAction(left.Id, "ButtonPushedFcn", "Add", registry);
-leftHandler = document.CallbackEdits(end).HandlerName;
+states = macd.source.CallbackSourceAnalyzer.analyze(document, left.Id, registry);
+leftHandler = states([states.Name] == "ButtonPushedFcn").HandlerName;
 document.applyCallbackAction(right.Id, "ButtonPushedFcn", "Add", registry);
-rightHandler = document.CallbackEdits(end).HandlerName;
+states = macd.source.CallbackSourceAnalyzer.analyze(document, right.Id, registry);
+rightHandler = states([states.Name] == "ButtonPushedFcn").HandlerName;
 document.applyCallbackAction(drop.Id, "ValueChangedFcn", "Add", registry);
-dropHandler = document.CallbackEdits(end).HandlerName;
+states = macd.source.CallbackSourceAnalyzer.analyze(document, drop.Id, registry);
+dropHandler = states([states.Name] == "ValueChangedFcn").HandlerName;
 source = macd.source.RoundTripGenerator(registry).generate(document);
 source = replace(source, "% Add callback behavior here.", ...
     "assignin('base','macdCallbackWorkflowSentinel',true);");
@@ -325,8 +327,37 @@ arguments (Input)
     action (1, 1) string
     name (1, 1) string
 end
-button = findall(popup, "Tag", "macd-callback-" + lower(action), "UserData", name);
-button.ButtonPushedFcn(button, []);
+control = findall(popup, "Tag", "macd-callback-target", "UserData", name);
+if action == "New"
+    control.Value = "<New...>";
+    responder = timer("ExecutionMode", "fixedSpacing", "Period", 0.2, ...
+        "TasksToExecute", 50, "TimerFcn", @acceptCallbackName);
+    cleanup = onCleanup(@() delete(responder));
+    start(responder);
+else
+    control.Value = "<" + action + ">";
+end
+control.ValueChangedFcn(control, []);
+end
+
+function acceptCallbackName(responder, ~)
+% acceptCallbackName Accept the actual name popup with its collision-aware default unchanged.
+arguments (Input)
+    responder (1, 1) timer
+    ~
+end
+window = findall(0, "Type", "figure", "Name", "New callback");
+if isempty(window), return, end
+button = findall(window, "Style", "pushbutton", "String", "OK");
+if ~isscalar(button), return, end
+callback = button.Callback;
+stop(responder);
+if isa(callback, "function_handle")
+    callback(button, []);
+else
+    assert(iscell(callback) && isa(callback{1}, "function_handle"));
+    callback{1}(button, [], callback{2:end});
+end
 end
 
 %{

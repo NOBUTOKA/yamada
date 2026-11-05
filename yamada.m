@@ -1250,10 +1250,12 @@ classdef yamada < handle
             document = app.Document;
             app.CallbackDialogTargetId = componentId;
             app.CallbackDialog = macd.ui.CallbackManagerDialog(component.Name, ...
-                @() macd.source.CallbackSourceAnalyzer.analyze(document, componentId, app.Registry), ...
-                @(name, action) app.callbackActionRequested(componentId, name, action), ...
+                @() macd.source.CallbackSourceAnalyzer.analyze(document, componentId, app.Registry, true), ...
+                @(name, action, handler) app.callbackActionRequested(componentId, name, action, handler), ...
                 @() app.Document == document && ~isempty(document.getComponent(componentId)), ...
-                true, @() app.reloadSourceRequested());
+                true, @() app.reloadSourceRequested(), ...
+                @(name) macd.source.CallbackMethodTargets.list(document, componentId, name, app.Registry), ...
+                @(name) macd.source.CallbackMethodTargets.defaultName(document, componentId, name, app.Registry));
         end
 
         function closeCallbackDialog(app)
@@ -1266,20 +1268,21 @@ classdef yamada < handle
             app.CallbackDialogTargetId = "";
         end
 
-        function message = callbackActionRequested(app, componentId, name, action)
+        function message = callbackActionRequested(app, componentId, name, action, handler)
             % callbackActionRequested Apply one source-preflighted callback transaction and refresh availability.
             arguments (Input)
                 app (1, 1) yamada
                 componentId (1, 1) string
                 name (1, 1) string
                 action (1, 1) string
+                handler (1, 1) string = ""
             end
             arguments (Output)
                 message (1, 1) string
             end
             message = "";
             try
-                app.Document.applyCallbackAction(componentId, name, action, app.Registry);
+                app.Document.applyCallbackAction(componentId, name, action, app.Registry, handler);
                 if app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)
                     app.refreshSourceViews(false);
                 else

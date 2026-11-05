@@ -398,8 +398,8 @@ classdef RoundTripGenerator
                     "app." + component.Name + " = " + component.Factory + "(" + arguments + ");";
                 pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id);
                 for callback = pending(:)'
-                    if callback.Action == "Add"
-                        creationText = creationText + eol + obj.indent(source, creationOffset) + macd.source.CallbackSourceEdits.bindingText(component.Name, callback.Name, callback.HandlerName);
+                    if any(callback.Action == ["Add", "New", "Connect"])
+                        creationText = creationText + eol + obj.indent(source, creationOffset) + macd.source.CallbackSourceEdits.bindingText(component.Name, callback.Name, callback.HandlerName, callback.BindingExpression);
                     end
                 end
                 entries = macd.model.PropertyApplicationPlanner.forComponent( ...

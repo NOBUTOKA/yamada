@@ -1625,14 +1625,15 @@ classdef DocumentModel < handle
             obj.recordHistory(edit);
         end
 
-        function applyCallbackAction(obj, componentId, name, action, registry)
+        function applyCallbackAction(obj, componentId, name, action, registry, requestedHandler)
             % applyCallbackAction Preflight and record a binding-plus-method edit as one history step.
             arguments (Input)
                 obj (1, 1) macd.model.DocumentModel
                 componentId (1, 1) string
                 name (1, 1) string
-                action (1, 1) string {mustBeMember(action, ["Add", "Delete"])}
+                action (1, 1) string {mustBeMember(action, ["Add", "Delete", "New", "Connect", "Disconnect"])}
                 registry (1, 1) macd.model.ComponentRegistry
+                requestedHandler (1, 1) string = ""
             end
 
             try
@@ -1641,12 +1642,15 @@ classdef DocumentModel < handle
                 error("macd:DocumentModel:UnsafeCallbackSource", "%s", exception.message);
             end
             % Validate current availability before changing any document or history state.
-            states = macd.source.CallbackSourceAnalyzer.analyze(obj, componentId, registry);
+            bindingOnly = any(action == ["New", "Connect", "Disconnect"]);
+            states = macd.source.CallbackSourceAnalyzer.analyze(obj, componentId, registry, bindingOnly);
             state = states(string({states.Name}) == name);
             if numel(state) ~= 1 || ...
-                    ~(action == "Add" && state.State == "absent" || action == "Delete" && state.State == "editable")
+                    ~(action == "Add" && state.State == "absent" || action == "Delete" && state.State == "editable" || ...
+                    bindingOnly && state.State ~= "unsupported")
                 error("macd:DocumentModel:UnsafeCallbackEdit", "The callback action is unavailable or unsafe.");
             end
+            if action == "Disconnect" && state.State == "absent", return, end
             component = obj.getComponent(componentId);
             before = obj.CallbackEdits;
             after = before;
@@ -1660,37 +1664,42 @@ classdef DocumentModel < handle
             end
             handler = "";
             method = "";
-            if action == "Add"
+            expression = "";
+            if action == "Connect"
+                targets = macd.source.CallbackMethodTargets.list(obj, componentId, name, registry);
+                target = targets(string({targets.Name}) == requestedHandler);
+                if ~isscalar(target)
+                    error("macd:DocumentModel:UnsafeCallbackTarget", "The selected method is no longer an eligible callback target.");
+                end
+                handler = target.Name;
+                expression = target.Expression;
+                if state.State == "editable" && state.HandlerName == handler, return, end
+            end
+            if any(action == ["Add", "New"])
                 parentFactory = "";
                 if component.ParentId ~= "", parentFactory = obj.getComponent(component.ParentId).Factory; end
                 definition = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
                 definition = definition(string({definition.Path}) == name);
-                % Avoid all source tokens, component names, and pending generated method names.
-                stem = macd.source.ComponentNameRewriter.defaultHandler(component.Name, name, definition.HandlerSuffix);
-                handler = stem;
-                suffix = 1;
-                used = [string({obj.Components.Name}), string({after.HandlerName}), ...
-                    string({obj.RenameEdits.OldName}), string({obj.RenameEdits.NewName}), obj.ClassName, "createComponents", "delete", "figureDeleted"];
-                for item = obj.History
-                    edit = item{1};
-                    if edit.Kind == "callback"
-                        previous = [edit.Before edit.After];
-                        used = [used string({previous.HandlerName})]; %#ok<AGROW>
-                        if isfield(edit, "DeletedHandler"), used = [used edit.DeletedHandler]; end %#ok<AGROW>
+                % Share collision-aware naming with the callback name popup.
+                handler = macd.source.CallbackMethodTargets.defaultName(obj, componentId, name, registry);
+                if action == "New"
+                    names = obj.sourceAnalysis().nameIndex();
+                    reserved = [string({obj.Components.Name}), string({after.HandlerName}), ...
+                        names.Members, obj.ClassName, "createComponents", "delete", "figureDeleted", ...
+                        string(properties("handle"))', string(methods("handle"))'];
+                    if ~isvarname(requestedHandler) || iskeyword(requestedHandler) || ...
+                            strlength(requestedHandler) > namelengthmax || any(reserved == requestedHandler)
+                        error("macd:DocumentModel:CallbackNameCollision", "Enter a valid, unused callback method name.");
                     end
-                end
-                while any(used == handler) || ~isempty(regexp(obj.CurrentText, ...
-                        '(?<!\w)' + handler + '(?!\w)', 'once'))
-                    suffix = suffix + 1;
-                    handler = stem + "_" + suffix;
+                    handler = requestedHandler;
                 end
                 ending = string(newline);
                 if obj.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
                 method = macd.source.CallbackSourceEdits.handlerText(handler, name, obj.ClassName, ending, ...
                     component.Factory == "uifigure" && name == "CloseRequestFcn", definition.CallbackSignature);
             end
-            if action == "Add" || ~isempty(original.BindingSpan) || ~isempty(original.MethodSpan)
-                after(end + 1) = macd.model.CallbackEdit(componentId, name, action, handler, method, original, obj.CurrentText);
+            if any(action == ["Add", "New", "Connect"]) || ~isempty(original.BindingSpan) || ~isempty(original.MethodSpan)
+                after(end + 1) = macd.model.CallbackEdit(componentId, name, action, handler, method, original, obj.CurrentText, expression);
             end
 
             % Preflight the complete generated result, restoring every temporary state on failure.

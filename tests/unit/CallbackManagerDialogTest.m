@@ -8,6 +8,7 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
         TargetValid logical = true
         Fail logical = false
         Calls double = 0
+        NameResponse string = "ChosenHandler"
     end
 
     methods (Test)
@@ -16,17 +17,19 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             dialog = testCase.fixture();
             cleanup = onCleanup(@() delete(dialog));
             figure = findall(0, "Tag", "macd-callback-manager");
-            add = findall(figure, "Tag", "macd-callback-add");
-            remove = findall(figure, "Tag", "macd-callback-delete");
-            testCase.verifyEqual(numel(add), 3);
+            controls = findall(figure, "Tag", "macd-callback-target");
+            testCase.verifyEqual(numel(controls), 3);
             testCase.verifyEqual(string(figure.WindowStyle), "modal");
-            testCase.verifyEqual(string(add(arrayfun(@(button) button.Layout.Row == 1, add)).Enable), "on");
-            testCase.verifyEqual(string(remove(arrayfun(@(button) button.Layout.Row == 1, remove)).Enable), "off");
-            testCase.verifyEqual(string(add(arrayfun(@(button) button.Layout.Row == 2, add)).Enable), "off");
-            testCase.verifyEqual(string(remove(arrayfun(@(button) button.Layout.Row == 2, remove)).Enable), "on");
-            testCase.verifyEqual(string(add(arrayfun(@(button) button.Layout.Row == 3, add)).Enable), "off");
-            testCase.verifyEqual(string(remove(arrayfun(@(button) button.Layout.Row == 3, remove)).Enable), "off");
-            testCase.verifyEqual(string(add(arrayfun(@(button) button.Layout.Row == 3, add)).Tooltip), "Shared method");
+            for row = 1:2
+                control = controls(arrayfun(@(item) item.Layout.Row == row, controls));
+                testCase.verifyEqual(string(control.Enable), "on");
+                testCase.verifyEqual(string(control.ItemsData(1:2)), ["<New...>", "<Disconnect>"]);
+            end
+            control = controls(arrayfun(@(item) item.Layout.Row == 3, controls));
+            testCase.verifyEqual(string(control.Enable), "off");
+            testCase.verifyEqual(string(control.Tooltip), "Unsupported expression");
+            testCase.verifyEmpty(findall(figure, "Tag", "macd-callback-add"));
+            testCase.verifyEmpty(findall(figure, "Tag", "macd-callback-delete"));
         end
 
         function refreshesAfterSuccessAndReportsFailure(testCase)
@@ -34,18 +37,32 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             dialog = testCase.fixture();
             cleanup = onCleanup(@() delete(dialog));
             figure = findall(0, "Tag", "macd-callback-manager");
-            add = findall(figure, "Tag", "macd-callback-add", "UserData", "FirstFcn");
             testCase.Fail = true;
-            add.ButtonPushedFcn(add, []);
+            testCase.choose(figure, "FirstFcn", "<New...>");
             message = findall(figure, "Tag", "macd-callback-message");
             testCase.verifyEqual(string(message.Text), "Rejected");
-            add = findall(figure, "Tag", "macd-callback-add", "UserData", "FirstFcn");
-            testCase.verifyEqual(string(add.Enable), "on");
+            control = findall(figure, "Tag", "macd-callback-target", "UserData", "FirstFcn");
+            testCase.verifyEqual(string(control.Value), "<Disconnect>");
             testCase.Fail = false;
-            add.ButtonPushedFcn(add, []);
-            remove = findall(figure, "Tag", "macd-callback-delete", "UserData", "FirstFcn");
-            testCase.verifyEqual(string(remove.Enable), "on");
+            testCase.choose(figure, "FirstFcn", "<New...>");
+            control = findall(figure, "Tag", "macd-callback-target", "UserData", "FirstFcn");
+            testCase.verifyEqual(string(control.Value), "ChosenHandler");
             testCase.verifyEqual(testCase.Calls, 2);
+        end
+
+        function cancellationPreservesSelectionAndDoesNotDispatch(testCase)
+            % cancellationPreservesSelectionAndDoesNotDispatch Keep the authoritative binding on name-popup cancellation.
+            dialog = testCase.fixture();
+            cleanup = onCleanup(@() delete(dialog));
+            figure = findall(0, "Tag", "macd-callback-manager");
+            testCase.NameResponse = "";
+            testCase.choose(figure, "SecondFcn", "<New...>");
+            control = findall(figure, "Tag", "macd-callback-target", "UserData", "SecondFcn");
+            testCase.verifyEqual(string(control.Value), "existing");
+            testCase.verifyEqual(testCase.Calls, 0);
+            testCase.choose(figure, "SecondFcn", "<Disconnect>");
+            control = findall(figure, "Tag", "macd-callback-target", "UserData", "SecondFcn");
+            testCase.verifyEqual(string(control.Value), "<Disconnect>");
         end
 
         function closesExpiredTargetAndSupportsLongLists(testCase)
@@ -56,7 +73,7 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             end
             dialog.refresh();
             figure = findall(0, "Tag", "macd-callback-manager");
-            testCase.verifyEqual(numel(findall(figure, "Tag", "macd-callback-add")), 40);
+            testCase.verifyEqual(numel(findall(figure, "Tag", "macd-callback-target")), 40);
             testCase.TargetValid = false;
             dialog.refresh();
             testCase.verifyFalse(isvalid(figure));
@@ -75,19 +92,36 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             testCase.TargetValid = true;
             testCase.Fail = false;
             testCase.Calls = 0;
+            testCase.NameResponse = "ChosenHandler";
             testCase.States = [macd.model.CallbackState("FirstFcn", "absent"), ...
-                macd.model.CallbackState("SecondFcn", "editable"), ...
-                macd.model.CallbackState("ThirdFcn", "unsupported", "Shared method")];
+                macd.model.CallbackState("SecondFcn", "editable", "", "existing"), ...
+                macd.model.CallbackState("ThirdFcn", "unsupported", "Unsupported expression")];
             dialog = macd.ui.CallbackManagerDialog("Button", @() testCase.States, ...
-                @(name, action) testCase.commit(name, action), @() testCase.TargetValid, false);
+                @(name, action, handler) testCase.commit(name, action, handler), @() testCase.TargetValid, false, @() [], ...
+                @(~) struct("Name", "existing", "Label", "existing(app)"), ...
+                @(~) "DefaultPushed", @(~) testCase.NameResponse);
         end
 
-        function message = commit(testCase, name, action)
+        function choose(~, figure, name, value)
+            % choose Dispatch the actual dropdown callback with a chosen item.
+            arguments (Input)
+                ~
+                figure (1, 1) matlab.ui.Figure
+                name (1, 1) string
+                value (1, 1) string
+            end
+            control = findall(figure, "Tag", "macd-callback-target", "UserData", name);
+            control.Value = value;
+            control.ValueChangedFcn(control, []);
+        end
+
+        function message = commit(testCase, name, action, handler)
             % commit Emulate immediate model results without coupling UI tests to source generation.
             arguments (Input)
                 testCase (1, 1) CallbackManagerDialogTest
                 name (1, 1) string
                 action (1, 1) string
+                handler (1, 1) string
             end
             arguments (Output)
                 message (1, 1) string
@@ -96,9 +130,9 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             message = "";
             if testCase.Fail, message = "Rejected"; return, end
             state = "editable";
-            if action == "Delete", state = "absent"; end
+            if action == "Disconnect", state = "absent"; end
             index = find(string({testCase.States.Name}) == name);
-            testCase.States(index) = macd.model.CallbackState(name, state);
+            testCase.States(index) = macd.model.CallbackState(name, state, "", handler);
         end
     end
 end

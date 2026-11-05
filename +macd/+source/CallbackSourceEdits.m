@@ -26,14 +26,16 @@ classdef CallbackSourceEdits
                     return
                 end
                 component = document.getComponent(edit.ComponentId);
-                if ~isempty(edit.MethodSpan)
+                if ~isempty(edit.MethodSpan) && any(edit.Action == ["Add", "Delete"])
                     edits(end + 1) = struct("Start", edit.MethodSpan.StartOffset, ...
                         "End", edit.MethodSpan.EndOffset, "Text", ""); %#ok<AGROW>
                 end
                 if isempty(component), continue, end
                 binding = "";
-                if edit.Action == "Add"
-                    binding = macd.source.CallbackSourceEdits.bindingText(component.Name, edit.Name, edit.HandlerName);
+                if any(edit.Action == ["Add", "New", "Connect"])
+                    binding = macd.source.CallbackSourceEdits.bindingText(component.Name, edit.Name, edit.HandlerName, edit.BindingExpression);
+                end
+                if any(edit.Action == ["Add", "New"])
                     if edit.MethodAnchor <= 0
                         diagnostics(end + 1) = macd.model.Diagnostic("unsafe-callback-anchor", "error", ...
                             "The callback method insertion anchor is unavailable."); %#ok<AGROW>
@@ -42,13 +44,13 @@ classdef CallbackSourceEdits
                     edits(end + 1) = struct("Start", edit.MethodAnchor + 1, "End", edit.MethodAnchor, ...
                         "Text", ending + macd.source.CallbackSourceEdits.methodText(edit, document.ClassName) + ending); %#ok<AGROW>
                 end
-                if edit.Action == "Delete" && component.Factory == "uifigure" && edit.Name == "CloseRequestFcn"
+                if any(edit.Action == ["Delete", "Disconnect"]) && component.Factory == "uifigure" && edit.Name == "CloseRequestFcn"
                     binding = macd.source.CallbackSourceEdits.defaultClose(component.Name);
                 end
                 if ~isempty(edit.BindingSpan)
                     edits(end + 1) = struct("Start", edit.BindingSpan.StartOffset, ...
                         "End", edit.BindingSpan.EndOffset, "Text", binding); %#ok<AGROW>
-                elseif edit.Action == "Add" && macd.model.SourceOwnership.hasSource(component)
+                elseif any(edit.Action == ["Add", "New", "Connect"]) && macd.model.SourceOwnership.hasSource(component)
                     if edit.BindingAnchor <= 0
                         diagnostics(end + 1) = macd.model.Diagnostic("unsafe-callback-anchor", "error", ...
                             "The callback binding insertion anchor is unavailable."); %#ok<AGROW>
@@ -60,17 +62,19 @@ classdef CallbackSourceEdits
             end
         end
 
-        function text = bindingText(componentName, name, handler)
+        function text = bindingText(componentName, name, handler, expression)
             % bindingText Emit one documented bound-method callback assignment.
             arguments (Input)
                 componentName (1, 1) string
                 name (1, 1) string
                 handler (1, 1) string
+                expression (1, 1) string = ""
             end
             arguments (Output)
                 text (1, 1) string
             end
-            text = "app." + componentName + "." + name + " = @app." + handler + ";";
+            if expression == "", expression = "@app." + handler; end
+            text = "app." + componentName + "." + name + " = " + expression + ";";
         end
 
         function text = defaultClose(componentName)

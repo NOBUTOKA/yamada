@@ -14,6 +14,8 @@ classdef CallbackEdit
         HandlerName string
         % MethodText - Complete generated method for an addition.
         MethodText string
+        % BindingExpression - Proven callback expression for an existing target.
+        BindingExpression string = ""
         % BindingSpan - Original assignment replaced or removed by this edit.
         BindingSpan macd.model.SourceSpan
         % MethodSpan - Original handler removed by this edit.
@@ -27,16 +29,17 @@ classdef CallbackEdit
     end
 
     methods
-        function obj = CallbackEdit(componentId, name, action, handlerName, methodText, state, originalSource)
+        function obj = CallbackEdit(componentId, name, action, handlerName, methodText, state, originalSource, bindingExpression)
             % CallbackEdit Capture original ownership together with the resulting binding state.
             arguments (Input)
                 componentId (1, 1) string
                 name (1, 1) string
-                action (1, 1) string {mustBeMember(action, ["Add", "Delete"])}
+                action (1, 1) string {mustBeMember(action, ["Add", "Delete", "New", "Connect", "Disconnect"])}
                 handlerName (1, 1) string
                 methodText (1, 1) string
                 state (1, 1) macd.model.CallbackState
                 originalSource (1, 1) string = ""
+                bindingExpression (1, 1) string = ""
             end
             arguments (Output)
                 obj (1, 1) macd.model.CallbackEdit
@@ -47,6 +50,7 @@ classdef CallbackEdit
             obj.Action = action;
             obj.HandlerName = handlerName;
             obj.MethodText = methodText;
+            obj.BindingExpression = bindingExpression;
             obj.BindingSpan = state.BindingSpan;
             obj.MethodSpan = state.MethodSpan;
             obj.BindingAnchor = state.BindingAnchor;

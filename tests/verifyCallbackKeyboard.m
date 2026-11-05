@@ -5,23 +5,25 @@ arguments (Output)
     evidence (1, 1) struct
 end
 states = [macd.model.CallbackState("FirstFcn", "absent"), ...
-    macd.model.CallbackState("SecondFcn", "editable"), ...
+    macd.model.CallbackState("SecondFcn", "editable", "", "existing"), ...
     macd.model.CallbackState("UnsafeFcn", "unsupported", "Shared handler")];
 actions = 0;
 reloads = 0;
-dialog = macd.ui.CallbackManagerDialog("Keyboard Verification", @() states, @action, @() true, true, @reload);
+dialog = macd.ui.CallbackManagerDialog("Keyboard Verification", @() states, @action, @() true, true, @reload, ...
+    @(~) struct("Name", "existing", "Label", "existing(app)"));
 cleanup = onCleanup(@() deleteIfValid(dialog));
 popup = findall(0, "Tag", "macd-callback-manager");
-add = findall(popup, "Tag", "macd-callback-add", "UserData", "FirstFcn");
-focus(add);
+control = findall(popup, "Tag", "macd-callback-target", "UserData", "FirstFcn");
+focus(control);
 drawnow;
 windows = matlab.internal.webwindowmanager.instance.findAllWebwindows();
 owned = windows(arrayfun(@(window) string(window.Title) == "Callbacks: Keyboard Verification", windows));
 assert(isscalar(owned));
 robot = javaObject("java.awt.Robot");
-waitForText(owned, "Add");
+waitForText(owned, "<Disconnect>");
 sendKey(owned, robot, 9);
-waitForText(owned, "Delete");
+waitForText(owned, "existing(app)");
+sendKey(owned, robot, 38);
 sendKey(owned, robot, 10);
 started = tic;
 while actions == 0 && toc(started) < 10, drawnow; end
@@ -33,9 +35,9 @@ assert(reloads == 1);
 evidence = struct("NativeTabNavigation", true, "NativeEnterAction", true, "NativeF5", true);
 disp(evidence);
 
-    function message = action(name, command)
+    function message = action(name, command, ~)
         % action Record one native keyboard activation and update authoritative state.
-        assert(name == "SecondFcn" && command == "Delete");
+        assert(name == "SecondFcn" && command == "Disconnect");
         actions = actions + 1;
         states(2) = macd.model.CallbackState("SecondFcn", "absent");
         message = "";

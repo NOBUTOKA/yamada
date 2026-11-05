@@ -54,12 +54,13 @@ classdef CallbackSourceAnalyzer
             [order, diagnostics, certain, returns] = macd.source.InitializationSourceAnalyzer.analyze(statements, layout, creationOffsets);
         end
 
-        function states = analyze(document, componentId, registry)
+        function states = analyze(document, componentId, registry, bindingOnly)
             % analyze Return catalog-ordered callback states for the current source snapshot.
             arguments (Input)
                 document (1, 1) macd.model.DocumentModel
                 componentId (1, 1) string
                 registry (1, 1) macd.model.ComponentRegistry
+                bindingOnly (1, 1) logical = false
             end
             arguments (Output)
                 states macd.model.CallbackState
@@ -106,7 +107,7 @@ classdef CallbackSourceAnalyzer
                             candidates = analysis.callbackCandidates(name);
                         end
                         [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = ...
-                        macd.source.CallbackSourceAnalyzer.classify(component, sourceName, name, statements, layout, candidates, analysis);
+                        macd.source.CallbackSourceAnalyzer.classify(component, sourceName, name, statements, layout, candidates, analysis, bindingOnly);
                     end
                 else
                     entry = component.getProperty(name);
@@ -121,7 +122,7 @@ classdef CallbackSourceAnalyzer
                 if ~isempty(pending)
                     edit = pending(end);
                     state = "absent";
-                    if edit.Action == "Add", state = "editable"; end
+                    if any(edit.Action == ["Add", "New", "Connect"]), state = "editable"; end
                     reason = "";
                     handler = edit.HandlerName;
                     bindingSpan = edit.BindingSpan;
@@ -177,8 +178,8 @@ classdef CallbackSourceAnalyzer
                 "StraightLine", false(1, numel(statements)), ...
                 "Owner", strings(1, numel(statements)), "ClassName", "", ...
                 "InstanceNames", strings(1, 0), ...
-                "Methods", struct("Name", {}, "Span", {}), "MethodAnchor", 0);
-            stack = struct("Kind", {}, "Name", {}, "Start", {}, "Instance", {});
+                "Methods", struct("Name", {}, "Span", {}, "Signature", {}), "MethodAnchor", 0);
+            stack = struct("Kind", {}, "Name", {}, "Start", {}, "Instance", {}, "Index", {});
             constructorTry = zeros(1, numel(statements));
             for index = 1:numel(statements)
                 text = char(strtrim(statements(index).Text));
@@ -206,7 +207,8 @@ classdef CallbackSourceAnalyzer
                     stack(end) = [];
                     if block.Kind == "function" && block.Instance
                         layout.Methods(end + 1) = struct("Name", block.Name, ...
-                            "Span", macd.model.SourceSpan(block.Start, statements(index).Span.EndOffset));
+                            "Span", macd.model.SourceSpan(block.Start, statements(index).Span.EndOffset), ...
+                            "Signature", macd.source.CallbackMethodSignature(statements(block.Index:index)));
                     elseif block.Kind == "methods" && block.Instance && layout.MethodAnchor == 0
                         layout.MethodAnchor = statements(index).Span.StartOffset - 1;
                     elseif block.Kind == "try"
@@ -242,20 +244,20 @@ classdef CallbackSourceAnalyzer
                     if keyword == "methods"
                         instance = isempty(regexp(text, '(?<!\w)(Static|Abstract|External)(?!\w)', 'once'));
                     elseif keyword == "function"
-                        declaration = regexp(text, '^function\s+(?:(?:\[[^\]]*\]|\w+)\s*=\s*)?(\w+)\s*(?:\(|$)', 'tokens', 'once');
+                        declaration = regexp(text, '^function\s+(?:(?:\[[^\]]*\]|\w+)\s*=\s*)?((?:get\.|set\.)?\w+)\s*(?:\(|$)', 'tokens', 'once');
                         if isempty(declaration), layout.Valid = false; break, end
                         name = string(declaration{1});
                         instance = numel(stack) == 2 && stack(2).Kind == "methods" && stack(2).Instance;
                         if instance, layout.InstanceNames(end + 1) = name; end
                     end
                     stack(end + 1) = struct("Kind", keyword, "Name", name, ...
-                        "Start", statements(index).Span.StartOffset, "Instance", instance); %#ok<AGROW>
+                        "Start", statements(index).Span.StartOffset, "Instance", instance, "Index", index); %#ok<AGROW>
                 end
             end
             layout.Valid = layout.Valid && isempty(stack);
         end
 
-        function [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = classify(component, sourceName, name, statements, layout, candidates, analysis)
+        function [state, reason, handler, bindingSpan, methodSpan, bindingAnchor, methodAnchor] = classify(component, sourceName, name, statements, layout, candidates, analysis, bindingOnly)
             % classify Validate a direct binding, unique method, and exclusive source references.
             arguments (Input)
                 component (1, 1) macd.model.ComponentRecord
@@ -265,6 +267,7 @@ classdef CallbackSourceAnalyzer
                 layout (1, 1) struct
                 candidates (1, :) double
                 analysis (1, 1) macd.source.SourceAnalysis
+                bindingOnly (1, 1) logical = false
             end
             arguments (Output)
                 state (1, 1) string
@@ -339,6 +342,11 @@ classdef CallbackSourceAnalyzer
             handler = macd.source.CallbackSourceAnalyzer.bindingHandler(expression);
             reason = "The callback expression does not have supported method ownership.";
             if strlength(handler) == 0, return, end
+            if bindingOnly
+                state = "editable";
+                reason = "";
+                return
+            end
             if any(handler == ["createComponents", "delete"]), return, end
             methods = layout.Methods(string({layout.Methods.Name}) == handler);
             reason = "The callback method is missing, shared, or referenced elsewhere.";

@@ -123,9 +123,12 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
         end
 
         function popupActionsCommitAndUndoCompleteCallbacks(testCase)
-            % popupActionsCommitAndUndoCompleteCallbacks Exercise real Add/Delete and editor history callbacks.
+            % popupActionsCommitAndUndoCompleteCallbacks Exercise binding-only dropdown edits and editor history callbacks.
             app = yamada();
             cleanup = onCleanup(@() delete(app));
+            registry = macd.model.ComponentRegistry.createDefault();
+            app.Document.applyCallbackAction(app.Document.RootComponentId, "SizeChangedFcn", "New", registry, "RootSized");
+            app.Document.applyCallbackAction(app.Document.RootComponentId, "SizeChangedFcn", "Disconnect", registry);
             figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
             tree = findall(figure, "Type", "uitree");
             menu = tree.ContextMenu;
@@ -133,20 +136,23 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", tree.Children(1))));
             item.MenuSelectedFcn(item, []);
             popup = findall(0, "Tag", "macd-callback-manager");
-            add = findall(popup, "Tag", "macd-callback-add", "UserData", "SizeChangedFcn");
-            add.ButtonPushedFcn(add, []);
-            testCase.verifyEqual(app.Document.HistoryIndex, 1);
+            control = findall(popup, "Tag", "macd-callback-target", "UserData", "SizeChangedFcn");
+            control.Value = "RootSized";
+            control.ValueChangedFcn(control, []);
+            testCase.verifyEqual(app.Document.HistoryIndex, 3);
             testCase.verifySubstring(app.Document.GeneratedText, "SizeChangedFcn = @app.");
-            remove = findall(popup, "Tag", "macd-callback-delete", "UserData", "SizeChangedFcn");
-            testCase.verifyEqual(string(remove.Enable), "on");
-            remove.ButtonPushedFcn(remove, []);
-            testCase.verifyEqual(app.Document.HistoryIndex, 2);
+            control = findall(popup, "Tag", "macd-callback-target", "UserData", "SizeChangedFcn");
+            testCase.verifyEqual(string(control.Enable), "on");
+            control.Value = "<Disconnect>";
+            control.ValueChangedFcn(control, []);
+            testCase.verifyEqual(app.Document.HistoryIndex, 4);
             testCase.verifyFalse(contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
+            testCase.verifySubstring(app.Document.CurrentText, "function RootSized(app, source, event)");
             undo = findall(figure, "Type", "uimenu", "Tag", "macd-edit-undo");
             undo.MenuSelectedFcn(undo, []);
             testCase.verifySubstring(app.Document.GeneratedText, "SizeChangedFcn = @app.");
-            remove = findall(popup, "Tag", "macd-callback-delete", "UserData", "SizeChangedFcn");
-            testCase.verifyEqual(string(remove.Enable), "on");
+            control = findall(popup, "Tag", "macd-callback-target", "UserData", "SizeChangedFcn");
+            testCase.verifyEqual(string(control.Value), "RootSized");
         end
     end
 

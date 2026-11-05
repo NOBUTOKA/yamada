@@ -11,10 +11,13 @@ classdef CallbackManagerDialog < handle
         StateFcn function_handle
         ActionFcn function_handle
         ValidFcn function_handle
+        TargetsFcn function_handle
+        DefaultNameFcn function_handle
+        PromptFcn function_handle
     end
 
     methods
-        function obj = CallbackManagerDialog(targetName, stateFcn, actionFcn, validFcn, visible, reloadFcn)
+        function obj = CallbackManagerDialog(targetName, stateFcn, actionFcn, validFcn, visible, reloadFcn, targetsFcn, defaultNameFcn, promptFcn)
             % CallbackManagerDialog Create a modal callback list with a fixed command layout.
             arguments (Input)
                 targetName (1, 1) string
@@ -23,6 +26,9 @@ classdef CallbackManagerDialog < handle
                 validFcn (1, 1) function_handle
                 visible (1, 1) logical = true
                 reloadFcn (1, 1) function_handle = @() []
+                targetsFcn (1, 1) function_handle = @(~) struct("Name", {}, "Label", {})
+                defaultNameFcn (1, 1) function_handle = @(name) name
+                promptFcn (1, 1) function_handle = @macd.ui.CallbackManagerDialog.promptName
             end
             arguments (Output)
                 obj (1, 1) macd.ui.CallbackManagerDialog
@@ -32,13 +38,16 @@ classdef CallbackManagerDialog < handle
             obj.StateFcn = stateFcn;
             obj.ActionFcn = actionFcn;
             obj.ValidFcn = validFcn;
+            obj.TargetsFcn = targetsFcn;
+            obj.DefaultNameFcn = defaultNameFcn;
+            obj.PromptFcn = promptFcn;
             obj.Figure = uifigure("Name", "Callbacks: " + targetName, "Visible", "off", ...
                 "WindowStyle", "modal", "Resize", "on", "Position", [300 300 380 170], ...
                 "Tag", "macd-callback-manager", "CloseRequestFcn", @(~, ~) delete(obj));
             obj.Figure.WindowKeyPressFcn = @(~, event) obj.keyPressed(event, reloadFcn);
             grid = uigridlayout(obj.Figure, [3 1], "RowHeight", {"1x", 0, 30}, "RowSpacing", 6);
             obj.MainGrid = grid;
-            obj.Rows = uigridlayout(grid, [1 3], "ColumnWidth", {"1x", 64, 64}, ...
+            obj.Rows = uigridlayout(grid, [1 2], "ColumnWidth", {"fit", "1x"}, ...
                 "Scrollable", "on", "RowSpacing", 6, "Padding", [0 0 0 0]);
             obj.Message = uilabel(grid, "WordWrap", "on", "Text", "", ...
                 "Tag", "macd-callback-message");
@@ -96,16 +105,23 @@ classdef CallbackManagerDialog < handle
                 label = uilabel(obj.Rows, "Text", state.Name, "Tooltip", state.Reason);
                 label.Layout.Row = index;
                 label.Layout.Column = 1;
-                for action = ["Add", "Delete"]
-                    enabled = (action == "Add" && state.State == "absent") || ...
-                        (action == "Delete" && state.State == "editable");
-                    button = uibutton(obj.Rows, "Text", action, "Enable", enabled, ...
-                        "Tooltip", state.Reason, "Tag", "macd-callback-" + lower(action), ...
-                        "UserData", state.Name, "ButtonPushedFcn", ...
-                        @(~, ~) obj.invoke(state.Name, action));
-                    button.Layout.Row = index;
-                    button.Layout.Column = 2 + double(action == "Delete");
+                targets = obj.TargetsFcn(state.Name);
+                items = ["<New...>", "<Disconnect>", string({targets.Label})];
+                values = ["<New...>", "<Disconnect>", string({targets.Name})];
+                selected = "<Disconnect>";
+                if state.State ~= "absent" && state.HandlerName ~= ""
+                    selected = state.HandlerName;
+                    if ~any(values == selected)
+                        items(end + 1) = selected + " [current; unavailable]";
+                        values(end + 1) = selected;
+                    end
                 end
+                control = uidropdown(obj.Rows, "Items", items, "ItemsData", values, ...
+                    "Value", selected, "Enable", state.State ~= "unsupported", ...
+                    "Tooltip", state.Reason, "Tag", "macd-callback-target", "UserData", state.Name, ...
+                    "ValueChangedFcn", @(control, ~) obj.invoke(state.Name, string(control.Value)));
+                control.Layout.Row = index;
+                control.Layout.Column = 2;
             end
         end
 
@@ -128,25 +144,36 @@ classdef CallbackManagerDialog < handle
             end
         end
 
-        function invoke(obj, name, action)
+        function invoke(obj, name, selection)
             % invoke Revalidate availability and dispatch one atomic action request.
             arguments (Input)
                 obj (1, 1) macd.ui.CallbackManagerDialog
                 name (1, 1) string
-                action (1, 1) string
+                selection (1, 1) string
             end
             if ~obj.ValidFcn(), delete(obj); return, end
             states = obj.StateFcn();
             state = states(string({states.Name}) == name);
-            if numel(state) ~= 1 || ...
-                    ~(action == "Add" && state.State == "absent" || action == "Delete" && state.State == "editable")
+            if numel(state) ~= 1 || state.State == "unsupported"
                 obj.refresh();
                 return
             end
 
             % A failed command reports an error without optimistically changing button states.
             try
-                message = obj.ActionFcn(name, action);
+                handler = "";
+                if selection == "<New...>"
+                    handler = string(obj.PromptFcn(obj.DefaultNameFcn(name)));
+                    if handler == "", obj.refresh(); return, end
+                    action = "New";
+                elseif selection == "<Disconnect>"
+                    action = "Disconnect";
+                else
+                    action = "Connect";
+                    handler = selection;
+                end
+                if ~obj.ValidFcn(), delete(obj); return, end
+                message = obj.ActionFcn(name, action, handler);
             catch exception
                 message = string(exception.message);
             end
@@ -154,6 +181,21 @@ classdef CallbackManagerDialog < handle
                 obj.Message.Text = message;
                 obj.refresh();
             end
+        end
+    end
+
+    methods (Static, Access = private)
+        function name = promptName(defaultName)
+            % promptName Ask for a method name while preserving cancellation as a no-op.
+            arguments (Input)
+                defaultName (1, 1) string
+            end
+            arguments (Output)
+                name (1, 1) string
+            end
+            answer = inputdlg('Callback method name:', 'New callback', [1 55], {char(defaultName)});
+            name = "";
+            if ~isempty(answer), name = strtrim(string(answer{1})); end
         end
     end
 end
