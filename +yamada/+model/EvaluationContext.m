@@ -312,7 +312,7 @@ classdef EvaluationContext < handle
 
     methods (Static, Access = ?yamada.model.DocumentModel)
         function obj = fromValidated(document, registry)
-            % fromValidated Snapshot source-certified values while checking all metadata outside the semantic publication proof.
+            % fromValidated Snapshot values certified by a semantic proof or a model-owned callback patch projection.
             arguments (Input)
                 document (1, 1) yamada.model.DocumentModel
                 registry (1, 1) yamada.model.ComponentRegistry
@@ -321,7 +321,7 @@ classdef EvaluationContext < handle
                 obj (1, 1) yamada.model.EvaluationContext
             end
             [clock, revision, tracked] = document.inputStamp();
-            % Only DocumentModel calls this after DocumentValidationProof checks every primary value and binding.
+            % DocumentModel calls this after a semantic join or an owned callback-only source projection.
             safe = tracked && yamada.model.InputChangeClock.isValueData(document.Metadata) && ...
                 yamada.model.InputChangeClock.isValueData(document.UnknownRegions) && isempty(document.PendingEdits) && ...
                 isempty(document.CallbackEdits) && isempty(document.RenameEdits);

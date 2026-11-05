@@ -1250,12 +1250,13 @@ classdef yamada < handle
             document = app.Document;
             app.CallbackDialogTargetId = componentId;
             app.CallbackDialog = yamada.ui.CallbackManagerDialog(component.Name, ...
-                @() yamada.source.CallbackSourceAnalyzer.analyze(document, componentId, app.Registry, true), ...
+                @() document.callbackStates(componentId, app.Registry), ...
                 @(name, action, handler) app.callbackActionRequested(componentId, name, action, handler), ...
                 @() app.Document == document && ~isempty(document.getComponent(componentId)), ...
                 true, @() app.reloadSourceRequested(), ...
-                @(name) yamada.source.CallbackMethodTargets.list(document, componentId, name, app.Registry), ...
-                @(name) yamada.source.CallbackMethodTargets.defaultName(document, componentId, name, app.Registry));
+                @(name) document.callbackTargets(componentId, name, app.Registry), ...
+                @(name) yamada.source.CallbackMethodTargets.defaultName(document, componentId, name, app.Registry), ...
+                @yamada.ui.CallbackManagerDialog.promptName, @() document.callbackRevision(app.Registry));
         end
 
         function closeCallbackDialog(app)
@@ -1269,7 +1270,7 @@ classdef yamada < handle
         end
 
         function message = callbackActionRequested(app, componentId, name, action, handler)
-            % callbackActionRequested Apply one source-preflighted callback transaction and refresh availability.
+            % callbackActionRequested Apply one revision-checked callback transaction and refresh availability.
             arguments (Input)
                 app (1, 1) yamada
                 componentId (1, 1) string
@@ -1299,7 +1300,7 @@ classdef yamada < handle
                 app (1, 1) yamada
                 refreshDialog (1, 1) logical = true
             end
-            % The model transaction has already generated and validated the complete source.
+            % The model transaction has already published current source bindings and diagnostics.
             app.refreshInspector();
             app.refreshDiagnostics(app.Document.Diagnostics);
             app.refreshEditCommands();

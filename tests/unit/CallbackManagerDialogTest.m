@@ -9,6 +9,8 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
         Fail logical = false
         Calls double = 0
         NameResponse string = "ChosenHandler"
+        Revision uint64 = uint64(1)
+        ChangeDuringPrompt logical = false
     end
 
     methods (Test)
@@ -65,6 +67,28 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             testCase.verifyEqual(string(control.Value), "<Disconnect>");
         end
 
+        function staleChoicesRefreshWithoutDispatch(testCase)
+            % staleChoicesRefreshWithoutDispatch Reject choices populated from an earlier document revision.
+            dialog = testCase.fixture();
+            cleanup = onCleanup(@() delete(dialog));
+            figure = findall(0, "Tag", "yamada-callback-manager");
+            testCase.Revision = testCase.Revision + 1;
+            testCase.choose(figure, "FirstFcn", "<New...>");
+            testCase.verifyEqual(testCase.Calls, 0);
+            testCase.choose(figure, "FirstFcn", "<New...>");
+            testCase.verifyEqual(testCase.Calls, 1);
+        end
+
+        function changedDocumentDuringPromptDoesNotDispatch(testCase)
+            % changedDocumentDuringPromptDoesNotDispatch Recheck the listed revision after a modal name prompt returns.
+            dialog = testCase.fixture();
+            cleanup = onCleanup(@() delete(dialog));
+            figure = findall(0, "Tag", "yamada-callback-manager");
+            testCase.ChangeDuringPrompt = true;
+            testCase.choose(figure, "FirstFcn", "<New...>");
+            testCase.verifyEqual(testCase.Calls, 0);
+        end
+
         function closesExpiredTargetAndSupportsLongLists(testCase)
             % closesExpiredTargetAndSupportsLongLists Exercise scrolling and expired document closure.
             dialog = testCase.fixture();
@@ -93,13 +117,27 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             testCase.Fail = false;
             testCase.Calls = 0;
             testCase.NameResponse = "ChosenHandler";
+            testCase.Revision = uint64(1); testCase.ChangeDuringPrompt = false;
             testCase.States = [yamada.model.CallbackState("FirstFcn", "absent"), ...
                 yamada.model.CallbackState("SecondFcn", "editable", "", "existing"), ...
                 yamada.model.CallbackState("ThirdFcn", "unsupported", "Unsupported expression")];
             dialog = yamada.ui.CallbackManagerDialog("Button", @() testCase.States, ...
                 @(name, action, handler) testCase.commit(name, action, handler), @() testCase.TargetValid, false, @() [], ...
                 @(~) struct("Name", "existing", "Label", "existing(app)"), ...
-                @(~) "DefaultPushed", @(~) testCase.NameResponse);
+                @(~) "DefaultPushed", @(name) testCase.prompt(name), @() testCase.Revision);
+        end
+
+        function name = prompt(testCase, ~)
+            % prompt Return a controlled response while optionally changing the underlying revision.
+            arguments (Input)
+                testCase (1, 1) CallbackManagerDialogTest
+                ~
+            end
+            arguments (Output)
+                name (1, 1) string
+            end
+            name = testCase.NameResponse;
+            if testCase.ChangeDuringPrompt, testCase.Revision = testCase.Revision + 1; end
         end
 
         function choose(~, figure, name, value)

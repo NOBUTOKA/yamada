@@ -48,6 +48,48 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
             end
         end
 
+        function preparedChoicesFollowSourceAndHistory(testCase)
+            % preparedChoicesFollowSourceAndHistory Refresh listed methods and binding ownership after edits and replay.
+            [document, registry, button] = CallbackBindingSelectionTest.fixture();
+            before = document.callbackRevision(registry);
+            targets = document.callbackTargets(button.Id, "ButtonPushedFcn", registry);
+            testCase.verifyFalse(any(string({targets.Name}) == "CreatedByChoice"));
+            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, "CreatedByChoice");
+            testCase.verifyNotEqual(document.callbackRevision(registry), before);
+            targets = document.callbackTargets(button.Id, "ButtonPushedFcn", registry);
+            testCase.verifyTrue(any(string({targets.Name}) == "CreatedByChoice"));
+            document.undo();
+            targets = document.callbackTargets(button.Id, "ButtonPushedFcn", registry);
+            testCase.verifyFalse(any(string({targets.Name}) == "CreatedByChoice"));
+            document.redo();
+            states = document.callbackStates(button.Id, registry);
+            selected = states(string({states.Name}) == "ButtonPushedFcn");
+            testCase.verifyEqual(selected.HandlerName, "CreatedByChoice");
+        end
+
+        function callbackThenLiteralEditSurvivesSaveAndHistory(testCase)
+            % callbackThenLiteralEditSurvivesSaveAndHistory Preserve current callback and value bindings through Save As and replay.
+            [document, registry, button] = CallbackBindingSelectionTest.fixture();
+            initial = document.CurrentText;
+            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, "CreatedThenEdited");
+            connected = document.CurrentText;
+            document.setProperty(button.Id, "Text", "Changed after callback", registry);
+            source = document.CurrentText;
+            savedClass = "SavedCallbackThenLiteral";
+            source = yamada.source.AppClassIdentityRewriter.rewrite(source, savedClass);
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, savedClass + ".m", registry);
+            document.confirmSavedSource(checkpoint, registry);
+            saved = document.CurrentText;
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, yamada.source.AppClassIdentityRewriter.rewrite(connected, document.ClassName));
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, yamada.source.AppClassIdentityRewriter.rewrite(initial, document.ClassName));
+            document.redo(); document.redo();
+            testCase.verifyEqual(document.CurrentText, saved);
+            testCase.verifyEqual(button.getProperty("Text").LiteralValue, "Changed after callback");
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(document.validatePropertyCommit(registry)));
+        end
+
         function detachedBuilderComponentsBindBeforeFirstCallback(testCase)
             % detachedBuilderComponentsBindBeforeFirstCallback Retain nested records and distinct constructor and assignment occurrence identities.
             registry = yamada.model.ComponentRegistry.createDefault();

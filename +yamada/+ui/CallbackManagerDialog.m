@@ -14,10 +14,11 @@ classdef CallbackManagerDialog < handle
         TargetsFcn function_handle
         DefaultNameFcn function_handle
         PromptFcn function_handle
+        RevisionFcn function_handle
     end
 
     methods
-        function obj = CallbackManagerDialog(targetName, stateFcn, actionFcn, validFcn, visible, reloadFcn, targetsFcn, defaultNameFcn, promptFcn)
+        function obj = CallbackManagerDialog(targetName, stateFcn, actionFcn, validFcn, visible, reloadFcn, targetsFcn, defaultNameFcn, promptFcn, revisionFcn)
             % CallbackManagerDialog Create a modal callback list with a fixed command layout.
             arguments (Input)
                 targetName (1, 1) string
@@ -29,6 +30,7 @@ classdef CallbackManagerDialog < handle
                 targetsFcn (1, 1) function_handle = @(~) struct("Name", {}, "Label", {})
                 defaultNameFcn (1, 1) function_handle = @(name) name
                 promptFcn (1, 1) function_handle = @yamada.ui.CallbackManagerDialog.promptName
+                revisionFcn (1, 1) function_handle = @() []
             end
             arguments (Output)
                 obj (1, 1) yamada.ui.CallbackManagerDialog
@@ -40,7 +42,7 @@ classdef CallbackManagerDialog < handle
             obj.ValidFcn = validFcn;
             obj.TargetsFcn = targetsFcn;
             obj.DefaultNameFcn = defaultNameFcn;
-            obj.PromptFcn = promptFcn;
+            obj.PromptFcn = promptFcn; obj.RevisionFcn = revisionFcn;
             obj.Figure = uifigure("Name", "Callbacks: " + targetName, "Visible", "off", ...
                 "WindowStyle", "modal", "Resize", "on", "Position", [300 300 380 170], ...
                 "Tag", "yamada-callback-manager", "CloseRequestFcn", @(~, ~) delete(obj));
@@ -87,7 +89,7 @@ classdef CallbackManagerDialog < handle
             end
             if ~obj.isOpen(), return, end
             if ~obj.ValidFcn(), delete(obj); return, end
-            states = obj.StateFcn();
+            states = obj.StateFcn(); revision = obj.RevisionFcn();
             % Reserve message space only while an action has something to report.
             messageHeight = 52 * double(strlength(obj.Message.Text) > 0);
             previousHeight = obj.MainGrid.RowHeight{2};
@@ -112,14 +114,14 @@ classdef CallbackManagerDialog < handle
                 if state.State ~= "absent" && state.HandlerName ~= ""
                     selected = state.HandlerName;
                     if ~any(values == selected)
-                        items(end + 1) = selected + " [current; unavailable]";
-                        values(end + 1) = selected;
+                        items(end + 1) = selected + " [current; unavailable]"; %#ok<AGROW>
+                        values(end + 1) = selected; %#ok<AGROW>
                     end
                 end
                 control = uidropdown(obj.Rows, "Items", items, "ItemsData", values, ...
                     "Value", selected, "Enable", state.State ~= "unsupported", ...
                     "Tooltip", state.Reason, "Tag", "yamada-callback-target", "UserData", state.Name, ...
-                    "ValueChangedFcn", @(control, ~) obj.invoke(state.Name, string(control.Value)));
+                    "ValueChangedFcn", @(control, ~) obj.invoke(state.Name, string(control.Value), revision));
                 control.Layout.Row = index;
                 control.Layout.Column = 2;
             end
@@ -144,20 +146,16 @@ classdef CallbackManagerDialog < handle
             end
         end
 
-        function invoke(obj, name, selection)
-            % invoke Revalidate availability and dispatch one atomic action request.
+        function invoke(obj, name, selection, revision)
+            % invoke Dispatch a listed choice only while its source and catalog revision is current.
             arguments (Input)
                 obj (1, 1) yamada.ui.CallbackManagerDialog
                 name (1, 1) string
                 selection (1, 1) string
+                revision
             end
             if ~obj.ValidFcn(), delete(obj); return, end
-            states = obj.StateFcn();
-            state = states(string({states.Name}) == name);
-            if numel(state) ~= 1 || state.State == "unsupported"
-                obj.refresh();
-                return
-            end
+            if ~isequaln(revision, obj.RevisionFcn()), obj.refresh(); return, end
 
             % A failed command reports an error without optimistically changing button states.
             try
@@ -173,6 +171,7 @@ classdef CallbackManagerDialog < handle
                     handler = selection;
                 end
                 if ~obj.ValidFcn(), delete(obj); return, end
+                if ~isequaln(revision, obj.RevisionFcn()), obj.refresh(); return, end
                 message = obj.ActionFcn(name, action, handler);
             catch exception
                 message = string(exception.message);
@@ -184,7 +183,7 @@ classdef CallbackManagerDialog < handle
         end
     end
 
-    methods (Static, Access = private)
+    methods (Static, Access = ?yamada)
         function name = promptName(defaultName)
             % promptName Ask for a method name while preserving cancellation as a no-op.
             arguments (Input)

@@ -67,6 +67,7 @@ classdef DocumentModel < handle
         SourceAnalysisData yamada.source.SourceAnalysis = yamada.source.SourceAnalysis.empty
         InputClock yamada.model.InputChangeClock = yamada.model.InputChangeClock.empty
         Evaluation yamada.model.EvaluationContext = yamada.model.EvaluationContext.empty
+        CallbackPreparation struct = struct()
         PropertyValidationNames string = strings(1, 0)
         PropertyValidationContext yamada.model.EvaluationContext = yamada.model.EvaluationContext.empty
         PropertyValidationDiagnostics yamada.model.Diagnostic = yamada.model.Diagnostic.empty
@@ -119,7 +120,7 @@ classdef DocumentModel < handle
     end
 
     methods (Access = {?yamada.source.SubtreeReparentSourceEdits, ?yamada.source.PropertyInsertionPlanner, ?yamada.source.PropertySourcePlan})
-        function [candidate, state] = editedSourceCandidate(obj, text, edits, registry, stateId)
+        function [candidate, state] = editedSourceCandidate(obj, text, edits, registry, stateId, callback)
             % editedSourceCandidate Bind only changed owners against projected lexical and initialization indexes.
             arguments (Input)
                 obj (1, 1) yamada.model.DocumentModel
@@ -127,6 +128,7 @@ classdef DocumentModel < handle
                 edits (1, :) struct
                 registry (1, 1) yamada.model.ComponentRegistry
                 stateId (1, 1) string = ""
+                callback (1, 1) struct = struct()
             end
             arguments (Output)
                 candidate (1, 1) yamada.model.DocumentModel
@@ -238,7 +240,18 @@ classdef DocumentModel < handle
             end
             yamada.model.SourceEffectSummary.refresh(candidate, registry);
             candidate.publishCurrentSource(state);
-            diagnostics = candidate.validatePropertyCommit(registry);
+            if isempty(fieldnames(callback))
+                diagnostics = candidate.validatePropertyCommit(registry);
+            else
+                % Callback commands preserve non-callback semantics and existing diagnostics.
+                context = candidate.evaluationContext(registry);
+                context.inheritLiteralStates(callback.Context, callback.ComponentId, batch, true);
+                candidate.getEffectivePropertyStates(registry, callback.ComponentId);
+                candidate.PropertyValidationContext = context;
+                candidate.PropertyValidationNames = strings(1, 0);
+                candidate.PropertyValidationDiagnostics = candidate.Diagnostics;
+                diagnostics = candidate.Diagnostics;
+            end
             if yamada.validation.ModelValidator.hasErrors(diagnostics)
                 error("yamada:DocumentModel:UnsafeSourceCommit", "%s", strjoin(string({diagnostics.Message}), newline));
             end
@@ -1625,6 +1638,62 @@ classdef DocumentModel < handle
             obj.recordHistory(edit);
         end
 
+        function revision = callbackRevision(obj, registry)
+            % callbackRevision Identify the exact model, source and catalog used to populate a callback list.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                revision (1, 1) struct
+            end
+            [clock, counter, tracked] = obj.inputStamp();
+            revision = struct("Clock", clock, "Counter", counter, "Tracked", tracked, ...
+                "SourceId", obj.CurrentSource.StateId, "Registry", registry, "CatalogRevision", registry.Revision);
+        end
+
+        function states = callbackStates(obj, componentId, registry, bindingOnly)
+            % callbackStates Prepare callback ownership once per source and catalog revision.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                componentId (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
+                bindingOnly (1, 1) logical = true
+            end
+            arguments (Output)
+                states yamada.model.CallbackState
+            end
+            obj.ensureCurrentSource(registry);
+            revision = obj.callbackRevision(registry); cached = obj.CallbackPreparation;
+            if revision.Tracked && ~isempty(fieldnames(cached)) && cached.ComponentId == componentId && ...
+                    cached.BindingOnly == bindingOnly && isequaln(cached.Revision, revision)
+                states = cached.States; return
+            end
+            states = yamada.source.CallbackSourceAnalyzer.analyze(obj, componentId, registry, bindingOnly);
+            obj.CallbackPreparation = struct("Revision", revision, "ComponentId", componentId, ...
+                "BindingOnly", bindingOnly, "States", states, ...
+                "Targets", struct("Name", {}, "Values", {}));
+        end
+
+        function targets = callbackTargets(obj, componentId, name, registry)
+            % callbackTargets Retain the eligible method values shown by the current callback dropdown.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                componentId (1, 1) string
+                name (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                targets (1, :) struct
+            end
+            obj.callbackStates(componentId, registry);
+            cached = obj.CallbackPreparation; found = find(string({cached.Targets.Name}) == name, 1);
+            if ~isempty(found), targets = cached.Targets(found).Values; return, end
+            targets = yamada.source.CallbackMethodTargets.list(obj, componentId, name, registry);
+            cached.Targets(end + 1) = struct("Name", name, "Values", targets);
+            obj.CallbackPreparation = cached;
+        end
+
         function applyCallbackAction(obj, componentId, name, action, registry, requestedHandler)
             % applyCallbackAction Preflight and record a binding-plus-method edit as one history step.
             arguments (Input)
@@ -1644,7 +1713,7 @@ classdef DocumentModel < handle
             end
             % Validate current availability before changing any document or history state.
             bindingOnly = any(action == ["New", "Connect", "Disconnect"]);
-            states = yamada.source.CallbackSourceAnalyzer.analyze(obj, componentId, registry, bindingOnly);
+            states = obj.callbackStates(componentId, registry, bindingOnly);
             state = states(string({states.Name}) == name);
             if numel(state) ~= 1 || ...
                     ~(action == "Add" && state.State == "absent" || action == "Delete" && state.State == "editable" || ...
@@ -1667,7 +1736,7 @@ classdef DocumentModel < handle
             method = "";
             expression = "";
             if action == "Connect"
-                targets = yamada.source.CallbackMethodTargets.list(obj, componentId, name, registry);
+                targets = obj.callbackTargets(componentId, name, registry);
                 target = targets(string({targets.Name}) == requestedHandler);
                 if ~isscalar(target)
                     error("yamada:DocumentModel:UnsafeCallbackTarget", "The selected method is no longer an eligible callback target.");
@@ -1682,7 +1751,7 @@ classdef DocumentModel < handle
                 definition = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
                 definition = definition(string({definition.Path}) == name);
                 % Share collision-aware naming with the callback name popup.
-                handler = yamada.source.CallbackMethodTargets.defaultName(obj, componentId, name, registry);
+                if action == "Add", handler = yamada.source.CallbackMethodTargets.defaultName(obj, componentId, name, registry); end
                 if action == "New"
                     names = obj.sourceAnalysis().nameIndex();
                     reserved = [string({obj.Components.Name}), string({after.HandlerName}), ...
@@ -1703,24 +1772,30 @@ classdef DocumentModel < handle
                 after(end + 1) = yamada.model.CallbackEdit(componentId, name, action, handler, method, original, obj.CurrentText, expression);
             end
 
-            % Preflight the complete generated result, restoring every temporary state on failure.
-            previousText = obj.GeneratedText;
-            previousDiagnostics = obj.Diagnostics;
+            % Apply only owned callback patches; value and hierarchy validation remains valid.
+            previousContext = obj.evaluationContext(registry);
             obj.CallbackEdits = after;
             try
-                [callbackSource, diagnostics, callbackPatches] = yamada.source.RoundTripGenerator(registry).generate(obj);
+                [patches, diagnostics] = yamada.source.CallbackSourceEdits.build(obj);
                 if yamada.validation.ModelValidator.hasErrors(diagnostics)
-                    error("yamada:DocumentModel:UnsafeCallbackSource", "%s", ...
-                        strjoin(string({diagnostics.Message}), newline));
+                    error("yamada:DocumentModel:UnsafeCallbackSource", "%s", strjoin(string({diagnostics.Message}), newline));
                 end
+                patches = yamada.source.CallbackSourceEdits.combineInsertions(patches);
+                patches = yamada.source.SourceFormatting.cleanDeletions(obj.CurrentText, patches);
+                batch = yamada.source.SourcePatchBatch(obj.CurrentText, patches);
+                callback = struct("Context", previousContext, "ComponentId", componentId);
+                [candidate, ~] = obj.editedSourceCandidate(batch.AfterText, batch.Edits, registry, "", callback);
             catch exception
                 obj.CallbackEdits = before;
-                obj.GeneratedText = previousText;
-                obj.Diagnostics = previousDiagnostics;
                 rethrow(exception)
             end
-            % Commit only a fully generated intention snapshot; original bodies remain untouched.
-            obj.recordHistory(struct("Kind", "callback", "Before", before, "After", after, "DeletedHandler", state.HandlerName), callbackSource, yamada.model.DocumentModel.empty, callbackPatches);
+            beforeSource = obj.CurrentSource;
+            obj.publishCallbackSource(candidate.CurrentSource, candidate, registry, componentId);
+            edit = struct("Kind", "callback", "ComponentId", componentId, "Before", before, ...
+                "After", after, "DeletedHandler", state.HandlerName, "SourceForward", batch.Edits, ...
+                "SourceInverse", batch.InverseEdits, "SourceBeforeId", beforeSource.StateId, "SourceAfterId", obj.CurrentSource.StateId);
+            obj.SourcePublication = true; cleanup = onCleanup(@() obj.endSourcePublication());
+            obj.recordHistory(edit);
         end
 
         function candidate = structuralCandidate(obj, registry)
@@ -2609,6 +2684,35 @@ classdef DocumentModel < handle
             obj.adoptValidationProof(parsed.captureValidationProof(registry), registry);
         end
 
+        function publishCallbackSource(obj, state, candidate, registry, componentId)
+            % publishCallbackSource Apply a known callback projection without rechecking unrelated primary values.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                state (1, 1) yamada.model.CurrentSourceState
+                candidate (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                componentId (1, 1) string
+            end
+            % Stable component and occurrence IDs come directly from the owned patch projection.
+            for component = obj.Components
+                other = candidate.getComponent(component.Id);
+                component.SourceSpans = other.SourceSpans;
+                component.Metadata = other.Metadata;
+                component.synchronizeSourceSettings(other.Settings, other.CreationArguments);
+            end
+            obj.Diagnostics = candidate.Diagnostics; obj.UnknownRegions = candidate.UnknownRegions;
+            obj.Metadata = candidate.Metadata; obj.publishCurrentSource(state);
+            % Retain independent computed values, rather than adopting a candidate document or context.
+            prepared = candidate.evaluationContext(registry);
+            context = yamada.model.EvaluationContext.fromValidated(obj, registry);
+            context.inheritLiteralStates(prepared, componentId, yamada.source.SourcePatchBatch(state.Text), true);
+            [resolved, found] = prepared.lookup("states:" + componentId);
+            assert(found, "yamada:DocumentModel:MissingCallbackState", "The callback projection must retain its edited owner's states.");
+            context.rememberValidatedStates(componentId, resolved);
+            obj.Evaluation = context; obj.PropertyValidationContext = context;
+            obj.PropertyValidationNames = strings(1, 0); obj.PropertyValidationDiagnostics = candidate.Diagnostics;
+        end
+
         function [candidate, staged] = prepareStagedLiterals(obj, registry)
             % prepareStagedLiterals Prepare direct builder writes locally without publishing a partial command.
             arguments (Input)
@@ -2930,8 +3034,16 @@ classdef DocumentModel < handle
                 stateId = edit.SourceBeforeId;
             end
             batch = yamada.source.SourcePatchBatch(obj.CurrentText, edits);
-            [candidate, state] = obj.editedSourceCandidate(batch.AfterText, batch.Edits, obj.SourceRegistry, stateId);
-            obj.publishParsedSource(state, obj.SourceRegistry, candidate, true);
+            callback = struct();
+            if edit.Kind == "callback" && isfield(edit, "ComponentId")
+                callback = struct("Context", obj.Evaluation, "ComponentId", edit.ComponentId);
+            end
+            [candidate, state] = obj.editedSourceCandidate(batch.AfterText, batch.Edits, obj.SourceRegistry, stateId, callback);
+            if isempty(fieldnames(callback))
+                obj.publishParsedSource(state, obj.SourceRegistry, candidate, true);
+            else
+                obj.publishCallbackSource(state, candidate, obj.SourceRegistry, callback.ComponentId);
+            end
         end
 
         function applySourcePropertyHistory(obj, edit, forward)
