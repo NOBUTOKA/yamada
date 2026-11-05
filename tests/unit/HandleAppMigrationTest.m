@@ -76,15 +76,17 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             source = macd.source.NewAppGenerator(registry).generate(document);
             source = replace(source, "% Add callback behavior here.", ...
-                "app." + button.Name + ".Text = source.Text + event.Suffix;");
+                "source.UserData = event; app." + button.Name + ".Text = source.Text + "" changed"";");
             app = testCase.instantiate(document, source);
             cleanup = onCleanup(@() delete(app));
             control = findall(0, "Tag", tag);
             testCase.assertNumElements(control, 1);
             before = string(control.Text);
             callback = control.ButtonPushedFcn;
-            callback(control, struct("Suffix", " changed"));
+            event = matlab.ui.eventdata.ButtonPushedData();
+            callback(control, event);
             testCase.verifyEqual(string(control.Text), before + " changed");
+            testCase.verifyEqual(control.UserData, event);
             clear cleanup
         end
 

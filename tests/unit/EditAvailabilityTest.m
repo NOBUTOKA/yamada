@@ -106,9 +106,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             definition = registry.get("uicontextmenu");
             menu = macd.model.ComponentRecord("menu", "Menu", definition.Factory, definition.DeclaredType, "generated");
             document.addComponent(menu, document.RootComponentId);
+            % Load this programmatic-only component before exercising editor insertion commands.
+            rightName = right.Name;
+            document = macd.source.AppSourceParser.parseText(macd.source.NewAppGenerator(registry).generate(document), registry);
+            right = document.getComponentByName(rightName);
+            menu = document.getComponentByName("Menu");
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
             entry = button.setProperty("ContextMenu", []);
-            entry.setSourceExpression("app.Menu");
+            entry.setSourceExpression("app." + menu.Name);
             entry.Metadata.SubtreeReferenceId = menu.Id;
             clipboard = macd.model.ComponentClipboard();
             clipboard.copy(document, button.Id, registry);
