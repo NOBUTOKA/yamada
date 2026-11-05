@@ -129,19 +129,22 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             testCase.verifyEqual(testCase.state(document, registry, copy, "InnerPosition").EffectiveValue, [20 30 0 0]);
         end
 
-        function shadowedRelocationRequestsFailWithoutMovingAnything(testCase)
-            % shadowedRelocationRequestsFailWithoutMovingAnything Refuse a destination position overridden by a preserved alias.
+        function relocationPlacesRequestedPositionAfterPreservedAlias(testCase)
+            % relocationPlacesRequestedPositionAfterPreservedAlias Compile final placement after retained aliases and restore exact source on Undo.
             [document, registry, control, target] = testCase.fixture([ ...
                 "app.Control = uibutton(app.Left);", "app.Control.Position = [10 20 130 35];", ...
                 "app.Control.InnerPosition = [30 40 150 45];"]);
-            before = control.settingSnapshot();
-            parent = control.ParentId;
-            testCase.verifyError(@() document.reparentSubtree(control.Id, target.Id, registry, [], [], [60 70 150 45]), ...
-                "yamada:DocumentModel:UnsafeSubtreeEdit");
-            testCase.verifyEqual(control.ParentId, parent);
-            testCase.verifyEqual(control.settingSnapshot(), before);
-            testCase.verifyEqual(document.HistoryIndex, 0);
-            testCase.verifyFalse(document.IsDirty);
+            before = document.CurrentText; parent = control.ParentId;
+            document.reparentSubtree(control.Id, target.Id, registry, [], [], [60 70 150 45]);
+            testCase.verifyEqual(control.ParentId, target.Id);
+            testCase.verifyEqual(testCase.state(document, registry, control, "Position").EffectiveValue, [60 70 150 45]);
+            testCase.verifyTrue(contains(document.CurrentText, "app.Control.InnerPosition = [30 40 150 45];"));
+            parsed = yamada.source.AppSourceParser.parseText(document.CurrentText, registry);
+            testCase.verifyEqual(testCase.state(parsed, registry, parsed.getComponentByName(control.Name), "Position").EffectiveValue, [60 70 150 45]);
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, before); testCase.verifyEqual(control.ParentId, parent);
+            document.redo();
+            testCase.verifyEqual(testCase.state(document, registry, control, "Position").EffectiveValue, [60 70 150 45]);
         end
 
         function lampCopiesUseTheCoercedSquareAndKeepOriginalVectors(testCase)

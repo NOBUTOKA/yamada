@@ -2006,7 +2006,7 @@ classdef DocumentModel < handle
             candidate.PendingEdits{end + 1} = struct("Kind", "reparent-subtree", ...
                 "OriginalRecords", snapshot.Records);
             try
-                if obj.currentModelIsBound()
+                if obj.currentModelIsBound() && all(arrayfun(@yamada.model.SourceOwnership.hasSource, snapshot.Records))
                     [sourcePatches, ~, placedDocument] = yamada.source.SubtreeReparentSourceEdits.build(candidate, registry);
                 else
                     [text, diagnostics, sourcePatches] = yamada.source.RoundTripGenerator(registry).generate(candidate);
@@ -2014,6 +2014,9 @@ classdef DocumentModel < handle
                         error("yamada:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
                     end
                     [placedDocument, ~] = candidate.editedSourceCandidate(text, sourcePatches, registry);
+                end
+                if isempty(placedDocument)
+                    error("yamada:DocumentModel:UnsafeSubtreeEdit", "The relocation plan did not produce a source candidate.");
                 end
             catch exception
                 error("yamada:DocumentModel:UnsafeSubtreeEdit", "%s", string(exception.message));

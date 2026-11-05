@@ -51,6 +51,16 @@ classdef SubtreePlacementPlanner
                 error("yamada:SubtreePlacementPlanner:CyclicParent", "A subtree cannot move under itself or its descendants.");
             end
             root = snapshot.Records(1);
+            % A selected tab must remain a direct child of its referencing group.
+            originalParent = document.getComponent(root.ParentId);
+            if root.Factory == "uitab" && ~isempty(originalParent) && parentId ~= root.ParentId
+                selected = originalParent.getProperty("SelectedTab");
+                if ~isempty(selected) && isfield(selected.Metadata, "SubtreeReferenceId") && ...
+                        string(selected.Metadata.SubtreeReferenceId) == root.Id
+                    error("yamada:SubtreePlacementPlanner:InvalidParent", ...
+                        "An editor-owned SelectedTab reference requires its current tab group.");
+                end
+            end
             if root.Id == document.RootComponentId
                 error("yamada:SubtreePlacementPlanner:RootOperation", "The document root cannot be moved or pasted.");
             end
@@ -75,7 +85,6 @@ classdef SubtreePlacementPlanner
             definitions = registry.getEffectiveProperties(root.Factory, parent.Factory, root.CreationArguments);
             paths = string({definitions.Path});
             changes = struct("Path", {}, "Value", {}, "Remove", {});
-            originalParent = document.getComponent(root.ParentId);
             wasGrid = ~isempty(originalParent) && originalParent.Factory == "uigridlayout";
             hasGridPlacement = any(string({root.Properties.Path}) == "Layout.Row");
 
