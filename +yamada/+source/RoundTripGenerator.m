@@ -52,7 +52,7 @@ classdef RoundTripGenerator
             diagnostics = yamada.model.Diagnostic.empty;
             % Only the insertion planner may defer validation until its complete source is parsed.
             if isempty(obj.PreparedInsertions)
-                diagnostics = yamada.validation.ModelValidator.validate(document, obj.Registry, obj.PropertyValidationNames);
+                diagnostics = document.generationDiagnostics(obj.Registry, obj.PropertyValidationNames);
             end
             if yamada.validation.ModelValidator.hasErrors(diagnostics)
                 return

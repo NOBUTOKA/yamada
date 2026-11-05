@@ -127,7 +127,7 @@ classdef SourceLiteralTransaction
             obj.CatalogRevision = registry.Revision;
             if obj.NeedsDocumentValidation
                 obj.PreparedValidation = document.validateIndexedCandidate(obj.Settings, obj.FactoryArguments, ...
-                    obj.Updates, obj.AfterSource, obj.Diagnostics, obj.Regions, obj.Metadata, id, changes, registry);
+                    obj.Updates, obj.AfterSource, obj.Diagnostics, obj.Regions, obj.Metadata, id, changes, registry, obj.Batch);
             end
         end
 

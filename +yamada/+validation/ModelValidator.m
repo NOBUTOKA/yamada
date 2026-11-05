@@ -97,51 +97,7 @@ classdef ModelValidator
 
                 % Retain global structural checks while bounding property-state evaluation.
                 if ~isempty(propertyNames) && ~any(propertyNames == component.Name), continue, end
-                % Resolve direct-parent applicability before reporting unknown paths.
-                parentFactory = "";
-                if strlength(component.ParentId) > 0 && ~isempty(parent)
-                    parentFactory = parent.Factory;
-                end
-                effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory, ...
-                    component.CreationArguments);
-                supportedPaths = [effectiveProperties.Path];
-                [transaction, resolved, stateDiagnostics] = yamada.validation.ModelValidator.propertyTransaction( ...
-                    component, effectiveProperties, document, registry);
-                diagnostics = [diagnostics stateDiagnostics]; %#ok<AGROW>
-                for propertyIndex = 1:numel(component.Properties)
-                    entry = component.Properties(propertyIndex);
-                    if ~any(supportedPaths == entry.Path)
-                        if yamada.validation.ModelValidator.isNotRenderedFigureTool(component.Factory)
-                            continue
-                        end
-                        diagnostics(end + 1) = yamada.model.Diagnostic( ...
-                            "unsupported-property", "warning", ...
-                            sprintf("Property ""%s"" is not editable for factory ""%s"".", ...
-                            entry.Path, component.Factory), component.Id, entry.SourceSpan); %#ok<AGROW>
-                    elseif entry.ValueKind == "expression" && entry.IsEditable
-                        diagnostics(end + 1) = yamada.validation.ModelValidator.error( ...
-                            "editable-expression", ...
-                            "Source expressions cannot be marked editable.", component.Id); %#ok<AGROW>
-                    elseif entry.ValueKind == "literal"
-                        definition = effectiveProperties( ...
-                            find(supportedPaths == entry.Path, 1));
-                        state = resolved(find(supportedPaths == entry.Path, 1));
-                        if definition.IsEditable && definition.AuditDisposition == "editable" && state.IsKnown
-                            transaction.stage(entry.Path, state.EffectiveValue);
-                            message = yamada.validation.PropertyBatchValidator.validate( ...
-                                effectiveProperties, transaction);
-                            if strlength(message) > 0
-                                diagnostics(end + 1) = yamada.validation.ModelValidator.error( ...
-                                    "invalid-catalog-property", message, component.Id); %#ok<AGROW>
-                            end
-                        end
-                        geometryDiagnostic = yamada.validation.ModelValidator.validateGeometry( ...
-                            entry, component.Id, component.Factory, definition);
-                        if ~isempty(geometryDiagnostic)
-                            diagnostics(end + 1) = geometryDiagnostic; %#ok<AGROW>
-                        end
-                    end
-                end
+                diagnostics = [diagnostics yamada.validation.ModelValidator.properties(component, document, registry)]; %#ok<AGROW>
             end
 
             % Require one resolvable registered root for every app document.
@@ -153,6 +109,52 @@ classdef ModelValidator
             end
             % Publish diagnostics for editor and generator consumers.
             document.Diagnostics = diagnostics;
+        end
+
+        function diagnostics = validateOwners(document, registry, ids, checkStructure)
+            % validateOwners Check accepted inputs and local constraints without rechecking the whole document structure.
+            arguments (Input)
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                ids (1, :) string
+                checkStructure (1, 1) logical = false
+            end
+            arguments (Output)
+                diagnostics yamada.model.Diagnostic
+            end
+            scope = document.evaluationContext(registry).readScope(); %#ok<NASGU>
+            diagnostics = yamada.model.Diagnostic.empty;
+            for component = document.Components(ismember(string({document.Components.Id}), ids))
+                if ~registry.contains(component.Factory)
+                    diagnostics(end + 1) = yamada.validation.ModelValidator.error("unsupported-factory", ...
+                        "The edited component factory is not registered.", component.Id); %#ok<AGROW>
+                    continue
+                end
+                if checkStructure
+                    if ~isvarname(component.Name) || iskeyword(component.Name)
+                        diagnostics(end + 1) = yamada.validation.ModelValidator.error("invalid-component-name", ...
+                            "Use a valid component identifier.", component.Id); %#ok<AGROW>
+                    elseif nnz(string({document.Components.Name}) == component.Name) ~= 1
+                        diagnostics(end + 1) = yamada.validation.ModelValidator.error("duplicate-component-name", ...
+                            "The edited component name is already in use.", component.Id); %#ok<AGROW>
+                    end
+                    parent = document.getComponent(component.ParentId);
+                    definition = registry.get(component.Factory, component.CreationArguments);
+                    if component.ParentId ~= "" && (isempty(parent) || ~any(definition.AllowedParentFactories == parent.Factory))
+                        diagnostics(end + 1) = yamada.validation.ModelValidator.error("invalid-parent", ...
+                            "The destination does not accept this component.", component.Id); %#ok<AGROW>
+                    end
+                end
+                if component.Factory == "uibuttongroup"
+                    children = document.Components(string({document.Components.ParentId}) == component.Id & ...
+                        ismember(string({document.Components.Factory}), ["uiradiobutton", "uitogglebutton"]));
+                    if numel(unique(string({children.Factory}))) > 1
+                        diagnostics(end + 1) = yamada.validation.ModelValidator.error("mixed-button-group", ...
+                            "RadioButton and ToggleButton cannot share one ButtonGroup.", component.Id); %#ok<AGROW>
+                    end
+                end
+                diagnostics = [diagnostics yamada.validation.ModelValidator.properties(component, document, registry)]; %#ok<AGROW>
+            end
         end
 
         function result = hasErrors(diagnostics)
@@ -316,6 +318,65 @@ classdef ModelValidator
 
             result = any(factory == ["uicontextmenu", "uimenu", "uitoolbar", ...
                 "uipushtool", "uitoggletool"]);
+        end
+
+        function diagnostics = properties(component, document, registry)
+            % properties Validate one owner's effective setting values and supported property schemas.
+            arguments (Input)
+                component (1, 1) yamada.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                diagnostics yamada.model.Diagnostic
+            end
+            diagnostics = yamada.model.Diagnostic.empty;
+            parent = document.getComponent(component.ParentId);
+            % Resolve direct-parent applicability before reporting unknown paths.
+            parentFactory = "";
+            if strlength(component.ParentId) > 0 && ~isempty(parent)
+                parentFactory = parent.Factory;
+            end
+            effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory, ...
+                component.CreationArguments);
+            supportedPaths = [effectiveProperties.Path];
+            [transaction, resolved, stateDiagnostics] = yamada.validation.ModelValidator.propertyTransaction( ...
+                component, effectiveProperties, document, registry);
+            diagnostics = [diagnostics stateDiagnostics];
+            for propertyIndex = 1:numel(component.Properties)
+                entry = component.Properties(propertyIndex);
+                if ~any(supportedPaths == entry.Path)
+                    if yamada.validation.ModelValidator.isNotRenderedFigureTool(component.Factory)
+                        continue
+                    end
+                    diagnostics(end + 1) = yamada.model.Diagnostic( ...
+                        "unsupported-property", "warning", ...
+                        sprintf("Property ""%s"" is not editable for factory ""%s"".", ...
+                        entry.Path, component.Factory), component.Id, entry.SourceSpan); %#ok<AGROW>
+                elseif entry.ValueKind == "expression" && entry.IsEditable
+                    diagnostics(end + 1) = yamada.validation.ModelValidator.error( ...
+                        "editable-expression", ...
+                        "Source expressions cannot be marked editable.", component.Id); %#ok<AGROW>
+                elseif entry.ValueKind == "literal"
+                    definition = effectiveProperties( ...
+                        find(supportedPaths == entry.Path, 1));
+                    state = resolved(find(supportedPaths == entry.Path, 1));
+                    if definition.IsEditable && definition.AuditDisposition == "editable" && state.IsKnown
+                        transaction.stage(entry.Path, state.EffectiveValue);
+                        message = yamada.validation.PropertyBatchValidator.validate( ...
+                            effectiveProperties, transaction);
+                        if strlength(message) > 0
+                            diagnostics(end + 1) = yamada.validation.ModelValidator.error( ...
+                                "invalid-catalog-property", message, component.Id); %#ok<AGROW>
+                        end
+                    end
+                    geometryDiagnostic = yamada.validation.ModelValidator.validateGeometry( ...
+                        entry, component.Id, component.Factory, definition);
+                    if ~isempty(geometryDiagnostic)
+                        diagnostics(end + 1) = geometryDiagnostic; %#ok<AGROW>
+                    end
+                end
+            end
         end
 
         function diagnostic = validateGeometry(entry, componentId, factory, definition)

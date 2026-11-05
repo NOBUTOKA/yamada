@@ -1,7 +1,7 @@
 classdef SourceLiteralBatchTransaction
     % SourceLiteralBatchTransaction Prepare one indexed atomic literal patch spanning multiple component owners.
     %   Syntax planning uses the original source for every owner. Final document
-    %   validation runs once after all values and positions have been projected.
+    %   input constraints are checked once after values and positions have been projected.
     properties (SetAccess = private)
         % Batch - Exact primary forward and inverse source edits.
         Batch yamada.source.SourcePatchBatch
@@ -71,7 +71,7 @@ classdef SourceLiteralBatchTransaction
             obj.Metadata.InitializationContext = struct("Order", trace.Order, "Certain", trace.Certain, ...
                 "Returns", trace.Returns, "Layout", obj.AfterSource.Analysis.Layout);
             obj.Validation = document.validateIndexedBatchCandidate(obj.Bindings, obj.Updates, ...
-                obj.AfterSource, obj.Diagnostics, obj.Regions, obj.Metadata, obj.Specs, registry);
+                obj.AfterSource, obj.Diagnostics, obj.Regions, obj.Metadata, obj.Specs, registry, obj.Batch);
         end
 
         function result = validationResult(obj)

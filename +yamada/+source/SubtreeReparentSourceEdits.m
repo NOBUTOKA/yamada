@@ -125,14 +125,14 @@ classdef SubtreeReparentSourceEdits
             if document.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
             block = "";
             deferredParsedReferences = strings(1, 0);
-            events = struct("Id", {}, "ParentId", {}, "Creates", {}, "SourceOrder", {}, "Text", {});
+            events = struct("Id", {}, "ParentId", {}, "Creates", {}, "SourceOrder", {}, "Placement", {}, "Text", {});
 
             % Preserve original interleaving subject to the destination creation dependencies.
             for component = document.Components
                 if ~yamada.model.SourceOwnership.hasSource(component)
                     text = yamada.source.SubtreeReparentSourceEdits.generatedInitialization(document, component, registry, ending);
                     events(end + 1) = struct("Id", component.Id, "ParentId", component.ParentId, ...
-                        "Creates", true, "SourceOrder", Inf, "Text", text); %#ok<AGROW>
+                        "Creates", true, "SourceOrder", Inf, "Placement", false, "Text", text); %#ok<AGROW>
                     continue
                 end
                 if ~any(movedIds == component.Id), continue, end
@@ -141,7 +141,7 @@ classdef SubtreeReparentSourceEdits
                 if isempty(parent)
                     error("yamada:SubtreeReparentSourceEdits:UnsafeSource", "Destination parent no longer exists.");
                 end
-                [creation, assignments, deferred, positions] = yamada.source.SubtreeReparentSourceEdits.parsedInitialization( ...
+                [creation, assignments, deferred, positions, placement] = yamada.source.SubtreeReparentSourceEdits.parsedInitialization( ...
                     source, statements, record, component, names, document, registry);
                 pattern = '^(app\.\w+\s*=\s*\w+\s*\(\s*)app\.\w+';
                 if isempty(regexp(creation, pattern, 'once'))
@@ -155,11 +155,11 @@ classdef SubtreeReparentSourceEdits
                 end
                 creation = regexprep(creation, pattern, "$1app." + parentName, 'once');
                 events(end + 1) = struct("Id", component.Id, "ParentId", component.ParentId, ...
-                    "Creates", true, "SourceOrder", record.SourceSpans.Creation.StartOffset, ...
+                    "Creates", true, "SourceOrder", record.SourceSpans.Creation.StartOffset, "Placement", false, ...
                     "Text", ending + "            " + creation); %#ok<AGROW>
                 for index = 1:numel(assignments)
                     events(end + 1) = struct("Id", component.Id, "ParentId", component.ParentId, ...
-                        "Creates", false, "SourceOrder", positions(index), ...
+                        "Creates", false, "SourceOrder", positions(index), "Placement", placement(index), ...
                         "Text", ending + "            " + assignments(index)); %#ok<AGROW>
                 end
                 deferredParsedReferences = [deferredParsedReferences deferred]; %#ok<AGROW>
@@ -171,6 +171,7 @@ classdef SubtreeReparentSourceEdits
             for span = spans
                 edits(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, "Text", ""); %#ok<AGROW>
             end
+            edits = yamada.source.SourceFormatting.cleanDeletions(source, edits);
             [block, candidate] = yamada.source.SubtreeReparentSourceEdits.placePending( ...
                 document, registry, edits, anchor, block, movedIds);
             edits(end + 1) = struct("Start", anchor + 1, "End", anchor, "Text", block);
@@ -291,7 +292,7 @@ classdef SubtreeReparentSourceEdits
     end
 
     methods (Static, Access = private)
-        function [creation, assignments, deferred, positions] = parsedInitialization(source, statements, record, component, names, document, registry)
+        function [creation, assignments, deferred, positions, placement] = parsedInitialization(source, statements, record, component, names, document, registry)
             % parsedInitialization Preserve every owned occurrence and update only its bound value token.
             arguments (Input)
                 source (1, 1) string
@@ -307,12 +308,16 @@ classdef SubtreeReparentSourceEdits
                 assignments (1, :) string
                 deferred (1, :) string
                 positions (1, :) double
+                placement (1, :) logical
             end
             patches = struct("Start", {}, "End", {}, "Text", {});
             removed = yamada.model.PropertySetting.empty;
             assignments = strings(1, 0);
             deferred = strings(1, 0);
-            positions = zeros(1, 0);
+            positions = zeros(1, 0); placement = false(1, 0);
+            placementPaths = strings(1, 0);
+            if record.ParentId ~= component.ParentId, placementPaths = ["Position", "Layout.Row", "Layout.Column"]; end
+            terminal = struct("Path", {}, "Text", {});
             settings = component.Settings(string({component.Settings.Method}) ~= "generated");
             [~, order] = sort([settings.Sequence]);
             settings = settings(order);
@@ -335,6 +340,13 @@ classdef SubtreeReparentSourceEdits
                     patches(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, ...
                         "Text", yamada.source.LiteralEncoder.encode(entry.LiteralValue)); %#ok<AGROW>
                 end
+                if any(placementPaths == setting.Path) && setting.Method == "assignment" && ...
+                        isfield(entry.Metadata, "SourceSettingId") && entry.Metadata.SourceSettingId == setting.Id
+                    span = yamada.source.SubtreeReparentSourceEdits.withTrailingComment(source, setting.SourceSpan);
+                    terminal(end + 1) = struct("Path", setting.Path, ...
+                        "Text", yamada.source.SubtreeReparentSourceEdits.applyRange(source, span, patches)); %#ok<AGROW>
+                    continue
+                end
                 if setting.Method ~= "assignment", continue, end
                 span = yamada.source.SubtreeReparentSourceEdits.withTrailingComment(source, setting.SourceSpan);
                 assignment = yamada.source.SubtreeReparentSourceEdits.applyRange(source, span, patches);
@@ -354,7 +366,18 @@ classdef SubtreeReparentSourceEdits
                     end
                 end
                 assignments(end + 1) = assignment; %#ok<AGROW>
-                positions(end + 1) = setting.SourceSpan.StartOffset; %#ok<AGROW>
+                positions(end + 1) = setting.SourceSpan.StartOffset; placement(end + 1) = false; %#ok<AGROW>
+            end
+            % Final placement writes follow this owner's retained settings and precede child creation.
+            last = record.SourceSpans.Creation.EndOffset;
+            if ~isempty(positions), last = max([last positions]); end
+            for path = placementPaths
+                entry = component.getProperty(path); if isempty(entry), continue, end
+                existing = find(string({terminal.Path}) == path, 1);
+                text = "app." + component.Name + "." + path + " = " + yamada.source.LiteralEncoder.encode(entry.LiteralValue) + ";";
+                if ~isempty(existing), text = terminal(existing).Text; end
+                assignments(end + 1) = text; positions(end + 1) = last + 1; placement(end + 1) = true; %#ok<AGROW>
+                last = last + 1;
             end
             statement = statements(arrayfun(@(item) item.Span.StartOffset == record.SourceSpans.Creation.StartOffset, statements));
             patches = [patches yamada.source.FactoryCallEditor.remove(statement, removed)];
@@ -395,6 +418,7 @@ classdef SubtreeReparentSourceEdits
                 owner = ids == events(index).Id;
                 if events(index).Creates
                     edges(creates & ids == events(index).ParentId, index) = true;
+                    edges([events.Placement] & ids == events(index).ParentId, index) = true;
                 else
                     edges(owner & (creates | [events.SourceOrder] < events(index).SourceOrder), index) = true;
                 end
@@ -441,6 +465,16 @@ classdef SubtreeReparentSourceEdits
                 original = document.getComponent(id);
                 configured = candidate.getComponentByName(document.sourceComponentName(id));
                 pending = original.Properties(arrayfun(@(entry) isempty(entry.SourceSpan), original.Properties));
+                records = document.PendingEdits;
+                for request = records
+                    if isstruct(request{1}) && isfield(request{1}, "Kind") && request{1}.Kind == "reparent-subtree"
+                        previous = request{1}.OriginalRecords;
+                        old = previous(string({previous.Id}) == id);
+                        if isscalar(old) && old.ParentId ~= original.ParentId
+                            pending = pending(~ismember(string({pending.Path}), ["Position", "Layout.Row", "Layout.Column"]));
+                        end
+                    end
+                end
                 pending = pending(arrayfun(@(entry) isempty(entry.SourceSpan) && entry.ValueKind == "literal" && ...
                     ~isfield(entry.Metadata, "SubtreeReferenceId"), pending));
                 if isempty(pending), continue, end

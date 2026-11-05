@@ -4,6 +4,26 @@ classdef SubtreePlacementPlanner
     %   grid occupancy, and absolute/grid conversion rules.
 
     methods (Static)
+        function accepted = accepts(document, parent, definition, excludedIds)
+            % accepts Decide catalog and child-family compatibility before constructing a placement edit.
+            arguments (Input)
+                document (1, 1) yamada.model.DocumentModel
+                parent (1, 1) yamada.model.ComponentRecord
+                definition (1, 1) yamada.model.ComponentDefinition
+                excludedIds (1, :) string = strings(1, 0)
+            end
+            arguments (Output)
+                accepted (1, 1) logical
+            end
+            accepted = any(definition.AllowedParentFactories == parent.Factory);
+            family = ["uiradiobutton", "uitogglebutton"];
+            if ~accepted || parent.Factory ~= "uibuttongroup" || ~any(definition.Factory == family), return, end
+            members = document.Components;
+            members = members(string({members.ParentId}) == parent.Id & ...
+                ~ismember(string({members.Id}), excludedIds) & ismember(string({members.Factory}), family));
+            accepted = isempty(members) || all(string({members.Factory}) == definition.Factory);
+        end
+
         function plan = prepare(document, snapshot, parentId, registry, excludedIds, measuredPosition, offset, targetCell, targetPosition, allowOverlap)
             % prepare Resolve valid root placement under an explicit destination parent.
             arguments (Input)
@@ -47,7 +67,8 @@ classdef SubtreePlacementPlanner
                     ancestor = snapshot.Records(string({snapshot.Records.Id}) == record.ParentId);
                     parentFactory = ancestor.Factory;
                 end
-                if ~any(definition.AllowedParentFactories == parentFactory)
+                if ~any(definition.AllowedParentFactories == parentFactory) || ...
+                        record.Id == root.Id && ~yamada.model.SubtreePlacementPlanner.accepts(document, parent, definition, excludedIds)
                     error("yamada:SubtreePlacementPlanner:InvalidParent", "The destination does not accept this construction style.");
                 end
             end
@@ -155,6 +176,32 @@ classdef SubtreePlacementPlanner
                         error("yamada:SubtreePlacementPlanner:MissingGeometry", "A verified position is required for absolute placement.");
                     end
                     position = reshape(double(position), 1, 4);
+                    % Reject impossible native rectangles while planning, before emitting any placement code.
+                    policy = definitions(find(paths == "Position", 1)).Application.EffectPolicy;
+                    if yamada.model.PositionGeometry.applies(policy)
+                        orientation = ""; known = false;
+                        configuration = root.Properties;
+                        if ~isempty(snapshot.CopyConfiguration)
+                            configuration = snapshot.CopyConfiguration(1).Properties;
+                        end
+                        entry = configuration(string({configuration.Path}) == "Orientation");
+                        if isscalar(entry) && entry.ValueKind == "literal"
+                            orientation = string(entry.LiteralValue); known = true;
+                        end
+                        source = document.getComponent(root.Id);
+                        if ~known && ~isempty(source)
+                            states = document.getEffectivePropertyStates(registry, root.Id);
+                            selected = states(arrayfun(@(item) item.Definition.Path == "Orientation", states));
+                            if isscalar(selected) && selected.Resolution.IsKnown
+                                orientation = string(selected.Resolution.EffectiveValue); known = true;
+                            end
+                        end
+                        spec = yamada.model.PositionGeometry.constraint(policy, orientation, known);
+                        normalized = yamada.model.PositionGeometry.normalize(position, spec);
+                        if ~spec.Known || any(abs(normalized - position) > 16 * eps(max(1, max(abs(normalized), abs(position)))))
+                            error("yamada:SubtreePlacementPlanner:MissingGeometry", "The requested rectangle conflicts with native size constraints.");
+                        end
+                    end
                     position(1:2) = position(1:2) + offset;
                     changes(end + 1) = yamada.model.SubtreePlacementPlanner.change("Position", position, false);
                 end

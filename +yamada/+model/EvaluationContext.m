@@ -414,6 +414,96 @@ classdef EvaluationContext < handle
     end
 
     methods (Access = ?yamada.model.DocumentModel)
+        function plan = editScope(obj, document, changed)
+            % editScope Derive checked owners and invalidated dependencies from a known edit footprint.
+            arguments (Input)
+                obj (1, 1) yamada.model.EvaluationContext
+                document (1, 1) yamada.model.DocumentModel
+                changed (1, :) string
+            end
+            arguments (Output)
+                plan (1, 1) struct
+            end
+            after = document.Components; ids = string({after.Id});
+            before = obj.Key.Components; oldIds = string({before.Id});
+            topologyRecords = yamada.model.EvaluationContext.records(document);
+            added = setdiff(ids, oldIds); removed = setdiff(oldIds, ids);
+            checked = intersect(unique([changed added]), ids, "stable"); affected = checked;
+            % Topology affects only the participating containers and their modeled child policies.
+            for index = 1:numel(after)
+                old = find(oldIds == ids(index), 1); member = after(index);
+                topology = isempty(old) || before(old).ParentId ~= member.ParentId || ...
+                    ~isequaln(before(old).Children, member.Children);
+                if topology
+                    affected(end + 1) = member.Id; %#ok<AGROW>
+                    if any(member.Factory == ["uigridlayout", "uibuttongroup", "uitabgroup"])
+                        checked(end + 1) = member.Id; %#ok<AGROW>
+                        affected = union(affected, yamada.model.EvaluationContext.descendants(after, member.Id), "stable");
+                    end
+                end
+                if ~any(checked == member.Id), continue, end
+                affected = union(affected, ids(yamada.model.EvaluationContext.stateScope(topologyRecords, member.Id)), "stable");
+                affected = union(affected, yamada.model.EvaluationContext.descendants(after, member.Id), "stable");
+                parent = member.ParentId; visited = strings(1, 0);
+                while parent ~= ""
+                    assert(~any(visited == parent), "yamada:DocumentModel:InvalidParent", "An edited parent chain must be acyclic.");
+                    visited(end + 1) = parent; %#ok<AGROW>
+                    owner = document.getComponent(parent); if isempty(owner), break, end
+                    if any(owner.Factory == ["uigridlayout", "uibuttongroup", "uitabgroup"])
+                        checked(end + 1) = owner.Id; %#ok<AGROW>
+                    end
+                    parent = owner.ParentId;
+                end
+            end
+            for field = ["HasUnresolvedLifecycleEffects", "HasUnresolvedExecutableEffects", "HasUnrecognizedSetter"]
+                old = isfield(obj.Key.Metadata, field) && obj.Key.Metadata.(field);
+                current = isfield(document.Metadata, field) && document.Metadata.(field);
+                if old ~= current, checked = ids; affected = ids; break, end
+            end
+            if obj.RegistryRevision ~= obj.Registry.Revision, checked = ids; affected = ids; end
+            plan = struct("Checked", unique(checked, "stable"), "Invalidated", unique([affected removed], "stable"));
+        end
+
+        function inheritPlannedStates(obj, previous, affected, batch)
+            % inheritPlannedStates Rebase independent cached states outside a certified edit's affected scope.
+            arguments (Input)
+                obj (1, 1) yamada.model.EvaluationContext
+                previous (1, 1) yamada.model.EvaluationContext
+                affected (1, :) string
+                batch (1, 1) yamada.source.SourcePatchBatch
+            end
+            if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
+                    obj.RegistryRevision ~= previous.RegistryRevision, return, end
+            values = previous.stateValues();
+            for name = string(keys(obj.Values))
+                if startsWith(name, "states:"), remove(obj.Values, char(name)); end
+            end
+            ids = string({obj.Key.Components.Id});
+            for owner = values
+                id = owner.ComponentId;
+                if ~any(ids == id) || any(affected == id), continue, end
+                value = owner.Resolved;
+                value.Diagnostics = yamada.model.SourceLocationUpdate.relocateDiagnostics(value.Diagnostics, batch);
+                obj.Values(char("states:" + id)) = value;
+            end
+        end
+
+        function values = stateValues(obj)
+            % stateValues Export already independent computed owner states without retaining a context handle.
+            arguments (Input)
+                obj (1, 1) yamada.model.EvaluationContext
+            end
+            arguments (Output)
+                values (1, :) struct
+            end
+            values = struct("ComponentId", {}, "Resolved", {});
+            for name = string(keys(obj.Values))
+                if startsWith(name, "states:")
+                    values(end + 1) = struct("ComponentId", extractAfter(name, "states:"), "Resolved", obj.Values(char(name))); %#ok<AGROW>
+                end
+            end
+        end
+
         function inheritSourceStates(obj, previous, changedIds, batch)
             % inheritSourceStates Retain only scopes independent of owners changed by one certified literal source patch.
             arguments (Input)
@@ -638,6 +728,35 @@ classdef EvaluationContext < handle
                 end
                 % Cycles and duplicate identities retain the established conservative traversal.
                 if groups(index) > 0 && outer > 0, groups(index) = outer; end
+            end
+        end
+
+        function records = records(document)
+            % records Read only topology needed to bound a planned edit's dependencies.
+            arguments (Input)
+                document (1, 1) yamada.model.DocumentModel
+            end
+            arguments (Output)
+                records (1, :) struct
+            end
+            members = document.Components;
+            records = struct("Id", {members.Id}, "ParentId", {members.ParentId}, "Factory", {members.Factory});
+        end
+
+        function ids = descendants(members, id)
+            % descendants Follow the maintained child index without interpreting source or property values.
+            arguments (Input)
+                members yamada.model.ComponentRecord
+                id (1, 1) string
+            end
+            arguments (Output)
+                ids (1, :) string
+            end
+            ids = id; names = string({members.Id}); parents = string({members.ParentId});
+            while true
+                next = union(ids, names(ismember(parents, ids)), "stable");
+                if numel(next) == numel(ids), break, end
+                ids = next;
             end
         end
 

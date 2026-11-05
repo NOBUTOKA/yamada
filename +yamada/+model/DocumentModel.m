@@ -68,6 +68,9 @@ classdef DocumentModel < handle
         InputClock yamada.model.InputChangeClock = yamada.model.InputChangeClock.empty
         Evaluation yamada.model.EvaluationContext = yamada.model.EvaluationContext.empty
         CallbackPreparation struct = struct()
+        PlanBaseline yamada.model.EvaluationContext = yamada.model.EvaluationContext.empty
+        PlannedValidation logical = false
+        PlannedScope struct = struct()
         PropertyValidationNames string = strings(1, 0)
         PropertyValidationContext yamada.model.EvaluationContext = yamada.model.EvaluationContext.empty
         PropertyValidationDiagnostics yamada.model.Diagnostic = yamada.model.Diagnostic.empty
@@ -116,6 +119,49 @@ classdef DocumentModel < handle
             end
             obj.inputStamp();
             for index = 1:numel(settings), settings(index) = obj.SettingStore.canonicalize(settings(index)); end
+        end
+    end
+
+    methods (Access = ?yamada.source.RoundTripGenerator)
+        function diagnostics = generationDiagnostics(obj, registry, names)
+            % generationDiagnostics Check only unpublished input owners when an editor-owned baseline exists.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                names (1, :) string = strings(1, 0)
+            end
+            arguments (Output)
+                diagnostics yamada.model.Diagnostic
+            end
+            if isempty(names) && obj.hasCurrentValidation(registry)
+                diagnostics = obj.PropertyValidationDiagnostics; return
+            end
+            if isempty(obj.PlanBaseline) && isempty(obj.Evaluation)
+                diagnostics = yamada.validation.ModelValidator.validate(obj, registry, names); return
+            end
+            changed = string({obj.Components(ismember(string({obj.Components.Name}), names)).Id});
+            if isempty(names)
+                for member = obj.Components
+                    pending = ~yamada.model.SourceOwnership.hasSource(member);
+                    for entry = member.Properties
+                        settings = member.getSettings(entry.Path);
+                        if isempty(entry.SourceSpan) || isempty(settings)
+                            pending = true; break
+                        end
+                        last = settings(end);
+                        if entry.ValueKind ~= last.ValueKind || ~isequaln(entry.LiteralValue, last.LiteralValue) || ...
+                                entry.SourceExpression ~= last.SourceExpression
+                            pending = true; break
+                        end
+                    end
+                    if pending, changed(end + 1) = member.Id; end %#ok<AGROW>
+                end
+            end
+            previous = obj.planBaseline(registry); scope = previous.editScope(obj, changed);
+            checked = yamada.validation.ModelValidator.validateOwners(obj, registry, scope.Checked, true);
+            retained = obj.Diagnostics;
+            if ~isempty(retained), retained = retained(~ismember(string({retained.ComponentId}), scope.Checked)); end
+            diagnostics = [retained checked];
         end
     end
 
@@ -241,7 +287,7 @@ classdef DocumentModel < handle
             yamada.model.SourceEffectSummary.refresh(candidate, registry);
             candidate.publishCurrentSource(state);
             if isempty(fieldnames(callback))
-                diagnostics = candidate.validatePropertyCommit(registry);
+                diagnostics = candidate.finishPlannedValidation(registry, obj.planBaseline(registry), changed, batch);
             else
                 % Callback commands preserve non-callback semantics and existing diagnostics.
                 context = candidate.evaluationContext(registry);
@@ -282,7 +328,7 @@ classdef DocumentModel < handle
     end
 
     methods (Access = {?yamada.model.SourceLiteralTransaction, ?yamada.model.SourceLiteralBatchTransaction})
-        function result = validateIndexedCandidate(obj, settings, factoryArguments, updates, state, diagnostics, regions, metadata, id, changes, registry)
+        function result = validateIndexedCandidate(obj, settings, factoryArguments, updates, state, diagnostics, regions, metadata, id, changes, registry, batch)
             % validateIndexedCandidate Validate document-dependent literal policies without reparsing their known source edits.
             arguments (Input)
                 obj (1, 1) yamada.model.DocumentModel
@@ -296,6 +342,7 @@ classdef DocumentModel < handle
                 id (1, 1) string
                 changes (1, :) struct
                 registry (1, 1) yamada.model.ComponentRegistry
+                batch (1, 1) yamada.source.SourcePatchBatch
             end
             arguments (Output)
                 result (1, 1) struct
@@ -306,7 +353,7 @@ classdef DocumentModel < handle
             owner.synchronizeSourceSettings(settings, factoryArguments);
             candidate.Diagnostics = diagnostics; candidate.UnknownRegions = regions; candidate.Metadata = metadata;
             candidate.publishCurrentSource(state);
-            diagnostics = candidate.validatePropertyCommit(registry);
+            diagnostics = candidate.finishPlannedValidation(registry, obj.planBaseline(registry), id, batch);
             assert(~yamada.validation.ModelValidator.hasErrors(diagnostics), ...
                 "yamada:SourceLiteralTransaction:InvalidValue", "%s", strjoin(string({diagnostics.Message}), newline));
             states = candidate.getEffectivePropertyStates(registry, id);
@@ -318,10 +365,10 @@ classdef DocumentModel < handle
             end
             result = struct("Ready", true, "States", resolutions, "Definitions", definitions, ...
                 "StateDiagnostics", yamada.model.Diagnostic.empty, "Diagnostics", diagnostics, ...
-                "Proof", candidate.captureValidationProof(registry));
+                "Plan", candidate.plannedResult());
         end
 
-        function result = validateIndexedBatchCandidate(obj, bindings, updates, state, diagnostics, regions, metadata, specs, registry)
+        function result = validateIndexedBatchCandidate(obj, bindings, updates, state, diagnostics, regions, metadata, specs, registry, batch)
             % validateIndexedBatchCandidate Validate the complete final multi-owner state without regenerating or parsing source.
             arguments (Input)
                 obj (1, 1) yamada.model.DocumentModel
@@ -333,6 +380,7 @@ classdef DocumentModel < handle
                 metadata (1, 1) struct
                 specs (1, :) struct
                 registry (1, 1) yamada.model.ComponentRegistry
+                batch (1, 1) yamada.source.SourcePatchBatch
             end
             arguments (Output)
                 result (1, 1) struct
@@ -344,7 +392,7 @@ classdef DocumentModel < handle
             end
             candidate.Diagnostics = diagnostics; candidate.UnknownRegions = regions; candidate.Metadata = metadata;
             candidate.publishCurrentSource(state);
-            diagnostics = candidate.validatePropertyCommit(registry);
+            diagnostics = candidate.finishPlannedValidation(registry, obj.planBaseline(registry), string({specs.ComponentId}), batch);
             assert(~yamada.validation.ModelValidator.hasErrors(diagnostics), ...
                 "yamada:SourceLiteralTransaction:InvalidValue", "%s", strjoin(string({diagnostics.Message}), newline));
             owners = struct("ComponentId", {}, "Definitions", {}, "States", {});
@@ -359,7 +407,7 @@ classdef DocumentModel < handle
                 owners(end + 1) = struct("ComponentId", spec.ComponentId, "Definitions", definitions, ...
                     "States", resolutions); %#ok<AGROW>
             end
-            result = struct("Diagnostics", diagnostics, "Owners", owners, "Proof", candidate.captureValidationProof(registry));
+            result = struct("Diagnostics", diagnostics, "Owners", owners, "Plan", candidate.plannedResult());
         end
 
         function result = preparePropertyValidation(obj, component, definitions, states, paths, batch, registry)
@@ -916,7 +964,7 @@ classdef DocumentModel < handle
                 error("yamada:DocumentModel:UnknownParent", ...
                     "Parent component ID ""%s"" does not exist.", parentId);
             end
-            if ~any(definition.AllowedParentFactories == parent.Factory)
+            if ~yamada.model.SubtreePlacementPlanner.accepts(obj, parent, definition)
                 error("yamada:DocumentModel:InvalidInsertionParent", ...
                     "Factory ""%s"" cannot be inserted under ""%s"".", ...
                     factory, parent.Factory);
@@ -1111,7 +1159,8 @@ classdef DocumentModel < handle
             % Only this editor post-commit path consumes proof; generation and saving still validate fully.
             if ~isempty(obj.PropertyValidationContext) && obj.PropertyValidationContext.matches(obj, registry)
                 if ~isempty(obj.PropertyValidationNames)
-                    [checked, ids] = yamada.validation.ModelValidator.validate(obj, registry, obj.PropertyValidationNames);
+                    ids = string({obj.Components(ismember(string({obj.Components.Name}), obj.PropertyValidationNames)).Id});
+                    checked = yamada.validation.ModelValidator.validateOwners(obj, registry, ids);
                     retained = obj.PropertyValidationDiagnostics;
                     if ~isempty(retained), retained = retained(~ismember(string({retained.ComponentId}), ids)); end
                     obj.PropertyValidationDiagnostics = [retained checked];
@@ -1774,25 +1823,36 @@ classdef DocumentModel < handle
 
             % Apply only owned callback patches; value and hierarchy validation remains valid.
             previousContext = obj.evaluationContext(registry);
+            callbackOnly = obj.currentModelIsBound();
             obj.CallbackEdits = after;
             try
-                [patches, diagnostics] = yamada.source.CallbackSourceEdits.build(obj);
+                if callbackOnly
+                    [patches, diagnostics] = yamada.source.CallbackSourceEdits.build(obj);
+                else
+                    % Detached builders may still have primary values that need their own source edits.
+                    [~, diagnostics, patches] = yamada.source.RoundTripGenerator(registry).generate(obj);
+                end
                 if yamada.validation.ModelValidator.hasErrors(diagnostics)
                     error("yamada:DocumentModel:UnsafeCallbackSource", "%s", strjoin(string({diagnostics.Message}), newline));
                 end
                 patches = yamada.source.CallbackSourceEdits.combineInsertions(patches);
                 patches = yamada.source.SourceFormatting.cleanDeletions(obj.CurrentText, patches);
                 batch = yamada.source.SourcePatchBatch(obj.CurrentText, patches);
-                callback = struct("Context", previousContext, "ComponentId", componentId);
+                callback = struct();
+                if callbackOnly, callback = struct("Context", previousContext, "ComponentId", componentId); end
                 [candidate, ~] = obj.editedSourceCandidate(batch.AfterText, batch.Edits, registry, "", callback);
             catch exception
                 obj.CallbackEdits = before;
                 rethrow(exception)
             end
             beforeSource = obj.CurrentSource;
-            obj.publishCallbackSource(candidate.CurrentSource, candidate, registry, componentId);
+            if callbackOnly
+                obj.publishCallbackSource(candidate.CurrentSource, candidate, registry, componentId);
+            else
+                obj.publishPlannedSource(candidate.CurrentSource, candidate, registry);
+            end
             edit = struct("Kind", "callback", "ComponentId", componentId, "Before", before, ...
-                "After", after, "DeletedHandler", state.HandlerName, "SourceForward", batch.Edits, ...
+                "After", after, "DeletedHandler", state.HandlerName, "CallbackOnly", callbackOnly, "SourceForward", batch.Edits, ...
                 "SourceInverse", batch.InverseEdits, "SourceBeforeId", beforeSource.StateId, "SourceAfterId", obj.CurrentSource.StateId);
             obj.SourcePublication = true; cleanup = onCleanup(@() obj.endSourcePublication());
             obj.recordHistory(edit);
@@ -1821,11 +1881,22 @@ classdef DocumentModel < handle
             candidate.SourceAnalysisData = obj.SourceAnalysisData;
             candidate.CurrentSource = obj.CurrentSource;
             candidate.SourceRegistry = obj.SourceRegistry;
+            candidate.PlanBaseline = obj.PlanBaseline;
+            catalog = registry; if isempty(catalog), catalog = obj.SourceRegistry; end
+            if isempty(candidate.PlanBaseline) || ~isempty(catalog) && obj.hasCurrentValidation(catalog)
+                candidate.PlanBaseline = obj.Evaluation;
+            end
             % Resolver entries are independent values; mutation invalidates their normal scopes.
             if ~isempty(registry) && ~isempty(obj.Evaluation)
                 previous = obj.evaluationContext(registry);
                 current = candidate.evaluationContext(registry);
                 current.inheritStates(previous);
+                if obj.hasCurrentValidation(registry)
+                    current.inheritPlannedStates(previous, strings(1, 0), yamada.source.SourcePatchBatch(obj.CurrentText));
+                    candidate.PropertyValidationContext = current; candidate.PropertyValidationNames = strings(1, 0);
+                    candidate.PropertyValidationDiagnostics = obj.PropertyValidationDiagnostics;
+                    candidate.PlannedValidation = true; candidate.PlannedScope = obj.PlannedScope;
+                end
             end
         end
 
@@ -1934,26 +2005,20 @@ classdef DocumentModel < handle
             candidate.Components = candidate.Components(indices);
             candidate.PendingEdits{end + 1} = struct("Kind", "reparent-subtree", ...
                 "OriginalRecords", snapshot.Records);
-            [source, diagnostics, sourcePatches] = yamada.source.RoundTripGenerator(registry).generate(candidate);
-            if yamada.validation.ModelValidator.hasErrors(diagnostics)
-                error("yamada:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
-            end
-            % A preserved later setter must not undo the requested destination geometry.
-            [placedDocument, ~] = candidate.editedSourceCandidate(source, sourcePatches, registry);
-            placedDiagnostics = placedDocument.Diagnostics;
-            if yamada.validation.ModelValidator.hasErrors(placedDiagnostics)
-                error("yamada:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({placedDiagnostics.Message}), newline));
-            end
-            placedRoot = placedDocument.getComponentByName(root.Name);
-            if isempty(placedRoot)
-                error("yamada:DocumentModel:UnsafeSubtreeEdit", "The relocated component is missing from generated source.");
-            end
             try
-                placedStates = placedDocument.getEffectivePropertyStates(registry, placedRoot.Id);
-                obj.assertRequestedStates(placedStates, plan.Changes(~[plan.Changes.Remove]));
+                if obj.currentModelIsBound()
+                    [sourcePatches, ~, placedDocument] = yamada.source.SubtreeReparentSourceEdits.build(candidate, registry);
+                else
+                    [text, diagnostics, sourcePatches] = yamada.source.RoundTripGenerator(registry).generate(candidate);
+                    if yamada.validation.ModelValidator.hasErrors(diagnostics)
+                        error("yamada:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
+                    end
+                    [placedDocument, ~] = candidate.editedSourceCandidate(text, sourcePatches, registry);
+                end
             catch exception
                 error("yamada:DocumentModel:UnsafeSubtreeEdit", "%s", string(exception.message));
             end
+            source = placedDocument.CurrentText; diagnostics = placedDocument.Diagnostics;
             afterSnapshot = yamada.model.SubtreeSnapshot(placedDocument, id);
             afterRoot = afterSnapshot.Records(1);
             afterParents = struct("Id", {oldParent.Id, newParent.Id}, ...
@@ -2416,7 +2481,9 @@ classdef DocumentModel < handle
                 currentContext.inheritEligibility(previousContext);
             end
             validation = prepared.validationResult();
-            if isfield(validation, "Proof") && obj.adoptValidationProof(validation.Proof, registry, currentContext)
+            if isfield(validation, "Plan")
+                obj.adoptPlannedResult(validation.Plan, registry, currentContext);
+            elseif isfield(validation, "Proof") && obj.adoptValidationProof(validation.Proof, registry, currentContext)
                 % The exact complete candidate already supplied every dependency-scoped state.
             elseif validation.Ready
                 currentContext.remember("states:" + id, struct("Definitions", validation.Definitions, ...
@@ -2477,7 +2544,9 @@ classdef DocumentModel < handle
             prepared.applyModel(obj, before, registry);
             obj.publishCurrentSource(prepared.AfterSource);
             validation = prepared.validationResult();
-            if ~obj.adoptValidationProof(validation.Proof, registry)
+            if isfield(validation, "Plan")
+                obj.adoptPlannedResult(validation.Plan, registry);
+            elseif ~obj.adoptValidationProof(validation.Proof, registry)
                 context = obj.evaluationContext(registry);
                 for owner = validation.Owners
                     context.remember("states:" + owner.ComponentId, struct("Definitions", owner.Definitions, ...
@@ -2561,12 +2630,8 @@ classdef DocumentModel < handle
                     end
                 end
             end
-            % True Grid, sibling and ancestor effects retain their bounded model validation.
-            context.inheritSourceStates(previous, ids, batch);
-            obj.PropertyValidationContext = context;
-            obj.PropertyValidationNames = arrayfun(@(id) obj.getComponent(id).Name, ids);
-            obj.PropertyValidationDiagnostics = yamada.model.SourceLocationUpdate.relocateDiagnostics(diagnostics, batch);
-            obj.validatePropertyCommit(registry);
+            % Replayed primary changes use the same bounded accepted-input checks.
+            obj.finishPlannedValidation(registry, previous, ids, batch);
         end
 
         function adopted = adoptValidationProof(obj, proof, registry, context)
@@ -2609,6 +2674,7 @@ classdef DocumentModel < handle
                 obj (1, 1) yamada.model.DocumentModel
                 state (1, 1) yamada.model.CurrentSourceState
             end
+            obj.PlannedValidation = false;
             obj.CurrentSource = state;
             obj.SourceAnalysisData = state.Analysis;
             obj.GeneratedText = state.Text;
@@ -2632,6 +2698,10 @@ classdef DocumentModel < handle
                 registry (1, 1) yamada.model.ComponentRegistry
                 parsed yamada.model.DocumentModel = yamada.model.DocumentModel.empty
                 requirePrepared (1, 1) logical = false
+            end
+            if requirePrepared && ~isempty(parsed) && parsed.PlannedValidation && parsed.CurrentText == state.Text && ...
+                    parsed.hasCurrentValidation(registry)
+                obj.publishPlannedSource(state, parsed, registry); return
             end
             % A command-local candidate is reusable only while its exact complete source proof still holds.
             if isempty(parsed) || ~isscalar(parsed) || parsed.CurrentText ~= state.Text || ...
@@ -2682,6 +2752,96 @@ classdef DocumentModel < handle
             obj.Metadata = parsed.Metadata;
             obj.publishCurrentSource(state.withAnalysis(parsed.sourceAnalysis()));
             obj.adoptValidationProof(parsed.captureValidationProof(registry), registry);
+        end
+
+        function previous = planBaseline(obj, registry)
+            % planBaseline Read the last accepted source state while a command's semantic delta is being prepared.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                previous (1, 1) yamada.model.EvaluationContext
+            end
+            previous = obj.PlanBaseline;
+            if obj.hasCurrentValidation(registry) || isempty(previous), previous = obj.Evaluation; end
+            if isempty(previous), previous = obj.evaluationContext(registry); end
+        end
+
+        function diagnostics = finishPlannedValidation(obj, registry, previous, changed, batch)
+            % finishPlannedValidation Check an edit's accepted inputs and retain unrelated diagnostics and states.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                previous (1, 1) yamada.model.EvaluationContext
+                changed (1, :) string
+                batch (1, 1) yamada.source.SourcePatchBatch
+            end
+            arguments (Output)
+                diagnostics yamada.model.Diagnostic
+            end
+            scope = previous.editScope(obj, changed);
+            [token, ~] = previous.revisionToken();
+            if token.Registry ~= registry || token.RegistryRevision ~= registry.Revision
+                scope.Checked = string({obj.Components.Id}); scope.Invalidated = scope.Checked;
+            end
+            context = obj.evaluationContext(registry);
+            context.inheritPlannedStates(previous, scope.Invalidated, batch);
+            checked = yamada.validation.ModelValidator.validateOwners(obj, registry, scope.Checked);
+            retained = obj.Diagnostics;
+            if ~isempty(retained)
+                retained = retained(~ismember(string({retained.ComponentId}), scope.Checked) & ...
+                    ismember(string({retained.ComponentId}), ["" string({obj.Components.Id})]));
+            end
+            diagnostics = [retained checked]; obj.Diagnostics = diagnostics;
+            obj.Evaluation = context; obj.PropertyValidationContext = context;
+            obj.PropertyValidationNames = strings(1, 0); obj.PropertyValidationDiagnostics = diagnostics;
+            obj.PlannedValidation = true; obj.PlannedScope = scope;
+        end
+
+        function plan = plannedResult(obj)
+            % plannedResult Export independent cached values and diagnostics for an already accepted source plan.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+            end
+            arguments (Output)
+                plan (1, 1) struct
+            end
+            plan = struct("States", obj.Evaluation.stateValues(), "Diagnostics", obj.Diagnostics, ...
+                "Scope", obj.PlannedScope);
+        end
+
+        function adoptPlannedResult(obj, plan, registry, context)
+            % adoptPlannedResult Bind independent plan values to this exact post-edit input revision.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                plan (1, 1) struct
+                registry (1, 1) yamada.model.ComponentRegistry
+                context yamada.model.EvaluationContext = yamada.model.EvaluationContext.empty
+            end
+            if isempty(context), context = yamada.model.EvaluationContext.fromValidated(obj, registry); end
+            for owner = plan.States, context.rememberValidatedStates(owner.ComponentId, owner.Resolved); end
+            obj.Evaluation = context; obj.PropertyValidationContext = context;
+            obj.PropertyValidationNames = strings(1, 0); obj.PropertyValidationDiagnostics = plan.Diagnostics;
+            obj.Diagnostics = plan.Diagnostics; obj.PlannedValidation = true; obj.PlannedScope = plan.Scope;
+        end
+
+        function publishPlannedSource(obj, state, candidate, registry)
+            % publishPlannedSource Publish the known source binding delta without comparing unchanged primary values again.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                state (1, 1) yamada.model.CurrentSourceState
+                candidate (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            for component = obj.Components
+                other = candidate.getComponent(component.Id);
+                component.SourceSpans = other.SourceSpans; component.Metadata = other.Metadata;
+                component.synchronizeSourceSettings(other.Settings, other.CreationArguments);
+            end
+            obj.Diagnostics = candidate.Diagnostics; obj.UnknownRegions = candidate.UnknownRegions;
+            obj.Metadata = candidate.Metadata; obj.publishCurrentSource(state);
+            obj.adoptPlannedResult(candidate.plannedResult(), registry);
         end
 
         function publishCallbackSource(obj, state, candidate, registry, componentId)
@@ -2777,12 +2937,13 @@ classdef DocumentModel < handle
                 "Returns", trace.Returns, "Layout", analysis.Layout);
             yamada.model.SourceEffectSummary.refresh(candidate, registry);
             candidate.publishCurrentSource(state);
-            diagnostics = candidate.validatePropertyCommit(registry);
+            ids = unique([string({candidate.Components(ismember(string({candidate.Components.Name}), names)).Id}) removed], "stable");
+            diagnostics = candidate.finishPlannedValidation(registry, obj.planBaseline(registry), ids, batch);
             if yamada.validation.ModelValidator.hasErrors(diagnostics)
                 error("yamada:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
             end
-            assert(candidate.hasCurrentValidation(registry) && candidate.currentModelIsBound(), ...
-                "yamada:DocumentModel:InvalidPreparedSource", "The emitted component block must have complete value and ownership proofs.");
+            assert(candidate.hasCurrentValidation(registry), ...
+                "yamada:DocumentModel:InvalidPreparedSource", "The emitted component block must retain its accepted input checks.");
         end
 
         function bindInsertedComponents(obj, statements, names, analysis, state, registry, allocator)
@@ -2858,7 +3019,7 @@ classdef DocumentModel < handle
             end
             base = obj;
             if forward && ~isempty(edit.StagedEdit)
-                base = obj.structuralCandidate(); base.applySourceBatchHistory(edit.StagedEdit, true);
+                base = obj.structuralCandidate(obj.SourceRegistry); base.applySourceBatchHistory(edit.StagedEdit, true);
             end
             candidate = base.structuralCandidate(); names = string({edit.Snapshot.Records.Name});
             ids = string({edit.Snapshot.Records.Id}); parent = candidate.getComponent(edit.ParentId);
@@ -2958,7 +3119,7 @@ classdef DocumentModel < handle
                 context = obj.evaluationContext(registry);
                 for component = obj.Components
                     [resolved, found] = previous.lookup("states:" + component.Id);
-                    if ~found, ready = false; break, end
+                    if ~found, continue, end
                     resolved.States = resolved.States.withSourceSettings(component.Settings);
                     resolved.Diagnostics = yamada.model.SourceLocationUpdate.relocateDiagnostics(resolved.Diagnostics, batch);
                     context.rememberValidatedStates(component.Id, resolved);
@@ -2966,6 +3127,7 @@ classdef DocumentModel < handle
                 if ready
                     obj.PropertyValidationContext = context; obj.PropertyValidationNames = strings(1, 0);
                     obj.PropertyValidationDiagnostics = diagnostics;
+                    obj.PlannedValidation = true; obj.PlannedScope = struct("Checked", strings(1, 0), "Invalidated", strings(1, 0));
                 end
             end
         end
@@ -3035,7 +3197,8 @@ classdef DocumentModel < handle
             end
             batch = yamada.source.SourcePatchBatch(obj.CurrentText, edits);
             callback = struct();
-            if edit.Kind == "callback" && isfield(edit, "ComponentId")
+            if edit.Kind == "callback" && isfield(edit, "ComponentId") && ...
+                    (~isfield(edit, "CallbackOnly") || edit.CallbackOnly)
                 callback = struct("Context", obj.Evaluation, "ComponentId", edit.ComponentId);
             end
             [candidate, state] = obj.editedSourceCandidate(batch.AfterText, batch.Edits, obj.SourceRegistry, stateId, callback);
