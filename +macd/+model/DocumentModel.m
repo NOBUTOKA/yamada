@@ -1639,7 +1639,8 @@ classdef DocumentModel < handle
             try
                 obj.ensureCurrentSource(registry);
             catch exception
-                error("macd:DocumentModel:UnsafeCallbackSource", "%s", exception.message);
+                failure = MException("macd:DocumentModel:UnsafeCallbackSource", "%s", exception.message);
+                throw(addCause(failure, exception));
             end
             % Validate current availability before changing any document or history state.
             bindingOnly = any(action == ["New", "Connect", "Disconnect"]);
@@ -2184,8 +2185,60 @@ classdef DocumentModel < handle
                 if macd.validation.ModelValidator.hasErrors(diagnostics)
                     error("macd:DocumentModel:UnsafeInitialSource", "%s", strjoin(string({diagnostics.Message}), newline));
                 end
-                obj.publishParsedSource(macd.model.CurrentSourceState(text), registry);
+                obj.publishInitialGeneratedSource(text, registry, diagnostics);
             end
+        end
+
+        function publishInitialGeneratedSource(obj, text, registry, diagnostics)
+            % publishInitialGeneratedSource Bind trusted initial output to the existing model without whole-source parsing.
+            arguments (Input)
+                obj (1, 1) macd.model.DocumentModel
+                text (1, 1) string
+                registry (1, 1) macd.model.ComponentRegistry
+                diagnostics macd.model.Diagnostic
+            end
+
+            % Match generated declarations and factories against known component identities.
+            state = macd.model.CurrentSourceState(text);
+            analysis = state.Analysis;
+            candidate = obj.structuralCandidate();
+            candidate.SourceRegistry = registry;
+            candidate.publishCurrentSource(state);
+            statements = analysis.Statements;
+            texts = string({statements.Text});
+            for component = candidate.Components
+                declaration = find(startsWith(texts, component.Name + " "));
+                creation = find(~cellfun(@isempty, regexp(cellstr(texts), ...
+                    '^app\.' + regexptranslate('escape', component.Name) + '\s*=', 'once')));
+                assert(isscalar(declaration) && isscalar(creation), ...
+                    "macd:DocumentModel:UnsafeInitialSource", "Initial output needs unique declarations and factories.");
+                component.SourceSpans = struct("Declaration", statements(declaration).Span, "Creation", statements(creation).Span);
+                definition = registry.get(component.Factory, component.CreationArguments);
+                [~, ~, settings, ~, supported] = macd.source.PropertySettingSyntax.factory(statements(creation), definition, state.StateId);
+                assert(supported, "macd:DocumentModel:UnsafeInitialSource", "Initial factory syntax must match the known model.");
+                % Seed constructor occurrence counts before compiling initialization sequences.
+                for setting = settings, component.recordSetting(setting); end
+            end
+
+            % Reuse the same emitted-token binder and validation proof as component insertion.
+            execution = macd.model.SourceSettingRebinder.executionSequences(candidate, state, ...
+                macd.source.SourcePatchBatch(text), registry);
+            obj.inputStamp();
+            obj.SettingStore.reserveAfter(candidate.SettingStore);
+            candidate.bindInsertedComponents(statements, string({candidate.Components.Name}), analysis, state, registry, obj);
+            trace = execution.Trace;
+            candidate.Metadata.SourceSnapshotId = state.StateId;
+            candidate.Metadata.InitializationContext = struct("Order", trace.Order, "Certain", trace.Certain, ...
+                "Returns", trace.Returns, "Layout", analysis.Layout);
+            candidate.Metadata.HasUnresolvedInitialization = false;
+            candidate.Diagnostics = diagnostics;
+            macd.model.SourceEffectSummary.refresh(candidate, registry);
+            candidate.publishCurrentSource(state);
+            diagnostics = candidate.validatePropertyCommit(registry);
+            if macd.validation.ModelValidator.hasErrors(diagnostics)
+                error("macd:DocumentModel:UnsafeInitialSource", "%s", strjoin(string({diagnostics.Message}), newline));
+            end
+            obj.publishParsedSource(state, registry, candidate, true);
         end
 
         function discardUnownedReadOnlyInputs(obj, registry)
@@ -2658,7 +2711,8 @@ classdef DocumentModel < handle
                         definition = registry.get(component.Factory, component.CreationArguments);
                         [parentName, arguments, factorySettings, ~, supported] = macd.source.PropertySettingSyntax.factory(statement, definition, state.StateId);
                         parent = obj.getComponent(component.ParentId);
-                        assert(supported && ~isempty(parent) && parentName == parent.Name, ...
+                        root = component.Id == obj.RootComponentId && component.Factory == "uifigure" && isempty(parent) && parentName == "";
+                        assert(supported && (root || ~isempty(parent) && parentName == parent.Name), ...
                             "macd:DocumentModel:UnsafeSubtreeEdit", "Emitted factories must match the prepared parent and positional arguments.");
                         component.Metadata.InitializationCreationSequence = execution.Creation(visit);
                         component.Metadata.InitializationCreationCertain = execution.Trace.Certain(visit);
@@ -2679,7 +2733,7 @@ classdef DocumentModel < handle
                     owner = analysis.Layout.Owner(index); methods = analysis.Layout.Methods;
                     scope = methods(string({methods.Name}) == owner);
                     assert(isscalar(scope)); setting = setting.withScope(owner, scope.Span);
-                    old = previous(string({previous.Path}) == setting.Path & string({previous.Method}) ~= "generated");
+                    old = previous(string({previous.Path}) == setting.Path & string({previous.Method}) == setting.Method);
                     if isscalar(old), setting = setting.withIdentity(old.Id, old.SourceSnapshotId); end
                     setting = allocator.canonicalizeSettings(setting);
                     settings(end + 1) = setting; %#ok<AGROW>

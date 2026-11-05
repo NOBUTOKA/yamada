@@ -137,7 +137,7 @@ Implementation sequence and checkpoints:
 
 ## Select Existing Methods for Callback Bindings
 
-Status: implementation in progress in the isolated callback integration branch. Cached fixed-input signatures, binding-only New/Connect/Disconnect transactions and selector UI integration are implemented. All 59 focused callback, cache, rename, UI, convention and test-selection checks pass. Full-suite integration verification and native keyboard/name-popup verification remain pending.
+Status: implementation in progress in the isolated callback integration branch. Cached fixed-input signatures, binding-only New/Connect/Disconnect transactions and selector UI integration are implemented. All 59 focused callback, cache, rename, UI, convention and test-selection checks pass. Native Tab/dropdown/F5 and the visible name-popup/save/reload workflow are verified. Initial new-app cache publication additionally avoids AppSourceParser.parseText; its broader regression verification and final full-suite integration remain in progress.
 
 Replace both Add and Delete buttons with one binding-target dropdown per callback row. Its entries are `<New...>`, `<Disconnect>`, and eligible existing methods; no separate Add/Delete buttons remain. Display the current method when its binding is recognized, and use `<Disconnect>` as the unbound selection. The selector is implemented in the integration branch and remains under verification.
 

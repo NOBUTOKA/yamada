@@ -3,6 +3,21 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
     %   Tests cover binding replacement, retained method bodies and atomic history.
 
     methods (Test)
+        function firstCallbackCreationPreservesRootAndHistory(testCase)
+            % firstCallbackCreationPreservesRootAndHistory Preserve root values, identity and clean Undo on the first callback creation.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("FirstCallbackFixture", registry);
+            root = document.getComponent(document.RootComponentId);
+            document.applyCallbackAction(root.Id, "SizeChangedFcn", "New", registry, "RootSized");
+            document.undo();
+            testCase.verifyFalse(document.IsDirty);
+            document.redo();
+            testCase.verifyEqual(document.getComponent(root.Id), root);
+            testCase.verifyEqual(root.getProperty("Visible").LiteralValue, "on");
+            testCase.verifySubstring(document.CurrentText, "SizeChangedFcn = @app.RootSized;");
+            testCase.verifyEqual(document.HistoryIndex, 1);
+        end
+
         function candidatesUseCachedSignaturesAndFixedArity(testCase)
             % candidatesUseCachedSignaturesAndFixedArity Exclude optional fourth inputs and retain unknown constraints.
             [document, registry, button] = CallbackBindingSelectionTest.fixture();
@@ -26,6 +41,29 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
                 testCase.verifyEqual(macd.source.CallbackMethodTargets.list(document, button.Id, "ButtonPushedFcn", registry), targets);
                 testCase.verifyEqual(document.sourceAnalysis(), analysis);
             end
+        end
+
+        function detachedBuilderComponentsBindBeforeFirstCallback(testCase)
+            % detachedBuilderComponentsBindBeforeFirstCallback Retain nested records and distinct constructor and assignment occurrence identities.
+            registry = macd.model.ComponentRegistry.createDefault();
+            document = macd.model.NewAppFactory.createEmpty("DetachedCallbackFixture", registry);
+            definition = registry.get("uipanel");
+            panel = macd.model.ComponentRecord("panel", "Panel", definition.Factory, definition.DeclaredType, "generated");
+            panel.setProperty("Position", [10 10 300 200]);
+            document.addComponent(panel, document.RootComponentId);
+            definition = registry.get("uibutton");
+            button = macd.model.ComponentRecord("button", "Button", definition.Factory, definition.DeclaredType, "generated");
+            button.setProperty("Text", "Run");
+            document.addComponent(button, panel.Id);
+            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, "RunPushed");
+            testCase.verifyEqual(document.getComponent(button.Id), button);
+            testCase.verifyEqual(button.ParentId, panel.Id);
+            testCase.verifyEqual(button.getProperty("Text").LiteralValue, "Run");
+            root = document.getComponent(document.RootComponentId);
+            settings = root.getSettings("Visible");
+            testCase.verifyNumElements(settings, 2);
+            testCase.verifyEqual(numel(unique([settings.Id])), numel(settings));
+            testCase.verifySubstring(document.CurrentText, "app.Button = uibutton(app.Panel);");
         end
 
         function replaceAndDisconnectKeepEveryMethodBody(testCase)
