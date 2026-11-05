@@ -28,7 +28,7 @@ classdef (TestTags = {'ui', 'preview', 'rename'}) RenamePreviewUpdateTest < matl
             rectangle = native.Position;
             renameThroughEditor(testCase, figure, "RenamedSubject");
             testCase.verifyEqual(subject.Name, "RenamedSubject");
-            testCase.verifySubstring(app.Document.GeneratedText, "RenamedSubjectButtonPushed");
+            testCase.verifySubstring(app.Document.GeneratedText, "RenamedSubjectPushed");
             for action = ["Undo", "Redo"]
                 menus = findall(figure, "Type", "uimenu");
                 menu = menus(erase(string({menus.Text}), "&") == action);

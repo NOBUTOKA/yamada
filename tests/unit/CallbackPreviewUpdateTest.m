@@ -4,7 +4,7 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
     %   and history across free, fixed-grid, and nested-grid fixtures.
     methods (Test)
         function managerActionsAndHistoryRetainAllPreviewGeometry(testCase)
-            % managerActionsAndHistoryRetainAllPreviewGeometry Exercise real Add/Delete and callback Undo/Redo.
+            % managerActionsAndHistoryRetainAllPreviewGeometry Exercise target selection, disconnection and callback history.
             for layout = ["absolute", "flat", "nested"]
                 folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
                 path = fullfile(folder.Folder, "CallbackPreviewFixture.m");
@@ -32,20 +32,25 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
                 manage = findall(context, "Tag", "macd-manage-callbacks");
                 manage.MenuSelectedFcn(manage, struct());
                 dialog = findall(0, "Tag", "macd-callback-manager");
-                for action = ["add", "delete"]
-                    button = findall(dialog, "Tag", "macd-callback-" + action, "UserData", "ButtonPushedFcn");
-                    testCase.assertEqual(numel(button), 1);
-                    testCase.assertEqual(string(button.Enable), "on");
-                    button.ButtonPushedFcn(button, struct());
+                binding = "app.Subject.ButtonPushedFcn = @app.SubjectPushed;";
+                for selection = ["SubjectPushed", "<Disconnect>"]
+                    control = findall(dialog, "Tag", "macd-callback-target", "UserData", "ButtonPushedFcn");
+                    testCase.assertEqual(numel(control), 1);
+                    testCase.assertEqual(string(control.Enable), "on");
+                    control.Value = selection;
+                    control.ValueChangedFcn(control, struct());
                     drawnow;
                     canvas = findall(figure, "Tag", "macd-preview-canvas");
                     native = findall(canvas, "Type", "uibutton");
                     testCase.assertNumElements(native, 1);
                     testCase.verifyEqual(native.Position, rectangle);
                     testCase.verifyEmpty(native.ButtonPushedFcn);
-                    if action == "add"
-                        testCase.verifySubstring(app.Document.GeneratedText, "SubjectButtonPushed");
+                    if selection == "SubjectPushed"
+                        testCase.verifySubstring(app.Document.GeneratedText, binding);
+                    else
+                        testCase.verifyFalse(contains(app.Document.GeneratedText, binding));
                     end
+                    testCase.verifySubstring(app.Document.GeneratedText, "function SubjectPushed(app,source,event)");
                 end
                 for action = ["Undo", "Redo"]
                     menus = findall(figure, "Type", "uimenu");
@@ -58,10 +63,11 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
                     testCase.verifyEqual(native.Position, rectangle);
                     testCase.verifyEmpty(native.ButtonPushedFcn);
                     if action == "Undo"
-                        testCase.verifySubstring(app.Document.GeneratedText, "SubjectButtonPushed");
+                        testCase.verifySubstring(app.Document.GeneratedText, binding);
                     else
-                        testCase.verifyFalse(contains(app.Document.GeneratedText, "SubjectButtonPushed"));
+                        testCase.verifyFalse(contains(app.Document.GeneratedText, binding));
                     end
+                    testCase.verifySubstring(app.Document.GeneratedText, "function SubjectPushed(app,source,event)");
                 end
                 testCase.verifyEqual(app.Document.OriginalText, source);
                 testCase.verifyEqual(app.Document.HistoryIndex, 2);
@@ -113,7 +119,8 @@ body = [body, "app.Subject = uibutton(app." + parent + ");", "app.Subject.Text =
 if layout == "absolute", body(end + 1) = "app.Subject.Position = [20 20 180 30];"; end
 source = strjoin(["classdef CallbackPreviewFixture < handle", "properties", properties, "end", ...
     "methods", "function app = CallbackPreviewFixture", "createComponents(app);", "end", ...
-    "function createComponents(app)", body, "end", "end", "end"], sprintf("\r\n"));
+    "function createComponents(app)", body, "end", ...
+    "function SubjectPushed(app,source,event)", "end", "end", "end"], sprintf("\r\n"));
 end
 
 %{
