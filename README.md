@@ -22,7 +22,7 @@
 - Allow unaudited (`unknown`) properties under existing product and source-edit rules, using their stored literal inputs; refuse identified unsupported effects
 - Copy, cut, paste, delete, and reparent complete component subtrees with atomic Undo/Redo
 - Rename component properties in the hierarchy, including static source references and default callback names
-- Manage source-owned callbacks from a Hierarchy context menu, including empty handler generation and complete handler deletion
+- Manage callback bindings from a Hierarchy context menu, reusing methods or creating named handlers; disconnect bindings while retaining method bodies
 - View validation diagnostics and compare the original and generated source before saving
 - Track unsaved edits and guard New, Open, and Close with Save, Discard, or Cancel
 - Preserve unsupported code and nonliteral expressions where possible, and build a Safe Preview without running the input application or its callbacks
