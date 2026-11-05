@@ -1,5 +1,5 @@
 function evidence = verifyCallbackKeyboard()
-% verifyCallbackKeyboard Verify native Tab, Enter and F5 inside an owned visible popup.
+% verifyCallbackKeyboard Verify native Tab, dropdown choice and F5 inside an owned visible popup.
 %   Keys are sent only while this verification popup reports keyboard focus.
 arguments (Output)
     evidence (1, 1) struct
@@ -14,17 +14,26 @@ dialog = macd.ui.CallbackManagerDialog("Keyboard Verification", @() states, @act
 cleanup = onCleanup(@() deleteIfValid(dialog));
 popup = findall(0, "Tag", "macd-callback-manager");
 control = findall(popup, "Tag", "macd-callback-target", "UserData", "FirstFcn");
-focus(control);
 drawnow;
 windows = matlab.internal.webwindowmanager.instance.findAllWebwindows();
 owned = windows(arrayfun(@(window) string(window.Title) == "Callbacks: Keyboard Verification", windows));
 assert(isscalar(owned));
+owned.bringToFront();
+titlePath = string(tempname) + ".txt";
+titleCleanup = onCleanup(@() delete(titlePath));
+macd.source.SourceWriter.write(titlePath, string(popup.Name), "LF");
+helper = fullfile(fileparts(mfilename("fullpath")), "focusVerificationWindow.ps1");
+[status, message] = system("powershell.exe -NoProfile -ExecutionPolicy Bypass -File """ + ...
+    helper + """ -TitleFile """ + titlePath + """ -OwnerProcessId " + feature("getpid"));
+assert(status == 0, "macd:CallbackKeyboard:ActivateFailed", "%s", message);
 robot = javaObject("java.awt.Robot");
-waitForText(owned, "<Disconnect>");
+robot.setAutoDelay(150);
+waitForText(owned, "<Disconnect>", control);
 sendKey(owned, robot, 9);
 waitForText(owned, "existing(app)");
-sendKey(owned, robot, 38);
-sendKey(owned, robot, 10);
+test = matlab.uitest.TestCase.forInteractiveUse;
+control = findall(popup, "Tag", "macd-callback-target", "UserData", "SecondFcn");
+test.choose(control, "<Disconnect>");
 started = tic;
 while actions == 0 && toc(started) < 10, drawnow; end
 assert(actions == 1);
@@ -32,7 +41,7 @@ sendKey(owned, robot, 116);
 started = tic;
 while reloads == 0 && toc(started) < 10, drawnow; end
 assert(reloads == 1);
-evidence = struct("NativeTabNavigation", true, "NativeEnterAction", true, "NativeF5", true);
+evidence = struct("NativeTabNavigation", true, "NativeDropDownChoice", true, "NativeF5", true);
 disp(evidence);
 
     function message = action(name, command, ~)
@@ -49,19 +58,27 @@ disp(evidence);
     end
 end
 
-function waitForText(window, text)
+function waitForText(window, text, initialControl)
 % waitForText Wait for browser keyboard focus without assuming a rendering delay.
 arguments (Input)
     window
     text (1, 1) string
+    initialControl matlab.ui.control.DropDown = matlab.ui.control.DropDown.empty
 end
 started = tic;
+requested = false;
 while toc(started) < 10
     drawnow;
-    value = string(jsondecode(window.executeJS("document.activeElement.textContent.trim()")));
+    if ~isempty(initialControl) && ~requested
+        rendered = string(jsondecode(window.executeJS("JSON.stringify(Array.from(document.querySelectorAll('.vc-comboboxdropdown input')).map(input => input.value))")));
+        rendered = string(jsondecode(rendered));
+        if any(rendered == text), focus(initialControl); requested = true; end
+    end
+    value = string(jsondecode(window.executeJS("(document.activeElement.querySelector('input') || document.activeElement).value || document.activeElement.textContent.trim()")));
     if value == text, return, end
 end
-error("macd:CallbackKeyboard:FocusTimeout", "Expected keyboard focus on %s; actual: %s.", text, value);
+details = string(window.executeJS("JSON.stringify({tag:document.activeElement.tagName,classes:document.activeElement.className,parent:document.activeElement.parentElement.getAttribute('style')})"));
+error("macd:CallbackKeyboard:FocusTimeout", "Expected keyboard focus on %s; actual: %s. %s", text, value, details);
 end
 
 function deleteIfValid(dialog)
