@@ -7,7 +7,7 @@ arguments (Output)
     results (1, :) struct
 end
 % Construct only catalog factories inside hidden, fixture-owned parents.
-registry = macd.model.ComponentRegistry.createDefault();
+registry = yamada.model.ComponentRegistry.createDefault();
 figure = uifigure("Visible", "off");
 cleanup = onCleanup(@() delete(figure));
 results = struct("Id", {}, "Requested", {}, "Actual", {}, "Error", {});

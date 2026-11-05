@@ -14,7 +14,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
                 [document, registry, panel, button] = CallbackCopyTest.fixture(body);
                 original = document.OriginalText;
                 settings = button.settingSnapshot();
-                clipboard = macd.model.ComponentClipboard();
+                clipboard = yamada.model.ComponentClipboard();
                 testCase.verifyTrue(clipboard.availability("Copy", document, panel.Id, registry).Enabled);
                 clipboard.copy(document, panel.Id, registry);
                 testCase.verifyFalse(document.IsDirty);
@@ -34,15 +34,15 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
                 testCase.verifyEqual(count(source, ".SizeChangedFcn ="), 1);
 
                 % Reopening and Undo/Redo retain one binding and one body per original.
-                reopened = macd.source.AppSourceParser.parseText(source, registry);
+                reopened = yamada.source.AppSourceParser.parseText(source, registry);
                 copied = reopened.getComponentByName(copiedButton.Name);
-                states = macd.source.CallbackSourceAnalyzer.analyze(reopened, copied.Id, registry);
+                states = yamada.source.CallbackSourceAnalyzer.analyze(reopened, copied.Id, registry);
                 testCase.verifyTrue(all(string({states.State}) == "absent"));
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(reopened), source);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(reopened), source);
                 document.undo();
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), original);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), original);
                 document.redo();
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             end
         end
 
@@ -54,7 +54,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
                     "app.Button = uibutton(app.Panel, CreateFcn=[], Text='Constructor');", ...
                     "app.Button = uibutton(app.Panel, DeleteFcn=@app.OnPushed, Text='Constructor');"]
                 [document, registry, ~, button] = CallbackCopyTest.fixture(creation);
-                clipboard = macd.model.ComponentClipboard();
+                clipboard = yamada.model.ComponentClipboard();
                 testCase.verifyTrue(clipboard.availability("Copy", document, button.Id, registry).Enabled);
                 clipboard.copy(document, button.Id, registry);
                 pasted = clipboard.paste(document, document.RootComponentId, registry);
@@ -66,7 +66,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
                 testCase.verifySubstring(document.GeneratedText, creation);
                 testCase.verifySubstring(document.GeneratedText, "app." + pasted.Name + " = uibutton(app.UIFigure);");
                 document.undo();
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
             end
         end
 
@@ -77,12 +77,12 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
                     "app.Button = uibutton(app.Panel, ButtonPushedFcn=@app.OnPushed, Text=computeText(app));", ...
                     "app.Button = uibutton(app.Panel, ButtonPushedFcn=@app.OnPushed, UnknownFcn=[]);"}
                 [document, registry, ~, button] = CallbackCopyTest.fixture(body{1});
-                clipboard = macd.model.ComponentClipboard();
+                clipboard = yamada.model.ComponentClipboard();
                 testCase.verifyFalse(clipboard.availability("Copy", document, button.Id, registry).Enabled);
-                testCase.verifyError(@() clipboard.copy(document, button.Id, registry), "macd:DocumentModel:UnsafeSubtreeCopy");
+                testCase.verifyError(@() clipboard.copy(document, button.Id, registry), "yamada:DocumentModel:UnsafeSubtreeCopy");
                 testCase.verifyEqual(document.HistoryIndex, 0);
                 testCase.verifyFalse(document.IsDirty);
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
             end
         end
 
@@ -90,9 +90,9 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
             % constructionEffectsStillPreventUnknownConfigurationCopy Do not infer effective settings after an executable CreateFcn.
             [document, registry, ~, button] = CallbackCopyTest.fixture( ...
                 "app.Button = uibutton(app.Panel, CreateFcn=@app.OnPushed);");
-            clipboard = macd.model.ComponentClipboard();
+            clipboard = yamada.model.ComponentClipboard();
             testCase.verifyFalse(clipboard.availability("Copy", document, button.Id, registry).Enabled);
-            testCase.verifyError(@() document.copySubtree(button.Id, registry), "macd:DocumentModel:UnsafeSubtreeCopy");
+            testCase.verifyError(@() document.copySubtree(button.Id, registry), "yamada:DocumentModel:UnsafeSubtreeCopy");
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
         end
@@ -103,8 +103,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             document.applyCallbackAction(panel.Id, "SizeChangedFcn", "Delete", registry);
             edits = document.CallbackEdits;
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            clipboard = macd.model.ComponentClipboard();
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            clipboard = yamada.model.ComponentClipboard();
             clipboard.copy(document, panel.Id, registry);
             pasted = clipboard.paste(document, document.RootComponentId, registry);
             copied = document.getComponent(pasted.Children(1));
@@ -114,7 +114,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
             testCase.verifyEqual(count(document.GeneratedText, ".ButtonPushedFcn ="), 1);
             testCase.verifyEqual(count(document.GeneratedText, ".SizeChangedFcn ="), 0);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             testCase.verifyEqual(document.CallbackEdits, edits);
         end
     end
@@ -126,12 +126,12 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
                 body (1, :) string
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                panel (1, 1) macd.model.ComponentRecord
-                button (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                panel (1, 1) yamada.model.ComponentRecord
+                button (1, 1) yamada.model.ComponentRecord
             end
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             textAssignment = "app.Button.Text = 'Keep this text';";
             if any(contains(body, "Text")), textAssignment = strings(1, 0); end
             source = strjoin(["classdef CallbackCopyApp < handle", "properties", ...
@@ -145,7 +145,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
                 "function OnPushed(app, event)", "error('handler-must-not-run');", "end", ...
                 "function OnResized(app, event)", "error('resize-must-not-run');", "end", ...
                 "end", "end"], sprintf("\r\n"));
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             panel = document.getComponentByName("Panel");
             button = document.getComponentByName("Button");
         end

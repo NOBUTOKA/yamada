@@ -6,7 +6,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
     methods (Test)
         function repeatedNumericEditsRetainEverySourceOccurrence(testCase)
             % repeatedNumericEditsRetainEverySourceOccurrence Replace only the final owned value in either syntax.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for assignments = [false true]
                 statements = "app.StatusLabel = uilabel(app.UIFigure, FontSize=17); % constructor";
                 target = "FontSize=17";
@@ -19,20 +19,20 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
                     replacement = "FontSize = 31";
                 end
                 source = testCase.fixture(statements);
-                document = macd.source.AppSourceParser.parseText(source, registry);
+                document = yamada.source.AppSourceParser.parseText(source, registry);
                 label = document.getComponentByName("StatusLabel");
                 settings = label.Settings;
                 document.setProperty(label.Id, "FontSize", 23, registry);
                 document.setPropertyBatch(label.Id, ...
-                    macd.model.PropertyTransaction.singleChange("FontSize", 31), registry);
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), ...
+                    yamada.model.PropertyTransaction.singleChange("FontSize", 31), registry);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), ...
                     replace(source, target, replacement));
                 testCase.verifyEqual(string({label.Settings.Id}), string({settings.Id}));
                 testCase.verifyEqual([label.getSettings("FontSize").LiteralValue], [settings(1:end - 1).LiteralValue 31]);
                 testCase.verifyEqual(document.OriginalText, source);
                 document.undo();
                 document.undo();
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             end
         end
 
@@ -43,14 +43,14 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
                 "app.StatusLabel = uilabel(app.UIFigure, Text=""First"");", ...
                 "app.StatusLabel.Text = ""Second"";", ...
                 "app.StatusLabel.Text = ""Third"";"]);
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("StatusLabel");
             document.removeSubtree(component.Id, registry);
-            generated = macd.source.RoundTripGenerator(registry).generate(document);
+            generated = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyFalse(contains(generated, "app.StatusLabel"));
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             testCase.verifyNumElements(document.getComponent(component.Id).getSettings("Text"), 3);
         end
 
@@ -62,8 +62,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
                 "app.StatusLabel.Tooltip = ""Hint"";", ...
                 "app.StatusLabel.Text = ""Second"";", ...
                 "app.StatusLabel.Text = ""Third"";"]);
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("StatusLabel");
             settings = component.getSettings("Text");
             testCase.verifyEqual(string({settings.Method}), ["nameValue", "assignment", "assignment"]);
@@ -72,8 +72,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
             testCase.verifyTrue(all(diff([component.Settings.Sequence]) > 0));
 
             document.setProperty(component.Id, "Text", "Updated");
-            [generated, diagnostics] = macd.source.RoundTripGenerator(registry).generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            [generated, diagnostics] = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyEqual(generated, replace(source, """Third""", """Updated"""));
             testCase.verifyEqual([component.getSettings("Text").LiteralValue], ["First", "Second", "Updated"]);
         end
@@ -81,16 +81,16 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
         function constructorEditPreservesBothSyntaxSpellingsAndComments(testCase)
             % constructorEditPreservesBothSyntaxSpellingsAndComments Replace only the original argument value.
 
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for argument = ["Text=""First""", """Text"", ""First"""]
                 source = testCase.fixture([ ...
                     "app.StatusLabel = uilabel(app.UIFigure, ... % keep constructor comment", ...
                     "    " + argument + "); % keep trailing comment"]);
-                document = macd.source.AppSourceParser.parseText(source, registry);
+                document = yamada.source.AppSourceParser.parseText(source, registry);
                 component = document.getComponentByName("StatusLabel");
                 setting = component.getSettings("Text");
                 document.setProperty(component.Id, "Text", "Updated");
-                generated = macd.source.RoundTripGenerator(registry).generate(document);
+                generated = yamada.source.RoundTripGenerator(registry).generate(document);
                 testCase.verifyEqual(generated, replace(source, """First""", """Updated"""));
                 testCase.verifyEqual(component.CreationArguments, {"Text", "Updated"});
                 testCase.verifyEqual(setting.LiteralValue, "First");
@@ -98,7 +98,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
 
                 document.undo();
                 testCase.verifyEqual(component.CreationArguments, {"Text", "First"});
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
                 document.redo();
                 testCase.verifyEqual(component.getSettings("Text").Id, setting.Id);
                 testCase.verifyEqual(component.getProperty("Text").LiteralValue, "Updated");
@@ -111,15 +111,15 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
             source = testCase.fixture([ ...
                 "app.StatusLabel = uilabel(app.UIFigure, Text=""Initial"" + ""Text"");", ...
                 "app.StatusLabel.Text = ""Ready"";"]);
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("StatusLabel");
             settings = component.getSettings("Text");
             testCase.verifyNumElements(settings, 2);
             testCase.verifyEqual(settings(1).SourceExpression, """Initial"" + ""Text""");
             testCase.verifyTrue(component.getProperty("Text").IsEditable);
             document.setProperty(component.Id, "Text", "Updated");
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), ...
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), ...
                 replace(source, """Ready""", """Updated"""));
         end
 
@@ -130,9 +130,9 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
                 "app.StatusLabel = uilabel(app.UIFigure);", ...
                 "app.StatusLabel.Position = [10 ... % keep inner comment", ...
                 "    20 100 30];"]);
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(source, registry);
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(source, registry);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
         end
 
         function subtreeSnapshotsRetainHistoryAndIndependentRequestedValues(testCase)
@@ -141,10 +141,10 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
             source = testCase.fixture([ ...
                 "app.StatusLabel = uilabel(app.UIFigure, Text=""First"");", ...
                 "app.StatusLabel.Text = ""Second"";"]);
-            document = macd.source.AppSourceParser.parseText(source, macd.model.ComponentRegistry.createDefault());
+            document = yamada.source.AppSourceParser.parseText(source, yamada.model.ComponentRegistry.createDefault());
             component = document.getComponentByName("StatusLabel");
             document.setProperty(component.Id, "Text", "Requested");
-            snapshot = macd.model.SubtreeSnapshot(document, component.Id);
+            snapshot = yamada.model.SubtreeSnapshot(document, component.Id);
             restored = snapshot.materialize();
             restored.setProperty("Text", "Other");
             testCase.verifyEqual(component.getProperty("Text").LiteralValue, "Requested");

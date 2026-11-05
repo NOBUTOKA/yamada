@@ -9,19 +9,19 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
             cleanup = onCleanup(@() deleteIfValid(owner));
             setappdata(owner, "changes", struct.empty);
             state = makeState();
-            dialog = macd.ui.inspector.ColumnSettingsEditorDialog.open( ...
+            dialog = yamada.ui.inspector.ColumnSettingsEditorDialog.open( ...
                 state, @(changes) captureChanges(owner, changes), false);
-            table = findall(dialog, "Tag", "macd-column-settings-table");
-            oneX = findall(dialog, "Tag", "macd-column-settings-all-1x");
+            table = findall(dialog, "Tag", "yamada-column-settings-table");
+            oneX = findall(dialog, "Tag", "yamada-column-settings-all-1x");
             oneX.ButtonPushedFcn(oneX, struct());
             testCase.verifyTrue(all(strcmp(table.Data(:, 4), '1x')));
             table.Data{1, 4} = 'fit';
             table.Data{1, 2} = true;
             table.Data{1, 3} = true;
             table.Data{1, 5} = '''bank''';
-            rearrangeable = findall(dialog, "Tag", "macd-column-settings-rearrangeable");
+            rearrangeable = findall(dialog, "Tag", "yamada-column-settings-rearrangeable");
             rearrangeable.Value = true;
-            apply = findall(dialog, "Tag", "macd-column-settings-apply");
+            apply = findall(dialog, "Tag", "yamada-column-settings-apply");
             apply.ButtonPushedFcn(apply, struct());
 
             changes = getappdata(owner, "changes");
@@ -42,11 +42,11 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
             setappdata(owner, "changes", struct.empty);
-            dialog = macd.ui.inspector.ColumnSettingsEditorDialog.open( ...
+            dialog = yamada.ui.inspector.ColumnSettingsEditorDialog.open( ...
                 makeState(), @(changes) captureChanges(owner, changes), false);
-            table = findall(dialog, "Tag", "macd-column-settings-table");
+            table = findall(dialog, "Tag", "yamada-column-settings-table");
             table.Data{1, 4} = 'wide';
-            apply = findall(dialog, "Tag", "macd-column-settings-apply");
+            apply = findall(dialog, "Tag", "yamada-column-settings-apply");
             apply.ButtonPushedFcn(apply, struct());
 
             testCase.verifyEmpty(getappdata(owner, "changes"));
@@ -63,13 +63,13 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
             setappdata(owner, "changes", struct.empty);
             state = makeState();
             state.ColumnWidth = {'1x', '1x'};
-            dialog = macd.ui.inspector.ColumnSettingsEditorDialog.open( ...
+            dialog = yamada.ui.inspector.ColumnSettingsEditorDialog.open( ...
                 state, @(changes) captureChanges(owner, changes), false);
-            table = findall(dialog, "Tag", "macd-column-settings-table");
+            table = findall(dialog, "Tag", "yamada-column-settings-table");
             testCase.verifyEqual(string(table.Data(:, 4)), ["1x"; "1x"]);
-            auto = findall(dialog, "Tag", "macd-column-settings-all-auto");
+            auto = findall(dialog, "Tag", "yamada-column-settings-all-auto");
             auto.ButtonPushedFcn(auto, struct());
-            apply = findall(dialog, "Tag", "macd-column-settings-apply");
+            apply = findall(dialog, "Tag", "yamada-column-settings-apply");
             apply.ButtonPushedFcn(apply, struct());
 
             changes = getappdata(owner, "changes");
@@ -77,13 +77,13 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
             testCase.verifyEqual(changes.Value, {'auto', 'auto'});
             state.ColumnWidth = changes.Value;
             setappdata(owner, "changes", struct.empty);
-            dialog = macd.ui.inspector.ColumnSettingsEditorDialog.open( ...
+            dialog = yamada.ui.inspector.ColumnSettingsEditorDialog.open( ...
                 state, @(nextChanges) captureChanges(owner, nextChanges), false);
-            table = findall(dialog, "Tag", "macd-column-settings-table");
+            table = findall(dialog, "Tag", "yamada-column-settings-table");
             testCase.verifyEqual(string(table.Data(:, 4)), ["auto"; "auto"]);
-            auto = findall(dialog, "Tag", "macd-column-settings-all-auto");
+            auto = findall(dialog, "Tag", "yamada-column-settings-all-auto");
             auto.ButtonPushedFcn(auto, struct());
-            apply = findall(dialog, "Tag", "macd-column-settings-apply");
+            apply = findall(dialog, "Tag", "yamada-column-settings-apply");
             apply.ButtonPushedFcn(apply, struct());
 
             testCase.verifyEmpty(getappdata(owner, "changes"));
@@ -96,18 +96,18 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
-            dialog = macd.ui.inspector.ColumnSettingsEditorDialog.open( ...
+            dialog = yamada.ui.inspector.ColumnSettingsEditorDialog.open( ...
                 makeState(), @(changes) captureChanges(owner, changes), false);
-            table = findall(dialog, "Tag", "macd-column-settings-table");
+            table = findall(dialog, "Tag", "yamada-column-settings-table");
             testCase.verifyEqual(string(table.ColumnName).', ...
                 ["Column", "Editable", "Sortable", "Width", "Format"]);
-            allEditable = findall(dialog, "Tag", "macd-column-settings-all-editable");
-            noEditable = findall(dialog, "Tag", "macd-column-settings-no-editable");
-            allSortable = findall(dialog, "Tag", "macd-column-settings-all-sortable");
-            noSortable = findall(dialog, "Tag", "macd-column-settings-no-sortable");
-            auto = findall(dialog, "Tag", "macd-column-settings-all-auto");
-            fit = findall(dialog, "Tag", "macd-column-settings-all-fit");
-            oneX = findall(dialog, "Tag", "macd-column-settings-all-1x");
+            allEditable = findall(dialog, "Tag", "yamada-column-settings-all-editable");
+            noEditable = findall(dialog, "Tag", "yamada-column-settings-no-editable");
+            allSortable = findall(dialog, "Tag", "yamada-column-settings-all-sortable");
+            noSortable = findall(dialog, "Tag", "yamada-column-settings-no-sortable");
+            auto = findall(dialog, "Tag", "yamada-column-settings-all-auto");
+            fit = findall(dialog, "Tag", "yamada-column-settings-all-fit");
+            oneX = findall(dialog, "Tag", "yamada-column-settings-all-1x");
             testCase.verifyEqual([allEditable.Layout.Row, noEditable.Layout.Row], [3 4]);
             testCase.verifyEqual([allSortable.Layout.Row, noSortable.Layout.Row], [3 4]);
             testCase.verifyEqual([auto.Layout.Row, fit.Layout.Row, oneX.Layout.Row], [3 3 3]);

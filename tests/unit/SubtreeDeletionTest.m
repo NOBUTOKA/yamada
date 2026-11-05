@@ -25,35 +25,35 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
         function openedSourceAllowsInternalParentReferences(testCase)
             % openedSourceAllowsInternalParentReferences Remove all owned subtree spans together.
             [original, registry, panel] = SubtreeDeletionTest.fixture();
-            source = macd.source.NewAppGenerator(registry).generate(original);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(original);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             panel = document.getComponentByName(panel.Name);
             before = document.OriginalText;
             document.removeSubtree(panel.Id, registry);
-            [after, diagnostics] = macd.source.RoundTripGenerator(registry).generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            [after, diagnostics] = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyFalse(contains(after, "app." + panel.Name));
-            reopened = macd.source.AppSourceParser.parseText(after, registry);
+            reopened = yamada.source.AppSourceParser.parseText(after, registry);
             testCase.verifyEqual(numel(reopened.Components), 1);
             document.undo();
-            restored = macd.source.RoundTripGenerator(registry).generate(document);
+            restored = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyEqual(restored, before);
             document.redo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), after);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), after);
         end
 
         function externalReferencesRejectWithoutMutation(testCase)
             % externalReferencesRejectWithoutMutation Keep source preview, history and hierarchy intact.
             [original, registry, panel] = SubtreeDeletionTest.fixture();
-            source = macd.source.NewAppGenerator(registry).generate(original);
+            source = yamada.source.NewAppGenerator(registry).generate(original);
             source = replace(source, "delete(app.UIFigure);", "disp(app." + panel.Name + "); delete(app.UIFigure);");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             panel = document.getComponentByName(panel.Name);
             before = document.Components;
             history = document.HistoryIndex;
             text = document.GeneratedText;
             testCase.verifyError(@() document.removeSubtree(panel.Id, registry), ...
-                "macd:SubtreeSourceEdits:UnsafeDeletion");
+                "yamada:SubtreeSourceEdits:UnsafeDeletion");
             testCase.verifyEqual(document.Components, before);
             testCase.verifyEqual(document.HistoryIndex, history);
             testCase.verifyEqual(document.GeneratedText, text);
@@ -62,11 +62,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
         function commentsAndStringsAreNotExternalReferences(testCase)
             % commentsAndStringsAreNotExternalReferences Ignore textual mentions while preserving their bytes.
             [original, registry, panel] = SubtreeDeletionTest.fixture();
-            source = macd.source.NewAppGenerator(registry).generate(original);
+            source = yamada.source.NewAppGenerator(registry).generate(original);
             marker = "app." + panel.Name;
             source = replace(source, "delete(app.UIFigure);", ...
                 "disp(""" + marker + """); % " + marker + newline + "            delete(app.UIFigure);");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             panel = document.getComponentByName(panel.Name);
             document.removeSubtree(panel.Id, registry);
             testCase.verifySubstring(document.GeneratedText, "disp(""" + marker + """); % " + marker);
@@ -76,23 +76,23 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
             % frozenOwnershipSurvivesLaterModelChanges Preserve deletion proof from independent source values.
             [original, registry, panel] = SubtreeDeletionTest.fixture();
             name = panel.Name;
-            source = macd.source.NewAppGenerator(registry).generate(original);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(original);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             panel = document.getComponentByName(name);
-            subtree = macd.model.SubtreeSnapshot(document, panel.Id);
+            subtree = yamada.model.SubtreeSnapshot(document, panel.Id);
             records = document.Components(ismember(string({document.Components.Id}), string({subtree.Records.Id})));
-            ownership = macd.model.SourceOwnership.snapshot(records);
-            expected = macd.source.SubtreeSourceEdits.deletion(source, ownership);
+            ownership = yamada.model.SourceOwnership.snapshot(records);
+            expected = yamada.source.SubtreeSourceEdits.deletion(source, ownership);
             for record = records
                 record.Name = record.Name + "Changed";
-                record.SourceSpans = struct("Declaration", macd.model.SourceSpan.empty, "Creation", macd.model.SourceSpan.empty);
+                record.SourceSpans = struct("Declaration", yamada.model.SourceSpan.empty, "Creation", yamada.model.SourceSpan.empty);
             end
-            actual = macd.source.SubtreeSourceEdits.deletion(source, ownership);
+            actual = yamada.source.SubtreeSourceEdits.deletion(source, ownership);
             testCase.verifyEqual(actual, expected);
-            result = macd.source.SourcePatchBatch(source, actual).AfterText;
-            parsed = macd.source.AppSourceParser.parseText(result, registry);
+            result = yamada.source.SourcePatchBatch(source, actual).AfterText;
+            parsed = yamada.source.AppSourceParser.parseText(result, registry);
             testCase.verifyEmpty(parsed.getComponentByName(name));
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(parsed.Diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(parsed.Diagnostics));
         end
 
         function candidateDoesNotShareComponentOrPropertyHandles(testCase)
@@ -111,11 +111,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
             % rootAndReadOnlyDescendantsAreRejected Check the complete subtree before mutation.
             [document, registry, panel] = SubtreeDeletionTest.fixture();
             testCase.verifyError(@() document.removeSubtree(document.RootComponentId, registry), ...
-                "macd:DocumentModel:RootDeletion");
+                "yamada:DocumentModel:RootDeletion");
             document.getComponent(panel.Children(1)).IsEditable = false;
             history = document.HistoryIndex;
             testCase.verifyError(@() document.removeSubtree(panel.Id, registry), ...
-                "macd:DocumentModel:UnsafeSubtreeEdit");
+                "yamada:DocumentModel:UnsafeSubtreeEdit");
             testCase.verifyEqual(document.HistoryIndex, history);
         end
     end
@@ -124,12 +124,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
         function [document, registry, panel] = fixture()
             % fixture Build a complete nested panel subtree with one leaf.
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                panel (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                panel (1, 1) yamada.model.ComponentRecord
             end
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("SubtreeApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("SubtreeApp", registry);
             panel = document.insertComponent(registry, "uipanel", document.RootComponentId);
             nested = document.insertComponent(registry, "uipanel", panel.Id);
             document.insertComponent(registry, "uilabel", nested.Id);

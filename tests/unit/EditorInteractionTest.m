@@ -30,7 +30,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             toolbars = findall(0, "Type", "uitoolbar");
             testCase.verifyEqual(numel(toolbars), 1);
             testCase.verifyEqual(numel(toolbars.Children), 3);
-            refresh = findall(toolbars, "Tag", "macd-refresh-source");
+            refresh = findall(toolbars, "Tag", "yamada-refresh-source");
             testCase.verifyEqual(numel(refresh), 1);
             testCase.verifyEqual(string(refresh.Enable), "off");
             testCase.verifyTrue(all(arrayfun(@(tool) ...
@@ -82,20 +82,20 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
             figure.CurrentObject = node;
             figure.WindowKeyPressFcn(figure, struct("Key", "f2", "Modifier", {{}}));
-            field = findall(figure, "Tag", "macd-hierarchy-rename");
+            field = findall(figure, "Tag", "yamada-hierarchy-rename");
             testCase.assertEqual(numel(field), 1);
             testCase.verifyEqual(string(field.Value), component.Name);
             figure.WindowKeyPressFcn(figure, struct("Key", "delete", "Modifier", {{}}));
             testCase.verifyEqual(app.Document.getComponent(id), component);
             field.ValueChangingFcn(field, struct("Value", "RunButton"));
             figure.WindowKeyPressFcn(figure, struct("Key", "escape", "Modifier", {{}}));
-            testCase.verifyEmpty(findall(figure, "Tag", "macd-hierarchy-rename"));
+            testCase.verifyEmpty(findall(figure, "Tag", "yamada-hierarchy-rename"));
             testCase.verifyEqual(component.Name, "Button");
             testCase.verifyEqual(app.Document.HistoryIndex, before);
             information = struct("Node", node, "Location", [60 50]);
             tree.ClickedFcn(tree, struct("InteractionInformation", information));
             tree.ClickedFcn(tree, struct("InteractionInformation", information));
-            field = findall(figure, "Tag", "macd-hierarchy-rename");
+            field = findall(figure, "Tag", "yamada-hierarchy-rename");
             testCase.assertEqual(numel(field), 1);
             field.ValueChangingFcn(field, struct("Value", "RunButton"));
             figure.WindowKeyPressFcn(figure, struct("Key", "return", "Modifier", {{}}));
@@ -104,12 +104,12 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyTrue(isvalid(node));
             testCase.verifyEqual(tree.SelectedNodes, node);
             testCase.verifySubstring(string(node.Text), "RunButton");
-            menu = findall(figure, "Tag", "macd-edit-undo");
+            menu = findall(figure, "Tag", "yamada-edit-undo");
             menu.MenuSelectedFcn(menu, []);
             testCase.verifyEqual(component.Name, "Button");
             testCase.verifyTrue(isvalid(rootNode));
             testCase.verifyEqual(tree.SelectedNodes, node);
-            menu = findall(figure, "Tag", "macd-edit-redo");
+            menu = findall(figure, "Tag", "yamada-edit-redo");
             menu.MenuSelectedFcn(menu, []);
             testCase.verifyEqual(component.Name, "RunButton");
             testCase.verifyTrue(isvalid(node));
@@ -124,10 +124,10 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             [figure, ~] = editorPalette();
             tree = findall(figure, "Type", "uitree");
             node = tree.SelectedNodes;
-            testCase.verifyEmpty(findall(figure, "Tag", "macd-rename-component"));
+            testCase.verifyEmpty(findall(figure, "Tag", "yamada-rename-component"));
             figure.CurrentObject = node;
             figure.WindowKeyPressFcn(figure, struct("Key", "f2", "Modifier", {{}}));
-            field = findall(figure, "Tag", "macd-hierarchy-rename");
+            field = findall(figure, "Tag", "yamada-hierarchy-rename");
             field.Value = "bad name";
             field.ValueChangedFcn(field, struct("Value", "bad name"));
             testCase.verifyEqual(app.Document.getComponent(app.SelectedComponentId).Name, "UIFigure");
@@ -135,7 +135,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyNotEmpty(field.Tooltip);
             field.Value = "MainWindow";
             field.ValueChangedFcn(field, struct("Value", "MainWindow"));
-            testCase.verifyEmpty(findall(figure, "Tag", "macd-hierarchy-rename"));
+            testCase.verifyEmpty(findall(figure, "Tag", "yamada-hierarchy-rename"));
             testCase.verifyEqual(app.Document.getComponent(app.SelectedComponentId).Name, "MainWindow");
             testCase.verifyEqual(tree.SelectedNodes, node);
             clear cleanup
@@ -168,13 +168,13 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             historyIndex = app.Document.HistoryIndex;
 
             % A completed SVG click selects the existing leaf without creating history.
-            overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Type", "uihtml", "Tag", "yamada-interaction-overlay");
             for phase = ["pointerdown", "pointerup"]
                 overlay.HTMLEventReceivedFcn(overlay, struct( ...
                     "HTMLEventName", "Pointer", "HTMLEventData", struct( ...
                     "phase", phase, "x", 25, "y", 25, ...
                     "componentId", buttonId, "handle", "")));
-                overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+                overlay = findall(figure, "Type", "uihtml", "Tag", "yamada-interaction-overlay");
                 testCase.verifyEqual(tree.SelectedNodes, buttonNode);
             end
             testCase.verifyEqual(app.SelectedComponentId, buttonId);
@@ -216,7 +216,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyNotEmpty(app.Document.getComponent(selectedId));
 
             % Preview requests carry selection identity and revision, excluding stale input.
-            overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Type", "uihtml", "Tag", "yamada-interaction-overlay");
             revision = overlay.Data.gridEditor.revision;
             request = struct("componentId", selectedId, "revision", revision - 1);
             overlay.HTMLEventReceivedFcn(overlay, struct( ...
@@ -248,7 +248,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figures = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figures = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figures, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -271,7 +271,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -425,7 +425,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             tree.SelectionChangedFcn(tree, struct("SelectedNodes", buttonNode));
             testCase.verifyEqual(app.SelectedComponentId, buttonId);
 
-            deleteMenu = findall(figure, "Tag", "macd-edit-delete");
+            deleteMenu = findall(figure, "Tag", "yamada-edit-delete");
             deleteMenu.MenuSelectedFcn(deleteMenu, struct());
             drawnow;
 
@@ -447,7 +447,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -478,7 +478,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -537,7 +537,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -567,7 +567,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -576,7 +576,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             palette.DoubleClickedFcn(palette, ...
                 struct("InteractionInformation", struct("Row", gridRow)));
             % Occupy both destinations before rendering the moving child's overlay.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             occupied = app.Document.insertComponent(registry, "uilabel", app.SelectedComponentId);
             app.Document.setProperty(occupied.Id, "Layout.Row", [1 2]);
             app.Document.setProperty(occupied.Id, "Layout.Column", 2);
@@ -637,7 +637,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -682,7 +682,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -726,7 +726,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -768,11 +768,11 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
             fixture = string(fullfile(projectRoot, "tests", "fixtures", "SimpleCalculatorApp.m"));
-            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
             app = yamada(lifecycle);
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             menus = findall(figure, "Type", "uimenu");
             openMenu = menus(erase(string({menus.Text}), "&") == "Open...");
             testCase.verifyEqual(numel(openMenu), 1);
@@ -869,7 +869,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 1);
 
             % Reacquire the disposable overlay before resizing and checking stale events.
-            overlays = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            overlays = findall(figure, "Type", "uihtml", "Tag", "yamada-interaction-overlay");
             parentData = overlays.Data.gridPlacement;
             action = struct("action", "resize-span", "revision", parentData.revision, ...
                 "activeGridId", outerGridId, "childId", innerGridId, ...
@@ -878,7 +878,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "HTMLEventName", "GridAction", "HTMLEventData", action));
             testCase.verifyEqual(inner.getProperty("Layout.Row").LiteralValue, [1 2]);
             testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 2);
-            overlays = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            overlays = findall(figure, "Type", "uihtml", "Tag", "yamada-interaction-overlay");
             overlays.HTMLEventReceivedFcn(overlays, struct( ...
                 "HTMLEventName", "GridAction", "HTMLEventData", action));
             testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 2);
@@ -895,11 +895,11 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
             fixture = string(fullfile(projectRoot, "tests", "fixtures", "ControlGalleryApp.m"));
-            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
             app = yamada(lifecycle);
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             menus = findall(figure, "Type", "uimenu");
             openMenu = menus(erase(string({menus.Text}), "&") == "Open...");
             testCase.verifyEqual(numel(openMenu), 1);
@@ -919,7 +919,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(numel(previewPanel), 1);
             datePosition = double(getpixelposition(datePicker, true));
             canvas = findall(previewPanel, "Type", "uipanel", ...
-                "Tag", "macd-preview-canvas");
+                "Tag", "yamada-preview-canvas");
             testCase.verifyEqual(numel(canvas), 1);
             canvasPosition = double(getpixelposition(canvas, true));
             datePosition(1:2) = datePosition(1:2) - canvasPosition(1:2);
@@ -1047,13 +1047,13 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "app.Slider = uislider(app.UIFigure);", "app.Slider.Value = 20;", ...
                 "app.Slider.Limits = [50 100];", "end", "end", "end"], sprintf("\r\n"));
             fixture = string(tempname()) + ".m";
-            macd.source.SourceWriter.write(fixture, source);
+            yamada.source.SourceWriter.write(fixture, source);
             testCase.addTeardown(@() delete(fixture));
-            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
             app = yamada(lifecycle);
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             figure.Visible = "off";
             menus = findall(figure, "Type", "uimenu");
             openMenu = menus(erase(string({menus.Text}), "&") == "Open...");
@@ -1065,9 +1065,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             tree.SelectedNodes = node;
             tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
             drawnow;
-            labels = findall(figure, "Type", "uilabel", "Tag", "macd-inspector-property-label");
+            labels = findall(figure, "Type", "uilabel", "Tag", "yamada-inspector-property-label");
             label = labels(string({labels.Text}) == "Value");
-            editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+            editor = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
             testCase.assertEqual(numel(editor), 1);
             testCase.verifyEqual(editor.Value, 50);
             testCase.verifyEqual(component.getProperty("Value").LiteralValue, 20);
@@ -1085,9 +1085,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             menus = findall(figure, "Type", "uimenu");
             undo = menus(erase(string({menus.Text}), "&") == "Undo");
             undo.MenuSelectedFcn(undo, struct());
-            labels = findall(figure, "Type", "uilabel", "Tag", "macd-inspector-property-label");
+            labels = findall(figure, "Type", "uilabel", "Tag", "yamada-inspector-property-label");
             label = labels(string({labels.Text}) == "Value");
-            editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+            editor = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
             testCase.verifyEqual(editor.Value, 50);
             testCase.verifyFalse(document.IsDirty);
             clear cleanup
@@ -1099,14 +1099,14 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figures = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figures = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figures, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
             row = find(string(palette.Data(:, 1)) == "List Box", 1);
             palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
             drawnow;
-            checks = findall(0, "Type", "uicheckbox", "Tag", "macd-inspector-property-editor");
+            checks = findall(0, "Type", "uicheckbox", "Tag", "yamada-inspector-property-editor");
             testCase.verifyNotEmpty(checks);
             testCase.verifyTrue(any([checks.Value]));
             selected = app.Document.getComponent(app.SelectedComponentId);
@@ -1129,12 +1129,12 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "app.Field.Layout.Row = 1;", "app.Field.Layout.Column = 1;", ...
                 "end", "end", "end"], sprintf("\r\n"));
             fixture = string(tempname()) + ".m";
-            macd.source.SourceWriter.write(fixture, source);
+            yamada.source.SourceWriter.write(fixture, source);
             testCase.addTeardown(@() delete(fixture));
-            lifecycle = macd.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
+            lifecycle = yamada.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
             app = yamada(lifecycle);
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Tag", "macd-yamada-editor");
+            figure = findall(0, "Tag", "yamada-editor");
             menus = findall(figure, "Type", "uimenu");
             open = menus(erase(string({menus.Text}), "&") == "Open...");
             open.MenuSelectedFcn(open, struct());
@@ -1147,9 +1147,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
             drawnow;
             for value = [2 3]
-                labels = findall(figure, "Tag", "macd-inspector-property-label");
+                labels = findall(figure, "Tag", "yamada-inspector-property-label");
                 label = labels(string({labels.Text}) == "Value");
-                editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+                editor = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
                 testCase.assertEqual(numel(editor), 1);
                 editor.Value = value;
                 editor.ValueChangedFcn(editor, struct());
@@ -1157,15 +1157,15 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             end
 
             % The retained payload must equal an independent measurement of the current native controls.
-            canvas = findall(figure, "Tag", "macd-preview-canvas");
+            canvas = findall(figure, "Tag", "yamada-preview-canvas");
             controls = findall(canvas);
             nativeGrid = controls(arrayfun(@(item) isa(item, "matlab.ui.container.GridLayout"), controls));
             nativeField = controls(arrayfun(@(item) isa(item, "matlab.ui.control.NumericEditField"), controls));
             handles = containers.Map(cellstr([grid.Id, field.Id]), {nativeGrid, nativeField});
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             actual = overlay.Data.gridEditor;
-            expected = macd.ui.GridLayoutOverlayDataBuilder().build(app.Document, handles, canvas, ...
-                grid.Id, field.Id, actual.revision, macd.model.ComponentRegistry.createDefault());
+            expected = yamada.ui.GridLayoutOverlayDataBuilder().build(app.Document, handles, canvas, ...
+                grid.Id, field.Id, actual.revision, yamada.model.ComponentRegistry.createDefault());
             testCase.verifyTrue(actual.geometryAvailable);
             testCase.verifyEqual(actual, expected);
             testCase.verifyEqual(nativeField.Value, 3);
@@ -1183,13 +1183,13 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "app.StatusLabel = uilabel(app.UIFigure, Text=""Local validation label"");", ...
                 "end", "end", "end"], sprintf("\r\n"));
             fixture = string(tempname()) + ".m";
-            macd.source.SourceWriter.write(fixture, source);
+            yamada.source.SourceWriter.write(fixture, source);
             testCase.addTeardown(@() delete(fixture));
-            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
             app = yamada(lifecycle);
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             figure.Visible = "off";
             menus = findall(figure, "Type", "uimenu");
             open = menus(erase(string({menus.Text}), "&") == "Open...");
@@ -1203,9 +1203,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             % The first edit establishes source placement; the second retains real Preview behavior.
             for value = [23 31]
-                labels = findall(figure, "Tag", "macd-inspector-property-label");
+                labels = findall(figure, "Tag", "yamada-inspector-property-label");
                 label = labels(string({labels.Text}) == "FontSize");
-                editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+                editor = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
                 testCase.assertEqual(numel(editor), 1);
                 if isa(editor, "matlab.ui.control.EditField")
                     editor.Value = char(string(value));
@@ -1248,7 +1248,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
@@ -1257,10 +1257,10 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             drawnow;
 
             % Toggle the compact bold state button using the real batch callback binding.
-            labels = findall(figure, "Type", "uilabel", "Tag", "macd-inspector-property-label");
+            labels = findall(figure, "Type", "uilabel", "Tag", "yamada-inspector-property-label");
             label = labels(string({labels.Text}) == "Font Style");
             testCase.verifyEqual(numel(label), 1);
-            controls = findall(figure, "Tag", "macd-inspector-font-weight-button");
+            controls = findall(figure, "Tag", "yamada-inspector-font-weight-button");
             control = controls(arrayfun(@(candidate) isa(candidate, ...
                 "matlab.ui.control.StateButton") && isvalid(candidate), controls));
             testCase.verifyEqual(numel(control), 1);
@@ -1281,7 +1281,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -1292,9 +1292,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             drawnow;
 
             labels = findall(figure, "Type", "uilabel", ...
-                "Tag", "macd-inspector-property-label");
+                "Tag", "yamada-inspector-property-label");
             label = labels(string({labels.Text}) == "Value");
-            editor = findall(label.Parent, "Tag", "macd-inspector-item-selection-editor");
+            editor = findall(label.Parent, "Tag", "yamada-inspector-item-selection-editor");
             testCase.verifyClass(editor, "matlab.ui.control.DropDown");
             testCase.verifyEqual(string(editor.Enable), "on");
             testCase.verifyGreaterThanOrEqual(numel(editor.Items), 2);
@@ -1313,7 +1313,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -1323,22 +1323,22 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "InteractionInformation", struct("Row", row)));
             drawnow;
 
-            editItems = findall(figure, "Tag", "macd-inspector-items-editor");
+            editItems = findall(figure, "Tag", "yamada-inspector-items-editor");
             editItems.ButtonPushedFcn(editItems, struct());
-            dialog = findall(0, "Type", "figure", "Tag", "macd-items-editor-dialog");
-            table = findall(dialog, "Type", "uitable", "Tag", "macd-items-editor-table");
+            dialog = findall(0, "Type", "figure", "Tag", "yamada-items-editor-dialog");
+            table = findall(dialog, "Type", "uitable", "Tag", "yamada-items-editor-table");
             data = table.Data;
             data(:, 2) = string((10:10:(10 * size(data, 1)))');
             table.Data = data;
-            apply = findall(dialog, "Tag", "macd-items-editor-apply");
+            apply = findall(dialog, "Tag", "yamada-items-editor-apply");
             apply.ButtonPushedFcn(apply, struct());
             drawnow;
 
             component = app.Document.getComponent(app.SelectedComponentId);
             testCase.verifyEqual(component.getProperty("Value").LiteralValue, 10);
-            labels = findall(figure, "Type", "uilabel", "Tag", "macd-inspector-property-label");
+            labels = findall(figure, "Type", "uilabel", "Tag", "yamada-inspector-property-label");
             valueLabel = labels(string({labels.Text}) == "Value");
-            editor = findall(valueLabel.Parent, "Tag", "macd-inspector-item-selection-editor");
+            editor = findall(valueLabel.Parent, "Tag", "yamada-inspector-item-selection-editor");
             editor.Value = char(editor.Items{2});
             editor.ValueChangedFcn(editor, struct());
             drawnow;
@@ -1351,7 +1351,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % Insert a Text Area, then invoke its native multiline inspector callback.
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -1363,10 +1363,10 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             % Resolve the Value row without confusing it with the Tooltip text area.
             labels = findall(figure, "Type", "uilabel", ...
-                "Tag", "macd-inspector-property-label");
+                "Tag", "yamada-inspector-property-label");
             label = labels(string({labels.Text}) == "Value");
             editor = findall(label.Parent, "Type", "uitextarea", ...
-                "Tag", "macd-inspector-property-editor");
+                "Tag", "yamada-inspector-property-editor");
             lines = {'First'; 'Second'; 'Third'};
             editor.Value = lines;
             editor.ValueChangedFcn(editor, struct());
@@ -1376,10 +1376,10 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             entry = component.getProperty("Value");
             testCase.verifyEqual(entry.LiteralValue, {'First', 'Second', 'Third'});
             labels = findall(figure, "Type", "uilabel", ...
-                "Tag", "macd-inspector-property-label");
+                "Tag", "yamada-inspector-property-label");
             label = labels(string({labels.Text}) == "Value");
             editor = findall(label.Parent, "Type", "uitextarea", ...
-                "Tag", "macd-inspector-property-editor");
+                "Tag", "yamada-inspector-property-editor");
             testCase.verifyEqual(string(editor.Value), string(lines));
             clear cleanup
         end
@@ -1390,7 +1390,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             % Insert a Date Picker, then invoke the native date editor callback.
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -1401,9 +1401,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             drawnow;
 
             labels = findall(figure, "Type", "uilabel", ...
-                "Tag", "macd-inspector-property-label");
+                "Tag", "yamada-inspector-property-label");
             label = labels(string({labels.Text}) == "Value");
-            editor = findall(label.Parent, "Tag", "macd-inspector-date-picker-editor");
+            editor = findall(label.Parent, "Tag", "yamada-inspector-date-picker-editor");
             selected = datetime(2024, 2, 29);
             editor.Value = selected;
             editor.ValueChangedFcn(editor, struct());
@@ -1421,7 +1421,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -1431,7 +1431,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 "InteractionInformation", struct("Row", row)));
             drawnow;
 
-            limitsEditor = findall(figure, "Tag", "macd-inspector-date-limits-editor");
+            limitsEditor = findall(figure, "Tag", "yamada-inspector-date-limits-editor");
             editorPosition = getpixelposition(limitsEditor, true);
             testCase.verifyGreaterThanOrEqual(editorPosition(4), 56);
             parts = limitsEditor.UserData;
@@ -1454,7 +1454,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -1465,14 +1465,14 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             drawnow;
 
             limits = [datetime(2024, 1, 1) datetime(2024, 12, 31)];
-            limitsEditor = findall(figure, "Tag", "macd-inspector-date-limits-editor");
+            limitsEditor = findall(figure, "Tag", "yamada-inspector-date-limits-editor");
             parts = limitsEditor.UserData;
             parts.Start.Value = limits(1);
             parts.End.Value = limits(2);
             parts.End.ValueChangedFcn(parts.End, struct());
             drawnow;
 
-            editor = findall(figure, "Tag", "macd-inspector-date-picker-editor");
+            editor = findall(figure, "Tag", "yamada-inspector-date-picker-editor");
             testCase.verifyEqual(editor.Limits, limits);
             clear cleanup
         end
@@ -1482,7 +1482,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -1493,7 +1493,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             drawnow;
 
             labels = findall(figure, "Type", "uilabel", ...
-                "Tag", "macd-inspector-property-label");
+                "Tag", "yamada-inspector-property-label");
             actual = string({labels.Text});
             expected = ["Value", "Placeholder", "Limits", "DisplayFormat", ...
                 "DisabledDates", "DisabledDaysOfWeek", "FontName", "FontSize", ...
@@ -1502,37 +1502,37 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyTrue(all(ismember(expected, actual)));
 
             % Unaudited defaults still initialize editable date and weekday dialogs.
-            dates = findall(figure, "Tag", "macd-inspector-date-list-editor");
-            days = findall(figure, "Tag", "macd-inspector-day-of-week-editor");
+            dates = findall(figure, "Tag", "yamada-inspector-date-list-editor");
+            days = findall(figure, "Tag", "yamada-inspector-day-of-week-editor");
             testCase.verifyEqual(string(dates.Enable), "on");
             testCase.verifyClass(dates.UserData, "datetime");
             testCase.verifyEqual(string(days.Enable), "on");
             days.ButtonPushedFcn(days, struct());
-            dialog = findall(0, "Tag", "macd-inspector-day-of-week-dialog");
+            dialog = findall(0, "Tag", "yamada-inspector-day-of-week-dialog");
             testCase.addTeardown(@() deleteIfValid(dialog));
-            buttons = findall(dialog, "Tag", "macd-inspector-day-of-week-button");
+            buttons = findall(dialog, "Tag", "yamada-inspector-day-of-week-button");
             sunday = buttons(string({buttons.Text}) == "Sun");
             sunday.Value = true;
-            apply = findall(dialog, "Tag", "macd-inspector-day-of-week-apply");
+            apply = findall(dialog, "Tag", "yamada-inspector-day-of-week-apply");
             apply.ButtonPushedFcn(apply, struct());
             component = app.Document.getComponent(app.SelectedComponentId);
             testCase.verifyEqual(component.getProperty("DisabledDaysOfWeek").LiteralValue, 1);
 
             % Commit a date through the same live Inspector and related calendar state.
-            dates = findall(figure, "Tag", "macd-inspector-date-list-editor");
+            dates = findall(figure, "Tag", "yamada-inspector-date-list-editor");
             dates.ButtonPushedFcn(dates, struct());
-            dialog = findall(0, "Tag", "macd-inspector-date-list-dialog");
+            dialog = findall(0, "Tag", "yamada-inspector-date-list-dialog");
             testCase.addTeardown(@() deleteIfValid(dialog));
-            add = findall(dialog, "Tag", "macd-inspector-date-list-add");
+            add = findall(dialog, "Tag", "yamada-inspector-date-list-add");
             add.ButtonPushedFcn(add, struct());
-            picker = findall(dialog, "Tag", "macd-inspector-date-list-row-picker");
+            picker = findall(dialog, "Tag", "yamada-inspector-date-list-row-picker");
             selected = datetime(2026, 10, 17);
             picker.Value = selected;
             picker.ValueChangedFcn(picker, struct());
-            apply = findall(dialog, "Tag", "macd-inspector-date-list-apply");
+            apply = findall(dialog, "Tag", "yamada-inspector-date-list-apply");
             apply.ButtonPushedFcn(apply, struct());
             testCase.verifyEqual(component.getProperty("DisabledDates").LiteralValue, selected);
-            editor = findall(figure, "Tag", "macd-inspector-date-picker-editor");
+            editor = findall(figure, "Tag", "yamada-inspector-date-picker-editor");
             testCase.verifyEqual(editor.DisabledDates, selected);
             testCase.verifyEqual(editor.DisabledDaysOfWeek, 1);
             clear cleanup
@@ -1543,7 +1543,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
@@ -1554,42 +1554,42 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             drawnow;
 
             labels = findall(figure, "Type", "uilabel", ...
-                "Tag", "macd-inspector-property-label");
+                "Tag", "yamada-inspector-property-label");
             dataLabel = labels(string({labels.Text}) == "Data & Names");
-            editor = findall(dataLabel.Parent, "Tag", "macd-inspector-table-data-editor");
+            editor = findall(dataLabel.Parent, "Tag", "yamada-inspector-table-data-editor");
             editor.ButtonPushedFcn(editor, struct());
-            dialog = findall(0, "Tag", "macd-inspector-table-data-dialog");
-            addColumn = findall(dialog, "Tag", "macd-table-data-add-column");
+            dialog = findall(0, "Tag", "yamada-inspector-table-data-dialog");
+            addColumn = findall(dialog, "Tag", "yamada-table-data-add-column");
             addColumn.ButtonPushedFcn(addColumn, struct());
-            addRow = findall(dialog, "Tag", "macd-table-data-add-row");
+            addRow = findall(dialog, "Tag", "yamada-table-data-add-row");
             addRow.ButtonPushedFcn(addRow, struct());
-            table = findall(dialog, "Tag", "macd-table-data-editor-table");
+            table = findall(dialog, "Tag", "yamada-table-data-editor-table");
             bodyRows = size(table.Data, 1) - 1;
             bodyColumns = size(table.Data, 2) - 1;
             expected = reshape(1:bodyRows * bodyColumns, bodyRows, bodyColumns);
-            dataType = findall(dialog, "Tag", "macd-table-data-type");
+            dataType = findall(dialog, "Tag", "yamada-table-data-type");
             dataType.Value = "numeric";
             dataType.ValueChangedFcn(dataType, struct());
             table.Data(2:end, 2:end) = string(expected);
-            applyButton = findall(dialog, "Tag", "macd-table-data-apply");
+            applyButton = findall(dialog, "Tag", "yamada-table-data-apply");
             applyButton.ButtonPushedFcn(applyButton, struct());
             drawnow;
 
             component = app.Document.getComponent(app.SelectedComponentId);
             entry = component.getProperty("Data");
             testCase.verifyEqual(entry.LiteralValue, expected);
-            columnEditors = findall(figure, "Tag", "macd-inspector-column-settings-editor");
+            columnEditors = findall(figure, "Tag", "yamada-inspector-column-settings-editor");
             columnEditor = columnEditors(arrayfun(@(candidate) isa(candidate, ...
                 "matlab.ui.control.Button") && isvalid(candidate), columnEditors));
             testCase.verifyEqual(numel(columnEditor), 1);
             columnEditor.ButtonPushedFcn(columnEditor, struct());
-            columnDialog = findall(0, "Tag", "macd-column-settings-dialog");
-            columnTable = findall(columnDialog, "Tag", "macd-column-settings-table");
+            columnDialog = findall(0, "Tag", "yamada-column-settings-dialog");
+            columnTable = findall(columnDialog, "Tag", "yamada-column-settings-table");
             columnTable.Data{1, 2} = true;
             columnTable.Data{1, 3} = true;
             columnTable.Data{1, 4} = 'fit';
             columnTable.Data{1, 5} = '''bank''';
-            columnApply = findall(columnDialog, "Tag", "macd-column-settings-apply");
+            columnApply = findall(columnDialog, "Tag", "yamada-column-settings-apply");
             columnApply.ButtonPushedFcn(columnApply, struct());
             drawnow;
             component = app.Document.getComponent(app.SelectedComponentId);
@@ -1658,7 +1658,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;
-            figures = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figures = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figures, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == ...
                 "Component") && any(string(table.ColumnName) == "Category"), tables));
@@ -1740,11 +1740,11 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             projectRoot = fileparts(fileparts(fileparts(testPath)));
             fixture = string(fullfile(projectRoot, "tests", "fixtures", ...
                 "LargePreviewFixtureApp.m"));
-            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
             app = yamada(lifecycle);
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             menus = findall(figure, "Type", "uimenu");
             openMenu = menus(erase(string({menus.Text}), "&") == "Open...");
             openMenu.MenuSelectedFcn(openMenu, struct());
@@ -1754,9 +1754,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             previewPanel = findall(figure, "Type", "uipanel", ...
                 "Title", "Safe preview: UIFigure");
             scrollPanel = findall(previewPanel, "Type", "uipanel", ...
-                "Tag", "macd-preview-scroll-host");
+                "Tag", "yamada-preview-scroll-host");
             canvas = findall(previewPanel, "Type", "uipanel", ...
-                "Tag", "macd-preview-canvas");
+                "Tag", "yamada-preview-canvas");
             testCase.assertEqual(numel(canvas), 1);
             testCase.assertEqual(numel(scrollPanel), 1);
             testCase.verifyEqual(canvas.Position, [2 2 1200 900]);
@@ -1769,9 +1769,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyGreaterThan(content.Position(4), ...
                 scrollPanel.InnerPosition(4));
             verticalDivider = findall(previewPanel, "Type", "uipanel", ...
-                "Tag", "macd-preview-vertical-scroll-divider");
+                "Tag", "yamada-preview-vertical-scroll-divider");
             horizontalDivider = findall(previewPanel, "Type", "uipanel", ...
-                "Tag", "macd-preview-horizontal-scroll-divider");
+                "Tag", "yamada-preview-horizontal-scroll-divider");
             testCase.verifyEqual(string(verticalDivider.Visible), "on");
             testCase.verifyEqual(string(horizontalDivider.Visible), "on");
             testCase.verifyEqual(verticalDivider.Position(1), ...
@@ -1783,7 +1783,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             scroll(scrollPanel, "bottom");
             drawnow;
             overlay = findall(canvas.Parent.Parent, "Type", "uihtml", ...
-                "Tag", "macd-interaction-overlay");
+                "Tag", "yamada-interaction-overlay");
             components = overlay.Data.components;
             buttonId = app.Document.getComponentByName("BottomRightButton").Id;
             target = components(string({components.id}) == buttonId);
@@ -1811,23 +1811,23 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                     "componentId", rootId, "handle", handle)));
                 if phase == "pointermove"
                     guide = findall(content, "Type", "uihtml", ...
-                        "Tag", "macd-root-resize-guide");
+                        "Tag", "yamada-root-resize-guide");
                     testCase.assertEqual(numel(guide), 1);
                     testCase.verifyEqual(string(guide.Visible), "on");
                     testCase.verifyEqual(guide.Position(3:4), [1240 930]);
                 end
             end
             testCase.verifyEmpty(findall(content, "Type", "uihtml", ...
-                "Tag", "macd-root-resize-guide"));
+                "Tag", "yamada-root-resize-guide"));
             root = app.Document.getComponent(rootId);
             testCase.verifyEqual(root.getProperty("Position").LiteralValue, ...
                 [100 100 1240 930]);
-            [source, diagnostics] = macd.source.RoundTripGenerator().generate(app.Document);
+            [source, diagnostics] = yamada.source.RoundTripGenerator().generate(app.Document);
             testCase.verifyEmpty(diagnostics);
             testCase.verifyTrue(contains(source, ...
                 "app.UIFigure.Position = [100 100 1240 930];"));
-            reopened = macd.source.AppSourceParser.parseText(source, ...
-                macd.model.ComponentRegistry.createDefault(), fixture);
+            reopened = yamada.source.AppSourceParser.parseText(source, ...
+                yamada.model.ComponentRegistry.createDefault(), fixture);
             reopenedRoot = reopened.getComponent(reopened.RootComponentId);
             testCase.verifyEqual(reopenedRoot.getProperty("Position").LiteralValue, ...
                 [100 100 1240 930]);
@@ -1841,9 +1841,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(root.getProperty("Position").LiteralValue, ...
                 [100 100 1240 930]);
             canvas = findall(figure, "Type", "uipanel", ...
-                "Tag", "macd-preview-canvas");
+                "Tag", "yamada-preview-canvas");
             overlay = findall(canvas.Parent.Parent, "Type", "uihtml", ...
-                "Tag", "macd-interaction-overlay");
+                "Tag", "yamada-interaction-overlay");
             for phase = ["pointerdown", "pointermove", "pointerup"]
                 point = [7 7];
                 handle = "root-sw";
@@ -1858,7 +1858,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                     "componentId", rootId, "handle", handle)));
                 if phase == "pointermove"
                     guide = findall(canvas.Parent.Parent, "Type", "uihtml", ...
-                        "Tag", "macd-root-resize-guide");
+                        "Tag", "yamada-root-resize-guide");
                     testCase.assertEqual(numel(guide), 1);
                     testCase.verifyEqual(guide.Position(3:4), [1260 945]);
                 end
@@ -1869,7 +1869,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(root.getProperty("Position").LiteralValue, ...
                 [100 100 1240 930]);
             canvas = findall(figure, "Type", "uipanel", ...
-                "Tag", "macd-preview-canvas");
+                "Tag", "yamada-preview-canvas");
             figure.Position(3:4) = [1100 700];
             drawnow;
             testCase.verifyEqual(canvas.Position(3:4), [1240 930]);
@@ -1880,23 +1880,23 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             projectRoot = fileparts(which("yamada"));
             fixture = string(fullfile(projectRoot, "tests", "fixtures", ...
                 "LargePreviewFixtureApp.m"));
-            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
             app = yamada(lifecycle);
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             menus = findall(figure, "Type", "uimenu");
             openMenu = menus(erase(string({menus.Text}), "&") == "Open...");
             openMenu.MenuSelectedFcn(openMenu, struct());
             drawnow;
 
             % Shrink the actual figure without moving its existing components.
-            overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Type", "uihtml", "Tag", "yamada-interaction-overlay");
             sendOverlayGesture(overlay, app.Document.RootComponentId, ...
                 "root-ne", [1190 890], [310 230]);
-            canvas = findall(figure, "Type", "uipanel", "Tag", "macd-preview-canvas");
-            scrollPanel = findall(figure, "Type", "uipanel", "Tag", "macd-preview-scroll-host");
-            overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            canvas = findall(figure, "Type", "uipanel", "Tag", "yamada-preview-canvas");
+            scrollPanel = findall(figure, "Type", "uipanel", "Tag", "yamada-preview-scroll-host");
+            overlay = findall(figure, "Type", "uihtml", "Tag", "yamada-interaction-overlay");
             testCase.verifyEqual(canvas.Position(3:4), [320 240]);
             testCase.verifyEqual([overlay.Data.width overlay.Data.height], [320 240]);
             testCase.verifyGreaterThan(overlay.Data.surfaceBounds(3:4), [1186 886]);
@@ -1909,7 +1909,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             names = ["BottomRightButton", "CenterPanel", "TopLeftLabel"];
             destinations = [50 60; 0 50; 12 212];
             for index = 1:numel(names)
-                overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+                overlay = findall(figure, "Type", "uihtml", "Tag", "yamada-interaction-overlay");
                 component = app.Document.getComponentByName(names(index));
                 target = overlay.Data.components(string({overlay.Data.components.id}) == component.Id);
                 testCase.assertEqual(numel(target), 1);
@@ -1921,7 +1921,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 testCase.verifyEqual(component.getProperty("Position").LiteralValue(1:2), ...
                     destinations(index, :));
             end
-            canvas = findall(figure, "Type", "uipanel", "Tag", "macd-preview-canvas");
+            canvas = findall(figure, "Type", "uipanel", "Tag", "yamada-preview-canvas");
             content = canvas.Parent.Parent;
             testCase.verifyEqual(canvas.Position(3:4), [320 240]);
             testCase.verifyEqual(content.Position(3:4), scrollPanel.InnerPosition(3:4));
@@ -1930,10 +1930,10 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             undoMenu = menus(erase(string({menus.Text}), "&") == "Undo");
             redoMenu = menus(erase(string({menus.Text}), "&") == "Redo");
             undoMenu.MenuSelectedFcn(undoMenu, struct());
-            overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Type", "uihtml", "Tag", "yamada-interaction-overlay");
             testCase.verifyGreaterThan(overlay.Data.surfaceBounds(4), 886);
             redoMenu.MenuSelectedFcn(redoMenu, struct());
-            overlay = findall(figure, "Type", "uihtml", "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Type", "uihtml", "Tag", "yamada-interaction-overlay");
             testCase.verifyLessThanOrEqual(overlay.Data.surfaceBounds(4), 246);
             clear cleanup
         end
@@ -1943,7 +1943,7 @@ end
 function [figure, palette] = editorPalette()
 % editorPalette Find the live editor figure and its component palette table.
 
-figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
 tables = findall(figure, "Type", "uitable");
 palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
     any(string(table.ColumnName) == "Category"), tables));

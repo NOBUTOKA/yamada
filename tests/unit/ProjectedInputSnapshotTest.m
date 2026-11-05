@@ -3,10 +3,10 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
     methods (Test)
         function distinctChangesAndHistoryMatchFullCapture(testCase)
             % distinctChangesAndHistoryMatchFullCapture Preserve all values and source ranges across replacements and insertions.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
             source = string(fileread(fullfile(root, "tests", "fixtures", "SmallPreviewFixtureApp.m")));
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             operations = {"TopLeftLabel", "Text", "A much longer label"; ...
                 "BottomRightButton", "Tooltip", "New tooltip"; ...
                 "CenterLabel", "FontSize", 19; "TopLeftLabel", "FontColor", [0.1 0.2 0.3]};
@@ -17,10 +17,10 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
                 before = previous.inputs();
                 document.setProperty(owner.Id, operations{index, 2}, operations{index, 3}, registry);
                 current = document.evaluationContext(registry);
-                request = macd.ui.RefreshRequest("properties", owner.Id, operations{index, 2});
+                request = yamada.ui.RefreshRequest("properties", owner.Id, operations{index, 2});
                 testCase.verifyTrue(current.isLiteralTransition(token, request));
                 projected = current.inputs();
-                fresh = macd.model.EvaluationContext(document, registry).inputs();
+                fresh = yamada.model.EvaluationContext(document, registry).inputs();
                 testCase.verifyEqual(projected, fresh);
                 testCase.verifyNotEqual(before.OriginalText, projected.OriginalText);
                 projected.Components(1).Name = "Caller mutation";
@@ -29,12 +29,12 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
             for index = 1:4
                 document.undo();
                 testCase.verifyEqual(document.evaluationContext(registry).inputs(), ...
-                    macd.model.EvaluationContext(document, registry).inputs());
+                    yamada.model.EvaluationContext(document, registry).inputs());
             end
             for index = 1:4
                 document.redo();
                 testCase.verifyEqual(document.evaluationContext(registry).inputs(), ...
-                    macd.model.EvaluationContext(document, registry).inputs());
+                    yamada.model.EvaluationContext(document, registry).inputs());
             end
         end
 
@@ -42,8 +42,8 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
             % equalValuesOfDifferentClassesStillReplaceTheLiteral Preserve empty text and nested numeric storage types.
             cases = {[], ''; 1, single(1); {1}, {single(1)}; struct("Value", 1), struct("Value", single(1))};
             for index = 1:size(cases, 1)
-                entry = macd.model.PropertyEntry("Value", cases{index, 1}, "parsed");
-                setting = macd.model.PropertySetting("Value", cases{index, 2}, ...
+                entry = yamada.model.PropertyEntry("Value", cases{index, 1}, "parsed");
+                setting = yamada.model.PropertySetting("Value", cases{index, 2}, ...
                     struct("Id", 1, "Method", "assignment", "IsEditable", true));
                 entry.applySourceSetting(setting);
                 testCase.verifyEqual(entry.LiteralValue, cases{index, 2});
@@ -56,9 +56,9 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
 
         function identicalSourceSettingsDoNotInvalidateInputs(testCase)
             % identicalSourceSettingsDoNotInvalidateInputs Retain the input revision when a current binding is reapplied.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
-            document = macd.source.AppSourceParser.parseText(string(fileread(fullfile(root, ...
+            document = yamada.source.AppSourceParser.parseText(string(fileread(fullfile(root, ...
                 "tests", "fixtures", "SmallPreviewFixtureApp.m"))), registry);
             owner = document.getComponentByName("TopLeftLabel");
             entry = owner.getProperty("Text");
@@ -72,39 +72,39 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
 
         function foreignDocumentTokensNeverCertifyTransitions(testCase)
             % foreignDocumentTokensNeverCertifyTransitions Require exact clock ownership even for identical revision numbers.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
             source = string(fileread(fullfile(root, "tests", "fixtures", "SmallPreviewFixtureApp.m")));
-            first = macd.source.AppSourceParser.parseText(source, registry);
-            second = macd.source.AppSourceParser.parseText(source, registry);
+            first = yamada.source.AppSourceParser.parseText(source, registry);
+            second = yamada.source.AppSourceParser.parseText(source, registry);
             foreign = first.evaluationContext(registry).revisionToken();
             own = second.evaluationContext(registry).revisionToken();
             testCase.verifyEqual(foreign.Revision, own.Revision);
             owner = second.getComponentByName("TopLeftLabel");
             second.setProperty(owner.Id, "Text", "Changed", registry);
             context = second.evaluationContext(registry);
-            request = macd.ui.RefreshRequest("properties", owner.Id, "Text");
+            request = yamada.ui.RefreshRequest("properties", owner.Id, "Text");
             testCase.verifyTrue(context.isLiteralTransition(own, request));
             testCase.verifyFalse(context.isLiteralTransition(foreign, request));
         end
 
         function directChangesRejectThePreviousTransitionToken(testCase)
             % directChangesRejectThePreviousTransitionToken Keep management-free input mutations on exact comparison.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
-            document = macd.source.AppSourceParser.parseText(string(fileread(fullfile(root, ...
+            document = yamada.source.AppSourceParser.parseText(string(fileread(fullfile(root, ...
                 "tests", "fixtures", "SmallPreviewFixtureApp.m"))), registry);
             owner = document.getComponentByName("TopLeftLabel");
             context = document.evaluationContext(registry);
             token = context.revisionToken();
             document.setProperty(owner.Id, "Text", "Changed", registry);
-            request = macd.ui.RefreshRequest("properties", owner.Id, "Text");
+            request = yamada.ui.RefreshRequest("properties", owner.Id, "Text");
             current = document.evaluationContext(registry);
             testCase.verifyTrue(current.isLiteralTransition(token, request));
             owner.Metadata.DirectMutation = true;
             testCase.verifyFalse(current.isLiteralTransition(token, request));
             testCase.verifyEqual(document.evaluationContext(registry).inputs(), ...
-                macd.model.EvaluationContext(document, registry).inputs());
+                yamada.model.EvaluationContext(document, registry).inputs());
         end
     end
 end

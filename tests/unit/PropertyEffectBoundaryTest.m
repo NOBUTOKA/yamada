@@ -5,9 +5,9 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
     methods (Test)
         function missingPolicyAllowsStoredLiteralWithoutClaimingIndependence(testCase)
             % missingPolicyAllowsStoredLiteralWithoutClaimingIndependence Retain legacy editability while keeping its audit status unknown.
-            component = macd.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label", "parsed");
+            component = yamada.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label", "parsed");
             component.setProperty("Text", "literal");
-            state = macd.model.PropertyStateResolver.resolve(component, macd.model.PropertyDefinition("Text"));
+            state = yamada.model.PropertyStateResolver.resolve(component, yamada.model.PropertyDefinition("Text"));
             testCase.verifyTrue(state.IsKnown);
             testCase.verifyTrue(state.IsEditable);
             testCase.verifyEqual(state.EffectStatus, "unknown");
@@ -17,14 +17,14 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function unknownLiteralPreservesOtherStatesAndCatalogRestrictions(testCase)
             % unknownLiteralPreservesOtherStatesAndCatalogRestrictions Keep review status separate from product intent.
-            component = macd.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label");
+            component = yamada.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label");
             component.setProperty("Unreviewed", 2);
-            definitions = [macd.model.PropertyDefinition("Unreviewed"), ...
-                macd.model.PropertyDefinition("Text", "kept", true, true, ...
+            definitions = [yamada.model.PropertyDefinition("Unreviewed"), ...
+                yamada.model.PropertyDefinition("Text", "kept", true, true, ...
                 struct("application", struct("effectStatus", "independent"))), ...
-                macd.model.PropertyDefinition("ReadOnly", 1, true, false), ...
-                macd.model.PropertyDefinition("Omitted", 1, true, true, struct("auditDisposition", "omitted"))];
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                yamada.model.PropertyDefinition("ReadOnly", 1, true, false), ...
+                yamada.model.PropertyDefinition("Omitted", 1, true, true, struct("auditDisposition", "omitted"))];
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyTrue(states(1).IsEditable);
             testCase.verifyEqual(states(1).EffectiveValue, 2);
             testCase.verifyEqual(states(2).EffectiveValue, "kept");
@@ -34,18 +34,18 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function unreviewedDateOptionsSupportEditCopyAndHistory(testCase)
             % unreviewedDateOptionsSupportEditCopyAndHistory Exercise both date options through document preflight.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = PropertyEffectBoundaryTest.fixture(["app.Date = uidatepicker(app.UIFigure);"; ...
                 "app.Date.Position = [10 20 150 22];"]);
             source = replace(source, "Label matlab.ui.control.Label", ...
                 "Label matlab.ui.control.Label" + newline + "Date matlab.ui.control.DatePicker");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             picker = document.getComponentByName("Date");
             dates = datetime(2026, 10, [17; 18]);
             document.setProperty(picker.Id, "DisabledDates", dates, registry);
             document.setProperty(picker.Id, "DisabledDaysOfWeek", [1 7], registry);
-            emitted = macd.source.RoundTripGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(emitted, registry);
+            emitted = yamada.source.RoundTripGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(emitted, registry);
             target = parsed.getComponentByName("Date");
             testCase.verifyEqual(target.getProperty("DisabledDates").LiteralValue, dates);
             testCase.verifyEqual(target.getProperty("DisabledDaysOfWeek").LiteralValue, [1 7]);
@@ -55,24 +55,24 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
             testCase.verifyEmpty(document.getComponent(picker.Id).getProperty("DisabledDaysOfWeek"));
             document.redo();
             testCase.verifyEqual(document.getComponent(picker.Id).getProperty("DisabledDaysOfWeek").LiteralValue, [1 7]);
-            checkpoint = macd.model.SavedSourceCheckpoint(document, emitted, fullfile(tempdir, "EffectApp.m"), registry);
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, emitted, fullfile(tempdir, "EffectApp.m"), registry);
             testCase.verifyEqual(checkpoint.SourceText, emitted);
             document.setProperty(picker.Id, "DisabledDaysOfWeek", [2 6], registry);
-            updated = macd.source.RoundTripGenerator(registry).generate(document);
+            updated = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifySubstring(updated, "app.Date.DisabledDaysOfWeek = [2 6];");
         end
 
         function unsupportedSetterInvalidatesOnlyDeclaredAffectedPaths(testCase)
             % unsupportedSetterInvalidatesOnlyDeclaredAffectedPaths Preserve independent unaffected stored inputs.
-            component = macd.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label", "parsed");
+            component = yamada.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label", "parsed");
             component.setProperty("Text", "retained");
             component.setProperty("Geometry", [1 2]);
-            definitions = [macd.model.PropertyDefinition("Text", [], false, true, ...
+            definitions = [yamada.model.PropertyDefinition("Text", [], false, true, ...
                 struct("application", struct("effectStatus", "independent"))), ...
-                macd.model.PropertyDefinition("Geometry", [], false, true, ...
+                yamada.model.PropertyDefinition("Geometry", [], false, true, ...
                 struct("application", struct("effectStatus", "unsupported", ...
                 "affectedPaths", {{"Geometry"}}, "effectReason", "Native layout is not modeled.")))];
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyTrue(states(1).IsKnown);
             testCase.verifyEqual(states(1).EffectiveValue, "retained");
             testCase.verifyFalse(states(2).IsKnown);
@@ -81,16 +81,16 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function laterCoupledSetterCannotEraseUnreviewedUpstream(testCase)
             % laterCoupledSetterCannotEraseUnreviewedUpstream Keep modeled values unknown despite later literals.
-            component = macd.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label");
+            component = yamada.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label");
             component.setProperty("UnknownMode", 1);
             component.setProperty("Value", 7);
             component.setProperty("Text", "restored");
-            definitions = [macd.model.PropertyDefinition("UnknownMode", [], false, true, ...
+            definitions = [yamada.model.PropertyDefinition("UnknownMode", [], false, true, ...
                 struct("application", struct("effectStatus", "unsupported", "affectedPaths", {{"Value", "Text"}}, ...
                 "effectReason", "An upstream mode is not modeled."))), ...
-                macd.model.PropertyDefinition("Value", [], false, true, struct("application", struct("effectStatus", "modeled"))), ...
-                macd.model.PropertyDefinition("Text", [], false, true, struct("application", struct("effectStatus", "independent")))];
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                yamada.model.PropertyDefinition("Value", [], false, true, struct("application", struct("effectStatus", "modeled"))), ...
+                yamada.model.PropertyDefinition("Text", [], false, true, struct("application", struct("effectStatus", "independent")))];
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyFalse(states(2).IsKnown);
             testCase.verifyFalse(states(2).IsEditable);
             testCase.verifyEqual(states(2).ReadOnlyReason, "An upstream mode is not modeled.");
@@ -100,25 +100,25 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function unresolvedInitializerPreservesSourceAndPermitsOwnedEdits(testCase)
             % unresolvedInitializerPreservesSourceAndPermitsOwnedEdits Leave unknown-call effects to the source author.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = PropertyEffectBoundaryTest.fixture("externalSetup(app);");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName("Label");
             states = document.getEffectivePropertyStates(registry, label.Id);
             text = states(arrayfun(@(item) item.Definition.Path == "Text", states)).Resolution;
             testCase.verifyTrue(text.IsKnown);
             testCase.verifyTrue(text.IsEditable);
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             document.setProperty(label.Id, "Text", "changed", registry);
             testCase.verifyTrue(document.IsDirty);
             testCase.verifyEqual(label.getProperty("Text").LiteralValue, "changed");
-            testCase.verifySubstring(macd.source.RoundTripGenerator(registry).generate(document), "externalSetup(app);");
+            testCase.verifySubstring(yamada.source.RoundTripGenerator(registry).generate(document), "externalSetup(app);");
         end
 
         function componentHandleCallIsPreservedWithoutBlockingEdits(testCase)
             % componentHandleCallIsPreservedWithoutBlockingEdits Do not execute or infer effects of external consumers.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(PropertyEffectBoundaryTest.fixture("externalSetup(app.Label);"), registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(PropertyEffectBoundaryTest.fixture("externalSetup(app.Label);"), registry);
             label = document.getComponentByName("Label");
             document.setProperty(label.Id, "Text", "changed", registry);
             testCase.verifyTrue(document.IsDirty);
@@ -126,71 +126,71 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function constructionCallbackKeepsEarlierComponentsUnknown(testCase)
             % constructionCallbackKeepsEarlierComponentsUnknown Preserve source and refuse unproven callback effects.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = PropertyEffectBoundaryTest.fixture("");
             source = replace(source, "uilabel(app.UIFigure)", "uilabel(app.UIFigure, CreateFcn=@(~,~) externalSetup(app))");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName("Label");
             testCase.verifyTrue(document.Metadata.HasUnresolvedLifecycleEffects);
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             testCase.verifyError(@() document.setProperty(label.Id, "Text", "changed", registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
         end
 
         function unrecognizedSetterCannotDisappearFromProof(testCase)
             % unrecognizedSetterCannotDisappearFromProof Refuse edits when an uncataloged setter is present.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = PropertyEffectBoundaryTest.fixture("app.Label.FutureProperty = 1;");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName("Label");
             testCase.verifyTrue(document.Metadata.HasUnrecognizedSetter);
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             testCase.verifyError(@() document.setProperty(label.Id, "Text", "changed", registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
         end
 
         function toggleToolStateDoesNotProveOtherComponentValues(testCase)
             % toggleToolStateDoesNotProveOtherComponentValues Treat programmatic callback execution as document-wide.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = PropertyEffectBoundaryTest.fixture(["app.Tools = uitoolbar(app.UIFigure);"; ...
                 "app.Tool = uitoggletool(app.Tools, OnCallback=@(~,~) externalSetup(app));"; ...
                 "app.Tool.State = 'on';"]);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName("Label");
             testCase.verifyTrue(document.Metadata.HasUnresolvedExecutableEffects);
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             testCase.verifyError(@() document.setProperty(label.Id, "Text", "changed", registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyFalse(document.IsDirty);
         end
 
         function externalHtmlEffectsDoNotProveOtherComponentValues(testCase)
             % externalHtmlEffectsDoNotProveOtherComponentValues Preserve external sources without running their code.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = PropertyEffectBoundaryTest.fixture("app.HTML = uihtml(app.UIFigure, HTMLSource='owned.html');");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName("Label");
             testCase.verifyTrue(document.Metadata.HasUnresolvedExecutableEffects);
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             testCase.verifyError(@() document.setProperty(label.Id, "Text", "changed", registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyFalse(document.IsDirty);
         end
 
         function unknownStatementsAndPropertyExpressionsHaveSeparateContracts(testCase)
             % unknownStatementsAndPropertyExpressionsHaveSeparateContracts Keep expression-backed setter limits explicit.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for tail = ["app.Extra = externalSetup(app.Label);", ...
                     "app.Label.Text = externalText(app.UIFigure);"]
-                document = macd.source.AppSourceParser.parseText(PropertyEffectBoundaryTest.fixture(tail), registry);
+                document = yamada.source.AppSourceParser.parseText(PropertyEffectBoundaryTest.fixture(tail), registry);
                 label = document.getComponentByName("Label");
                 if startsWith(tail, "app.Label.Text")
-                    testCase.verifyTrue(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
+                    testCase.verifyTrue(yamada.model.PropertyStateResolver.hasUnresolvedExecution(document));
                     testCase.verifyError(@() document.setProperty(label.Id, "Tooltip", "changed", registry), ...
-                        "macd:DocumentModel:UnsafePropertyEdit");
+                        "yamada:DocumentModel:UnsafePropertyEdit");
                     testCase.verifyFalse(document.IsDirty);
                 else
-                    testCase.verifyFalse(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
+                    testCase.verifyFalse(yamada.model.PropertyStateResolver.hasUnresolvedExecution(document));
                     document.setProperty(label.Id, "Tooltip", "changed", registry);
                     testCase.verifyTrue(document.IsDirty);
                 end
@@ -199,41 +199,41 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function throwingConstructorCallsAreNotHiddenByLaterLiterals(testCase)
             % throwingConstructorCallsAreNotHiddenByLaterLiterals Preserve source while refusing unverified execution atomically.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = replace(PropertyEffectBoundaryTest.fixture(""), "app.Label = uilabel(app.UIFigure);", ...
                 "app.Label = uilabel(app.UIFigure, Text=error('must not execute'));");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName("Label");
-            testCase.verifyTrue(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
+            testCase.verifyTrue(yamada.model.PropertyStateResolver.hasUnresolvedExecution(document));
             testCase.verifyError(@() document.setProperty(label.Id, "Text", "changed", registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyError(@() document.copySubtree(label.Id, registry), ...
-                "macd:DocumentModel:UnsafeSubtreeCopy");
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+                "yamada:DocumentModel:UnsafeSubtreeCopy");
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
         end
 
         function hierarchyWritesInvalidateDestinationStateAndRejectEdits(testCase)
             % hierarchyWritesInvalidateDestinationStateAndRejectEdits Bound Parent and Children effects across modeled ownership.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             prefix = ["app.Left = uibuttongroup(app.UIFigure);"; "app.Right = uibuttongroup(app.UIFigure);"; ...
                 "app.Moved = uiradiobutton(app.Left);"; "app.Other = uiradiobutton(app.Right);"];
             for tail = { [prefix; "app.Moved.Parent = app.Right;"; "app.Moved.Value = true;"]; ...
                     [prefix; "app.Right.Children = [app.Moved app.Other];"] }'
                 source = PropertyEffectBoundaryTest.fixture(tail{1});
-                document = macd.source.AppSourceParser.parseText(source, registry);
+                document = yamada.source.AppSourceParser.parseText(source, registry);
                 other = document.getComponentByName("Other");
                 states = document.getEffectivePropertyStates(registry, other.Id);
                 value = states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution;
                 testCase.verifyFalse(value.IsKnown);
                 testCase.verifyFalse(value.IsEditable);
-                testCase.verifyTrue(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
+                testCase.verifyTrue(yamada.model.PropertyStateResolver.hasUnresolvedExecution(document));
                 testCase.verifyError(@() document.setProperty(other.Id, "Value", true, registry), ...
-                    "macd:DocumentModel:UnsafePropertyEdit");
+                    "yamada:DocumentModel:UnsafePropertyEdit");
                 testCase.verifyError(@() document.copySubtree(other.Id, registry), ...
-                    "macd:DocumentModel:UnsafeSubtreeCopy");
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+                    "yamada:DocumentModel:UnsafeSubtreeCopy");
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
                 testCase.verifyEqual(document.HistoryIndex, 0);
                 testCase.verifyFalse(document.IsDirty);
             end
@@ -241,11 +241,11 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function conditionalCreationDoesNotProveDefaultOrLaterValues(testCase)
             % conditionalCreationDoesNotProveDefaultOrLaterValues Keep uncertain object existence explicit.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = PropertyEffectBoundaryTest.fixture("");
             source = replace(source, "app.Label = uilabel(app.UIFigure);", ...
                 "if unknownFlag" + newline + "app.Label = uilabel(app.UIFigure);" + newline + "end");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName("Label");
             states = document.getEffectivePropertyStates(registry, label.Id);
             text = states(arrayfun(@(item) item.Definition.Path == "Text", states)).Resolution;
@@ -253,21 +253,21 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
             testCase.verifyFalse(text.IsEditable);
             testCase.verifyEqual(text.ReasonCode, "source-creation");
             testCase.verifyEqual(text.RequestedValue, "original");
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
         end
 
         function unknownCallsWithoutAppArgumentsAreUserOwned(testCase)
             % unknownCallsWithoutAppArgumentsAreUserOwned Preserve calls without claiming their effects are modeled.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for tail = ["externalSetup();", "app.Label.Text = externalText();", "drawnow;"]
-                document = macd.source.AppSourceParser.parseText(PropertyEffectBoundaryTest.fixture(tail), registry);
+                document = yamada.source.AppSourceParser.parseText(PropertyEffectBoundaryTest.fixture(tail), registry);
                 label = document.getComponentByName("Label");
                 if startsWith(tail, "app.Label.Text")
-                    testCase.verifyTrue(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
+                    testCase.verifyTrue(yamada.model.PropertyStateResolver.hasUnresolvedExecution(document));
                     testCase.verifyError(@() document.setProperty(label.Id, "Tooltip", "changed", registry), ...
-                        "macd:DocumentModel:UnsafePropertyEdit");
+                        "yamada:DocumentModel:UnsafePropertyEdit");
                 else
-                    testCase.verifyFalse(macd.model.PropertyStateResolver.hasUnresolvedExecution(document));
+                    testCase.verifyFalse(yamada.model.PropertyStateResolver.hasUnresolvedExecution(document));
                     document.setProperty(label.Id, "Tooltip", "changed", registry);
                 end
             end
@@ -275,10 +275,10 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function ancestorResizeInvalidatesOnlyGeometry(testCase)
             % ancestorResizeInvalidatesOnlyGeometry Do not equate a stored child input with reflowed layout.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = PropertyEffectBoundaryTest.fixture(["app.Label.Position = [10 20 100 30];"; ...
                 "app.UIFigure.Position = [50 50 800 600];"]);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName("Label");
             states = document.getEffectivePropertyStates(registry, label.Id);
             position = states(arrayfun(@(item) item.Definition.Path == "Position", states)).Resolution;
@@ -287,7 +287,7 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
             testCase.verifyEqual(position.ReasonCode, "ancestor-geometry");
             testCase.verifyTrue(text.IsKnown);
             source = replace(source, "app.UIFigure.Position =", "app.UIFigure.AutoResizeChildren = 'off';" + newline + "app.UIFigure.Position =");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName("Label");
             states = document.getEffectivePropertyStates(registry, label.Id);
             position = states(arrayfun(@(item) item.Definition.Path == "Position", states)).Resolution;
@@ -297,9 +297,9 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function deferredCallbackRegistrationIsNotAnExecutionBarrier(testCase)
             % deferredCallbackRegistrationIsNotAnExecutionBarrier Keep anonymous callback bodies unexecuted.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = PropertyEffectBoundaryTest.fixture("callback = @(~,~) externalSetup(app);");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName("Label");
             document.setProperty(label.Id, "Text", "changed", registry);
             testCase.verifyTrue(document.IsDirty);

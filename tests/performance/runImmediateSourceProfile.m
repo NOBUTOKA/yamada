@@ -16,10 +16,10 @@ operations=all.(matlab.lang.makeValidName(fixtureName));
 if size(operations,2)==1 && iscell(operations{1})
     rows=cellfun(@(row) reshape(row,1,[]),operations,UniformOutput=false); operations=vertcat(rows{:});
 end
-registry=macd.model.ComponentRegistry.createDefault();
-service=macd.ui.DocumentLifecycleService(struct("RequestOpenPathFcn",@() deal(true,fixture),"ConfirmUnsavedChangesFcn",@() "Discard"));
+registry=yamada.model.ComponentRegistry.createDefault();
+service=yamada.ui.DocumentLifecycleService(struct("RequestOpenPathFcn",@() deal(true,fixture),"ConfirmUnsavedChangesFcn",@() "Discard"));
 clock=tic; app=yamada(service); startup=toc(clock); cleanup=onCleanup(@() delete(app));
-figure=findall(0,"Tag","macd-yamada-editor"); setappdata(figure,"macdPerformanceMeasurement",true);
+figure=findall(0,"Tag","yamada-editor"); setappdata(figure,"yamadaPerformanceMeasurement",true);
 menus=findall(figure,"Type","uimenu"); open=menus(erase(string({menus.Text}),"&")=="Open...");
 clock=tic; open.MenuSelectedFcn(open,struct()); settle(figure,true); openSeconds=toc(clock);
 assert(startsWith(string(which("yamada")),projectRoot));
@@ -43,15 +43,15 @@ for index=1:size(operations,1)
     writeJson(fullfile(output,"measurements.json"),struct("fixture",fixtureName,"loaded",string(which("yamada")),"startupSeconds",startup,"openSeconds",openSeconds,"samples",samples));
 end
 if profiled, writeSourceStrategyProfile(output, "edits", profiles); end
-source=macd.source.RoundTripGenerator(registry).generate(app.Document);
-parsed=macd.source.AppSourceParser.parseText(source,registry);
+source=yamada.source.RoundTripGenerator(registry).generate(app.Document);
+parsed=yamada.source.AppSourceParser.parseText(source,registry);
 for item=samples
     entry=parsed.getComponentByName(item.name).getProperty(item.path);
     assert(~isempty(entry)&&isequaln(entry.LiteralValue,item.value));
 end
 % Audit current offsets against the exact editor text rather than normalized save output.
 if isprop(app.Document,"CurrentText")
-    current=macd.source.AppSourceParser.parseText(app.Document.CurrentText,registry);
+    current=yamada.source.AppSourceParser.parseText(app.Document.CurrentText,registry);
     for owner=app.Document.Components
         expected=current.getComponentByName(owner.Name);
         assert(isequaln(owner.SourceSpans,expected.SourceSpans));
@@ -94,9 +94,9 @@ arguments (Input)
     propertyPath (1, 1) string
     value
 end
-labels = findall(figure, "Tag", "macd-inspector-property-label");
+labels = findall(figure, "Tag", "yamada-inspector-property-label");
 label = labels(string({labels.Text}) == propertyPath);
-editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+editor = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
 if isa(editor, "matlab.ui.control.EditField") || isa(editor, "matlab.ui.control.TextArea")
     editor.Value = char(string(value));
 else
@@ -124,10 +124,10 @@ while true
             if isvalid(current), rethrow(exception), end
         end
     end
-    overlay = findall(figure, "Tag", "macd-interaction-overlay");
+    overlay = findall(figure, "Tag", "yamada-interaction-overlay");
     acknowledged = ~renderAck || (~isempty(overlay) && ...
-        isappdata(figure, "macdRenderedRevision") && ...
-        isequal(getappdata(figure, "macdRenderedRevision"), overlay.Data.gridEditor.revision));
+        isappdata(figure, "yamadaRenderedRevision") && ...
+        isequal(getappdata(figure, "yamadaRenderedRevision"), overlay.Data.gridEditor.revision));
     if ~active && acknowledged, return, end
     assert(toc(started) < 600, "Performance measurement did not settle within 600 seconds.");
     pause(0.01);

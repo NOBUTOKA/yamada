@@ -11,21 +11,21 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             state = struct("Data", {num2cell([1 2; 3 4])}, ...
                 "ColumnName", {{'First', 'Second'}}, "RowName", {{'One', 'Two'}}, ...
                 "HasData", true, "HasColumnName", true, "HasRowName", true);
-            dialog = macd.ui.inspector.TableDataEditorDialog.open( ...
+            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
                 state, @(changes) captureChanges(owner, changes), false);
-            deleteRows = findall(dialog, "Tag", "macd-table-data-delete-row");
+            deleteRows = findall(dialog, "Tag", "yamada-table-data-delete-row");
             deleteRow = deleteRows([deleteRows.UserData] == 1);
             deleteRow.ButtonPushedFcn(deleteRow, struct());
-            addRow = findall(dialog, "Tag", "macd-table-data-add-row");
+            addRow = findall(dialog, "Tag", "yamada-table-data-add-row");
             addRow.ButtonPushedFcn(addRow, struct());
-            deleteColumns = findall(dialog, "Tag", "macd-table-data-delete-column");
+            deleteColumns = findall(dialog, "Tag", "yamada-table-data-delete-column");
             deleteColumn = deleteColumns([deleteColumns.UserData] == 1);
             deleteColumn.ButtonPushedFcn(deleteColumn, struct());
-            addColumn = findall(dialog, "Tag", "macd-table-data-add-column");
+            addColumn = findall(dialog, "Tag", "yamada-table-data-add-column");
             addColumn.ButtonPushedFcn(addColumn, struct());
-            table = findall(dialog, "Tag", "macd-table-data-editor-table");
+            table = findall(dialog, "Tag", "yamada-table-data-editor-table");
             table.Data(2:3, 2:3) = ["true", """Updated"""; "1", "'last'"];
-            applyButton = findall(dialog, "Tag", "macd-table-data-apply");
+            applyButton = findall(dialog, "Tag", "yamada-table-data-apply");
             applyButton.ButtonPushedFcn(applyButton, struct());
 
             changes = getappdata(owner, "changes");
@@ -47,9 +47,9 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             state = struct("Data", {num2cell([1 2])}, "ColumnName", "numbered", ...
                 "RowName", "numbered", "HasData", true, ...
                 "HasColumnName", true, "HasRowName", true);
-            dialog = macd.ui.inspector.TableDataEditorDialog.open( ...
+            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
                 state, @(~) "", false);
-            table = findall(dialog, "Tag", "macd-table-data-editor-table");
+            table = findall(dialog, "Tag", "yamada-table-data-editor-table");
 
             testCase.verifyEmpty(table.ColumnName);
             testCase.verifyEmpty(table.RowName);
@@ -57,18 +57,18 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             testCase.verifyEqual(size(table.Data), [2 3]);
             testCase.verifyEqual(table.Data(1, 2:3), ["Column 1", "Column 2"]);
             testCase.verifyEqual(table.Data(2, 1), "Row 1");
-            rowDelete = findall(dialog, "Tag", "macd-table-data-delete-row");
+            rowDelete = findall(dialog, "Tag", "yamada-table-data-delete-row");
             testCase.verifyEqual(rowDelete.Layout.Row, 2);
             testCase.verifyEqual(rowDelete.FontSize, 14);
             testCase.verifyEqual(rowDelete.Parent.RowHeight{2}, 23.3);
-            rowAdd = findall(dialog, "Tag", "macd-table-data-add-row");
-            columnAdd = findall(dialog, "Tag", "macd-table-data-add-column");
+            rowAdd = findall(dialog, "Tag", "yamada-table-data-add-row");
+            columnAdd = findall(dialog, "Tag", "yamada-table-data-add-column");
             testCase.verifyEqual(rowAdd.Layout.Row, 1);
             testCase.verifyEqual(columnAdd.Layout.Column, 1);
             testCase.verifyEqual(rowAdd.FontSize, 14);
             testCase.verifyEqual(columnAdd.FontSize, 14);
-            testCase.verifyEmpty(findall(dialog, "Tag", "macd-table-data-column-name"));
-            testCase.verifyEmpty(findall(dialog, "Tag", "macd-table-data-row-name"));
+            testCase.verifyEmpty(findall(dialog, "Tag", "yamada-table-data-column-name"));
+            testCase.verifyEmpty(findall(dialog, "Tag", "yamada-table-data-row-name"));
             deleteIfValid(dialog);
             clear cleanup
         end
@@ -81,14 +81,14 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             state = struct("Data", {num2cell(zeros(30, 7))}, "ColumnName", "numbered", ...
                 "RowName", "numbered", "HasData", true, ...
                 "HasColumnName", true, "HasRowName", true);
-            dialog = macd.ui.inspector.TableDataEditorDialog.open( ...
+            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
                 state, @(~) "", false);
             drawnow;
-            host = findall(dialog, "Tag", "macd-table-data-scroll-host");
-            content = findall(dialog, "Tag", "macd-table-data-scroll-content");
-            table = findall(dialog, "Tag", "macd-table-data-editor-table");
-            rowActions = findall(dialog, "Tag", "macd-table-data-row-actions");
-            columnActions = findall(dialog, "Tag", "macd-table-data-column-actions");
+            host = findall(dialog, "Tag", "yamada-table-data-scroll-host");
+            content = findall(dialog, "Tag", "yamada-table-data-scroll-content");
+            table = findall(dialog, "Tag", "yamada-table-data-editor-table");
+            rowActions = findall(dialog, "Tag", "yamada-table-data-row-actions");
+            columnActions = findall(dialog, "Tag", "yamada-table-data-column-actions");
 
             testCase.verifyEqual(string(host.Scrollable), "on");
             testCase.verifyGreaterThan(content.Position(4), host.Position(4));
@@ -107,13 +107,13 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             setappdata(owner, "changes", struct.empty);
             state = struct("Data", 1, "ColumnName", "numbered", "RowName", "numbered", ...
                 "HasData", true, "HasColumnName", true, "HasRowName", true);
-            dialog = macd.ui.inspector.TableDataEditorDialog.open( ...
+            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
                 state, @(changes) captureChanges(owner, changes), false);
-            table = findall(dialog, "Tag", "macd-table-data-editor-table");
+            table = findall(dialog, "Tag", "yamada-table-data-editor-table");
             table.Data(1, 2) = "Amount";
             table.Data(2, 1) = "Total";
             table.Data(2, 2) = "3";
-            applyButton = findall(dialog, "Tag", "macd-table-data-apply");
+            applyButton = findall(dialog, "Tag", "yamada-table-data-apply");
             applyButton.ButtonPushedFcn(applyButton, struct());
 
             changes = getappdata(owner, "changes");
@@ -132,15 +132,15 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             setappdata(owner, "changes", struct.empty);
             state = struct("Data", 1, "ColumnName", {{'Amount'}}, "RowName", {{'Total'}}, ...
                 "HasData", true, "HasColumnName", true, "HasRowName", true);
-            dialog = macd.ui.inspector.TableDataEditorDialog.open( ...
+            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
                 state, @(changes) captureChanges(owner, changes), false);
-            rowButton = findall(dialog, "Tag", "macd-table-data-numbered-rows");
+            rowButton = findall(dialog, "Tag", "yamada-table-data-numbered-rows");
             rowButton.Value = true;
             rowButton.ValueChangedFcn(rowButton, struct());
-            columnButton = findall(dialog, "Tag", "macd-table-data-numbered-columns");
+            columnButton = findall(dialog, "Tag", "yamada-table-data-numbered-columns");
             columnButton.Value = true;
             columnButton.ValueChangedFcn(columnButton, struct());
-            applyButton = findall(dialog, "Tag", "macd-table-data-apply");
+            applyButton = findall(dialog, "Tag", "yamada-table-data-apply");
             applyButton.ButtonPushedFcn(applyButton, struct());
 
             changes = getappdata(owner, "changes");
@@ -158,13 +158,13 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             setappdata(owner, "changes", struct.empty);
             state = struct("Data", {num2cell([1 2])}, "ColumnName", {{'A', 'B'}}, ...
                 "RowName", {{'One'}}, "HasData", true, "HasColumnName", true, "HasRowName", true);
-            dialog = macd.ui.inspector.TableDataEditorDialog.open( ...
+            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
                 state, @(changes) captureChanges(owner, changes), false);
-            clearButton = findall(dialog, "Tag", "macd-table-data-clear");
+            clearButton = findall(dialog, "Tag", "yamada-table-data-clear");
             clearButton.ButtonPushedFcn(clearButton, struct());
 
             testCase.verifyEmpty(getappdata(owner, "changes"));
-            applyButton = findall(dialog, "Tag", "macd-table-data-apply");
+            applyButton = findall(dialog, "Tag", "yamada-table-data-apply");
             applyButton.ButtonPushedFcn(applyButton, struct());
             changes = getappdata(owner, "changes");
             testCase.verifyEqual(string({changes.Path}), ["Data", "ColumnName", "RowName"]);
@@ -188,12 +188,12 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
                 "ColumnFormat", {{'bank', 'char'}}, "HasColumnWidth", true, ...
                 "HasColumnEditable", true, "HasColumnSortable", true, ...
                 "HasColumnFormat", true);
-            dialog = macd.ui.inspector.TableDataEditorDialog.open( ...
+            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
                 state, @(changes) captureChanges(owner, changes), false);
-            buttons = findall(dialog, "Tag", "macd-table-data-delete-column");
+            buttons = findall(dialog, "Tag", "yamada-table-data-delete-column");
             button = buttons([buttons.UserData] == 1);
             button.ButtonPushedFcn(button, struct());
-            apply = findall(dialog, "Tag", "macd-table-data-apply");
+            apply = findall(dialog, "Tag", "yamada-table-data-apply");
             apply.ButtonPushedFcn(apply, struct());
 
             changes = getappdata(owner, "changes");
@@ -210,8 +210,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
 
             state = struct("Data", table([1; 2]), "ColumnName", [], "RowName", [], ...
                 "HasData", true, "HasColumnName", false, "HasRowName", false);
-            testCase.verifyError(@() macd.ui.inspector.TableDataEditorDialog.open( ...
-                state, @(~) "", false), "macd:TableDataEditorDialog:UnsupportedData");
+            testCase.verifyError(@() yamada.ui.inspector.TableDataEditorDialog.open( ...
+                state, @(~) "", false), "yamada:TableDataEditorDialog:UnsupportedData");
         end
 
     end

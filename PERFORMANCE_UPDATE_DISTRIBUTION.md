@@ -230,4 +230,4 @@ Builderはfit・固定・伸縮・実測矩形を方程式にし、伸縮トラ�
 
 計測用MATLABソース2ファイルの静的指摘は0件、既存のPerformanceViewTestとGridLayoutOverlayDataBuilderTestは17件全て合格、失敗・未完了0件だった。アプリ本体が固定された関連検証であり、全プロジェクトテストを今回やり直したという意味にはしない。最終の計測器調整は未計測領域での配列拡張注記と、probeの等価なスカラー判定のみで、本体・計測アルゴリズム・既存データを変更しない。
 
-主要なコード根拠は、[RoundTripGenerator](+macd/+source/RoundTripGenerator.m)の所有者ごとの挿入計画、[PropertyInsertionPlanner](+macd/+source/PropertyInsertionPlanner.m)のevaluate／candidate、[CallbackSourceAnalyzer](+macd/+source/CallbackSourceAnalyzer.m)のcanInsertGenerated、[PreviewRenderer](+macd/+ui/PreviewRenderer.m)のLabelに限る差分更新、[GridLayoutOverlayDataBuilder](+macd/+ui/GridLayoutOverlayDataBuilder.m)の実測境界の整合性検査、[yamada](yamada.m)のrefreshViews／refreshShell／配置監視である。
+主要なコード根拠は、[RoundTripGenerator](+yamada/+source/RoundTripGenerator.m)の所有者ごとの挿入計画、[PropertyInsertionPlanner](+yamada/+source/PropertyInsertionPlanner.m)のevaluate／candidate、[CallbackSourceAnalyzer](+yamada/+source/CallbackSourceAnalyzer.m)のcanInsertGenerated、[PreviewRenderer](+yamada/+ui/PreviewRenderer.m)のLabelに限る差分更新、[GridLayoutOverlayDataBuilder](+yamada/+ui/GridLayoutOverlayDataBuilder.m)の実測境界の整合性検査、[yamada](yamada.m)のrefreshViews／refreshShell／配置監視である。

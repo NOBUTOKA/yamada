@@ -50,19 +50,19 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
         function parsedMoveUnderLaterParentRoundTrips(testCase)
             % parsedMoveUnderLaterParentRoundTrips Relocate initialization after a later destination safely.
             [original, registry, ~, right, nested, leaf] = SubtreeReparentTest.fixture();
-            source = macd.source.NewAppGenerator(registry).generate(original);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(original);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             nested = document.getComponentByName(nested.Name);
             right = document.getComponentByName(right.Name);
             document.reparentSubtree(nested.Id, right.Id, registry);
             after = document.GeneratedText;
-            reopened = macd.source.AppSourceParser.parseText(after, registry);
+            reopened = yamada.source.AppSourceParser.parseText(after, registry);
             testCase.verifyEqual(reopened.getComponentByName(nested.Name).ParentId, reopened.getComponentByName(right.Name).Id);
             testCase.verifyEqual(reopened.getComponentByName(leaf.Name).ParentId, reopened.getComponentByName(nested.Name).Id);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             document.redo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), after);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), after);
         end
 
         function preservesCallbackMethodsAndBindings(testCase)
@@ -70,9 +70,9 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
             [original, registry, left, right] = SubtreeReparentTest.fixture();
             button = original.insertComponent(registry, "uibutton", left.Id);
             original.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-            source = macd.source.NewAppGenerator(registry).generate(original);
+            source = yamada.source.NewAppGenerator(registry).generate(original);
             source = replace(source, "% Add callback behavior here.", "error('callback-must-not-run');");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             button = document.getComponentByName(button.Name);
             right = document.getComponentByName(right.Name);
             document.reparentSubtree(button.Id, right.Id, registry);
@@ -83,17 +83,17 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
         function dependentInitializationRejectsWithoutMutation(testCase)
             % dependentInitializationRejectsWithoutMutation Keep all live state intact when relocation changes dependencies.
             [original, registry, ~, right, nested] = SubtreeReparentTest.fixture();
-            source = macd.source.NewAppGenerator(registry).generate(original);
+            source = yamada.source.NewAppGenerator(registry).generate(original);
             marker = "app." + right.Name + " = uipanel(app.UIFigure);";
             source = replace(source, marker, "disp(app." + nested.Name + ");" + newline + "            " + marker);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             nested = document.getComponentByName(nested.Name);
             right = document.getComponentByName(right.Name);
             parent = nested.ParentId;
             before = document.Components;
             history = document.HistoryIndex;
             testCase.verifyError(@() document.reparentSubtree(nested.Id, right.Id, registry), ...
-                "macd:DocumentModel:UnsafeSubtreeEdit");
+                "yamada:DocumentModel:UnsafeSubtreeEdit");
             testCase.verifyEqual(nested.ParentId, parent);
             testCase.verifyEqual(document.Components, before);
             testCase.verifyEqual(document.HistoryIndex, history);
@@ -120,51 +120,51 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
             % parsedLayoutConversionRemovesOwnedPosition Remove obsolete source assignments and reopen new placement.
             [original, registry, ~, right, ~, leaf] = SubtreeReparentTest.fixture();
             grid = original.insertComponent(registry, "uigridlayout", right.Id);
-            source = macd.source.NewAppGenerator(registry).generate(original);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(original);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             leaf = document.getComponentByName(leaf.Name);
             grid = document.getComponentByName(grid.Name);
             document.reparentSubtree(leaf.Id, grid.Id, registry);
             after = document.GeneratedText;
             testCase.verifyFalse(contains(after, "app." + leaf.Name + ".Position ="));
-            reopened = macd.source.AppSourceParser.parseText(after, registry);
+            reopened = yamada.source.AppSourceParser.parseText(after, registry);
             testCase.verifyEqual(reopened.getComponentByName(leaf.Name).ParentId, reopened.getComponentByName(grid.Name).Id);
             testCase.verifyEqual(reopened.getComponentByName(leaf.Name).getProperty("Layout.Row").LiteralValue, 1);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
         end
 
         function conditionalInitializationIsRejected(testCase)
             % conditionalInitializationIsRejected Do not relocate statements out of conditional scope.
             [original, registry, ~, right, nested] = SubtreeReparentTest.fixture();
-            source = macd.source.NewAppGenerator(registry).generate(original);
+            source = yamada.source.NewAppGenerator(registry).generate(original);
             marker = "app." + nested.Name + " = uipanel(app.Panel);";
             testCase.assertTrue(contains(source, marker));
             source = replace(source, marker, "if true" + newline + "            " + marker + newline + "            end");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             nested = document.getComponentByName(nested.Name);
             right = document.getComponentByName(right.Name);
             parent = nested.ParentId;
             testCase.verifyError(@() document.reparentSubtree(nested.Id, right.Id, registry), ...
-                "macd:DocumentModel:UnsafeSubtreeEdit");
+                "yamada:DocumentModel:UnsafeSubtreeEdit");
             testCase.verifyEqual(nested.ParentId, parent);
         end
 
         function repeatedMovesRemainUndoable(testCase)
             % repeatedMovesRemainUndoable Retain original source ownership through repeated parent changes.
             [original, registry, left, right, nested] = SubtreeReparentTest.fixture();
-            source = macd.source.NewAppGenerator(registry).generate(original);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(original);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             nested = document.getComponentByName(nested.Name);
             left = document.getComponentByName(left.Name);
             right = document.getComponentByName(right.Name);
             document.reparentSubtree(nested.Id, right.Id, registry);
             first = document.GeneratedText;
             document.reparentSubtree(nested.Id, left.Id, registry);
-            reopened = macd.source.AppSourceParser.parseText(document.GeneratedText, registry);
+            reopened = yamada.source.AppSourceParser.parseText(document.GeneratedText, registry);
             testCase.verifyEqual(reopened.getComponentByName(nested.Name).ParentId, reopened.getComponentByName(left.Name).Id);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), first);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), first);
         end
     end
 
@@ -172,15 +172,15 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
         function [document, registry, left, right, nested, leaf] = fixture()
             % fixture Create a subtree before its eventual destination in generation order.
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                left (1, 1) macd.model.ComponentRecord
-                right (1, 1) macd.model.ComponentRecord
-                nested (1, 1) macd.model.ComponentRecord
-                leaf (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                left (1, 1) yamada.model.ComponentRecord
+                right (1, 1) yamada.model.ComponentRecord
+                nested (1, 1) yamada.model.ComponentRecord
+                leaf (1, 1) yamada.model.ComponentRecord
             end
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ReparentApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ReparentApp", registry);
             left = document.insertComponent(registry, "uipanel", document.RootComponentId);
             nested = document.insertComponent(registry, "uipanel", left.Id);
             leaf = document.insertComponent(registry, "uilabel", nested.Id);

@@ -5,8 +5,8 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
     methods (Test)
         function firstCallbackCreationPreservesRootAndHistory(testCase)
             % firstCallbackCreationPreservesRootAndHistory Preserve root values, identity and clean Undo on the first callback creation.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("FirstCallbackFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("FirstCallbackFixture", registry);
             root = document.getComponent(document.RootComponentId);
             document.applyCallbackAction(root.Id, "SizeChangedFcn", "New", registry, "RootSized");
             document.undo();
@@ -22,7 +22,7 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
             % candidatesUseCachedSignaturesAndFixedArity Exclude optional fourth inputs and retain unknown constraints.
             [document, registry, button] = CallbackBindingSelectionTest.fixture();
             analysis = document.sourceAnalysis();
-            targets = macd.source.CallbackMethodTargets.list(document, button.Id, "ButtonPushedFcn", registry);
+            targets = yamada.source.CallbackMethodTargets.list(document, button.Id, "ButtonPushedFcn", registry);
             names = string({targets.Name});
             testCase.verifyTrue(all(ismember(["run0", "run1", "run2", "unknown", "baseEvent"], names)));
             testCase.verifyFalse(any(ismember(["four", "variadic", "wrongSource", "wrongEvent", "delete", "createComponents", document.ClassName], names)));
@@ -31,28 +31,28 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
             testCase.verifyEqual(targets(names == "run2").Expression, "@app.run2");
             testCase.verifyTrue(targets(names == "unknown").Unchecked);
             testCase.verifySubstring(targets(names == "unknown").Label, "[unchecked]");
-            [accepted, known] = macd.source.CallbackMethodTargets.compatible("matlab.ui.eventdata.ButtonPushedData", "event.EventData");
+            [accepted, known] = yamada.source.CallbackMethodTargets.compatible("matlab.ui.eventdata.ButtonPushedData", "event.EventData");
             testCase.verifyTrue(accepted && known);
-            [accepted, known] = macd.source.CallbackMethodTargets.compatible("double", "event.EventData");
+            [accepted, known] = yamada.source.CallbackMethodTargets.compatible("double", "event.EventData");
             testCase.verifyTrue(~accepted && known);
             testCase.verifyError(@() document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Connect", registry, "missing"), ...
-                "macd:DocumentModel:UnsafeCallbackTarget");
+                "yamada:DocumentModel:UnsafeCallbackTarget");
             for index = 1:3
-                testCase.verifyEqual(macd.source.CallbackMethodTargets.list(document, button.Id, "ButtonPushedFcn", registry), targets);
+                testCase.verifyEqual(yamada.source.CallbackMethodTargets.list(document, button.Id, "ButtonPushedFcn", registry), targets);
                 testCase.verifyEqual(document.sourceAnalysis(), analysis);
             end
         end
 
         function detachedBuilderComponentsBindBeforeFirstCallback(testCase)
             % detachedBuilderComponentsBindBeforeFirstCallback Retain nested records and distinct constructor and assignment occurrence identities.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("DetachedCallbackFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("DetachedCallbackFixture", registry);
             definition = registry.get("uipanel");
-            panel = macd.model.ComponentRecord("panel", "Panel", definition.Factory, definition.DeclaredType, "generated");
+            panel = yamada.model.ComponentRecord("panel", "Panel", definition.Factory, definition.DeclaredType, "generated");
             panel.setProperty("Position", [10 10 300 200]);
             document.addComponent(panel, document.RootComponentId);
             definition = registry.get("uibutton");
-            button = macd.model.ComponentRecord("button", "Button", definition.Factory, definition.DeclaredType, "generated");
+            button = yamada.model.ComponentRecord("button", "Button", definition.Factory, definition.DeclaredType, "generated");
             button.setProperty("Text", "Run");
             document.addComponent(button, panel.Id);
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, "RunPushed");
@@ -72,7 +72,7 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
             other = document.insertComponent(registry, "uibutton", document.RootComponentId);
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Connect", registry, "run0");
             document.applyCallbackAction(other.Id, "ButtonPushedFcn", "Connect", registry, "run0");
-            states = macd.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry, true);
+            states = yamada.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry, true);
             testCase.verifyEqual(states([states.Name] == "ButtonPushedFcn").State, "editable");
             before = document.CurrentText;
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Connect", registry, "run1");
@@ -97,7 +97,7 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
             count = document.HistoryIndex;
             for invalid = ["run0", "delete", "bad-name", "end", document.ClassName]
                 testCase.verifyError(@() document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, invalid), ...
-                    "macd:DocumentModel:CallbackNameCollision");
+                    "yamada:DocumentModel:CallbackNameCollision");
                 testCase.verifyEqual(document.CurrentText, initial);
                 testCase.verifyEqual(document.HistoryIndex, count);
             end
@@ -109,8 +109,8 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Disconnect", registry);
             testCase.verifySubstring(document.CurrentText, "function CustomPushed(app, source, event)");
             testCase.verifyFalse(contains(document.CurrentText, "ButtonPushedFcn = @app.CustomPushed"));
-            reopened = macd.source.AppSourceParser.parseText(document.CurrentText, registry);
-            targets = macd.source.CallbackMethodTargets.list(reopened, reopened.getComponentByName(button.Name).Id, "ButtonPushedFcn", registry);
+            reopened = yamada.source.AppSourceParser.parseText(document.CurrentText, registry);
+            targets = yamada.source.CallbackMethodTargets.list(reopened, reopened.getComponentByName(button.Name).Id, "ButtonPushedFcn", registry);
             testCase.verifyTrue(any(string({targets.Name}) == "CustomPushed"));
         end
 
@@ -120,12 +120,12 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
         function [document, registry, button] = fixture()
             % fixture Load owned app text containing fixed, optional and unknown method signatures.
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                button (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                button (1, 1) yamada.model.ComponentRecord
             end
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CallbackSelectionFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CallbackSelectionFixture", registry);
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
             source = document.CurrentText;
             anchor = document.sourceAnalysis().Layout.MethodAnchor;
@@ -137,9 +137,9 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
                 "function unknown(app, event)"; "arguments"; "app"; "event project.CustomEvent"; "end"; "end"; ...
                 "function four(app, src, event, optional)"; "arguments"; "app"; "src"; "event"; "optional = dangerous()"; "end"; "end"; ...
                 "function variadic(app, varargin)"; "end"; ""];
-            batch = macd.source.SourcePatchBatch(source, struct("Start", anchor + 1, "End", anchor, "Text", strjoin(methods, newline)));
+            batch = yamada.source.SourcePatchBatch(source, struct("Start", anchor + 1, "End", anchor, "Text", strjoin(methods, newline)));
             buttonName = button.Name;
-            document = macd.source.AppSourceParser.parseText(batch.AfterText, registry);
+            document = yamada.source.AppSourceParser.parseText(batch.AfterText, registry);
             button = document.getComponentByName(buttonName);
         end
     end

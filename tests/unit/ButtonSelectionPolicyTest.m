@@ -15,7 +15,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
         function invalidIntermediateSelectionIsNotHidden(testCase)
             % invalidIntermediateSelectionIsNotHidden Retain proven errors even when a later Value selects a child.
             [document, registry] = fixture(["app.Group.SelectedObject = [];"; "app.First.Value = 1;"]);
-            diagnostics = macd.validation.ModelValidator.validate(document, registry);
+            diagnostics = yamada.validation.ModelValidator.validate(document, registry);
             testCase.verifyTrue(any(string({diagnostics.Code}) == "invalid-property-sequence"));
         end
 
@@ -24,8 +24,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             [~, registry, source] = fixture("app.Second.Value = 1;");
             source = replace(source, "app.Second = uiradiobutton(app.Group);", ...
                 "app.Group.SelectedObject = app.Second;" + newline + "app.Second = uiradiobutton(app.Group);");
-            document = macd.source.AppSourceParser.parseText(source, registry);
-            diagnostics = macd.validation.ModelValidator.validate(document, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
+            diagnostics = yamada.validation.ModelValidator.validate(document, registry);
             testCase.verifyTrue(any(string({diagnostics.Code}) == "invalid-property-sequence"));
         end
 
@@ -43,7 +43,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             testCase.verifyEqual(first.getProperty("Value").LiteralValue, 1);
             testCase.verifyEqual(numel(first.getSettings("Value")), 1);
             testCase.verifyError(@() document.setProperty(first.Id, "Value", 1, registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyFalse(document.IsDirty);
         end
 
@@ -77,8 +77,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             second = document.getComponentByName("Second");
             document.setProperty(second.Id, "Value", 1, registry);
             testCase.verifyEqual(values(document, registry), [0 1]);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            checkpoint = macd.model.SavedSourceCheckpoint(document, source, "SelectionApp.m", registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, "SelectionApp.m", registry);
             testCase.verifyNotEmpty(checkpoint);
             document.undo();
             testCase.verifyEqual(values(document, registry), [1 0]);
@@ -92,7 +92,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             first = document.getComponentByName("First");
             document.setProperty(first.Id, "Value", 0, registry);
             testCase.verifyEqual(values(document, registry), [0 1]);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyLessThan(strfind(source, "app.Second = uiradiobutton"), ...
                 strfind(source, "app.First.Value = 0;"));
         end
@@ -101,7 +101,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             % copiesEffectiveSelectionAfterAllSiblingCreations Freeze implicit values and avoid a sole-child zero assignment.
             [~, registry, source] = fixture("app.Second.Value = 1;");
             source = replace(source, "uibuttongroup(app.UIFigure)", "uibuttongroup(app.UIFigure, Position=[10 20 200 120])");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             group = document.getComponentByName("Group");
             snapshot = document.copySubtree(group.Id, registry);
             pasted = document.pasteSubtree(snapshot, document.RootComponentId, registry);
@@ -112,25 +112,25 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution.EffectiveValue, 0);
             states = document.getEffectivePropertyStates(registry, second.Id);
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution.EffectiveValue, 1);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyLessThan(strfind(source, "app." + second.Name + " = uiradiobutton"), ...
                 strfind(source, "app." + first.Name + ".Value = 0;"));
         end
 
         function generatedLegacyConstructorValueParticipates(testCase)
             % generatedLegacyConstructorValueParticipates Replay raw constructor pairs before final assignments.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("LegacySelection", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("LegacySelection", registry);
             group = document.insertComponent(registry, "uibuttongroup", document.RootComponentId);
             document.insertComponent(registry, "uiradiobutton", group.Id);
             definition = registry.get("uiradiobutton");
-            second = macd.model.ComponentRecord("legacy-second", "Second", "uiradiobutton", definition.DeclaredType);
+            second = yamada.model.ComponentRecord("legacy-second", "Second", "uiradiobutton", definition.DeclaredType);
             second.CreationArguments = {"Value", 1};
             document.addComponent(second, group.Id);
             states = document.getEffectivePropertyStates(registry, second.Id);
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution.EffectiveValue, 1);
-            source = macd.source.NewAppGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             copied = parsed.getComponentByName(second.Name);
             states = parsed.getEffectivePropertyStates(registry, copied.Id);
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution.EffectiveValue, 1);
@@ -141,7 +141,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             [~, registry, source] = fixture("app.Second.Value = 1;");
             source = replace(source, "uiradiobutton", "uitogglebutton");
             source = replace(source, "matlab.ui.control.RadioButton", "matlab.ui.control.ToggleButton");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyEqual(values(document, registry), [0 1]);
         end
     end
@@ -153,11 +153,11 @@ arguments (Input)
     tail string
 end
 arguments (Output)
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
     source (1, 1) string
 end
-registry = macd.model.ComponentRegistry.createDefault();
+registry = yamada.model.ComponentRegistry.createDefault();
 source = strjoin(["classdef SelectionApp < handle"; "properties"; ...
     "UIFigure matlab.ui.Figure"; "Group matlab.ui.container.ButtonGroup"; ...
     "First matlab.ui.control.RadioButton"; "Second matlab.ui.control.RadioButton"; "end"; ...
@@ -165,14 +165,14 @@ source = strjoin(["classdef SelectionApp < handle"; "properties"; ...
     "function createComponents(app)"; "app.UIFigure = uifigure(Visible='off');"; ...
     "app.Group = uibuttongroup(app.UIFigure);"; "app.First = uiradiobutton(app.Group);"; ...
     "app.Second = uiradiobutton(app.Group);"; reshape(tail, [], 1); "end"; "end"; "end"], newline) + newline;
-document = macd.source.AppSourceParser.parseText(source, registry);
+document = yamada.source.AppSourceParser.parseText(source, registry);
 end
 
 function result = values(document, registry)
 % values Return known values in fixture declaration order rather than native child order.
 arguments (Input)
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
 end
 arguments (Output)
     result (1, 2) double

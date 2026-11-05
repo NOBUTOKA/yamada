@@ -6,8 +6,8 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
     methods (Test)
         function additionDeletionAndHistoryAreAtomic(testCase)
             % additionDeletionAndHistoryAreAtomic Restore pending methods and saved checkpoints exactly.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CallbackApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CallbackApp", registry);
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
             document.markSaved();
             checkpoint = document.HistoryIndex;
@@ -33,48 +33,48 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
 
         function rejectsRepeatedAndInvalidRequestsWithoutChangingState(testCase)
             % rejectsRepeatedAndInvalidRequestsWithoutChangingState Reject stale and unknown action targets before mutation.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CallbackApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CallbackApp", registry);
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             before = document.CallbackEdits;
             history = document.History;
             testCase.verifyError(@() document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry), ...
-                "macd:DocumentModel:UnsafeCallbackEdit");
+                "yamada:DocumentModel:UnsafeCallbackEdit");
             testCase.verifyError(@() document.applyCallbackAction("missing", "ButtonPushedFcn", "Delete", registry), ...
-                "macd:DocumentModel:UnsafeCallbackEdit");
+                "yamada:DocumentModel:UnsafeCallbackEdit");
             testCase.verifyError(@() document.applyCallbackAction(button.Id, "UnknownFcn", "Add", registry), ...
-                "macd:DocumentModel:UnsafeCallbackEdit");
+                "yamada:DocumentModel:UnsafeCallbackEdit");
             testCase.verifyEqual(document.CallbackEdits, before);
             testCase.verifyEqual(document.History, history);
         end
 
         function rejectsSharedMethodsAndGeneratesPendingCallbacks(testCase)
             % rejectsSharedMethodsAndGeneratesPendingCallbacks Protect unsafe source while generating validated operations.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
             source = string(fileread(path));
             source = replace(source, "app.CalculateButton = uibutton(app.GridLayout, 'push');", ...
                 "app.CalculateButton = uibutton(app.GridLayout, 'push');" + newline + ...
                 "app.UIFigure.CloseRequestFcn = @app.CalculateButtonPushed;");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("CalculateButton");
             testCase.verifyError(@() document.applyCallbackAction(component.Id, "ButtonPushedFcn", "Delete", registry), ...
-                "macd:DocumentModel:UnsafeCallbackEdit");
+                "yamada:DocumentModel:UnsafeCallbackEdit");
             testCase.verifyError(@() document.applyCallbackAction(component.Id, "ButtonPushedFcn", "Add", registry), ...
-                "macd:DocumentModel:UnsafeCallbackEdit");
+                "yamada:DocumentModel:UnsafeCallbackEdit");
             testCase.verifyFalse(document.IsDirty);
             testCase.verifyEmpty(document.History);
-            fresh = macd.model.NewAppFactory.createEmpty("CallbackApp", registry);
+            fresh = yamada.model.NewAppFactory.createEmpty("CallbackApp", registry);
             fresh.applyCallbackAction(fresh.RootComponentId, "SizeChangedFcn", "Add", registry);
-            [~, diagnostics] = macd.source.NewAppGenerator(registry).generate(fresh);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            [~, diagnostics] = yamada.source.NewAppGenerator(registry).generate(fresh);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function generatedNamesAvoidSourceAndPendingCollisions(testCase)
             % generatedNamesAvoidSourceAndPendingCollisions Generate distinct valid names for multiple callback additions.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("UIFigureSizeChanged", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("UIFigureSizeChanged", registry);
             root = document.RootComponentId;
             document.applyCallbackAction(root, "SizeChangedFcn", "Add", registry);
             first = document.History{end}.After(1);
@@ -86,9 +86,9 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
 
         function parsedDeletionPreservesOriginalBodyAndCanBeReplaced(testCase)
             % parsedDeletionPreservesOriginalBodyAndCanBeReplaced Retain original spans through delete/add and history.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
-            document = macd.source.AppSourceParser.parseFile(path, registry);
+            document = yamada.source.AppSourceParser.parseFile(path, registry);
             component = document.getComponentByName("CalculateButton");
             original = document.OriginalText;
             document.applyCallbackAction(component.Id, "ButtonPushedFcn", "Delete", registry);
@@ -103,7 +103,7 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
             stale = document.structuralCandidate();
             stale.OriginalText = original + newline;
             testCase.verifyError(@() stale.applyCallbackAction(component.Id, "ButtonPushedFcn", "Delete", registry), ...
-                "macd:DocumentModel:UnsafeCallbackEdit");
+                "yamada:DocumentModel:UnsafeCallbackEdit");
             document.undo();
             testCase.verifyEqual(document.CurrentText, deletedText);
             document.undo();

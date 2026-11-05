@@ -3,13 +3,13 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
     %   All fixtures are synthetic handle-based text and are never executed. Candidate
     %   sharing must preserve source ownership, setting order and caller isolation.
     properties (Access = private)
-        Registry macd.model.ComponentRegistry
+        Registry yamada.model.ComponentRegistry
     end
 
     methods (TestClassSetup)
         function loadRegistry(testCase)
             % loadRegistry Load the release catalog used by placement and state checks.
-            testCase.Registry = macd.model.ComponentRegistry.createDefault();
+            testCase.Registry = yamada.model.ComponentRegistry.createDefault();
         end
     end
 
@@ -21,9 +21,9 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             for index = 1:12
                 document.getComponentByName("Field" + index).setProperty("Value", index + 1);
             end
-            [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
-            parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            [source, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+            parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
             for index = 1:12
                 testCase.verifyEqual(parsed.getComponentByName("Field" + index).getProperty("Value").LiteralValue, index + 1);
             end
@@ -39,21 +39,21 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                     document.getComponentByName("Field" + index).setProperty("Value", index + 1);
                 end
                 first = document.getComponentByName("Field1");
-                plan = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+                plan = yamada.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
                 plan.Component.setProperty("Value", 99);
-                validation = macd.validation.ModelValidator.validate(document, testCase.Registry);
-                testCase.assertFalse(macd.validation.ModelValidator.hasErrors(validation));
-                [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
-                parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+                validation = yamada.validation.ModelValidator.validate(document, testCase.Registry);
+                testCase.assertFalse(yamada.validation.ModelValidator.hasErrors(validation));
+                [source, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+                testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+                parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
                 for index = 1:count
                     testCase.verifyEqual(parsed.getComponentByName("Field" + index).getProperty("Value").LiteralValue, index + 1);
                 end
-                retained = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+                retained = yamada.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
                 testCase.verifyEqual(retained.Component.getProperty("Value").LiteralValue, 2);
                 first.setProperty("Value", 7);
-                changed = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                reparsed = macd.source.AppSourceParser.parseText(changed, testCase.Registry);
+                changed = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+                reparsed = yamada.source.AppSourceParser.parseText(changed, testCase.Registry);
                 testCase.verifyEqual(reparsed.getComponentByName("Field1").getProperty("Value").LiteralValue, 7);
             end
         end
@@ -62,12 +62,12 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             % committedInsertionsAdvanceThePrivateSourceBasis Avoid replaying earlier owners without saving to disk.
             document = testCase.numericFixture(3);
             original = document.OriginalText;
-            generator = macd.source.RoundTripGenerator(testCase.Registry);
+            generator = yamada.source.RoundTripGenerator(testCase.Registry);
             for index = 1:3
                 component = document.getComponentByName("Field" + index);
                 document.setProperty(component.Id, "Value", index + 1, testCase.Registry);
                 source = generator.generate(document);
-                parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+                parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
                 for earlier = 1:index
                     testCase.verifyEqual(parsed.getComponentByName("Field" + earlier).getProperty("Value").LiteralValue, earlier + 1);
                 end
@@ -80,7 +80,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             document.redo();
             testCase.verifyEqual(generator.generate(document), source);
             document.setProperty(document.getComponentByName("Field1").Id, "Value", 9, testCase.Registry);
-            replaced = macd.source.AppSourceParser.parseText(generator.generate(document), testCase.Registry);
+            replaced = yamada.source.AppSourceParser.parseText(generator.generate(document), testCase.Registry);
             testCase.verifyEqual(replaced.getComponentByName("Field1").getProperty("Value").LiteralValue, 9);
         end
 
@@ -91,22 +91,22 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 document.getComponentByName("Field" + index).setProperty("Value", index + 2);
             end
             for index = 1:2
-                isolated = macd.source.AppSourceParser.parseText(document.OriginalText, testCase.Registry);
+                isolated = yamada.source.AppSourceParser.parseText(document.OriginalText, testCase.Registry);
                 single = isolated.getComponentByName("Field" + index);
                 single.setProperty("Value", index + 2);
-                reference = macd.source.PropertyInsertionPlanner.plan(isolated, single, testCase.Registry);
+                reference = yamada.source.PropertyInsertionPlanner.plan(isolated, single, testCase.Registry);
                 component = document.getComponentByName("Field" + index);
-                plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+                plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
                 testCase.verifyEqual(plan.Edits, reference.Edits);
                 testCase.verifyEqual(plan.Placements, reference.Placements);
                 plan.Component.setProperty("Value", 99);
                 plan.Document.getComponentByName("Field" + (3 - index)).setProperty("Value", 98);
-                retained = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+                retained = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
                 testCase.verifyEqual(retained.Component.getProperty("Value").LiteralValue, index + 2);
                 testCase.verifyEqual(retained.Document.getComponentByName("Field" + (3 - index)).getProperty("Value").LiteralValue, 5 - index);
             end
             document.getComponentByName("Field1").setProperty("Value", 7);
-            refreshed = macd.source.PropertyInsertionPlanner.plan(document, document.getComponentByName("Field2"), testCase.Registry);
+            refreshed = yamada.source.PropertyInsertionPlanner.plan(document, document.getComponentByName("Field2"), testCase.Registry);
             testCase.verifyEqual(refreshed.Document.getComponentByName("Field1").getProperty("Value").LiteralValue, 7);
         end
 
@@ -122,10 +122,10 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             first.setProperty("FontSize", 18);
             first.setProperty("Value", 3);
             second.setProperty("Value", 4);
-            source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+            source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
             testCase.verifySubstring(source, "app.First.FontSize = 10; % earlier setting");
             testCase.verifySubstring(source, "app.First.FontSize = 18; % latest setting");
-            parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
             testCase.verifyNumElements(parsed.getComponentByName("First").getSettings("FontSize"), 2);
             testCase.verifyEqual(parsed.getComponentByName("First").getProperty("Value").LiteralValue, 3);
             testCase.verifyEqual(parsed.getComponentByName("Second").getProperty("Value").LiteralValue, 4);
@@ -140,9 +140,9 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 "app.Second.ItemsData = [10 20];"]);
             document.getComponentByName("First").setProperty("Value", 20);
             document.getComponentByName("Second").setProperty("Value", 10);
-            [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
-            parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            [source, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+            parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
             first = parsed.getComponentByName("First");
             second = parsed.getComponentByName("Second");
             testCase.verifyEqual(first.getSettings("Value").Method, "nameValue");
@@ -160,9 +160,9 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 "app.Second = uieditfield(app.UIFigure,'numeric');"]);
             document.getComponentByName("First").setProperty("Limits", [50 100]);
             document.getComponentByName("Second").setProperty("Value", 3);
-            [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
-            parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            [source, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+            parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
             first = parsed.getComponentByName("First");
             testCase.verifyGreaterThan(first.getSettings("Limits").SourceSpan.StartOffset, ...
                 first.getSettings("Value").SourceSpan.EndOffset);
@@ -181,8 +181,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             original = document.OriginalText;
             document.getComponentByName("First").setProperty("Value", 20);
             document.getComponentByName("Second").setProperty("Value", 3);
-            [~, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            [~, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyEqual(document.OriginalText, original);
             testCase.verifyEmpty(document.History);
         end
@@ -194,7 +194,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             second = document.getComponentByName("Field2");
             document.setProperty(first.Id, "Value", 3, testCase.Registry);
             document.setProperty(second.Id, "Value", 4, testCase.Registry);
-            generator = macd.source.RoundTripGenerator(testCase.Registry);
+            generator = yamada.source.RoundTripGenerator(testCase.Registry);
             both = generator.generate(document);
             document.undo();
             one = generator.generate(document);
@@ -212,12 +212,12 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 first = document.getComponentByName("Field1");
                 second = document.getComponentByName("Field2");
                 first.setProperty("Value", 3); second.setProperty("Value", 4);
-                added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+                added = yamada.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
                 document.addComponent(added, first.ParentId);
                 added.setProperty("FontSize", 14);
                 original = document.OriginalText;
-                plan = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
-                other = macd.source.PropertyInsertionPlanner.plan(document, second, testCase.Registry);
+                plan = yamada.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+                other = yamada.source.PropertyInsertionPlanner.plan(document, second, testCase.Registry);
                 testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 3);
                 testCase.verifyEqual(other.Component.getProperty("Value").LiteralValue, 4);
                 testCase.verifyEqual(plan.Document.getComponentByName(added.Name).getProperty("FontSize").LiteralValue, 14);
@@ -227,8 +227,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 [retained, found] = document.evaluationContext(testCase.Registry).configuration("combined", added.Name);
                 testCase.verifyTrue(found, layout);
                 testCase.verifyEqual(retained.Document.getComponentByName(second.Name).getProperty("Value").LiteralValue, 4);
-                [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                [source, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+                testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
                 testCase.verifyEqual(source, expected, layout);
                 testCase.verifyEqual(document.OriginalText, original);
                 testCase.verifyEqual(document.HistoryIndex, 0);
@@ -242,11 +242,11 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 "app.Second = uieditfield(app.UIFigure,'numeric');"]);
             document.getComponentByName("First").setProperty("Limits", [50 100]);
             document.getComponentByName("Second").setProperty("Value", 3);
-            added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+            added = yamada.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
             document.addComponent(added, document.RootComponentId);
-            [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
-            parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            [source, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+            parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
             first = parsed.getComponentByName("First");
             testCase.verifyGreaterThan(first.getSettings("Limits").SourceSpan.StartOffset, ...
                 first.getSettings("Value").SourceSpan.EndOffset);
@@ -260,14 +260,14 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             first = document.getComponentByName("Field1");
             first.setProperty("Value", 3);
             document.getComponentByName("Field2").setProperty("Value", 4);
-            added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+            added = yamada.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
             document.addComponent(added, document.RootComponentId);
             added.setProperty("FontSize", -2);
-            macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+            yamada.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
             [~, found] = document.evaluationContext(testCase.Registry).configuration("combined", first.Name);
             testCase.verifyFalse(found);
-            [~, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+            [~, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function generatedChangesInvalidateTheCompletePlacementProof(testCase)
@@ -276,14 +276,14 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             first = document.getComponentByName("Field1");
             first.setProperty("Value", 3);
             document.getComponentByName("Field2").setProperty("Value", 4);
-            added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+            added = yamada.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
             document.addComponent(added, document.RootComponentId);
             added.setProperty("FontSize", 14);
-            before = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+            before = yamada.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
             added.setProperty("FontSize", 18);
             [~, found] = document.evaluationContext(testCase.Registry).configuration("combined", first.Name);
             testCase.verifyFalse(found);
-            after = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+            after = yamada.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
             testCase.verifyEqual(before.Document.getComponentByName(added.Name).getProperty("FontSize").LiteralValue, 14);
             testCase.verifyEqual(after.Document.getComponentByName(added.Name).getProperty("FontSize").LiteralValue, 18);
         end
@@ -298,31 +298,31 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 if definition.IsRoot, continue, end
                 document = testCase.numericFixture(2);
                 parentId = testCase.generatedParent(document, definition);
-                generated = macd.model.ComponentRecord("generated-subject", "Subject", ...
+                generated = yamada.model.ComponentRecord("generated-subject", "Subject", ...
                     definition.Factory, definition.DeclaredType, "generated");
                 generated.CreationArguments = definition.CreationArguments;
                 document.addComponent(generated, parentId);
                 % Existing ordinary generation defines applicability without broadening product capabilities.
-                [~, baselineDiagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+                [~, baselineDiagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
                 first = document.getComponentByName("Field1");
                 first.setProperty("Value", 3);
                 document.getComponentByName("Field2").setProperty("FontSize", 14);
-                if macd.validation.ModelValidator.hasErrors(baselineDiagnostics)
-                    [~, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                    testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics), variant);
+                if yamada.validation.ModelValidator.hasErrors(baselineDiagnostics)
+                    [~, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+                    testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics), variant);
                     unsupported = unsupported + 1;
                     fprintf("GENERATED_BATCH_NOT_APPLICABLE %s\n", variant);
                     continue
                 end
-                plan = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+                plan = yamada.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
                 retained = plan.Document.getComponentByName(generated.Name);
                 testCase.assertNotEmpty(retained, variant);
                 testCase.verifyEqual(retained.Factory, generated.Factory, variant);
                 testCase.verifyEqual(retained.CreationArguments, generated.CreationArguments, variant);
                 testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 3, variant);
                 testCase.verifyEqual(plan.Document.getComponentByName("Field2").getProperty("FontSize").LiteralValue, 14, variant);
-                [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics), variant);
+                [source, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+                testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics), variant);
                 testCase.verifyEqual(source, plan.Document.OriginalText, variant);
                 applicable = applicable + 1;
                 fprintf("GENERATED_BATCH_VARIANT %s\n", variant);
@@ -340,15 +340,15 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 first = document.getComponentByName("Field1");
                 first.setProperty("Value", 3);
                 document.getComponentByName("Field2").setProperty("Value", 4);
-                added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+                added = yamada.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
                 document.addComponent(added, first.ParentId);
                 original = document.OriginalText;
-                plan = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+                plan = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
                 testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 3);
                 testCase.verifyNotEmpty(plan.Document.getComponentByName(added.Name));
                 expected = plan.Document.OriginalText;
                 plan.Document.getComponentByName("Field2").setProperty("Value", 99);
-                retained = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+                retained = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
                 testCase.verifyEqual(retained.Document.OriginalText, expected);
                 testCase.verifyEqual(retained.Document.getComponentByName("Field2").getProperty("Value").LiteralValue, 4);
                 testCase.verifyEqual(document.OriginalText, original);
@@ -361,13 +361,13 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             first = document.getComponentByName("Field1");
             first.setProperty("Value", 3);
             document.getComponentByName("Field2").setProperty("Value", 4);
-            added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+            added = yamada.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
             document.addComponent(added, document.RootComponentId);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
             expected = plan.Document.OriginalText;
             plan.Document.getComponentByName("Field2").setProperty("Value", 99);
-            [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            [source, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyEqual(source, expected);
             testCase.verifyEqual(document.GeneratedText, expected);
         end
@@ -379,24 +379,24 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             first.setProperty("Value", 3);
             second = document.getComponentByName("Field2");
             second.setProperty("Value", 4);
-            added = macd.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
+            added = yamada.model.ComponentRecord("staged-label", "AddedLabel", "uilabel", "matlab.ui.control.Label", "generated");
             document.addComponent(added, document.RootComponentId);
-            macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+            yamada.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
             [~, found] = document.evaluationContext(testCase.Registry).lookup("complete-insertion-source");
             testCase.verifyTrue(found);
-            replacement = macd.model.ComponentRegistry.createDefault();
+            replacement = yamada.model.ComponentRegistry.createDefault();
             [~, found] = document.evaluationContext(replacement).lookup("complete-insertion-source");
             testCase.verifyFalse(found);
             second.setProperty("Value", 5);
             [~, found] = document.evaluationContext(testCase.Registry).lookup("complete-insertion-source");
             testCase.verifyFalse(found);
-            [source, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
-            parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            [source, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+            parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
             testCase.verifyEqual(parsed.getComponentByName("Field2").getProperty("Value").LiteralValue, 5);
             added.setProperty("FontSize", -2);
-            [~, diagnostics] = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+            [~, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function partialPlacementsRetainCompleteSourceParsing(testCase)
@@ -405,10 +405,10 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             first = document.getComponentByName("Field1");
             first.setProperty("Value", 3);
             document.getComponentByName("Field2").setProperty("Value", 4);
-            macd.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
+            yamada.source.PropertyInsertionPlanner.plan(document, first, testCase.Registry);
             [~, found] = document.evaluationContext(testCase.Registry).lookup("complete-insertion-source");
             testCase.verifyFalse(found);
-            plan = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+            plan = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
             testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 3);
             testCase.verifyEqual(plan.Document.getComponentByName("Field2").getProperty("Value").LiteralValue, 4);
         end
@@ -423,7 +423,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 layout (1, 1) string = "absolute"
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
             end
             fields = "Field" + (1:count);
             names = fields;
@@ -447,8 +447,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             % generatedParent Build the minimal allowed generated hierarchy for source-only catalog coverage.
             arguments (Input)
                 testCase (1, 1) PropertyInsertionBatchTest
-                document (1, 1) macd.model.DocumentModel
-                definition (1, 1) macd.model.ComponentDefinition
+                document (1, 1) yamada.model.DocumentModel
+                definition (1, 1) yamada.model.ComponentDefinition
             end
             arguments (Output)
                 id (1, 1) string
@@ -460,7 +460,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             parentDefinition = testCase.Registry.get(definition.AllowedParentFactories(1));
             parentId = testCase.generatedParent(document, parentDefinition);
             name = "GeneratedParent" + numel(document.Components);
-            parent = macd.model.ComponentRecord("generated-" + name, name, ...
+            parent = yamada.model.ComponentRecord("generated-" + name, name, ...
                 parentDefinition.Factory, parentDefinition.DeclaredType, "generated");
             parent.CreationArguments = parentDefinition.CreationArguments;
             document.addComponent(parent, parentId);
@@ -475,14 +475,14 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 initialization (1, :) string
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
             end
             source = strjoin(["classdef BatchInsertionFixture < handle", ...
                 "properties", "UIFigure matlab.ui.Figure", names, "end", "methods", ...
                 "function app = BatchInsertionFixture", "createComponents(app);", "end", ...
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
                 initialization, "end", "end", "end"], sprintf("\r\n"));
-            document = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            document = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
         end
     end
 end

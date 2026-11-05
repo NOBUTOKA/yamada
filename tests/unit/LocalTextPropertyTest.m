@@ -3,13 +3,13 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
     %   Text edits retain literal syntax, source ownership, ordered setters,
     %   validation provenance, history, and independent public source plans.
     properties (Access = private)
-        Registry macd.model.ComponentRegistry
+        Registry yamada.model.ComponentRegistry
     end
 
     methods (TestClassSetup)
         function loadRegistry(testCase)
             % loadRegistry Use the production catalog for both full and local preflight.
-            testCase.Registry = macd.model.ComponentRegistry.createDefault();
+            testCase.Registry = yamada.model.ComponentRegistry.createDefault();
         end
     end
 
@@ -22,12 +22,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                 document.validatePropertyCommit(testCase.Registry);
                 requested = "quoted ""text""; % end app.Second.Text = 'unchanged'";
                 document.setPropertyBatch(first.Id, ...
-                    macd.model.PropertyTransaction.singleChange("Text", requested), testCase.Registry);
+                    yamada.model.PropertyTransaction.singleChange("Text", requested), testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
                 testCase.verifyEqual(first.getProperty("Text").LiteralValue, requested);
                 testCase.verifyEqual(document.HistoryIndex, 2);
-                source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+                source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+                parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
                 testCase.verifyEqual(parsed.getComponentByName("First").getProperty("Text").LiteralValue, requested);
                 testCase.verifySubstring(source, "% untouched source");
             end
@@ -44,8 +44,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                 requested = values{index};
                 document.setProperty(first.Id, "Text", requested, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+                source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+                parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
                 testCase.verifyEqual(parsed.getComponentByName("First").getProperty("Text").LiteralValue, requested);
             end
         end
@@ -67,14 +67,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                 document.validatePropertyCommit(testCase.Registry);
                 after = first.getSettings("Text");
                 testCase.verifyEqual(string({after.Id}), ids);
-                source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+                source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
                 testCase.verifySubstring(source, "% creation");
                 if ~constructor
                     testCase.verifySubstring(source, "app.First.Text = 'earlier'; % earlier");
                     testCase.verifySubstring(source, "'Text','constructor'");
                     testCase.verifySubstring(source, "% latest");
                 end
-                parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+                parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
                 testCase.verifyEqual(parsed.getComponentByName("First").getProperty("Text").LiteralValue, ...
                     "A longer final replacement");
             end
@@ -84,7 +84,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
             % changedInputsReturnToFullPreflight Reuse validated owner changes but discard stale metadata, catalog, or source proofs.
             for kind = ["other-owner", "metadata", "registry", "source"]
                 [document, first] = testCase.fixture("flat");
-                registry = macd.model.ComponentRegistry.createDefault();
+                registry = yamada.model.ComponentRegistry.createDefault();
                 document.setProperty(first.Id, "Text", "Warm", registry);
                 document.validatePropertyCommit(registry);
                 switch kind
@@ -106,7 +106,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                     document.validatePropertyCommit(registry);
                 end
                 if kind == "source"
-                    testCase.verifyEqual(identifier, "macd:DocumentModel:UnsafePropertyEdit");
+                    testCase.verifyEqual(identifier, "yamada:DocumentModel:UnsafePropertyEdit");
                     testCase.verifyEqual(first.getProperty("Text").LiteralValue, "Warm");
                 else
                     testCase.verifyEqual(first.getProperty("Text").LiteralValue, "After invalidation");
@@ -119,23 +119,23 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
             [document, first] = testCase.fixture("nested");
             document.setProperty(first.Id, "Text", "One", testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            old = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+            old = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
             document.setPropertyBatch(first.Id, ...
-                macd.model.PropertyTransaction.singleChange("Text", "Two"), testCase.Registry);
+                yamada.model.PropertyTransaction.singleChange("Text", "Two"), testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
             testCase.verifyEqual(old.Component.getProperty("Text").LiteralValue, "One");
-            copy = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+            copy = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
             copy.Component.setProperty("Text", "External mutation");
-            copy = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+            copy = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
             testCase.verifyEqual(copy.Component.getProperty("Text").LiteralValue, "Two");
             document.undo();
             testCase.verifyEqual(first.getProperty("Text").LiteralValue, "One");
             document.redo();
             testCase.verifyEqual(first.getProperty("Text").LiteralValue, "Two");
-            source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            checkpoint = macd.model.SavedSourceCheckpoint(document, source, ...
+            source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, ...
                 fullfile(tempdir, "LocalTextFixture.m"), testCase.Registry);
-            testCase.verifyEqual(checkpoint.SourceText, macd.source.SourceWriter.normalize(source, document.LineEnding));
+            testCase.verifyEqual(checkpoint.SourceText, yamada.source.SourceWriter.normalize(source, document.LineEnding));
             testCase.verifyEqual(document.HistoryIndex, 2);
         end
 
@@ -156,7 +156,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                 testCase.verifyEqual(actual, expected, cases(index));
                 if cases(index) == "exact-nested-cell"
                     % Exact literal decoding permits local schema acceptance or rejection without a source trial.
-                    [decoded, literal] = macd.source.MatlabLiteralParser.parse(macd.source.LiteralEncoder.encode(values{index}));
+                    [decoded, literal] = yamada.source.MatlabLiteralParser.parse(yamada.source.LiteralEncoder.encode(values{index}));
                     testCase.verifyTrue(literal);
                     testCase.verifyEqual(decoded, values{index});
                 end
@@ -170,18 +170,18 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
             % otherIndependentTextPropertiesReuseTheirProof Share the literal path for plain and multiline text contracts.
             for path = ["Title", "Tooltip"]
                 registry = testCase.Registry;
-                document = macd.model.NewAppFactory.createEmpty("TextDomainsFixture", registry);
+                document = yamada.model.NewAppFactory.createEmpty("TextDomainsFixture", registry);
                 panel = document.insertComponent(registry, "uipanel", document.RootComponentId);
                 name = panel.Name;
-                source = macd.source.NewAppGenerator(registry).generate(document);
-                document = macd.source.AppSourceParser.parseText(source, registry);
+                source = yamada.source.NewAppGenerator(registry).generate(document);
+                document = yamada.source.AppSourceParser.parseText(source, registry);
                 panel = document.getComponentByName(name);
                 document.setProperty(panel.Id, path, "First edit", registry);
                 document.validatePropertyCommit(registry);
                 document.setProperty(panel.Id, path, "Second edit", registry);
                 document.validatePropertyCommit(registry);
-                source = macd.source.RoundTripGenerator(registry).generate(document);
-                parsed = macd.source.AppSourceParser.parseText(source, registry);
+                source = yamada.source.RoundTripGenerator(registry).generate(document);
+                parsed = yamada.source.AppSourceParser.parseText(source, registry);
                 testCase.verifyEqual(parsed.getComponentByName(name).getProperty(path).LiteralValue, "Second edit");
             end
         end
@@ -197,8 +197,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                 firstLines string = "app.First = uilabel(PARENT);"
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                first (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                first (1, 1) yamada.model.ComponentRecord
             end
             declarations = ["UIFigure matlab.ui.Figure", "First matlab.ui.control.Label", "Second matlab.ui.control.Label"];
             body = "app.UIFigure = uifigure(Visible='off');";
@@ -222,7 +222,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
             source = strjoin(["classdef LocalTextFixture < handle", "properties", declarations, ...
                 "end", "methods", "function app = LocalTextFixture", "createComponents(app);", ...
                 "end", "function createComponents(app)", body, "end", "end", "end"], sprintf("\r\n"));
-            document = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            document = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
             first = document.getComponentByName("First");
         end
     end
@@ -231,10 +231,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
         function identifier = attempt(document, id, value, registry)
             % attempt Capture a failed preflight without changing its transactional behavior.
             arguments (Input)
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
                 id (1, 1) string
                 value
-                registry (1, 1) macd.model.ComponentRegistry
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 identifier (1, 1) string

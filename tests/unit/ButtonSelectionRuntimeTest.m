@@ -6,24 +6,24 @@ classdef (TestTags = {'ui', 'model', 'generation', 'preview'}) ButtonSelectionRu
 
         function pastedPanelRetainsPositionAfterParentInitialization(testCase)
             % pastedPanelRetainsPositionAfterParentInitialization Execute only an owned copied-container fixture.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             className = "OwnedAncestor" + erase(string(java.util.UUID.randomUUID()), "-");
-            original = macd.model.NewAppFactory.createEmpty(className, registry);
+            original = yamada.model.NewAppFactory.createEmpty(className, registry);
             original.getComponent(original.RootComponentId).setProperty("Visible", "off");
             left = original.insertComponent(registry, "uipanel", original.RootComponentId);
             left.setProperty("Position", [20 20 100 80]);
             original.insertComponent(registry, "uilabel", left.Id);
             right = original.insertComponent(registry, "uipanel", original.RootComponentId);
             right.setProperty("Position", [200 20 300 200]);
-            source = macd.source.NewAppGenerator(registry).generate(original);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(original);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             left = document.getComponentByName(left.Name);
             right = document.getComponentByName(right.Name);
             snapshot = document.copySubtree(left.Id, registry);
             pasted = document.pasteSubtree(snapshot, right.Id, registry);
             tag = className + "-pasted";
             pasted.setProperty("Tag", tag);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyLessThan(strfind(source, "app." + right.Name + ".Position ="), ...
                 strfind(source, "app." + pasted.Name + " = uipanel"));
             folder = string(tempname());
@@ -31,7 +31,7 @@ classdef (TestTags = {'ui', 'model', 'generation', 'preview'}) ButtonSelectionRu
             originalPath = string(path);
             cleanup = onCleanup(@() cleanupOwnedFolder(folder, originalPath));
             addpath(folder);
-            macd.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
+            yamada.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
             app = feval(className);
             appCleanup = onCleanup(@() delete(app));
             drawnow;

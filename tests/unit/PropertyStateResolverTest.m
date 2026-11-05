@@ -4,13 +4,13 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
     %   application or native control is executed by these tests.
 
     properties (Access = private)
-        Registry macd.model.ComponentRegistry
+        Registry yamada.model.ComponentRegistry
     end
 
     methods (TestClassSetup)
         function loadRegistry(testCase)
             % loadRegistry Load the release catalog once for this read-only fixture class.
-            testCase.Registry = macd.model.ComponentRegistry.createDefault();
+            testCase.Registry = yamada.model.ComponentRegistry.createDefault();
         end
     end
 
@@ -19,7 +19,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             % unsupportedAspectKeepsLimitsUnknown Retain the identified unsupported aspect interaction across later limits.
             for writes = {{"DataAspectRatio", [1 1 1]; "XLim", [1 10]; "FontName", "Helvetica"}}
                 [component, definitions] = testCase.fixture("uiaxes", writes{1});
-                states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                states = yamada.model.PropertyStateResolver.resolve(component, definitions);
                 limits = testCase.state(states, "XLim");
                 testCase.verifyFalse(limits.IsKnown);
                 testCase.verifyFalse(limits.IsEditable);
@@ -33,7 +33,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             % clampingDoesNotRewriteExplicitOrRequestedValues Retain the Value slot while Limits changes its effect.
             [component, definitions] = testCase.fixture("uislider-slider", {"Value", 20; "Limits", [50 100]});
             before = component.settingSnapshot();
-            [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
+            [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             value = testCase.state(states, "Value");
             testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(value.ExplicitValue, 20);
@@ -50,11 +50,11 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             % constructorUsesFinalDomainInsteadOfTextualSetterValidation Admit a constructor value above default limits.
             [component, definitions] = testCase.fixture("uislider-slider", ...
                 {"Value", 150; "Limits", [120 200]}, "nameValue");
-            [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
+            [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(testCase.state(states, "Value").EffectiveValue, 150);
             [component, definitions] = testCase.fixture("uislider-slider", {"Value", 150; "Limits", [120 200]});
-            [~, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
+            [~, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyTrue(any(string({diagnostics.Code}) == "invalid-property-sequence"));
         end
 
@@ -62,11 +62,11 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             % constructorModesStillFollowArgumentOrder Preserve mode effects observed for actual R2024a constructors.
             [component, definitions] = testCase.fixture("uislider-slider", ...
                 {"MajorTicksMode", "auto"; "MajorTicks", [10 90]}, "nameValue");
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEqual(testCase.state(states, "MajorTicksMode").EffectiveValue, "manual");
             [component, definitions] = testCase.fixture("uislider-slider", ...
                 {"MajorTicks", [10 90]; "MajorTicksMode", "auto"}, "nameValue");
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEqual(testCase.state(states, "MajorTicksMode").EffectiveValue, "auto");
             testCase.verifyFalse(testCase.state(states, "MajorTicks").IsKnown);
         end
@@ -75,13 +75,13 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             % numericRoundingIsAnEffectRatherThanAnExplicitWrite Model programmatic rounding without altering source history.
             [component, definitions] = testCase.fixture("uieditfield-numeric", ...
                 {"Value", 2.4; "RoundFractionalValues", "on"});
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             value = testCase.state(states, "Value");
             testCase.verifyEqual(value.ExplicitValue, 2.4);
             testCase.verifyEqual(value.EffectiveValue, 2);
             [component, definitions] = testCase.fixture("uieditfield-numeric", ...
                 {"Limits", [0 2]; "RoundFractionalValues", "on"; "Value", 2.4});
-            [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
+            [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(testCase.state(states, "Value").EffectiveValue, 2);
         end
@@ -89,23 +89,23 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
         function emptyNumericValuesRequireAllowEmpty(testCase)
             % emptyNumericValuesRequireAllowEmpty Distinguish a known empty value from an unknown state.
             [component, definitions] = testCase.fixture("uieditfield-numeric", {"Value", []});
-            [~, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
+            [~, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyNotEmpty(diagnostics);
             [component, definitions] = testCase.fixture("uieditfield-numeric", {"AllowEmpty", "on"; "Value", []});
-            [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
+            [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEmpty(diagnostics);
             value = testCase.state(states, "Value");
             testCase.verifyTrue(value.IsKnown);
             testCase.verifyEmpty(value.EffectiveValue);
             component.recordSetting(testCase.setting("AllowEmpty", "off", 3));
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEqual(testCase.state(states, "Value").EffectiveValue, 0);
         end
 
         function characterLimitsClearOutOfRangeText(testCase)
             % characterLimitsClearOutOfRangeText Retain the explicit text while exposing its cleared effective value.
             [component, definitions] = testCase.fixture("uieditfield-text", {"Value", "Hello"; "CharacterLimits", [6 Inf]});
-            [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
+            [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEmpty(diagnostics);
             value = testCase.state(states, "Value");
             testCase.verifyEqual(value.ExplicitValue, "Hello");
@@ -116,7 +116,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             % replacementRequestsRemainAtTheirSourceOccurrences Detect a later setter overriding a requested replacement.
             [component, definitions] = testCase.fixture("uislider-slider", {"Value", 20; "Limits", [50 100]});
             component.setProperty("Value", 30);
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             value = testCase.state(states, "Value");
             testCase.verifyEqual(value.ExplicitValue, 20);
             testCase.verifyEqual(value.RequestedValue, 30);
@@ -128,12 +128,12 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             [component, definitions] = testCase.fixture("uislider-slider", {"Value", 20});
             location = testCase.setting("Limits", [], 2).toStruct().Location;
             location.SourceExpression = "readLimits()";
-            component.recordSetting(macd.model.PropertySetting("Limits", [], location));
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            component.recordSetting(yamada.model.PropertySetting("Limits", [], location));
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyFalse(testCase.state(states, "Value").IsKnown);
             component.recordSetting(testCase.setting("Limits", [0 100], 3));
             component.recordSetting(testCase.setting("Value", 75, 4));
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyTrue(testCase.state(states, "Value").IsKnown);
             testCase.verifyEqual(testCase.state(states, "Value").EffectiveValue, 75);
         end
@@ -142,7 +142,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             % axesValuesSelectManualModeWithoutAddingExplicitSettings Preserve original histories while resolving known mode side effects.
             for id = ["axes", "uiaxes", "polaraxes", "geoaxes"]
                 [component, definitions] = testCase.fixture(id, {"FontSize", 14});
-                states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                states = yamada.model.PropertyStateResolver.resolve(component, definitions);
                 mode = testCase.state(states, "FontSizeMode");
                 testCase.verifyTrue(mode.IsKnown);
                 testCase.verifyEqual(mode.EffectiveValue, "manual");
@@ -155,17 +155,17 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
         function axesConstructorAndAutomaticModesRetainExecutionOrder(testCase)
             % axesConstructorAndAutomaticModesRetainExecutionOrder Distinguish final auto, final manual, and uncertain mode expressions.
             [component, definitions] = testCase.fixture("uiaxes", {"XTickMode", "auto"; "XTick", [0 1]}, "nameValue");
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEqual(testCase.state(states, "XTickMode").EffectiveValue, "manual");
             testCase.verifyEqual(testCase.state(states, "XTick").EffectiveValue, [0 1]);
             [component, definitions] = testCase.fixture("uiaxes", {"XTick", [0 1]; "XTickMode", "auto"}, "nameValue");
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyFalse(testCase.state(states, "XTick").IsKnown);
             testCase.verifyEqual(testCase.state(states, "XTick").ReasonCode, "automatic");
             location = testCase.setting("XTickMode", [], 3).toStruct().Location;
             location.SourceExpression = "chooseMode()";
-            component.recordSetting(macd.model.PropertySetting("XTickMode", [], location));
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            component.recordSetting(yamada.model.PropertySetting("XTickMode", [], location));
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyFalse(testCase.state(states, "XTickMode").IsKnown);
             testCase.verifyFalse(testCase.state(states, "XTick").IsKnown);
             testCase.verifyEqual(testCase.state(states, "XTick").ReasonCode, "uncertain-mode");
@@ -174,7 +174,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
         function automaticLimitEndpointsAreNotPretendedToBeResolved(testCase)
             % automaticLimitEndpointsAreNotPretendedToBeResolved Retain the input but mark data-dependent output as unknown.
             [component, definitions] = testCase.fixture("uiaxes", {"XLim", [-Inf 10]});
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEqual(testCase.state(states, "XLim").ExplicitValue, [-Inf 10]);
             testCase.verifyFalse(testCase.state(states, "XLim").IsKnown);
             testCase.verifyEqual(testCase.state(states, "XLim").ReasonCode, "automatic-limits");
@@ -186,13 +186,13 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             [component, definitions] = testCase.fixture("uiaxes", {"LineWidth", 2; ...
                 "GridLineWidth", 4; "MinorGridLineWidth", 3; "MinorGridLineWidthMode", "auto"});
             before = component.settingSnapshot();
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             minor = testCase.state(states, "MinorGridLineWidth");
             testCase.verifyEqual(minor.ExplicitValue, 3);
             testCase.verifyEqual(minor.EffectiveValue, 4);
             testCase.verifyEqual(minor.EffectSettingId, component.getSettings("MinorGridLineWidthMode").Id);
             component.recordSetting(testCase.setting("GridLineWidthMode", "auto", 5));
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectiveValue, 2);
             testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 2);
             testCase.verifyEqual(component.getProperty("MinorGridLineWidth").LiteralValue, 3);
@@ -205,8 +205,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             [component, definitions] = testCase.fixture("uiaxes", {"LineWidth", 2; "GridLineWidthMode", "manual"});
             location = testCase.setting("LineWidth", [], 3).toStruct().Location;
             location.SourceExpression = "readWidth()";
-            component.recordSetting(macd.model.PropertySetting("LineWidth", [], location));
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            component.recordSetting(yamada.model.PropertySetting("LineWidth", [], location));
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyFalse(testCase.state(states, "LineWidth").IsKnown);
             testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectiveValue, 2);
             testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 2);
@@ -220,12 +220,12 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             [component, definitions] = testCase.fixture("axes", {"GridLineWidth", 4});
             location = testCase.setting("GridLineWidthMode", [], 2).toStruct().Location;
             location.SourceExpression = "chooseMode()";
-            component.recordSetting(macd.model.PropertySetting("GridLineWidthMode", [], location));
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            component.recordSetting(yamada.model.PropertySetting("GridLineWidthMode", [], location));
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyFalse(testCase.state(states, "GridLineWidth").IsKnown);
             testCase.verifyFalse(testCase.state(states, "MinorGridLineWidth").IsKnown);
             component.recordSetting(testCase.setting("MinorGridLineWidth", 3, 3));
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 3);
             testCase.verifyEqual(testCase.state(states, "MinorGridLineWidthMode").EffectiveValue, "manual");
         end
@@ -236,7 +236,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
                 for writes = {{"GridLineWidth", 4; "MinorGridLineWidthMode", "manual"}, ...
                         {"MinorGridLineWidthMode", "manual"; "GridLineWidth", 4}}
                     [component, definitions] = testCase.fixture(id, writes{1}, "nameValue");
-                    states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                    states = yamada.model.PropertyStateResolver.resolve(component, definitions);
                     testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectiveValue, 4);
                     testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 0.5);
                     testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectSettingId, ...
@@ -244,11 +244,11 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
                 end
                 [component, definitions] = testCase.fixture(id, {"GridLineWidth", 4; ...
                     "MinorGridLineWidth", 3; "MinorGridLineWidthMode", "auto"}, "nameValue");
-                states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                states = yamada.model.PropertyStateResolver.resolve(component, definitions);
                 testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 4);
                 [component, definitions] = testCase.fixture(id, {"GridLineWidth", 4; ...
                     "MinorGridLineWidthMode", "auto"; "MinorGridLineWidth", 3}, "nameValue");
-                states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                states = yamada.model.PropertyStateResolver.resolve(component, definitions);
                 testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 3);
             end
         end
@@ -258,7 +258,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             for id = ["axes", "uiaxes", "polaraxes", "geoaxes"]
                 [component, definitions] = testCase.fixture(id, {"GridColor", [0.3 0.5 0.7]; ...
                     "GridColorMode", "auto"; "GridAlphaMode", "auto"; "GridAlpha", 0.4});
-                states = macd.model.PropertyStateResolver.resolve(component, definitions);
+                states = yamada.model.PropertyStateResolver.resolve(component, definitions);
                 testCase.verifyEqual(testCase.state(states, "GridColor").EffectiveValue, [0.3 0.5 0.7]);
                 testCase.verifyEqual(testCase.state(states, "GridColorMode").EffectiveValue, "auto");
                 testCase.verifyEqual(testCase.state(states, "GridAlpha").EffectiveValue, 0.4);
@@ -270,7 +270,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
         function invalidWidthIsAnInitializationError(testCase)
             % invalidWidthIsAnInitializationError Reject a nonpositive scalar before claiming an effective width.
             [component, definitions] = testCase.fixture("uiaxes", {"GridLineWidth", 0});
-            [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
+            [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyNotEmpty(diagnostics);
             testCase.verifyFalse(testCase.state(states, "GridLineWidth").IsKnown);
         end
@@ -279,7 +279,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             % constructorUnitConversionsAreNotReplacedByRawNumbers Respect source argument order for position units.
             [component, definitions] = testCase.fixture("uipanel", ...
                 {"Position", [1 1 200 100]; "Units", "normalized"}, "nameValue");
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyFalse(testCase.state(states, "Position").IsKnown);
             testCase.verifyEqual(testCase.state(states, "Position").ReasonCode, "unit-conversion");
             for alias = ["InnerPosition", "OuterPosition"]
@@ -288,7 +288,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             end
             [component, definitions] = testCase.fixture("uipanel", ...
                 {"Units", "normalized"; "Position", [0.1 0.1 0.5 0.5]}, "nameValue");
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEqual(testCase.state(states, "Position").EffectiveValue, [0.1 0.1 0.5 0.5]);
         end
 
@@ -296,10 +296,10 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             % itemDataTransitionsUseReviewedValueAndIndexRules Preserve an index when switching between labels and data.
             [component, definitions] = testCase.fixture("uidropdown", ...
                 {"Items", {'A','B'}; "Value", 'B'; "ItemsData", [10 20]});
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEqual(testCase.state(states, "Value").EffectiveValue, 20);
             component.recordSetting(testCase.setting("ItemsData", [30 40], 4));
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEqual(testCase.state(states, "Value").EffectiveValue, 30);
         end
 
@@ -307,14 +307,14 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             % extraItemDataIsNotAnAvailableSelection Ignore data entries with no corresponding visible item.
             [component, definitions] = testCase.fixture("uidropdown", ...
                 {"Items", {'A','B'}; "ItemsData", [10 20 30]; "Value", 30});
-            [~, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definitions);
+            [~, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyNotEmpty(diagnostics);
         end
 
         function defaultsAndStateCopiesNeverMaterializeSourceSettings(testCase)
             % defaultsAndStateCopiesNeverMaterializeSourceSettings Keep derived state independent from editable records.
             [component, definitions] = testCase.fixture("uislider-slider", cell(0, 2));
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             value = testCase.state(states, "Value");
             testCase.verifyEqual(value.ExplicitKind, "absent");
             testCase.verifyEqual(value.EffectiveValue, 0);
@@ -336,11 +336,11 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
                 method (1, 1) string = "assignment"
             end
             arguments (Output)
-                component (1, 1) macd.model.ComponentRecord
-                definitions macd.model.PropertyDefinition
+                component (1, 1) yamada.model.ComponentRecord
+                definitions yamada.model.PropertyDefinition
             end
             definition = testCase.Registry.getById(id);
-            component = macd.model.ComponentRecord("owned-component", "OwnedComponent", ...
+            component = yamada.model.ComponentRecord("owned-component", "OwnedComponent", ...
                 definition.Factory, definition.DeclaredType, "parsed");
             component.CreationArguments = definition.CreationArguments;
             for index = 1:size(writes, 1)
@@ -360,13 +360,13 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
                 method (1, 1) string = "assignment"
             end
             arguments (Output)
-                setting (1, 1) macd.model.PropertySetting
+                setting (1, 1) yamada.model.PropertySetting
             end
             syntax = "dot";
             statementId = "owned-statement-" + sequence;
             if method == "nameValue", syntax = "quotedPair"; statementId = "owned-constructor"; end
-            span = macd.model.SourceSpan(10 * sequence, 10 * sequence + 1);
-            setting = macd.model.PropertySetting(path, value, struct("Method", method, "Syntax", syntax, ...
+            span = yamada.model.SourceSpan(10 * sequence, 10 * sequence + 1);
+            setting = yamada.model.PropertySetting(path, value, struct("Method", method, "Syntax", syntax, ...
                 "SourceSnapshotId", "owned-state", "SourceSpan", span, "ValueSpan", span, ...
                 "Sequence", sequence, "StatementId", statementId));
         end
@@ -374,11 +374,11 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
         function state = state(states, path)
             % state Select exactly one typed effective-state fixture result.
             arguments (Input)
-                states macd.model.PropertyState
+                states yamada.model.PropertyState
                 path (1, 1) string
             end
             arguments (Output)
-                state (1, 1) macd.model.PropertyState
+                state (1, 1) yamada.model.PropertyState
             end
             state = states(string({states.Path}) == path);
         end

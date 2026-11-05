@@ -5,7 +5,7 @@ classdef (TestTags = {'model', 'catalog', 'preview', 'ui'}) PositionGeometryRunt
     methods (Test)
         function linearGaugePreviewKeepsWidthAndHeightIndependent(testCase)
             % linearGaugePreviewKeepsWidthAndHeightIndependent Preserve narrow, tall, and height-only Preview edits.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             definition = registry.getById("uigauge-linear");
             testCase.verifyEqual(definition.resizeConstraintFor(definition.CreationArguments), "free");
             source = strjoin(["classdef LinearPositionFixture < handle"; "properties"; ...
@@ -14,18 +14,18 @@ classdef (TestTags = {'model', 'catalog', 'preview', 'ui'}) PositionGeometryRunt
                 "function createComponents(app)"; "app.UIFigure = uifigure(Visible='off', AutoResizeChildren='off');"; ...
                 "app.Control = uigauge(app.UIFigure, 'linear');"; "app.Control.Orientation = 'horizontal';"; ...
                 "app.Control.Position = [10 20 100 70];"; "end"; "end"; "end"], newline);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("Control");
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             for orientation = ["horizontal", "vertical"]
                 document.setProperty(component.Id, "Orientation", orientation, registry);
                 for sizes = [100 70; 100 150; 50 150]'
                     requested = [10 20 sizes'];
                     document.setProperty(component.Id, "Position", requested, registry);
                     [handles, diagnostics] = renderer.render(document, figure);
-                    testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                    testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
                     testCase.verifyEqual(handles(char(component.Id)).Position, requested);
                 end
             end
@@ -33,7 +33,7 @@ classdef (TestTags = {'model', 'catalog', 'preview', 'ui'}) PositionGeometryRunt
 
         function aspectPoliciesMatchEveryOrientationAndBoundary(testCase)
             % aspectPoliciesMatchEveryOrientationAndBoundary Check fractional, tall, wide, and zero rectangles.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
             vectors = [10 20 100 70; 20 30 50 150; 10.1 20.2 0.5 2.3; 10 20 0 0; 10 20 100 0];
@@ -58,7 +58,7 @@ classdef (TestTags = {'model', 'catalog', 'preview', 'ui'}) PositionGeometryRunt
 
         function constructorAndSetterOrderRetainNativeSizeExchange(testCase)
             % constructorAndSetterOrderRetainNativeSizeExchange Check both orders instead of assuming canonical input.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
             for id = ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uigauge-semicircular", ...
@@ -91,24 +91,24 @@ classdef (TestTags = {'model', 'catalog', 'preview', 'ui'}) PositionGeometryRunt
         function state = resolve(definition, writes, method)
             % resolve Replay owned occurrences while leaving their requested literals intact.
             arguments (Input)
-                definition (1, 1) macd.model.ComponentDefinition
+                definition (1, 1) yamada.model.ComponentDefinition
                 writes cell
                 method (1, 1) string
             end
             arguments (Output)
-                state (1, 1) macd.model.PropertyState
+                state (1, 1) yamada.model.PropertyState
             end
-            component = macd.model.ComponentRecord("owned", "Owned", definition.Factory, definition.DeclaredType, "parsed");
+            component = yamada.model.ComponentRecord("owned", "Owned", definition.Factory, definition.DeclaredType, "parsed");
             component.CreationArguments = definition.CreationArguments;
             for index = 1:size(writes, 1)
-                span = macd.model.SourceSpan(index * 10, index * 10 + 1);
+                span = yamada.model.SourceSpan(index * 10, index * 10 + 1);
                 location = struct("Method", method, "Syntax", "dot", "Sequence", index, ...
                     "StatementId", "owned-constructor", "SourceSnapshotId", "owned", ...
                     "SourceSpan", span, "ValueSpan", span);
                 if method == "nameValue", location.Syntax = "quotedPair"; end
-                component.recordSetting(macd.model.PropertySetting(writes{index, 1}, writes{index, 2}, location));
+                component.recordSetting(yamada.model.PropertySetting(writes{index, 1}, writes{index, 2}, location));
             end
-            states = macd.model.PropertyStateResolver.resolve(component, definition.Properties);
+            states = yamada.model.PropertyStateResolver.resolve(component, definition.Properties);
             state = states(string({states.Path}) == "Position");
         end
     end

@@ -7,7 +7,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
     methods (Test)
         function matchingReplyCompletesOnlyOnce(testCase)
             % matchingReplyCompletesOnlyOnce Reject stale tokens and retain the first matching response.
-            reply = macd.ui.LayoutStabilizeReply("current");
+            reply = yamada.ui.LayoutStabilizeReply("current");
             reply.accept(struct("token", "obsolete"));
             testCase.verifyFalse(reply.Done);
             reply.accept(struct("token", "current", "value", 1));
@@ -19,7 +19,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
 
         function expiredReplyCannotBeReplaced(testCase)
             % expiredReplyCannotBeReplaced Ignore a native response that arrives after request expiry.
-            reply = macd.ui.LayoutStabilizeReply("expired");
+            reply = yamada.ui.LayoutStabilizeReply("expired");
             reply.expire();
             expected = reply.Data;
             reply.accept(struct("token", "expired", "value", 1));
@@ -58,7 +58,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
             if Widget == "axes", target.FontSize = 24; ylabel(target, "Changed axis label"); end
             if Widget == "tabs", target.SelectedTab = tab; nested.FontSize = 24; end
             drawnow;
-            macd.ui.waitForPreviewLayout(figure, grid);
+            yamada.ui.waitForPreviewLayout(figure, grid);
             drawnow;
             immediate = [label.Position target.Position];
             if Widget == "tabs", immediate = [immediate getpixelposition(nested, true)]; end
@@ -82,7 +82,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
             label.Text = ["First line"; "Second line"];
             drawnow;
             before = timerfindall();
-            response = macd.ui.waitForPreviewLayout(figure, grid);
+            response = yamada.ui.waitForPreviewLayout(figure, grid);
             drawnow;
             immediate = label.Position;
             pause(0.2); drawnow;

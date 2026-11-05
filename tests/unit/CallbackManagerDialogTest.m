@@ -4,7 +4,7 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
     %   failure reporting, and target expiry independently of source transactions.
 
     properties (Access = private)
-        States macd.model.CallbackState = macd.model.CallbackState.empty
+        States yamada.model.CallbackState = yamada.model.CallbackState.empty
         TargetValid logical = true
         Fail logical = false
         Calls double = 0
@@ -16,8 +16,8 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             % showsOrderedMutuallyExclusiveStates Display absent, existing and unsafe rows in order.
             dialog = testCase.fixture();
             cleanup = onCleanup(@() delete(dialog));
-            figure = findall(0, "Tag", "macd-callback-manager");
-            controls = findall(figure, "Tag", "macd-callback-target");
+            figure = findall(0, "Tag", "yamada-callback-manager");
+            controls = findall(figure, "Tag", "yamada-callback-target");
             testCase.verifyEqual(numel(controls), 3);
             testCase.verifyEqual(string(figure.WindowStyle), "modal");
             for row = 1:2
@@ -28,24 +28,24 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             control = controls(arrayfun(@(item) item.Layout.Row == 3, controls));
             testCase.verifyEqual(string(control.Enable), "off");
             testCase.verifyEqual(string(control.Tooltip), "Unsupported expression");
-            testCase.verifyEmpty(findall(figure, "Tag", "macd-callback-add"));
-            testCase.verifyEmpty(findall(figure, "Tag", "macd-callback-delete"));
+            testCase.verifyEmpty(findall(figure, "Tag", "yamada-callback-add"));
+            testCase.verifyEmpty(findall(figure, "Tag", "yamada-callback-delete"));
         end
 
         function refreshesAfterSuccessAndReportsFailure(testCase)
             % refreshesAfterSuccessAndReportsFailure Avoid optimistic state changes on rejected commands.
             dialog = testCase.fixture();
             cleanup = onCleanup(@() delete(dialog));
-            figure = findall(0, "Tag", "macd-callback-manager");
+            figure = findall(0, "Tag", "yamada-callback-manager");
             testCase.Fail = true;
             testCase.choose(figure, "FirstFcn", "<New...>");
-            message = findall(figure, "Tag", "macd-callback-message");
+            message = findall(figure, "Tag", "yamada-callback-message");
             testCase.verifyEqual(string(message.Text), "Rejected");
-            control = findall(figure, "Tag", "macd-callback-target", "UserData", "FirstFcn");
+            control = findall(figure, "Tag", "yamada-callback-target", "UserData", "FirstFcn");
             testCase.verifyEqual(string(control.Value), "<Disconnect>");
             testCase.Fail = false;
             testCase.choose(figure, "FirstFcn", "<New...>");
-            control = findall(figure, "Tag", "macd-callback-target", "UserData", "FirstFcn");
+            control = findall(figure, "Tag", "yamada-callback-target", "UserData", "FirstFcn");
             testCase.verifyEqual(string(control.Value), "ChosenHandler");
             testCase.verifyEqual(testCase.Calls, 2);
         end
@@ -54,14 +54,14 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             % cancellationPreservesSelectionAndDoesNotDispatch Keep the authoritative binding on name-popup cancellation.
             dialog = testCase.fixture();
             cleanup = onCleanup(@() delete(dialog));
-            figure = findall(0, "Tag", "macd-callback-manager");
+            figure = findall(0, "Tag", "yamada-callback-manager");
             testCase.NameResponse = "";
             testCase.choose(figure, "SecondFcn", "<New...>");
-            control = findall(figure, "Tag", "macd-callback-target", "UserData", "SecondFcn");
+            control = findall(figure, "Tag", "yamada-callback-target", "UserData", "SecondFcn");
             testCase.verifyEqual(string(control.Value), "existing");
             testCase.verifyEqual(testCase.Calls, 0);
             testCase.choose(figure, "SecondFcn", "<Disconnect>");
-            control = findall(figure, "Tag", "macd-callback-target", "UserData", "SecondFcn");
+            control = findall(figure, "Tag", "yamada-callback-target", "UserData", "SecondFcn");
             testCase.verifyEqual(string(control.Value), "<Disconnect>");
         end
 
@@ -69,11 +69,11 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             % closesExpiredTargetAndSupportsLongLists Exercise scrolling and expired document closure.
             dialog = testCase.fixture();
             for index = 4:40
-                testCase.States(end + 1) = macd.model.CallbackState("Fcn" + index, "absent");
+                testCase.States(end + 1) = yamada.model.CallbackState("Fcn" + index, "absent");
             end
             dialog.refresh();
-            figure = findall(0, "Tag", "macd-callback-manager");
-            testCase.verifyEqual(numel(findall(figure, "Tag", "macd-callback-target")), 40);
+            figure = findall(0, "Tag", "yamada-callback-manager");
+            testCase.verifyEqual(numel(findall(figure, "Tag", "yamada-callback-target")), 40);
             testCase.TargetValid = false;
             dialog.refresh();
             testCase.verifyFalse(isvalid(figure));
@@ -87,16 +87,16 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
                 testCase (1, 1) CallbackManagerDialogTest
             end
             arguments (Output)
-                dialog (1, 1) macd.ui.CallbackManagerDialog
+                dialog (1, 1) yamada.ui.CallbackManagerDialog
             end
             testCase.TargetValid = true;
             testCase.Fail = false;
             testCase.Calls = 0;
             testCase.NameResponse = "ChosenHandler";
-            testCase.States = [macd.model.CallbackState("FirstFcn", "absent"), ...
-                macd.model.CallbackState("SecondFcn", "editable", "", "existing"), ...
-                macd.model.CallbackState("ThirdFcn", "unsupported", "Unsupported expression")];
-            dialog = macd.ui.CallbackManagerDialog("Button", @() testCase.States, ...
+            testCase.States = [yamada.model.CallbackState("FirstFcn", "absent"), ...
+                yamada.model.CallbackState("SecondFcn", "editable", "", "existing"), ...
+                yamada.model.CallbackState("ThirdFcn", "unsupported", "Unsupported expression")];
+            dialog = yamada.ui.CallbackManagerDialog("Button", @() testCase.States, ...
                 @(name, action, handler) testCase.commit(name, action, handler), @() testCase.TargetValid, false, @() [], ...
                 @(~) struct("Name", "existing", "Label", "existing(app)"), ...
                 @(~) "DefaultPushed", @(~) testCase.NameResponse);
@@ -110,7 +110,7 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
                 name (1, 1) string
                 value (1, 1) string
             end
-            control = findall(figure, "Tag", "macd-callback-target", "UserData", name);
+            control = findall(figure, "Tag", "yamada-callback-target", "UserData", name);
             control.Value = value;
             control.ValueChangedFcn(control, []);
         end
@@ -132,7 +132,7 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             state = "editable";
             if action == "Disconnect", state = "absent"; end
             index = find(string({testCase.States.Name}) == name);
-            testCase.States(index) = macd.model.CallbackState(name, state, "", handler);
+            testCase.States(index) = yamada.model.CallbackState(name, state, "", handler);
         end
     end
 end

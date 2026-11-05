@@ -8,15 +8,15 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DayOfWeekEditorDialogTest < 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
             setappdata(owner, "changes", struct.empty);
-            dialog = macd.ui.inspector.DayOfWeekEditorDialog.open([1 3], ...
+            dialog = yamada.ui.inspector.DayOfWeekEditorDialog.open([1 3], ...
                 "DisabledDaysOfWeek", @(changes) captureChanges(owner, changes), false);
-            buttons = findall(dialog, "Tag", "macd-inspector-day-of-week-button");
+            buttons = findall(dialog, "Tag", "yamada-inspector-day-of-week-button");
             testCase.verifyEqual(sort(string({buttons.Text})), ...
                 ["Fri", "Mon", "Sat", "Sun", "Thu", "Tue", "Wed"]);
             testCase.verifyEqual(sort(string({buttons([buttons.Value]).Text})), ["Sun", "Tue"]);
             monday = buttons(string({buttons.Text}) == "Mon");
             monday.Value = true;
-            applyButton = findall(dialog, "Tag", "macd-inspector-day-of-week-apply");
+            applyButton = findall(dialog, "Tag", "yamada-inspector-day-of-week-apply");
             applyButton.ButtonPushedFcn(applyButton, struct());
 
             changes = getappdata(owner, "changes");
@@ -33,7 +33,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DayOfWeekEditorDialogTest < 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
             setappdata(owner, "changes", struct.empty);
-            dialog = macd.ui.inspector.DayOfWeekEditorDialog.open([], "DisabledDaysOfWeek", ...
+            dialog = yamada.ui.inspector.DayOfWeekEditorDialog.open([], "DisabledDaysOfWeek", ...
                 @(changes) captureChanges(owner, changes), false);
             dialog.CloseRequestFcn(dialog, struct());
 

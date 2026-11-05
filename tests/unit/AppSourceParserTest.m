@@ -10,8 +10,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
 
             % Read the preserved fixture without adding it to the MATLAB path.
             fixturePath = AppSourceParserTest.fixturePath("SimpleCalculatorApp.m");
-            registry = macd.model.ComponentRegistry.createDefault();
-            [document, diagnostics] = macd.source.AppSourceParser.parseFile( ...
+            registry = yamada.model.ComponentRegistry.createDefault();
+            [document, diagnostics] = yamada.source.AppSourceParser.parseFile( ...
                 fixturePath, registry);
 
             % Verify class identity, source preservation, and hierarchy recovery.
@@ -21,7 +21,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 "classdef SimpleCalculatorApp < handle");
             testCase.verifyEqual(document.LineEnding, "CRLF");
             testCase.verifyEqual(numel(document.Components), 11);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
 
             root = document.getComponentByName("UIFigure");
             grid = document.getComponentByName("GridLayout");
@@ -38,8 +38,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
 
             % Parse values from the same fixture through the shared document model.
             fixturePath = AppSourceParserTest.fixturePath("SimpleCalculatorApp.m");
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseFile(fixturePath, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseFile(fixturePath, registry);
             label = document.getComponentByName("LeftValueLabel");
             dropDown = document.getComponentByName("OperatorDropDown");
             button = document.getComponentByName("CalculateButton");
@@ -67,13 +67,13 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
 
         function recognizedCallbackBindingsDoNotProduceExpressionWarnings(testCase)
             % recognizedCallbackBindingsDoNotProduceExpressionWarnings Distinguish known registrations from data expressions.
-            registry = macd.model.ComponentRegistry.createDefault();
-            evalin("base", "clear macdCallbackDiagnosticSentinel");
+            registry = yamada.model.ComponentRegistry.createDefault();
+            evalin("base", "clear yamadaCallbackDiagnosticSentinel");
             expressions = ["@app.Pressed", "@(~, event) app.Pressed(event)", ...
                 "@(~,~) app.Pressed()", "@(source,event) app.Pressed(source,event)"];
             for expression = expressions
                 source = AppSourceParserTest.callbackFixture(expression);
-                [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+                [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
                 button = document.getComponentByName("Button");
                 label = document.getComponentByName("Label");
                 callback = button.getProperty("ButtonPushedFcn");
@@ -86,20 +86,20 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 regions = document.UnknownRegions(string({document.UnknownRegions.Reason}) == "source-expression");
                 testCase.verifyNumElements(regions, 1);
                 testCase.verifySubstring(regions.Text, "app.Label.Text = message");
-                states = macd.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
+                states = yamada.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
                 testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "editable");
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
-                testCase.verifyEqual(evalin("base", "exist('macdCallbackDiagnosticSentinel','var')"), 0);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
+                testCase.verifyEqual(evalin("base", "exist('yamadaCallbackDiagnosticSentinel','var')"), 0);
             end
         end
 
         function unsupportedOrUncertainCallbackExpressionsKeepWarnings(testCase)
             % unsupportedOrUncertainCallbackExpressionsKeepWarnings Retain diagnostics outside proven callback syntax.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             expressions = ["@(source,event) disp(event)", "@(~,event) app.Pressed(event.Value)", ...
                 "@(~,event) app.Pressed(captured)"];
             for expression = expressions
-                [document, diagnostics] = macd.source.AppSourceParser.parseText( ...
+                [document, diagnostics] = yamada.source.AppSourceParser.parseText( ...
                     AppSourceParserTest.callbackFixture(expression), registry);
                 button = document.getComponentByName("Button");
                 warnings = diagnostics(string({diagnostics.Code}) == "source-expression");
@@ -108,7 +108,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             source = AppSourceParserTest.callbackFixture("@(~,event) app.Pressed(event)");
             binding = "app.Button.ButtonPushedFcn = @(~,event) app.Pressed(event);";
             source = replace(source, binding, strjoin(["if true"; binding; "end"], newline));
-            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
             button = document.getComponentByName("Button");
             warnings = diagnostics(string({diagnostics.Code}) == "source-expression");
             testCase.verifyTrue(any(string({warnings.ComponentId}) == button.Id));
@@ -117,7 +117,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             % A method-handle expression on an ordinary data property is still unsupported source.
             source = replace(AppSourceParserTest.callbackFixture("@app.Pressed"), ...
                 "app.Label.Text = message;", "app.Label.Text = @app.Pressed;");
-            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName("Label");
             warnings = diagnostics(string({diagnostics.Code}) == "source-expression");
             testCase.verifyTrue(any(string({warnings.ComponentId}) == label.Id));
@@ -139,8 +139,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 "        end", ...
                 "    end", ...
                 "end"], newline);
-            registry = macd.model.ComponentRegistry.createDefault();
-            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
 
             % Recover the root and its literal constructor values without evaluation.
             root = document.getComponentByName("UIFigure");
@@ -148,7 +148,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             testCase.verifyEqual(root.Factory, "uifigure");
             testCase.verifyEqual(root.CreationArguments, ...
                 {"Visible", "off", "Position", [100 100 320 240]});
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function retainsConditionalAssignmentsWithoutOverwritingExpressions(testCase)
@@ -173,8 +173,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 "        end", ...
                 "    end", ...
                 "end"], newline);
-            registry = macd.model.ComponentRegistry.createDefault();
-            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
 
             % Retain both conditional occurrences without claiming a definite final value.
             statusLabel = document.getComponentByName("StatusLabel");
@@ -186,7 +186,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             testCase.verifyEqual(settings(1).SourceExpression, "compose(""Count %d"", 1)");
             testCase.verifyEqual(settings(2).LiteralValue, "Ready");
             testCase.verifyFalse(any([settings.IsCertain]));
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyTrue(any([diagnostics.Code] == ...
                 "conflicting-property-assignment"));
         end
@@ -212,8 +212,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 "        end", ...
                 "    end", ...
                 "end"], newline);
-            registry = macd.model.ComponentRegistry.createDefault();
-            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
 
             % Confirm source callbacks do not prevent the renderable control model.
             runButton = document.getComponentByName("RunButton");
@@ -223,7 +223,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             testCase.verifyFalse(isempty(resultTable));
             testCase.verifyEqual(resultTable.CreationArguments, ...
                 {"ColumnEditable", [true false]});
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyTrue(any([diagnostics.Code] == "source-creation-property"));
         end
 
@@ -234,19 +234,19 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             fixtureNames = ["ControlGalleryApp.m", "NavigationDataApp.m", ...
                 "AxesExplorerApp.m", "FigureToolsApp.m"];
             expectedComponentCounts = [16 19 5 9];
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
 
             % Verify class identity and lossless structural recovery per fixture.
             for index = 1:numel(fixtureNames)
                 fixturePath = AppSourceParserTest.fixturePath(fixtureNames(index));
-                [document, diagnostics] = macd.source.AppSourceParser.parseFile( ...
+                [document, diagnostics] = yamada.source.AppSourceParser.parseFile( ...
                     fixturePath, registry);
                 expectedClassName = erase(fixtureNames(index), ".m");
                 testCase.verifyEqual(document.ClassName, expectedClassName);
                 testCase.verifyEqual(numel(document.Components), ...
                     expectedComponentCounts(index));
                 testCase.verifyFalse( ...
-                    macd.validation.ModelValidator.hasErrors(diagnostics));
+                    yamada.validation.ModelValidator.hasErrors(diagnostics));
             end
         end
 
@@ -266,14 +266,14 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 "        end", ...
                 "    end", ...
                 "end"], newline);
-            registry = macd.model.ComponentRegistry.createDefault();
-            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
 
             % Keep supported literals while retaining the callback as opaque source.
             root = document.getComponentByName("UIFigure");
             testCase.verifyNotEmpty(root);
             testCase.verifyEqual(root.CreationArguments, {"Name", "Example"});
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyTrue(any([diagnostics.Code] == "source-creation-property"));
         end
 
@@ -283,13 +283,13 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             % Use the production source as a regression fixture without executing it.
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
             sourcePath = string(fullfile(projectRoot, "yamada.m"));
-            registry = macd.model.ComponentRegistry.createDefault();
-            [document, diagnostics] = macd.source.AppSourceParser.parseFile(sourcePath, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            [document, diagnostics] = yamada.source.AppSourceParser.parseFile(sourcePath, registry);
 
             % Recover an editable root despite source-only callback properties.
             testCase.verifyEqual(document.ClassName, "yamada");
             testCase.verifyNotEmpty(document.getComponentByName("UIFigure"));
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function parserNeverExecutesInputSource(testCase)
@@ -310,8 +310,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 "        end", newline, ...
                 "    end", newline, ...
                 "end", newline];
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(source, registry);
 
             % Successful recovery proves the source was inspected rather than run.
             testCase.verifyEqual(document.ClassName, "NonExecutingApp");
@@ -322,7 +322,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             % parseFileRejectsMissingPathsAndDirectories Validate file inputs early.
 
             % Supply a nonexistent path and a directory instead of a source file.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             missingPath = string(tempname) + ".m";
             inputPaths = [missingPath string(tempdir)];
 
@@ -330,7 +330,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             for inputPath = inputPaths
                 caughtException = MException.empty;
                 try
-                    macd.source.AppSourceParser.parseFile(inputPath, registry);
+                    yamada.source.AppSourceParser.parseFile(inputPath, registry);
                 catch exception
                     caughtException = exception;
                 end
@@ -347,10 +347,10 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 uint8(255)];
             fixturePath = AppSourceParserTest.writeTemporaryBytes(sourceBytes);
             cleanup = onCleanup(@() deleteIfPresent(fixturePath));
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
 
             % Report an error without constructing editable component records.
-            [document, diagnostics] = macd.source.AppSourceParser.parseFile( ...
+            [document, diagnostics] = yamada.source.AppSourceParser.parseFile( ...
                 fixturePath, registry);
             encodingDiagnostic = diagnostics([diagnostics.Code] == "invalid-utf8");
             testCase.verifyEqual(encodingDiagnostic.Severity, "error");
@@ -370,10 +370,10 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             fixturePath = AppSourceParserTest.writeTemporaryBytes( ...
                 unicode2native(source, "UTF-8"));
             cleanup = onCleanup(@() deleteIfPresent(fixturePath));
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
 
             % Do not normalize an opened LF source to the new-document default.
-            document = macd.source.AppSourceParser.parseFile(fixturePath, registry);
+            document = yamada.source.AppSourceParser.parseFile(fixturePath, registry);
             testCase.verifyEqual(document.LineEnding, "LF");
             clear cleanup
         end
@@ -396,7 +396,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 "app.Button = uibutton(app.UIFigure);"; "app.Label = uilabel(app.UIFigure);"; ...
                 "app.Label.Text = message;"; "app.Button.ButtonPushedFcn = " + expression + ";"; ...
                 "end"; "function Pressed(app, varargin)"; ...
-                "assignin('base','macdCallbackDiagnosticSentinel',true);"; "end"; "end"; "end"];
+                "assignin('base','yamadaCallbackDiagnosticSentinel',true);"; "end"; "end"; "end"];
             source = strjoin(lines, newline) + newline;
         end
 

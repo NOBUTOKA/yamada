@@ -13,14 +13,14 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
 
             actual = testCase.state(document, registry, grid, "RowHeight");
             testCase.verifyTrue(actual.IsKnown);
-            testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(actual.EffectiveValue, {"1x", "1x", "1x"}));
+            testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(actual.EffectiveValue, {"1x", "1x", "1x"}));
             testCase.verifyEqual(testCase.state(document, registry, first, "Layout.Row").EffectiveValue, 3);
-            copy = macd.source.PropertySourcePlan.combined(document, grid, registry);
+            copy = yamada.source.PropertySourcePlan.combined(document, grid, registry);
             copy.Component.setProperty("RowHeight", {999});
             again = testCase.state(document, registry, grid, "RowHeight");
             testCase.verifyEqual(again.EffectiveValue, actual.EffectiveValue);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             parsedFirst = parsed.getComponentByName("First");
             testCase.verifyEqual(testCase.state(parsed, registry, parsedFirst, "Layout.Row").EffectiveValue, 3);
         end
@@ -34,7 +34,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
             testCase.verifyTrue(testCase.state(document, registry, second, "Layout.Column").IsKnown);
             before = first.settingSnapshot();
-            uncertain = macd.model.PropertySetting("Layout", [], struct( ...
+            uncertain = yamada.model.PropertySetting("Layout", [], struct( ...
                 "SourceSnapshotId", "changed-layout", "SourceExpression", "layoutValue"));
             first.restoreSettings([before, uncertain.toStruct()]);
             uncertain = first.getSettings("Layout");
@@ -74,7 +74,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             metadata.application.effectStatus = "unsupported";
             metadata.application.affectedPaths = {"RowHeight", "Layout.Row"};
             metadata.application.effectReason = "Synthetic layout dependency for cache validation.";
-            replacement = macd.model.PropertyDefinition(property.Path, property.DefaultValue, ...
+            replacement = yamada.model.PropertyDefinition(property.Path, property.DefaultValue, ...
                 property.HasDefault, property.IsEditable, metadata);
             testCase.replaceButtonProperty(registry, replacement);
             actual = testCase.state(document, registry, grid, "RowHeight");
@@ -87,15 +87,15 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
 
         function sharedUncertaintyTracksMembershipAndOrder(testCase)
             % sharedUncertaintyTracksMembershipAndOrder Keep separate grids and moved members tied to current records.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("GridMembershipFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("GridMembershipFixture", registry);
             firstGrid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             first = document.insertComponent(registry, "uibutton", firstGrid.Id);
             secondGrid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             second = document.insertComponent(registry, "uibutton", secondGrid.Id);
-            firstEffect = macd.model.PropertySetting("Layout", [], struct( ...
+            firstEffect = yamada.model.PropertySetting("Layout", [], struct( ...
                 "SourceSnapshotId", "first-layout", "SourceExpression", "firstLayout"));
-            secondEffect = macd.model.PropertySetting("Layout", [], struct( ...
+            secondEffect = yamada.model.PropertySetting("Layout", [], struct( ...
                 "SourceSnapshotId", "second-layout", "SourceExpression", "secondLayout"));
             first.restoreSettings([first.settingSnapshot(), firstEffect.toStruct()]);
             second.restoreSettings([second.settingSnapshot(), secondEffect.toStruct()]);
@@ -124,11 +124,11 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             second = document.getComponentByName("Second");
             document.setProperty(first.Id, "FontSize", 14, registry);
             document.setProperty(second.Id, "FontSize", 15, registry);
-            testCase.verifyFalse(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(first, document, registry));
-            testCase.verifyFalse(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(first, document));
+            testCase.verifyFalse(yamada.model.GridLayoutStatePolicy.requiresCombinedPlan(first, document, registry));
+            testCase.verifyFalse(yamada.model.GridLayoutStatePolicy.requiresCombinedPlan(first, document));
             testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
             testCase.verifyEqual(testCase.state(document, registry, second, "Layout.Column").EffectiveValue, 2);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyEqual(count(source, "app.First.FontSize"), 1);
             testCase.verifyEqual(count(source, "app.Second.FontSize"), 1);
             testCase.verifyEqual(document.HistoryIndex, 2);
@@ -136,7 +136,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyEmpty(second.getProperty("FontSize"));
             document.redo();
             testCase.verifyEqual(second.getProperty("FontSize").LiteralValue, 15);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyEqual(parsed.getComponentByName("First").getProperty("FontSize").LiteralValue, 14);
             testCase.verifyEqual(parsed.getComponentByName("Second").getProperty("FontSize").LiteralValue, 15);
         end
@@ -149,18 +149,18 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             second = document.getComponentByName("Second");
             first.setProperty("FontSize", 14);
             second.setProperty("FontSize", 15);
-            testCase.verifyFalse(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
+            testCase.verifyFalse(yamada.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
             first.setProperty("Layout.Row", 3);
             second.setProperty("Layout.Column", 3);
-            testCase.verifyTrue(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             actual = parsed.getComponentByName("Grid");
             for path = ["RowHeight", "ColumnWidth"]
                 before = testCase.state(document, registry, grid, path);
                 after = testCase.state(parsed, registry, actual, path);
                 testCase.verifyTrue(before.IsKnown && after.IsKnown);
-                testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(before.EffectiveValue, after.EffectiveValue));
+                testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(before.EffectiveValue, after.EffectiveValue));
             end
         end
 
@@ -170,13 +170,13 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
                 "app.First = uibutton(app.Grid);", "app.Second = uibutton(app.Grid);", "app.First.Layout.Row = 4;"]);
             first = document.getComponentByName("First");
             first.setProperty("FontSize", 14);
-            third = macd.model.ComponentRecord("new-third", "Third", "uibutton", "matlab.ui.control.Button", "generated");
+            third = yamada.model.ComponentRecord("new-third", "Third", "uibutton", "matlab.ui.control.Button", "generated");
             document.addComponent(third, grid.Id);
-            testCase.verifyFalse(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
+            testCase.verifyFalse(yamada.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
             before = testCase.state(document, registry, third, "Layout.Row");
             testCase.verifyTrue(before.IsKnown);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             after = testCase.state(parsed, registry, parsed.getComponentByName("Third"), "Layout.Row");
             testCase.verifyTrue(after.IsKnown);
             testCase.verifyEqual(before.EffectiveValue, after.EffectiveValue);
@@ -190,10 +190,10 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             second = document.getComponentByName("Second");
             first.setProperty("FontSize", 14);
             second.setProperty("FontSize", 15);
-            testCase.verifyFalse(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
+            testCase.verifyFalse(yamada.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
             first.setProperty("UnregisteredSetting", 1);
             second.setProperty("UnregisteredSetting", 2);
-            testCase.verifyTrue(macd.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
+            testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.requiresCombinedPlan(grid, document, registry));
         end
 
         function unreviewedMemberEffectKeepsCoupledTracksUnknown(testCase)
@@ -207,35 +207,35 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
 
         function generatedConstructorTracksSurviveOtherGeneratedSettings(testCase)
             % generatedConstructorTracksSurviveOtherGeneratedSettings Retain legacy named inputs when unrelated setters exist.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("GeneratedGridFixture", registry);
-            grid = macd.model.ComponentRecord("generated-grid", "Grid", "uigridlayout", ...
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("GeneratedGridFixture", registry);
+            grid = yamada.model.ComponentRecord("generated-grid", "Grid", "uigridlayout", ...
                 "matlab.ui.container.GridLayout", "generated");
             grid.CreationArguments = {[3 4], "RowHeight", {55}, "ColumnWidth", {65, 75}};
             grid.setProperty("Padding", [1 2 3 4]);
             document.addComponent(grid, document.RootComponentId);
             testCase.verifyEqual(testCase.state(document, registry, grid, "RowHeight").EffectiveValue, {55});
             testCase.verifyEqual(testCase.state(document, registry, grid, "ColumnWidth").EffectiveValue, {65, 75});
-            source = macd.source.NewAppGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             configured = parsed.getComponentByName("Grid");
             testCase.verifyEqual(testCase.state(parsed, registry, configured, "RowHeight").EffectiveValue, {55});
-            checkpoint = macd.model.SavedSourceCheckpoint(document, source, fullfile(tempdir, "GeneratedGridFixture.m"), registry);
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, fullfile(tempdir, "GeneratedGridFixture.m"), registry);
             testCase.verifyEqual(checkpoint.SourceText, source);
             testCase.verifyFalse(document.IsDirty);
         end
 
         function trackComparisonRequiresTheAuditedPolicy(testCase)
             % trackComparisonRequiresTheAuditedPolicy Keep similarly named table properties in their own schema.
-            ordinary = macd.model.PropertyState(macd.model.PropertyDefinition("ColumnWidth"));
+            ordinary = yamada.model.PropertyState(yamada.model.PropertyDefinition("ColumnWidth"));
             ordinary = ordinary.withEffective("fit", true);
-            testCase.verifyTrue(macd.model.PropertyStateResolver.matchesRequested(ordinary, 'fit'));
+            testCase.verifyTrue(yamada.model.PropertyStateResolver.matchesRequested(ordinary, 'fit'));
             ordinary = ordinary.withEffective({100, 200}, true);
-            testCase.verifyFalse(macd.model.PropertyStateResolver.matchesRequested(ordinary, [100 200]));
-            definition = macd.model.PropertyDefinition("ColumnWidth", [], false, true, ...
+            testCase.verifyFalse(yamada.model.PropertyStateResolver.matchesRequested(ordinary, [100 200]));
+            definition = yamada.model.PropertyDefinition("ColumnWidth", [], false, true, ...
                 struct("application", struct("effectPolicy", "gridTracks")));
-            audited = macd.model.PropertyState(definition).withEffective({100, 200}, true);
-            testCase.verifyTrue(macd.model.PropertyStateResolver.matchesRequested(audited, [100 200]));
+            audited = yamada.model.PropertyState(definition).withEffective({100, 200}, true);
+            testCase.verifyTrue(yamada.model.PropertyStateResolver.matchesRequested(audited, [100 200]));
         end
 
         function creationOrderUsesTheInitializerTraceRatherThanFileOrder(testCase)
@@ -268,8 +268,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
                 testCase.verifyEqual(state.EffectiveValue, {50, "1x", "1x", "1x"});
                 testCase.verifyEqual(SourceAssertions.retained(grid.settingSnapshot(), before), SourceAssertions.semantics(before));
                 testCase.verifyFalse(document.IsDirty);
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
-                testCase.verifyFalse(macd.model.PropertyStateResolver.matchesRequested(state, {50}));
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+                testCase.verifyFalse(yamada.model.PropertyStateResolver.matchesRequested(state, {50}));
             end
         end
 
@@ -312,7 +312,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyEqual(testCase.state(document, registry, grid, "RowHeight").EffectiveValue, {55});
             state = testCase.state(document, registry, grid, "ColumnWidth");
             testCase.verifyEqual(state.EffectiveValue, {65, 75});
-            testCase.verifyTrue(macd.model.PropertyStateResolver.matchesRequested(state, [65 75]));
+            testCase.verifyTrue(yamada.model.PropertyStateResolver.matchesRequested(state, [65 75]));
             body = "app.Grid = uigridlayout(app.UIFigure, [3 4]);";
             [document, registry, grid] = testCase.fixture(body);
             testCase.verifyNumElements(testCase.state(document, registry, grid, "RowHeight").EffectiveValue, 3);
@@ -341,19 +341,19 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             [document, registry, grid] = testCase.fixture(body);
             before = grid.settingSnapshot();
             testCase.verifyError(@() document.setProperty(grid.Id, "RowHeight", {50}, registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(SourceAssertions.retained(grid.settingSnapshot(), before), SourceAssertions.semantics(before));
             testCase.verifyEqual(grid.getProperty("RowHeight").LiteralValue, {100, 200});
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
             document.setProperty(grid.Id, "RowHeight", {50, 60}, registry);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyTrue(contains(source, "app.Grid.RowHeight = {50, 60};"));
             testCase.verifyEqual(grid.getSettings("RowHeight").Id, before(1).Location.Id);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
             document.redo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
         end
 
         function newTrackSettingsUseVerifiedStyleAndRejectImpossibleSizes(testCase)
@@ -364,8 +364,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             for index = 1:numel(bodies)
                 [document, registry, grid] = testCase.fixture(bodies{index});
                 document.setProperty(grid.Id, "RowHeight", {50}, registry);
-                source = macd.source.RoundTripGenerator(registry).generate(document);
-                parsed = macd.source.AppSourceParser.parseText(source, registry);
+                source = yamada.source.RoundTripGenerator(registry).generate(document);
+                parsed = yamada.source.AppSourceParser.parseText(source, registry);
                 configured = parsed.getComponentByName("Grid");
                 method = "assignment";
                 if index == 1, method = "nameValue"; end
@@ -376,7 +376,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
                 "app.First = uibutton(app.Grid);", "app.First.Layout.Row = 2;"];
             [document, registry, grid] = testCase.fixture(body);
             testCase.verifyError(@() document.setProperty(grid.Id, "RowHeight", {50}, registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEmpty(grid.getProperty("RowHeight"));
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
@@ -393,8 +393,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyEqual(testCase.state(document, registry, second, "Layout.Row").EffectiveValue, 3);
             testCase.verifyEqual(testCase.state(document, registry, second, "Layout.Column").EffectiveValue, 2);
             testCase.verifyNumElements(testCase.state(document, registry, grid, "RowHeight").EffectiveValue, 3);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyEqual(testCase.state(document, registry, second, "Layout.Row").EffectiveValue, ...
                 testCase.state(parsed, registry, parsed.getComponentByName("Second"), "Layout.Row").EffectiveValue);
         end
@@ -404,13 +404,13 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             body = ["app.Grid = uigridlayout(app.UIFigure, [2 2]);", ...
                 "app.First = uibutton(app.Grid);", "app.Second = uibutton(app.Grid);", "app.First.Layout.Row = 4;"];
             [document, registry, grid] = testCase.fixture(body);
-            third = macd.model.ComponentRecord("new-fourth", "Fourth", "uibutton", "matlab.ui.control.Button", "generated");
+            third = yamada.model.ComponentRecord("new-fourth", "Fourth", "uibutton", "matlab.ui.control.Button", "generated");
             document.addComponent(third, grid.Id);
             state = testCase.state(document, registry, third, "Layout.Row");
             testCase.verifyTrue(state.IsKnown);
             testCase.verifyEqual(state.EffectiveValue, 2);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyEqual(testCase.state(parsed, registry, parsed.getComponentByName("Fourth"), "Layout.Row").EffectiveValue, 2);
         end
 
@@ -422,7 +422,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             first = document.getComponentByName("First");
             changes = struct("ComponentId", grid.Id, "Path", "RowHeight", "Value", {{50}});
             testCase.verifyError(@() document.applyGridLayoutEdit(grid.Id, changes, registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(document.HistoryIndex, 0);
             changes(end + 1) = struct("ComponentId", first.Id, "Path", "Layout.Row", "Value", 1);
             document.applyGridLayoutEdit(grid.Id, changes, registry);
@@ -450,10 +450,10 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyEqual(state.RequestedValue, {50, 60});
             testCase.verifyEqual(state.ExplicitKind, "literal");
             testCase.verifyFalse(isfield(document.Metadata, "ResolvingCombinedPropertySource"));
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyEqual(testCase.state(parsed, registry, parsed.getComponentByName("Grid"), "RowHeight").EffectiveValue, {50, 60});
-            checkpoint = macd.model.SavedSourceCheckpoint(document, source, fullfile(tempdir, "GridStateFixture.m"), registry);
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, fullfile(tempdir, "GridStateFixture.m"), registry);
             testCase.verifyEqual(checkpoint.SourceText, source);
             document.undo();
             testCase.verifyEmpty(grid.getProperty("RowHeight"));
@@ -495,12 +495,12 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyEqual(copiedChild.Properties(string({copiedChild.Properties.Path}) == "Layout.Row").LiteralValue, 2);
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
-            [handles, diagnostics] = macd.ui.PreviewRenderer(registry).render(document, figure);
+            [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, figure);
             drawnow;
             testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(handles(char(first.Id)).Layout.Row, 2);
-            testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(handles(char(grid.Id)).RowHeight, {50, 60}));
-            overlay = macd.ui.GridLayoutOverlayDataBuilder().build(document, handles, figure, grid.Id, first.Id, 1, registry);
+            testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(handles(char(grid.Id)).RowHeight, {50, 60}));
+            overlay = yamada.ui.GridLayoutOverlayDataBuilder().build(document, handles, figure, grid.Id, first.Id, 1, registry);
             testCase.verifyNumElements(overlay.rowTracks, 2);
             testCase.verifyEqual([overlay.rowTracks.value], [50 60]);
             testCase.verifyEqual(SourceAssertions.retained(grid.settingSnapshot(), before), SourceAssertions.semantics(before));
@@ -525,7 +525,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
                 app = struct("UIFigure", figure);
                 for line = fixtureBody{1}, eval(line); end
                 for path = ["RowHeight", "ColumnWidth"]
-                    testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent( ...
+                    testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent( ...
                         testCase.state(document, registry, grid, path).EffectiveValue, app.Grid.(path)));
                 end
                 for childId = grid.Children
@@ -548,14 +548,14 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             before = second.settingSnapshot();
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, figure);
             drawnow;
             testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(handles(char(second.Id)).Layout.Row, 3);
             testCase.verifyEqual(handles(char(second.Id)).Layout.Column, 1);
-            testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(handles(char(grid.Id)).RowHeight, {100, 200, "1x"}));
-            overlay = macd.ui.GridLayoutOverlayDataBuilder().build(document, handles, figure, grid.Id, second.Id, 1, registry);
+            testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(handles(char(grid.Id)).RowHeight, {100, 200, "1x"}));
+            overlay = yamada.ui.GridLayoutOverlayDataBuilder().build(document, handles, figure, grid.Id, second.Id, 1, registry);
             testCase.verifyNumElements(overlay.rowTracks, 3);
             testCase.verifyEqual(string({overlay.rowTracks.kind}), ["fixed", "fixed", "flexible"]);
             testCase.verifyEqual(second.settingSnapshot(), before);
@@ -567,13 +567,13 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
         function replaceButtonProperty(registry, property)
             % replaceButtonProperty Change one immutable policy while preserving the component variant.
             arguments (Input)
-                registry (1, 1) macd.model.ComponentRegistry
-                property (1, 1) macd.model.PropertyDefinition
+                registry (1, 1) yamada.model.ComponentRegistry
+                property (1, 1) yamada.model.PropertyDefinition
             end
             original = registry.get("uibutton");
             definitions = original.Properties;
             definitions(string({definitions.Path}) == property.Path) = property;
-            replacement = macd.model.ComponentDefinition(original.Factory, original.DeclaredType, ...
+            replacement = yamada.model.ComponentDefinition(original.Factory, original.DeclaredType, ...
                 original.AllowedParentFactories, original.IsRoot, original.CreationArguments, definitions, ...
                 original.DisplayName, original.Category, original.IsProgrammaticOnly, original.RequiresParentComponent, ...
                 original.SupportedStyles, original.DefaultStyle, original.DeclaredTypesByStyle, ...
@@ -588,30 +588,30 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
                 body string
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                grid (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                grid (1, 1) yamada.model.ComponentRecord
             end
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = strjoin(["classdef GridStateFixture < handle", "properties", ...
                 "UIFigure matlab.ui.Figure", "Grid matlab.ui.container.GridLayout", ...
                 "First matlab.ui.control.Button", "Second matlab.ui.control.Button", "Third matlab.ui.control.Button", ...
                 "end", "methods", "function app = GridStateFixture", "createComponents(app);", "end", ...
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", body, "end", "end", "end"], sprintf('\r\n'));
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             grid = document.getComponentByName("Grid");
         end
 
         function resolution = state(document, registry, component, path)
             % state Select one shared effective state from the document projection.
             arguments (Input)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                component (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                component (1, 1) yamada.model.ComponentRecord
                 path (1, 1) string
             end
             arguments (Output)
-                resolution (1, 1) macd.model.PropertyState
+                resolution (1, 1) yamada.model.PropertyState
             end
             states = document.getEffectivePropertyStates(registry, component.Id);
             index = find(arrayfun(@(state) state.Definition.Path == path, states), 1);

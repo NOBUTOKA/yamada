@@ -5,19 +5,19 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
     methods (Test)
         function addedComponentsInheritSpacesAndTabs(testCase)
             % addedComponentsInheritSpacesAndTabs Preserve local indentation and newline conventions.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for ending = [string(newline), string(sprintf("\r\n"))]
                 for indent = ["            ", string(char(9))]
                     original = SourceFormattingTest.fixture(ending, indent);
-                    document = macd.source.AppSourceParser.parseText(original, registry);
+                    document = yamada.source.AppSourceParser.parseText(original, registry);
                     component = document.insertComponent(registry, "uilabel", document.RootComponentId);
                     document.setProperty(component.Id, "Text", "Added", registry);
-                    [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(document);
-                    testCase.assertFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                    [source, diagnostics] = yamada.source.RoundTripGenerator(registry).generate(document);
+                    testCase.assertFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
                     testCase.verifySubstring(source, ending + "        " + component.Name + " matlab.ui.control.Label");
                     testCase.verifySubstring(source, ending + indent + "app." + component.Name + " = uilabel(app.UIFigure);");
                     testCase.verifySubstring(source, ending + indent + "app." + component.Name + ".Text = ""Added"";");
-                    reopened = macd.source.AppSourceParser.parseText(source, registry);
+                    reopened = yamada.source.AppSourceParser.parseText(source, registry);
                     testCase.verifyEqual(reopened.getComponentByName(component.Name).getProperty("Text").LiteralValue, "Added");
                 end
             end
@@ -25,59 +25,59 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
 
         function removedSubtreeDoesNotLeaveVacatedLines(testCase)
             % removedSubtreeDoesNotLeaveVacatedLines Remove full owned lines and retain neighboring blocks.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             ending = string(sprintf("\r\n"));
             original = SourceFormattingTest.fixture(ending, "            ");
             original = erase(original, " % keep this comment");
-            document = macd.source.AppSourceParser.parseText(original, registry);
+            document = yamada.source.AppSourceParser.parseText(original, registry);
             document.removeSubtree(document.getComponentByName("First").Id, registry);
-            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(document);
-            testCase.assertFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            [source, diagnostics] = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.assertFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             expected = regexprep(original, '(?m)^ *First matlab.ui.control.Label\r\n', '');
             expected = regexprep(expected, '(?m)^ *app\.First[^\r\n]*\r\n', '');
             testCase.verifyEqual(source, expected);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), original);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), original);
             document.redo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), expected);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), expected);
         end
 
         function readOnlyPropertyDoesNotTriggerDeletionCleanup(testCase)
             % readOnlyPropertyDoesNotTriggerDeletionCleanup Preserve restricted setter lines and their whitespace.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             ending = string(newline);
             original = SourceFormattingTest.fixture(ending, "            ");
             extra = "            app.UIFigure.Number = 1;" + ending;
             original = replace(original, "            app.First =", extra + "            app.First =");
-            document = macd.source.AppSourceParser.parseText(original, registry);
-            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(document);
-            testCase.assertFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            document = yamada.source.AppSourceParser.parseText(original, registry);
+            [source, diagnostics] = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.assertFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyEqual(source, original);
         end
 
         function newPropertiesFollowTheOwnersExistingSettings(testCase)
             % newPropertiesFollowTheOwnersExistingSettings Keep edits in their component block through history and reopen.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             ending = string(sprintf("\r\n"));
             original = SourceFormattingTest.fixture(ending, "            ");
-            document = macd.source.AppSourceParser.parseText(original, registry);
+            document = yamada.source.AppSourceParser.parseText(original, registry);
             first = document.getComponentByName("First");
             document.setProperty(first.Id, "FontSize", 19, registry);
             document.setProperty(first.Id, "Tooltip", "Hint", registry);
-            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(document);
-            testCase.assertFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            [source, diagnostics] = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.assertFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             block = "            app.First.Text = ""First""; % keep this comment" + ending + ...
                 "            app.First.FontSize = 19;" + ending + ...
                 "            app.First.Tooltip = ""Hint"";";
             testCase.verifySubstring(source, block + ending + ending + "            app.Second =");
             document.undo();
-            testCase.verifyFalse(contains(macd.source.RoundTripGenerator(registry).generate(document), ".Tooltip ="));
+            testCase.verifyFalse(contains(yamada.source.RoundTripGenerator(registry).generate(document), ".Tooltip ="));
             document.redo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
-            reopened = macd.source.AppSourceParser.parseText(source, registry);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
+            reopened = yamada.source.AppSourceParser.parseText(source, registry);
             document = reopened;
             document.setProperty(document.getComponentByName("First").Id, "FontWeight", "bold", registry);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifySubstring(source, block + ending + "            app.First.FontWeight = ""bold"";" + ...
                 ending + ending + "            app.Second =");
         end
@@ -92,35 +92,35 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
                     block = ending + "    app.Middle = uilabel(app.UIFigure);" + ending + ...
                         "    app.Middle.Text = ""Middle"";";
                     edits = struct("Start", anchor + 1, "End", anchor, "Text", block);
-                    edits = macd.source.SourceFormatting.separateComponents(source, edits);
+                    edits = yamada.source.SourceFormatting.separateComponents(source, edits);
                     actual = extractBefore(source, edits.Start) + edits.Text + extractAfter(source, edits.End);
                     expected = "    app.First.Text = ""First""; % note" + ending + ending + ...
                         "    app.Middle = uilabel(app.UIFigure);" + ending + ...
                         "    app.Middle.Text = ""Middle"";" + ending + ending + ...
                         "    app.Last.Text = ""Last"";" + ending;
                     testCase.verifyEqual(actual, expected);
-                    testCase.verifyEqual(macd.source.SourceFormatting.separateComponents(source, edits), edits);
+                    testCase.verifyEqual(yamada.source.SourceFormatting.separateComponents(source, edits), edits);
                 end
             end
         end
 
         function multipleInsertedComponentsKeepTheirOwnSettingsTogether(testCase)
             % multipleInsertedComponentsKeepTheirOwnSettingsTogether Separate generated groups and preserve deletion history.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             ending = string(sprintf("\r\n"));
-            document = macd.source.AppSourceParser.parseText(SourceFormattingTest.fixture(ending, "            "), registry);
+            document = yamada.source.AppSourceParser.parseText(SourceFormattingTest.fixture(ending, "            "), registry);
             first = document.insertComponent(registry, "uilabel", document.RootComponentId);
             second = document.insertComponent(registry, "uilabel", document.RootComponentId);
             document.setProperty(first.Id, "Text", "Added first", registry);
             document.setProperty(second.Id, "Text", "Added second", registry);
-            generator = macd.source.RoundTripGenerator(registry);
+            generator = yamada.source.RoundTripGenerator(registry);
             [source, diagnostics] = generator.generate(document);
-            testCase.assertFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.assertFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifySubstring(source, "app.Second.Text = ""Second"";" + ending + ending + ...
                 "            app." + first.Name + " = uilabel(app.UIFigure);");
             testCase.verifySubstring(source, ".Text = ""Added first"";" + ending + ending + ...
                 "            app." + second.Name + " = uilabel(app.UIFigure);");
-            reopened = macd.source.AppSourceParser.parseText(source, registry);
+            reopened = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyEqual(generator.generate(reopened), source);
             reopened.removeSubtree(reopened.getComponentByName(first.Name).Id, registry);
             removed = generator.generate(reopened);
@@ -139,7 +139,7 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
                     source = "    app.UIFigure = uifigure;" + ending + body + ending;
                     anchor = strfind(source, "Items=[") - 1;
                     edits = struct("Start", anchor + 1, "End", anchor, "Text", "FontSize=18, ");
-                    testCase.verifyEqual(macd.source.SourceFormatting.separateComponents(source, edits), edits);
+                    testCase.verifyEqual(yamada.source.SourceFormatting.separateComponents(source, edits), edits);
                 end
             end
         end
@@ -223,7 +223,7 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
             arguments (Output)
                 source (1, 1) string
             end
-            edits = macd.source.SourceFormatting.cleanDeletions(source, edits);
+            edits = yamada.source.SourceFormatting.cleanDeletions(source, edits);
             [~, order] = sort([edits.Start], "descend");
             for index = order
                 edit = edits(index);

@@ -4,7 +4,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
     methods (Test)
         function newChildFollowsParentCreationAcrossHelpers(testCase)
             % newChildFollowsParentCreationAcrossHelpers Use execution visits when helper file order differs.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = strjoin(["classdef AnchorApp < handle"; "properties"; ...
                 "UIFigure matlab.ui.Figure"; "EarlyPanel matlab.ui.container.Panel"; ...
                 "LatePanel matlab.ui.container.Panel"; "end"; "methods"; ...
@@ -12,14 +12,14 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
                 "function createLate(app)"; "app.LatePanel = uipanel(app.UIFigure);"; "end"; ...
                 "function createEarly(app)"; "app.UIFigure = uifigure(Visible='off');"; ...
                 "app.EarlyPanel = uipanel(app.UIFigure);"; "end"; "end"; "end"], newline) + newline;
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             parent = document.getComponentByName("LatePanel");
-            child = macd.model.ComponentRecord("new-child", "NewChild", "uilabel", "matlab.ui.control.Label");
+            child = yamada.model.ComponentRecord("new-child", "NewChild", "uilabel", "matlab.ui.control.Label");
             child.setProperty("Text", "retained");
             document.addComponent(child, parent.Id);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.assertGreaterThan(strlength(source), 0);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             actual = parsed.getComponentByName("NewChild");
             testCase.assertNotEmpty(actual);
             testCase.verifyEqual(actual.ParentId, parsed.getComponentByName("LatePanel").Id);
@@ -32,7 +32,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             [source, diagnostics] = generator.generate(document);
 
             testCase.verifyEqual(source, document.OriginalText);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function propertyEditChangesOnlyOwnedAssignment(testCase)
@@ -45,7 +45,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
 
             testCase.verifySubstring(source, "app.LeftValueLabel.Text = ""First value"";");
             testCase.verifySubstring(source, "app.CalculateButton.ButtonPushedFcn = @app.CalculateButtonPushed");
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function generatedComponentUsesAnchoredInsertion(testCase)
@@ -53,7 +53,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
 
             [document, generator] = RoundTripGeneratorTest.parsedFixture();
             parent = document.getComponentByName("GridLayout");
-            component = macd.model.ComponentRecord("generated-status", "StatusLabel", ...
+            component = yamada.model.ComponentRecord("generated-status", "StatusLabel", ...
                 "uilabel", "matlab.ui.control.Label", "generated");
             component.setProperty("Text", "Ready");
             document.addComponent(component, parent.Id);
@@ -62,14 +62,14 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             testCase.verifySubstring(source, "StatusLabel matlab.ui.control.Label");
             testCase.verifySubstring(source, "app.StatusLabel = uilabel(app.GridLayout);");
             testCase.verifySubstring(source, "app.StatusLabel.Text = ""Ready"";");
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function insertedGridOmitsReadOnlyPosition(testCase)
             % insertedGridOmitsReadOnlyPosition Avoid read-only assignments when extending parsed apps.
 
             [document, generator] = RoundTripGeneratorTest.parsedFixture();
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             testCase.verifyEmpty(grid.getProperty("Position"));
             grid.setProperty("Position", [1 1 300 200]);
@@ -78,7 +78,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             document.setProperty(grid.Id, "RowHeight", {"1x"});
             [source, diagnostics] = generator.generate(document);
 
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifySubstring(source, "app." + grid.Name + " = uigridlayout(app.UIFigure);");
             testCase.verifyFalse(contains(source, "app." + grid.Name + ".Position ="));
             testCase.verifyFalse(contains(source, "app." + grid.Name + ".InnerPosition ="));
@@ -98,20 +98,20 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
                 "            app.GridLayout.OuterPosition = [1 1 640 480];" + newline + ...
                 "            app.UIFigure.Number = 1;" + newline + ...
                 "            app.GridLayout.CustomUnknownProperty = 123;");
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(original, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(original, registry);
             grid = document.getComponentByName("GridLayout");
             testCase.assertNotEmpty(grid.getProperty("Position"));
             [source, diagnostics] = generator.generate(document);
 
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyEqual(source, original);
 
             % A permitted literal rewrite must leave every restricted occurrence intact.
             label = document.getComponentByName("LeftValueLabel");
             label.setProperty("Text", "First value");
             [source, diagnostics] = generator.generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             expected = replace(original, "app.LeftValueLabel.Text = 'Left value';", ...
                 "app.LeftValueLabel.Text = ""First value"";");
             testCase.verifyNotEqual(expected, original);
@@ -120,8 +120,8 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
 
         function openedEditFieldCallbacksSurviveGenerationAndEdits(testCase)
             % openedEditFieldCallbacksSurviveGenerationAndEdits Preserve text and numeric registrations until explicit deletion.
-            registry = macd.model.ComponentRegistry.createDefault();
-            generator = macd.source.RoundTripGenerator(registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            generator = yamada.source.RoundTripGenerator(registry);
             for style = ["text", "numeric"]
                 type = "matlab.ui.control.EditField";
                 if style == "numeric", type = "matlab.ui.control.NumericEditField"; end
@@ -138,16 +138,16 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
                         "% FieldValueChanged Preserve this callback without executing it."; ...
                         "error('CallbackRetentionFixture:Executed', 'Callback must remain inert.');"; ...
                         "end"; "end"; "end"], sprintf("\r\n")) + sprintf("\r\n");
-                    document = macd.source.AppSourceParser.parseText(original, registry);
+                    document = yamada.source.AppSourceParser.parseText(original, registry);
                     [source, diagnostics] = generator.generate(document);
-                    testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                    testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
                     testCase.verifyEqual(source, original);
 
                     % Ordinary property edits must preserve the registration and method verbatim.
                     root = document.getComponent(document.RootComponentId);
                     document.setProperty(root.Id, "Name", "After", registry);
                     [source, diagnostics] = generator.generate(document);
-                    testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                    testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
                     expected = replace(original, "app.UIFigure.Name = 'Before';", ...
                         "app.UIFigure.Name = ""After"";");
                     testCase.verifyEqual(source, expected);
@@ -156,7 +156,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
                     field = document.getComponentByName("Field");
                     document.applyCallbackAction(field.Id, "ValueChangedFcn", "Delete", registry);
                     [source, diagnostics] = generator.generate(document);
-                    testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                    testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
                     testCase.verifyFalse(contains(source, "app.Field.ValueChangedFcn ="));
                     testCase.verifyFalse(contains(source, "function FieldValueChanged("));
                     document.undo();
@@ -170,17 +170,17 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
 
             [document, generator] = RoundTripGeneratorTest.parsedFixture();
             source = document.OriginalText + newline + "app.LeftValueLabel.Visible = 'on';";
-            document = macd.source.AppSourceParser.parseText(source, ...
-                macd.model.ComponentRegistry.createDefault());
+            document = yamada.source.AppSourceParser.parseText(source, ...
+                yamada.model.ComponentRegistry.createDefault());
             testCase.verifyError(@() document.removeComponent("parsed-LeftValueLabel"), ...
-                "macd:DocumentModel:UnsafeSourceCommit");
+                "yamada:DocumentModel:UnsafeSourceCommit");
             testCase.verifyNotEmpty(document.getComponent("parsed-LeftValueLabel"));
             testCase.verifyEqual(generator.generate(document), source);
         end
 
         function checkboxTreePreservesWritableGeometrySettings(testCase)
             % checkboxTreePreservesWritableGeometrySettings Keep owned public geometry writes and edit the existing Position token.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             bodies = {["app.Tree = uitree(app.UIFigure, 'checkbox');", ...
                 "app.Tree.InnerPosition = [10 20 150 200];", "app.Tree.Position = [30 40 160 210];"], ...
                 "app.Tree = uitree(app.UIFigure, 'checkbox', InnerPosition=[10 20 150 200], Position=[30 40 160 210]);", ...
@@ -191,20 +191,20 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
                     "function app = GeometryFixture", "createComponents(app);", "end", ...
                     "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
                     body{1}, "end", "end", "end"], sprintf('\r\n'));
-                document = macd.source.AppSourceParser.parseText(original, registry);
-                generator = macd.source.RoundTripGenerator(registry);
+                document = yamada.source.AppSourceParser.parseText(original, registry);
+                generator = yamada.source.RoundTripGenerator(registry);
                 [source, diagnostics] = generator.generate(document);
-                testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
                 testCase.verifyEqual(source, original);
                 tree = document.getComponentByName("Tree");
                 testCase.assertNumElements(tree.getSettings("InnerPosition"), 1);
                 target = tree.getSettings("Position");
                 document.setProperty(tree.Id, "Position", [50 60 170 220], registry);
                 [source, diagnostics] = generator.generate(document);
-                testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+                testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
                 testCase.verifyEqual(source, replace(original, "[30 40 160 210]", "[50 60 170 220]"));
                 testCase.verifyEqual(tree.getSettings("Position").Id, target.Id);
-                reopened = macd.source.AppSourceParser.parseText(source, registry);
+                reopened = yamada.source.AppSourceParser.parseText(source, registry);
                 other = reopened.getComponentByName("Tree");
                 testCase.verifyEqual(other.getProperty("Position").LiteralValue, [50 60 170 220]);
                 testCase.verifyEqual(other.getSettings("Position").Method, target.Method);
@@ -221,7 +221,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
 
             testCase.verifyFalse(contains(source, "app.LeftValueLabel"));
             testCase.verifyFalse(contains(source, "LeftValueLabel  matlab.ui.control.Label"));
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function documentEditRewritesPositionAndGridAssignment(testCase)
@@ -238,7 +238,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             testCase.verifySubstring(source, ...
                 "app.UIFigure.Position = [120 130 360 250];");
             testCase.verifySubstring(source, "app.ResultLabel.Layout.Row = 4;");
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function gridLayoutEditRewritesTracksAndChildPlacement(testCase)
@@ -258,7 +258,7 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             testCase.verifySubstring(source, "app.GridLayout.ColumnWidth = {'2x', '1x'};");
             testCase.verifySubstring(source, "app.CalculateButton.Layout.Row = [3 4];");
             testCase.verifySubstring(source, "app.CalculateButton.Layout.Column = [1 2];");
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
     end
 
@@ -269,9 +269,9 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
             testPath = mfilename("fullpath");
             fixturePath = string(fullfile(fileparts(fileparts(testPath)), ...
                 "fixtures", "SimpleCalculatorApp.m"));
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseFile(fixturePath, registry);
-            generator = macd.source.RoundTripGenerator(registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseFile(fixturePath, registry);
+            generator = yamada.source.RoundTripGenerator(registry);
         end
     end
 end

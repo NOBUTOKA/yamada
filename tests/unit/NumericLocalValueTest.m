@@ -3,13 +3,13 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
     %   Local validation must preserve source order, constraint behavior, atomic
     %   history, full save verification and the independence of public results.
     properties (Access = private)
-        Registry macd.model.ComponentRegistry
+        Registry yamada.model.ComponentRegistry
     end
 
     methods (TestClassSetup)
         function loadRegistry(testCase)
             % loadRegistry Load the same catalog used by full property preflight.
-            testCase.Registry = macd.model.ComponentRegistry.createDefault();
+            testCase.Registry = yamada.model.ComponentRegistry.createDefault();
         end
     end
 
@@ -24,7 +24,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 document.validatePropertyCommit(testCase.Registry);
                 document.setProperty(second.Id, "Value", 3, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                document.setPropertyBatch(first.Id, macd.model.PropertyTransaction.singleChange("Value", 4), testCase.Registry);
+                document.setPropertyBatch(first.Id, yamada.model.PropertyTransaction.singleChange("Value", 4), testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
                 document.setProperty(second.Id, "Value", 5, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
@@ -32,8 +32,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 testCase.verifyEqual(second.getProperty("Value").LiteralValue, 5);
                 testCase.verifyEqual(document.HistoryIndex, 4);
                 document.undo(); document.redo();
-                source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+                source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+                parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
                 testCase.verifyEqual(parsed.getComponentByName("First").getProperty("Value").LiteralValue, 4);
                 testCase.verifyEqual(parsed.getComponentByName("Second").getProperty("Value").LiteralValue, 5);
             end
@@ -51,20 +51,20 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 end
                 measured = [10 20 100 22];
                 for id = [first.Id, second.Id]
-                    macd.model.DocumentEditAvailability.copying(document, id, testCase.Registry);
-                    macd.model.DocumentEditAvailability.deletion(document, id, testCase.Registry);
-                    macd.model.DocumentEditAvailability.reparenting(document, id, testCase.Registry, measured);
+                    yamada.model.DocumentEditAvailability.copying(document, id, testCase.Registry);
+                    yamada.model.DocumentEditAvailability.deletion(document, id, testCase.Registry);
+                    yamada.model.DocumentEditAvailability.reparenting(document, id, testCase.Registry, measured);
                 end
                 for id = [first.Id, second.Id]
-                    document.setPropertyBatch(id, macd.model.PropertyTransaction.singleChange("Value", 4), testCase.Registry);
+                    document.setPropertyBatch(id, yamada.model.PropertyTransaction.singleChange("Value", 4), testCase.Registry);
                     document.validatePropertyCommit(testCase.Registry);
-                    copied = macd.model.DocumentEditAvailability.copying(document, id, testCase.Registry);
-                    deleted = macd.model.DocumentEditAvailability.deletion(document, id, testCase.Registry);
-                    parents = macd.model.DocumentEditAvailability.reparenting(document, id, testCase.Registry, measured);
+                    copied = yamada.model.DocumentEditAvailability.copying(document, id, testCase.Registry);
+                    deleted = yamada.model.DocumentEditAvailability.deletion(document, id, testCase.Registry);
+                    parents = yamada.model.DocumentEditAvailability.reparenting(document, id, testCase.Registry, measured);
                     fresh = document.structuralCandidate();
-                    testCase.verifyEqual(copied, macd.model.DocumentEditAvailability.copying(fresh, id, testCase.Registry));
-                    testCase.verifyEqual(deleted, macd.model.DocumentEditAvailability.deletion(fresh, id, testCase.Registry));
-                    testCase.verifyEqual(parents, macd.model.DocumentEditAvailability.reparenting(fresh, id, testCase.Registry, measured));
+                    testCase.verifyEqual(copied, yamada.model.DocumentEditAvailability.copying(fresh, id, testCase.Registry));
+                    testCase.verifyEqual(deleted, yamada.model.DocumentEditAvailability.deletion(fresh, id, testCase.Registry));
+                    testCase.verifyEqual(parents, yamada.model.DocumentEditAvailability.reparenting(fresh, id, testCase.Registry, measured));
                 end
                 snapshot = document.copySubtree(second.Id, testCase.Registry);
                 value = snapshot.Records(1).Properties(string({snapshot.Records(1).Properties.Path}) == "Value");
@@ -79,18 +79,18 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             destination = document.Components(string({document.Components.Factory}) == "uipanel");
             document.setProperty(first.Id, "Value", 1, testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            before = macd.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry);
+            before = yamada.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry);
             testCase.assertFalse(before(string({before.Id}) == destination.Id).Enabled);
             document.setProperty(first.Id, "Value", 2, testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            testCase.verifyEqual(macd.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry), before);
+            testCase.verifyEqual(yamada.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry), before);
             measured = [10 20 100 30];
-            after = macd.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry, measured);
+            after = yamada.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry, measured);
             testCase.verifyTrue(after(string({after.Id}) == destination.Id).Enabled);
             fresh = document.structuralCandidate();
-            testCase.verifyEqual(after, macd.model.DocumentEditAvailability.reparenting(fresh, first.Id, testCase.Registry, measured));
+            testCase.verifyEqual(after, yamada.model.DocumentEditAvailability.reparenting(fresh, first.Id, testCase.Registry, measured));
             document.undo(); document.redo();
-            restored = macd.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry, measured);
+            restored = yamada.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry, measured);
             testCase.verifyEqual(restored, after);
         end
 
@@ -101,7 +101,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 first = document.getComponentByName("First");
                 document.setProperty(first.Id, "Value", 1, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                macd.model.DocumentEditAvailability.copying(document, first.Id, testCase.Registry);
+                yamada.model.DocumentEditAvailability.copying(document, first.Id, testCase.Registry);
                 document.setProperty(first.Id, "Value", 2, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
                 switch kind
@@ -112,9 +112,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                     case "registry"
                         testCase.Registry.register(testCase.Registry.get(first.Factory, first.CreationArguments));
                 end
-                actual = macd.model.DocumentEditAvailability.copying(document, first.Id, testCase.Registry);
+                actual = yamada.model.DocumentEditAvailability.copying(document, first.Id, testCase.Registry);
                 fresh = document.structuralCandidate();
-                testCase.verifyEqual(actual, macd.model.DocumentEditAvailability.copying(fresh, first.Id, testCase.Registry));
+                testCase.verifyEqual(actual, yamada.model.DocumentEditAvailability.copying(fresh, first.Id, testCase.Registry));
                 if kind == "readonly", testCase.verifyFalse(actual.Enabled); end
             end
         end
@@ -196,19 +196,19 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 definitions = [states.Definition];
                 value = states(string({definitions.Path}) == "Value");
                 testCase.verifyEqual(value.Resolution.EffectiveValue, 2);
-                copy = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+                copy = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
                 testCase.assertNotEmpty(copy.Component);
                 normal = copy.Document.structuralCandidate();
-                again = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+                again = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
                 testCase.assertNotEmpty(again.Component);
-                testCase.verifyEqual(macd.model.SubtreeSnapshot(normal, normal.RootComponentId).Records, ...
-                    macd.model.SubtreeSnapshot(again.Document, again.Document.RootComponentId).Records);
+                testCase.verifyEqual(yamada.model.SubtreeSnapshot(normal, normal.RootComponentId).Records, ...
+                    yamada.model.SubtreeSnapshot(again.Document, again.Document.RootComponentId).Records);
                 for name = reshape(string(properties(normal)), 1, [])
                     if name ~= "Components", testCase.verifyEqual(again.Document.(name), normal.(name), name); end
                 end
                 copy.Component.setProperty("Value", 9);
                 testCase.verifyEqual(first.getProperty("Value").LiteralValue, 2);
-                again = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+                again = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
                 testCase.verifyEqual(again.Component.getProperty("Value").LiteralValue, 2);
             end
         end
@@ -222,7 +222,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             document.validatePropertyCommit(testCase.Registry);
             document.setProperty(first.Id, "Value", 3, testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            old = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+            old = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
             previousDocument = old.Document;
             previousComponent = previousDocument.getComponent(first.Id);
             definitions = testCase.Registry.getEffectiveProperties(first.Factory, "uifigure", first.CreationArguments);
@@ -230,10 +230,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             document.validatePropertyCommit(testCase.Registry);
             testCase.assertNotEmpty(old.Component);
             testCase.verifyEqual(old.Component.getProperty("Value").LiteralValue, 3);
-            states = macd.model.PropertyStateResolver.resolve(previousComponent, definitions, previousDocument, testCase.Registry);
+            states = yamada.model.PropertyStateResolver.resolve(previousComponent, definitions, previousDocument, testCase.Registry);
             testCase.verifyEqual(states(string({states.Path}) == "Value").EffectiveValue, 3);
-            source = macd.source.RoundTripGenerator(testCase.Registry).generate(old.Document);
-            parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            source = yamada.source.RoundTripGenerator(testCase.Registry).generate(old.Document);
+            parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
             testCase.verifyEqual(parsed.getComponentByName("First").getProperty("Value").LiteralValue, 3);
             testCase.verifyEqual(first.getProperty("Value").LiteralValue, 4);
         end
@@ -250,12 +250,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             document.validatePropertyCommit(testCase.Registry);
             history = document.History;
             testCase.verifyError(@() document.setProperty(first.Id, "Value", 50, testCase.Registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(document.History, history);
             definitions = testCase.Registry.getEffectiveProperties(first.Factory, "uifigure", first.CreationArguments);
-            states = macd.model.PropertyStateResolver.resolve(first, definitions, document, testCase.Registry);
+            states = yamada.model.PropertyStateResolver.resolve(first, definitions, document, testCase.Registry);
             testCase.verifyEqual(states(string({states.Path}) == "Value").EffectiveValue, 3);
-            copy = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+            copy = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
             testCase.assertNotEmpty(copy.Component);
             testCase.verifyEqual(copy.Component.getProperty("Value").LiteralValue, 3);
             testCase.verifyEqual(first.getProperty("Value").LiteralValue, 3);
@@ -269,9 +269,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 document.setProperty(first.Id, "Value", 4, testCase.Registry);
                 parent = document.getComponent(first.ParentId);
                 definitions = testCase.Registry.getEffectiveProperties(first.Factory, parent.Factory, first.CreationArguments);
-                plan = macd.source.PropertySourcePlan.combined(document, first, testCase.Registry);
+                plan = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
                 testCase.assertNotEmpty(plan.Component);
-                expected = macd.model.PropertyStateResolver.resolve(plan.Component, definitions, plan.Document, testCase.Registry);
+                expected = yamada.model.PropertyStateResolver.resolve(plan.Component, definitions, plan.Document, testCase.Registry);
                 actual = document.getEffectivePropertyStates(testCase.Registry, first.Id);
                 actual = [actual.Resolution];
                 value = actual(string({actual.Path}) == "Value");
@@ -296,12 +296,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             document.setProperty(first.Id, "Value", 2, testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
             history = document.History;
-            source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+            source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
             testCase.verifyError(@() document.setProperty(first.Id, "Value", 50, testCase.Registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(document.History, history);
             testCase.verifyEqual(first.getProperty("Value").LiteralValue, 2);
-            testCase.verifyEqual(macd.source.RoundTripGenerator(testCase.Registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(testCase.Registry).generate(document), source);
         end
 
         function preservesRoundingAndExclusiveBoundaryRejections(testCase)
@@ -325,7 +325,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 document.validatePropertyCommit(testCase.Registry);
                 before = document.History;
                 testCase.verifyError(@() document.setProperty(first.Id, "Value", rejected, testCase.Registry), ...
-                    "macd:DocumentModel:UnsafePropertyEdit", kind);
+                    "yamada:DocumentModel:UnsafePropertyEdit", kind);
                 testCase.verifyEqual(first.getProperty("Value").LiteralValue, 2);
                 testCase.verifyEqual(document.History, before);
             end
@@ -361,8 +361,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 document.setProperty(first.Id, "Value", 3, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
                 document.setProperty(first.Id, "Value", 4, testCase.Registry);
-                source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+                source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+                parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
                 settings = parsed.getComponentByName("First").getSettings("Value");
                 if index == 1
                     testCase.verifyEqual(settings.Method, "nameValue");
@@ -394,8 +394,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             document.validatePropertyCommit(testCase.Registry);
             document.setProperty(first.Id, "Value", 3, testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
-            source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            checkpoint = macd.model.SavedSourceCheckpoint(document, source, ...
+            source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, ...
                 fullfile(tempdir, "LocalNumericFixture.m"), testCase.Registry);
             testCase.verifyEqual(checkpoint.SourceText, source);
         end
@@ -409,12 +409,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 layout (1, 1) string
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
             end
             document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
             document.insertComponent(testCase.Registry, "uipanel", document.RootComponentId);
-            source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            document = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            document = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
         end
 
         function document = fixture(testCase, layout, firstBody)
@@ -425,7 +425,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 firstBody (1, :) string
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
             end
             declarations = ["UIFigure matlab.ui.Figure", "First matlab.ui.control.NumericEditField", ...
                 "Second matlab.ui.control.NumericEditField"];
@@ -455,7 +455,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 declarations, "end", "methods", "function app = LocalNumericFixture", ...
                 "createComponents(app);", "end", "function createComponents(app)", ...
                 body, "end", "end", "end"], sprintf("\r\n"));
-            document = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            document = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
         end
     end
 end

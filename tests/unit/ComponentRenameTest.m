@@ -9,8 +9,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             [document, button, registry] = ComponentRenameTest.newButton();
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             source = regexprep(document.CurrentText, '(?<!\w)ButtonPushed(?!\w)', "ButtonButtonPushed");
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(parsed), source);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(parsed), source);
             target = parsed.getComponentByName("Button");
             parsed.renameComponent(target.Id, "HogeButton", registry);
             testCase.verifySubstring(parsed.CurrentText, "@app.HogeButtonPushed");
@@ -34,7 +34,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             testCase.verifySubstring(document.GeneratedText, "app.RunButton = uibutton(app.UIFigure)");
             testCase.verifySubstring(document.GeneratedText, "@app.RunButtonPushed");
             testCase.verifySubstring(document.GeneratedText, "% RunButtonPushed Handle");
-            states = macd.source.CallbackSourceAnalyzer.analyze(document, id, registry);
+            states = yamada.source.CallbackSourceAnalyzer.analyze(document, id, registry);
             testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").HandlerName, "RunButtonPushed");
             document.undo();
             testCase.verifyEqual(button.Name, "Button");
@@ -47,7 +47,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             % parsedReferencesAndMemberHelpFollowWithoutChangingLiterals Rewrite static uses and preserve literal text.
             [document, button, registry] = ComponentRenameTest.newButton();
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-            source = macd.source.NewAppGenerator(registry).generate(document);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
             source = replace(source, "        Button matlab.ui.control.Button", ...
                 "        % Button - UI component handle." + newline + "        Button matlab.ui.control.Button");
             source = replace(source, "% ButtonPushed Handle the ButtonPushedFcn callback.", ...
@@ -66,7 +66,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
                 "            other.ButtonPushed(app, event);"; ...
                 "            z = app.Button.Text;"];
             source = replace(source, "            % Add callback behavior here.", strjoin(body, newline));
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "GoButton", registry);
             result = parsed.GeneratedText;
@@ -88,30 +88,30 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             testCase.verifySubstring(result, "% GoButtonPushed Handle");
             testCase.verifySubstring(result, "%   Example: GoButtonPushed(app, event); app.GoButton.Text = 'Run';");
             parsed.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(parsed), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(parsed), source);
         end
 
         function customAndSharedCallbackNamesRemainUnchanged(testCase)
             % customAndSharedCallbackNamesRemainUnchanged Preserve intentional handler identities.
             [document, button, registry] = ComponentRenameTest.newButton();
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-            source = macd.source.NewAppGenerator(registry).generate(document);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
             custom = replace(source, "ButtonPushed", "performAction");
-            parsed = macd.source.AppSourceParser.parseText(custom, registry);
+            parsed = yamada.source.AppSourceParser.parseText(custom, registry);
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "GoButton", registry);
             testCase.verifySubstring(parsed.GeneratedText, "@app.performAction");
             testCase.verifySubstring(parsed.GeneratedText, "% performAction Handle");
             shared = replace(source, "app.UIFigure.Position =", ...
                 "app.UIFigure.CloseRequestFcn = @app.ButtonPushed;" + newline + "            app.UIFigure.Position =");
-            parsed = macd.source.AppSourceParser.parseText(shared, registry);
+            parsed = yamada.source.AppSourceParser.parseText(shared, registry);
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "GoButton", registry);
             testCase.verifySubstring(parsed.GeneratedText, "@app.ButtonPushed");
             testCase.verifySubstring(parsed.GeneratedText, "function ButtonPushed");
             shadowed = replace(source, "            % Add callback behavior here.", ...
                 "            ButtonPushed = 1; data = who('ButtonPushed');");
-            parsed = macd.source.AppSourceParser.parseText(shadowed, registry);
+            parsed = yamada.source.AppSourceParser.parseText(shadowed, registry);
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "GoButton", registry);
             testCase.verifySubstring(parsed.GeneratedText, "@app.ButtonPushed");
@@ -127,7 +127,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
                     document.renameComponent(button.Id, name, registry);
                     testCase.verifyFail("Accepted invalid or conflicting name: " + name);
                 catch exception
-                    testCase.verifyTrue(startsWith(string(exception.identifier), "macd:DocumentModel:"));
+                    testCase.verifyTrue(startsWith(string(exception.identifier), "yamada:DocumentModel:"));
                 end
                 testCase.verifyEqual(button.Name, "Button");
                 testCase.verifyEqual(document.History, before);
@@ -140,12 +140,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
         function dynamicDispatchAndAliasesAreRejected(testCase)
             % dynamicDispatchAndAliasesAreRejected Preserve sources whose references cannot be resolved statically.
             [document, ~, registry] = ComponentRenameTest.newButton();
-            source = macd.source.NewAppGenerator(registry).generate(document);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
             for statement = ["app.('Button').Text = 'x';", "alias = app;", "eval('app.Button.Text');"]
                 unsafe = replace(source, "            app.Button.Position", statement + newline + "            app.Button.Position");
-                parsed = macd.source.AppSourceParser.parseText(unsafe, registry);
+                parsed = yamada.source.AppSourceParser.parseText(unsafe, registry);
                 button = parsed.getComponentByName("Button");
-                testCase.verifyError(@() parsed.renameComponent(button.Id, "GoButton", registry), "macd:DocumentModel:UnsafeComponentRename");
+                testCase.verifyError(@() parsed.renameComponent(button.Id, "GoButton", registry), "yamada:DocumentModel:UnsafeComponentRename");
                 testCase.verifyEqual(button.Name, "Button");
                 testCase.verifyEqual(parsed.OriginalText, unsafe);
                 testCase.verifyEmpty(parsed.History);
@@ -156,8 +156,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             % repeatedRenamesAndCallbackEditsKeepTheirOriginalAnchors Compose renames with parsed callback deletion and replacement.
             [document, button, registry] = ComponentRenameTest.newButton();
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-            source = macd.source.NewAppGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "GoButton", registry);
             parsed.renameComponent(button.Id, "RunButton", registry);
@@ -165,7 +165,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             parsed.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
             testCase.verifyFalse(contains(parsed.GeneratedText, "function RunButtonPushed"));
             parsed.undo();
-            testCase.verifySubstring(macd.source.RoundTripGenerator(registry).generate(parsed), "@app.RunButtonPushed");
+            testCase.verifySubstring(yamada.source.RoundTripGenerator(registry).generate(parsed), "@app.RunButtonPushed");
             parsed.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
             parsed.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             testCase.verifySubstring(parsed.GeneratedText, "@app.RunButtonPushed_2");
@@ -176,8 +176,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
         function parentReferencesAndLaterPropertyEditsUseCurrentNames(testCase)
             % parentReferencesAndLaterPropertyEditsUseCurrentNames Preserve parent links and combine literal edits with source renaming.
             [document, ~, registry] = ComponentRenameTest.newButton();
-            source = macd.source.NewAppGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             root = parsed.getComponent(parsed.RootComponentId);
             parsed.renameComponent(root.Id, "MainWindow", registry);
             testCase.verifySubstring(parsed.GeneratedText, "uibutton(app.MainWindow)");
@@ -186,7 +186,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "RunButton", registry);
             parsed.setProperty(button.Id, "Text", "Run");
-            result = macd.source.RoundTripGenerator(registry).generate(parsed);
+            result = yamada.source.RoundTripGenerator(registry).generate(parsed);
             testCase.verifySubstring(result, "app.RunButton.Text = ""Run""");
             testCase.verifyEqual(button.ParentId, root.Id);
         end
@@ -195,18 +195,18 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             % existingUserMembersAndHandlerCollisionsAreRespected Reserve other class members and suffix generated handlers.
             [document, button, registry] = ComponentRenameTest.newButton();
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-            source = macd.source.NewAppGenerator(registry).generate(document);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
             canonicalSource = source;
             source = replace(source, "    properties (Access = private)", ...
                 "    properties (Access = private)" + newline + "        UserData double" + newline + "        RunButtonPushed double");
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             button = parsed.getComponentByName("Button");
-            testCase.verifyError(@() parsed.renameComponent(button.Id, "UserData", registry), "macd:DocumentModel:ComponentNameCollision");
+            testCase.verifyError(@() parsed.renameComponent(button.Id, "UserData", registry), "yamada:DocumentModel:ComponentNameCollision");
             parsed.renameComponent(button.Id, "RunButton", registry);
             testCase.verifySubstring(parsed.GeneratedText, "@app.RunButtonPushed_2");
             testCase.verifySubstring(parsed.GeneratedText, "% RunButtonPushed_2 Handle");
             % A Save As identity can differ from the preserved source snapshot.
-            parsed = macd.source.AppSourceParser.parseText(canonicalSource, registry);
+            parsed = yamada.source.AppSourceParser.parseText(canonicalSource, registry);
             parsed.ClassName = "RunButtonPushed";
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "RunButton", registry);
@@ -219,8 +219,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             document.renameComponent(button.Id, "RunButton", registry);
             second = document.insertComponent(registry, "uibutton", document.RootComponentId);
             testCase.verifyEqual(second.Name, "Button2");
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyNotEmpty(parsed.getComponentByName("RunButton"));
             testCase.verifyNotEmpty(parsed.getComponentByName("Button2"));
         end
@@ -229,10 +229,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             % defaultHandlerCallsAndHelpExamplesFollowTheRename Rename static method calls alongside an exclusive default binding.
             [document, button, registry] = ComponentRenameTest.newButton();
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-            source = macd.source.NewAppGenerator(registry).generate(document);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
             source = replace(source, "            % Add callback behavior here.", ...
                 "            ButtonPushed(app, event);");
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             button = parsed.getComponentByName("Button");
             parsed.renameComponent(button.Id, "RunButton", registry);
             testCase.verifySubstring(parsed.GeneratedText, "RunButtonPushed(app, event);");
@@ -244,13 +244,13 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
         function [document, button, registry] = newButton()
             % newButton Create a small new document with one editable button.
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                button (1, 1) macd.model.ComponentRecord
-                registry (1, 1) macd.model.ComponentRegistry
+                document (1, 1) yamada.model.DocumentModel
+                button (1, 1) yamada.model.ComponentRecord
+                registry (1, 1) yamada.model.ComponentRegistry
             end
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("RenameApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("RenameApp", registry);
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
         end
     end

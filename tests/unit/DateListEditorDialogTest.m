@@ -10,26 +10,26 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DateListEditorDialogTest < m
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
             setappdata(owner, "changes", struct.empty);
-            dialog = macd.ui.inspector.DateListEditorDialog.open( ...
+            dialog = yamada.ui.inspector.DateListEditorDialog.open( ...
                 [datetime(2024, 3, 1); datetime(2024, 3, 2)], "DisabledDates", ...
                 @(changes) captureChanges(owner, changes), false);
-            clearButton = findall(dialog, "Tag", "macd-inspector-date-list-clear");
-            applyButton = findall(dialog, "Tag", "macd-inspector-date-list-apply");
+            clearButton = findall(dialog, "Tag", "yamada-inspector-date-list-clear");
+            applyButton = findall(dialog, "Tag", "yamada-inspector-date-list-apply");
 
             testCase.verifyEmpty(getappdata(owner, "changes"));
-            pickers = findall(dialog, "Tag", "macd-inspector-date-list-row-picker");
+            pickers = findall(dialog, "Tag", "yamada-inspector-date-list-row-picker");
             testCase.verifyEqual(numel(pickers), 2);
-            deleteButtons = findall(dialog, "Tag", "macd-inspector-date-list-delete");
+            deleteButtons = findall(dialog, "Tag", "yamada-inspector-date-list-delete");
             deleteButton = deleteButtons([deleteButtons.UserData] == 1);
             deleteButton.ButtonPushedFcn(deleteButton, struct());
-            pickers = findall(dialog, "Tag", "macd-inspector-date-list-row-picker");
+            pickers = findall(dialog, "Tag", "yamada-inspector-date-list-row-picker");
             testCase.verifyEqual(numel(pickers), 1);
             testCase.verifyEqual(pickers.Value, datetime(2024, 3, 2));
             clearButton.ButtonPushedFcn(clearButton, struct());
-            testCase.verifyEmpty(findall(dialog, "Tag", "macd-inspector-date-list-row-picker"));
-            addButton = findall(dialog, "Tag", "macd-inspector-date-list-add");
+            testCase.verifyEmpty(findall(dialog, "Tag", "yamada-inspector-date-list-row-picker"));
+            addButton = findall(dialog, "Tag", "yamada-inspector-date-list-add");
             addButton.ButtonPushedFcn(addButton, struct());
-            picker = findall(dialog, "Tag", "macd-inspector-date-list-row-picker");
+            picker = findall(dialog, "Tag", "yamada-inspector-date-list-row-picker");
             expected = datetime(2024, 3, 3);
             picker.Value = expected;
             picker.ValueChangedFcn(picker, struct());
@@ -48,12 +48,12 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DateListEditorDialogTest < m
 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
-            dialog = macd.ui.inspector.DateListEditorDialog.open( ...
+            dialog = yamada.ui.inspector.DateListEditorDialog.open( ...
                 datetime(2024, 3, 1), "DisabledDates", @(~) "", false);
             testCase.addTeardown(@() deleteIfValid(dialog));
             drawnow;
-            picker = findall(dialog, "Tag", "macd-inspector-date-list-row-picker");
-            deleteButton = findall(dialog, "Tag", "macd-inspector-date-list-delete");
+            picker = findall(dialog, "Tag", "yamada-inspector-date-list-row-picker");
+            deleteButton = findall(dialog, "Tag", "yamada-inspector-date-list-delete");
             rowGrid = picker.Parent;
             testCase.verifyEqual(string(rowGrid.ColumnWidth{1}), "1x");
             testCase.verifyEqual(rowGrid.ColumnWidth{2}, 30);
@@ -68,10 +68,10 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DateListEditorDialogTest < m
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
             setappdata(owner, "changes", struct.empty);
-            dialog = macd.ui.inspector.DateListEditorDialog.open( ...
+            dialog = yamada.ui.inspector.DateListEditorDialog.open( ...
                 datetime.empty(0, 1), "DisabledDates", ...
                 @(changes) captureChanges(owner, changes), false);
-            addButton = findall(dialog, "Tag", "macd-inspector-date-list-add");
+            addButton = findall(dialog, "Tag", "yamada-inspector-date-list-add");
             addButton.ButtonPushedFcn(addButton, struct());
             dialog.CloseRequestFcn(dialog, struct());
 

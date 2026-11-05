@@ -33,17 +33,17 @@ addpath(projectRoot);
 if ~isfolder(options.OutputFolder), mkdir(options.OutputFolder); end
 progress = fullfile(options.OutputFolder, "progress.jsonl");
 publishProgress(progress, "start", "fixture");
-registry = macd.model.ComponentRegistry.createDefault();
+registry = yamada.model.ComponentRegistry.createDefault();
 fixture = makeFixture(projectRoot, registry, options);
-service = macd.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, fixture), ...
+service = yamada.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, fixture), ...
     "ConfirmUnsavedChangesFcn", @() "Discard"));
 results = struct("action", {}, "phase", {}, "sample", {}, "callbackSeconds", {}, ...
     "settledSeconds", {}, "nativeObjects", {}, "timers", {}, "payloadBytes", {});
 started = tic;
 app = yamada(service);
 cleanup = onCleanup(@() delete(app));
-figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
-setappdata(figure, "macdPerformanceMeasurement", options.RenderAck);
+figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
+setappdata(figure, "yamadaPerformanceMeasurement", options.RenderAck);
 menus = findall(figure, "Type", "uimenu");
 open = menus(erase(string({menus.Text}), "&") == "Open...");
 results = measure(results, "startup", 1, toc(started), toc(started), figure, "first");
@@ -121,11 +121,11 @@ for index = 1:propertySamples
     persist(options, results);
     publishProgress(progress, "complete", "property");
 end
-if isappdata(figure, "macdPreviewStatistics")
+if isappdata(figure, "yamadaPreviewStatistics")
     fid = fopen(fullfile(options.OutputFolder, "preview-statistics.json"), "w", "n", "UTF-8");
     assert(fid >= 0, "Cannot write preview counters.");
     fprintf(fid, "%s", jsonencode(struct("phase", "after-normal-properties", ...
-        "counters", getappdata(figure, "macdPreviewStatistics"))));
+        "counters", getappdata(figure, "yamadaPreviewStatistics"))));
     fclose(fid);
 end
 % Profile the actual repeated edit before changing selection for cold profiles.
@@ -256,8 +256,8 @@ for index = 1:options.DocumentCycles
     persist(options, results);
     publishProgress(progress, "complete", "document-cycle");
 end
-if isappdata(figure, "macdDocumentLifetime")
-    lifetime = getappdata(figure, "macdDocumentLifetime");
+if isappdata(figure, "yamadaDocumentLifetime")
+    lifetime = getappdata(figure, "yamadaDocumentLifetime");
     lifetime.active = app.Document.Metadata.SourceSnapshotId;
     fid = fopen(fullfile(options.OutputFolder, "document-lifetime.json"), "w", "n", "UTF-8");
     assert(fid >= 0, "Cannot record document lifetime.");
@@ -271,15 +271,15 @@ function watchDocument(figure, document)
 % watchDocument Observe destruction without retaining documents or listener handles.
 arguments (Input)
     figure (1, 1) matlab.ui.Figure
-    document (1, 1) macd.model.DocumentModel
+    document (1, 1) yamada.model.DocumentModel
 end
-if ~isappdata(figure, "macdDocumentLifetime")
-    setappdata(figure, "macdDocumentLifetime", struct("observed", strings(1, 0), "destroyed", strings(1, 0)));
+if ~isappdata(figure, "yamadaDocumentLifetime")
+    setappdata(figure, "yamadaDocumentLifetime", struct("observed", strings(1, 0), "destroyed", strings(1, 0)));
 end
 snapshot = document.Metadata.SourceSnapshotId;
-lifetime = getappdata(figure, "macdDocumentLifetime");
+lifetime = getappdata(figure, "yamadaDocumentLifetime");
 lifetime.observed(end + 1) = snapshot;
-setappdata(figure, "macdDocumentLifetime", lifetime);
+setappdata(figure, "yamadaDocumentLifetime", lifetime);
 addlistener(document, "ObjectBeingDestroyed", @(~, ~) recordDestroyedDocument(figure, snapshot));
 end
 
@@ -290,24 +290,24 @@ arguments (Input)
     snapshot (1, 1) string
 end
 if ~isvalid(figure), return, end
-lifetime = getappdata(figure, "macdDocumentLifetime");
+lifetime = getappdata(figure, "yamadaDocumentLifetime");
 lifetime.destroyed(end + 1) = snapshot;
-setappdata(figure, "macdDocumentLifetime", lifetime);
+setappdata(figure, "yamadaDocumentLifetime", lifetime);
 end
 
 function targets = measurementTargets(document, registry, propertyPath)
 % measurementTargets Prefer matched labels and allow other controls supporting the measured property.
 arguments (Input)
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
     propertyPath (1, 1) string
 end
 arguments (Output)
-    targets macd.model.ComponentRecord
+    targets yamada.model.ComponentRecord
 end
 targets = document.Components([document.Components.Factory] == "uilabel");
 if numel(targets) >= 2, return, end
-targets = macd.model.ComponentRecord.empty;
+targets = yamada.model.ComponentRecord.empty;
 for component = document.Components
     if component.Id == document.RootComponentId || ~registry.contains(component.Factory), continue, end
     parent = document.getComponent(component.ParentId);
@@ -333,10 +333,10 @@ arguments (Output)
 end
 editable = false;
 reason = "No editable " + propertyPath + " row is available in the current fixture state.";
-labels = findall(figure, "Tag", "macd-inspector-property-label");
+labels = findall(figure, "Tag", "yamada-inspector-property-label");
 label = labels(string({labels.Text}) == propertyPath);
 if isempty(label), return, end
-editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+editor = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
 if isempty(editor), return, end
 editable = string(editor.Enable) == "on";
 if isprop(editor, "Editable"), editable = editable && string(editor.Editable) == "on"; end
@@ -347,7 +347,7 @@ function fixture = makeFixture(projectRoot, registry, options)
 % makeFixture Generate matched layouts or use a preserved product fixture.
 arguments (Input)
     projectRoot (1, 1) string
-    registry (1, 1) macd.model.ComponentRegistry
+    registry (1, 1) yamada.model.ComponentRegistry
     options (1, 1) struct
 end
 arguments (Output)
@@ -360,7 +360,7 @@ elseif options.Case == "navigation"
     fixture = fullfile(projectRoot, "tests", "fixtures", "NavigationDataApp.m");
     return
 end
-document = macd.model.NewAppFactory.createEmpty("PerformanceFixture", registry);
+document = yamada.model.NewAppFactory.createEmpty("PerformanceFixture", registry);
 parentId = document.RootComponentId;
 if options.Case == "nestedgrid"
     for depth = 1:options.NestedDepth - 1
@@ -406,10 +406,10 @@ for group = 1:3
         end
     end
 end
-[source, diagnostics] = macd.source.NewAppGenerator(registry).generate(document);
+[source, diagnostics] = yamada.source.NewAppGenerator(registry).generate(document);
 assert(strlength(source) > 0, strjoin(string({diagnostics.Message}), newline));
 fixture = fullfile(options.OutputFolder, "PerformanceFixture.m");
-macd.source.SourceWriter.write(fixture, source, "CRLF");
+yamada.source.SourceWriter.write(fixture, source, "CRLF");
 end
 
 function selectId(figure, id)
@@ -432,9 +432,9 @@ arguments (Input)
     propertyPath (1, 1) string
     value
 end
-labels = findall(figure, "Tag", "macd-inspector-property-label");
+labels = findall(figure, "Tag", "yamada-inspector-property-label");
 label = labels(string({labels.Text}) == propertyPath);
-editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+editor = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
 if isa(editor, "matlab.ui.control.EditField") || isa(editor, "matlab.ui.control.TextArea")
     editor.Value = char(string(value));
 else
@@ -459,7 +459,7 @@ end
 function verifyPropertyValue(document, id, propertyPath, expected)
 % verifyPropertyValue Reject missing edits without coercing numeric settings into text.
 arguments (Input)
-    document (1, 1) macd.model.DocumentModel
+    document (1, 1) yamada.model.DocumentModel
     id (1, 1) string
     propertyPath (1, 1) string
     expected
@@ -493,10 +493,10 @@ while true
             if isvalid(current), rethrow(exception), end
         end
     end
-    overlay = findall(figure, "Tag", "macd-interaction-overlay");
+    overlay = findall(figure, "Tag", "yamada-interaction-overlay");
     acknowledged = ~renderAck || (~isempty(overlay) && ...
-        isappdata(figure, "macdRenderedRevision") && ...
-        isequal(getappdata(figure, "macdRenderedRevision"), overlay.Data.gridEditor.revision));
+        isappdata(figure, "yamadaRenderedRevision") && ...
+        isequal(getappdata(figure, "yamadaRenderedRevision"), overlay.Data.gridEditor.revision));
     if ~active && acknowledged, return, end
     assert(toc(started) < 30, "Performance measurement did not settle within 30 seconds.");
     pause(0.01);
@@ -517,7 +517,7 @@ end
 arguments (Output)
     results (1, :) struct
 end
-overlay = findall(figure, "Tag", "macd-interaction-overlay");
+overlay = findall(figure, "Tag", "yamada-interaction-overlay");
 bytes = 0;
 if ~isempty(overlay), bytes = numel(unicode2native(jsonencode(overlay.Data), "UTF-8")); end
 results(end + 1) = struct("action", action, "phase", phase, "sample", sample, ...

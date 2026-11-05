@@ -4,13 +4,13 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
     %   the represented app, including its opaque calls or expressions.
 
     properties (Access = private)
-        Registry macd.model.ComponentRegistry
+        Registry yamada.model.ComponentRegistry
     end
 
     methods (TestClassSetup)
         function loadRegistry(testCase)
             % loadRegistry Load one read-only release catalog for the fixture class.
-            testCase.Registry = macd.model.ComponentRegistry.createDefault();
+            testCase.Registry = yamada.model.ComponentRegistry.createDefault();
         end
     end
 
@@ -19,14 +19,14 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             % cachedPlansRemainIndependentAndInvalidateOnDirectChange Keep shared proofs private and exact.
             [document, component] = testCase.fixture("app.Control = uidropdown(app.UIFigure);");
             component.setProperty("Tooltip", "first");
-            first = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            first = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             source = first.Edits;
             first.Component.setProperty("Tooltip", "private mutation");
-            second = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            second = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyEqual(second.Edits, source);
             testCase.verifyEqual(string(second.Component.getProperty("Tooltip").LiteralValue), "first");
             component.setProperty("Tooltip", "second");
-            third = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            third = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyEqual(string(third.Component.getProperty("Tooltip").LiteralValue), "second");
         end
 
@@ -35,7 +35,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             [document, component] = testCase.fixture(["app.Control = uidropdown(app.UIFigure);", ...
                 "app.Control.Items = [""A"" ""B""];", "app.Control.ItemsData = [10 20];"]);
             document.setProperty(component.Id, "Value", 20, testCase.Registry);
-            source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+            source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
             testCase.verifyGreaterThan(strfind(source, "app.Control.Value = 20;"), strfind(source, "app.Control.ItemsData = [10 20];"));
             states = document.getEffectivePropertyStates(testCase.Registry, component.Id);
             value = states(arrayfun(@(state) state.Definition.Path == "Value", states)).Resolution;
@@ -43,25 +43,25 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyEqual(value.ExplicitKind, "literal");
             testCase.verifyEqual(value.LastSettingId, component.getSettings("Value").Id);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(testCase.Registry).generate(document), document.OriginalText);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(testCase.Registry).generate(document), document.OriginalText);
             document.redo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(testCase.Registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(testCase.Registry).generate(document), source);
         end
 
         function constructorAdditionsRemainEditableAfterReparse(testCase)
             % constructorAdditionsRemainEditableAfterReparse Bind the added token to a fresh immutable source occurrence.
             [document, component] = testCase.fixture("app.Control = uidropdown(app.UIFigure, Items=[""A"" ""B""], ItemsData=[10 20]);");
             document.setProperty(component.Id, "Value", 20, testCase.Registry);
-            source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-            reopened = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            reopened = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
             selected = reopened.getComponentByName("Control");
             testCase.verifyEqual(selected.getSettings("Value").Method, "nameValue");
             reopened.setProperty(selected.Id, "Value", 10, testCase.Registry);
-            modified = macd.source.RoundTripGenerator(testCase.Registry).generate(reopened);
+            modified = yamada.source.RoundTripGenerator(testCase.Registry).generate(reopened);
             testCase.verifySubstring(modified, "Value=10");
             testCase.verifyFalse(contains(modified, "app.Control.Value ="));
             reopened.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(testCase.Registry).generate(reopened), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(testCase.Registry).generate(reopened), source);
         end
 
         function invalidInsertionLeavesDocumentAndHistoryUntouched(testCase)
@@ -71,7 +71,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 "app.Control.ItemsData = [10 20];"]);
             before = component.settingSnapshot();
             testCase.verifyError(@() document.setProperty(component.Id, "Value", 30, testCase.Registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(component.settingSnapshot(), before);
             testCase.verifyEmpty(component.getProperty("Value"));
             testCase.verifyEqual(document.HistoryIndex, 0);
@@ -83,7 +83,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             [document, component] = testCase.fixture(["app.Control = uidropdown(app.UIFigure);", ...
                 "app.Control.Items = [""A"" ""B""];", "app.Control.ItemsData = [10 20];"]);
             component.setProperty("Value", 20);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyEqual(plan.Placements.Method, "assignment");
             testCase.verifyGreaterThanOrEqual(plan.Placements.Offset, component.getSettings("ItemsData").SourceSpan.EndOffset);
             testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 20);
@@ -97,7 +97,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             for creation = cases
                 [document, component] = testCase.fixture(creation);
                 component.setProperty("Value", 20);
-                plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+                plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
                 testCase.verifyEqual(plan.Placements.Method, "nameValue");
                 testCase.verifyEqual(plan.Component.getSettings("Value").Method, "nameValue");
                 testCase.verifyEqual(plan.Component.getSettings("Value").Syntax, component.Settings(1).Syntax);
@@ -111,7 +111,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 "app.Control = uidropdown(app.UIFigure, Items=[""A"" ""B""]);", ...
                 "app.Control.ItemsData = [10 20];"]);
             component.setProperty("Value", 20);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyEqual(plan.Placements.Method, "assignment");
         end
 
@@ -119,7 +119,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             % documentedPropertiesUseTheExistingConstructorStyle Insert ordinary properties without a per-property support flag.
             [document, component] = testCase.fixture("app.Control = uidropdown(app.UIFigure, Items=[""A"" ""B""]);");
             component.setProperty("Tooltip", "Hint");
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyEqual(plan.Placements.Method, "nameValue");
             testCase.verifySubstring(plan.Document.OriginalText, "Tooltip=""Hint""");
         end
@@ -130,7 +130,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             component.setProperty("Value", 20);
             component.setProperty("ItemsData", [10 20]);
             component.setProperty("Items", ["A" "B"]);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyEqual(string({plan.Placements.Path}), ["Items", "ItemsData", "Value"]);
             testCase.verifyEqual(string({plan.Component.Settings.Path}), ["Items", "ItemsData", "Value", "FontSize"]);
         end
@@ -139,16 +139,16 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             % aNewRangeCanRepairAnEarlierOutOfDefaultValue Validate the candidate sequence rather than pending-at-end fiction.
             [document, component] = testCase.fixture(["app.Control = uislider(app.UIFigure);", "app.Control.Value = 150;"]);
             component.setProperty("Limits", [120 200]);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyLessThan(plan.Placements.Offset, component.getSettings("Value").SourceSpan.StartOffset);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(plan.Document.Diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(plan.Document.Diagnostics));
         end
 
         function aSafeLaterRangeSetterCanClampAnEarlierValue(testCase)
             % aSafeLaterRangeSetterCanClampAnEarlierValue Do not reject a legal reverse sequence solely for canonical order.
             [document, component] = testCase.fixture(["app.Control = uislider(app.UIFigure);", "app.Control.Value = 20;"]);
             component.setProperty("Limits", [50 100]);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyGreaterThanOrEqual(plan.Placements.Offset, component.getSettings("Value").SourceSpan.EndOffset);
             states = plan.Document.getEffectivePropertyStates(testCase.Registry, plan.Component.Id);
             testCase.verifyEqual(states(arrayfun(@(state) state.Definition.Path == "Value", states)).Resolution.EffectiveValue, 50);
@@ -160,7 +160,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 "observed = app.Control.Value;", "app.Control.Items = [""A"" ""B""];", ...
                 "app.Control.ItemsData = [10 20];"]);
             component.setProperty("Value", 20);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyGreaterThanOrEqual(plan.Placements.Offset, component.getSettings("ItemsData").SourceSpan.EndOffset);
             testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 20);
             testCase.verifySubstring(plan.Document.OriginalText, "observed = app.Control.Value;");
@@ -170,7 +170,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             % helperOrderUsesExecutionRatherThanFileOffsets Allow a later initializer that is declared earlier in the file.
             [document, component] = testCase.helperFixture(false);
             component.setProperty("Value", 20);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyEqual(plan.Placements.OwnerMethod, "configure");
             testCase.verifyLessThan(plan.Placements.Offset, component.SourceSpans.Creation.StartOffset);
             setting = component.getSettings("Items");
@@ -185,7 +185,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 "observe(app.Control);", "app.Control.Items = [""A"" ""B""];", ...
                 "observeAgain(app.Control);"]);
             component.setProperty("Value", "B");
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyGreaterThanOrEqual(plan.Placements.Offset, component.getSettings("Items").SourceSpan.EndOffset);
             testCase.verifyLessThan(plan.Placements.Offset, strfind(char(document.OriginalText), 'observeAgain('));
             testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, "B");
@@ -196,10 +196,10 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             [original, ~] = testCase.helperFixture(false);
             source = replace(original.OriginalText, "app.Control = uidropdown(app.UIFigure);", ...
                 "app.Control = uidropdown(app.UIFigure);" + sprintf("\r\n") + "return;");
-            document = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            document = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
             component = document.getComponentByName("Control");
             component.setProperty("Value", 20);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyEqual(plan.Placements.OwnerMethod, "configure");
             testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 20);
         end
@@ -208,7 +208,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             % repeatedHelpersUseTheFinalUniqueCallSite Avoid inserting one source setting into multiple execution visits.
             [document, component] = testCase.helperFixture(true);
             component.setProperty("Value", 20);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyEqual(plan.Placements.OwnerMethod, "PlacementApp");
             testCase.verifyNumElements(plan.Component.getSettings("Value"), 1);
         end
@@ -217,7 +217,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             % trailingFactoryCommentsKeepTheirOriginalLine Do not attach an existing trailing comment to a new assignment.
             [document, component] = testCase.fixture("app.Control = uislider(app.UIFigure); % creation note");
             component.setProperty("Value", 75);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifySubstring(plan.Document.OriginalText, ...
                 "uislider(app.UIFigure); % creation note" + sprintf("\r\n") + "app.Control.Value = 75;");
         end
@@ -228,7 +228,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 "    'Items', {'A','B'}, ... % labels", "    'ItemsData', [10 20] ... % data", "    );"];
             [document, component] = testCase.fixture(creation);
             component.setProperty("Value", 20);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyEqual(plan.Placements.Method, "nameValue");
             testCase.verifySubstring(plan.Document.OriginalText, "... % factory");
             testCase.verifySubstring(plan.Document.OriginalText, "... % labels");
@@ -241,7 +241,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             [document, component] = testCase.fixture( ...
                 "app.Control = uidropdown(app.UIFigure, Items=[""A"" ""B""], ItemsData=[10 20], Tooltip=""Opaque"" + ""Hint"");");
             component.setProperty("Value", 20);
-            plan = macd.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
+            plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifySubstring(plan.Document.OriginalText, "Tooltip=""Opaque"" + ""Hint""");
             testCase.verifyEqual(plan.Component.getProperty("Tooltip").SourceExpression, """Opaque"" + ""Hint""");
             testCase.verifyEqual(plan.Component.getProperty("Value").LiteralValue, 20);
@@ -256,15 +256,15 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 initialization (1, :) string
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                component (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                component (1, 1) yamada.model.ComponentRecord
             end
             source = strjoin(["classdef PlacementApp < handle", "properties", ...
                 "UIFigure matlab.ui.Figure", "Control", "end", "methods", ...
                 "function app = PlacementApp", "createComponents(app);", "end", ...
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
                 initialization, "end", "end", "end"], sprintf("\r\n"));
-            document = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            document = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
             component = document.getComponentByName("Control");
         end
 
@@ -275,8 +275,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 repeated (1, 1) logical
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                component (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                component (1, 1) yamada.model.ComponentRecord
             end
             calls = ["createComponents(app);", "configure(app);"];
             if repeated, calls(end + 1) = "configure(app);"; end
@@ -287,7 +287,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
                 "app.Control.ItemsData = [10 20];", "end", ...
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
                 "app.Control = uidropdown(app.UIFigure);", "end", "end", "end"], sprintf("\r\n"));
-            document = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            document = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
             component = document.getComponentByName("Control");
         end
     end

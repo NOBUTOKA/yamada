@@ -10,22 +10,22 @@ arguments (Output)
 end
 
 % Clear the marker before exercising source analysis and Safe Preview.
-evalin("base", "clear macdCallbackWorkflowSentinel");
+evalin("base", "clear yamadaCallbackWorkflowSentinel");
 
 % Build a nested fixture with shared handlers, an anonymous binding, and ordinary controls.
-registry = macd.model.ComponentRegistry.createDefault();
+registry = yamada.model.ComponentRegistry.createDefault();
 [source, leftName, rightName] = mixedFixture(registry);
 path = string(tempname) + ".m";
 fileCleanup = onCleanup(@() delete(path));
-macd.source.SourceWriter.write(path, source, "CRLF");
-service = macd.ui.DocumentLifecycleService(struct( ...
+yamada.source.SourceWriter.write(path, source, "CRLF");
+service = yamada.ui.DocumentLifecycleService(struct( ...
     "RequestOpenPathFcn", @() deal(true, path), ...
     "RequestNewClassNameFcn", @() deal(true, "WorkflowReplacement"), ...
     "ConfirmUnsavedChangesFcn", @() "Discard", ...
     "ConfirmReloadConflictFcn", @() "Discard"));
 app = yamada(service);
 appCleanup = onCleanup(@() delete(app));
-window = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+window = findall(0, "Type", "figure", "Tag", "yamada-editor");
 open = findall(window, "Type", "uimenu", "Text", "&Open...");
 open.MenuSelectedFcn(open, []);
 tree = findall(window, "Type", "uitree");
@@ -47,7 +47,7 @@ selected = app.SelectedComponentId;
 % Native right-click leaves selection untouched while shared bindings remain editable.
 left = app.Document.getComponentByName(leftName);
 popup = openPopup(test, tree, left.Id);
-control = findall(popup, "Tag", "macd-callback-target", "UserData", "ButtonPushedFcn");
+control = findall(popup, "Tag", "yamada-callback-target", "UserData", "ButtonPushedFcn");
 assert(string(control.Enable) == "on");
 assert(app.SelectedComponentId == selected);
 exportapp(popup, fullfile(outputDirectory, "callback-shared-popup.png"));
@@ -57,13 +57,13 @@ close(popup);
 % Anonymous bindings are visible but do not permit either mutation action.
 drop = app.Document.Components([app.Document.Components.Factory] == "uidropdown");
 popup = openPopup(test, tree, drop.Id);
-control = findall(popup, "Tag", "macd-callback-target", "UserData", "ValueChangedFcn");
+control = findall(popup, "Tag", "yamada-callback-target", "UserData", "ValueChangedFcn");
 assert(string(control.Enable) == "off");
 close(popup);
 
 % A root's complete catalog list exercises scrolling and immediate atomic source changes.
 popup = openPopup(test, tree, app.Document.RootComponentId);
-rows = findall(popup, "Tag", "macd-callback-target");
+rows = findall(popup, "Tag", "yamada-callback-target");
 assert(numel(rows) == numel(registry.getEffectiveCallbacks("uifigure")));
 grids = findall(popup, "Type", "uigridlayout");
 assert(any(arrayfun(@(grid) string(grid.Scrollable) == "on", grids)));
@@ -80,59 +80,59 @@ leftNode = nodes(arrayfun(@(node) string(node.NodeData) == left.Id, nodes));
 tree.SelectedNodes = leftNode;
 tree.SelectionChangedFcn(tree, struct("SelectedNodes", leftNode));
 popup = openPopup(test, tree, left.Id);
-removeComponent = findall(window, "Type", "uimenu", "Tag", "macd-edit-delete");
+removeComponent = findall(window, "Type", "uimenu", "Tag", "yamada-edit-delete");
 removeComponent.MenuSelectedFcn(removeComponent, []);
 assert(~isvalid(popup));
 assert(isempty(app.Document.getComponent(left.Id)));
-undo = findall(window, "Type", "uimenu", "Tag", "macd-edit-undo");
+undo = findall(window, "Type", "uimenu", "Tag", "yamada-edit-undo");
 undo.MenuSelectedFcn(undo, []);
 assert(~isempty(app.Document.getComponent(left.Id)));
 tree = findall(window, "Type", "uitree");
 popup = openPopup(test, tree, app.Document.RootComponentId);
-undo = findall(window, "Type", "uimenu", "Tag", "macd-edit-undo");
+undo = findall(window, "Type", "uimenu", "Tag", "yamada-edit-undo");
 undo.MenuSelectedFcn(undo, []);
 assert(contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
-redo = findall(window, "Type", "uimenu", "Tag", "macd-edit-redo");
+redo = findall(window, "Type", "uimenu", "Tag", "yamada-edit-redo");
 redo.MenuSelectedFcn(redo, []);
 assert(~contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
 
 % Reload externally saved method bodies through F5 while the modal popup has focus.
 clickAction(popup, "New", "SizeChangedFcn");
 saved = replace(app.Document.GeneratedText, "% Add callback behavior here.", ...
-    "disp('macdReloadedBody');");
-macd.source.SourceWriter.write(path, saved, "CRLF");
+    "disp('yamadaReloadedBody');");
+yamada.source.SourceWriter.write(path, saved, "CRLF");
 popup.WindowKeyPressFcn(popup, struct("Key", "f5", "Modifier", {{}}));
 assert(~isvalid(popup));
-assert(contains(app.Document.OriginalText, "macdReloadedBody"));
+assert(contains(app.Document.OriginalText, "yamadaReloadedBody"));
 assert(~app.Document.canUndo() && ~app.Document.IsDirty);
 tree = findall(window, "Type", "uitree");
 popup = openPopup(test, tree, app.Document.RootComponentId);
 clickAction(popup, "Disconnect", "SizeChangedFcn");
-assert(contains(app.Document.GeneratedText, "macdReloadedBody"));
+assert(contains(app.Document.GeneratedText, "yamadaReloadedBody"));
 undo.MenuSelectedFcn(undo, []);
-assert(contains(app.Document.GeneratedText, "macdReloadedBody"));
+assert(contains(app.Document.GeneratedText, "yamadaReloadedBody"));
 
 % Preserve selection through unrelated external changes and block newly shared handlers.
 close(popup);
 selectComponent(window, app.Document.getComponentByName(leftName).Id);
-states = macd.source.CallbackSourceAnalyzer.analyze(app.Document, app.Document.RootComponentId, registry);
+states = yamada.source.CallbackSourceAnalyzer.analyze(app.Document, app.Document.RootComponentId, registry);
 handler = states([states.Name] == "SizeChangedFcn").HandlerName;
 saved = app.Document.GeneratedText;
 saved = replace(saved, 'app.UIFigure.Visible = "on";', ...
     "app.UIFigure.WindowKeyPressFcn = @app." + handler + ";" + newline + ...
     '        app.UIFigure.Visible = "on";');
 saved = saved + join(repmat("% External long-source verification", 2000, 1), newline) + newline;
-macd.source.SourceWriter.write(path, saved, "CRLF");
-reload = findall(window, "Tag", "macd-reload-source");
+yamada.source.SourceWriter.write(path, saved, "CRLF");
+reload = findall(window, "Tag", "yamada-reload-source");
 reload.MenuSelectedFcn(reload, []);
 assert(app.Document.getComponent(app.SelectedComponentId).Name == leftName);
-states = macd.source.CallbackSourceAnalyzer.analyze(app.Document, app.Document.RootComponentId, registry);
+states = yamada.source.CallbackSourceAnalyzer.analyze(app.Document, app.Document.RootComponentId, registry);
 assert(states([states.Name] == "SizeChangedFcn").State == "unsupported");
-assert(contains(app.Document.OriginalText, "macdReloadedBody"));
+assert(contains(app.Document.OriginalText, "yamadaReloadedBody"));
 
 % Renaming the active component externally falls back to the root and clears old spans/history.
 saved = regexprep(saved, "(?<!\w)" + leftName + "(?!\w)", "ExternallyRenamedButton");
-macd.source.SourceWriter.write(path, saved, "CRLF");
+yamada.source.SourceWriter.write(path, saved, "CRLF");
 reload.MenuSelectedFcn(reload, []);
 assert(app.SelectedComponentId == app.Document.RootComponentId);
 assert(isempty(app.Document.getComponentByName(leftName)));
@@ -141,9 +141,9 @@ assert(~app.Document.canUndo());
 
 % Removing the selected component externally and repeated reloads must leave no stale target.
 selectComponent(window, app.Document.getComponentByName("ExternallyRenamedButton").Id);
-replacement = macd.model.NewAppFactory.createEmpty("MixedCallbackFixture", registry);
-saved = macd.source.RoundTripGenerator(registry).generate(replacement);
-macd.source.SourceWriter.write(path, saved, "CRLF");
+replacement = yamada.model.NewAppFactory.createEmpty("MixedCallbackFixture", registry);
+saved = yamada.source.RoundTripGenerator(registry).generate(replacement);
+yamada.source.SourceWriter.write(path, saved, "CRLF");
 for repetition = 1:3
     reload.MenuSelectedFcn(reload, []);
     assert(app.SelectedComponentId == app.Document.RootComponentId);
@@ -165,7 +165,7 @@ assert(~isvalid(popup));
 tree = findall(window, "Type", "uitree");
 for repetition = 1:3
     popup = openPopup(test, tree, app.Document.RootComponentId);
-    assert(isscalar(findall(0, "Tag", "macd-callback-manager")));
+    assert(isscalar(findall(0, "Tag", "yamada-callback-manager")));
     close(popup);
 end
 popup = openPopup(test, tree, app.Document.RootComponentId);
@@ -173,7 +173,7 @@ new = findall(window, "Type", "uimenu", "Text", "&New");
 new.MenuSelectedFcn(new, []);
 assert(~isvalid(popup));
 assert(app.Document.ClassName == "WorkflowReplacement");
-assert(evalin("base", "exist('macdCallbackWorkflowSentinel', 'var')") == 0);
+assert(evalin("base", "exist('yamadaCallbackWorkflowSentinel', 'var')") == 0);
 
 evidence = struct("SharedComponent", leftName, "SecondSharedComponent", rightName, ...
     "RootCallbackCount", numel(rows), "NativeSelectionPreserved", true, ...
@@ -203,17 +203,17 @@ assert(isscalar(owned));
 owned.bringToFront();
 titlePath = string(tempname) + ".txt";
 titleCleanup = onCleanup(@() delete(titlePath));
-macd.source.SourceWriter.write(titlePath, string(window.Name), "LF");
+yamada.source.SourceWriter.write(titlePath, string(window.Name), "LF");
 helper = fullfile(fileparts(mfilename("fullpath")), "focusVerificationWindow.ps1");
 [status, message] = system("powershell.exe -NoProfile -ExecutionPolicy Bypass -File """ + ...
     helper + """ -TitleFile """ + titlePath + """ -OwnerProcessId " + feature("getpid"));
-assert(status == 0, "macd:CallbackWorkflow:ActivateFailed", "%s", message);
+assert(status == 0, "yamada:CallbackWorkflow:ActivateFailed", "%s", message);
 focus(window);
 focus(target);
 started = tic;
 while ~(owned.isFocused && owned.isWindowActive) && toc(started) < 10, drawnow; end
 assert(owned.isFocused && owned.isWindowActive, ...
-    "macd:CallbackWorkflow:FocusUnavailable", ...
+    "yamada:CallbackWorkflow:FocusUnavailable", ...
     "Expected active editor: focused=%d, active=%d.", owned.isFocused, owned.isWindowActive);
 robot = javaObject("java.awt.Robot");
 robot.keyPress(116);
@@ -240,14 +240,14 @@ end
 function [source, leftName, rightName] = mixedFixture(registry)
 % mixedFixture Build source-only nested controls with deliberately unsupported callback forms.
 arguments (Input)
-    registry (1, 1) macd.model.ComponentRegistry
+    registry (1, 1) yamada.model.ComponentRegistry
 end
 arguments (Output)
     source (1, 1) string
     leftName (1, 1) string
     rightName (1, 1) string
 end
-document = macd.model.NewAppFactory.createEmpty("MixedCallbackFixture", registry);
+document = yamada.model.NewAppFactory.createEmpty("MixedCallbackFixture", registry);
 panel = document.insertComponent(registry, "uipanel", document.RootComponentId);
 grid = document.insertComponent(registry, "uigridlayout", panel.Id);
 left = document.insertComponent(registry, "uibutton", grid.Id);
@@ -256,17 +256,17 @@ drop = document.insertComponent(registry, "uidropdown", grid.Id);
 document.insertComponent(registry, "uitable", grid.Id);
 document.insertComponent(registry, "uitextarea", grid.Id);
 document.applyCallbackAction(left.Id, "ButtonPushedFcn", "Add", registry);
-states = macd.source.CallbackSourceAnalyzer.analyze(document, left.Id, registry);
+states = yamada.source.CallbackSourceAnalyzer.analyze(document, left.Id, registry);
 leftHandler = states([states.Name] == "ButtonPushedFcn").HandlerName;
 document.applyCallbackAction(right.Id, "ButtonPushedFcn", "Add", registry);
-states = macd.source.CallbackSourceAnalyzer.analyze(document, right.Id, registry);
+states = yamada.source.CallbackSourceAnalyzer.analyze(document, right.Id, registry);
 rightHandler = states([states.Name] == "ButtonPushedFcn").HandlerName;
 document.applyCallbackAction(drop.Id, "ValueChangedFcn", "Add", registry);
-states = macd.source.CallbackSourceAnalyzer.analyze(document, drop.Id, registry);
+states = yamada.source.CallbackSourceAnalyzer.analyze(document, drop.Id, registry);
 dropHandler = states([states.Name] == "ValueChangedFcn").HandlerName;
-source = macd.source.RoundTripGenerator(registry).generate(document);
+source = yamada.source.RoundTripGenerator(registry).generate(document);
 source = replace(source, "% Add callback behavior here.", ...
-    "assignin('base','macdCallbackWorkflowSentinel',true);");
+    "assignin('base','yamadaCallbackWorkflowSentinel',true);");
 source = replace(source, "@app." + rightHandler, "@app." + leftHandler);
 source = replace(source, "@app." + dropHandler, ...
     "@(src,event) disp(event)");
@@ -286,9 +286,9 @@ arguments (Output)
 end
 nodes = findall(tree, "Type", "uitreenode");
 node = nodes(arrayfun(@(candidate) string(candidate.NodeData) == componentId, nodes));
-item = findall(tree.ContextMenu, "Tag", "macd-manage-callbacks");
+item = findall(tree.ContextMenu, "Tag", "yamada-manage-callbacks");
 test.chooseContextMenu(node, item);
-popup = findall(0, "Tag", "macd-callback-manager");
+popup = findall(0, "Tag", "yamada-callback-manager");
 drawnow;
 test.hover(popup, [10 10]);
 windows = matlab.internal.webwindowmanager.instance.findAllWebwindows();
@@ -305,7 +305,7 @@ while ~ready && toc(started) < 10
         ready = ready && contains(rendered, string(label.Text));
     end
 end
-assert(ready, "macd:CallbackWorkflow:LabelsNotReady", "Callback names must be visibly rendered before capture.");
+assert(ready, "yamada:CallbackWorkflow:LabelsNotReady", "Callback names must be visibly rendered before capture.");
 end
 
 function grid = gridsForRows(popup)
@@ -327,7 +327,7 @@ arguments (Input)
     action (1, 1) string
     name (1, 1) string
 end
-control = findall(popup, "Tag", "macd-callback-target", "UserData", name);
+control = findall(popup, "Tag", "yamada-callback-target", "UserData", name);
 if action == "New"
     control.Value = "<New...>";
     fprintf("NATIVE_VERIFICATION Accept the default method name in the New callback dialog.\n");

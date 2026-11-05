@@ -27,7 +27,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             [app, figure, panelId] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             testCase.select(figure, panelId);
-            copy = findall(figure, "Tag", "macd-edit-copy");
+            copy = findall(figure, "Tag", "yamada-edit-copy");
             copy.MenuSelectedFcn(copy, []);
             field = uieditfield(figure, "Value", "Local text");
             figure.CurrentObject = field;
@@ -50,27 +50,27 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             actions = ["Copy", "Cut", "Paste"];
             keys = ["C", "X", "V"];
             for index = 1:numel(actions)
-                item = findall(figure, "Tag", "macd-edit-" + lower(actions(index)));
+                item = findall(figure, "Tag", "yamada-edit-" + lower(actions(index)));
                 testCase.verifyEqual(string(item.Text), actions(index));
                 testCase.verifyEqual(string(item.Accelerator), keys(index));
             end
-            rename = findall(figure, "Tag", "macd-rename-component");
+            rename = findall(figure, "Tag", "yamada-rename-component");
             testCase.verifyEmpty(rename);
             items = findall(figure, "Type", "uimenu");
             labels = string({items.Text});
             for label = ["&Delete" + string(sprintf("\t\t\t")) + "(Del)", "&Undo", "&Redo", "Reload Source" + string(char(9)) + "(F5)"]
                 testCase.verifyTrue(any(labels == label));
             end
-            undo = findall(figure, "Tag", "macd-edit-undo");
-            redo = findall(figure, "Tag", "macd-edit-redo");
+            undo = findall(figure, "Tag", "yamada-edit-undo");
+            redo = findall(figure, "Tag", "yamada-edit-redo");
             testCase.verifyEqual(string(undo.Accelerator), "Z");
             testCase.verifyEqual(string(redo.Accelerator), "R");
             for key = ["N", "O", "S"]
                 testCase.verifyNumElements(findall(figure, "Type", "uimenu", "Accelerator", key), 1);
             end
             testCase.verifyEmpty(findall(figure, "Type", "uimenu", "Accelerator", "A"));
-            testCase.verifyEmpty(findall(figure, "Tag", "macd-edit-reparent"));
-            testCase.verifyEmpty(findall(figure, "Tag", "macd-context-reparent"));
+            testCase.verifyEmpty(findall(figure, "Tag", "yamada-edit-reparent"));
+            testCase.verifyEmpty(findall(figure, "Tag", "yamada-context-reparent"));
         end
 
         function previewContextTargetsAndShortcutsShareCommands(testCase)
@@ -78,27 +78,27 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             [app, figure, panelId] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             selected = app.SelectedComponentId;
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             request = struct("componentId", panelId, "revision", overlay.Data.gridEditor.revision, "x", 30, "y", 40);
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "ContextMenu", "HTMLEventData", request));
             testCase.verifyEqual(app.SelectedComponentId, selected);
             tree = findall(figure, "Type", "uitree");
-            copy = findall(tree.ContextMenu, "Tag", "macd-context-copy");
+            copy = findall(tree.ContextMenu, "Tag", "yamada-context-copy");
             testCase.verifyEqual(string(copy.Enable), "on");
             copy.MenuSelectedFcn(copy, []);
             testCase.select(figure, app.Document.RootComponentId);
-            paste = findall(figure, "Tag", "macd-edit-paste");
+            paste = findall(figure, "Tag", "yamada-edit-paste");
             paste.MenuSelectedFcn(paste, []);
             testCase.verifyEqual(numel(app.Document.getComponent(app.SelectedComponentId).Children), 1);
             history = app.Document.HistoryIndex;
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             request = struct("componentId", app.SelectedComponentId, "revision", overlay.Data.gridEditor.revision - 1, "action", "Undo");
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Shortcut", "HTMLEventData", request));
             testCase.verifyEqual(app.Document.HistoryIndex, history);
             request.revision = overlay.Data.gridEditor.revision;
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Shortcut", "HTMLEventData", request));
             testCase.verifyEqual(app.Document.HistoryIndex, history - 1);
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             request.componentId = app.SelectedComponentId;
             request.revision = overlay.Data.gridEditor.revision;
             request.action = "Redo";
@@ -117,7 +117,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             figure.WindowKeyPressFcn(figure, struct("Key", "delete", "Modifier", {{}}));
             testCase.verifyEmpty(app.Document.getComponent(selected));
             testCase.verifyNotEmpty(app.Document.getComponent(panelId));
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             figure.CurrentObject = [];
             figure.WindowButtonDownFcn(figure, []);
             request = struct("phase", "pointerdown", "componentId", panelId, "handle", "", "x", 30, "y", 40);
@@ -143,11 +143,11 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
                 figure.WindowKeyPressFcn(figure, struct("Key", key, "Modifier", {{'control'}}));
             end
             testCase.verifyEqual(app.Document.HistoryIndex, history);
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             request = struct("componentId", panelId, "revision", overlay.Data.gridEditor.revision, "x", 30, "y", 40);
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "ContextMenu", "HTMLEventData", request));
             tree = findall(figure, "Type", "uitree");
-            item = findall(tree.ContextMenu, "Tag", "macd-context-delete");
+            item = findall(tree.ContextMenu, "Tag", "yamada-context-delete");
             testCase.verifyEqual(string(item.Enable), "on");
             item.MenuSelectedFcn(item, []);
             testCase.verifyEmpty(app.Document.getComponent(panelId));
@@ -162,7 +162,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             [app, figure, panelId] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             testCase.select(figure, panelId);
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             originalFcn = overlay.HTMLEventReceivedFcn;
             overlay.HTMLEventReceivedFcn = @(src, event) testCase.captureHtml(originalFcn, src, event);
             html = string(fileread(overlay.HTMLSource));
@@ -200,7 +200,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(pasted.ParentId, app.Document.RootComponentId);
             testCase.verifyEqual(numel(pasted.Children), 1);
             pastedId = pasted.Id;
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             originalFcn = overlay.HTMLEventReceivedFcn;
             overlay.HTMLEventReceivedFcn = @(src, event) testCase.captureHtml(originalFcn, src, event);
             testCase.HtmlEvents = strings(1, 0);
@@ -218,11 +218,11 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             [app, figure, panelId] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             testCase.select(figure, panelId);
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             data = struct("action", "Copy", "componentId", panelId, "revision", overlay.Data.gridEditor.revision);
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Clipboard", "HTMLEventData", data));
             testCase.select(figure, app.Document.RootComponentId);
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             history = app.Document.HistoryIndex;
             data.action = "Paste";
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Clipboard", "HTMLEventData", data));
@@ -239,16 +239,16 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             [app, figure, panelId] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             testCase.select(figure, panelId);
-            copy = findall(figure, "Tag", "macd-edit-copy");
+            copy = findall(figure, "Tag", "yamada-edit-copy");
             copy.MenuSelectedFcn(copy, []);
             app.Document.markSaved();
             menus = findall(figure, "Type", "uimenu");
             item = menus(erase(string({menus.Text}), "&") == "New");
             item.MenuSelectedFcn(item, []);
-            paste = findall(figure, "Tag", "macd-edit-paste");
+            paste = findall(figure, "Tag", "yamada-edit-paste");
             testCase.verifyEqual(string(paste.Enable), "off");
             testCase.verifyEqual(numel(app.Document.Components), 1);
-            status = findall(figure, "Tag", "macd-status");
+            status = findall(figure, "Tag", "yamada-status");
             testCase.verifySubstring(string(status.Tooltip), "The document root cannot be copied.");
         end
     end
@@ -299,7 +299,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             [app, figure, panelId] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             rootId = app.Document.RootComponentId;
-            app.Document.applyCallbackAction(panelId, "SizeChangedFcn", "Add", macd.model.ComponentRegistry.createDefault());
+            app.Document.applyCallbackAction(panelId, "SizeChangedFcn", "Add", yamada.model.ComponentRegistry.createDefault());
             testCase.select(figure, panelId);
             if route == "context", testCase.select(figure, rootId); end
             selected = app.SelectedComponentId;
@@ -322,7 +322,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(app.SelectedComponentId, rootId);
             testCase.verifyEqual(app.Document.HistoryIndex, history + 2);
             menus = findall(figure, "Type", "uimenu");
-            undo = menus(string({menus.Tag}) == "macd-edit-undo");
+            undo = menus(string({menus.Tag}) == "yamada-edit-undo");
             undo.MenuSelectedFcn(undo, []);
             testCase.verifyNotEmpty(app.Document.getComponent(pastedId));
             undo.MenuSelectedFcn(undo, []);
@@ -339,7 +339,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
                 id (1, 1) string
             end
             if route == "menu"
-                item = findall(figure, "Tag", "macd-edit-" + lower(action));
+                item = findall(figure, "Tag", "yamada-edit-" + lower(action));
                 testCase.assertEqual(string(item.Enable), "on");
                 item.MenuSelectedFcn(item, []);
             elseif route == "keyboard"
@@ -358,7 +358,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
                 node = nodes(arrayfun(@(value) string(value.NodeData) == id, nodes));
                 expand(tree.Children(1));
                 drawnow;
-                item = findall(tree.ContextMenu, "Tag", "macd-context-" + lower(action));
+                item = findall(tree.ContextMenu, "Tag", "yamada-context-" + lower(action));
                 testCase.chooseContextMenu(node, item);
             end
             drawnow;
@@ -388,11 +388,11 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
                 figure (1, 1) matlab.ui.Figure
                 panelId (1, 1) string
             end
-            lifecycle = macd.ui.DocumentLifecycleService(struct( ...
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestNewClassNameFcn", @() deal(true, "ReplacementApp"), ...
                 "ConfirmUnsavedChangesFcn", @() "discard"));
             app = yamada(lifecycle);
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Category"), tables));
             row = find(string(palette.Data(:, 1)) == "Panel", 1);

@@ -12,18 +12,18 @@ end
 root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
 addpath(root);
 if ~isfolder(options.OutputFolder), mkdir(options.OutputFolder); end
-registry = macd.model.ComponentRegistry.createDefault();
-document = macd.source.AppSourceParser.parseFile(options.FixturePath, registry);
+registry = yamada.model.ComponentRegistry.createDefault();
+document = yamada.source.AppSourceParser.parseFile(options.FixturePath, registry);
 grid = document.getComponentByName(options.GridName);
 assert(~isempty(grid) && grid.Factory == "uigridlayout");
 figure = uifigure("Visible", "on", "Position", [100 100 1100 800]);
 cleanup = onCleanup(@() delete(figure));
 panel = uipanel(figure, "Position", [1 1 1060 760], "AutoResizeChildren", "off");
-renderer = macd.ui.PreviewRenderer(registry);
+renderer = yamada.ui.PreviewRenderer(registry);
 [handles, diagnostics, canvas] = renderer.render(document, panel);
 assert(isempty(diagnostics), "The geometry probe requires a fully rendered fixture.");
 preview = handles(char(grid.Id));
-builder = macd.ui.GridLayoutOverlayDataBuilder();
+builder = yamada.ui.GridLayoutOverlayDataBuilder();
 snapshots = struct("seconds", {}, "grid", {}, "native", {}, "fitMinimumHeight", {}, "remainingForFlexible", {});
 clock = tic;
 % Rebuild directly each time; no application geometry cache participates.
@@ -43,7 +43,7 @@ for requested = [0 1 3 6]
         "rowHeight", {preview.RowHeight}, "columnWidth", {preview.ColumnWidth}, ...
         "rowSpacing", double(preview.RowSpacing), "columnSpacing", double(preview.ColumnSpacing), ...
         "padding", double(preview.Padding), "children", children);
-    tracks = macd.model.GridTrackList.describe(preview.RowHeight);
+    tracks = yamada.model.GridTrackList.describe(preview.RowHeight);
     minimum = preview.RowSpacing * max(numel(tracks) - 1, 0);
     for index = 1:numel(tracks)
         if tracks(index).kind == "fixed"

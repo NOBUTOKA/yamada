@@ -9,10 +9,10 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
         function destinationsShareOneValidatedHierarchy(testCase, Depth)
             % destinationsShareOneValidatedHierarchy Bound subtree captures across all candidate parents.
             [document, registry, source, destinations] = fixture(Depth);
-            snapshot = macd.model.SubtreeSnapshot(document, source.Id);
+            snapshot = yamada.model.SubtreeSnapshot(document, source.Id);
             plans = struct([]);
             for index = 1:numel(destinations)
-                prepared = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, ...
+                prepared = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, ...
                     destinations(index).Id, registry, source.Id);
                 if isempty(plans), plans = prepared; else, plans(end + 1) = prepared; end %#ok<AGROW>
             end
@@ -25,23 +25,23 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
             expected = plans(1);
             plans(1).Changes(1).Value = 99;
             testCase.verifyNotEqual(plans(1), expected);
-            again = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, destinations(1).Id, registry, source.Id);
+            again = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, destinations(1).Id, registry, source.Id);
             testCase.verifyEqual(again, expected);
         end
 
         function coordinateAndCatalogChangesInvalidateSharedValues(testCase, Depth)
             % coordinateAndCatalogChangesInvalidateSharedValues Recompute coordinates after live writes and catalog updates.
             [document, registry, source, destinations] = fixture(Depth);
-            snapshot = macd.model.SubtreeSnapshot(document, source.Id);
+            snapshot = yamada.model.SubtreeSnapshot(document, source.Id);
             parent = destinations(1);
             child = document.getComponent(parent.Children(1));
-            macd.model.SubtreePlacementPlanner.prepare(document, snapshot, parent.Id, registry, source.Id);
+            yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, parent.Id, registry, source.Id);
             child.setProperty("Layout.Column", 2);
-            changed = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, parent.Id, registry, source.Id);
+            changed = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, parent.Id, registry, source.Id);
             column = changed.Changes(string({changed.Changes.Path}) == "Layout.Column");
             testCase.verifyEqual(column.Value, 1);
             registry.register(registry.get("uilabel"));
-            refreshed = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, parent.Id, registry, source.Id);
+            refreshed = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, parent.Id, registry, source.Id);
             testCase.verifyEqual(refreshed, changed);
         end
 
@@ -49,14 +49,14 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
             % unrelatedInvalidRecordsKeepLegacyPlacementResults Fall back locally instead of rejecting unrelated corruption.
             for kind = ["hierarchy", "live-data"]
                 [document, registry, source, destinations, outsider] = fixture(Depth);
-                snapshot = macd.model.SubtreeSnapshot(document, source.Id);
-                expected = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, destinations(1).Id, registry, source.Id);
+                snapshot = yamada.model.SubtreeSnapshot(document, source.Id);
+                expected = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, destinations(1).Id, registry, source.Id);
                 if kind == "hierarchy"
                     outsider.addChild("missing-unrelated-child");
                 else
                     outsider.Metadata.UnsafeValue = @() error("PlacementProjectionTest:Executed", "Must not run.");
                 end
-                actual = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, destinations(1).Id, registry, source.Id);
+                actual = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, destinations(1).Id, registry, source.Id);
                 testCase.verifyEqual(actual, expected, kind);
             end
         end
@@ -65,18 +65,18 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
             % invalidDestinationChildrenStillFail Retain explicit-coordinate and subtree value restrictions.
             for kind = ["missing-coordinate", "live-data"]
                 [document, registry, source, destinations] = fixture(Depth);
-                snapshot = macd.model.SubtreeSnapshot(document, source.Id);
+                snapshot = yamada.model.SubtreeSnapshot(document, source.Id);
                 parent = destinations(1);
-                macd.model.SubtreePlacementPlanner.prepare(document, snapshot, parent.Id, registry, source.Id);
+                yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, parent.Id, registry, source.Id);
                 child = document.getComponent(parent.Children(1));
                 if kind == "missing-coordinate"
                     child.removeProperty("Layout.Row");
-                    expected = "macd:SubtreePlacementPlanner:ImplicitPlacement";
+                    expected = "yamada:SubtreePlacementPlanner:ImplicitPlacement";
                 else
                     child.Metadata.UnsafeValue = @() error("PlacementProjectionTest:Executed", "Must not run.");
-                    expected = "macd:SubtreeSnapshot:UnsupportedValue";
+                    expected = "yamada:SubtreeSnapshot:UnsupportedValue";
                 end
-                testCase.verifyError(@() macd.model.SubtreePlacementPlanner.prepare(document, snapshot, ...
+                testCase.verifyError(@() yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, ...
                     parent.Id, registry, source.Id), expected);
             end
         end
@@ -89,19 +89,19 @@ arguments (Input)
     depth (1, 1) double {mustBeInteger, mustBePositive}
 end
 arguments (Output)
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
-    source (1, 1) macd.model.ComponentRecord
-    destinations (1, :) macd.model.ComponentRecord
-    outsider (1, 1) macd.model.ComponentRecord
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
+    source (1, 1) yamada.model.ComponentRecord
+    destinations (1, :) yamada.model.ComponentRecord
+    outsider (1, 1) yamada.model.ComponentRecord
 end
-registry = macd.model.ComponentRegistry.createDefault();
-document = macd.model.NewAppFactory.createEmpty("PlacementProjectionFixture", registry);
+registry = yamada.model.ComponentRegistry.createDefault();
+document = yamada.model.NewAppFactory.createEmpty("PlacementProjectionFixture", registry);
 outsider = document.insertComponent(registry, "uipanel", document.RootComponentId);
 source = document.insertComponent(registry, "uibutton", outsider.Id);
 source.setProperty("Position", [10 10 80 22]);
 parent = document.RootComponentId;
-destinations = macd.model.ComponentRecord.empty(1, 0);
+destinations = yamada.model.ComponentRecord.empty(1, 0);
 for index = 1:depth
     grid = document.insertComponent(registry, "uigridlayout", parent);
     grid.setProperty("RowHeight", repmat({"1x"}, 1, 12));

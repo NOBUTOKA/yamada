@@ -25,7 +25,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             testCase.verifyTrue(all(string({pasted.Settings.Method}) == "assignment"));
             testCase.verifyTrue(all(arrayfun(@(setting) ~isempty(setting.SourceSpan), pasted.Settings)));
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
             document.redo();
             testCase.verifyEqual(document.getComponent(pasted.Id).getProperty("Value").LiteralValue, 50);
         end
@@ -44,7 +44,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
                 value = strfind(source, "app." + pasted.Name + ".Value = 150;");
                 testCase.verifyLessThan(limits, value);
                 testCase.verifyNumElements(value, 1);
-                reopened = macd.source.AppSourceParser.parseText(source, registry);
+                reopened = yamada.source.AppSourceParser.parseText(source, registry);
                 copied = reopened.getComponentByName(pasted.Name);
                 testCase.verifyNumElements(copied.getSettings("Value"), 1);
                 testCase.verifyEqual(copied.getSettings("Value").Method, "assignment");
@@ -91,14 +91,14 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             % rawSnapshotPreparationUsesFrozenRecords Resolve a source snapshot rather than later changes to its live component.
             [document, registry, component, target] = testCase.fixture([ ...
                 "app.Control = uislider(app.Left);", "app.Control.Value = 20;", "app.Control.Limits = [50 100];"]);
-            snapshot = macd.model.SubtreeSnapshot(document, component.Id);
+            snapshot = yamada.model.SubtreeSnapshot(document, component.Id);
             document.setProperty(component.Id, "Limits", [0 100], registry);
             pasted = document.pasteSubtree(snapshot, target.Id, registry);
             testCase.verifyEqual(pasted.getProperty("Limits").LiteralValue, [50 100]);
             testCase.verifyEqual(pasted.getProperty("Value").LiteralValue, 50);
-            other = macd.source.AppSourceParser.parseText(document.OriginalText, registry);
+            other = yamada.source.AppSourceParser.parseText(document.OriginalText, registry);
             otherTarget = other.getComponentByName("Right");
-            testCase.verifyError(@() other.pasteSubtree(snapshot, otherTarget.Id, registry), "macd:DocumentModel:UnsafeSubtreeCopy");
+            testCase.verifyError(@() other.pasteSubtree(snapshot, otherTarget.Id, registry), "yamada:DocumentModel:UnsafeSubtreeCopy");
             testCase.verifyEqual(other.HistoryIndex, 0);
         end
 
@@ -118,7 +118,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             % clipboardConfigurationStaysFrozenAfterLaterEdits Keep copied effective values independent of live settings and handles.
             [document, registry, component, target] = testCase.fixture([ ...
                 "app.Control = uislider(app.Left);", "app.Control.Value = 20;", "app.Control.Limits = [50 100];"]);
-            clipboard = macd.model.ComponentClipboard();
+            clipboard = yamada.model.ComponentClipboard();
             clipboard.copy(document, component.Id, registry);
             document.setProperty(component.Id, "Limits", [0 100], registry);
             pasted = clipboard.paste(document, target.Id, registry);
@@ -151,7 +151,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
                 "app.Control = uieditfield(app.Left, 'numeric');", "app.Control.Limits = [0 1];", ...
                 "app.Control.Value = 0;", "app.Control.LowerLimitInclusive = 'off';"]);
             before = component.settingSnapshot();
-            testCase.verifyError(@() document.copySubtree(component.Id, registry), "macd:DocumentModel:UnsafeSubtreeCopy");
+            testCase.verifyError(@() document.copySubtree(component.Id, registry), "yamada:DocumentModel:UnsafeSubtreeCopy");
             testCase.verifyEqual(component.settingSnapshot(), before);
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
@@ -166,12 +166,12 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
                 declaredType (1, 1) string = ""
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                component (1, 1) macd.model.ComponentRecord
-                target (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                component (1, 1) yamada.model.ComponentRecord
+                target (1, 1) yamada.model.ComponentRecord
             end
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             if strlength(declaredType) == 0
                 declaredType = "matlab.ui.control.Slider";
                 if any(contains(body, "uidropdown")), declaredType = "matlab.ui.control.DropDown"; end
@@ -183,7 +183,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
                 "app.Left = uipanel(app.UIFigure);", body, "app.Control.Position = [10 20 100 22];", ...
                 "app.Right = uipanel(app.UIFigure);", "end", "end", "end"], sprintf("\r\n"));
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("Control");
             target = document.getComponentByName("Right");
         end

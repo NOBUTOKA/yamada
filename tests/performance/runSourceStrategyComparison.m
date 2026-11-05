@@ -13,7 +13,7 @@ base = fullfile(root, "testResults", "performance", "source-strategy-20261031");
 fixtures = jsondecode(fileread(fullfile(base, "fixtures.json")));
 operations = jsondecode(fileread(fullfile(base, "operations.json")));
 source = string(fileread(fixtures.(layout).path));
-registry = macd.model.ComponentRegistry.createDefault();
+registry = yamada.model.ComponentRegistry.createDefault();
 clock = tic;
 engine = SourceStrategyExperiment(source, mode, registry);
 initialization = toc(clock);
@@ -44,7 +44,7 @@ checkpoint = engine.save(fullfile(output, "UpdateDistributionFixture.m"));
 saveSeconds = toc(clock);
 if profiled, profile off; writeSourceStrategyProfile(output, "save"); end
 % Output correctness and full index checks remain outside operation timings.
-parsed = macd.source.AppSourceParser.parseText(checkpoint.SourceText, registry);
+parsed = yamada.source.AppSourceParser.parseText(checkpoint.SourceText, registry);
 for request = engine.Requests
     entry = parsed.getComponentByName(request.Name).getProperty(request.Path);
     assert(isequaln(entry.LiteralValue, request.Value));

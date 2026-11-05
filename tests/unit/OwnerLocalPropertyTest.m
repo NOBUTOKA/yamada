@@ -5,7 +5,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) OwnerLocalProper
     methods (Test)
         function coupledEditsAndHistoryRetainAllEffectiveStates(testCase)
             % coupledEditsAndHistoryRetainAllEffectiveStates Match full initialization semantics for every local policy family.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for scenario = policyScenarios()
                 document = policyDocument(scenario, registry); owner = document.getComponentByName("Subject");
                 before = document.CurrentText;
@@ -22,7 +22,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) OwnerLocalProper
 
         function changedFollowersRemainCurrentDuringDistinctEdits(testCase)
             % changedFollowersRemainCurrentDuringDistinctEdits Keep implicit numeric rounding and width followers across later independent edits.
-            registry = macd.model.ComponentRegistry.createDefault(); scenarios = policyScenarios();
+            registry = yamada.model.ComponentRegistry.createDefault(); scenarios = policyScenarios();
             for scenario = scenarios(ismember(string({scenarios.Name}), ["numeric", "width", "items", "color"]))
                 document = policyDocument(scenario, registry); owner = document.getComponentByName("Subject");
                 document.setPropertyBatch(owner.Id, scenario.Changes, registry); document.validatePropertyCommit(registry);
@@ -75,28 +75,28 @@ function document = policyDocument(scenario, registry)
 % policyDocument Parse one subject alongside an independent component without executing application code.
 arguments (Input)
     scenario (1, 1) struct
-    registry (1, 1) macd.model.ComponentRegistry
+    registry (1, 1) yamada.model.ComponentRegistry
 end
 arguments (Output)
-    document (1, 1) macd.model.DocumentModel
+    document (1, 1) yamada.model.DocumentModel
 end
 source = strjoin(["classdef OwnerLocalFixture < handle", "properties", "UIFigure matlab.ui.Figure", ...
     "Subject " + scenario.Type, "Unchanged matlab.ui.control.Label", "end", "methods", ...
     "function app = OwnerLocalFixture", "createComponents(app);", "end", "function createComponents(app)", ...
     "app.UIFigure = uifigure(Visible='off');", scenario.Body, ...
     "app.Unchanged = uilabel(app.UIFigure);", "app.Unchanged.Text = 'untouched';", "end", "end", "end"], sprintf('\r\n'));
-document = macd.source.AppSourceParser.parseText(source, registry);
+document = yamada.source.AppSourceParser.parseText(source, registry);
 end
 
 function verifyEffectiveStates(testCase, document, registry)
 % verifyEffectiveStates Compare every owner's semantic projection against independently parsed current source.
 arguments (Input)
     testCase (1, 1) matlab.unittest.TestCase
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
 end
-reference = macd.source.AppSourceParser.parseText(document.CurrentText, registry);
-testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(reference.Diagnostics));
+reference = yamada.source.AppSourceParser.parseText(document.CurrentText, registry);
+testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(reference.Diagnostics));
 for component = document.Components
     fresh = reference.getComponentByName(component.Name);
     actual = document.getEffectivePropertyStates(registry, component.Id);

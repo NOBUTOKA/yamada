@@ -10,8 +10,8 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             [figure, ~] = testCase.environment();
             for tokens = {{55, 'fit'}, [55 75], ["1x" "2x"]}
                 grid = uigridlayout(figure, [3 4], "RowHeight", tokens{1}, "ColumnWidth", tokens{1});
-                testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(grid.RowHeight, tokens{1}));
-                testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(grid.ColumnWidth, tokens{1}));
+                testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(grid.RowHeight, tokens{1}));
+                testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(grid.ColumnWidth, tokens{1}));
                 delete(grid);
             end
             for axis = ["Row", "Column"]
@@ -21,9 +21,9 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 trackPath = "RowHeight";
                 if axis == "Column", trackPath = "ColumnWidth"; end
                 grid.(trackPath) = {50};
-                testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(grid.(trackPath), {50, "1x", "1x", "1x"}));
+                testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(grid.(trackPath), {50, "1x", "1x", "1x"}));
                 child.Layout.(axis) = 1;
-                testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(grid.(trackPath), {50}));
+                testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(grid.(trackPath), {50}));
                 delete(grid);
             end
         end
@@ -37,7 +37,7 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             output = string(tempname) + ".json";
             fileCleanup = onCleanup(@() delete(output));
             results = ProbePositionAliasInteractions(output);
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             testCase.assertNumElements(results, 42);
             testCase.verifyNumElements(unique(string({results.Id})), 14);
             for result = results
@@ -100,7 +100,7 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                     target = feval(definition.Factory, parent, definition.CreationArguments{:});
                     if value(3) < 0
                         testCase.verifyError(@() set(target, "Position", value), "MATLAB:hg:set_chck:DimensionsOutsideRange");
-                        testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+                        testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
                         testCase.verifyFalse(states(string({states.Path}) == "Position").IsKnown);
                     else
                         target.Position = value;
@@ -124,9 +124,9 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 "uiknob", {"discrete"}; "uiswitch", {"rocker"}; ...
                 "uiswitch", {"slider"}; "uiswitch", {"toggle"}};
             for index = 1:size(cases, 1)
-                entries = [macd.model.PropertyEntry("Value", 20), ...
-                    macd.model.PropertyEntry("ItemsData", [10 20]), ...
-                    macd.model.PropertyEntry("Items", ["Low", "High"])];
+                entries = [yamada.model.PropertyEntry("Value", 20), ...
+                    yamada.model.PropertyEntry("ItemsData", [10 20]), ...
+                    yamada.model.PropertyEntry("Items", ["Low", "High"])];
                 target = testCase.apply(figure, registry, cases{index, 1}, cases{index, 2}, entries);
                 testCase.verifyEqual(target.Value, 20);
                 testCase.verifyEqual(string(target.Items), ["Low", "High"]);
@@ -142,8 +142,8 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 "uiknob", {"continuous"}, 150; ...
                 "uieditfield", {"numeric"}, 150; "uispinner", {}, 150};
             for index = 1:size(cases, 1)
-                entries = [macd.model.PropertyEntry("Value", cases{index, 3}), ...
-                    macd.model.PropertyEntry("Limits", [120 200])];
+                entries = [yamada.model.PropertyEntry("Value", cases{index, 3}), ...
+                    yamada.model.PropertyEntry("Limits", [120 200])];
                 target = testCase.apply(figure, registry, cases{index, 1}, cases{index, 2}, entries);
                 testCase.verifyEqual(target.Value, cases{index, 3});
                 delete(target);
@@ -151,8 +151,8 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             for factory = ["uieditfield", "uispinner"]
                 style = {};
                 if factory == "uieditfield", style = {"numeric"}; end
-                entries = [macd.model.PropertyEntry("Value", []), ...
-                    macd.model.PropertyEntry("AllowEmpty", "on")];
+                entries = [yamada.model.PropertyEntry("Value", []), ...
+                    yamada.model.PropertyEntry("AllowEmpty", "on")];
                 target = testCase.apply(figure, registry, factory, style, entries);
                 testCase.verifyEmpty(target.Value);
                 delete(target);
@@ -163,8 +163,8 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             % gaugesAllowOffScaleValuesWithoutClamping Distinguish all gauge variants from slider behavior.
             [figure, registry] = testCase.environment();
             for style = ["circular", "linear", "ninetydegree", "semicircular"]
-                entries = [macd.model.PropertyEntry("Value", 20), ...
-                    macd.model.PropertyEntry("Limits", [50 100])];
+                entries = [yamada.model.PropertyEntry("Value", 20), ...
+                    yamada.model.PropertyEntry("Limits", [50 100])];
                 target = testCase.apply(figure, registry, "uigauge", {style}, entries);
                 testCase.verifyEqual(target.Value, 20);
                 target.Value = 150;
@@ -181,13 +181,13 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 "uigauge", {"linear"}; "uigauge", {"ninetydegree"}; ...
                 "uigauge", {"semicircular"}};
             for index = 1:size(cases, 1)
-                entries = [macd.model.PropertyEntry("MajorTicksMode", "auto"), ...
-                    macd.model.PropertyEntry("MinorTicksMode", "auto"), ...
-                    macd.model.PropertyEntry("MajorTickLabelsMode", "auto"), ...
-                    macd.model.PropertyEntry("MajorTickLabels", ["Low", "High"]), ...
-                    macd.model.PropertyEntry("MajorTicks", [0 100]), ...
-                    macd.model.PropertyEntry("MinorTicks", [25 75]), ...
-                    macd.model.PropertyEntry("Limits", [0 100])];
+                entries = [yamada.model.PropertyEntry("MajorTicksMode", "auto"), ...
+                    yamada.model.PropertyEntry("MinorTicksMode", "auto"), ...
+                    yamada.model.PropertyEntry("MajorTickLabelsMode", "auto"), ...
+                    yamada.model.PropertyEntry("MajorTickLabels", ["Low", "High"]), ...
+                    yamada.model.PropertyEntry("MajorTicks", [0 100]), ...
+                    yamada.model.PropertyEntry("MinorTicks", [25 75]), ...
+                    yamada.model.PropertyEntry("Limits", [0 100])];
                 target = testCase.apply(figure, registry, cases{index, 1}, cases{index, 2}, entries);
                 testCase.verifyEqual(string(target.MajorTicksMode), "auto");
                 testCase.verifyEqual(string(target.MinorTicksMode), "auto");
@@ -217,8 +217,8 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 testCase.verifyTrue(result.ManualMatches, result.Factory + "." + result.Path);
                 testCase.verifyEqual(result.ConstructorValueLastMode, "manual");
                 testCase.verifyEqual(result.ConstructorModeLastMode, "auto");
-                entries = [macd.model.PropertyEntry(result.Path + "Mode", "auto"), ...
-                    macd.model.PropertyEntry(result.Path, result.RequestedValue)];
+                entries = [yamada.model.PropertyEntry(result.Path + "Mode", "auto"), ...
+                    yamada.model.PropertyEntry(result.Path, result.RequestedValue)];
                 creation = {};
                 if result.Factory == "geoaxes", creation = {"Basemap", "none"}; end
                 target = testCase.apply(figure, registry, result.Factory, creation, entries);
@@ -252,8 +252,8 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 testCase.verifyTrue(result.AutomaticRenderedMatches);
                 testCase.verifyEqual(result.ConstructorValueLastMode, "manual");
                 testCase.verifyEqual(result.ConstructorModeLastMode, "auto");
-                entries = [macd.model.PropertyEntry(result.Path + "Mode", "auto"), ...
-                    macd.model.PropertyEntry(result.Path, result.RequestedValue)];
+                entries = [yamada.model.PropertyEntry(result.Path + "Mode", "auto"), ...
+                    yamada.model.PropertyEntry(result.Path, result.RequestedValue)];
                 creation = {};
                 if result.Factory == "geoaxes", creation = {"Basemap", "none"}; end
                 target = testCase.apply(figure, registry, result.Factory, creation, entries);
@@ -277,7 +277,7 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             paths = ["LineWidth", "GridLineWidth", "MinorGridLineWidth", "GridLineWidthMode", "MinorGridLineWidthMode"];
             for factory = ["axes", "uiaxes"]
                 definition = registry.get(factory);
-                component = macd.model.ComponentRecord("native-widths", "OwnedAxes", factory, definition.DeclaredType, "parsed");
+                component = yamada.model.ComponentRecord("native-widths", "OwnedAxes", factory, definition.DeclaredType, "parsed");
                 target = feval(factory, figure);
                 testCase.verifyEqual([target.LineWidth target.GridLineWidth target.MinorGridLineWidth], [0.5 0.5 0.5]);
                 testCase.verifyEqual(string(target.GridLineWidthMode), "auto");
@@ -287,9 +287,9 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                     value = writes{index, 2};
                     target.(name) = value;
                     location = struct("Method", "assignment", "Syntax", "dot", "SourceSnapshotId", "native-widths", ...
-                        "Sequence", index, "SourceSpan", macd.model.SourceSpan(index, index));
-                    component.recordSetting(macd.model.PropertySetting(name, value, location));
-                    states = macd.model.PropertyStateResolver.resolve(component, definition.Properties);
+                        "Sequence", index, "SourceSpan", yamada.model.SourceSpan(index, index));
+                    component.recordSetting(yamada.model.PropertySetting(name, value, location));
+                    states = yamada.model.PropertyStateResolver.resolve(component, definition.Properties);
                     for path = paths
                         state = states(string({states.Path}) == path);
                         testCase.verifyTrue(state.IsKnown);
@@ -302,10 +302,10 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 delete(target);
 
                 % Explicit auto requests run after the values that otherwise force manual mode.
-                entries = [macd.model.PropertyEntry("MinorGridLineWidthMode", "auto"), ...
-                    macd.model.PropertyEntry("GridLineWidthMode", "auto"), ...
-                    macd.model.PropertyEntry("MinorGridLineWidth", 3), ...
-                    macd.model.PropertyEntry("GridLineWidth", 4), macd.model.PropertyEntry("LineWidth", 2)];
+                entries = [yamada.model.PropertyEntry("MinorGridLineWidthMode", "auto"), ...
+                    yamada.model.PropertyEntry("GridLineWidthMode", "auto"), ...
+                    yamada.model.PropertyEntry("MinorGridLineWidth", 3), ...
+                    yamada.model.PropertyEntry("GridLineWidth", 4), yamada.model.PropertyEntry("LineWidth", 2)];
                 target = testCase.apply(figure, registry, factory, {}, entries);
                 testCase.verifyEqual([target.LineWidth target.GridLineWidth target.MinorGridLineWidth], [2 2 2]);
                 testCase.verifyEqual(string(target.GridLineWidthMode), "auto");
@@ -326,10 +326,10 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             % unitsAreEstablishedBeforeCoordinatesAndFontSize Avoid conversion of values assigned in old units.
             [figure, registry] = testCase.environment();
             for factory = ["uipanel", "uibuttongroup", "uitable", "uiaxes", "axes", "polaraxes"]
-                entries = [macd.model.PropertyEntry("Position", [1 1 8 6]), ...
-                    macd.model.PropertyEntry("Units", "centimeters"), ...
-                    macd.model.PropertyEntry("FontSize", 14), ...
-                    macd.model.PropertyEntry("FontUnits", "points")];
+                entries = [yamada.model.PropertyEntry("Position", [1 1 8 6]), ...
+                    yamada.model.PropertyEntry("Units", "centimeters"), ...
+                    yamada.model.PropertyEntry("FontSize", 14), ...
+                    yamada.model.PropertyEntry("FontUnits", "points")];
                 target = testCase.apply(figure, registry, factory, {}, entries);
                 testCase.verifyEqual(target.Position, [1 1 8 6], "AbsTol", 1e-8);
                 testCase.verifyEqual(target.FontSize, 14, "AbsTol", 1e-8);
@@ -341,17 +341,17 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             % previewPlanPreservesParsedSetterEffectsAndEarlierWrites Avoid treating canonical order as original execution order.
             [figure, registry] = testCase.environment();
             definition = registry.get("uislider");
-            component = macd.model.ComponentRecord("owned-slider", "Slider", ...
+            component = yamada.model.ComponentRecord("owned-slider", "Slider", ...
                 "uislider", definition.DeclaredType, "parsed");
             writes = {"Value", 20; "Limits", [50 100]; "Value", 75; "Limits", [80 100]};
             for index = 1:size(writes, 1)
                 location = struct("Method", "assignment", "Syntax", "dot", ...
                     "SourceSnapshotId", "owned-preview", "Sequence", index, ...
-                    "SourceSpan", macd.model.SourceSpan(index, index));
-                component.recordSetting(macd.model.PropertySetting(writes{index, 1}, writes{index, 2}, location));
+                    "SourceSpan", yamada.model.SourceSpan(index, index));
+                component.recordSetting(yamada.model.PropertySetting(writes{index, 1}, writes{index, 2}, location));
             end
-            document = macd.model.NewAppFactory.createEmpty("OwnedReplayApp", registry);
-            entries = macd.model.PropertyApplicationPlanner.forPreview(component, document, registry);
+            document = yamada.model.NewAppFactory.createEmpty("OwnedReplayApp", registry);
+            entries = yamada.model.PropertyApplicationPlanner.forPreview(component, document, registry);
             testCase.verifyEqual(string({entries.Path}), ["Value", "Limits", "Value", "Limits"]);
             target = uislider(figure);
             for entry = entries
@@ -372,11 +372,11 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             end
             arguments (Output)
                 figure (1, 1) matlab.ui.Figure
-                registry (1, 1) macd.model.ComponentRegistry
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             figure = uifigure("Visible", "off");
             testCase.addTeardown(@() delete(figure));
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
         end
     end
 
@@ -384,41 +384,41 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
         function [states, component, diagnostics] = positionStates(definition, writes, method)
             % positionStates Build owned setting occurrences for native position comparisons.
             arguments (Input)
-                definition (1, 1) macd.model.ComponentDefinition
+                definition (1, 1) yamada.model.ComponentDefinition
                 writes cell
                 method (1, 1) string = "assignment"
             end
             arguments (Output)
-                states macd.model.PropertyState
-                component (1, 1) macd.model.ComponentRecord
-                diagnostics macd.model.Diagnostic
+                states yamada.model.PropertyState
+                component (1, 1) yamada.model.ComponentRecord
+                diagnostics yamada.model.Diagnostic
             end
-            component = macd.model.ComponentRecord("owned-position", "OwnedPosition", definition.Factory, definition.DeclaredType, "parsed");
+            component = yamada.model.ComponentRecord("owned-position", "OwnedPosition", definition.Factory, definition.DeclaredType, "parsed");
             component.CreationArguments = definition.CreationArguments;
             for index = 1:size(writes, 1)
-                span = macd.model.SourceSpan(index * 10, index * 10 + 1);
+                span = yamada.model.SourceSpan(index * 10, index * 10 + 1);
                 location = struct("Method", method, "Syntax", "dot", "Sequence", index, ...
                     "SourceSnapshotId", "owned-position", "StatementId", "owned-constructor", "SourceSpan", span, "ValueSpan", span);
                 if method == "nameValue", location.Syntax = "quotedPair"; end
-                component.recordSetting(macd.model.PropertySetting(writes{index, 1}, writes{index, 2}, location));
+                component.recordSetting(yamada.model.PropertySetting(writes{index, 1}, writes{index, 2}, location));
             end
-            [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definition.Properties);
+            [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definition.Properties);
         end
 
         function target = apply(figure, registry, factory, creationArguments, entries)
             % apply Run only owned literal setters in the shared planner's order.
             arguments (Input)
                 figure (1, 1) matlab.ui.Figure
-                registry (1, 1) macd.model.ComponentRegistry
+                registry (1, 1) yamada.model.ComponentRegistry
                 factory (1, 1) string
                 creationArguments cell
-                entries macd.model.PropertyEntry
+                entries yamada.model.PropertyEntry
             end
             arguments (Output)
                 target
             end
             definition = registry.get(factory, creationArguments);
-            entries = macd.model.PropertyApplicationPlanner.order(entries, definition.Properties);
+            entries = yamada.model.PropertyApplicationPlanner.order(entries, definition.Properties);
             target = feval(factory, figure, creationArguments{:});
             for entry = entries
                 target.(entry.Path) = entry.LiteralValue;
@@ -434,7 +434,7 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             cleanup = onCleanup(@() delete(constructed));
             for entry = entries
                 assert(isequaln(constructed.(entry.Path), target.(entry.Path)), ...
-                    "macd:PropertyApplicationRuntimeTest:ConstructorMismatch", ...
+                    "yamada:PropertyApplicationRuntimeTest:ConstructorMismatch", ...
                     "Constructor and ordered setters disagree for %s.%s.", factory, entry.Path);
             end
             clear cleanup

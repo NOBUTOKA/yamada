@@ -1,0 +1,437 @@
+classdef InspectorPropertyRow < handle
+    % InspectorPropertyRow Present and synchronize one inspector property value.
+    %   The row owns a label and one native editor. Its callback identifies the
+    %   component and property without allowing adapters to mutate the model.
+
+    properties (Access = private)
+        Editor
+        ErrorMessage string = ""
+        NormalBackgroundColor double = [1 1 1]
+        Definition yamada.model.PropertyDefinition
+        CommitFcn function_handle
+        BatchCommitFcn function_handle
+        ComponentId string
+        Path string
+        Row struct = struct()
+        IsComposite logical = false
+        BindingGeneration uint64 = uint64(0)
+    end
+
+    methods
+        function obj = InspectorPropertyRow( ...
+                parent, row, componentId, definition, commitFcn, batchCommitFcn)
+            % InspectorPropertyRow Create one disposable native property-row control set.
+            arguments (Input)
+                parent
+                row (1, 1) double {mustBeInteger, mustBePositive}
+                componentId (1, 1) string
+                definition
+                commitFcn (1, 1) function_handle
+                batchCommitFcn = []
+            end
+            arguments (Output)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+            end
+
+            % Keep layout and binding local to the inspector reconstruction.
+            grid = uigridlayout(parent, [1 2]);
+            grid.Layout.Row = row;
+            grid.Padding = [0 0 0 0];
+            grid.ColumnSpacing = 4;
+            grid.ColumnWidth = {105, "1x"};
+            grid.RowHeight = {yamada.ui.inspector.InspectorPropertyRow.rowHeight(definition)};
+            obj.ComponentId = componentId;
+            obj.IsComposite = isstruct(definition) && isfield(definition, "IsComposite") && ...
+                definition.IsComposite;
+            if obj.IsComposite
+                obj.Row = definition;
+                obj.Path = definition.Id;
+                obj.Definition = yamada.model.PropertyDefinition(definition.Id, [], false, false, ...
+                    struct("displayName", definition.DisplayName, "editor", definition.Editor));
+                displayName = definition.DisplayName;
+                tooltip = strjoin(definition.MemberPaths, ", ");
+            else
+                obj.Path = definition.Path;
+                obj.Definition = definition;
+                displayName = definition.DisplayName;
+                tooltip = definition.Path;
+            end
+            obj.CommitFcn = commitFcn;
+            if isempty(batchCommitFcn)
+                batchCommitFcn = @(id, changes) ...
+                    yamada.ui.inspector.InspectorPropertyRow.commitSingleChange( ...
+                    commitFcn, id, changes);
+            end
+            obj.BatchCommitFcn = batchCommitFcn;
+            uilabel(grid, "Text", displayName, "Tooltip", tooltip, ...
+                "Tag", "yamada-inspector-property-label");
+            if obj.IsComposite
+                obj.Editor = yamada.ui.inspector.PropertyEditorFactory.createComposite( ...
+                    grid, definition, @(changes) obj.commitBatch(changes));
+            else
+                obj.Editor = yamada.ui.inspector.PropertyEditorFactory.create(grid, definition, ...
+                    @(value) obj.commit(value), @(changes) obj.commitBatch(changes));
+            end
+            obj.Editor.Layout.Column = 2;
+            obj.captureNormalBackgroundColor();
+            obj.rebind(componentId);
+        end
+
+        function rebind(obj, componentId)
+            % rebind Retarget controls while invalidating queued callbacks and open dialog commits.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                componentId (1, 1) string
+            end
+            obj.ComponentId = componentId;
+            obj.BindingGeneration = obj.BindingGeneration + 1;
+            generation = obj.BindingGeneration;
+            definition = obj.Definition;
+            if obj.IsComposite, definition = obj.Row; end
+            yamada.ui.inspector.PropertyEditorFactory.bind(obj.Editor, definition, ...
+                @(value) obj.commitBound(generation, value), ...
+                @(changes) obj.commitBatchBound(generation, changes));
+            % Guard queued native events before adapters can change current draft state.
+            controls = findall(obj.Editor);
+            for index = 1:numel(controls)
+                control = controls(index);
+                for name = ["ValueChangedFcn", "ValueChangingFcn", "ButtonPushedFcn"]
+                    if ~isprop(control, name), continue, end
+                    callback = control.(name);
+                    if isa(callback, "function_handle")
+                        control.(name) = @(source, event) obj.invokeBound(generation, callback, source, event);
+                    end
+                end
+            end
+            obj.prepareCommit();
+        end
+
+    end
+
+    methods (Access = private)
+        function invokeBound(obj, generation, callback, source, event)
+            % invokeBound Suppress a queued native event from an obsolete component binding.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                generation (1, 1) uint64
+                callback (1, 1) function_handle
+                source
+                event
+            end
+            if generation == obj.BindingGeneration && isvalid(obj.Editor)
+                callback(source, event);
+            end
+        end
+
+        function commitBound(obj, generation, value)
+            % commitBound Ignore an input event captured before the row changed targets.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                generation (1, 1) uint64
+                value
+            end
+            if generation == obj.BindingGeneration && isvalid(obj.Editor)
+                obj.commit(value);
+            end
+        end
+
+        function message = commitBatchBound(obj, generation, changes)
+            % commitBatchBound Reject a dialog belonging to an obsolete row binding.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                generation (1, 1) uint64
+                changes (1, :) struct
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+            message = "Selection changed before the edit could be applied.";
+            if generation == obj.BindingGeneration && isvalid(obj.Editor)
+                message = obj.commitBatch(changes);
+            end
+        end
+
+    end
+
+    methods
+        function synchronize(obj, value, isEditable, rawValue, relatedValues)
+            % synchronize Load a current value and editability presentation.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                value (1, 1) string
+                isEditable (1, 1) logical
+                rawValue = []
+                relatedValues struct = struct()
+            end
+            if obj.IsComposite
+                error("yamada:InspectorPropertyRow:CompositeSynchronization", ...
+                    "Composite rows require ordered member synchronization.");
+            end
+            % Clear a stale error presentation before loading the current model value.
+            obj.restoreNormalBackgroundColor();
+            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
+                obj.Editor, value, isEditable && ...
+                yamada.ui.inspector.PropertyEditorFactory.supportsEditing(obj.Definition), rawValue, relatedValues);
+            obj.ErrorMessage = "";
+            obj.Editor.Tooltip = "";
+            obj.captureNormalBackgroundColor();
+        end
+
+        function synchronizeMembers(obj, members, relatedValues)
+            % synchronizeMembers Load an ordered multi-property row from effective member state.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                members (1, :) struct
+                relatedValues struct = struct()
+            end
+
+            if ~obj.IsComposite
+                if numel(members) ~= 1
+                    error("yamada:InspectorPropertyRow:UnexpectedMemberCount", ...
+                        "A singleton Inspector row requires exactly one member.");
+                end
+                obj.synchronize(members.Value, members.IsEditable, members.RawValue, relatedValues);
+                if isfield(members, "Reason") && strlength(members.Reason) > 0
+                    obj.Editor.Tooltip = members.Reason;
+                end
+                return
+            end
+            obj.restoreNormalBackgroundColor();
+            yamada.ui.inspector.PropertyEditorFactory.synchronizeComposite( ...
+                obj.Editor, obj.Row, members, relatedValues);
+            obj.ErrorMessage = "";
+            obj.Editor.Tooltip = "";
+            if isfield(members, "Reason")
+                reasons = string({members.Reason});
+                obj.Editor.Tooltip = strjoin(unique(reasons(strlength(reasons) > 0), "stable"), newline);
+            end
+            obj.captureNormalBackgroundColor();
+        end
+
+        function id = identifier(obj)
+            % identifier Return the stable projected row identifier for surface comparison.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+            end
+            arguments (Output)
+                id (1, 1) string
+            end
+
+            id = obj.Path;
+            if ~obj.IsComposite
+                id = "property:" + id;
+            end
+        end
+
+        function state = snapshotTransientState(obj)
+            % snapshotTransientState Return an uncommitted invalid draft for later restoration.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+            end
+            arguments (Output)
+                state (1, 1) struct
+            end
+
+            % Only invalid drafts are transient state; committed values come from the model.
+            state = struct("Path", obj.Path, "HasDraft", strlength(obj.ErrorMessage) > 0 && ...
+                ~obj.IsComposite, ...
+                "Value", [], "Message", obj.ErrorMessage, "HasFocus", obj.hasFocus());
+            if state.HasDraft
+                state.Value = yamada.ui.inspector.PropertyEditorFactory.editorValue(obj.Editor);
+            end
+        end
+
+        function restoreTransientState(obj, state)
+            % restoreTransientState Restore one compatible invalid draft and focus state.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                state (1, 1) struct
+            end
+
+            if state.Path ~= obj.Path || obj.IsComposite
+                return
+            end
+            if state.HasDraft
+                yamada.ui.inspector.PropertyEditorFactory.restoreDraft(obj.Editor, state.Value);
+                obj.showError(state.Message);
+            end
+            if state.HasFocus
+                try
+                    focus(obj.Editor);
+                catch
+                    % Focus is best effort when the rebuilt control is not yet visible.
+                end
+            end
+        end
+    end
+
+    methods (Access = private)
+        function commit(obj, value)
+            % commit Forward edited text through the row-owned current binding.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                value
+            end
+            obj.prepareCommit();
+            message = obj.CommitFcn(obj.ComponentId, obj.Path, value);
+            if strlength(message) > 0
+                obj.showError(message);
+            end
+        end
+
+        function message = commitBatch(obj, changes)
+            % commitBatch Submit one dialog-owned staged property batch through the row binding.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                changes (1, :) struct
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+
+            obj.prepareCommit();
+            message = obj.BatchCommitFcn(obj.ComponentId, changes);
+        end
+
+        function prepareCommit(obj)
+            % prepareCommit Prevent an obsolete invalid draft from surviving an accepted edit refresh.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+            end
+            obj.ErrorMessage = "";
+            obj.Editor.Tooltip = "";
+            obj.restoreNormalBackgroundColor();
+        end
+
+        function showError(obj, message)
+            % showError Mark an invalid editor draft and expose its explanation by hover.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                message (1, 1) string
+            end
+
+            if strlength(obj.ErrorMessage) == 0
+                obj.captureNormalBackgroundColor();
+            end
+            obj.ErrorMessage = message;
+            obj.Editor.Tooltip = message;
+            if isprop(obj.Editor, "BackgroundColor")
+                obj.Editor.BackgroundColor = [1 0.9 0.9];
+            end
+        end
+
+        function captureNormalBackgroundColor(obj)
+            % captureNormalBackgroundColor Save the editor background used outside errors.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+            end
+
+            if isprop(obj.Editor, "BackgroundColor")
+                obj.NormalBackgroundColor = obj.Editor.BackgroundColor;
+            end
+        end
+
+        function restoreNormalBackgroundColor(obj)
+            % restoreNormalBackgroundColor Restore the editor background after an error clears.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+            end
+
+            if isprop(obj.Editor, "BackgroundColor")
+                obj.Editor.BackgroundColor = obj.NormalBackgroundColor;
+            end
+        end
+
+        function result = hasFocus(obj)
+            % hasFocus Return whether this row editor currently owns UI focus.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = false;
+            figure = ancestor(obj.Editor, "figure");
+            if ~isempty(figure) && isvalid(figure) && isprop(figure, "CurrentObject")
+                current = figure.CurrentObject;
+                while ~isempty(current)
+                    if isequal(current, obj.Editor), result = true; return, end
+                    if ~isprop(current, "Parent"), break, end
+                    current = current.Parent;
+                end
+            end
+        end
+    end
+
+    methods (Static)
+        function height = rowHeight(definition)
+            % rowHeight Return the deterministic native height requested by one editor schema.
+            arguments (Input)
+                definition
+            end
+            arguments (Output)
+                height (1, 1) double
+            end
+
+            if isstruct(definition) && isfield(definition, "IsComposite") && definition.IsComposite
+                height = 28;
+            elseif definition.Editor == "itemSelection" && ...
+                    isfield(definition.ValueSchema, "multiselectProperty")
+                % Reserve the List Box selection surface for its optional multi-select mode.
+                height = 84;
+            elseif definition.Editor == "position"
+                height = 102;
+            elseif definition.Editor == "multilineText"
+                height = 84;
+            elseif definition.Editor == "dateTime" && ...
+                    isfield(definition.ValueSchema, "shape") && ...
+                    string(definition.ValueSchema.shape) == "fixedLengthVector"
+                % The two native date pickers require a full two-row parent slot.
+                height = 56;
+            else
+                height = 28;
+            end
+        end
+    end
+
+    methods (Static, Access = private)
+        function message = commitSingleChange(commitFcn, componentId, changes)
+            % commitSingleChange Adapt a legacy row callback to one staged property value.
+            arguments (Input)
+                commitFcn (1, 1) function_handle
+                componentId (1, 1) string
+                changes (1, :) struct
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+
+            if numel(changes) ~= 1
+                error("yamada:InspectorPropertyRow:InvalidSingleChange", ...
+                    "A legacy inspector row can commit only one property value.");
+            end
+            message = commitFcn(componentId, string(changes.Path), changes.Value);
+        end
+
+    end
+end
+
+%{
+Copyright (C) 2026 Nobuto Kaitoh
+
+This file is part of yamada.
+
+yamada is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+yamada is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with yamada. If not, see <https://www.gnu.org/licenses/>.
+%}

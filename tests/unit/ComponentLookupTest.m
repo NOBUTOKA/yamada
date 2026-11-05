@@ -5,13 +5,13 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
     methods (Test)
         function repeatedReadsKeepIdentityAndInputRevision(testCase)
             % repeatedReadsKeepIdentityAndInputRevision Return current records without semantic mutations.
-            document = macd.model.DocumentModel("LookupFixture");
-            records = macd.model.ComponentRecord.empty;
+            document = yamada.model.DocumentModel("LookupFixture");
+            records = yamada.model.ComponentRecord.empty;
             for index = 1:64
                 records(end + 1) = ComponentLookupTest.record("id" + index, "Label" + index); %#ok<AGROW>
             end
             document.Components = records;
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             context = document.evaluationContext(registry);
             [before, safe] = context.inputs();
             testCase.assertTrue(safe);
@@ -28,7 +28,7 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
 
         function reorderedDuplicatesRetainFirstMatch(testCase)
             % reorderedDuplicatesRetainFirstMatch Respect ordering even in a deliberately invalid identity graph.
-            document = macd.model.DocumentModel("DuplicateLookupFixture");
+            document = yamada.model.DocumentModel("DuplicateLookupFixture");
             first = ComponentLookupTest.record("same", "First");
             second = ComponentLookupTest.record("same", "Second");
             document.Components = [first second];
@@ -40,7 +40,7 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
 
         function indexedAssignmentsInvalidateEveryAffectedResult(testCase)
             % indexedAssignmentsInvalidateEveryAffectedResult Observe append, replacement, removal, and reshaping.
-            document = macd.model.DocumentModel("CollectionLookupFixture");
+            document = yamada.model.DocumentModel("CollectionLookupFixture");
             first = ComponentLookupTest.record("one", "First");
             second = ComponentLookupTest.record("two", "Second");
             document.Components = [first second];
@@ -57,14 +57,14 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
             testCase.verifyEqual(document.getComponent("three"), third);
             document.Components = reshape(document.Components, [], 1);
             testCase.verifyEqual(document.getComponent("one"), replacement);
-            document.Components = macd.model.ComponentRecord.empty;
+            document.Components = yamada.model.ComponentRecord.empty;
             testCase.verifyEmpty(document.getComponent("one"));
         end
 
         function renamedRecordsAndDocumentsRemainIndependent(testCase)
             % renamedRecordsAndDocumentsRemainIndependent Store indices rather than stale objects or names.
-            firstDocument = macd.model.DocumentModel("FirstLookupFixture");
-            secondDocument = macd.model.DocumentModel("SecondLookupFixture");
+            firstDocument = yamada.model.DocumentModel("FirstLookupFixture");
+            secondDocument = yamada.model.DocumentModel("SecondLookupFixture");
             first = ComponentLookupTest.record("shared", "First");
             second = ComponentLookupTest.record("shared", "Second");
             firstDocument.Components = first;
@@ -80,7 +80,7 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
 
         function unusualIdsPreserveOrderedSearchSemantics(testCase)
             % unusualIdsPreserveOrderedSearchSemantics Retain empty and non-scalar query behavior.
-            document = macd.model.DocumentModel("UnusualLookupFixture");
+            document = yamada.model.DocumentModel("UnusualLookupFixture");
             empty = ComponentLookupTest.record("", "EmptyId");
             normal = ComponentLookupTest.record("normal", "Normal");
             document.Components = [empty normal];
@@ -93,7 +93,7 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
 
         function invalidRecordsKeepEarlierMatchAndFailureOrder(testCase)
             % invalidRecordsKeepEarlierMatchAndFailureOrder Do not hide invalid handles after warming an identity.
-            document = macd.model.DocumentModel("InvalidLookupFixture");
+            document = yamada.model.DocumentModel("InvalidLookupFixture");
             first = ComponentLookupTest.record("first", "First");
             last = ComponentLookupTest.record("last", "Last");
             document.Components = [first last];
@@ -107,8 +107,8 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
 
         function insertionHistoryReturnsTheCurrentCollection(testCase)
             % insertionHistoryReturnsTheCurrentCollection Follow source-safe insertion, Undo, and Redo.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("HistoryLookupFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("HistoryLookupFixture", registry);
             root = document.getComponent(document.RootComponentId);
             label = document.insertComponent(registry, "uilabel", root.Id);
             testCase.verifyEqual(document.getComponent(label.Id), label);
@@ -128,9 +128,9 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
                 name (1, 1) string
             end
             arguments (Output)
-                value (1, 1) macd.model.ComponentRecord
+                value (1, 1) yamada.model.ComponentRecord
             end
-            value = macd.model.ComponentRecord(id, name, "uilabel", "matlab.ui.control.Label", "generated");
+            value = yamada.model.ComponentRecord(id, name, "uilabel", "matlab.ui.control.Label", "generated");
         end
     end
 end

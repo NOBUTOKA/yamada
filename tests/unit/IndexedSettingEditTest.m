@@ -5,9 +5,9 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
     methods (Test)
         function canonicalAddressesAreStableAcrossRemovalAndRestore(testCase)
             % canonicalAddressesAreStableAcrossRemovalAndRestore Reserve tombstones for the same historical occurrence.
-            store = macd.model.SourceSettingStore();
-            first = macd.model.PropertySetting("Text", "first");
-            second = macd.model.PropertySetting("Tooltip", "second");
+            store = yamada.model.SourceSettingStore();
+            first = yamada.model.PropertySetting("Text", "first");
+            second = yamada.model.PropertySetting("Tooltip", "second");
             ids = store.replace("owner", zeros(1, 0), [first second]);
             records = store.get(ids);
             testCase.verifyEqual([records.Id], ids);
@@ -15,7 +15,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
             retained = store.replace("owner", ids, records(2));
             testCase.verifyEqual(retained, ids(2));
             testCase.verifyEqual(store.get(ids(1)).Id, 0);
-            third = macd.model.PropertySetting("FontSize", 19);
+            third = yamada.model.PropertySetting("FontSize", 19);
             another = store.replace("other", zeros(1, 0), third);
             testCase.verifyGreaterThan(another, max(ids));
             restored = store.replace("owner", retained, records);
@@ -25,10 +25,10 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
 
         function distinctEditsAndHistoryMatchIndependentParsing(testCase)
             % distinctEditsAndHistoryMatchIndependentParsing Preserve comments, literal code and all derived positions.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
             source = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             operations = {"TopLeftLabel", "Text", "Longer quoted ""text"" 日本語"; ...
                 "CenterLabel", "Tooltip", "A new tooltip"; ...
                 "BottomRightButton", "FontSize", 21; ...
@@ -45,8 +45,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
 
         function editsAfterStructuralChangesMatchIndependentParsing(testCase)
             % editsAfterStructuralChangesMatchIndependentParsing Preserve source indexes when new components precede distinct edits.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("IndexedAfterInsert", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("IndexedAfterInsert", registry);
             first = document.insertComponent(registry, "uilabel", document.RootComponentId);
             second = document.insertComponent(registry, "uibutton", document.RootComponentId);
             third = document.insertComponent(registry, "uilabel", document.RootComponentId);
@@ -61,8 +61,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
 
         function multiOwnerGridEditsPreserveTextPositionsAndIdentities(testCase)
             % multiOwnerGridEditsPreserveTextPositionsAndIdentities Replay mixed constructor, assignment and new child settings atomically.
-            registry = macd.model.ComponentRegistry.createDefault();
-            source = gridSource(); document = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            source = gridSource(); document = yamada.source.AppSourceParser.parseText(source, registry);
             grid = document.getComponentByName("Grid"); first = document.getComponentByName("First");
             second = document.getComponentByName("Second");
             original = [grid.Settings first.Settings second.Settings];
@@ -87,11 +87,11 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
             testCase.verifyEqual([grid.Settings.Id first.Settings.Id second.Settings.Id], ids);
             verifyIndependent(testCase, document, registry);
             % Save As changes class-name lengths without introducing a history node.
-            renamed = macd.source.AppClassIdentityRewriter.rewrite(after, "LongerIndexedGridFixture");
-            checkpoint = macd.model.SavedSourceCheckpoint(document, renamed, fullfile(tempdir, "LongerIndexedGridFixture.m"), registry);
+            renamed = yamada.source.AppClassIdentityRewriter.rewrite(after, "LongerIndexedGridFixture");
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, renamed, fullfile(tempdir, "LongerIndexedGridFixture.m"), registry);
             document.confirmSavedSource(checkpoint, registry);
             document.undo();
-            testCase.verifyEqual(document.CurrentText, macd.source.AppClassIdentityRewriter.rewrite(source, "LongerIndexedGridFixture"));
+            testCase.verifyEqual(document.CurrentText, yamada.source.AppClassIdentityRewriter.rewrite(source, "LongerIndexedGridFixture"));
             verifyIndependent(testCase, document, registry);
             document.redo();
             testCase.verifyEqual(document.CurrentText, renamed);
@@ -101,14 +101,14 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
 
         function rejectedMultiOwnerGridEditRetainsEveryOwner(testCase)
             % rejectedMultiOwnerGridEditRetainsEveryOwner Keep source, settings and history unchanged when any requested value cannot survive.
-            registry = macd.model.ComponentRegistry.createDefault();
-            source = gridSource(); document = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            source = gridSource(); document = yamada.source.AppSourceParser.parseText(source, registry);
             grid = document.getComponentByName("Grid"); second = document.getComponentByName("Second");
             original = [grid.Settings second.Settings];
             changes = [struct("ComponentId", grid.Id, "Path", "RowHeight", "Value", {{55}}), ...
                 struct("ComponentId", second.Id, "Path", "Layout.Column", "Value", 2)];
             testCase.verifyError(@() document.applyGridLayoutEdit(grid.Id, changes, registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(document.CurrentText, source);
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyEqual([grid.Settings second.Settings], original);
@@ -117,8 +117,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
 
         function historyBranchNeverReusesAnIssuedOccurrence(testCase)
             % historyBranchNeverReusesAnIssuedOccurrence Keep old identities distinct after an insertion is undone.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("IntegerBranch", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("IntegerBranch", registry);
             label = document.insertComponent(registry, "uilabel", document.RootComponentId);
             document.setProperty(label.Id, "Tooltip", "First branch", registry);
             first = label.getSettings("Tooltip");
@@ -151,10 +151,10 @@ function verifyIndependent(testCase, document, registry)
 % verifyIndependent Compare published text, token offsets and semantic source settings with a fresh parse.
 arguments (Input)
     testCase (1, 1) matlab.unittest.TestCase
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
 end
-reference = macd.source.AppSourceParser.parseText(document.CurrentText, registry);
+reference = yamada.source.AppSourceParser.parseText(document.CurrentText, registry);
 actual = document.sourceAnalysis().Statements;
 expected = reference.sourceAnalysis().Statements;
 testCase.assertEqual(numel(actual), numel(expected));

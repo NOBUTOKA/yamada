@@ -10,13 +10,13 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
                 "app.Control = uidropdown(app.Left, Items=[""A"" ""B""], ItemsData=[10 20], Value=10);", ...
                 "app.Control.Value = 10;", "app.Control.Value  =  20;"]);
             document.setProperty(component.Id, "Value", 10, registry);
-            before = macd.source.RoundTripGenerator(registry).generate(document);
+            before = yamada.source.RoundTripGenerator(registry).generate(document);
             ids = string({component.Settings.Id});
             document.reparentSubtree(component.Id, target.Id, registry, [], [], [10 20 100 22]);
             source = document.GeneratedText;
             testCase.verifySubstring(source, "uidropdown(app.Right, Items=[""A"" ""B""], ItemsData=[10 20], Value=10)");
             testCase.verifySubstring(source, "app.Control.Value  =  10;");
-            reopened = macd.source.AppSourceParser.parseText(source, registry);
+            reopened = yamada.source.AppSourceParser.parseText(source, registry);
             history = reopened.getComponentByName("Control").getSettings("Value");
             testCase.verifyNumElements(history, 3);
             testCase.verifyEqual(string({history.Method}), ["nameValue" "assignment" "assignment"]);
@@ -24,9 +24,9 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
             original = component.Settings(string({component.Settings.Method}) ~= "generated");
             testCase.verifyEqual(string({original(ismember(string({original.Id}), ids)).Id}), ids);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), before);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), before);
             document.redo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
         end
 
         function existingConstructorSettingCanBeReeditedAfterMove(testCase)
@@ -38,17 +38,17 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
             document.reparentSubtree(component.Id, target.Id, registry, [], [], [10 20 100 22]);
             moved = document.GeneratedText;
             document.setProperty(component.Id, "Value", 20, registry);
-            edited = macd.source.RoundTripGenerator(registry).generate(document);
+            edited = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifySubstring(edited, "Value=20");
             testCase.verifyFalse(contains(edited, "app.Control.Value ="));
             testCase.verifyEqual(component.getSettings("Value").Id, settingId);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), moved);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), moved);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), original);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), original);
             document.redo();
             document.redo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), edited);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), edited);
         end
 
         function repeatedInitializerCannotBeRelocated(testCase)
@@ -56,14 +56,14 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
             [original, registry] = testCase.fixture("app.Control = uidropdown(app.Left, Position=[10 20 100 22]);");
             source = replace(original.OriginalText, "createComponents(app);", ...
                 "createComponents(app);" + sprintf("\r\n") + "createComponents(app);");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("Control");
             before = component.settingSnapshot();
             parent = component.ParentId;
-            snapshot = macd.model.SubtreeSnapshot(document, component.Id);
+            snapshot = yamada.model.SubtreeSnapshot(document, component.Id);
             document.PendingEdits{end + 1} = struct("Kind", "reparent-subtree", "OriginalRecords", snapshot.Records);
-            testCase.verifyError(@() macd.source.SubtreeReparentSourceEdits.build(document, registry), ...
-                "macd:SubtreeReparentSourceEdits:UnsafeSource");
+            testCase.verifyError(@() yamada.source.SubtreeReparentSourceEdits.build(document, registry), ...
+                "yamada:SubtreeReparentSourceEdits:UnsafeSource");
             testCase.verifyEqual(component.ParentId, parent);
             testCase.verifyEqual(component.settingSnapshot(), before);
             testCase.verifyEqual(document.HistoryIndex, 0);
@@ -97,7 +97,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
             testCase.verifySubstring(source, "'Value', 20");
             testCase.verifyFalse(contains(source, "app.Control.Items ="));
             testCase.verifyFalse(contains(source, "app.Control.Value ="));
-            reopened = macd.source.AppSourceParser.parseText(source, registry);
+            reopened = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyEqual(reopened.getComponentByName("Control").getSettings("Value").Method, "nameValue");
         end
 
@@ -126,7 +126,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
             testCase.verifyFalse(contains(source, "Position=[10 20 100 22]"));
             testCase.verifySubstring(source, "% creation");
             testCase.verifySubstring(source, "% old position");
-            reopened = macd.source.AppSourceParser.parseText(source, registry);
+            reopened = yamada.source.AppSourceParser.parseText(source, registry);
             selected = reopened.getComponentByName("Control");
             testCase.verifyEmpty(selected.getProperty("Position"));
             testCase.verifyEqual(selected.getProperty("Layout.Row").LiteralValue, 1);
@@ -142,7 +142,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
                 "app.Other.Value = ""Y"";", "app.Control.Value = ""B""; % last selection"]);
             source = replace(original.OriginalText, "Grid matlab.ui.container.GridLayout", ...
                 "Other" + sprintf("\r\n") + "Grid matlab.ui.container.GridLayout");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             left = document.getComponentByName("Left");
             right = document.getComponentByName("Right");
             document.reparentSubtree(left.Id, right.Id, registry, [], [], [10 20 200 200]);
@@ -157,7 +157,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
             [original, registry] = testCase.fixture("app.Control = uidropdown(app.Left, Position=[10 20 100 22]);");
             source = replace(original.OriginalText, "app.Grid = uigridlayout(app.Right);", ...
                 "app.Grid = uigridlayout(app.Right);" + sprintf("\r\n") + "app.UIFigure.Visible = 'on';");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("Control");
             right = document.getComponentByName("Right");
             document.reparentSubtree(component.Id, right.Id, registry);
@@ -184,12 +184,12 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
                 body (1, :) string
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                component (1, 1) macd.model.ComponentRecord
-                target (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                component (1, 1) yamada.model.ComponentRecord
+                target (1, 1) yamada.model.ComponentRecord
             end
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = strjoin(["classdef RelocationApp < handle", "properties", ...
                 "UIFigure matlab.ui.Figure", "Left matlab.ui.container.Panel", "Right matlab.ui.container.Panel", ...
                 "Grid matlab.ui.container.GridLayout", "Control", "end", "methods", ...
@@ -197,7 +197,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
                 "app.Left = uipanel(app.UIFigure);", body, "app.Right = uipanel(app.UIFigure);", ...
                 "app.Grid = uigridlayout(app.Right);", "end", "end", "end"], sprintf("\r\n"));
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("Control");
             target = document.getComponentByName("Right");
         end

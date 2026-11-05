@@ -5,11 +5,11 @@ classdef (TestTags = {'inspector', 'ui'}) DefaultValueProviderTest < matlab.unit
         function resolvesGridDefaultsWithoutMutation(testCase)
             % resolvesGridDefaultsWithoutMutation Probe one Grid child without document mutation.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("DefaultsApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("DefaultsApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             label = document.insertComponent(registry, "uilabel", grid.Id);
-            provider = macd.ui.inspector.DefaultValueProvider(registry);
+            provider = yamada.ui.inspector.DefaultValueProvider(registry);
             properties = registry.getEffectiveProperties("uilabel", "uigridlayout");
             definition = properties(find(string({properties.Path}) == "Layout.Row", 1));
             [found, value] = provider.resolve(label, "uigridlayout", definition);
@@ -26,13 +26,13 @@ classdef (TestTags = {'inspector', 'ui'}) DefaultValueProviderTest < matlab.unit
         function resolvesKnownAndUnknownDefaults(testCase)
             % resolvesKnownAndUnknownDefaults Report known and unavailable properties consistently.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("DefaultsApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("DefaultsApp", registry);
             listBox = document.insertComponent(registry, "uilistbox", document.RootComponentId);
-            provider = macd.ui.inspector.DefaultValueProvider(registry);
+            provider = yamada.ui.inspector.DefaultValueProvider(registry);
             properties = registry.getEffectiveProperties("uilistbox", "uifigure");
             selected = properties(ismember(string({properties.Path}), ["Visible", "Enable"]));
-            selected(end + 1) = macd.model.PropertyDefinition("NoSuchProperty", [], false, true, struct());
+            selected(end + 1) = yamada.model.PropertyDefinition("NoSuchProperty", [], false, true, struct());
             testCase.verifyNumElements(selected, 3);
             results = provider.resolveAll(listBox, "uifigure", selected);
             testCase.verifyEqual(results.Found, [true true false]);

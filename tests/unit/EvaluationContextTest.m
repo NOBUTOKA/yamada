@@ -4,8 +4,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
     methods (Test)
         function manyChildrenShareExactNestedDependencyScopes(testCase)
             % manyChildrenShareExactNestedDependencyScopes Bound repeated traversals while preserving fresh resolver results.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("SharedScopeFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("SharedScopeFixture", registry);
             outer = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             inner = document.insertComponent(registry, "uigridlayout", outer.Id);
             nestedGroup = document.insertComponent(registry, "uibuttongroup", inner.Id);
@@ -14,7 +14,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             group = document.insertComponent(registry, "uibuttongroup", document.RootComponentId);
             document.insertComponent(registry, "uiradiobutton", group.Id);
             absolute = document.insertComponent(registry, "uilabel", document.RootComponentId);
-            leaves = macd.model.ComponentRecord.empty;
+            leaves = yamada.model.ComponentRecord.empty;
             for index = 1:32
                 parentId = inner.Id;
                 if mod(index, 2) == 0, parentId = separate.Id; end
@@ -50,8 +50,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
         function invalidIdentityGraphsKeepConservativeScopeBehavior(testCase)
             % invalidIdentityGraphsKeepConservativeScopeBehavior Preserve cycle invalidation and duplicate-id fallback.
             for kind = ["cycle", "duplicate"]
-                registry = macd.model.ComponentRegistry.createDefault();
-                document = macd.model.NewAppFactory.createEmpty("InvalidScopeFixture", registry);
+                registry = yamada.model.ComponentRegistry.createDefault();
+                document = yamada.model.NewAppFactory.createEmpty("InvalidScopeFixture", registry);
                 first = document.insertComponent(registry, "uilabel", document.RootComponentId);
                 second = document.insertComponent(registry, "uilabel", document.RootComponentId);
                 third = document.insertComponent(registry, "uilabel", document.RootComponentId);
@@ -59,7 +59,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
                     first.ParentId = second.Id;
                     second.ParentId = first.Id;
                 else
-                    duplicate = macd.model.ComponentRecord(first.Id, "Duplicate", "uilabel", ...
+                    duplicate = yamada.model.ComponentRecord(first.Id, "Duplicate", "uilabel", ...
                         "matlab.ui.control.Label", "generated");
                     duplicate.ParentId = document.RootComponentId;
                     document.Components(end + 1) = duplicate;
@@ -76,8 +76,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function nestedGridInheritanceKeepsUnrelatedScopes(testCase)
             % nestedGridInheritanceKeepsUnrelatedScopes Invalidate coupled descendants while retaining separate groups.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("NestedInheritanceFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("NestedInheritanceFixture", registry);
             outer = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             inner = document.insertComponent(registry, "uigridlayout", outer.Id);
             first = document.insertComponent(registry, "uilabel", inner.Id);
@@ -115,8 +115,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function inheritedScopesPreserveNestedValueEquality(testCase)
             % inheritedScopesPreserveNestedValueEquality Keep NaN equality and distinguish empty-array shapes.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ValueInheritanceFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ValueInheritanceFixture", registry);
             first = document.insertComponent(registry, "uilabel", document.RootComponentId);
             second = document.insertComponent(registry, "uilabel", document.RootComponentId);
             first.Metadata.EqualityFixture = struct("Samples", [NaN Inf], ...
@@ -143,8 +143,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function isolatedCandidatesRetainOnlyUnaffectedStates(testCase)
             % isolatedCandidatesRetainOnlyUnaffectedStates Reuse value resolutions without sharing editable records.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CandidateFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CandidateFixture", registry);
             first = document.insertComponent(registry, "uilabel", document.RootComponentId);
             second = document.insertComponent(registry, "uilabel", document.RootComponentId);
             first.setProperty("FontSize", 13);
@@ -170,8 +170,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function candidateGridChangesDiscardCoupledStates(testCase)
             % candidateGridChangesDiscardCoupledStates Preserve the existing conservative grid dependency scope.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CandidateGridFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CandidateGridFixture", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             grid.setProperty("RowHeight", {"1x", "1x"});
             label = document.insertComponent(registry, "uilabel", grid.Id);
@@ -189,15 +189,15 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function liveDefinitionDataCannotBorrowAnIndependentProof(testCase)
             % liveDefinitionDataCannotBorrowAnIndependentProof Reject live metadata behind the same property path.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             context = document.evaluationContext(registry);
-            independent = macd.model.PropertyDefinition("Example", 1, true);
+            independent = yamada.model.PropertyDefinition("Example", 1, true);
             context.remember("independent", struct("Definitions", independent));
             [~, found] = context.lookup("independent");
             testCase.verifyTrue(found);
             live = containers.Map("a", 1);
-            definition = macd.model.PropertyDefinition("Example", 1, true, true, struct("Live", live));
+            definition = yamada.model.PropertyDefinition("Example", 1, true, true, struct("Live", live));
             context.remember("live", struct("Definitions", definition));
             [~, found] = context.lookup("live");
             testCase.verifyFalse(found);
@@ -214,8 +214,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function writesInvalidateAnAccidentallyHeldReadScope(testCase)
             % writesInvalidateAnAccidentallyHeldReadScope Do not hide tracked writes behind a read lease.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             context = document.evaluationContext(registry);
             lease = context.readScope(); %#ok<NASGU>
             document.Metadata.Changed = true;
@@ -225,13 +225,13 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function buttonGroupSiblingChangesDiscardResolverValues(testCase)
             % buttonGroupSiblingChangesDiscardResolverValues Preserve the exclusive-selection dependency scope.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             group = document.insertComponent(registry, "uibuttongroup", document.RootComponentId);
             first = document.insertComponent(registry, "uiradiobutton", group.Id);
             second = document.insertComponent(registry, "uiradiobutton", group.Id);
             definitions = registry.getEffectiveProperties(second.Factory, group.Factory, second.CreationArguments);
-            macd.model.PropertyStateResolver.resolve(second, definitions, document, registry);
+            yamada.model.PropertyStateResolver.resolve(second, definitions, document, registry);
             first.setProperty("Value", true);
             context = document.evaluationContext(registry);
             [~, found] = context.lookup("states:" + second.Id);
@@ -240,27 +240,27 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function sourceChangesDiscardAllResolverValues(testCase)
             % sourceChangesDiscardAllResolverValues Keep source and global initialization inputs authoritative.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             root = document.getComponent(document.RootComponentId);
             definitions = registry.getEffectiveProperties(root.Factory, "", root.CreationArguments);
-            macd.model.PropertyStateResolver.resolve(root, definitions, document, registry);
+            yamada.model.PropertyStateResolver.resolve(root, definitions, document, registry);
             document.Metadata.HasUnresolvedInitialization = true;
             context = document.evaluationContext(registry);
             [~, found] = context.lookup("states:" + root.Id);
             testCase.verifyFalse(found);
-            states = macd.model.PropertyStateResolver.resolve(root, definitions, document, registry);
+            states = yamada.model.PropertyStateResolver.resolve(root, definitions, document, registry);
             testCase.verifyTrue(any([states.IsKnown]));
         end
 
         function unchangedAbsoluteSiblingRetainsResolverValues(testCase)
             % unchangedAbsoluteSiblingRetainsResolverValues Reuse an unchanged dependency scope after a local write.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             first = document.insertComponent(registry, "uilabel", document.RootComponentId);
             second = document.insertComponent(registry, "uilabel", document.RootComponentId);
             definitions = registry.getEffectiveProperties(second.Factory, document.getComponent(second.ParentId).Factory, second.CreationArguments);
-            [expected, diagnostics] = macd.model.PropertyStateResolver.resolve(second, definitions, document, registry);
+            [expected, diagnostics] = yamada.model.PropertyStateResolver.resolve(second, definitions, document, registry);
             before = document.evaluationContext(registry);
             [~, found] = before.lookup("states:" + second.Id);
             testCase.verifyTrue(found);
@@ -274,18 +274,18 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function ancestorAndCoupledSiblingChangesDiscardResolverValues(testCase)
             % ancestorAndCoupledSiblingChangesDiscardResolverValues Include geometry and grid members in invalidation.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             first = document.insertComponent(registry, "uilabel", grid.Id);
             second = document.insertComponent(registry, "uilabel", grid.Id);
             definitions = registry.getEffectiveProperties(second.Factory, document.getComponent(second.ParentId).Factory, second.CreationArguments);
-            macd.model.PropertyStateResolver.resolve(second, definitions, document, registry);
+            yamada.model.PropertyStateResolver.resolve(second, definitions, document, registry);
             first.setProperty("FontSize", 19);
             context = document.evaluationContext(registry);
             [~, found] = context.lookup("states:" + second.Id);
             testCase.verifyFalse(found);
-            macd.model.PropertyStateResolver.resolve(second, definitions, document, registry);
+            yamada.model.PropertyStateResolver.resolve(second, definitions, document, registry);
             document.getComponent(document.RootComponentId).setProperty("Position", [1 1 900 700]);
             context = document.evaluationContext(registry);
             [~, found] = context.lookup("states:" + second.Id);
@@ -294,8 +294,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function changedThenRestoredValueStillInvalidatesRevision(testCase)
             % changedThenRestoredValueStillInvalidatesRevision Observe writes without rescanning equal final values.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             context = document.evaluationContext(registry);
             document.ClassName = "TemporaryName";
             document.ClassName = "CacheFixture";
@@ -304,8 +304,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function nestedAssignmentsInvalidateAllOwners(testCase)
             % nestedAssignmentsInvalidateAllOwners Observe public struct and cell subscript writes.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             root = document.getComponent(document.RootComponentId);
             entry = root.getProperty("Name");
             context = document.evaluationContext(registry);
@@ -321,8 +321,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function collectionChangesAttachNewEntries(testCase)
             % collectionChangesAttachNewEntries Track entries introduced after the first evaluation.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             root = document.getComponent(document.RootComponentId);
             previous = document.evaluationContext(registry);
             entry = root.setProperty("Tooltip", "first");
@@ -334,7 +334,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             root.removeProperty("Tooltip");
             testCase.verifyFalse(current.matches(document, registry));
             % Public component collections accept either array orientation.
-            document.addComponent(macd.model.ComponentRecord("column-label", "ColumnLabel", ...
+            document.addComponent(yamada.model.ComponentRecord("column-label", "ColumnLabel", ...
                 "uilabel", "matlab.ui.control.Label"), root.Id);
             document.Components = reshape(document.Components, [], 1);
             current = document.evaluationContext(registry);
@@ -344,10 +344,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function sharedRecordsUseExactComparisonForBothDocuments(testCase)
             % sharedRecordsUseExactComparisonForBothDocuments Do not lose writes through another owner.
-            registry = macd.model.ComponentRegistry.createDefault();
-            first = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            first = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             old = first.evaluationContext(registry);
-            second = macd.model.DocumentModel("CacheFixture");
+            second = yamada.model.DocumentModel("CacheFixture");
             second.Components = first.Components;
             second.RootComponentId = first.RootComponentId;
             other = second.evaluationContext(registry);
@@ -360,8 +360,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function candidateWritesDoNotInvalidateOriginal(testCase)
             % candidateWritesDoNotInvalidateOriginal Keep revision ownership separate across deep copies.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             original = document.evaluationContext(registry);
             candidate = document.structuralCandidate();
             candidate.evaluationContext(registry);
@@ -371,8 +371,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function liveDataIntroducedAfterCaptureRejectsFastReuse(testCase)
             % liveDataIntroducedAfterCaptureRejectsFastReuse Reject hidden mutations even after a value is restored.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             previous = document.evaluationContext(registry);
             document.Metadata.Live = containers.Map("a", 1);
             testCase.verifyFalse(previous.matches(document, registry));
@@ -387,8 +387,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function detectsDirectEntryChangesWithoutHistory(testCase)
             % detectsDirectEntryChangesWithoutHistory Compare current values even outside document commands.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             label = document.insertComponent(registry, "uilabel", document.RootComponentId);
             label.setProperty("FontSize", 13);
             context = document.evaluationContext(registry);
@@ -405,11 +405,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function derivedOutputsDoNotInvalidateInputs(testCase)
             % derivedOutputsDoNotInvalidateInputs Exclude generated text and display diagnostics.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             context = document.evaluationContext(registry);
             document.GeneratedText = "derived output";
-            document.Diagnostics = macd.model.Diagnostic("example", "warning", "Derived diagnostic.");
+            document.Diagnostics = yamada.model.Diagnostic("example", "warning", "Derived diagnostic.");
             testCase.verifyTrue(context.matches(document, registry));
             document.Metadata.DirectInput = 1;
             testCase.verifyFalse(context.matches(document, registry));
@@ -417,8 +417,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function revisionTokensFollowWritesAndCatalogWithoutOwningRecords(testCase)
             % revisionTokensFollowWritesAndCatalogWithoutOwningRecords Reject stale revisions and untracked live data.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("RevisionTokenFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("RevisionTokenFixture", registry);
             root = document.getComponent(document.RootComponentId);
             context = document.evaluationContext(registry);
             [before, tracked] = context.revisionToken();
@@ -443,8 +443,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function gridProjectionKeepsValueAndPublicPlanIndependence(testCase)
             % gridProjectionKeepsValueAndPublicPlanIndependence Avoid model copies while isolating returned grid values.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("GridProjectionFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("GridProjectionFixture", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             child = document.insertComponent(registry, "uilabel", grid.Id);
             grid.setProperty("RowHeight", {40, "fit", "1x"});
@@ -455,7 +455,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             [result, found] = context.configurationGridState("plan", grid, document, grid);
             testCase.assertTrue(found);
             testCase.verifyTrue(result.TrackKnown(1));
-            testCase.verifyTrue(macd.model.GridLayoutStatePolicy.equivalent(result.Tracks{1}, {40, "fit", "1x"}));
+            testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(result.Tracks{1}, {40, "fit", "1x"}));
             testCase.verifyEqual(result.ChildIds, child.Id);
             testCase.verifyEqual(result.Coordinates{1, 1}, 3);
             expected = result;
@@ -473,8 +473,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function gridProjectionRejectsMissingPlannedOwner(testCase)
             % gridProjectionRejectsMissingPlannedOwner Keep the original named source-plan ownership guard.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("GridProjectionFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("GridProjectionFixture", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             child = document.insertComponent(registry, "uilabel", grid.Id);
             incomplete = document.structuralCandidate();
@@ -493,8 +493,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
         function gridProjectionRejectsStaleOrUnownedInputs(testCase)
             % gridProjectionRejectsStaleOrUnownedInputs Require current ownership, input state, and catalog revision.
             for kind = ["foreign", "direct", "registry", "missing", "non-grid"]
-                registry = macd.model.ComponentRegistry.createDefault();
-                document = macd.model.NewAppFactory.createEmpty("GridProjectionFixture", registry);
+                registry = yamada.model.ComponentRegistry.createDefault();
+                document = yamada.model.NewAppFactory.createEmpty("GridProjectionFixture", registry);
                 grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
                 context = document.evaluationContext(registry);
                 context.rememberConfiguration("plan", document);
@@ -520,8 +520,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function doesNotExposeSharedConfigurationHandles(testCase)
             % doesNotExposeSharedConfigurationHandles Copy a cached plan for each mutable caller.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             context = document.evaluationContext(registry);
             context.rememberConfiguration("plan", document);
             [first, found] = context.configuration("plan", "UIFigure");
@@ -534,13 +534,13 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function configurationStatesKeepStoredAndReturnedValuesIndependent(testCase)
             % configurationStatesKeepStoredAndReturnedValuesIndependent Read immutable values without cloning model records.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ValueReadFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ValueReadFixture", registry);
             root = document.getComponent(document.RootComponentId);
             definitions = registry.getEffectiveProperties(root.Factory, "", root.CreationArguments);
             context = document.evaluationContext(registry);
             context.rememberConfiguration("plan", document);
-            expected = macd.model.PropertyStateResolver.resolve(root, definitions, document, registry);
+            expected = yamada.model.PropertyStateResolver.resolve(root, definitions, document, registry);
             [states, ids, found] = context.configurationStates("plan", root, definitions, document);
             testCase.assertTrue(found);
             testCase.verifyEqual(states, expected);
@@ -559,8 +559,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function configurationStatesRejectStaleInputsAndForeignRecords(testCase)
             % configurationStatesRejectStaleInputsAndForeignRecords Require current document ownership and catalog revision.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("StaleReadFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("StaleReadFixture", registry);
             root = document.getComponent(document.RootComponentId);
             definitions = registry.getEffectiveProperties(root.Factory, "", root.CreationArguments);
             context = document.evaluationContext(registry);
@@ -581,8 +581,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function liveMetadataBypassesCache(testCase)
             % liveMetadataBypassesCache Do not assume unrecognized mutable metadata is immutable.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             document.Metadata.Live = containers.Map("a", 1);
             context = document.evaluationContext(registry);
             context.remember("sample", 1);
@@ -593,8 +593,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function registryChangesInvalidateContext(testCase)
             % registryChangesInvalidateContext Detect registration even when its values are equal.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             context = document.evaluationContext(registry);
             registry.register(registry.get("uilabel"));
             testCase.verifyFalse(context.matches(document, registry));
@@ -602,8 +602,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function cyclicLiveMetadataBypassesWithoutRetainingHandles(testCase)
             % cyclicLiveMetadataBypassesWithoutRetainingHandles Do not recursively snapshot arbitrary model references.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             root = document.getComponent(document.RootComponentId);
             root.Metadata.Live = root;
             context = document.evaluationContext(registry);
@@ -616,8 +616,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function historyBranchAndSourceConventionsInvalidateContext(testCase)
             % historyBranchAndSourceConventionsInvalidateContext Never identify input by history index alone.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CacheFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             label = document.insertComponent(registry, "uilabel", document.RootComponentId);
             document.setProperty(label.Id, "FontSize", 17, registry);
             previous = document.evaluationContext(registry);

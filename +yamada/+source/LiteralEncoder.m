@@ -1,0 +1,125 @@
+classdef LiteralEncoder
+    % LiteralEncoder Encode a conservative subset of MATLAB literal values.
+    %   This static utility converts supported in-memory values to reviewable
+    %   MATLAB syntax. It rejects expressions and unsupported types rather than
+    %   evaluating or approximating them.
+
+    methods (Static)
+        function text = encode(value)
+            % encode Convert a supported value to a safe MATLAB literal.
+            arguments (Input)
+                value
+            end
+            arguments (Output)
+                text string
+            end
+
+            % Encode each supported family without evaluating expressions.
+            if ischar(value) && isempty(value)
+                text = "''";
+            elseif ischar(value) && isrow(value)
+                escaped = strrep(value, '''', '''''');
+                text = "'" + string(escaped) + "'";
+            elseif isstring(value) && isscalar(value)
+                % Character conversion is confined to escaping generated syntax.
+                escaped = strrep(char(string(value)), '"', '""');
+                text = string(['"' escaped '"']);
+            elseif isstring(value) && ismatrix(value)
+                rows = strings(1, size(value, 1));
+                for row = 1:size(value, 1)
+                    encoded = strings(1, size(value, 2));
+                    for column = 1:size(value, 2)
+                        encoded(column) = yamada.source.LiteralEncoder.encode(value(row, column));
+                    end
+                    rows(row) = strjoin(encoded, " ");
+                end
+                text = "[" + strjoin(rows, "; ") + "]";
+            elseif ischar(value) && ismatrix(value)
+                rows = strings(1, size(value, 1));
+                for row = 1:size(value, 1)
+                    rows(row) = "'" + string(strrep(value(row, :), '''', '''''')) + "'";
+                end
+                text = "[" + strjoin(rows, "; ") + "]";
+            elseif isdatetime(value) && ismatrix(value)
+                text = yamada.source.LiteralEncoder.encodeDateTime(value);
+            elseif isnumeric(value) && isreal(value) && ismatrix(value)
+                text = string(mat2str(value, 17));
+            elseif islogical(value) && ismatrix(value)
+                text = string(mat2str(value));
+            elseif iscell(value) && isequal(size(value), [0 0])
+                text = "{}";
+            elseif iscell(value) && isrow(value)
+                % Recursively encode row-cell elements used by UI properties.
+                encoded = strings(1, numel(value));
+                for index = 1:numel(value)
+                    encoded(index) = yamada.source.LiteralEncoder.encode(value{index});
+                end
+                text = "{" + strjoin(encoded, ", ") + "}";
+            else
+                % Refuse values that cannot be round-tripped conservatively.
+                error("yamada:LiteralEncoder:UnsupportedValue", ...
+                    "Value cannot be represented as a safe MATLAB literal.");
+            end
+        end
+    end
+
+    methods (Static, Access = private)
+        function text = encodeDateTime(value)
+            % encodeDateTime Encode date-only, timezone-free datetime data without evaluation.
+            arguments (Input)
+                value datetime
+            end
+            arguments (Output)
+                text string
+            end
+
+            if isempty(value)
+                text = "datetime.empty(" + size(value, 1) + ", " + size(value, 2) + ")";
+                return
+            end
+            if ~isempty(value.TimeZone) || any(~isnat(value) & seconds(timeofday(value)) ~= 0, "all")
+                error("yamada:LiteralEncoder:UnsupportedValue", ...
+                    "Value cannot be represented as a safe MATLAB literal.");
+            end
+
+            rows = strings(1, size(value, 1));
+            for row = 1:size(value, 1)
+                encoded = strings(1, size(value, 2));
+                for column = 1:size(value, 2)
+                    item = value(row, column);
+                    if isnat(item)
+                        encoded(column) = "NaT";
+                    else
+                        encoded(column) = "datetime(" + year(item) + ", " + ...
+                            month(item) + ", " + day(item) + ")";
+                    end
+                end
+                rows(row) = strjoin(encoded, " ");
+            end
+            if isscalar(value)
+                text = rows(1);
+            else
+                text = "[" + strjoin(rows, "; ") + "]";
+            end
+        end
+    end
+end
+
+%{
+Copyright (C) 2026 Nobuto Kaitoh
+
+This file is part of yamada.
+
+yamada is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+yamada is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with yamada. If not, see <https://www.gnu.org/licenses/>.
+%}

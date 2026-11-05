@@ -5,49 +5,49 @@ classdef (TestTags = {'fast', 'model', 'generation', 'parser'}) PositionGeometry
     methods (Test)
         function linkedFieldsAndFixedDimensionsUseOneConstraint(testCase)
             % linkedFieldsAndFixedDimensionsUseOneConstraint Preserve the edited dimension and update its partner.
-            spec = macd.model.PositionGeometry.constraint("switchPosition", "vertical", true);
-            value = macd.model.PositionGeometry.edit([10 20 20 45], 3, 40, spec);
+            spec = yamada.model.PositionGeometry.constraint("switchPosition", "vertical", true);
+            value = yamada.model.PositionGeometry.edit([10 20 20 45], 3, 40, spec);
             testCase.verifyEqual(value, [10 20 40 90]);
-            testCase.verifyEqual(macd.model.PositionGeometry.edit(value, 4, 135, spec), [10 20 60 135]);
-            testCase.verifyEqual(macd.model.PositionGeometry.edit(value, 1, 30, spec), [30 20 40 90]);
-            spec = macd.model.PositionGeometry.constraint("sliderPosition", "vertical", true);
+            testCase.verifyEqual(yamada.model.PositionGeometry.edit(value, 4, 135, spec), [10 20 60 135]);
+            testCase.verifyEqual(yamada.model.PositionGeometry.edit(value, 1, 30, spec), [30 20 40 90]);
+            spec = yamada.model.PositionGeometry.constraint("sliderPosition", "vertical", true);
             testCase.verifyEqual(spec.FixedIndex, 3);
-            testCase.verifyEqual(macd.model.PositionGeometry.edit([10 20 3 100], 3, 9, spec), [10 20 3 100]);
-            testCase.verifyEqual(macd.model.PositionGeometry.edit([10 20 3 100], 4, 120, spec), [10 20 3 120]);
+            testCase.verifyEqual(yamada.model.PositionGeometry.edit([10 20 3 100], 3, 9, spec), [10 20 3 100]);
+            testCase.verifyEqual(yamada.model.PositionGeometry.edit([10 20 3 100], 4, 120, spec), [10 20 3 120]);
         end
 
         function resizeAnchorsAndFractionalRatiosRemainConsistent(testCase)
             % resizeAnchorsAndFractionalRatiosRemainConsistent Keep opposite edges without integer size rounding.
-            spec = macd.model.PositionGeometry.constraint("semicircularPosition", "north", true);
+            spec = yamada.model.PositionGeometry.constraint("semicircularPosition", "north", true);
             before = [10 20 120 65];
-            value = macd.model.PositionGeometry.resize([0 20 130 65], before, "w", spec);
+            value = yamada.model.PositionGeometry.resize([0 20 130 65], before, "w", spec);
             testCase.verifyEqual(value(1) + value(3), 130, "AbsTol", 1e-12);
             testCase.verifyEqual(value(3) / value(4), 120 / 65, "AbsTol", 1e-12);
-            spec = macd.model.PositionGeometry.constraint("sliderPosition", "horizontal", true);
-            testCase.verifyEqual(macd.model.PositionGeometry.resize([10 5 200 50], ...
+            spec = yamada.model.PositionGeometry.constraint("sliderPosition", "horizontal", true);
+            testCase.verifyEqual(yamada.model.PositionGeometry.resize([10 5 200 50], ...
                 [10 20 100 3], "se", spec), [10 20 200 3]);
-            testCase.verifyFalse(macd.model.PositionGeometry.valid([1 2 -1 4]));
-            testCase.verifyFalse(macd.model.PositionGeometry.constraint("switchPosition").Known);
+            testCase.verifyFalse(yamada.model.PositionGeometry.valid([1 2 -1 4]));
+            testCase.verifyFalse(yamada.model.PositionGeometry.constraint("switchPosition").Known);
         end
 
         function editingCopyAndSavePreservePositionHistory(testCase)
             % editingCopyAndSavePreservePositionHistory Keep original source ownership and one undo unit.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for id = ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uigauge-semicircular", "uigauge-linear"]
                 definition = registry.getById(id);
                 source = PositionGeometryTest.source(definition);
-                document = macd.source.AppSourceParser.parseText(source, registry);
+                document = yamada.source.AppSourceParser.parseText(source, registry);
                 component = document.getComponentByName("Control");
                 states = document.getEffectivePropertyStates(registry, component.Id);
                 resolution = states(arrayfun(@(item) item.Definition.Path == "Position", states)).Resolution;
                 testCase.verifyTrue(resolution.IsEditable, id);
                 testCase.verifyTrue(resolution.IsKnown, id);
-                before = macd.source.RoundTripGenerator(registry).generate(document);
+                before = yamada.source.RoundTripGenerator(registry).generate(document);
                 original = component.settingSnapshot();
                 orientation = "horizontal";
                 if definition.Id == "uigauge-semicircular", orientation = "north"; end
-                spec = macd.model.PositionGeometry.constraint(definition.getProperty("Position").Application.EffectPolicy, orientation, true);
-                requested = macd.model.PositionGeometry.edit(resolution.EffectiveValue, 3, 90, spec);
+                spec = yamada.model.PositionGeometry.constraint(definition.getProperty("Position").Application.EffectPolicy, orientation, true);
+                requested = yamada.model.PositionGeometry.edit(resolution.EffectiveValue, 3, 90, spec);
                 history = document.HistoryIndex;
                 document.setProperty(component.Id, "Position", requested, registry);
                 testCase.verifyEqual(document.HistoryIndex, history + 1);
@@ -57,17 +57,17 @@ classdef (TestTags = {'fast', 'model', 'generation', 'parser'}) PositionGeometry
                 testCase.verifyNotEmpty(pasted);
                 document.undo();
                 document.undo();
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), before);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), before);
                 document.redo();
-                emitted = macd.source.RoundTripGenerator(registry).generate(document);
+                emitted = yamada.source.RoundTripGenerator(registry).generate(document);
                 testCase.verifySubstring(emitted, "% keep position comment");
-                checkpoint = macd.model.SavedSourceCheckpoint(document, emitted, fullfile(tempdir, "PositionFixture.m"), registry);
+                checkpoint = yamada.model.SavedSourceCheckpoint(document, emitted, fullfile(tempdir, "PositionFixture.m"), registry);
                 testCase.verifyEqual(checkpoint.SourceText, emitted);
                 requested(1) = requested(1) + 5;
                 document.setProperty(component.Id, "Position", requested, registry);
                 states = document.getEffectivePropertyStates(registry, component.Id);
                 value = states(arrayfun(@(item) item.Definition.Path == "Position", states)).Resolution;
-                testCase.verifyTrue(macd.model.PropertyStateResolver.matchesRequested(value, requested));
+                testCase.verifyTrue(yamada.model.PropertyStateResolver.matchesRequested(value, requested));
             end
         end
     end
@@ -76,7 +76,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'parser'}) PositionGeometry
         function source = source(definition)
             % source Build an owned handle-class fixture with a writable declared control.
             arguments (Input)
-                definition (1, 1) macd.model.ComponentDefinition
+                definition (1, 1) yamada.model.ComponentDefinition
             end
             arguments (Output)
                 source (1, 1) string

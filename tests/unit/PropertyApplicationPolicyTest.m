@@ -7,28 +7,28 @@ classdef (TestTags = {'fast', 'catalog', 'model'}) PropertyApplicationPolicyTest
         function legacyPolicyRetainsConservativeDefaults(testCase)
             % legacyPolicyRetainsConservativeDefaults Preserve unknown setter effects without a constructor-support flag.
 
-            policy = macd.model.PropertyApplicationPolicy();
+            policy = yamada.model.PropertyApplicationPolicy();
             testCase.verifyEmpty(policy.ApplyAfter);
             testCase.verifyFalse(isprop(policy, "NameValue"));
             testCase.verifyEqual(policy.EffectPolicy, "none");
             testCase.verifyEqual(policy.EffectStatus, "unknown");
             testCase.verifyEmpty(policy.AffectedPaths);
-            definitions = [macd.model.PropertyDefinition("Value"), ...
-                macd.model.PropertyDefinition("Items")];
-            testCase.verifyEqual(macd.model.PropertyApplicationPolicy.orderDefinitions(definitions), [1 2]);
+            definitions = [yamada.model.PropertyDefinition("Value"), ...
+                yamada.model.PropertyDefinition("Items")];
+            testCase.verifyEqual(yamada.model.PropertyApplicationPolicy.orderDefinitions(definitions), [1 2]);
         end
 
         function ordersDependenciesStablyAcrossIndependentProperties(testCase)
             % ordersDependenciesStablyAcrossIndependentProperties Respect prerequisites while retaining ready-node order.
 
             definitions = [ ...
-                macd.model.PropertyDefinition("Value", [], false, true, ...
+                yamada.model.PropertyDefinition("Value", [], false, true, ...
                     struct("application", struct("applyAfter", {{"Items", "ItemsData"}}))), ...
-                macd.model.PropertyDefinition("Text"), ...
-                macd.model.PropertyDefinition("ItemsData", [], false, true, ...
+                yamada.model.PropertyDefinition("Text"), ...
+                yamada.model.PropertyDefinition("ItemsData", [], false, true, ...
                     struct("application", struct("applyAfter", {{"Items"}}))), ...
-                macd.model.PropertyDefinition("Items")];
-            testCase.verifyEqual(macd.model.PropertyApplicationPolicy.orderDefinitions(definitions), [2 4 3 1]);
+                yamada.model.PropertyDefinition("Items")];
+            testCase.verifyEqual(yamada.model.PropertyApplicationPolicy.orderDefinitions(definitions), [2 4 3 1]);
         end
 
         function rejectsInvalidShapesDuplicatesAndSymbols(testCase)
@@ -42,33 +42,33 @@ classdef (TestTags = {'fast', 'catalog', 'model'}) PropertyApplicationPolicyTest
                 struct("effectStatus", "approved"), struct("effectReason", ""), ...
                 struct("affectedPaths", {{"A", "A"}}), struct("affectedPaths", {{"bad path"}})};
             for index = 1:numel(invalid)
-                testCase.verifyError(@() macd.model.PropertyApplicationPolicy(invalid{index}), ...
-                    "macd:ComponentCatalogLoader:InvalidCatalog");
+                testCase.verifyError(@() yamada.model.PropertyApplicationPolicy(invalid{index}), ...
+                    "yamada:ComponentCatalogLoader:InvalidCatalog");
             end
         end
 
         function rejectsSelfReferenceAndIndirectCycles(testCase)
             % rejectsSelfReferenceAndIndirectCycles Reject both immediate and transitive graph failures.
 
-            make = @(name, dependency) macd.model.PropertyDefinition(name, [], false, true, ...
+            make = @(name, dependency) yamada.model.PropertyDefinition(name, [], false, true, ...
                 struct("application", struct("applyAfter", {{dependency}})));
-            testCase.verifyError(@() macd.model.PropertyApplicationPolicy.orderDefinitions(make("A", "A")), ...
-                "macd:ComponentCatalogLoader:InvalidCatalog");
+            testCase.verifyError(@() yamada.model.PropertyApplicationPolicy.orderDefinitions(make("A", "A")), ...
+                "yamada:ComponentCatalogLoader:InvalidCatalog");
             definitions = [make("A", "B"), make("B", "C"), make("C", "A")];
-            testCase.verifyError(@() macd.model.PropertyApplicationPolicy.orderDefinitions(definitions), ...
-                "macd:ComponentCatalogLoader:InvalidCatalog");
+            testCase.verifyError(@() yamada.model.PropertyApplicationPolicy.orderDefinitions(definitions), ...
+                "yamada:ComponentCatalogLoader:InvalidCatalog");
         end
 
         function parsesOnlyAuditedInertDefaults(testCase)
             % parsesOnlyAuditedInertDefaults Keep seeds separate from source and reject executable expressions.
-            policy = macd.model.PropertyApplicationPolicy(struct("defaultLiteral", "[-Inf Inf]"));
+            policy = yamada.model.PropertyApplicationPolicy(struct("defaultLiteral", "[-Inf Inf]"));
             testCase.verifyTrue(policy.HasInitialValue);
             testCase.verifyEqual(policy.InitialValue, [-Inf Inf]);
-            policy = macd.model.PropertyApplicationPolicy(struct("defaultLiteral", "NaT"));
+            policy = yamada.model.PropertyApplicationPolicy(struct("defaultLiteral", "NaT"));
             testCase.verifyTrue(isnat(policy.InitialValue));
             for invalid = ["", "createSomething()", "1+2"]
-                testCase.verifyError(@() macd.model.PropertyApplicationPolicy( ...
-                    struct("defaultLiteral", invalid)), "macd:ComponentCatalogLoader:InvalidCatalog");
+                testCase.verifyError(@() yamada.model.PropertyApplicationPolicy( ...
+                    struct("defaultLiteral", invalid)), "yamada:ComponentCatalogLoader:InvalidCatalog");
             end
         end
     end

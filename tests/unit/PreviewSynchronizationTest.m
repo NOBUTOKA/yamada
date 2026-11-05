@@ -5,20 +5,20 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
     methods (Test)
         function immediateValuesUpdateAndRejectUnrelatedChanges(testCase)
             % immediateValuesUpdateAndRejectUnrelatedChanges Apply source additions and replacements through native diffs.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
             source = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             owner = document.getComponentByName("TopLeftLabel");
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             handles = renderer.render(document, figure);
             for path = ["Text", "FontSize"]
                 value = "Longer changed text";
                 if path == "FontSize", value = 23; end
                 document.setProperty(owner.Id, path, value, registry);
                 [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, ...
-                    macd.ui.RefreshRequest("properties", owner.Id, path));
+                    yamada.ui.RefreshRequest("properties", owner.Id, path));
                 testCase.verifyEmpty(diagnostics);
                 current = handles(char(owner.Id));
                 if path == "Text"
@@ -30,18 +30,18 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             document.setProperty(owner.Id, "Text", "Another change", registry);
             owner.Metadata.UnrelatedInput = true;
             applied = renderer.synchronize(document, handles, ...
-                macd.ui.RefreshRequest("properties", owner.Id, "Text"));
+                yamada.ui.RefreshRequest("properties", owner.Id, "Text"));
             testCase.verifyFalse(applied);
         end
 
         function appliesIndependentPropertiesAcrossAllCatalogVariants(testCase)
             % appliesIndependentPropertiesAcrossAllCatalogVariants Match independently rendered values across every eligible variant.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             variants = registry.listVariantIds();
             changes = 0;
             for variant = reshape(variants, 1, [])
                 definition = registry.getById(variant);
-                document = macd.model.NewAppFactory.createEmpty("CatalogPreviewFixture", registry);
+                document = yamada.model.NewAppFactory.createEmpty("CatalogPreviewFixture", registry);
                 if definition.IsRoot
                     component = document.getComponent(document.RootComponentId);
                 else
@@ -50,7 +50,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                 end
                 figure = uifigure(Visible="off");
                 cleanup = onCleanup(@() delete(figure));
-                renderer = macd.ui.PreviewRenderer(registry);
+                renderer = yamada.ui.PreviewRenderer(registry);
                 [handles, initialDiagnostics] = renderer.render(document, figure);
                 original = [];
                 if isKey(handles, char(component.Id)), original = handles(char(component.Id)); end
@@ -70,7 +70,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                     end
                     component.setProperty(property.Path, value);
                     [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, ...
-                        macd.ui.RefreshRequest("properties", component.Id, property.Path));
+                        yamada.ui.RefreshRequest("properties", component.Id, property.Path));
                     testCase.verifyEmpty(diagnostics, variant + "." + property.Path);
                     if isKey(handles, char(component.Id)), original = handles(char(component.Id)); end
                     touched(end + 1) = property.Path; %#ok<AGROW>
@@ -81,7 +81,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                 if ~isempty(original)
                     referenceFigure = uifigure(Visible="off");
                     referenceCleanup = onCleanup(@() delete(referenceFigure));
-                    reference = macd.ui.PreviewRenderer(registry).render(document, referenceFigure);
+                    reference = yamada.ui.PreviewRenderer(registry).render(document, referenceFigure);
                     drawnow;
                     for path = unique(touched)
                         testCase.verifyEqual(handles(char(component.Id)).(path), reference(char(component.Id)).(path), ...
@@ -96,9 +96,9 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
 
         function movesDisjointRangesAndItemsAsResolvedBatches(testCase)
             % movesDisjointRangesAndItemsAsResolvedBatches Preserve final values through otherwise invalid intermediate states.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for kind = ["numeric", "slider", "dropdown", "text"]
-                document = macd.model.NewAppFactory.createEmpty("CoupledPreviewFixture", registry);
+                document = yamada.model.NewAppFactory.createEmpty("CoupledPreviewFixture", registry);
                 if kind == "slider"
                     factory = "uislider"; args = {};
                 elseif kind == "dropdown"
@@ -118,7 +118,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                     component.setProperty("Limits", [0 5]); component.setProperty("Value", 2);
                 end
                 figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
-                renderer = macd.ui.PreviewRenderer(registry);
+                renderer = yamada.ui.PreviewRenderer(registry);
                 handles = renderer.render(document, figure);
                 if kind == "dropdown"
                     paths = ["Items", "ItemsData", "Value"];
@@ -130,7 +130,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                 end
                 for index = 1:numel(paths), component.setProperty(paths(index), values{index}); end
                 [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, ...
-                    macd.ui.RefreshRequest("properties", component.Id, paths));
+                    yamada.ui.RefreshRequest("properties", component.Id, paths));
                 testCase.verifyEmpty(diagnostics, kind);
                 original = handles(char(component.Id));
                 if kind == "text"
@@ -144,40 +144,40 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
 
         function keepsHeterogeneousBatchOwnershipExact(testCase)
             % keepsHeterogeneousBatchOwnershipExact Synchronize different paths without masking unrelated writes.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("BatchPreviewFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("BatchPreviewFixture", registry);
             first = fixtureComponent(document, registry.get("uilabel"), document.RootComponentId, "First");
             second = fixtureComponent(document, registry.get("uilabel"), document.RootComponentId, "Second");
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
-            renderer = macd.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
+            renderer = yamada.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             first.setProperty("FontColor", [0.2 0.3 0.4]); second.setProperty("Text", "Batch update");
             changes = [struct("ComponentId", first.Id, "Path", "FontColor"), ...
                 struct("ComponentId", second.Id, "Path", "Text")];
-            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest.forChanges(changes));
+            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest.forChanges(changes));
             testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(string(handles(char(second.Id)).Text), "Batch update");
             first.setProperty("FontColor", [0.4 0.3 0.2]); second.setProperty("Text", "Next batch");
             second.setProperty("FontColor", [0.1 0.1 0.1]);
-            testCase.verifyFalse(renderer.synchronize(document, handles, macd.ui.RefreshRequest.forChanges(changes)));
+            testCase.verifyFalse(renderer.synchronize(document, handles, yamada.ui.RefreshRequest.forChanges(changes)));
             clear cleanup
         end
 
         function reconstructsUncertainScopesToAcceptedValues(testCase)
             % reconstructsUncertainScopesToAcceptedValues Preserve accepted values and sibling ordering through reconstruction.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             definition = registry.get("uilabel"); properties = definition.Properties;
             index = find(string({properties.Path}) == "FontSize", 1);
             metadata = properties(index).Metadata; metadata.application.effectStatus = "unknown";
-            properties(index) = macd.model.PropertyDefinition("FontSize", [], false, true, metadata);
-            registry.register(macd.model.ComponentDefinition("uilabel", definition.DeclaredType, ...
+            properties(index) = yamada.model.PropertyDefinition("FontSize", [], false, true, metadata);
+            registry.register(yamada.model.ComponentDefinition("uilabel", definition.DeclaredType, ...
                 definition.AllowedParentFactories, false, {}, properties));
-            document = macd.model.NewAppFactory.createEmpty("LocalRepairFixture", registry);
+            document = yamada.model.NewAppFactory.createEmpty("LocalRepairFixture", registry);
             label = fixtureComponent(document, registry.get("uilabel"), document.RootComponentId, "Subject");
             sibling = fixtureComponent(document, registry.get("uibutton"), document.RootComponentId, "Sibling");
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
-            renderer = macd.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
+            renderer = yamada.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             label.setProperty("FontSize", 24);
-            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", label.Id, "FontSize"));
+            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", label.Id, "FontSize"));
             testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(handles(char(label.Id)).FontSize, 24);
             currentSibling = handles(char(sibling.Id));
@@ -187,19 +187,19 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
 
         function adaptsAssetsAndClearsExistingNativeContent(testCase)
             % adaptsAssetsAndClearsExistingNativeContent Share catalog adaptation between full and incremental rendering.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             temporary = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
             imwrite(uint8(ones(8, 8, 3) * 120), fullfile(temporary.Folder, "first.png"));
             imwrite(uint8(ones(4, 16, 3) * 200), fullfile(temporary.Folder, "second.png"));
-            document = macd.model.NewAppFactory.createEmpty("AssetPreviewFixture", registry);
+            document = yamada.model.NewAppFactory.createEmpty("AssetPreviewFixture", registry);
             document.FilePath = fullfile(temporary.Folder, "AssetPreviewFixture.m");
             image = fixtureComponent(document, registry.get("uiimage"), document.RootComponentId, "Subject");
             image.setProperty("ImageSource", "first.png");
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
-            renderer = macd.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
+            renderer = yamada.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             for value = ["second.png", ""]
                 image.setProperty("ImageSource", value);
-                [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", image.Id, "ImageSource"));
+                [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", image.Id, "ImageSource"));
                 testCase.verifyEmpty(diagnostics);
                 original = handles(char(image.Id));
                 if strlength(value) > 0
@@ -213,16 +213,16 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
 
         function restoresChildGeometryAfterParentReflow(testCase)
             % restoresChildGeometryAfterParentReflow Match fresh construction rather than compound prior native resizing.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ContainerReflowFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ContainerReflowFixture", registry);
             panel = fixtureComponent(document, registry.get("uipanel"), document.RootComponentId, "Panel");
             panel.setProperty("Position", [10 10 300 200]); panel.setProperty("AutoResizeChildren", "on");
             label = fixtureComponent(document, registry.get("uilabel"), panel.Id, "Subject");
             label.setProperty("Position", [10 20 100 22]);
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
-            renderer = macd.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
+            renderer = yamada.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             panel.setProperty("Position", [20 20 500 300]);
-            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", panel.Id, "Position"));
+            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", panel.Id, "Position"));
             testCase.verifyEmpty(diagnostics);
             original = handles(char(label.Id));
             drawnow; pause(0.15); drawnow;
@@ -232,8 +232,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
 
         function updatesGridPlacementSelectionAndRootSurface(testCase)
             % updatesGridPlacementSelectionAndRootSurface Preserve grid placement, group selection, and root dimensions through coupled edits.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("LayoutPreviewFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("LayoutPreviewFixture", registry);
             root = document.getComponent(document.RootComponentId);
             grid = fixtureComponent(document, registry.get("uigridlayout"), root.Id, "Grid");
             grid.setProperty("RowHeight", {100, 100}); grid.setProperty("ColumnWidth", {'1x'});
@@ -244,21 +244,21 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             second = fixtureComponent(document, registry.get("uiradiobutton"), group.Id, "Second");
             first.setProperty("Value", true); second.setProperty("Value", false);
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
-            renderer = macd.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
+            renderer = yamada.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             grid.setProperty("RowHeight", {150, 80});
-            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", grid.Id, "RowHeight"));
+            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", grid.Id, "RowHeight"));
             testCase.verifyEmpty(diagnostics);
             label.setProperty("Layout.Row", 2);
-            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", label.Id, "Layout.Row"));
+            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", label.Id, "Layout.Row"));
             testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(handles(char(label.Id)).Layout.Row, 2);
             second.setProperty("Value", true);
-            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", second.Id, "Value"));
+            [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", second.Id, "Value"));
             testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(handles(char(group.Id)).SelectedObject, handles(char(second.Id)));
             testCase.verifyFalse(logical(handles(char(first.Id)).Value));
             root.setProperty("Position", [100 100 720 480]);
-            [~, diagnostics, canvas] = synchronizePreview(renderer, document, handles, figure, macd.ui.RefreshRequest("properties", root.Id, "Position"));
+            [~, diagnostics, canvas] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", root.Id, "Position"));
             testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(canvas.Position(3:4), [720 480]);
             clear cleanup
@@ -269,15 +269,15 @@ end
 function [handles, diagnostics, surface] = synchronizePreview(renderer, document, handles, parent, request)
 % synchronizePreview Exercise accepted preview results with the application's reconstruction fallback.
 arguments (Input)
-    renderer (1, 1) macd.ui.PreviewRenderer
-    document (1, 1) macd.model.DocumentModel
+    renderer (1, 1) yamada.ui.PreviewRenderer
+    document (1, 1) yamada.model.DocumentModel
     handles containers.Map
     parent (1, 1) matlab.ui.Figure
-    request (1, 1) macd.ui.RefreshRequest
+    request (1, 1) yamada.ui.RefreshRequest
 end
 arguments (Output)
     handles containers.Map
-    diagnostics macd.model.Diagnostic
+    diagnostics yamada.model.Diagnostic
     surface
 end
 surface = [];
@@ -293,15 +293,15 @@ end
 function component = fixtureComponent(document, definition, parentId, name)
 % fixtureComponent Add one catalog record without broadening the product insertion UI.
 arguments (Input)
-    document (1, 1) macd.model.DocumentModel
-    definition (1, 1) macd.model.ComponentDefinition
+    document (1, 1) yamada.model.DocumentModel
+    definition (1, 1) yamada.model.ComponentDefinition
     parentId (1, 1) string
     name (1, 1) string
 end
 arguments (Output)
-    component (1, 1) macd.model.ComponentRecord
+    component (1, 1) yamada.model.ComponentRecord
 end
-component = macd.model.ComponentRecord("test-" + name, name, definition.Factory, definition.DeclaredType, "generated");
+component = yamada.model.ComponentRecord("test-" + name, name, definition.Factory, definition.DeclaredType, "generated");
 component.CreationArguments = definition.CreationArguments;
 document.addComponent(component, parentId);
 end
@@ -309,9 +309,9 @@ end
 function id = fixtureParent(document, registry, definition)
 % fixtureParent Recursively construct the minimal catalog-allowed native parent hierarchy.
 arguments (Input)
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
-    definition (1, 1) macd.model.ComponentDefinition
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
+    definition (1, 1) yamada.model.ComponentDefinition
 end
 arguments (Output)
     id (1, 1) string
@@ -326,7 +326,7 @@ end
 function [valid, value] = propertyMutation(property, native, root)
 % propertyMutation Generate inert independent mutations from catalog value contracts.
 arguments (Input)
-    property (1, 1) macd.model.PropertyDefinition
+    property (1, 1) yamada.model.PropertyDefinition
     native
     root (1, 1) logical
 end

@@ -5,11 +5,11 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) LocalSourceProje
             % batchedRangesMatchScalarReference Cover insertion affinity, overlap, deletion, unknown and empty ranges.
             source = "abcdefghijklmnopqrstuvwx";
             edits = [edit(1, 0, "HEAD"), edit(5, 7, "REPLACEMENT"), edit(13, 15, ""), edit(25, 24, "TAIL")];
-            batch = macd.source.SourcePatchBatch(source, edits);
-            spans = {macd.model.SourceSpan.empty, macd.model.SourceSpan()};
+            batch = yamada.source.SourcePatchBatch(source, edits);
+            spans = {yamada.model.SourceSpan.empty, yamada.model.SourceSpan()};
             for first = 1:strlength(source)
                 for last = first:strlength(source)
-                    spans{end + 1} = macd.model.SourceSpan(first, last); %#ok<AGROW>
+                    spans{end + 1} = yamada.model.SourceSpan(first, last); %#ok<AGROW>
                 end
             end
             [actual, flags] = batch.mapSpanCells(spans);
@@ -45,19 +45,19 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) LocalSourceProje
 
         function rebinderUsesPriorTraceForOwnedLiteralReplacement(testCase)
             % rebinderUsesPriorTraceForOwnedLiteralReplacement Certify that the integrated path avoids global call analysis.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
             source = string(fileread(fullfile(root, "tests", "fixtures", "SmallPreviewFixtureApp.m")));
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             owner = document.getComponentByName("TopLeftLabel");
             span = owner.getSettings("Text").ValueSpan;
-            batch = macd.source.SourcePatchBatch(source, edit(span.StartOffset, span.EndOffset, "'Changed length'"));
-            current = macd.model.CurrentSourceState(source, document.sourceAnalysis()).withBatch(batch);
-            [settings, ~, ~, execution] = macd.model.SourceSettingRebinder.rebind(document, owner, current, batch, registry);
+            batch = yamada.source.SourcePatchBatch(source, edit(span.StartOffset, span.EndOffset, "'Changed length'"));
+            current = yamada.model.CurrentSourceState(source, document.sourceAnalysis()).withBatch(batch);
+            [settings, ~, ~, execution] = yamada.model.SourceSettingRebinder.rebind(document, owner, current, batch, registry);
             testCase.verifyTrue(execution.ProjectedInitialization);
             testCase.verifyTrue(any(string({settings.Path}) == "Text"));
             % The trace must remain exact when read later with the same factory set.
-            fresh = macd.source.SourceAnalysis(batch.AfterText);
+            fresh = yamada.source.SourceAnalysis(batch.AfterText);
             offsets = zeros(1, 0);
             for item = document.Components
                 [creation, valid] = batch.mapSpan(item.SourceSpans.Creation);
@@ -69,9 +69,9 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) LocalSourceProje
 
         function publishedRangesAndHistoryMatchIndependentParsing(testCase)
             % publishedRangesAndHistoryMatchIndependentParsing Check all owners after distinct insertions, replacements and history.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
-            document = macd.source.AppSourceParser.parseText(string(fileread(fullfile(root, ...
+            document = yamada.source.AppSourceParser.parseText(string(fileread(fullfile(root, ...
                 "tests", "fixtures", "SmallPreviewFixtureApp.m"))), registry);
             operations = {"TopLeftLabel", "Text", "Longer replacement"; "CenterLabel", "Tooltip", "new"; ...
                 "BottomRightButton", "FontSize", 21; "TopLeftLabel", "Tooltip", "another new setting"};
@@ -96,10 +96,10 @@ function verifyDocument(testCase, document, registry)
 % verifyDocument Compare source locations and evaluated settings against an independent full parse.
 arguments (Input)
     testCase (1, 1) matlab.unittest.TestCase
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
 end
-parsed = macd.source.AppSourceParser.parseText(document.CurrentText, registry);
+parsed = yamada.source.AppSourceParser.parseText(document.CurrentText, registry);
 for owner = document.Components
     other = parsed.getComponentByName(owner.Name);
     testCase.verifyEqual(owner.SourceSpans, other.SourceSpans);
@@ -112,7 +112,7 @@ for owner = document.Components
         end
     end
 end
-testCase.verifyEqual(document.evaluationContext(registry).inputs(), macd.model.EvaluationContext(document, registry).inputs());
+testCase.verifyEqual(document.evaluationContext(registry).inputs(), yamada.model.EvaluationContext(document, registry).inputs());
 end
 
 function verifyProjection(testCase, source, changed, name, supported)
@@ -129,14 +129,14 @@ a = char(source); b = char(changed); first = 1;
 while first <= min(numel(a), numel(b)) && a(first) == b(first), first = first + 1; end
 lastA = numel(a); lastB = numel(b);
 while lastA >= first && lastB >= first && a(lastA) == b(lastB), lastA = lastA - 1; lastB = lastB - 1; end
-batch = macd.source.SourcePatchBatch(source, edit(first, lastA, string(b(first:lastB))));
-before = macd.source.SourceAnalysis(source);
+batch = yamada.source.SourcePatchBatch(source, edit(first, lastA, string(b(first:lastB))));
+before = yamada.source.SourceAnalysis(source);
 after = before.withPatches(batch);
 trace = before.initialization(factoryOffsets(before));
-[actual, proven] = macd.source.SourceInitializationProjection.project(before, after, batch, trace, name);
+[actual, proven] = yamada.source.SourceInitializationProjection.project(before, after, batch, trace, name);
 testCase.verifyEqual(proven, supported);
 if proven
-    expected = macd.source.SourceAnalysis(changed);
+    expected = yamada.source.SourceAnalysis(changed);
     testCase.verifyEqual(actual, expected.initialization(factoryOffsets(expected)));
 end
 end
@@ -144,7 +144,7 @@ end
 function offsets = factoryOffsets(analysis)
 % factoryOffsets Identify the controlled fixture's registered factory statements.
 arguments (Input)
-    analysis (1, 1) macd.source.SourceAnalysis
+    analysis (1, 1) yamada.source.SourceAnalysis
 end
 arguments (Output)
     offsets double

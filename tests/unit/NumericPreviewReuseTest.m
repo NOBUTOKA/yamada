@@ -11,7 +11,7 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                 cleanup = onCleanup(@() delete(figure));
                 left = uipanel(figure, Position=[1 1 520 600]);
                 right = uipanel(figure, Position=[550 1 520 600]);
-                renderer = macd.ui.PreviewRenderer(registry);
+                renderer = yamada.ui.PreviewRenderer(registry);
                 [handles, diagnostics] = renderer.render(document, left);
                 testCase.assertEmpty(diagnostics);
                 original = handles(char(first.Id));
@@ -19,14 +19,14 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                     document.setProperty(first.Id, "Value", value, registry);
                     document.validatePropertyCommit(registry);
                     [applied, diagnostics, geometry] = renderer.synchronize(document, handles, ...
-                        macd.ui.RefreshRequest("properties", first.Id, "Value"));
+                        yamada.ui.RefreshRequest("properties", first.Id, "Value"));
                     testCase.verifyTrue(applied, layout);
                     testCase.verifyEmpty(diagnostics);
                     testCase.verifyFalse(geometry);
                     original = handles(char(first.Id));
                     testCase.verifyEqual(original.Value, value);
                 end
-                reference = macd.ui.PreviewRenderer(registry).render(document, right);
+                reference = yamada.ui.PreviewRenderer(registry).render(document, right);
                 drawnow; pause(0.15); drawnow;
                 testCase.verifyEqual(original.Value, reference(char(first.Id)).Value);
                 testCase.verifyEqual(original.Limits, reference(char(first.Id)).Limits);
@@ -43,7 +43,7 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                 [document, registry, first] = numericPreviewFixture("absolute");
                 figure = uifigure(Visible="off");
                 cleanup = onCleanup(@() delete(figure));
-                renderer = macd.ui.PreviewRenderer(registry);
+                renderer = yamada.ui.PreviewRenderer(registry);
                 handles = renderer.render(document, figure);
                 if kind == "limits"
                     first.setProperty("Limits", [-10 10]);
@@ -55,7 +55,7 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                     registry.register(registry.get("uieditfield", {"numeric"}));
                 end
                 first.setProperty("Value", 4);
-                applied = renderer.synchronize(document, handles, macd.ui.RefreshRequest("properties", first.Id, "Value"));
+                applied = renderer.synchronize(document, handles, yamada.ui.RefreshRequest("properties", first.Id, "Value"));
                 testCase.verifyFalse(applied, kind);
                 clear cleanup
             end
@@ -67,11 +67,11 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                 [document, registry] = numericPreviewFixture("absolute");
                 source = replace(document.CurrentText, "app.First.Value = 1;", ...
                     "app.First.AllowEmpty = ""on"";" + newline + "app.First.Value = 1;");
-                document = macd.source.AppSourceParser.parseText(source, registry);
+                document = yamada.source.AppSourceParser.parseText(source, registry);
                 first = document.getComponentByName("First");
                 figure = uifigure(Visible="off");
                 cleanup = onCleanup(@() delete(figure));
-                renderer = macd.ui.PreviewRenderer(registry);
+                renderer = yamada.ui.PreviewRenderer(registry);
                 handles = renderer.render(document, figure);
                 if kind == "empty"
                     document.setProperty(first.Id, "Value", [], registry);
@@ -79,7 +79,7 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                     document.setProperty(first.Id, "Value", 4, registry);
                     delete(handles(char(first.Id)));
                 end
-                applied = renderer.synchronize(document, handles, macd.ui.RefreshRequest("properties", first.Id, "Value"));
+                applied = renderer.synchronize(document, handles, yamada.ui.RefreshRequest("properties", first.Id, "Value"));
                 testCase.verifyEqual(applied, kind == "empty", kind);
                 clear cleanup
             end
@@ -93,11 +93,11 @@ arguments (Input)
     layout (1, 1) string
 end
 arguments (Output)
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
-    first (1, 1) macd.model.ComponentRecord
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
+    first (1, 1) yamada.model.ComponentRecord
 end
-registry = macd.model.ComponentRegistry.createDefault();
+registry = yamada.model.ComponentRegistry.createDefault();
 declarations = ["UIFigure matlab.ui.Figure", "First matlab.ui.control.NumericEditField", ...
     "Second matlab.ui.control.Label"];
 body = ["app.UIFigure = uifigure(Visible='off');", "app.UIFigure.Position = [100 100 480 500];"];
@@ -123,7 +123,7 @@ if layout ~= "absolute", body = [body, "app.First.Layout.Row = 1;", "app.Second.
 source = strjoin(["classdef NumericPreviewFixture < handle", "properties", declarations, ...
     "end", "methods", "function app = NumericPreviewFixture", "createComponents(app);", "end", ...
     "function createComponents(app)", body, "end", "end", "end"], sprintf("\r\n"));
-document = macd.source.AppSourceParser.parseText(source, registry);
+document = yamada.source.AppSourceParser.parseText(source, registry);
 first = document.getComponentByName("First");
 end
 

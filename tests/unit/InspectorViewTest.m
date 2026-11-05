@@ -10,7 +10,7 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorViewTest < matlab.unittest.Te
             % Use a hidden ordinary figure to exercise the programmatic UI path.
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            view = macd.ui.inspector.InspectorView(figure);
+            view = yamada.ui.inspector.InspectorView(figure);
             drawnow;
 
             grid = view.contentGrid();
@@ -29,7 +29,7 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorViewTest < matlab.unittest.Te
             % unreachableViewReleasesOwnedControls Exercise implicit destructor dispatch.
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            view = macd.ui.inspector.InspectorView(figure);
+            view = yamada.ui.inspector.InspectorView(figure);
             grid = view.contentGrid();
 
             % Remove the callback's reference so clearing the owner triggers destruction.

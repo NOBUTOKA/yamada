@@ -9,7 +9,7 @@ classdef yamada < handle
 
     properties (SetAccess = private)
         % Document - Current new or parsed handle-based document, when available.
-        Document macd.model.DocumentModel = macd.model.DocumentModel.empty
+        Document yamada.model.DocumentModel = yamada.model.DocumentModel.empty
         % SelectedComponentId - Stable identity selected in the hierarchy browser.
         SelectedComponentId string = ""
         % ActiveGridId - Nearest Grid Layout context used only by the canvas overlay.
@@ -17,11 +17,11 @@ classdef yamada < handle
     end
 
     properties (Access = private)
-        ParseProgress macd.source.SourceParseProgress = macd.source.SourceParseProgress.empty
-        Registry macd.model.ComponentRegistry
-        DefaultValueProvider macd.ui.inspector.DefaultValueProvider
-        PreviewRenderer macd.ui.PreviewRenderer
-        GridLayoutOverlayDataBuilder macd.ui.GridLayoutOverlayDataBuilder
+        ParseProgress yamada.source.SourceParseProgress = yamada.source.SourceParseProgress.empty
+        Registry yamada.model.ComponentRegistry
+        DefaultValueProvider yamada.ui.inspector.DefaultValueProvider
+        PreviewRenderer yamada.ui.PreviewRenderer
+        GridLayoutOverlayDataBuilder yamada.ui.GridLayoutOverlayDataBuilder
         UIFigure matlab.ui.Figure
         MainGrid matlab.ui.container.GridLayout
         CommandGrid matlab.ui.container.GridLayout
@@ -36,10 +36,10 @@ classdef yamada < handle
         DeleteMenuItem matlab.ui.container.Menu
         EditUndoMenuItem matlab.ui.container.Menu
         EditRedoMenuItem matlab.ui.container.Menu
-        Clipboard macd.model.ComponentClipboard
+        Clipboard yamada.model.ComponentClipboard
         ClipboardMenuItems matlab.ui.container.Menu = matlab.ui.container.Menu.empty
         ReparentRevision double = 0
-        Lifecycle macd.ui.DocumentLifecycleService
+        Lifecycle yamada.ui.DocumentLifecycleService
         SavePathConfirmed logical = false
         SavedSourceText string = ""
         DismissedExternalSourceText string = string.empty
@@ -56,8 +56,8 @@ classdef yamada < handle
         HierarchyRenameText string = ""
         HierarchyClickId string = ""
         HierarchyClickLocation double = [0 0]
-        HierarchyContextMenu macd.ui.HierarchyContextMenu = macd.ui.HierarchyContextMenu.empty
-        CallbackDialog macd.ui.CallbackManagerDialog = macd.ui.CallbackManagerDialog.empty
+        HierarchyContextMenu yamada.ui.HierarchyContextMenu = yamada.ui.HierarchyContextMenu.empty
+        CallbackDialog yamada.ui.CallbackManagerDialog = yamada.ui.CallbackManagerDialog.empty
         CallbackDialogTargetId string = ""
         PreviewPanel matlab.ui.container.Panel
         PreviewScrollPanel matlab.ui.container.Panel
@@ -74,8 +74,8 @@ classdef yamada < handle
         OverlayGeometryRevision double = 0
         InspectorPanel matlab.ui.container.Panel
         InspectorGrid matlab.ui.container.GridLayout
-        InspectorView macd.ui.inspector.InspectorView
-        InspectorRows macd.ui.inspector.InspectorPropertyRow = macd.ui.inspector.InspectorPropertyRow.empty
+        InspectorView yamada.ui.inspector.InspectorView
+        InspectorRows yamada.ui.inspector.InspectorPropertyRow = yamada.ui.inspector.InspectorPropertyRow.empty
         InspectorComponentId string = ""
         InspectorSurfaceKey string = ""
         InspectorViewState containers.Map
@@ -117,8 +117,8 @@ classdef yamada < handle
         function app = yamada(lifecycle)
             % yamada Create the editor shell and an empty document.
             arguments (Input)
-                lifecycle (1, 1) macd.ui.DocumentLifecycleService = ...
-                    macd.ui.DocumentLifecycleService()
+                lifecycle (1, 1) yamada.ui.DocumentLifecycleService = ...
+                    yamada.ui.DocumentLifecycleService()
             end
             arguments (Output)
                 app (1, 1) yamada
@@ -128,14 +128,14 @@ classdef yamada < handle
             app.InspectorViewState = containers.Map("KeyType", "char", "ValueType", "any");
             app.PreviewTabSelections = containers.Map("KeyType", "char", "ValueType", "double");
             app.Lifecycle = lifecycle;
-            app.Registry = macd.model.ComponentRegistry.createDefault();
-            app.Clipboard = macd.model.ComponentClipboard();
-            app.DefaultValueProvider = macd.ui.inspector.DefaultValueProvider(app.Registry);
-            app.PreviewRenderer = macd.ui.PreviewRenderer(app.Registry);
-            app.GridLayoutOverlayDataBuilder = macd.ui.GridLayoutOverlayDataBuilder();
+            app.Registry = yamada.model.ComponentRegistry.createDefault();
+            app.Clipboard = yamada.model.ComponentClipboard();
+            app.DefaultValueProvider = yamada.ui.inspector.DefaultValueProvider(app.Registry);
+            app.PreviewRenderer = yamada.ui.PreviewRenderer(app.Registry);
+            app.GridLayoutOverlayDataBuilder = yamada.ui.GridLayoutOverlayDataBuilder();
             try
                 app.createComponents();
-                app.ParseProgress = macd.source.SourceParseProgress(app.Registry, app.UIFigure);
+                app.ParseProgress = yamada.source.SourceParseProgress(app.Registry, app.UIFigure);
                 addlistener(app.UIFigure, "ObjectBeingDestroyed", @app.figureDeleted);
                 app.createMenus();
                 app.newDocument("UntitledApp");
@@ -197,7 +197,7 @@ classdef yamada < handle
                 "WindowKeyPressFcn", @(~, event) app.editorKeyPressed(event), ...
                 "WindowButtonDownFcn", @(~, ~) app.editorPointerPressed(), ...
                 "CloseRequestFcn", @(~, ~) app.closeRequest(), ...
-                "Tag", "macd-yamada-editor");
+                "Tag", "yamada-editor");
             addlistener(app.UIFigure, "FigureActivated", @(~, ~) app.checkExternalSource());
             app.MainGrid = uigridlayout(app.UIFigure, [3 3]);
             app.MainGrid.RowHeight = {38, "1x", 150};
@@ -206,7 +206,7 @@ classdef yamada < handle
             app.CommandGrid = uigridlayout(app.MainGrid, [1 1]);
             app.CommandGrid.Layout.Row = 1;
             app.CommandGrid.Layout.Column = [1 3];
-            app.StatusLabel = uilabel(app.CommandGrid, "Text", "Ready", "Tag", "macd-status");
+            app.StatusLabel = uilabel(app.CommandGrid, "Text", "Ready", "Tag", "yamada-status");
             app.StatusLabel.Layout.Column = 1;
             app.EditorToolbar = uitoolbar(app.UIFigure);
             undoData = load(fullfile(matlabroot, "toolbox", "matlab", ...
@@ -221,7 +221,7 @@ classdef yamada < handle
                 "ClickedCallback", @(~, ~) app.redoButtonPushed());
             app.RefreshTool = uipushtool(app.EditorToolbar, ...
                 "CData", app.refreshToolIcon(), ...
-                "Tooltip", "Refresh saved source (F5)", "Tag", "macd-refresh-source", ...
+                "Tooltip", "Refresh saved source (F5)", "Tag", "yamada-refresh-source", ...
                 "ClickedCallback", @(~, ~) app.reloadSourceRequested());
 
             app.PaletteTable = uitable(app.MainGrid, ...
@@ -245,16 +245,16 @@ classdef yamada < handle
                 "AutoResizeChildren", "off", ...
                 "BackgroundColor", [0.35 0.36 0.38], ...
                 "Position", [1 1 innerSize], ...
-                "Tag", "macd-preview-scroll-host", ...
+                "Tag", "yamada-preview-scroll-host", ...
                 "SizeChangedFcn", @(~, ~) app.layoutPreviewCanvas());
             app.PreviewVerticalDivider = uipanel(app.PreviewPanel, ...
                 "BorderType", "none", "BackgroundColor", [0.35 0.36 0.38], ...
                 "Position", [1 1 2 1], "Visible", "off", ...
-                "Tag", "macd-preview-vertical-scroll-divider");
+                "Tag", "yamada-preview-vertical-scroll-divider");
             app.PreviewHorizontalDivider = uipanel(app.PreviewPanel, ...
                 "BorderType", "none", "BackgroundColor", [0.35 0.36 0.38], ...
                 "Position", [1 1 1 2], "Visible", "off", ...
-                "Tag", "macd-preview-horizontal-scroll-divider");
+                "Tag", "yamada-preview-horizontal-scroll-divider");
 
             app.RightGrid = uigridlayout(app.MainGrid, [2 1]);
             app.RightGrid.RowHeight = {"1x", "1x"};
@@ -273,7 +273,7 @@ classdef yamada < handle
             app.InspectorPanel.Layout.Row = 2;
             app.InspectorGrid = uigridlayout(app.InspectorPanel, [1 1]);
             app.InspectorGrid.Padding = [0 0 0 0];
-            app.InspectorView = macd.ui.inspector.InspectorView(app.InspectorGrid);
+            app.InspectorView = yamada.ui.inspector.InspectorView(app.InspectorGrid);
             app.DiagnosticsDrawer = uipanel(app.MainGrid);
             app.DiagnosticsDrawer.Layout.Row = 3;
             app.DiagnosticsDrawer.Layout.Column = [1 3];
@@ -320,17 +320,17 @@ classdef yamada < handle
                 action = actions(index);
                 app.ClipboardMenuItems(end + 1) = uimenu(editMenu, "Text", action, ...
                     "Accelerator", shortcuts(index), ...
-                    "Tag", "macd-edit-" + lower(action), "Enable", "off", ...
+                    "Tag", "yamada-edit-" + lower(action), "Enable", "off", ...
                     "MenuSelectedFcn", @(~, ~) app.clipboardCommand(action, app.SelectedComponentId));
             end
-            app.DeleteMenuItem = uimenu(editMenu, "Text", "&Delete" + sprintf("\t\t\t") + "(Del)", "Tag", "macd-edit-delete", ...
+            app.DeleteMenuItem = uimenu(editMenu, "Text", "&Delete" + sprintf("\t\t\t") + "(Del)", "Tag", "yamada-edit-delete", ...
                 "MenuSelectedFcn", @(~, ~) app.deleteComponentButtonPushed());
-            app.EditUndoMenuItem = uimenu(editMenu, "Text", "&Undo", "Tag", "macd-edit-undo", "Accelerator", "Z", ...
+            app.EditUndoMenuItem = uimenu(editMenu, "Text", "&Undo", "Tag", "yamada-edit-undo", "Accelerator", "Z", ...
                 "MenuSelectedFcn", @(~, ~) app.undoButtonPushed());
-            app.EditRedoMenuItem = uimenu(editMenu, "Text", "&Redo", "Tag", "macd-edit-redo", "Accelerator", "R", ...
+            app.EditRedoMenuItem = uimenu(editMenu, "Text", "&Redo", "Tag", "yamada-edit-redo", "Accelerator", "R", ...
                 "MenuSelectedFcn", @(~, ~) app.redoButtonPushed());
             app.ReloadMenuItem = uimenu(editMenu, "Text", "Reload Source" + sprintf("\t") + "(F5)", ...
-                "Separator", "on", "Tag", "macd-reload-source", ...
+                "Separator", "on", "Tag", "yamada-reload-source", ...
                 "MenuSelectedFcn", @(~, ~) app.reloadSourceRequested());
 
             toolsMenu = uimenu(app.UIFigure, "Text", "&Tools");
@@ -352,7 +352,7 @@ classdef yamada < handle
             if ~accepted
                 return
             end
-            document = macd.model.NewAppFactory.createEmpty(className, app.Registry);
+            document = yamada.model.NewAppFactory.createEmpty(className, app.Registry);
             app.replaceDocument(document, "Created new document " + className);
         end
 
@@ -402,9 +402,9 @@ classdef yamada < handle
             end
 
             % Validation is model-only and is safe for both new and opened documents.
-            diagnostics = macd.validation.ModelValidator.validate(app.Document, app.Registry);
+            diagnostics = yamada.validation.ModelValidator.validate(app.Document, app.Registry);
             app.refreshDiagnostics(diagnostics);
-            if macd.validation.ModelValidator.hasErrors(diagnostics)
+            if yamada.validation.ModelValidator.hasErrors(diagnostics)
                 app.setStatus("Validation found blocking errors.");
             else
                 app.setStatus("Validation completed without blocking errors.");
@@ -447,7 +447,7 @@ classdef yamada < handle
             end
 
             % The initial shell document does not need a replacement confirmation.
-            document = macd.model.NewAppFactory.createEmpty(className, app.Registry);
+            document = yamada.model.NewAppFactory.createEmpty(className, app.Registry);
             app.swapDocument(document, "Created new document " + className);
         end
 
@@ -459,8 +459,8 @@ classdef yamada < handle
             end
 
             % Parse before prompting about replacement so a failure retains this document.
-            [document, diagnostics] = macd.source.AppSourceParser.parseFile(filePath, app.Registry);
-            if macd.validation.ModelValidator.hasErrors(diagnostics)
+            [document, diagnostics] = yamada.source.AppSourceParser.parseFile(filePath, app.Registry);
+            if yamada.validation.ModelValidator.hasErrors(diagnostics)
                 app.setStatus("Open failed; the current document is unchanged.");
                 return
             end
@@ -471,7 +471,7 @@ classdef yamada < handle
             % replaceDocument Swap to a prepared document after one shared unsaved-change guard.
             arguments (Input)
                 app (1, 1) yamada
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
                 status (1, 1) string
             end
 
@@ -485,7 +485,7 @@ classdef yamada < handle
             % swapDocument Display an already prepared document without prompting.
             arguments (Input)
                 app (1, 1) yamada
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
                 status (1, 1) string
             end
 
@@ -565,7 +565,7 @@ classdef yamada < handle
             % refreshViews Update only invalidated surfaces after an accepted property transaction.
             arguments (Input)
                 app (1, 1) yamada
-                request (1, 1) macd.ui.RefreshRequest
+                request (1, 1) yamada.ui.RefreshRequest
             end
             if request.Kind ~= "properties" || isempty(app.PreviewHandles)
                 app.refreshShell();
@@ -595,8 +595,8 @@ classdef yamada < handle
             % All native writes precede the single stable geometry publication.
             clear batch
             app.completePreviewUpdate(~applied || geometryChanged);
-            if isappdata(app.UIFigure, "macdPerformanceMeasurement") && getappdata(app.UIFigure, "macdPerformanceMeasurement")
-                setappdata(app.UIFigure, "macdPreviewStatistics", app.PreviewRenderer.statistics());
+            if isappdata(app.UIFigure, "yamadaPerformanceMeasurement") && getappdata(app.UIFigure, "yamadaPerformanceMeasurement")
+                setappdata(app.UIFigure, "yamadaPreviewStatistics", app.PreviewRenderer.statistics());
             end
         end
 
@@ -744,7 +744,7 @@ classdef yamada < handle
             state = struct("Enabled", false, "Reason", "No component is available.", "ParentId", "");
             if isempty(app.Document) || strlength(app.HierarchyRenameId) > 0 || app.IsReloading, return, end
             if action == "Delete"
-                state = macd.model.DocumentEditAvailability.deletion(app.Document, id, app.Registry);
+                state = yamada.model.DocumentEditAvailability.deletion(app.Document, id, app.Registry);
             else
                 state = app.Clipboard.availability(action, app.Document, id, app.Registry);
             end
@@ -991,7 +991,7 @@ classdef yamada < handle
             app.HierarchyRenameText = component.Name;
             app.HierarchyRenameField = uieditfield(app.HierarchyPanel, "text", ...
                 "Position", [treePosition(1) + 20 treePosition(2) + y max(30, treePosition(3) - 24) height], ...
-                "Value", component.Name, "Tag", "macd-hierarchy-rename", ...
+                "Value", component.Name, "Tag", "yamada-hierarchy-rename", ...
                 "ValueChangingFcn", @(~, change) app.hierarchyRenameChanging(change), ...
                 "ValueChangedFcn", @(~, change) app.commitHierarchyRename(change.Value));
             app.refreshEditCommands();
@@ -1112,7 +1112,7 @@ classdef yamada < handle
             canDelete = ~isempty(component) && component.Id ~= app.Document.RootComponentId && ...
                 component.IsEditable;
             if canDelete
-                deletion = macd.model.DocumentEditAvailability.deletion(app.Document, component.Id, app.Registry);
+                deletion = yamada.model.DocumentEditAvailability.deletion(app.Document, component.Id, app.Registry);
                 canDelete = deletion.Enabled;
             end
             app.DeleteMenuItem.Enable = "off";
@@ -1165,7 +1165,7 @@ classdef yamada < handle
             % isPaletteDefinition Report whether a variant is in the initial edit scope.
             arguments (Input)
                 ~
-                definition (1, 1) macd.model.ComponentDefinition
+                definition (1, 1) yamada.model.ComponentDefinition
             end
             arguments (Output)
                 result (1, 1) logical
@@ -1195,7 +1195,7 @@ classdef yamada < handle
 
             % Delete old nodes so the browser cannot retain stale model identities.
             if isempty(app.HierarchyContextMenu)
-                app.HierarchyContextMenu = macd.ui.HierarchyContextMenu(app.UIFigure, ...
+                app.HierarchyContextMenu = yamada.ui.HierarchyContextMenu(app.UIFigure, ...
                     app.HierarchyTree, app.Registry, @() app.Document, ...
                     @(id) app.manageCallbacksRequested(id), ...
                     @(action, id) app.clipboardCommand(action, id), ...
@@ -1249,13 +1249,13 @@ classdef yamada < handle
             app.closeCallbackDialog();
             document = app.Document;
             app.CallbackDialogTargetId = componentId;
-            app.CallbackDialog = macd.ui.CallbackManagerDialog(component.Name, ...
-                @() macd.source.CallbackSourceAnalyzer.analyze(document, componentId, app.Registry, true), ...
+            app.CallbackDialog = yamada.ui.CallbackManagerDialog(component.Name, ...
+                @() yamada.source.CallbackSourceAnalyzer.analyze(document, componentId, app.Registry, true), ...
                 @(name, action, handler) app.callbackActionRequested(componentId, name, action, handler), ...
                 @() app.Document == document && ~isempty(document.getComponent(componentId)), ...
                 true, @() app.reloadSourceRequested(), ...
-                @(name) macd.source.CallbackMethodTargets.list(document, componentId, name, app.Registry), ...
-                @(name) macd.source.CallbackMethodTargets.defaultName(document, componentId, name, app.Registry));
+                @(name) yamada.source.CallbackMethodTargets.list(document, componentId, name, app.Registry), ...
+                @(name) yamada.source.CallbackMethodTargets.defaultName(document, componentId, name, app.Registry));
         end
 
         function closeCallbackDialog(app)
@@ -1264,7 +1264,7 @@ classdef yamada < handle
                 app (1, 1) yamada
             end
             if ~isempty(app.CallbackDialog) && isvalid(app.CallbackDialog), delete(app.CallbackDialog), end
-            app.CallbackDialog = macd.ui.CallbackManagerDialog.empty;
+            app.CallbackDialog = yamada.ui.CallbackManagerDialog.empty;
             app.CallbackDialogTargetId = "";
         end
 
@@ -1449,7 +1449,7 @@ classdef yamada < handle
 
             minimum = [0 0];
             maximum = double(app.PreviewCanvas.Position(3:4));
-            activeGridId = macd.model.ActiveGridResolver.resolve( ...
+            activeGridId = yamada.model.ActiveGridResolver.resolve( ...
                 app.Document, app.SelectedComponentId);
             if isa(app.PreviewHandles, "containers.Map")
                 keys = app.PreviewHandles.keys();
@@ -1487,7 +1487,7 @@ classdef yamada < handle
                 "resources", "EditorInteractionOverlay.html");
             app.InteractionOverlay = uihtml(app.PreviewCanvas.Parent.Parent, ...
                 "HTMLSource", overlayPath, ...
-                "Tag", "macd-interaction-overlay", ...
+                "Tag", "yamada-interaction-overlay", ...
                 "HTMLEventReceivedFcn", @(~, event) ...
                 app.interactionOverlayEvent(event));
         end
@@ -1506,7 +1506,7 @@ classdef yamada < handle
                 "resources", "RootResizeGuide.html");
             app.RootResizeGuide = uihtml(content, "HTMLSource", guidePath, ...
                 "Position", [1 1 1 1], "Visible", "off", ...
-                "Tag", "macd-root-resize-guide");
+                "Tag", "yamada-root-resize-guide");
         end
 
         function updateRootResizeGuide(app)
@@ -1632,7 +1632,7 @@ classdef yamada < handle
                 [~, paintOrder] = sort([components.depth]);
                 components = components(paintOrder);
             end
-            app.ActiveGridId = macd.model.ActiveGridResolver.resolve( ...
+            app.ActiveGridId = yamada.model.ActiveGridResolver.resolve( ...
                 app.Document, app.SelectedComponentId);
             if strlength(app.ActiveGridId) > 0 && ...
                     ~app.isVisibleInSelectedTab(app.ActiveGridId)
@@ -1656,7 +1656,7 @@ classdef yamada < handle
             rootEditable = root.IsEditable && ~isempty(rootPosition) && ...
                 rootPosition.IsEditable && rootPosition.ValueKind == "literal" && ...
                 isnumeric(rootPosition.LiteralValue) && numel(rootPosition.LiteralValue) == 4;
-            [dragSource, reparentTargets] = macd.ui.ReparentOverlayDataBuilder.build(app.Document, ...
+            [dragSource, reparentTargets] = yamada.ui.ReparentOverlayDataBuilder.build(app.Document, ...
                 app.PreviewHandles, app.PreviewCanvas, app.SelectedComponentId, ...
                 revision, @(id) app.isVisibleInSelectedTab(id), ...
                 @(id) app.gridOverlayData(id, revision), @(id) app.previewBounds(id), app.PreviewGeometry.Stamp);
@@ -1671,8 +1671,8 @@ classdef yamada < handle
                 "gridPlacement", gridPlacement, ...
                 "dragSource", dragSource, "reparentTargets", reparentTargets, ...
                 "reparentRevision", app.ReparentRevision, ...
-                "measureRender", isappdata(app.UIFigure, "macdPerformanceMeasurement") && ...
-                    getappdata(app.UIFigure, "macdPerformanceMeasurement"), ...
+                "measureRender", isappdata(app.UIFigure, "yamadaPerformanceMeasurement") && ...
+                    getappdata(app.UIFigure, "yamadaPerformanceMeasurement"), ...
                 "selectedComponentId", char(app.SelectedComponentId), ...
                 "rootId", char(root.Id), "rootSelected", root.Id == app.SelectedComponentId, ...
                 "rootEditable", rootEditable);
@@ -1745,7 +1745,7 @@ classdef yamada < handle
                 stamp (1, 1) struct = struct()
             end
             if isempty(fieldnames(stamp))
-                stamp = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(app.PreviewHandles, app.PreviewCanvas);
+                stamp = yamada.ui.GridLayoutOverlayDataBuilder.nativeInputs(app.PreviewHandles, app.PreviewCanvas);
             end
             geometry = struct("Stamp", {stamp}, ...
                 "Bounds", containers.Map("KeyType", "char", "ValueType", "any"), ...
@@ -1832,11 +1832,11 @@ classdef yamada < handle
             eventName = string(event.HTMLEventName);
             if eventName == "Rendered"
                 data = event.HTMLEventData;
-                if isappdata(app.UIFigure, "macdPerformanceMeasurement") && ...
-                        getappdata(app.UIFigure, "macdPerformanceMeasurement") && ...
+                if isappdata(app.UIFigure, "yamadaPerformanceMeasurement") && ...
+                        getappdata(app.UIFigure, "yamadaPerformanceMeasurement") && ...
                         isstruct(data) && isfield(data, "revision") && ...
                         isequal(data.revision, app.InteractionOverlayRevision)
-                    setappdata(app.UIFigure, "macdRenderedRevision", data.revision);
+                    setappdata(app.UIFigure, "yamadaRenderedRevision", data.revision);
                 end
                 return
             end
@@ -1970,7 +1970,7 @@ classdef yamada < handle
             app.InteractionKind = "";
             try
                 if strlength(parentId) == 0
-                    error("macd:yamada:InvalidDrop", "No valid destination is available at this point.");
+                    error("yamada:yamada:InvalidDrop", "No valid destination is available at this point.");
                 end
                 app.Document.reparentSubtree(id, parentId, app.Registry, app.clipboardPosition(id), ...
                     double(data.targetCell), double(data.targetPosition));
@@ -2043,29 +2043,29 @@ classdef yamada < handle
                 end
                 entry = grid.getProperty(path);
                 if ~isempty(entry) && entry.ValueKind ~= "literal"
-                    error("macd:yamada:ReadOnlyGridTrack", ...
+                    error("yamada:yamada:ReadOnlyGridTrack", ...
                         "%s is source-backed and cannot be edited safely.", path);
                 end
                 states = app.Document.getEffectivePropertyStates(app.Registry, gridId);
                 state = states(arrayfun(@(item) item.Definition.Path == path, states));
                 if isempty(state) || ~state.Resolution.IsKnown
-                    error("macd:yamada:ReadOnlyGridTrack", "%s depends on unresolved grid placement.", path);
+                    error("yamada:yamada:ReadOnlyGridTrack", "%s depends on unresolved grid placement.", path);
                 end
                 value = state.Resolution.EffectiveValue;
                 if action == "set-track"
-                    replacement = macd.model.GridTrackList.replace(value, double(data.index), ...
+                    replacement = yamada.model.GridTrackList.replace(value, double(data.index), ...
                         string(data.mode), double(data.value));
                     changes = struct("ComponentId", gridId, "Path", path, "Value", {replacement});
                 elseif action == "insert-track"
-                    changes = macd.model.GridLayoutStructuralEditPlanner.insert( ...
+                    changes = yamada.model.GridLayoutStructuralEditPlanner.insert( ...
                         app.Document, gridId, axis, double(data.index), value);
                 else
-                    changes = macd.model.GridLayoutStructuralEditPlanner.delete( ...
+                    changes = yamada.model.GridLayoutStructuralEditPlanner.delete( ...
                         app.Document, gridId, axis, double(data.index), value);
                 end
                 app.Document.applyGridLayoutEdit(gridId, changes, app.Registry);
                 app.setStatus("Updated " + path + ".");
-                app.refreshViews(macd.ui.RefreshRequest.forChanges(changes));
+                app.refreshViews(yamada.ui.RefreshRequest.forChanges(changes));
             catch exception
                 app.setStatus(string(exception.message));
                 app.updateInteractionOverlay();
@@ -2149,19 +2149,19 @@ classdef yamada < handle
                 rowCount = numel(overlay.rowTracks);
                 columnCount = numel(overlay.columnTracks);
                 if action == "move-child"
-                    changes = macd.model.GridChildPlacementPlanner.move(app.Document, ...
+                    changes = yamada.model.GridChildPlacementPlanner.move(app.Document, ...
                         gridId, childId, double(values(1)), double(values(3)), ...
                         rowCount, columnCount);
                     message = "Moved grid child.";
                 else
-                    changes = macd.model.GridChildPlacementPlanner.resize(app.Document, ...
+                    changes = yamada.model.GridChildPlacementPlanner.resize(app.Document, ...
                         gridId, childId, double(values(1)), double(values(2)), ...
                         double(values(3)), double(values(4)), rowCount, columnCount);
                     message = "Resized grid child span.";
                 end
                 app.Document.applyGridLayoutEdit(gridId, changes, app.Registry);
                 app.setStatus(message);
-                app.refreshViews(macd.ui.RefreshRequest.forChanges(changes));
+                app.refreshViews(yamada.ui.RefreshRequest.forChanges(changes));
             catch exception
                 app.setStatus(string(exception.message));
                 app.updateInteractionOverlay();
@@ -2332,12 +2332,12 @@ classdef yamada < handle
                     canvas = app.PreviewCanvas;
                     try
                         drawnow;
-                        macd.ui.waitForPreviewLayout(app.UIFigure, canvas);
+                        yamada.ui.waitForPreviewLayout(app.UIFigure, canvas);
                         drawnow;
                     catch exception
                         % Unsupported native versions retain the bounded legacy recovery path.
                         if ~isvalid(app) || app.IsClosingProgrammatically || ~isvalid(canvas), return, end
-                        warning("macd:PreviewLayout:Fallback", "Layout synchronization failed: %s", exception.message);
+                        warning("yamada:PreviewLayout:Fallback", "Layout synchronization failed: %s", exception.message);
                         if generation ~= app.TabLayoutGeneration, app.PreviewLayoutPending = true; continue, end
                         app.capturePreviewGeometry();
                         app.updateInteractionOverlay(false, true);
@@ -2527,7 +2527,7 @@ classdef yamada < handle
             arguments (Output)
                 signature (1, 1) struct
             end
-            signature = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(app.PreviewHandles, app.PreviewCanvas);
+            signature = yamada.ui.GridLayoutOverlayDataBuilder.nativeInputs(app.PreviewHandles, app.PreviewCanvas);
         end
 
         function restorePreviewTabSelections(app)
@@ -2608,7 +2608,7 @@ classdef yamada < handle
                 end
             end
             app.LastOverlayValue = struct();
-            app.refreshViews(macd.ui.RefreshRequest("properties", componentId, "Position"));
+            app.refreshViews(yamada.ui.RefreshRequest("properties", componentId, "Position"));
         end
 
         function position = movedPosition(app, componentId, startPosition, delta)
@@ -2663,7 +2663,7 @@ classdef yamada < handle
             component = app.Document.getComponent(componentId);
             definition = app.Registry.get(component.Factory, component.CreationArguments);
             property = definition.getProperty("Position");
-            if ~isempty(property) && macd.model.PositionGeometry.applies(property.Application.EffectPolicy)
+            if ~isempty(property) && yamada.model.PositionGeometry.applies(property.Application.EffectPolicy)
                 return
             end
             constraint = definition.resizeConstraintFor(component.CreationArguments);
@@ -2833,7 +2833,7 @@ classdef yamada < handle
                 end
             end
             app.LastOverlayValue = struct();
-            app.refreshViews(macd.ui.RefreshRequest("properties", componentId, "Position"));
+            app.refreshViews(yamada.ui.RefreshRequest("properties", componentId, "Position"));
         end
 
         function position = resizedRootPosition(~, startPosition, delta, kind)
@@ -2904,7 +2904,7 @@ classdef yamada < handle
             % interactionInputPosition Start constrained gestures from the owned native rectangle.
             arguments (Input)
                 app (1, 1) yamada
-                component (1, 1) macd.model.ComponentRecord
+                component (1, 1) yamada.model.ComponentRecord
                 requested (1, 4) double
             end
             arguments (Output)
@@ -2913,7 +2913,7 @@ classdef yamada < handle
             position = requested;
             definition = app.Registry.get(component.Factory, component.CreationArguments);
             property = definition.getProperty("Position");
-            if ~isempty(property) && macd.model.PositionGeometry.applies(property.Application.EffectPolicy) && ...
+            if ~isempty(property) && yamada.model.PositionGeometry.applies(property.Application.EffectPolicy) && ...
                     component.Id ~= app.Document.RootComponentId && ~isempty(app.PreviewHandles) && ...
                     isKey(app.PreviewHandles, char(component.Id))
                 position = double(app.PreviewHandles(char(component.Id)).Position);
@@ -2924,21 +2924,21 @@ classdef yamada < handle
             % previewResizeConstraint Publish orientation-aware handle affordances from shared constraints.
             arguments (Input)
                 app (1, 1) yamada
-                component (1, 1) macd.model.ComponentRecord
-                definition (1, 1) macd.model.ComponentDefinition
+                component (1, 1) yamada.model.ComponentRecord
+                definition (1, 1) yamada.model.ComponentDefinition
             end
             arguments (Output)
                 constraint (1, 1) string
             end
             constraint = definition.resizeConstraintFor(component.CreationArguments);
             property = definition.getProperty("Position");
-            if isempty(property) || ~macd.model.PositionGeometry.applies(property.Application.EffectPolicy), return, end
+            if isempty(property) || ~yamada.model.PositionGeometry.applies(property.Application.EffectPolicy), return, end
             orientation = "";
             if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles, char(component.Id))
                 target = app.PreviewHandles(char(component.Id));
                 if isprop(target, "Orientation"), orientation = string(target.Orientation); end
             end
-            spec = macd.model.PositionGeometry.constraint(property.Application.EffectPolicy, orientation, strlength(orientation) > 0);
+            spec = yamada.model.PositionGeometry.constraint(property.Application.EffectPolicy, orientation, strlength(orientation) > 0);
             if ~spec.Known, return, end
             constraint = "free";
             if ~isnan(spec.Ratio), constraint = "aspectRatio"; end
@@ -2965,15 +2965,15 @@ classdef yamada < handle
             end
             definition = app.Registry.get(component.Factory, component.CreationArguments);
             property = definition.getProperty("Position");
-            if ~isempty(property) && macd.model.PositionGeometry.applies(property.Application.EffectPolicy)
+            if ~isempty(property) && yamada.model.PositionGeometry.applies(property.Application.EffectPolicy)
                 orientation = "";
                 if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles, char(component.Id))
                     target = app.PreviewHandles(char(component.Id));
                     if isprop(target, "Orientation"), orientation = string(target.Orientation); end
                 end
-                spec = macd.model.PositionGeometry.constraint(property.Application.EffectPolicy, ...
+                spec = yamada.model.PositionGeometry.constraint(property.Application.EffectPolicy, ...
                     orientation, strlength(orientation) > 0);
-                position = macd.model.PositionGeometry.resize(position, startPosition, kind, spec);
+                position = yamada.model.PositionGeometry.resize(position, startPosition, kind, spec);
                 return
             end
             policy = definition.resizeConstraintFor(component.CreationArguments);
@@ -3096,7 +3096,7 @@ classdef yamada < handle
                 end
             end
             app.LastOverlayValue = struct();
-            app.refreshViews(macd.ui.RefreshRequest("properties", componentId, "Position"));
+            app.refreshViews(yamada.ui.RefreshRequest("properties", componentId, "Position"));
         end
 
         function message = inspectorValueCommitted(app, componentId, path, value)
@@ -3140,14 +3140,14 @@ classdef yamada < handle
                 end
             elseif ~isAllowedEmpty && definition.Editor ~= "multilineText" && ...
                     (ischar(value) || (isstring(value) && isscalar(value)))
-                [value, isLiteral] = macd.source.MatlabLiteralParser.parse(string(value));
+                [value, isLiteral] = yamada.source.MatlabLiteralParser.parse(string(value));
                 if ~isLiteral
                     message = "Enter a supported MATLAB literal.";
                     app.setStatus(message);
                     return
                 end
             end
-            changes = macd.model.PropertyTransaction.singleChange(path, value);
+            changes = yamada.model.PropertyTransaction.singleChange(path, value);
             message = app.inspectorValuesCommitted(componentId, changes);
         end
 
@@ -3192,7 +3192,7 @@ classdef yamada < handle
             end
             definitions = arrayfun(@(state) state.Definition, app.inspectorStates(component));
             app.reconcileItemSelectionValues(transaction, definitions);
-            message = macd.validation.PropertyBatchValidator.validate(definitions, transaction);
+            message = yamada.validation.PropertyBatchValidator.validate(definitions, transaction);
             if strlength(message) > 0
                 app.setStatus(message);
                 return
@@ -3206,7 +3206,7 @@ classdef yamada < handle
             end
             % Revalidate and dispatch the accepted property impact without rebuilding the shell.
             app.Document.validatePropertyCommit(app.Registry);
-            app.refreshViews(macd.ui.RefreshRequest("properties", component.Id, string({changes.Path})));
+            app.refreshViews(yamada.ui.RefreshRequest("properties", component.Id, string({changes.Path})));
         end
 
         function reconcileItemSelectionValues(app, transaction, definitions)
@@ -3216,8 +3216,8 @@ classdef yamada < handle
             %   same transaction, preventing an out-of-domain stale Value.
             arguments (Input)
                 app (1, 1) yamada
-                transaction (1, 1) macd.model.PropertyTransaction
-                definitions macd.model.PropertyDefinition
+                transaction (1, 1) yamada.model.PropertyTransaction
+                definitions yamada.model.PropertyDefinition
             end
 
             if isempty(app.Registry)
@@ -3294,7 +3294,7 @@ classdef yamada < handle
             % rebuildInspector Replace inspector rows for a new effective surface.
             arguments (Input)
                 app (1, 1) yamada
-                component (1, 1) macd.model.ComponentRecord
+                component (1, 1) yamada.model.ComponentRecord
                 surfaceKey (1, 1) string
             end
 
@@ -3304,7 +3304,7 @@ classdef yamada < handle
             categories = unique(string({rows.Category}), "stable");
             app.saveInspectorViewState();
             app.InspectorView.clear();
-            app.InspectorRows = macd.ui.inspector.InspectorPropertyRow.empty;
+            app.InspectorRows = yamada.ui.inspector.InspectorPropertyRow.empty;
             content = app.InspectorView.contentGrid();
             content.RowHeight = repmat({"fit"}, 1, numel(categories));
             contentHeight = 0;
@@ -3321,10 +3321,10 @@ classdef yamada < handle
                         heightDefinition = states(rowState.MemberIndices).Definition;
                     end
                     rowHeights(rowIndex) = ...
-                        macd.ui.inspector.InspectorPropertyRow.rowHeight(heightDefinition);
+                        yamada.ui.inspector.InspectorPropertyRow.rowHeight(heightDefinition);
                 end
                 contentHeight = contentHeight + 40 + sum(rowHeights) + 3 * numel(indices);
-                section = macd.ui.inspector.InspectorCategorySection(content, category, numel(indices));
+                section = yamada.ui.inspector.InspectorCategorySection(content, category, numel(indices));
                 section.setLayoutRow(categoryIndex);
                 for rowIndex = 1:numel(indices)
                     rowState = rows(indices(rowIndex));
@@ -3332,7 +3332,7 @@ classdef yamada < handle
                     if ~rowState.IsComposite
                         binding = states(rowState.MemberIndices).Definition;
                     end
-                    row = macd.ui.inspector.InspectorPropertyRow(section.contentGrid(), rowIndex, ...
+                    row = yamada.ui.inspector.InspectorPropertyRow(section.contentGrid(), rowIndex, ...
                         component.Id, binding, @(id, path, text) ...
                         app.inspectorValueCommitted(id, path, text), @(id, changes) ...
                         app.inspectorValuesCommitted(id, changes));
@@ -3351,7 +3351,7 @@ classdef yamada < handle
             % refreshInspectorValues Synchronize values without replacing the surface.
             arguments (Input)
                 app (1, 1) yamada
-                component (1, 1) macd.model.ComponentRecord
+                component (1, 1) yamada.model.ComponentRecord
             end
 
             % Preserve row controls when explicit values, history, or preview change.
@@ -3372,7 +3372,7 @@ classdef yamada < handle
                 app (1, 1) yamada
             end
 
-            app.InspectorRows = macd.ui.inspector.InspectorPropertyRow.empty;
+            app.InspectorRows = yamada.ui.inspector.InspectorPropertyRow.empty;
             app.InspectorComponentId = "";
             app.InspectorSurfaceKey = "";
             app.InspectorViewState = containers.Map("KeyType", "char", "ValueType", "any");
@@ -3436,7 +3436,7 @@ classdef yamada < handle
             % inspectorRowsFor Project one effective property surface into catalog-owned rows.
             arguments (Input)
                 app (1, 1) yamada
-                component (1, 1) macd.model.ComponentRecord
+                component (1, 1) yamada.model.ComponentRecord
                 states
             end
             arguments (Output)
@@ -3449,7 +3449,7 @@ classdef yamada < handle
                 parentFactory = parent.Factory;
             end
             definition = app.Registry.get(component.Factory, component.CreationArguments);
-            rows = macd.ui.inspector.InspectorSurfaceBuilder.build( ...
+            rows = yamada.ui.inspector.InspectorSurfaceBuilder.build( ...
                 definition.Id, parentFactory, states, app.Registry.inspectorRows());
         end
 
@@ -3457,7 +3457,7 @@ classdef yamada < handle
             % inspectorStates Append retained source-only entries to effective definitions.
             arguments (Input)
                 app (1, 1) yamada
-                component (1, 1) macd.model.ComponentRecord
+                component (1, 1) yamada.model.ComponentRecord
             end
 
             % Preserve unsupported source assignments without making them editable.
@@ -3476,10 +3476,10 @@ classdef yamada < handle
                 end
                 metadata = struct("category", "Source", "order", index, ...
                     "auditDisposition", "readOnly", "displayName", entry.Path);
-                sourceState = struct("Definition", macd.model.PropertyDefinition( ...
+                sourceState = struct("Definition", yamada.model.PropertyDefinition( ...
                     entry.Path, [], false, false, metadata), "Entry", entry, ...
-                    "IsExplicit", true, "Resolution", macd.model.PropertyState());
-                sourceState.Resolution = macd.model.PropertyState(sourceState.Definition, entry);
+                    "IsExplicit", true, "Resolution", yamada.model.PropertyState());
+                sourceState.Resolution = yamada.model.PropertyState(sourceState.Definition, entry);
                 states(end + 1) = sourceState; %#ok<AGROW>
             end
         end
@@ -3488,17 +3488,17 @@ classdef yamada < handle
             % inspectorDefinition Find one currently effective inspector definition.
             arguments (Input)
                 app (1, 1) yamada
-                component (1, 1) macd.model.ComponentRecord
+                component (1, 1) yamada.model.ComponentRecord
                 path (1, 1) string
             end
             arguments (Output)
-                definition (1, 1) macd.model.PropertyDefinition
+                definition (1, 1) yamada.model.PropertyDefinition
             end
 
             states = app.inspectorStates(component);
             index = find(arrayfun(@(state) state.Definition.Path == path, states), 1);
             if isempty(index)
-                definition = macd.model.PropertyDefinition(path, [], false, false, ...
+                definition = yamada.model.PropertyDefinition(path, [], false, false, ...
                     struct("auditDisposition", "readOnly"));
             else
                 definition = states(index).Definition;
@@ -3509,10 +3509,10 @@ classdef yamada < handle
             % inspectorTransaction Copy all current effective values into one candidate state.
             arguments (Input)
                 app (1, 1) yamada
-                component (1, 1) macd.model.ComponentRecord
+                component (1, 1) yamada.model.ComponentRecord
             end
             arguments (Output)
-                transaction (1, 1) macd.model.PropertyTransaction
+                transaction (1, 1) yamada.model.PropertyTransaction
             end
 
             states = app.inspectorStates(component);
@@ -3536,7 +3536,7 @@ classdef yamada < handle
                     known(index) = true;
                 end
             end
-            transaction = macd.model.PropertyTransaction( ...
+            transaction = yamada.model.PropertyTransaction( ...
                 string({definitions.Path}), values, known);
         end
 
@@ -3544,7 +3544,7 @@ classdef yamada < handle
             % synchronizeInspectorRows Load current model values into stable native rows.
             arguments (Input)
                 app (1, 1) yamada
-                component (1, 1) macd.model.ComponentRecord
+                component (1, 1) yamada.model.ComponentRecord
                 states
                 rows (1, :) struct
             end
@@ -3569,7 +3569,7 @@ classdef yamada < handle
                 editable = states(index).Resolution.IsEditable;
                 resolved = states(index).Resolution;
                 if ~isempty(entry)
-                    value = macd.ui.InspectorValueFormatter.format(entry);
+                    value = yamada.ui.InspectorValueFormatter.format(entry);
                     editable = editable && entry.IsEditable;
                 end
                 if resolved.IsKnown
@@ -3581,8 +3581,8 @@ classdef yamada < handle
                     isKnown = true;
                 end
                 if isKnown
-                    displayEntry = macd.model.PropertyEntry(states(index).Definition.Path, rawValue);
-                    value = macd.ui.InspectorValueFormatter.format(displayEntry);
+                    displayEntry = yamada.model.PropertyEntry(states(index).Definition.Path, rawValue);
+                    value = yamada.ui.InspectorValueFormatter.format(displayEntry);
                 elseif ~isempty(entry) && entry.ValueKind == "literal"
                     if states(index).Definition.Category ~= "Source", value = "<unresolved>"; end
                     editable = false;
@@ -3608,7 +3608,7 @@ classdef yamada < handle
             % inspectorSurfaceKey Identify one component's ordered editor surface.
             arguments (Input)
                 app (1, 1) yamada
-                component (1, 1) macd.model.ComponentRecord
+                component (1, 1) yamada.model.ComponentRecord
             end
             arguments (Output)
                 key (1, 1) string
@@ -3642,7 +3642,7 @@ classdef yamada < handle
             % refreshDiagnostics Present structured diagnostics in the bottom table.
             arguments (Input)
                 app (1, 1) yamada
-                diagnostics macd.model.Diagnostic
+                diagnostics yamada.model.Diagnostic
             end
 
             % Keep errors and warnings visible without modal interruption.
@@ -3681,7 +3681,7 @@ classdef yamada < handle
             end
             arguments (Output)
                 source string
-                diagnostics macd.model.Diagnostic
+                diagnostics yamada.model.Diagnostic
             end
 
             % All editor commands publish current source before the save/output boundary.
@@ -3691,10 +3691,10 @@ classdef yamada < handle
             app.Document.initializeSource(app.Registry);
             source = app.Document.CurrentText;
             diagnostics = app.Document.validatePropertyCommit(app.Registry);
-            if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
+            if strlength(source) == 0 || yamada.validation.ModelValidator.hasErrors(diagnostics)
                 return
             end
-            [source, renameDiagnostics] = macd.source.AppClassIdentityRewriter.rewrite( ...
+            [source, renameDiagnostics] = yamada.source.AppClassIdentityRewriter.rewrite( ...
                 source, targetClassName);
             diagnostics = [diagnostics renameDiagnostics];
             if updatePreview
@@ -3774,14 +3774,14 @@ classdef yamada < handle
             end
             app.refreshDiagnostics(diagnostics);
             app.updateSaveState(diagnostics);
-            if strlength(source) == 0 || macd.validation.ModelValidator.hasErrors(diagnostics)
+            if strlength(source) == 0 || yamada.validation.ModelValidator.hasErrors(diagnostics)
                 app.setStatus("Save is blocked by errors.");
                 return
             end
 
             % Reparse exact output before I/O, keeping saved and editable source epochs separate.
             try
-                checkpoint = macd.model.SavedSourceCheckpoint(app.Document, source, filePath, app.Registry);
+                checkpoint = yamada.model.SavedSourceCheckpoint(app.Document, source, filePath, app.Registry);
                 source = checkpoint.SourceText;
             catch exception
                 app.setStatus("Save is blocked: " + string(exception.message));
@@ -3922,13 +3922,13 @@ classdef yamada < handle
 
                 % Detect concurrent file changes across parsing without executing source.
                 before = app.Lifecycle.readSourceBytes(targetPath);
-                [document, diagnostics] = macd.source.AppSourceParser.parseFile(targetPath, app.Registry);
+                [document, diagnostics] = yamada.source.AppSourceParser.parseFile(targetPath, app.Registry);
                 after = app.Lifecycle.readSourceBytes(targetPath);
                 if ~isequal(before, after) || document.OriginalText ~= app.reloadText(before)
                     app.setStatus("Reload failed; the file changed while it was being read. Retry.");
                     return
                 end
-                if macd.validation.ModelValidator.hasErrors(diagnostics)
+                if yamada.validation.ModelValidator.hasErrors(diagnostics)
                     app.setStatus("Reload failed; source has parse errors. The current document is retained.");
                     return
                 end
@@ -4064,11 +4064,11 @@ classdef yamada < handle
             % updateSaveState Enable Save for valid documents, including new unsaved documents.
             arguments (Input)
                 app (1, 1) yamada
-                diagnostics macd.model.Diagnostic
+                diagnostics yamada.model.Diagnostic
             end
 
             % Keep the menu state synchronized with the current safety validation.
-            if ~isempty(app.Document) && ~macd.validation.ModelValidator.hasErrors(diagnostics)
+            if ~isempty(app.Document) && ~yamada.validation.ModelValidator.hasErrors(diagnostics)
                 app.SaveMenuItem.Enable = "on";
             else
                 app.SaveMenuItem.Enable = "off";

@@ -7,15 +7,15 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
     methods (Test)
         function cachedParentProjectionIsInvalidatedByRulesAndRegistration(testCase)
             % cachedParentProjectionIsInvalidatedByRulesAndRegistration Observe changes after a cache hit.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             first = registry.getEffectiveProperties("uilabel", "uigridlayout");
             testCase.verifyTrue(any(string({first.Path}) == "Layout.Row"));
             testCase.verifyEqual(registry.getEffectiveProperties("uilabel", "uigridlayout"), first);
-            registry.setParentContextRules(macd.model.ParentContextRule.empty);
+            registry.setParentContextRules(yamada.model.ParentContextRule.empty);
             plain = registry.getEffectiveProperties("uilabel", "uigridlayout");
             testCase.verifyFalse(any(string({plain.Path}) == "Layout.Row"));
-            replacement = macd.model.ComponentDefinition("uilabel", "matlab.ui.control.Label", ...
-                "uifigure", false, {}, macd.model.PropertyDefinition("Custom", 7, true, true));
+            replacement = yamada.model.ComponentDefinition("uilabel", "matlab.ui.control.Label", ...
+                "uifigure", false, {}, yamada.model.PropertyDefinition("Custom", 7, true, true));
             registry.register(replacement);
             replaced = registry.getEffectiveProperties("uilabel", "uigridlayout");
             testCase.verifyEqual(string({replaced.Path}), "Custom");
@@ -25,7 +25,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             % runtimeRegistryMatchesAuditedR2024aLedger Compare every variant with the audited ledger.
 
             % Resolve the generated catalog through the production loader.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             documents = ComponentRegistryBaselineTest.ledgerDocuments();
             expectedIds = sort(string(cellfun(@(document) document.id, documents, "UniformOutput", false)));
             testCase.verifyEqual(registry.listVariantIds(), expectedIds);
@@ -59,9 +59,9 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
                     actualSchema.matlabClasses = sort(reshape(string(actualSchema.matlabClasses), 1, []));
                     expectedSchema.matlabClasses = sort(reshape(string(expectedSchema.matlabClasses), 1, []));
                     testCase.verifyEqual(orderfields(actualSchema), orderfields(expectedSchema), context);
-                    policy = macd.model.PropertyApplicationPolicy();
+                    policy = yamada.model.PropertyApplicationPolicy();
                     if isfield(expected, "application")
-                        policy = macd.model.PropertyApplicationPolicy(expected.application);
+                        policy = yamada.model.PropertyApplicationPolicy(expected.application);
                     end
                     testCase.verifyEqual(actual.Application.ApplyAfter, policy.ApplyAfter);
                     testCase.verifyEqual(actual.Application.EffectPolicy, policy.EffectPolicy);
@@ -75,7 +75,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
                     if string(expected.valueContract.kind) == "callback"
                         testCase.verifyEqual(actual.HandlerSuffix, string(expected.handlerSuffix));
                         contract = rmfield(expected.callbackSignature, "evidence");
-                        testCase.verifyEqual(actual.CallbackSignature, macd.model.CallbackSignature(contract));
+                        testCase.verifyEqual(actual.CallbackSignature, yamada.model.CallbackSignature(contract));
                         testCase.verifyFalse(isfield(actual.Metadata.callbackSignature, "evidence"));
                     end
                 end
@@ -88,16 +88,16 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
         function editablePropertiesProjectToSupportedInspectorEditors(testCase)
             % editablePropertiesProjectToSupportedInspectorEditors Verify every editable capability has a row adapter.
 
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             templates = registry.inspectorRows();
             for id = registry.listVariantIds()
                 definition = registry.getById(id);
-                states = repmat(struct("Definition", macd.model.PropertyDefinition()), ...
+                states = repmat(struct("Definition", yamada.model.PropertyDefinition()), ...
                     1, numel(definition.Properties));
                 for propertyIndex = 1:numel(definition.Properties)
                     states(propertyIndex).Definition = definition.Properties(propertyIndex);
                 end
-                rows = macd.ui.inspector.InspectorSurfaceBuilder.build( ...
+                rows = yamada.ui.inspector.InspectorSurfaceBuilder.build( ...
                     id, "", states, templates);
                 for rowIndex = 1:numel(rows)
                     members = definition.Properties(rows(rowIndex).MemberIndices);
@@ -112,7 +112,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
                             id + ":" + rows(rowIndex).Id);
                     else
                         testCase.verifyTrue( ...
-                            macd.ui.inspector.PropertyEditorFactory.supportsEditing(members), ...
+                            yamada.ui.inspector.PropertyEditorFactory.supportsEditing(members), ...
                             id + ":" + members.Path);
                     end
                 end
@@ -123,7 +123,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             % editableEnumContractsRetainCompleteFiniteChoices Require dropdown choices for every editable enum.
 
             % Prevent incomplete documentation from silently producing disabled enum editors.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for id = registry.listVariantIds()
                 definition = registry.getById(id);
                 for property = definition.Properties
@@ -141,7 +141,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
 
         function checkboxTreeGeometryRetainsNativeAndProductAccessBoundaries(testCase)
             % checkboxTreeGeometryRetainsNativeAndProductAccessBoundaries Keep writable source aliases distinct from inspector capabilities.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             definition = registry.getById("uitree-checkbox");
             position = definition.Properties([definition.Properties.Path] == "Position");
             inner = definition.Properties([definition.Properties.Path] == "InnerPosition");
@@ -166,7 +166,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             % effectivePropertiesRemainUniqueForEveryConcreteVariant Check all direct-parent projections.
 
             % Resolve every allowed parent using the concrete variant's constructor arguments.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for id = registry.listVariantIds()
                 definition = registry.getById(id);
                 parents = definition.AllowedParentFactories;
@@ -190,7 +190,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             % verifyInspectorRows Compare every runtime row field with the reviewed presentation ledger.
             arguments (Input)
                 testCase (1, 1) ComponentRegistryBaselineTest
-                registry (1, 1) macd.model.ComponentRegistry
+                registry (1, 1) yamada.model.ComponentRegistry
             end
 
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));

@@ -6,7 +6,7 @@ arguments (Output)
 end
 
 % Use valid factory calls so multiple roots cannot be mistaken for absent roots.
-registry = macd.model.ComponentRegistry.createDefault();
+registry = yamada.model.ComponentRegistry.createDefault();
 counts = zeros(1, 3);
 for expectedCount = 0:2
     lines = ["classdef ContractApp < handle"; "properties"; ...
@@ -15,14 +15,14 @@ for expectedCount = 0:2
     if expectedCount >= 1, lines(end + 1) = "app.Main = uifigure();"; end %#ok<AGROW>
     if expectedCount >= 2, lines(end + 1) = "app.Other = uifigure();"; end %#ok<AGROW>
     source = strjoin([lines; "end"; "end"; "end"], newline);
-    [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+    [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
     counts(expectedCount + 1) = nnz(string({document.Components.Factory}) == "uifigure");
     assert(counts(expectedCount + 1) == expectedCount, ...
         "test:HandleRootRecognition", "Root factory calls were not recognized.");
     rootError = any(string({diagnostics.Code}) == "invalid-root-count");
     assert(rootError == (expectedCount ~= 1), ...
         "test:HandleRootCount", "The root-count contract was not enforced.");
-    assert(macd.validation.ModelValidator.hasErrors(diagnostics) == (expectedCount ~= 1), ...
+    assert(yamada.validation.ModelValidator.hasErrors(diagnostics) == (expectedCount ~= 1), ...
         "test:HandleRootValidation", "Unexpected model validation result.");
 end
 result = struct("RecognizedCounts", counts, "Passed", true);

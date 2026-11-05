@@ -13,7 +13,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             [document, registry] = fixture();
             source = replace(document.CurrentText, "uibutton(app.UIFigure, ""push"")", ...
                 "uibutton(app.UIFigure, ""push"", FontSize=13)");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             button = document.getComponentByName("BottomRightButton");
             if Operation == "callbackDelete", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry); end
             switch Operation
@@ -25,8 +25,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             end
             verifyBindings(testCase, document, registry);
             document.ClassName = "SavedCommandHistory";
-            source = macd.source.AppClassIdentityRewriter.rewrite(document.CurrentText, document.ClassName);
-            checkpoint = macd.model.SavedSourceCheckpoint(document, source, document.ClassName + ".m", registry);
+            source = yamada.source.AppClassIdentityRewriter.rewrite(document.CurrentText, document.ClassName);
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, document.ClassName + ".m", registry);
             document.confirmSavedSource(checkpoint, registry); saved = document.CurrentText;
             document.undo(); verifyBindings(testCase, document, registry);
             document.redo(); verifyBindings(testCase, document, registry);
@@ -53,7 +53,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             [document, registry] = fixture();
             source = replace(document.CurrentText, "app.TopLeftLabel.Text = ""Top left"";", ...
                 "app.TopLeftLabel.Text = ""Top left"";" + newline + "app.TopLeftLabel.UnrecognizedSetting = 1;");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyTrue(document.Metadata.HasUnrecognizedSetter);
             label = document.getComponentByName("TopLeftLabel");
             document.removeSubtree(label.Id, registry);
@@ -92,18 +92,18 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             [document, registry] = fixture();
             source = replace(document.CurrentText, "    properties (Access = public)", ...
                 "    properties (Access = public)" + newline + "        UserData double");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             owner = document.getComponentByName("TopLeftLabel");
             document.setProperty(owner.Id, "Tooltip", "app.TopLeftLabel and UserData", registry);
             before = document.CurrentText; history = document.HistoryIndex;
             testCase.verifyError(@() document.renameComponent(owner.Id, "UserData", registry), ...
-                "macd:DocumentModel:ComponentNameCollision");
+                "yamada:DocumentModel:ComponentNameCollision");
             testCase.verifyEqual(document.CurrentText, before); testCase.verifyEqual(document.HistoryIndex, history);
             document.renameComponent(owner.Id, "LongerLabel", registry);
             testCase.verifyEqual(owner.getProperty("Tooltip").LiteralValue, "app.TopLeftLabel and UserData");
             pasted = document.pasteSubtree(document.copySubtree(owner.Id, registry), document.RootComponentId, registry);
             testCase.verifyError(@() document.renameComponent(owner.Id, pasted.Name, registry), ...
-                "macd:DocumentModel:ComponentNameCollision");
+                "yamada:DocumentModel:ComponentNameCollision");
             verifyBindings(testCase, document, registry);
             document.undo(); document.undo(); verifyBindings(testCase, document, registry);
             document.redo(); document.redo(); verifyBindings(testCase, document, registry);
@@ -117,9 +117,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             document.renameComponent(owner.Id, "ANameLongEnoughToMovePositions", registry);
             pasted = document.pasteSubtree(document.copySubtree(owner.Id, registry), document.RootComponentId, registry);
             document.ClassName = "SavedWithADifferentClassName";
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            source = macd.source.AppClassIdentityRewriter.rewrite(source, document.ClassName);
-            checkpoint = macd.model.SavedSourceCheckpoint(document, source, document.ClassName + ".m", registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.AppClassIdentityRewriter.rewrite(source, document.ClassName);
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, document.ClassName + ".m", registry);
             document.confirmSavedSource(checkpoint, registry);
             saved = document.CurrentText; verifyBindings(testCase, document, registry);
             document.undo(); verifyBindings(testCase, document, registry);
@@ -155,9 +155,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             document.renameComponent(owner.Id, "BuilderRenamedLabel", registry);
             verifyBindings(testCase, document, registry);
             document.ClassName = "SavedBuilderRename";
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            source = macd.source.AppClassIdentityRewriter.rewrite(source, document.ClassName);
-            checkpoint = macd.model.SavedSourceCheckpoint(document, source, document.ClassName + ".m", registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.AppClassIdentityRewriter.rewrite(source, document.ClassName);
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, document.ClassName + ".m", registry);
             document.confirmSavedSource(checkpoint, registry); saved = document.CurrentText;
             document.undo(); verifyBindings(testCase, document, registry);
             testCase.verifyEmpty(owner.getProperty("Tooltip"));
@@ -173,22 +173,22 @@ end
 function [document, registry] = fixture()
 % fixture Load a small app containing absolute and Grid-managed components.
 arguments (Output)
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
 end
-registry = macd.model.ComponentRegistry.createDefault();
+registry = yamada.model.ComponentRegistry.createDefault();
 root = fileparts(fileparts(mfilename("fullpath")));
-document = macd.source.AppSourceParser.parseText(string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m"))), registry);
+document = yamada.source.AppSourceParser.parseText(string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m"))), registry);
 end
 
 function verifyBindings(testCase, document, registry)
 % verifyBindings Check public source, values and occurrence ownership against a fresh independent load.
 arguments (Input)
     testCase (1, 1) matlab.unittest.TestCase
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
 end
-reference = macd.source.AppSourceParser.parseText(document.CurrentText, registry);
+reference = yamada.source.AppSourceParser.parseText(document.CurrentText, registry);
 actual = document.sourceAnalysis().Statements; expected = reference.sourceAnalysis().Statements;
 testCase.assertNumElements(actual, numel(expected));
 for index = 1:numel(actual)
@@ -216,7 +216,7 @@ for owner = document.Components
     end
 end
 document.validatePropertyCommit(registry);
-testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(document.Diagnostics));
+testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(document.Diagnostics));
 end
 
 %{

@@ -4,16 +4,16 @@ function evidence = verifyCallbackKeyboard()
 arguments (Output)
     evidence (1, 1) struct
 end
-states = [macd.model.CallbackState("FirstFcn", "absent"), ...
-    macd.model.CallbackState("SecondFcn", "editable", "", "existing"), ...
-    macd.model.CallbackState("UnsafeFcn", "unsupported", "Shared handler")];
+states = [yamada.model.CallbackState("FirstFcn", "absent"), ...
+    yamada.model.CallbackState("SecondFcn", "editable", "", "existing"), ...
+    yamada.model.CallbackState("UnsafeFcn", "unsupported", "Shared handler")];
 actions = 0;
 reloads = 0;
-dialog = macd.ui.CallbackManagerDialog("Keyboard Verification", @() states, @action, @() true, true, @reload, ...
+dialog = yamada.ui.CallbackManagerDialog("Keyboard Verification", @() states, @action, @() true, true, @reload, ...
     @(~) struct("Name", "existing", "Label", "existing(app)"));
 cleanup = onCleanup(@() deleteIfValid(dialog));
-popup = findall(0, "Tag", "macd-callback-manager");
-control = findall(popup, "Tag", "macd-callback-target", "UserData", "FirstFcn");
+popup = findall(0, "Tag", "yamada-callback-manager");
+control = findall(popup, "Tag", "yamada-callback-target", "UserData", "FirstFcn");
 drawnow;
 windows = matlab.internal.webwindowmanager.instance.findAllWebwindows();
 owned = windows(arrayfun(@(window) string(window.Title) == "Callbacks: Keyboard Verification", windows));
@@ -21,18 +21,18 @@ assert(isscalar(owned));
 owned.bringToFront();
 titlePath = string(tempname) + ".txt";
 titleCleanup = onCleanup(@() delete(titlePath));
-macd.source.SourceWriter.write(titlePath, string(popup.Name), "LF");
+yamada.source.SourceWriter.write(titlePath, string(popup.Name), "LF");
 helper = fullfile(fileparts(mfilename("fullpath")), "focusVerificationWindow.ps1");
 [status, message] = system("powershell.exe -NoProfile -ExecutionPolicy Bypass -File """ + ...
     helper + """ -TitleFile """ + titlePath + """ -OwnerProcessId " + feature("getpid"));
-assert(status == 0, "macd:CallbackKeyboard:ActivateFailed", "%s", message);
+assert(status == 0, "yamada:CallbackKeyboard:ActivateFailed", "%s", message);
 robot = javaObject("java.awt.Robot");
 robot.setAutoDelay(150);
 waitForText(owned, "<Disconnect>", control);
 sendKey(owned, robot, 9);
 waitForText(owned, "existing(app)");
 test = matlab.uitest.TestCase.forInteractiveUse;
-control = findall(popup, "Tag", "macd-callback-target", "UserData", "SecondFcn");
+control = findall(popup, "Tag", "yamada-callback-target", "UserData", "SecondFcn");
 test.choose(control, "<Disconnect>");
 started = tic;
 while actions == 0 && toc(started) < 10, drawnow; end
@@ -48,7 +48,7 @@ disp(evidence);
         % action Record one native keyboard activation and update authoritative state.
         assert(name == "SecondFcn" && command == "Disconnect");
         actions = actions + 1;
-        states(2) = macd.model.CallbackState("SecondFcn", "absent");
+        states(2) = yamada.model.CallbackState("SecondFcn", "absent");
         message = "";
     end
 
@@ -78,13 +78,13 @@ while toc(started) < 10
     if value == text, return, end
 end
 details = string(window.executeJS("JSON.stringify({tag:document.activeElement.tagName,classes:document.activeElement.className,parent:document.activeElement.parentElement.getAttribute('style')})"));
-error("macd:CallbackKeyboard:FocusTimeout", "Expected keyboard focus on %s; actual: %s. %s", text, value, details);
+error("yamada:CallbackKeyboard:FocusTimeout", "Expected keyboard focus on %s; actual: %s. %s", text, value, details);
 end
 
 function deleteIfValid(dialog)
 % deleteIfValid Release the verification dialog without repeating destruction.
 arguments (Input)
-    dialog (1, 1) macd.ui.CallbackManagerDialog
+    dialog (1, 1) yamada.ui.CallbackManagerDialog
 end
 if isvalid(dialog), delete(dialog); end
 end
@@ -97,7 +97,7 @@ arguments (Input)
     key (1, 1) double
 end
 assert(window.isFocused && window.isWindowActive, ...
-    "macd:CallbackKeyboard:NotFocused", "The verification popup must own keyboard focus.");
+    "yamada:CallbackKeyboard:NotFocused", "The verification popup must own keyboard focus.");
 robot.keyPress(key);
 robot.keyRelease(key);
 drawnow;

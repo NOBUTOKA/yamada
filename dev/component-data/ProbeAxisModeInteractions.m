@@ -81,7 +81,7 @@ end
 % Persist supplemental facts separately from documentation and runtime metadata.
 artifact = struct("matlabRelease", "R2024a", "results", results, "couplings", probeCouplings(figure));
 file = fopen(outputPath, "w", "n", "UTF-8");
-assert(file >= 0, "macd:ProbeAxisModeInteractions:WriteFailed", "Cannot open probe output.");
+assert(file >= 0, "yamada:ProbeAxisModeInteractions:WriteFailed", "Cannot open probe output.");
 fileCleanup = onCleanup(@() fclose(file));
 fprintf(file, "%s\n", jsonencode(artifact, "PrettyPrint", true));
 fprintf("AXIS_MODE_PROBE Cases=%d Errors=%d\n", numel(results), sum(strlength(string({results.Error})) > 0));

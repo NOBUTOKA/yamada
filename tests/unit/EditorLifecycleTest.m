@@ -9,7 +9,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             [target, source] = reloadFixture();
             fileCleanup = onCleanup(@() deleteTemporaryFile(target));
             [confirm, count] = externalPromptCounter();
-            service = macd.ui.DocumentLifecycleService(struct( ...
+            service = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() deal(true, target), ...
                 "ConfirmExternalSourceChangeFcn", confirm));
             app = yamada(service);
@@ -23,12 +23,12 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % Repeated activation of one dismissed revision leaves model and history intact.
             revisionA = source + "% Revision A" + newline;
             revisionB = source + "% Revision B" + newline;
-            macd.source.SourceWriter.write(target, revisionA, "CRLF");
+            yamada.source.SourceWriter.write(target, revisionA, "CRLF");
             notify(window, "FigureActivated");
             notify(window, "FigureActivated");
             testCase.verifyEqual(count(), 1);
             testCase.verifyTrue(app.Document == original);
-            macd.source.SourceWriter.write(target, revisionB, "CRLF");
+            yamada.source.SourceWriter.write(target, revisionB, "CRLF");
             notify(window, "FigureActivated");
             testCase.verifyEqual(count(), 2);
 
@@ -36,22 +36,22 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
             testCase.verifyFalse(app.Document == original);
             testCase.verifyEqual(app.Document.OriginalText, string(fileread(target)));
-            macd.source.SourceWriter.write(target, revisionA, "CRLF");
+            yamada.source.SourceWriter.write(target, revisionA, "CRLF");
             notify(window, "FigureActivated");
             testCase.verifyEqual(count(), 3);
 
             % Save clears the dismissed revision even when its text returns later.
             invokeEditorMenu("Save");
-            macd.source.SourceWriter.write(target, revisionA, "CRLF");
+            yamada.source.SourceWriter.write(target, revisionA, "CRLF");
             notify(window, "FigureActivated");
             testCase.verifyEqual(count(), 4);
             notify(window, "FigureActivated");
             testCase.verifyEqual(count(), 4);
 
             % Reopening establishes a new comparison and dismissal scope.
-            macd.source.SourceWriter.write(target, revisionB, "CRLF");
+            yamada.source.SourceWriter.write(target, revisionB, "CRLF");
             invokeEditorMenu("Open...");
-            macd.source.SourceWriter.write(target, revisionA, "CRLF");
+            yamada.source.SourceWriter.write(target, revisionA, "CRLF");
             notify(window, "FigureActivated");
             testCase.verifyEqual(count(), 5);
         end
@@ -70,7 +70,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                 notify(window, "FigureActivated");
                 testCase.verifyTrue(app.Document == original);
                 addPaletteComponent("Button");
-                macd.source.SourceWriter.write(target, source + "% External revision" + newline, "CRLF");
+                yamada.source.SourceWriter.write(target, source + "% External revision" + newline, "CRLF");
                 notify(window, "FigureActivated");
                 if accepted
                     testCase.verifyFalse(app.Document == original);
@@ -115,11 +115,11 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % reloadChangedReadAndSaveFailureRetainCurrentState Reject changing snapshots and failed saves atomically.
             [target, ~] = reloadFixture();
             fileCleanup = onCleanup(@() deleteTemporaryFile(target));
-            service = macd.ui.DocumentLifecycleService(struct( ...
+            service = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() deal(true, target), "ReadSourceBytesFcn", changingReader(target)));
             app = yamada(service);
             appCleanup = onCleanup(@() deleteIfValid(app));
-            tool = findall(editorFigure(), "Tag", "macd-refresh-source");
+            tool = findall(editorFigure(), "Tag", "yamada-refresh-source");
             testCase.verifyEqual(string(tool.Enable), "off");
             invokeEditorMenu("Open...");
             original = app.Document;
@@ -145,11 +145,11 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             for entry = 1:3
-                macd.source.SourceWriter.write(target, source + "% Revision " + entry + newline, "CRLF");
+                yamada.source.SourceWriter.write(target, source + "% Revision " + entry + newline, "CRLF");
                 if entry == 1
                     invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
                 elseif entry == 2
-                    tool = findall(editorFigure(), "Tag", "macd-refresh-source");
+                    tool = findall(editorFigure(), "Tag", "yamada-refresh-source");
                     tool.ClickedCallback(tool, []);
                 else
                     figure = editorFigure();
@@ -169,7 +169,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             original = app.Document;
-            macd.source.SourceWriter.write(target, "not an handle-based class", "CRLF");
+            yamada.source.SourceWriter.write(target, "not an handle-based class", "CRLF");
             invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
             testCase.verifyTrue(app.Document == original);
             addPaletteComponent("Button");
@@ -193,7 +193,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                 appCleanup = onCleanup(@() deleteIfValid(app));
                 invokeEditorMenu("Open...");
                 addPaletteComponent("Button");
-                macd.source.SourceWriter.write(target, source + "% External edit" + newline, "CRLF");
+                yamada.source.SourceWriter.write(target, source + "% External edit" + newline, "CRLF");
                 invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
                 testCase.verifySubstring(string(fileread(target)), "% External edit");
                 if saveTarget == target
@@ -205,7 +205,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                     testCase.verifySubstring(app.Document.OriginalText, "% External edit");
                 end
                 clear appCleanup
-                macd.source.SourceWriter.write(target, source, "CRLF");
+                yamada.source.SourceWriter.write(target, source, "CRLF");
             end
         end
 
@@ -269,9 +269,9 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % saveExistingTargetSkipsChooser Preserve direct Save for an existing confirmed file.
             target = reloadFixture();
             cleanupFile = onCleanup(@() deleteTemporaryFile(target));
-            service = macd.ui.DocumentLifecycleService(struct( ...
+            service = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() deal(true, target), ...
-                "RequestSavePathFcn", @(~) error("macd:EditorLifecycleTest:UnexpectedSaveAs", "Existing Save must not open a chooser.")));
+                "RequestSavePathFcn", @(~) error("yamada:EditorLifecycleTest:UnexpectedSaveAs", "Existing Save must not open a chooser.")));
             app = yamada(service);
             cleanupApp = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
@@ -287,7 +287,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
 
             target = string(tempname) + ".m";
             cleanup = onCleanup(@() deleteTemporaryFile(target));
-            macd.source.SourceWriter.write(target, "original", "CRLF");
+            yamada.source.SourceWriter.write(target, "original", "CRLF");
             refused = lifecycleForTest(struct("SavePath", target, ...
                 "SaveAccepted", true, "FileExists", true, "ReplaceAccepted", false));
             app = yamada(refused);
@@ -375,7 +375,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
                 "app.Choice = uidropdown(app.UIFigure, Items=[""A"" ""B""], Value='A');", ...
                 "app.Choice.Value = 'B';", "end", "end", "end"], sprintf('\r\n'));
-            macd.source.SourceWriter.write(originalPath, source, "CRLF");
+            yamada.source.SourceWriter.write(originalPath, source, "CRLF");
             app = yamada(lifecycleForTest(struct("OpenPath", originalPath, "SavePath", target)));
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
@@ -417,7 +417,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % failedSecondWriteKeepsConfirmedCheckpoint Retain saved source, dirty intentions, and history on write failure.
             target = string(tempname) + ".m";
             targetCleanup = onCleanup(@() deleteTemporaryFile(target));
-            service = macd.ui.DocumentLifecycleService(struct( ...
+            service = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestSavePathFcn", @(~) deal(true, target), ...
                 "WriteSourceFcn", failingSecondWriter()));
             app = yamada(service);
@@ -541,7 +541,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyTrue(app.Document.IsDirty);
             figure = editorFigure();
             figure.CloseRequestFcn(figure, struct());
-            testCase.verifyEmpty(findall(0, "Type", "figure", "Tag", "macd-yamada-editor"));
+            testCase.verifyEmpty(findall(0, "Type", "figure", "Tag", "yamada-editor"));
             testCase.verifyTrue(isfile(target));
 
             discarded = lifecycleForTest(struct("UnsavedChoice", "Discard"));
@@ -550,7 +550,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyTrue(app.Document.IsDirty);
             figure = editorFigure();
             figure.CloseRequestFcn(figure, struct());
-            testCase.verifyEmpty(findall(0, "Type", "figure", "Tag", "macd-yamada-editor"));
+            testCase.verifyEmpty(findall(0, "Type", "figure", "Tag", "yamada-editor"));
 
             clean = lifecycleForTest(struct("SavePath", target, ...
                 "SaveAccepted", true, "ConfirmMustNotRun", true));
@@ -559,7 +559,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyFalse(app.Document.IsDirty);
             figure = editorFigure();
             figure.CloseRequestFcn(figure, struct());
-            testCase.verifyEmpty(findall(0, "Type", "figure", "Tag", "macd-yamada-editor"));
+            testCase.verifyEmpty(findall(0, "Type", "figure", "Tag", "yamada-editor"));
             clear cleanupFile
         end
     end
@@ -576,9 +576,9 @@ writer = @write;
         % write Write the first output and inject a failure for later writes.
         count = count + 1;
         if count > 1
-            error("macd:EditorLifecycleTest:WriteFailed", "Injected second write failure.");
+            error("yamada:EditorLifecycleTest:WriteFailed", "Injected second write failure.");
         end
-        macd.source.SourceWriter.write(path, source, lineEnding);
+        yamada.source.SourceWriter.write(path, source, lineEnding);
     end
 end
 
@@ -606,12 +606,12 @@ arguments (Output)
     target (1, 1) string
     source (1, 1) string
 end
-registry = macd.model.ComponentRegistry.createDefault();
-document = macd.model.NewAppFactory.createEmpty("ReloadFixture", registry);
+registry = yamada.model.ComponentRegistry.createDefault();
+document = yamada.model.NewAppFactory.createEmpty("ReloadFixture", registry);
 document.insertComponent(registry, "uibutton", document.RootComponentId);
-source = macd.source.RoundTripGenerator(registry).generate(document);
+source = yamada.source.RoundTripGenerator(registry).generate(document);
 target = string(tempname) + ".m";
-macd.source.SourceWriter.write(target, source, "CRLF");
+yamada.source.SourceWriter.write(target, source, "CRLF");
 end
 
 function service = lifecycleForTest(options)
@@ -642,7 +642,7 @@ callbacks = struct( ...
     "FileExistsFcn", @(path) fileExistsForTest(path, options.FileExists), ...
     "WriteSourceFcn", @(path, source, lineEnding) writeForTest( ...
     path, source, lineEnding, options.WriteSucceeds));
-service = macd.ui.DocumentLifecycleService(callbacks);
+service = yamada.ui.DocumentLifecycleService(callbacks);
 end
 
 function result = fileExistsForTest(path, override)
@@ -686,7 +686,7 @@ end
 function choice = unsavedChoice(options)
 % unsavedChoice Return one configured unsaved-document response.
 if options.ConfirmMustNotRun
-    error("macd:EditorLifecycleTest:UnexpectedConfirmation", ...
+    error("yamada:EditorLifecycleTest:UnexpectedConfirmation", ...
         "A clean document must not ask about unsaved changes.");
 end
 choice = string(options.UnsavedChoice);
@@ -695,16 +695,16 @@ end
 function writeForTest(path, source, lineEnding, succeeds)
 % writeForTest Write source or raise the configured injected failure.
 if ~succeeds
-    error("macd:EditorLifecycleTest:WriteFailed", "Injected write failure.");
+    error("yamada:EditorLifecycleTest:WriteFailed", "Injected write failure.");
 end
-macd.source.SourceWriter.write(path, source, lineEnding);
+yamada.source.SourceWriter.write(path, source, lineEnding);
 end
 
 function invokeEditorMenu(text)
 % invokeEditorMenu Trigger one editor menu callback by its visible text.
 menus = findall(editorFigure(), "Type", "uimenu");
 menu = menus(erase(string({menus.Text}), "&") == text);
-assert(isscalar(menu), "macd:EditorLifecycleTest:MissingMenu", ...
+assert(isscalar(menu), "yamada:EditorLifecycleTest:MissingMenu", ...
     "Expected one editor menu named ""%s"".", text);
 menu.MenuSelectedFcn(menu, struct());
 drawnow;
@@ -716,7 +716,7 @@ palette = findall(editorFigure(), "Type", "uitable");
 palette = palette(arrayfun(@(candidate) any(string(candidate.ColumnName) == "Component") && ...
     any(string(candidate.ColumnName) == "Category"), palette));
 row = find(string(palette.Data(:, 1)) == name, 1);
-assert(~isempty(row), "macd:EditorLifecycleTest:MissingPaletteComponent", ...
+assert(~isempty(row), "yamada:EditorLifecycleTest:MissingPaletteComponent", ...
     "Expected palette component ""%s"".", name);
 palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
 drawnow;
@@ -746,8 +746,8 @@ end
 
 function figure = editorFigure()
 % editorFigure Return the one stable-tag editor figure.
-figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
-assert(isscalar(figure), "macd:EditorLifecycleTest:MissingEditor", ...
+figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
+assert(isscalar(figure), "yamada:EditorLifecycleTest:MissingEditor", ...
     "Expected one editor figure.");
 end
 

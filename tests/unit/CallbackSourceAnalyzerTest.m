@@ -6,7 +6,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
     methods (Test)
         function sharesCandidateScansAcrossParsedOwners(testCase)
             % sharesCandidateScansAcrossParsedOwners Scan the source once per callback name across many component queries.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = CallbackSourceAnalyzerTest.fixture("", "");
             declarations = strings(1, 24);
             creations = strings(1, 24);
@@ -19,11 +19,11 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
                 strjoin(["Button matlab.ui.control.Button", declarations], newline));
             source = replace(source, "app.Button = uibutton(app.UIFigure);", ...
                 strjoin(["app.Button = uibutton(app.UIFigure);", creations], newline));
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             buttons = document.Components(string({document.Components.Factory}) == "uibutton");
             for repeat = 1:2
                 for button = buttons
-                    states = macd.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
+                    states = yamada.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
                     testCase.verifyTrue(all(string({states.State}) == "absent"));
                 end
             end
@@ -60,37 +60,37 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
             copy = document.structuralCandidate();
             document.OriginalText = replace(source, "app.Button = uibutton(app.UIFigure);", ...
                 "app.Button = uibutton(app.UIFigure);" + newline + "app.Button.ButtonPushedFcn = @app.Pressed;");
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             button = document.getComponentByName("Button");
-            states = macd.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
+            states = yamada.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
             testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "editable");
             button = copy.getComponentByName("Button");
-            states = macd.source.CallbackSourceAnalyzer.analyze(copy, button.Id, registry);
+            states = yamada.source.CallbackSourceAnalyzer.analyze(copy, button.Id, registry);
             testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "absent");
-            button.SourceSpans.Creation = macd.model.SourceSpan(1, 1);
-            states = macd.source.CallbackSourceAnalyzer.analyze(copy, button.Id, registry);
+            button.SourceSpans.Creation = yamada.model.SourceSpan(1, 1);
+            states = yamada.source.CallbackSourceAnalyzer.analyze(copy, button.Id, registry);
             testCase.verifyTrue(all(string({states.State}) == "unsupported"));
         end
 
         function recognizesOwnedMethodIncludingNestedBlocks(testCase)
             % recognizesOwnedMethodIncludingNestedBlocks Locate complete method help and body.
-            evalin("base", "clear macdCallbackAnalyzerSentinel");
+            evalin("base", "clear yamadaCallbackAnalyzerSentinel");
             source = CallbackSourceAnalyzerTest.fixture( ...
                 "app.Button.ButtonPushedFcn = @app.Pressed;", ...
-                ["if true"; "assignin('base','macdCallbackAnalyzerSentinel',true);"; "end"]);
+                ["if true"; "assignin('base','yamadaCallbackAnalyzerSentinel',true);"; "end"]);
             [state, document] = CallbackSourceAnalyzerTest.inspect(source);
             testCase.verifyEqual(state.State, "editable");
             testCase.verifyEqual(state.HandlerName, "Pressed");
             method = extractBetween(source, state.MethodSpan.StartOffset, state.MethodSpan.EndOffset);
             testCase.verifySubstring(method, "% Pressed Keep the test callback inert.");
-            testCase.verifySubstring(method, "assignin('base','macdCallbackAnalyzerSentinel',true);");
+            testCase.verifySubstring(method, "assignin('base','yamadaCallbackAnalyzerSentinel',true);");
             testCase.verifyTrue(endsWith(strtrim(method), "end"));
             testCase.verifyEqual(document.OriginalText, source);
             testCase.verifyEmpty(document.History);
             testCase.verifyFalse(document.IsDirty);
-            generated = macd.source.RoundTripGenerator().generate(document);
+            generated = yamada.source.RoundTripGenerator().generate(document);
             testCase.verifyEqual(generated, source);
-            testCase.verifyEqual(evalin("base", "exist('macdCallbackAnalyzerSentinel','var')"), 0);
+            testCase.verifyEqual(evalin("base", "exist('yamadaCallbackAnalyzerSentinel','var')"), 0);
         end
 
         function recognizesAbsentAndExplicitlyEmptyBindings(testCase)
@@ -150,14 +150,14 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
                 testCase.verifyEqual(state.State, "editable", expression);
                 testCase.verifyEqual(state.HandlerName, "Pressed", expression);
                 testCase.verifyTrue(state.MethodSpan.isKnown(), expression);
-                testCase.verifyEqual(macd.source.RoundTripGenerator().generate(document), source);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator().generate(document), source);
                 testCase.verifyEmpty(document.History);
             end
         end
 
         function handlerNamesMayContainCallbackPropertyNames(testCase)
             % handlerNamesMayContainCallbackPropertyNames Match callback identifiers without confusing handler suffixes.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for name = ["ButtonPushedFcn", "CellEditCallback"]
                 handler = "SampleTable" + name;
                 source = CallbackSourceAnalyzerTest.fixture( ...
@@ -167,17 +167,17 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
                     source = replace(source, "Button matlab.ui.control.Button", "Button matlab.ui.control.Table");
                     source = replace(source, "uibutton(app.UIFigure)", "uitable(app.UIFigure)");
                 end
-                document = macd.source.AppSourceParser.parseText(source, registry);
+                document = yamada.source.AppSourceParser.parseText(source, registry);
                 component = document.getComponentByName("Button");
-                states = macd.source.CallbackSourceAnalyzer.analyze(document, component.Id, registry);
+                states = yamada.source.CallbackSourceAnalyzer.analyze(document, component.Id, registry);
                 state = states(string({states.Name}) == name);
                 testCase.verifyEqual(state.State, "editable", name);
                 testCase.verifyEqual(state.HandlerName, handler);
                 document.applyCallbackAction(component.Id, name, "Delete", registry);
-                removed = macd.source.RoundTripGenerator(registry).generate(document);
+                removed = yamada.source.RoundTripGenerator(registry).generate(document);
                 testCase.verifyFalse(contains(removed, handler));
                 document.undo();
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             end
         end
 
@@ -226,49 +226,49 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
 
         function generatedInsertionRechecksChangedParsedAnchors(testCase)
             % generatedInsertionRechecksChangedParsedAnchors Share source analysis without sharing mutable eligibility.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText( ...
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText( ...
                 CallbackSourceAnalyzerTest.fixture("", ""), registry);
-            generated = macd.model.ComponentRecord("new-button", "NewButton", "uibutton", ...
+            generated = yamada.model.ComponentRecord("new-button", "NewButton", "uibutton", ...
                 "matlab.ui.control.Button", "generated");
             document.addComponent(generated, document.RootComponentId);
             shared = document.sourceAnalysis();
-            states = macd.source.CallbackSourceAnalyzer.analyze(document, generated.Id, registry);
+            states = yamada.source.CallbackSourceAnalyzer.analyze(document, generated.Id, registry);
             testCase.verifyTrue(all(string({states.State}) == "absent"));
             candidate = document.structuralCandidate();
             button = candidate.getComponentByName("Button");
             original = button.SourceSpans;
-            for creation = {[], macd.model.SourceSpan(1, 1), macd.model.SourceSpan()}
+            for creation = {[], yamada.model.SourceSpan(1, 1), yamada.model.SourceSpan()}
                 changed = original;
                 changed.Creation = creation{1};
                 button.SourceSpans = changed;
-                rejected = macd.source.CallbackSourceAnalyzer.analyze(candidate, generated.Id, registry);
+                rejected = yamada.source.CallbackSourceAnalyzer.analyze(candidate, generated.Id, registry);
                 testCase.verifyTrue(all(string({rejected.State}) == "unsupported"));
                 testCase.verifyEqual(candidate.sourceAnalysis(), shared);
-                retained = macd.source.CallbackSourceAnalyzer.analyze(document, generated.Id, registry);
+                retained = yamada.source.CallbackSourceAnalyzer.analyze(document, generated.Id, registry);
                 testCase.verifyEqual(retained, states);
             end
             button.SourceSpans = original;
-            testCase.verifyEqual(macd.source.CallbackSourceAnalyzer.analyze(candidate, generated.Id, registry), states);
-            reloaded = macd.source.AppSourceParser.parseText( ...
+            testCase.verifyEqual(yamada.source.CallbackSourceAnalyzer.analyze(candidate, generated.Id, registry), states);
+            reloaded = yamada.source.AppSourceParser.parseText( ...
                 replace(document.OriginalText, "app.Button = uibutton(app.UIFigure);", ...
                 "if true" + newline + "app.Button = uibutton(app.UIFigure);" + newline + "end"), registry);
-            replacement = macd.model.ComponentRecord("new-button", "NewButton", "uibutton", ...
+            replacement = yamada.model.ComponentRecord("new-button", "NewButton", "uibutton", ...
                 "matlab.ui.control.Button", "generated");
             reloaded.addComponent(replacement, reloaded.RootComponentId);
-            rejected = macd.source.CallbackSourceAnalyzer.analyze(reloaded, replacement.Id, registry);
+            rejected = yamada.source.CallbackSourceAnalyzer.analyze(reloaded, replacement.Id, registry);
             testCase.verifyTrue(all(string({rejected.State}) == "unsupported"));
             testCase.verifyNotEqual(reloaded.sourceAnalysis(), shared);
         end
 
         function newComponentCallbacksAreAbsentAndMissingHandlersAreUnsupported(testCase)
             % newComponentCallbacksAreAbsentAndMissingHandlersAreUnsupported Cover generated and unresolved records.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.DocumentModel("NewCallbackApp");
-            component = macd.model.ComponentRecord("button", "Button", "uibutton", ...
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.DocumentModel("NewCallbackApp");
+            component = yamada.model.ComponentRecord("button", "Button", "uibutton", ...
                 "matlab.ui.control.Button", "generated");
             document.addComponent(component);
-            states = macd.source.CallbackSourceAnalyzer.analyze(document, component.Id, registry);
+            states = yamada.source.CallbackSourceAnalyzer.analyze(document, component.Id, registry);
             testCase.verifyTrue(all(string({states.State}) == "absent"));
             source = CallbackSourceAnalyzerTest.fixture( ...
                 "app.Button.ButtonPushedFcn = @app.Missing;", "");
@@ -304,13 +304,13 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
                 source (1, 1) string
             end
             arguments (Output)
-                state (1, 1) macd.model.CallbackState
-                document (1, 1) macd.model.DocumentModel
+                state (1, 1) yamada.model.CallbackState
+                document (1, 1) yamada.model.DocumentModel
             end
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("Button");
-            states = macd.source.CallbackSourceAnalyzer.analyze(document, component.Id, registry);
+            states = yamada.source.CallbackSourceAnalyzer.analyze(document, component.Id, registry);
             state = states(string({states.Name}) == "ButtonPushedFcn");
         end
     end

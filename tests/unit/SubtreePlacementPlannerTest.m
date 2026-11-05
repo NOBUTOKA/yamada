@@ -6,9 +6,9 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
         function absolutePositionIsPreservedWithOptionalOffset(testCase)
             % absolutePositionIsPreservedWithOptionalOffset Keep parent-local geometry deterministic.
             [document, registry, left, right, leaf] = SubtreePlacementPlannerTest.fixture();
-            snapshot = macd.model.SubtreeSnapshot(document, leaf.Id);
+            snapshot = yamada.model.SubtreeSnapshot(document, leaf.Id);
             before = leaf.getProperty("Position").LiteralValue;
-            plan = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, right.Id, registry, leaf.Id, [], [10 20]);
+            plan = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, right.Id, registry, leaf.Id, [], [10 20]);
             testCase.verifyEqual(plan.ParentId, right.Id);
             testCase.verifyEqual(plan.Changes.Value, before + [10 20 0 0]);
             testCase.verifyEqual(leaf.ParentId, left.Id);
@@ -18,15 +18,15 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
         function rejectsCyclesRootAndInvalidParent(testCase)
             % rejectsCyclesRootAndInvalidParent Check root and construction parent restrictions.
             [document, registry, left, ~, leaf] = SubtreePlacementPlannerTest.fixture();
-            snapshot = macd.model.SubtreeSnapshot(document, left.Id);
-            testCase.verifyError(@() macd.model.SubtreePlacementPlanner.prepare(document, snapshot, leaf.Id, registry, ...
-                string({snapshot.Records.Id})), "macd:SubtreePlacementPlanner:CyclicParent");
-            snapshot = macd.model.SubtreeSnapshot(document, leaf.Id);
-            testCase.verifyError(@() macd.model.SubtreePlacementPlanner.prepare(document, snapshot, leaf.Id, registry), ...
-                "macd:SubtreePlacementPlanner:InvalidParent");
-            snapshot = macd.model.SubtreeSnapshot(document, document.RootComponentId);
-            testCase.verifyError(@() macd.model.SubtreePlacementPlanner.prepare(document, snapshot, left.Id, registry), ...
-                "macd:SubtreePlacementPlanner:RootOperation");
+            snapshot = yamada.model.SubtreeSnapshot(document, left.Id);
+            testCase.verifyError(@() yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, leaf.Id, registry, ...
+                string({snapshot.Records.Id})), "yamada:SubtreePlacementPlanner:CyclicParent");
+            snapshot = yamada.model.SubtreeSnapshot(document, leaf.Id);
+            testCase.verifyError(@() yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, leaf.Id, registry), ...
+                "yamada:SubtreePlacementPlanner:InvalidParent");
+            snapshot = yamada.model.SubtreeSnapshot(document, document.RootComponentId);
+            testCase.verifyError(@() yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, left.Id, registry), ...
+                "yamada:SubtreePlacementPlanner:RootOperation");
         end
 
         function absoluteToGridFindsFreeCellAndRemovesPosition(testCase)
@@ -36,8 +36,8 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
             grid.setProperty("RowHeight", {"1x", "1x"});
             grid.setProperty("ColumnWidth", {"1x", "1x"});
             existing = document.insertComponent(registry, "uilabel", grid.Id);
-            snapshot = macd.model.SubtreeSnapshot(document, leaf.Id);
-            plan = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, leaf.Id);
+            snapshot = yamada.model.SubtreeSnapshot(document, leaf.Id);
+            plan = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, leaf.Id);
             testCase.verifyEqual(plan.Changes(1).Value, 1);
             testCase.verifyEqual(plan.Changes(2).Value, 2);
             testCase.verifyEqual(plan.Changes(3).Path, "Position");
@@ -54,14 +54,14 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
             second.setProperty("ColumnWidth", {"1x", "1x"});
             leaf = document.insertComponent(registry, "uilabel", first.Id);
             leaf.setProperty("Layout.Row", [1 2]);
-            snapshot = macd.model.SubtreeSnapshot(document, leaf.Id);
-            plan = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, second.Id, registry, leaf.Id);
+            snapshot = yamada.model.SubtreeSnapshot(document, leaf.Id);
+            plan = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, second.Id, registry, leaf.Id);
             testCase.verifyEqual(plan.Changes(1).Value, [1 2]);
             occupied = document.insertComponent(registry, "uilabel", second.Id);
             occupied.setProperty("Layout.Row", [1 2]);
             occupied.setProperty("Layout.Column", [1 2]);
-            testCase.verifyError(@() macd.model.SubtreePlacementPlanner.prepare(document, snapshot, second.Id, registry, leaf.Id), ...
-                "macd:SubtreePlacementPlanner:NoSpace");
+            testCase.verifyError(@() yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, second.Id, registry, leaf.Id), ...
+                "yamada:SubtreePlacementPlanner:NoSpace");
         end
 
         function gridToAbsoluteRequiresVerifiedGeometry(testCase)
@@ -69,10 +69,10 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
             [document, registry, left, right] = SubtreePlacementPlannerTest.fixture();
             grid = document.insertComponent(registry, "uigridlayout", left.Id);
             leaf = document.insertComponent(registry, "uilabel", grid.Id);
-            snapshot = macd.model.SubtreeSnapshot(document, leaf.Id);
-            testCase.verifyError(@() macd.model.SubtreePlacementPlanner.prepare(document, snapshot, right.Id, registry, leaf.Id), ...
-                "macd:SubtreePlacementPlanner:MissingGeometry");
-            plan = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, right.Id, registry, leaf.Id, [5 6 80 22]);
+            snapshot = yamada.model.SubtreeSnapshot(document, leaf.Id);
+            testCase.verifyError(@() yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, right.Id, registry, leaf.Id), ...
+                "yamada:SubtreePlacementPlanner:MissingGeometry");
+            plan = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, right.Id, registry, leaf.Id, [5 6 80 22]);
             testCase.verifyEqual(plan.Changes(end).Value, [5 6 80 22]);
             testCase.verifyTrue(all([plan.Changes(1:2).Remove]));
         end
@@ -81,14 +81,14 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
             % resolvesGridConstructionAndCatalogDefaults Resolve tracks without requiring preview controls.
             [document, registry, ~, right, leaf] = SubtreePlacementPlannerTest.fixture();
             grid = document.insertComponent(registry, "uigridlayout", right.Id);
-            snapshot = macd.model.SubtreeSnapshot(document, leaf.Id);
-            plan = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, leaf.Id);
+            snapshot = yamada.model.SubtreeSnapshot(document, leaf.Id);
+            plan = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, leaf.Id);
             testCase.verifyEqual([plan.Changes(1:2).Value], [1 1]);
             document.setProperty(grid.Id, "RowHeight", {100}, registry);
             document.setProperty(grid.Id, "ColumnWidth", {100, 100, 100}, registry);
             existing = document.insertComponent(registry, "uilabel", grid.Id);
             existing.setProperty("Layout.Column", [1 2]);
-            plan = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, leaf.Id);
+            plan = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, leaf.Id);
             testCase.verifyEqual([plan.Changes(1:2).Value], [1 3]);
         end
 
@@ -97,25 +97,25 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
             [document, registry, ~, right, leaf] = SubtreePlacementPlannerTest.fixture();
             grid = document.insertComponent(registry, "uigridlayout", right.Id);
             document.insertComponent(registry, "uilabel", grid.Id);
-            snapshot = macd.model.SubtreeSnapshot(document, leaf.Id);
-            plan = macd.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, leaf.Id, [], [0 0], [2 2]);
+            snapshot = yamada.model.SubtreeSnapshot(document, leaf.Id);
+            plan = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, leaf.Id, [], [0 0], [2 2]);
             testCase.verifyEqual(plan.Changes(1).Value, 2);
             testCase.verifyEqual(plan.Changes(2).Value, 2);
             history = document.HistoryIndex;
-            testCase.verifyError(@() macd.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, ...
-                leaf.Id, [], [0 0], [1 1]), "macd:SubtreePlacementPlanner:NoSpace");
+            testCase.verifyError(@() yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, ...
+                leaf.Id, [], [0 0], [1 1]), "yamada:SubtreePlacementPlanner:NoSpace");
             testCase.verifyEqual(document.HistoryIndex, history);
-            testCase.verifyError(@() macd.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, ...
-                leaf.Id, [], [0 0], [3 1]), "macd:SubtreePlacementPlanner:InvalidCell");
+            testCase.verifyError(@() yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, grid.Id, registry, ...
+                leaf.Id, [], [0 0], [3 1]), "yamada:SubtreePlacementPlanner:InvalidCell");
         end
 
         function expressionPlacementRejectsWithoutMutation(testCase)
             % expressionPlacementRejectsWithoutMutation Do not silently discard unevaluated placement.
             [document, registry, left, right, leaf] = SubtreePlacementPlannerTest.fixture();
             leaf.getProperty("Position").setSourceExpression("computePosition(app)");
-            snapshot = macd.model.SubtreeSnapshot(document, leaf.Id);
-            testCase.verifyError(@() macd.model.SubtreePlacementPlanner.prepare(document, snapshot, right.Id, registry, leaf.Id), ...
-                "macd:SubtreePlacementPlanner:ImplicitPlacement");
+            snapshot = yamada.model.SubtreeSnapshot(document, leaf.Id);
+            testCase.verifyError(@() yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, right.Id, registry, leaf.Id), ...
+                "yamada:SubtreePlacementPlanner:ImplicitPlacement");
             testCase.verifyEqual(leaf.ParentId, left.Id);
             testCase.verifyEqual(leaf.getProperty("Position").SourceExpression, "computePosition(app)");
         end
@@ -125,14 +125,14 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
         function [document, registry, left, right, leaf] = fixture()
             % fixture Create two compatible absolute containers and one movable leaf.
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                left (1, 1) macd.model.ComponentRecord
-                right (1, 1) macd.model.ComponentRecord
-                leaf (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                left (1, 1) yamada.model.ComponentRecord
+                right (1, 1) yamada.model.ComponentRecord
+                leaf (1, 1) yamada.model.ComponentRecord
             end
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("PlacementApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("PlacementApp", registry);
             left = document.insertComponent(registry, "uipanel", document.RootComponentId);
             right = document.insertComponent(registry, "uipanel", document.RootComponentId);
             leaf = document.insertComponent(registry, "uilabel", left.Id);

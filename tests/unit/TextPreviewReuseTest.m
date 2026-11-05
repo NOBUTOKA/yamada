@@ -5,7 +5,7 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
     methods (Test)
         function localTextGrowthMatchesFreshRendering(testCase)
             % localTextGrowthMatchesFreshRendering Compare retained controls with complete native reconstruction.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for layout = ["absolute", "flat", "nested"]
                 [document, label] = TextPreviewReuseTest.fixture(registry, layout);
                 document.setProperty(label.Id, "Text", "Baseline", registry);
@@ -14,8 +14,8 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
                 cleanup = onCleanup(@() delete(figure));
                 left = uipanel(figure, Position=[1 1 440 680]);
                 right = uipanel(figure, Position=[451 1 440 680]);
-                renderer = macd.ui.PreviewRenderer(registry);
-                referenceRenderer = macd.ui.PreviewRenderer(registry);
+                renderer = yamada.ui.PreviewRenderer(registry);
+                referenceRenderer = yamada.ui.PreviewRenderer(registry);
                 [handles, diagnostics] = renderer.render(document, left);
                 testCase.assertEmpty(diagnostics);
                 original = handles(char(label.Id));
@@ -25,10 +25,10 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
                 for index = 1:numel(values)
                     % The already validated owner is edited through the production model path.
                     document.setPropertyBatch(label.Id, ...
-                        macd.model.PropertyTransaction.singleChange("Text", values{index}), registry);
+                        yamada.model.PropertyTransaction.singleChange("Text", values{index}), registry);
                     document.validatePropertyCommit(registry);
                     [applied, diagnostics, geometry] = renderer.synchronize(document, handles, ...
-                        macd.ui.RefreshRequest("properties", label.Id, "Text"));
+                        yamada.ui.RefreshRequest("properties", label.Id, "Text"));
                     testCase.verifyTrue(applied, layout);
                     testCase.verifyEmpty(diagnostics);
                     testCase.verifyEqual(geometry, layout ~= "absolute");
@@ -55,14 +55,14 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
         function [document, label] = fixture(registry, layout)
             % fixture Parse one owned label under the requested fit-layout depth.
             arguments (Input)
-                registry (1, 1) macd.model.ComponentRegistry
+                registry (1, 1) yamada.model.ComponentRegistry
                 layout (1, 1) string
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                label (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                label (1, 1) yamada.model.ComponentRecord
             end
-            document = macd.model.NewAppFactory.createEmpty("TextGeometryFixture", registry);
+            document = yamada.model.NewAppFactory.createEmpty("TextGeometryFixture", registry);
             parent = document.RootComponentId;
             if layout == "nested"
                 outer = document.insertComponent(registry, "uigridlayout", parent);
@@ -79,8 +79,8 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
             label = document.insertComponent(registry, "uilabel", parent);
             label.setProperty("Text", "Original");
             name = label.Name;
-            source = macd.source.NewAppGenerator(registry).generate(document);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName(name);
         end
 
@@ -103,7 +103,7 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
                 if stable >= 4, return, end
                 previous = current;
             end
-            error("macd:TextPreviewReuseTest:UnsettledGeometry", "Text layout did not settle.");
+            error("yamada:TextPreviewReuseTest:UnsettledGeometry", "Text layout did not settle.");
         end
     end
 end

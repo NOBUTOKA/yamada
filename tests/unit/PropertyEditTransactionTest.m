@@ -10,7 +10,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             before = component.settingSnapshot();
             diagnostics = document.Diagnostics;
             testCase.verifyError(@() document.setProperty(component.Id, "Value", 30, registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(component.getProperty("Value").LiteralValue, 20);
             testCase.verifyEqual(component.settingSnapshot(), before);
             testCase.verifyEqual(document.Diagnostics, diagnostics);
@@ -22,11 +22,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             % rawNoOpsStillCheckTheRequestedEffectiveValue Do not silently accept the old literal when its actual effect differs.
             [document, registry, component] = testCase.sliderFixture();
             testCase.verifyError(@() document.setProperty(component.Id, "Value", 20, registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
-            changes = [macd.model.PropertyTransaction.singleChange("Value", 20), ...
-                macd.model.PropertyTransaction.singleChange("Limits", [60 100])];
+                "yamada:DocumentModel:UnsafePropertyEdit");
+            changes = [yamada.model.PropertyTransaction.singleChange("Value", 20), ...
+                yamada.model.PropertyTransaction.singleChange("Limits", [60 100])];
             testCase.verifyError(@() document.setPropertyBatch(component.Id, changes, registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(component.getProperty("Limits").LiteralValue, [50 100]);
             testCase.verifyEqual(document.HistoryIndex, 0);
         end
@@ -35,8 +35,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             % validBatchRetainsOneHistoryUnitAndOriginalSettingIds Resolve safe replacements through Undo and Redo.
             [document, registry, component] = testCase.sliderFixture();
             original = component.getSettings("Value");
-            changes = [macd.model.PropertyTransaction.singleChange("Value", 75), ...
-                macd.model.PropertyTransaction.singleChange("Limits", [60 100])];
+            changes = [yamada.model.PropertyTransaction.singleChange("Value", 75), ...
+                yamada.model.PropertyTransaction.singleChange("Limits", [60 100])];
             document.setPropertyBatch(component.Id, changes, registry);
             testCase.verifyEqual(document.HistoryIndex, 1);
             states = document.getEffectivePropertyStates(registry, component.Id);
@@ -56,10 +56,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
         function finalRangeDoesNotHideAnInvalidIntermediateAssignment(testCase)
             % finalRangeDoesNotHideAnInvalidIntermediateAssignment Reject a value outside the range at its fixed source slot.
             [document, registry, component] = testCase.sliderFixture();
-            changes = [macd.model.PropertyTransaction.singleChange("Value", 150), ...
-                macd.model.PropertyTransaction.singleChange("Limits", [120 200])];
+            changes = [yamada.model.PropertyTransaction.singleChange("Value", 150), ...
+                yamada.model.PropertyTransaction.singleChange("Limits", [120 200])];
             testCase.verifyError(@() document.setPropertyBatch(component.Id, changes, registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(document.HistoryIndex, 0);
         end
 
@@ -67,10 +67,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             % constructorBatchUsesItsFinalDomain Keep constructor grouping distinct from sequential assignment checks.
             [document, registry, component] = testCase.sliderFixture( ...
                 "app.Slider = uislider(app.UIFigure, Value=75, Limits=[50 100]);");
-            changes = [macd.model.PropertyTransaction.singleChange("Value", 150), ...
-                macd.model.PropertyTransaction.singleChange("Limits", [120 200])];
+            changes = [yamada.model.PropertyTransaction.singleChange("Value", 150), ...
+                yamada.model.PropertyTransaction.singleChange("Limits", [120 200])];
             document.setPropertyBatch(component.Id, changes, registry);
-            generated = macd.source.RoundTripGenerator(registry).generate(document);
+            generated = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifySubstring(generated, "Value=150, Limits=[120 200]");
             testCase.verifyFalse(contains(generated, "app.Slider.Value ="));
             testCase.verifyEqual(document.HistoryIndex, 1);
@@ -79,8 +79,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
         function rootOnlyDocumentsCanPreflightCanvasResize(testCase)
             % rootOnlyDocumentsCanPreflightCanvasResize Handle empty child collections independent of orientation.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CanvasEdit", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CanvasEdit", registry);
             document.setProperty(document.RootComponentId, "Position", [100 80 640 500], registry);
             testCase.verifyEqual(document.getComponent(document.RootComponentId).getProperty("Position").LiteralValue, ...
                 [100 80 640 500]);
@@ -90,21 +90,21 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
         function tableColumnWidthsUseTheirOwnSchema(testCase)
             % tableColumnWidthsUseTheirOwnSchema Distinguish table widths from grid track settings.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("TableWidths", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("TableWidths", registry);
             component = document.insertComponent(registry, "uitable", document.RootComponentId);
             document.setProperty(component.Id, "Data", reshape(1:6, 2, 3));
-            changes = [macd.model.PropertyTransaction.singleChange("ColumnWidth", 'fit'), ...
-                macd.model.PropertyTransaction.singleChange("ColumnEditable", true), ...
-                macd.model.PropertyTransaction.singleChange("ColumnSortable", true), ...
-                macd.model.PropertyTransaction.singleChange("ColumnFormat", {'bank'})];
+            changes = [yamada.model.PropertyTransaction.singleChange("ColumnWidth", 'fit'), ...
+                yamada.model.PropertyTransaction.singleChange("ColumnEditable", true), ...
+                yamada.model.PropertyTransaction.singleChange("ColumnSortable", true), ...
+                yamada.model.PropertyTransaction.singleChange("ColumnFormat", {'bank'})];
             document.setPropertyBatch(component.Id, changes, registry);
             testCase.verifyEqual(component.getProperty("ColumnWidth").LiteralValue, 'fit');
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors( ...
-                macd.validation.ModelValidator.validate(document, registry)));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors( ...
+                yamada.validation.ModelValidator.validate(document, registry)));
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             testCase.verifyError(@() document.setProperty(grid.Id, "ColumnWidth", 'fit', registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
         end
 
         function rejectedBatchDoesNotChangeLiveValuesHistoryOrDiagnostics(testCase)
@@ -113,10 +113,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             [document, registry, component] = testCase.fixture();
             originalDiagnostics = document.Diagnostics;
             before = component.settingSnapshot();
-            changes = [macd.model.PropertyTransaction.singleChange("Text", "Changed"), ...
-                macd.model.PropertyTransaction.singleChange("Position", [1 2 3])];
+            changes = [yamada.model.PropertyTransaction.singleChange("Text", "Changed"), ...
+                yamada.model.PropertyTransaction.singleChange("Position", [1 2 3])];
             testCase.verifyError(@() document.setPropertyBatch(component.Id, changes, registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(component.getProperty("Text").LiteralValue, "First");
             testCase.verifyEqual(component.getProperty("Position").LiteralValue, [10 20 100 30]);
             testCase.verifyEqual(component.settingSnapshot(), before);
@@ -136,7 +136,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             testCase.verifyEqual(component.getSettings("Text").LiteralValue, "Changed");
             document.setProperty(component.Id, "Text", "Changed", registry);
             document.setPropertyBatch(component.Id, ...
-                macd.model.PropertyTransaction.singleChange("Text", "Changed"), registry);
+                yamada.model.PropertyTransaction.singleChange("Text", "Changed"), registry);
             testCase.verifyEqual(document.HistoryIndex, 1);
             document.undo();
             testCase.verifyEqual(component.getProperty("Text").LiteralValue, "First");
@@ -148,11 +148,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
 
             [document, registry, component] = testCase.fixture();
             document.OriginalText = "% changed outside parser" + newline + document.OriginalText;
-            [source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(document);
+            [source, diagnostics] = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyEqual(source, "");
             testCase.verifyTrue(any(string({diagnostics.Code}) == "stale-source-snapshot"));
             testCase.verifyError(@() document.setProperty(component.Id, "Text", "Changed", registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(component.getProperty("Text").LiteralValue, "First");
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
@@ -161,8 +161,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
         function pendingSettingsRetainOriginalValuesAcrossResetUndo(testCase)
             % pendingSettingsRetainOriginalValuesAcrossResetUndo Preserve generated occurrence identity.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("PendingApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("PendingApp", registry);
             component = document.insertComponent(registry, "uilabel", document.RootComponentId);
             document.setProperty(component.Id, "Text", "First");
             original = component.getSettings("Text");
@@ -189,7 +189,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             document.setProperty(component.Id, "Text", "Changed");
             entry = component.getProperty("Text");
             entry.Metadata.SourceSettingId = entry.Metadata.SourceSettingId + 1000;
-            testCase.verifyError(@() document.undo(), "macd:DocumentModel:StalePropertySetting");
+            testCase.verifyError(@() document.undo(), "yamada:DocumentModel:StalePropertySetting");
             testCase.verifyEqual(document.HistoryIndex, 1);
             testCase.verifyEqual(entry.LiteralValue, "Changed");
         end
@@ -203,26 +203,26 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
                     "app.Slider.Value = 20;", "app.Slider.Limits = [50 100];"]
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                component (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                component (1, 1) yamada.model.ComponentRecord
             end
             source = strjoin(["classdef StateEditApp < handle", "properties", ...
                 "UIFigure matlab.ui.Figure", "Slider matlab.ui.control.Slider", "end", "methods", ...
                 "function app = StateEditApp", "createComponents(app);", "end", ...
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
                 initialization, "end", "end", "end"], sprintf("\r\n"));
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("Slider");
         end
 
         function [document, registry, component] = fixture()
             % fixture Parse an owned label initializer without constructing its UI.
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                component (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                component (1, 1) yamada.model.ComponentRecord
             end
 
             source = strjoin(["classdef EditApp < handle", ...
@@ -234,8 +234,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
                 "            app.Label = uilabel(app.UIFigure, Text=""First"");", ...
                 "            app.Label.Position = [10 20 100 30];", ...
                 "        end", "    end", "end"], sprintf("\r\n"));
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             component = document.getComponentByName("Label");
         end
     end

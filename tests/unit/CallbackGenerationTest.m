@@ -6,8 +6,8 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
     methods (Test)
         function documentedEventTypesSurviveCallbackHistory(testCase)
             % documentedEventTypesSurviveCallbackHistory Generate typed handlers and preserve their source through callback history.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("TypedCallbackApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("TypedCallbackApp", registry);
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
             original = document.CurrentText;
 
@@ -25,54 +25,54 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
 
         function signatureContractsRejectMalformedValuesAndKeepFallback(testCase)
             % signatureContractsRejectMalformedValuesAndKeepFallback Validate optional type data without a universal event base.
-            testCase.verifyEqual(macd.model.CallbackSignature().argumentLine(), "event");
+            testCase.verifyEqual(yamada.model.CallbackSignature().argumentLine(), "event");
             contract = struct("eventArgument", struct("className", "double", "shape", [0 0]));
-            testCase.verifyEqual(macd.model.CallbackSignature(contract).argumentLine(), "event (0, 0) double");
+            testCase.verifyEqual(yamada.model.CallbackSignature(contract).argumentLine(), "event (0, 0) double");
             contract.eventArgument.className = "matlab.ui.eventdata.ButtonPushedData";
             contract.eventArgument.shape = [];
-            testCase.verifyEqual(macd.model.CallbackSignature(contract).argumentLine(), ...
+            testCase.verifyEqual(yamada.model.CallbackSignature(contract).argumentLine(), ...
                 "event matlab.ui.eventdata.ButtonPushedData");
             contract.eventArgument.className = "double; delete(app)";
-            testCase.verifyError(@() macd.model.CallbackSignature(contract), "macd:CallbackSignature:InvalidContract");
+            testCase.verifyError(@() yamada.model.CallbackSignature(contract), "yamada:CallbackSignature:InvalidContract");
             contract.eventArgument.className = "";
             contract.eventArgument.shape = [1 1];
-            testCase.verifyError(@() macd.model.CallbackSignature(contract), "macd:CallbackSignature:InvalidContract");
+            testCase.verifyError(@() yamada.model.CallbackSignature(contract), "yamada:CallbackSignature:InvalidContract");
             contract.eventArgument.className = "struct";
             contract.eventArgument.shape = [1 1 1];
-            testCase.verifyError(@() macd.model.CallbackSignature(contract), "macd:CallbackSignature:InvalidContract");
+            testCase.verifyError(@() yamada.model.CallbackSignature(contract), "yamada:CallbackSignature:InvalidContract");
         end
 
         function generatesNewAndEditedEmptyItems(testCase)
             % generatesNewAndEditedEmptyItems Encode empty list contents for new and parsed documents.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("EmptyItemsApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("EmptyItemsApp", registry);
             list = document.insertComponent(registry, "uilistbox", document.RootComponentId);
             list.setProperty("Items", {});
-            generator = macd.source.RoundTripGenerator(registry);
+            generator = yamada.source.RoundTripGenerator(registry);
             [emptySource, diagnostics] = generator.generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifySubstring(emptySource, "app." + list.Name + ".Items = {};");
             list.setProperty("Items", {'first'});
-            parsed = macd.source.AppSourceParser.parseText(generator.generate(document), registry);
+            parsed = yamada.source.AppSourceParser.parseText(generator.generate(document), registry);
             parsed.getComponentByName(list.Name).setProperty("Items", {});
             [edited, diagnostics] = generator.generate(parsed);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyEqual(edited, emptySource);
         end
 
         function unchangedEmptyItemsSurviveCallbackAddDeleteAndUndo(testCase)
             % unchangedEmptyItemsSurviveCallbackAddDeleteAndUndo Preserve unrelated empty cells during callback preflight.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("EmptyItemsApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("EmptyItemsApp", registry);
             document.insertComponent(registry, "uibutton", document.RootComponentId);
             document.insertComponent(registry, "uibutton", document.RootComponentId);
             list = document.insertComponent(registry, "uilistbox", document.RootComponentId);
-            generator = macd.source.RoundTripGenerator(registry);
+            generator = yamada.source.RoundTripGenerator(registry);
             source = generator.generate(document);
             creation = "app." + list.Name + " = uilistbox(app.UIFigure);";
             assignment = "app." + list.Name + ".Items = {};";
             source = replace(source, creation, creation + newline + "            " + assignment);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyEqual(generator.generate(parsed), source);
 
             % Both buttons must generate handlers without rewriting the list assignment.
@@ -81,12 +81,12 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
                 parsed.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             end
             [added, diagnostics] = generator.generate(parsed);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifySubstring(added, assignment);
-            reopened = macd.source.AppSourceParser.parseText(added, registry);
+            reopened = yamada.source.AppSourceParser.parseText(added, registry);
             for name = ["Button", "Button2"]
                 button = reopened.getComponentByName(name);
-                states = macd.source.CallbackSourceAnalyzer.analyze(reopened, button.Id, registry);
+                states = yamada.source.CallbackSourceAnalyzer.analyze(reopened, button.Id, registry);
                 testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "editable");
                 reopened.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
             end
@@ -101,18 +101,18 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
 
         function newCallbacksRoundTripAndDeleteEntireMethod(testCase)
             % newCallbacksRoundTripAndDeleteEntireMethod Keep generated bindings and bodies consistent after reopening.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CallbackApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CallbackApp", registry);
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             document.applyCallbackAction(document.RootComponentId, "SizeChangedFcn", "Add", registry);
-            generator = macd.source.RoundTripGenerator(registry);
+            generator = yamada.source.RoundTripGenerator(registry);
             [source, diagnostics] = generator.generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyEqual(generator.generate(document), source);
-            reopened = macd.source.AppSourceParser.parseText(source, registry);
+            reopened = yamada.source.AppSourceParser.parseText(source, registry);
             component = reopened.getComponentByName(button.Name);
-            states = macd.source.CallbackSourceAnalyzer.analyze(reopened, component.Id, registry);
+            states = yamada.source.CallbackSourceAnalyzer.analyze(reopened, component.Id, registry);
             state = states(string({states.Name}) == "ButtonPushedFcn");
             testCase.verifyEqual(state.State, "editable");
             reopened.applyCallbackAction(component.Id, "ButtonPushedFcn", "Delete", registry);
@@ -125,21 +125,21 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
 
         function openedCallbacksPreserveUnrelatedTextAndCombineInsertions(testCase)
             % openedCallbacksPreserveUnrelatedTextAndCombineInsertions Remove owned bodies and preserve surrounding source.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
-            document = macd.source.AppSourceParser.parseFile(path, registry);
+            document = yamada.source.AppSourceParser.parseFile(path, registry);
             original = document.OriginalText;
             button = document.getComponentByName("CalculateButton");
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
             document.applyCallbackAction(document.RootComponentId, "SizeChangedFcn", "Add", registry);
             document.applyCallbackAction(document.RootComponentId, "CloseRequestFcn", "Add", registry);
-            generator = macd.source.RoundTripGenerator(registry);
+            generator = yamada.source.RoundTripGenerator(registry);
             source = generator.generate(document);
             testCase.verifyFalse(contains(source, "function CalculateButtonPushed"));
             testCase.verifyFalse(contains(source, "leftValue = app.LeftValueField.Value"));
             testCase.verifySubstring(source, "app.ResultLabel.Text = 'Result';");
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
-            states = macd.source.CallbackSourceAnalyzer.analyze(parsed, parsed.RootComponentId, registry);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
+            states = yamada.source.CallbackSourceAnalyzer.analyze(parsed, parsed.RootComponentId, registry);
             testCase.verifyEqual(states(string({states.Name}) == "SizeChangedFcn").State, "editable");
             testCase.verifyEqual(states(string({states.Name}) == "CloseRequestFcn").State, "editable");
             document.undo(); document.undo(); document.undo();
@@ -148,50 +148,50 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
 
         function generatedComponentsInOpenedAppsReceiveCallbacks(testCase)
             % generatedComponentsInOpenedAppsReceiveCallbacks Insert bindings beside newly generated initialization.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
-            document = macd.source.AppSourceParser.parseFile(path, registry);
+            document = yamada.source.AppSourceParser.parseFile(path, registry);
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             component = parsed.getComponentByName(button.Name);
-            states = macd.source.CallbackSourceAnalyzer.analyze(parsed, component.Id, registry);
+            states = yamada.source.CallbackSourceAnalyzer.analyze(parsed, component.Id, registry);
             testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "editable");
         end
 
         function savedEditedBodiesAreRemovedWithoutExecutingThem(testCase)
             % savedEditedBodiesAreRemovedWithoutExecutingThem Reparse a saved externally edited method before deletion.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("SavedCallbackApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("SavedCallbackApp", registry);
             document.applyCallbackAction(document.RootComponentId, "SizeChangedFcn", "Add", registry);
-            generator = macd.source.RoundTripGenerator(registry);
+            generator = yamada.source.RoundTripGenerator(registry);
             source = generator.generate(document);
             source = replace(source, "% Add callback behavior here.", ...
-                "assignin('base','macdCallbackSaveSentinel',true);");
-            evalin("base", "clear macdCallbackSaveSentinel");
+                "assignin('base','yamadaCallbackSaveSentinel',true);");
+            evalin("base", "clear yamadaCallbackSaveSentinel");
             path = string(tempname) + ".m";
             cleanup = onCleanup(@() delete(path));
-            macd.source.SourceWriter.write(path, source, "CRLF");
-            loaded = macd.source.AppSourceParser.parseFile(path, registry);
+            yamada.source.SourceWriter.write(path, source, "CRLF");
+            loaded = yamada.source.AppSourceParser.parseFile(path, registry);
             loaded.applyCallbackAction(loaded.RootComponentId, "SizeChangedFcn", "Delete", registry);
             removed = generator.generate(loaded);
-            testCase.verifyFalse(contains(removed, "macdCallbackSaveSentinel"));
-            testCase.verifyEqual(evalin("base", "exist('macdCallbackSaveSentinel','var')"), 0);
+            testCase.verifyFalse(contains(removed, "yamadaCallbackSaveSentinel"));
+            testCase.verifyEqual(evalin("base", "exist('yamadaCallbackSaveSentinel','var')"), 0);
             loaded.undo();
             testCase.verifyEqual(generator.generate(loaded), source);
         end
 
         function anonymousForwardersPreserveSourceAndSupportDeleteUndo(testCase)
             % anonymousForwardersPreserveSourceAndSupportDeleteUndo Keep wrapper syntax and inert handler bodies intact.
-            registry = macd.model.ComponentRegistry.createDefault();
-            generator = macd.source.RoundTripGenerator(registry);
-            evalin("base", "clear macdForwardedCallbackSentinel");
+            registry = yamada.model.ComponentRegistry.createDefault();
+            generator = yamada.source.RoundTripGenerator(registry);
+            evalin("base", "clear yamadaForwardedCallbackSentinel");
             for mode = ["event", "none", "both"]
-                document = macd.model.NewAppFactory.createEmpty("ForwardedCallbackApp", registry);
+                document = yamada.model.NewAppFactory.createEmpty("ForwardedCallbackApp", registry);
                 button = document.insertComponent(registry, "uibutton", document.RootComponentId);
                 document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-                states = macd.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
+                states = yamada.source.CallbackSourceAnalyzer.analyze(document, button.Id, registry);
                 handler = states(string({states.Name}) == "ButtonPushedFcn").HandlerName;
                 source = generator.generate(document);
                 ending = string(newline);
@@ -208,20 +208,20 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
                 source = replace(source, "@app." + handler + ";", expression + ";");
                 definitions = registry.getEffectiveCallbacks("uibutton");
                 definition = definitions(string({definitions.Path}) == "ButtonPushedFcn");
-                originalMethod = macd.source.CallbackSourceEdits.handlerText( ...
+                originalMethod = yamada.source.CallbackSourceEdits.handlerText( ...
                     handler, "ButtonPushedFcn", document.ClassName, ending, false, definition.CallbackSignature);
                 testCase.assertSubstring(source, originalMethod);
                 method = strjoin(["        function " + handler + "(" + inputs + ")"; ...
                     "            % " + handler + " Keep forwarded callback behavior inert."; ...
-                    "            assignin('base','macdForwardedCallbackSentinel',true);"; ...
+                    "            assignin('base','yamadaForwardedCallbackSentinel',true);"; ...
                     "        end"], ending);
                 source = replace(source, originalMethod, method);
                 testCase.assertSubstring(source, method);
 
                 % Parsing and unrelated property edits retain the original registration and signature.
-                parsed = macd.source.AppSourceParser.parseText(source, registry);
+                parsed = yamada.source.AppSourceParser.parseText(source, registry);
                 target = parsed.getComponentByName(button.Name);
-                states = macd.source.CallbackSourceAnalyzer.analyze(parsed, target.Id, registry);
+                states = yamada.source.CallbackSourceAnalyzer.analyze(parsed, target.Id, registry);
                 testCase.assertEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "editable");
                 testCase.verifyEqual(generator.generate(parsed), source);
                 parsed.setProperty(target.Id, "Text", "Changed", registry);
@@ -233,13 +233,13 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
 
                 % Default handler renames preserve the wrapper's inputs and forwarding convention.
                 parsed.renameComponent(target.Id, "ForwardedButton", registry);
-                renamedHandler = macd.source.ComponentNameRewriter.defaultHandler("ForwardedButton", "ButtonPushedFcn", definition.HandlerSuffix);
+                renamedHandler = yamada.source.ComponentNameRewriter.defaultHandler("ForwardedButton", "ButtonPushedFcn", definition.HandlerSuffix);
                 renamed = generator.generate(parsed);
                 testCase.verifySubstring(renamed, replace(expression, "app." + handler, "app." + renamedHandler));
                 testCase.verifySubstring(renamed, "function " + renamedHandler + "(" + inputs + ")");
-                renamedDocument = macd.source.AppSourceParser.parseText(renamed, registry);
+                renamedDocument = yamada.source.AppSourceParser.parseText(renamed, registry);
                 renamedTarget = renamedDocument.getComponentByName("ForwardedButton");
-                renamedStates = macd.source.CallbackSourceAnalyzer.analyze(renamedDocument, renamedTarget.Id, registry);
+                renamedStates = yamada.source.CallbackSourceAnalyzer.analyze(renamedDocument, renamedTarget.Id, registry);
                 testCase.verifyEqual(renamedStates(string({renamedStates.Name}) == "ButtonPushedFcn").State, "editable");
                 parsed.undo();
                 testCase.verifyEqual(generator.generate(parsed), source);
@@ -248,22 +248,22 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
                 parsed.applyCallbackAction(target.Id, "ButtonPushedFcn", "Delete", registry);
                 removed = generator.generate(parsed);
                 testCase.verifyFalse(contains(removed, handler));
-                reopened = macd.source.AppSourceParser.parseText(removed, registry);
-                states = macd.source.CallbackSourceAnalyzer.analyze( ...
+                reopened = yamada.source.AppSourceParser.parseText(removed, registry);
+                states = yamada.source.CallbackSourceAnalyzer.analyze( ...
                     reopened, reopened.getComponentByName(button.Name).Id, registry);
                 testCase.verifyEqual(states(string({states.Name}) == "ButtonPushedFcn").State, "absent");
                 parsed.undo();
                 testCase.verifyEqual(generator.generate(parsed), source);
                 parsed.redo();
                 testCase.verifyEqual(generator.generate(parsed), removed);
-                testCase.verifyEqual(evalin("base", "exist('macdForwardedCallbackSentinel','var')"), 0);
+                testCase.verifyEqual(evalin("base", "exist('yamadaForwardedCallbackSentinel','var')"), 0);
             end
         end
 
         function failedGenerationRollsBackEveryTemporaryModelChange(testCase)
             % failedGenerationRollsBackEveryTemporaryModelChange Reject an invalid sibling value without recording history.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CallbackApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CallbackApp", registry);
             root = document.getComponent(document.RootComponentId);
             entry = root.setProperty("Name", []);
             entry.setSourceExpression("unsafeName()");
@@ -271,7 +271,7 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
             before = document.History;
             beforeDiagnostics = document.Diagnostics;
             testCase.verifyError(@() document.applyCallbackAction(root.Id, "SizeChangedFcn", "Add", registry), ...
-                "macd:DocumentModel:UnsafeCallbackSource");
+                "yamada:DocumentModel:UnsafeCallbackSource");
             testCase.verifyEmpty(document.CallbackEdits);
             testCase.verifyEqual(document.GeneratedText, "previous preview");
             testCase.verifyEqual(document.History, before);

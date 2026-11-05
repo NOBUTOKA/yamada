@@ -9,10 +9,10 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
                 folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
                 path = fullfile(folder.Folder, "CallbackPreviewFixture.m");
                 source = callbackFixture(layout);
-                macd.source.SourceWriter.write(path, source, "CRLF");
-                service = macd.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, path)));
+                yamada.source.SourceWriter.write(path, source, "CRLF");
+                service = yamada.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, path)));
                 app = yamada(service); cleanup = onCleanup(@() delete(app));
-                figure = findall(0, "Tag", "macd-yamada-editor");
+                figure = findall(0, "Tag", "yamada-editor");
                 menus = findall(figure, "Type", "uimenu");
                 open = menus(erase(string({menus.Text}), "&") == "Open...");
                 open.MenuSelectedFcn(open, struct());
@@ -24,23 +24,23 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
                 tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
                 % Finish unrelated initial layout before a callback source operation.
                 drawnow; pause(0.5); drawnow;
-                canvas = findall(figure, "Tag", "macd-preview-canvas");
+                canvas = findall(figure, "Tag", "yamada-preview-canvas");
                 native = findall(canvas, "Type", "uibutton");
                 rectangle = native.Position;
-                context = findall(figure, "Tag", "macd-hierarchy-context");
+                context = findall(figure, "Tag", "yamada-hierarchy-context");
                 context.ContextMenuOpeningFcn(context, struct("InteractionInformation", struct("Node", node)));
-                manage = findall(context, "Tag", "macd-manage-callbacks");
+                manage = findall(context, "Tag", "yamada-manage-callbacks");
                 manage.MenuSelectedFcn(manage, struct());
-                dialog = findall(0, "Tag", "macd-callback-manager");
+                dialog = findall(0, "Tag", "yamada-callback-manager");
                 binding = "app.Subject.ButtonPushedFcn = @app.SubjectPushed;";
                 for selection = ["SubjectPushed", "<Disconnect>"]
-                    control = findall(dialog, "Tag", "macd-callback-target", "UserData", "ButtonPushedFcn");
+                    control = findall(dialog, "Tag", "yamada-callback-target", "UserData", "ButtonPushedFcn");
                     testCase.assertEqual(numel(control), 1);
                     testCase.assertEqual(string(control.Enable), "on");
                     control.Value = selection;
                     control.ValueChangedFcn(control, struct());
                     drawnow;
-                    canvas = findall(figure, "Tag", "macd-preview-canvas");
+                    canvas = findall(figure, "Tag", "yamada-preview-canvas");
                     native = findall(canvas, "Type", "uibutton");
                     testCase.assertNumElements(native, 1);
                     testCase.verifyEqual(native.Position, rectangle);
@@ -57,7 +57,7 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
                     menu = menus(erase(string({menus.Text}), "&") == action);
                     menu.MenuSelectedFcn(menu, struct());
                     drawnow;
-                    canvas = findall(figure, "Tag", "macd-preview-canvas");
+                    canvas = findall(figure, "Tag", "yamada-preview-canvas");
                     native = findall(canvas, "Type", "uibutton");
                     testCase.assertNumElements(native, 1);
                     testCase.verifyEqual(native.Position, rectangle);
@@ -77,16 +77,16 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
 
         function callbackAcknowledgementCannotMaskVisualChanges(testCase)
             % callbackAcknowledgementCannotMaskVisualChanges Carry callback input versions without hiding property edits.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(callbackFixture("absolute"), registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(callbackFixture("absolute"), registry);
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
-            renderer = macd.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
+            renderer = yamada.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             subject = document.getComponentByName("Subject");
             document.applyCallbackAction(subject.Id, "ButtonPushedFcn", "Add", registry);
             testCase.verifyTrue(renderer.acknowledgeCallbackChanges(document));
             subject.setProperty("Text", "After callback");
             testCase.verifyFalse(renderer.acknowledgeCallbackChanges(document));
-            testCase.verifyTrue(renderer.synchronize(document, handles, macd.ui.RefreshRequest("properties", subject.Id, "Text")));
+            testCase.verifyTrue(renderer.synchronize(document, handles, yamada.ui.RefreshRequest("properties", subject.Id, "Text")));
             testCase.verifyEqual(string(handles(char(subject.Id)).Text), "After callback");
             clear cleanup
         end

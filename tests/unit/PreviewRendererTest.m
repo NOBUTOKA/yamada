@@ -21,7 +21,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
     methods (Test)
         function actualSizeFixturesKeepCanvasAndEdgeControlsUnscaled(testCase)
             % actualSizeFixturesKeepCanvasAndEdgeControlsUnscaled Cover fit and overflow.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             testPath = mfilename("fullpath");
             fixtureFolder = fullfile(fileparts(fileparts(fileparts(testPath))), ...
                 "tests", "fixtures");
@@ -31,13 +31,13 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 "LargePreviewFixtureApp", [1200 900], [1070 12 116 28]};
 
             for index = 1:size(cases, 1)
-                document = macd.source.AppSourceParser.parseFile( ...
+                document = yamada.source.AppSourceParser.parseFile( ...
                     fullfile(fixtureFolder, cases{index, 1} + ".m"), registry);
                 testCase.verifyEmpty(document.Diagnostics);
                 panel = uipanel(figure, "Position", [1 1 700 500], ...
                     "Scrollable", "on", "AutoResizeChildren", "off");
                 panelCleanup = onCleanup(@() deleteIfValid(panel));
-                renderer = macd.ui.PreviewRenderer(registry);
+                renderer = yamada.ui.PreviewRenderer(registry);
                 [handles, diagnostics, canvas] = renderer.render(document, panel);
                 testCase.verifyEmpty(diagnostics);
                 testCase.verifyEqual(canvas.Position, [2 2 cases{index, 2}]);
@@ -65,7 +65,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             % safePreviewRendersExtendedFixtureSemantics Cover string lists, axes, and tools.
 
             % Render the source-derived models without executing any of these fixtures.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             testPath = mfilename("fullpath");
             fixtureFolder = fullfile(fileparts(fileparts(fileparts(testPath))), ...
                 "tests", "fixtures");
@@ -139,14 +139,14 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
 
         function constrainedControlsRenderWithoutPositionWarnings(testCase)
             % constrainedControlsRenderWithoutPositionWarnings Verify safe Position writes.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ConstraintApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ConstraintApp", registry);
             document.insertComponent(registry, "uislider", document.RootComponentId);
             document.insertComponent(registry, "uiswitch", document.RootComponentId);
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 700 500]);
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             lastwarn("");
             [~, diagnostics] = renderer.render(document, panel);
             [warningMessage, ~] = lastwarn;
@@ -159,8 +159,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             % styleSpecificSwitchesUseNaturalPreviewSize Keep vertical switch variants compact.
 
             % Render both vertical variants through the catalog-backed insertion path.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("SwitchPreviewApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("SwitchPreviewApp", registry);
             rocker = registry.getById("uiswitch-rocker");
             toggle = registry.getById("uiswitch-toggle");
             rockerComponent = document.insertComponent(registry, rocker.Factory, ...
@@ -170,7 +170,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 700 500]);
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
 
             testCase.verifyEmpty(diagnostics);
@@ -185,8 +185,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
         function itemSelectionDependenciesRenderBeforeValue(testCase)
             % itemSelectionDependenciesRenderBeforeValue Render mapped and multiselect values.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ItemSelectionApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ItemSelectionApp", registry);
             dropDown = document.insertComponent(registry, "uidropdown", document.RootComponentId);
             listBox = document.insertComponent(registry, "uilistbox", document.RootComponentId);
             % Deliberately store the dependent value first; PreviewRenderer must
@@ -202,7 +202,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 700 500]);
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
 
             testCase.verifyEmpty(diagnostics);
@@ -213,8 +213,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
 
         function imageSourceRendersFromOpenedAppFolder(testCase)
             % imageSourceRendersFromOpenedAppFolder Resolve a relative image beside the app source.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ImagePreviewApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ImagePreviewApp", registry);
             imageComponent = document.insertComponent(registry, "uiimage", ...
                 document.RootComponentId);
             imagePath = string(tempname) + ".png";
@@ -227,7 +227,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             figure = uifigure("Visible", "off");
             figureCleanup = onCleanup(@() deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 700 500]);
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
 
             testCase.verifyEmpty(diagnostics);
@@ -245,12 +245,12 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             end
 
             % Render only the parsed model into an editor-owned hidden surface.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseFile(fixturePath, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseFile(fixturePath, registry);
             previewFigure = uifigure("Visible", "off");
             previewPanel = uipanel(previewFigure);
             previewCleanup = onCleanup(@() deleteIfValid(previewFigure));
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, previewPanel);
             testCase.verifyEmpty(diagnostics, fixturePath);
 
@@ -306,23 +306,23 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             % renderFixture Render one maintained fixture into a disposable preview panel.
             arguments (Input)
                 testCase (1, 1) PreviewRendererTest %#ok<INUSA>
-                registry (1, 1) macd.model.ComponentRegistry
+                registry (1, 1) yamada.model.ComponentRegistry
                 fixtureFolder (1, 1) string
                 fixtureName (1, 1) string
                 previewFigure (1, 1) matlab.ui.Figure
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
                 handles containers.Map
-                diagnostics macd.model.Diagnostic
+                diagnostics yamada.model.Diagnostic
                 panel (1, 1) matlab.ui.container.Panel
             end
 
             % Keep each fixture isolated while sharing a stable editor-sized surface.
-            document = macd.source.AppSourceParser.parseFile( ...
+            document = yamada.source.AppSourceParser.parseFile( ...
                 fullfile(fixtureFolder, fixtureName + ".m"), registry);
             panel = uipanel(previewFigure, "Position", [1 1 900 700]);
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
         end
     end

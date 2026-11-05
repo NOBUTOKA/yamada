@@ -7,15 +7,15 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'generation'}) PropertyApplica
         function projectsTransitiveEdgesWithoutChangingIndependentEntryOrder(testCase)
             % projectsTransitiveEdgesWithoutChangingIndependentEntryOrder Use graph closure without Inspector sorting.
             definitions = [ ...
-                macd.model.PropertyDefinition("Prerequisite"), ...
+                yamada.model.PropertyDefinition("Prerequisite"), ...
                 testCase.dependent("Intermediate", "Prerequisite"), ...
                 testCase.dependent("Value", "Intermediate"), ...
-                macd.model.PropertyDefinition("Text")];
-            entries = [macd.model.PropertyEntry("Value", 3), ...
-                macd.model.PropertyEntry("UnknownProperty", 4), ...
-                macd.model.PropertyEntry("Text", "Keep order"), ...
-                macd.model.PropertyEntry("Prerequisite", 1)];
-            ordered = macd.model.PropertyApplicationPlanner.order(entries, definitions);
+                yamada.model.PropertyDefinition("Text")];
+            entries = [yamada.model.PropertyEntry("Value", 3), ...
+                yamada.model.PropertyEntry("UnknownProperty", 4), ...
+                yamada.model.PropertyEntry("Text", "Keep order"), ...
+                yamada.model.PropertyEntry("Prerequisite", 1)];
+            ordered = yamada.model.PropertyApplicationPlanner.order(entries, definitions);
             testCase.verifyEqual(string({ordered.Path}), ...
                 ["UnknownProperty", "Text", "Prerequisite", "Value"]);
             testCase.verifyEqual(string({entries.Path}), ...
@@ -25,64 +25,64 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'generation'}) PropertyApplica
 
         function previewFiltersLegacyExecutableConstructorPairs(testCase)
             % previewFiltersLegacyExecutableConstructorPairs Apply skip policy without occurrence metadata.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for factory = ["uilabel", "uibutton"]
-                member = macd.model.ComponentRecord("owned", "Owned", factory, "matlab.ui.control.Label");
+                member = yamada.model.ComponentRecord("owned", "Owned", factory, "matlab.ui.control.Label");
                 member.CreationArguments = {"Text", "retained", "CreateFcn", @(~,~) error("MustNotExecute")};
-                actual = macd.model.PropertyApplicationPlanner.forPreviewArguments(member, registry);
+                actual = yamada.model.PropertyApplicationPlanner.forPreviewArguments(member, registry);
                 testCase.verifyEqual(actual, {"Text", "retained"});
             end
             member.CreationArguments = [{"push"}, member.CreationArguments];
-            actual = macd.model.PropertyApplicationPlanner.forPreviewArguments(member, registry);
+            actual = yamada.model.PropertyApplicationPlanner.forPreviewArguments(member, registry);
             testCase.verifyEqual(actual, {"push", "Text", "retained"});
         end
 
         function handlesEmptySubsetAndConservativeLegacyMetadata(testCase)
             % handlesEmptySubsetAndConservativeLegacyMetadata Retain original order without declared dependencies.
-            definitions = [macd.model.PropertyDefinition("A"), macd.model.PropertyDefinition("B")];
-            entries = [macd.model.PropertyEntry("B", 2), macd.model.PropertyEntry("A", 1)];
-            testCase.verifyEqual(macd.model.PropertyApplicationPlanner.order(entries, definitions), entries);
-            testCase.verifyEmpty(macd.model.PropertyApplicationPlanner.order( ...
-                macd.model.PropertyEntry.empty, definitions));
+            definitions = [yamada.model.PropertyDefinition("A"), yamada.model.PropertyDefinition("B")];
+            entries = [yamada.model.PropertyEntry("B", 2), yamada.model.PropertyEntry("A", 1)];
+            testCase.verifyEqual(yamada.model.PropertyApplicationPlanner.order(entries, definitions), entries);
+            testCase.verifyEmpty(yamada.model.PropertyApplicationPlanner.order( ...
+                yamada.model.PropertyEntry.empty, definitions));
         end
 
         function rejectsDuplicateProjectionAndInvalidFullGraph(testCase)
             % rejectsDuplicateProjectionAndInvalidFullGraph Refuse ambiguous entries and invalid omitted definitions.
-            entries = [macd.model.PropertyEntry("A", 1), macd.model.PropertyEntry("A", 2)];
-            testCase.verifyError(@() macd.model.PropertyApplicationPlanner.order(entries, ...
-                macd.model.PropertyDefinition("A")), "macd:PropertyApplicationPlanner:DuplicateProperty");
-            testCase.verifyError(@() macd.model.PropertyApplicationPlanner.order( ...
-                macd.model.PropertyEntry.empty, testCase.dependent("A", "Missing")), ...
-                "macd:ComponentCatalogLoader:InvalidCatalog");
+            entries = [yamada.model.PropertyEntry("A", 1), yamada.model.PropertyEntry("A", 2)];
+            testCase.verifyError(@() yamada.model.PropertyApplicationPlanner.order(entries, ...
+                yamada.model.PropertyDefinition("A")), "yamada:PropertyApplicationPlanner:DuplicateProperty");
+            testCase.verifyError(@() yamada.model.PropertyApplicationPlanner.order( ...
+                yamada.model.PropertyEntry.empty, testCase.dependent("A", "Missing")), ...
+                "yamada:ComponentCatalogLoader:InvalidCatalog");
         end
 
         function generatedNumericControlsEstablishRangeBeforeValue(testCase)
             % generatedNumericControlsEstablishRangeBeforeValue Use the promoted policy in canonical output.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("OrderedNumericApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("OrderedNumericApp", registry);
             slider = document.insertComponent(registry, "uislider", document.RootComponentId);
             slider.setProperty("Value", 75);
             slider.setProperty("Limits", [50 100]);
-            entries = macd.model.PropertyApplicationPlanner.forComponent(slider, document, registry);
+            entries = yamada.model.PropertyApplicationPlanner.forComponent(slider, document, registry);
             paths = string({entries.Path});
             testCase.verifyLessThan(find(paths == "Limits"), find(paths == "Value"));
-            [source, diagnostics] = macd.source.NewAppGenerator(registry).generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            [source, diagnostics] = yamada.source.NewAppGenerator(registry).generate(document);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             prefix = "app." + slider.Name + ".";
             testCase.verifyLessThan(strfind(source, prefix + "Limits ="), strfind(source, prefix + "Value ="));
-            reloaded = macd.source.AppSourceParser.parseText(source, registry);
+            reloaded = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyEqual(reloaded.getComponentByName(slider.Name).getProperty("Value").LiteralValue, 75);
         end
 
         function generationAcceptsDocumentedOffScaleGaugeValues(testCase)
             % generationAcceptsDocumentedOffScaleGaugeValues Avoid applying slider restrictions to a gauge.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("OffScaleGaugeApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("OffScaleGaugeApp", registry);
             gauge = document.insertComponent(registry, "uigauge", document.RootComponentId, {"circular"});
             gauge.setProperty("Value", 150);
             gauge.setProperty("Limits", [0 100]);
-            [source, diagnostics] = macd.source.NewAppGenerator(registry).generate(document);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            [source, diagnostics] = yamada.source.NewAppGenerator(registry).generate(document);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifySubstring(source, "app." + gauge.Name + ".Value = 150;");
             testCase.verifyEmpty(registry.get("uigauge", {"circular"}).getProperty("Value").Application.ApplyAfter);
         end
@@ -97,12 +97,12 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'generation'}) PropertyApplica
                 "app.Slider = uislider(app.UIFigure);", "app.Slider.Value = 20;", ...
                 "app.Slider.Limits = [0 50];", "end", "end", "methods (Access=public)", ...
                 "function app = ParsedPolicyApp", "createComponents(app);", "end", "end", "end"], ending);
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(source, registry);
-            generated = macd.source.RoundTripGenerator(registry).generate(document);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(source, registry);
+            generated = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyEqual(generated, source);
             component = document.getComponentByName("Slider");
-            entries = macd.model.PropertyApplicationPlanner.forPreview(component, document, registry);
+            entries = yamada.model.PropertyApplicationPlanner.forPreview(component, document, registry);
             testCase.verifyEqual(string({entries.Path}), ["Value", "Limits"]);
             testCase.verifyEqual(entries(1).LiteralValue, 20);
             testCase.verifyEqual(entries(2).LiteralValue, [0 50]);
@@ -117,9 +117,9 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'generation'}) PropertyApplica
                 prerequisite (1, 1) string
             end
             arguments (Output)
-                definition (1, 1) macd.model.PropertyDefinition
+                definition (1, 1) yamada.model.PropertyDefinition
             end
-            definition = macd.model.PropertyDefinition(path, [], false, true, ...
+            definition = yamada.model.PropertyDefinition(path, [], false, true, ...
                 struct("application", struct("applyAfter", {{prerequisite}})));
         end
     end

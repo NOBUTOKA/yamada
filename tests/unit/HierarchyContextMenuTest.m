@@ -4,7 +4,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
     %   invalidation across document replacement and empty tree space.
 
     properties (Access = private)
-        Document macd.model.DocumentModel
+        Document yamada.model.DocumentModel
         ReceivedId string = ""
     end
 
@@ -16,7 +16,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             tree.SelectedNodes = root;
             expand(root);
             drawnow;
-            item = findall(menu, "Tag", "macd-manage-callbacks");
+            item = findall(menu, "Tag", "yamada-manage-callbacks");
             testCase.chooseContextMenu(button, item);
             testCase.verifyEqual(testCase.ReceivedId, "button");
             testCase.verifyEqual(tree.SelectedNodes, root);
@@ -35,7 +35,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             tree.SelectedNodes = root;
             adapter = figure.UserData;
             adapter.openForComponent("button", [30 40]);
-            item = findall(menu, "Tag", "macd-manage-callbacks");
+            item = findall(menu, "Tag", "yamada-manage-callbacks");
             item.MenuSelectedFcn(item, []);
             testCase.verifyEqual(testCase.ReceivedId, "button");
             testCase.verifyEqual(tree.SelectedNodes, root);
@@ -47,7 +47,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             % emptySpaceAndReplacementCannotReuseTarget Reject stale targets after native menu preparation.
             [figure, tree, menu, ~, button] = testCase.fixture();
             cleanup = onCleanup(@() delete(figure));
-            item = findall(menu, "Tag", "macd-manage-callbacks");
+            item = findall(menu, "Tag", "yamada-manage-callbacks");
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", button)));
             testCase.verifyEqual(item.Enable, matlab.lang.OnOffSwitchState.on);
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", [])));
@@ -55,7 +55,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             item.MenuSelectedFcn(item, []);
             testCase.verifyEqual(testCase.ReceivedId, "");
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", button)));
-            testCase.Document = macd.model.DocumentModel("Replacement");
+            testCase.Document = yamada.model.DocumentModel("Replacement");
             item.MenuSelectedFcn(item, []);
             testCase.verifyEqual(testCase.ReceivedId, "");
             testCase.verifyEqual(item.Enable, matlab.lang.OnOffSwitchState.off);
@@ -66,7 +66,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             % resetDeletionAndCallbackFreeTargetsDisableCommand Verify explicit invalidation and empty capability surfaces.
             [figure, tree, menu, ~, button] = testCase.fixture();
             cleanup = onCleanup(@() delete(figure));
-            item = findall(menu, "Tag", "macd-manage-callbacks");
+            item = findall(menu, "Tag", "yamada-manage-callbacks");
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", button)));
             figure.UserData.reset();
             item.MenuSelectedFcn(item, []);
@@ -79,13 +79,13 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
 
             % Use an extension catalog with no callbacks to exercise availability independently.
             delete(figure.UserData);
-            registry = macd.model.ComponentRegistry();
-            registry.register(macd.model.ComponentDefinition("uifigure", "matlab.ui.Figure"));
-            figure.UserData = macd.ui.HierarchyContextMenu(figure, tree, registry, ...
+            registry = yamada.model.ComponentRegistry();
+            registry.register(yamada.model.ComponentDefinition("uifigure", "matlab.ui.Figure"));
+            figure.UserData = yamada.ui.HierarchyContextMenu(figure, tree, registry, ...
                 @() testCase.Document, @(id) testCase.receive(id));
             menu = tree.ContextMenu;
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", tree.Children(1))));
-            item = findall(menu, "Tag", "macd-manage-callbacks");
+            item = findall(menu, "Tag", "yamada-manage-callbacks");
             testCase.verifyEqual(item.Enable, matlab.lang.OnOffSwitchState.off);
         end
 
@@ -93,7 +93,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             % editorMenuSurvivesRebuildWithoutChangingInspector Exercise real editor command wiring and rebuilds.
             app = yamada();
             cleanup = onCleanup(@() delete(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             palette = findall(figure, "Type", "uitable");
             palette = palette(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), palette));
@@ -104,17 +104,17 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             tree = findall(figure, "Type", "uitree");
             root = tree.Children(1);
             menu = tree.ContextMenu;
-            item = findall(menu, "Tag", "macd-manage-callbacks");
-            inspector = findall(figure, "Tag", "macd-inspector-property-editor");
+            item = findall(menu, "Tag", "yamada-manage-callbacks");
+            inspector = findall(figure, "Tag", "yamada-inspector-property-editor");
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", root)));
             item.MenuSelectedFcn(item, []);
-            popup = findall(0, "Tag", "macd-callback-manager");
+            popup = findall(0, "Tag", "yamada-callback-manager");
             testCase.verifyEqual(numel(popup), 1);
             item.MenuSelectedFcn(item, []);
-            testCase.verifyEqual(findall(0, "Tag", "macd-callback-manager"), popup);
+            testCase.verifyEqual(findall(0, "Tag", "yamada-callback-manager"), popup);
             testCase.verifyEqual(app.SelectedComponentId, selected);
             testCase.verifyEqual(app.Document.HistoryIndex, historyIndex);
-            testCase.verifyEqual(findall(figure, "Tag", "macd-inspector-property-editor"), inspector);
+            testCase.verifyEqual(findall(figure, "Tag", "yamada-inspector-property-editor"), inspector);
             close(popup);
             palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
             testCase.verifyTrue(isvalid(menu));
@@ -126,32 +126,32 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             % popupActionsCommitAndUndoCompleteCallbacks Exercise binding-only dropdown edits and editor history callbacks.
             app = yamada();
             cleanup = onCleanup(@() delete(app));
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             app.Document.applyCallbackAction(app.Document.RootComponentId, "SizeChangedFcn", "New", registry, "RootSized");
             app.Document.applyCallbackAction(app.Document.RootComponentId, "SizeChangedFcn", "Disconnect", registry);
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tree = findall(figure, "Type", "uitree");
             menu = tree.ContextMenu;
-            item = findall(menu, "Tag", "macd-manage-callbacks");
+            item = findall(menu, "Tag", "yamada-manage-callbacks");
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", tree.Children(1))));
             item.MenuSelectedFcn(item, []);
-            popup = findall(0, "Tag", "macd-callback-manager");
-            control = findall(popup, "Tag", "macd-callback-target", "UserData", "SizeChangedFcn");
+            popup = findall(0, "Tag", "yamada-callback-manager");
+            control = findall(popup, "Tag", "yamada-callback-target", "UserData", "SizeChangedFcn");
             control.Value = "RootSized";
             control.ValueChangedFcn(control, []);
             testCase.verifyEqual(app.Document.HistoryIndex, 3);
             testCase.verifySubstring(app.Document.GeneratedText, "SizeChangedFcn = @app.");
-            control = findall(popup, "Tag", "macd-callback-target", "UserData", "SizeChangedFcn");
+            control = findall(popup, "Tag", "yamada-callback-target", "UserData", "SizeChangedFcn");
             testCase.verifyEqual(string(control.Enable), "on");
             control.Value = "<Disconnect>";
             control.ValueChangedFcn(control, []);
             testCase.verifyEqual(app.Document.HistoryIndex, 4);
             testCase.verifyFalse(contains(app.Document.GeneratedText, "SizeChangedFcn = @app."));
             testCase.verifySubstring(app.Document.CurrentText, "function RootSized(app, source, event)");
-            undo = findall(figure, "Type", "uimenu", "Tag", "macd-edit-undo");
+            undo = findall(figure, "Type", "uimenu", "Tag", "yamada-edit-undo");
             undo.MenuSelectedFcn(undo, []);
             testCase.verifySubstring(app.Document.GeneratedText, "SizeChangedFcn = @app.");
-            control = findall(popup, "Tag", "macd-callback-target", "UserData", "SizeChangedFcn");
+            control = findall(popup, "Tag", "yamada-callback-target", "UserData", "SizeChangedFcn");
             testCase.verifyEqual(string(control.Value), "RootSized");
         end
     end
@@ -170,16 +170,16 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
                 button (1, 1) matlab.ui.container.TreeNode
             end
             testCase.ReceivedId = "";
-            testCase.Document = macd.model.DocumentModel("ContextFixture");
-            testCase.Document.addComponent(macd.model.ComponentRecord("root", "UIFigure", "uifigure", "matlab.ui.Figure"));
-            testCase.Document.addComponent(macd.model.ComponentRecord("button", "Button", "uibutton", "matlab.ui.control.Button"), "root");
+            testCase.Document = yamada.model.DocumentModel("ContextFixture");
+            testCase.Document.addComponent(yamada.model.ComponentRecord("root", "UIFigure", "uifigure", "matlab.ui.Figure"));
+            testCase.Document.addComponent(yamada.model.ComponentRecord("button", "Button", "uibutton", "matlab.ui.control.Button"), "root");
             testCase.Document.markSaved();
             figure = uifigure("Position", [300 300 350 300]);
             tree = uitree(figure, "Position", [10 10 320 270]);
             root = uitreenode(tree, "Text", "UIFigure", "NodeData", "root");
             button = uitreenode(root, "Text", "Button", "NodeData", "button");
-            adapter = macd.ui.HierarchyContextMenu(figure, tree, ...
-                macd.model.ComponentRegistry.createDefault(), @() testCase.Document, ...
+            adapter = yamada.ui.HierarchyContextMenu(figure, tree, ...
+                yamada.model.ComponentRegistry.createDefault(), @() testCase.Document, ...
                 @(id) testCase.receive(id));
             figure.UserData = adapter;
             menu = tree.ContextMenu;

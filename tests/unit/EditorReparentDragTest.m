@@ -11,7 +11,7 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             % absoluteToGridAndBetweenGrids Commit exact destination cells with one history step each.
             [app, figure, button, left, grid] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             targets = overlay.Data.reparentTargets;
             target = targets(string({targets.id}) == grid.Id);
             testCase.verifyTrue(target.enabled);
@@ -67,7 +67,7 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             testCase.select(figure, button.Id);
             testCase.drop(figure, button.Id, leftGridId, [1 1], []);
             drawnow;
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             data = overlay.Data;
             source = data.dragSource.bounds;
             targets = data.reparentTargets;
@@ -125,7 +125,7 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             testCase.select(figure, left.Id);
             testCase.select(figure, button.Id);
             drawnow;
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             targets = overlay.Data.reparentTargets;
             testCase.verifyFalse(any(string({targets.id}) == button.Id));
             testCase.verifyTrue(targets(string({targets.id}) == grid.Id).enabled);
@@ -140,7 +140,7 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             % occupiedGridDropsClipSpansAndRemainUndoable Permit overlap and fit a larger span at the chosen cell.
             [app, figure, button, left, grid] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             occupied = app.Document.insertComponent(registry, "uilabel", grid.Id);
             testCase.select(figure, left.Id);
             testCase.select(figure, button.Id);
@@ -172,7 +172,7 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             % cancelInvalidAndStaleDropsDoNotEdit Keep model and history intact across rejected gestures.
             [app, figure, button, left, grid] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             position = button.getProperty("Position").LiteralValue;
             history = app.Document.HistoryIndex;
             for phase = ["pointerdown", "pointermove", "pointercancel"]
@@ -191,7 +191,7 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             menus = findall(figure, "Type", "uimenu");
             undo = menus(erase(string({menus.Text}), "&") == "Undo");
             undo.MenuSelectedFcn(undo, []);
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             history = app.Document.HistoryIndex;
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Reparent", ...
                 "HTMLEventData", struct("componentId", button.Id, "parentId", grid.Id, ...
@@ -236,7 +236,7 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
                 cell double
                 position double
             end
-            overlay = findall(figure, "Tag", "macd-interaction-overlay");
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "Reparent", ...
                 "HTMLEventData", struct("componentId", id, "parentId", parentId, ...
                 "modelRevision", overlay.Data.reparentRevision, "targetCell", cell, "targetPosition", position)));
@@ -264,12 +264,12 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             arguments (Output)
                 app (1, 1) yamada
                 figure (1, 1) matlab.ui.Figure
-                button (1, 1) macd.model.ComponentRecord
-                left (1, 1) macd.model.ComponentRecord
-                grid (1, 1) macd.model.ComponentRecord
+                button (1, 1) yamada.model.ComponentRecord
+                left (1, 1) yamada.model.ComponentRecord
+                grid (1, 1) yamada.model.ComponentRecord
             end
             app = yamada();
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Category"), tables));
             panelRow = find(string(palette.Data(:, 1)) == "Panel", 1);

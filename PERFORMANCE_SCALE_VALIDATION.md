@@ -61,7 +61,7 @@
 
 200ラベル・8段のOpenはプロファイル下で約60.47秒（反映待ちを含む）で完了した。parseFile 33.12秒のうちModelValidatorが29.49秒、画面更新refreshShellは15.09秒、うちPreview更新11.03秒だった。これらは内数・重複関係にあり加算しない。
 
-全体検証の内側では、GridLayoutStatePolicy.resolveから呼ぶPropertyStateResolver.unresolvedEffectIdが219回・19.56秒だった。その処理から設定検索getSettingsを398,486回呼び出していた。同じグリッドの部品群に不確かな連動設定があるかを、部品ごとの状態解決から繰り返し確認する構造である。部品数の増加によって重複走査が大きくなる。コードは`+macd/+model/PropertyStateResolver.m`のunresolvedEffectIdと、`+macd/+model/GridLayoutStatePolicy.m`のresolveにある。
+全体検証の内側では、GridLayoutStatePolicy.resolveから呼ぶPropertyStateResolver.unresolvedEffectIdが219回・19.56秒だった。その処理から設定検索getSettingsを398,486回呼び出していた。同じグリッドの部品群に不確かな連動設定があるかを、部品ごとの状態解決から繰り返し確認する構造である。部品数の増加によって重複走査が大きくなる。コードは`+yamada/+model/PropertyStateResolver.m`のunresolvedEffectIdと、`+yamada/+model/GridLayoutStatePolicy.m`のresolveにある。
 
 最初の選択では重ね表示更新5.94秒のうち親変更候補の状態計算reparentStatesが4.90秒で、GridLayoutOverlayDataBuilder.build自体は約0.12秒だった。認証済みFontSize再編集で可否照会が数msになる結果を、未訪問の選択へ広げない。
 

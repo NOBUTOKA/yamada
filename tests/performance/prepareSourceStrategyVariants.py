@@ -7,8 +7,8 @@ s=s.replace('''                app.Document.setPropertyBatch(component.Id, trans
                 assert(isscalar(requested), "Prototype handles one Inspector property per operation.");
                 experiment.edit(component.Name, string(requested.Path), requested.Value);''',1)
 s=s.replace('''            app.Document.validatePropertyCommit(app.Registry);
-            app.refreshViews(macd.ui.RefreshRequest("properties", component.Id, string({changes.Path})));''','''            app.Document.Diagnostics = macd.validation.ModelValidator.validate(app.Document, app.Registry, component.Name);
-            app.refreshViews(macd.ui.RefreshRequest("properties", component.Id, string({changes.Path})));''',1)
+            app.refreshViews(yamada.ui.RefreshRequest("properties", component.Id, string({changes.Path})));''','''            app.Document.Diagnostics = yamada.validation.ModelValidator.validate(app.Document, app.Registry, component.Name);
+            app.refreshViews(yamada.ui.RefreshRequest("properties", component.Id, string({changes.Path})));''',1)
 needle='''            completed = false;
             % Missing or unconfirmed targets'''
 replacement='''            completed = false;

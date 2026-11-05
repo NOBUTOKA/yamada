@@ -10,11 +10,11 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorPropertyRowTest < matlab.unit
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
             grid = uigridlayout(figure, [1 1]);
-            definition = macd.model.PropertyDefinition("Position", [], false, true, ...
+            definition = yamada.model.PropertyDefinition("Position", [], false, true, ...
                 struct("editor", "numericVector"));
-            row = macd.ui.inspector.InspectorPropertyRow(grid, 1, "component-1", ...
+            row = yamada.ui.inspector.InspectorPropertyRow(grid, 1, "component-1", ...
                 definition, @(~, ~, ~) "Enter a finite numeric vector."); %#ok<NASGU>
-            editor = findall(figure, "Tag", "macd-inspector-property-editor");
+            editor = findall(figure, "Tag", "yamada-inspector-property-editor");
             editor.Value = "not a vector";
             editor.ValueChangedFcn(editor, struct());
             drawnow;
@@ -30,14 +30,14 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorPropertyRowTest < matlab.unit
             % acceptedInspectorEditRetainsNativeEditor Avoid replacing rows during a value-only refresh.
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
-            figure = findall(0, "Tag", "macd-yamada-editor");
+            figure = findall(0, "Tag", "yamada-editor");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(item) any(string(item.ColumnName) == "Category"), tables));
             index = find(string(palette.Data(:, 1)) == "Label", 1);
             palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", index)));
-            labels = findall(figure, "Tag", "macd-inspector-property-label");
+            labels = findall(figure, "Tag", "yamada-inspector-property-label");
             label = labels(string({labels.Text}) == "FontSize");
-            editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+            editor = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
             editor.Value = 19;
             editor.ValueChangedFcn(editor, struct());
             testCase.verifyTrue(isvalid(editor));
@@ -50,15 +50,15 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorPropertyRowTest < matlab.unit
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
             grid = uigridlayout(figure, [2 1]);
-            definition = macd.model.PropertyDefinition("Position", [], false, true, ...
+            definition = yamada.model.PropertyDefinition("Position", [], false, true, ...
                 struct("editor", "numericVector"));
-            first = macd.ui.inspector.InspectorPropertyRow(grid, 1, "component-1", ...
+            first = yamada.ui.inspector.InspectorPropertyRow(grid, 1, "component-1", ...
                 definition, @(~, ~, ~) "Enter a finite numeric vector.");
-            firstEditor = findall(grid, "Tag", "macd-inspector-property-editor");
+            firstEditor = findall(grid, "Tag", "yamada-inspector-property-editor");
             firstEditor.Value = "bad draft";
             firstEditor.ValueChangedFcn(firstEditor, struct());
             state = first.snapshotTransientState();
-            second = macd.ui.inspector.InspectorPropertyRow(grid, 2, "component-1", ...
+            second = yamada.ui.inspector.InspectorPropertyRow(grid, 2, "component-1", ...
                 definition, @(~, ~, ~) "");
             second.synchronize("[10 20 30 40]", true, [10 20 30 40]);
             second.restoreTransientState(state);

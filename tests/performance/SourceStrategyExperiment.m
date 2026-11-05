@@ -5,7 +5,7 @@ classdef SourceStrategyExperiment < handle
 
     properties (SetAccess = private)
         % Document - Independent editable document retaining ordinary model history.
-        Document macd.model.DocumentModel
+        Document yamada.model.DocumentModel
         % Mode - Delayed patch accumulation or eager source and position maintenance.
         Mode string
         % Source - Baseline text in deferred mode or current text in eager mode.
@@ -17,7 +17,7 @@ classdef SourceStrategyExperiment < handle
     end
 
     properties (Access = private)
-        Registry macd.model.ComponentRegistry
+        Registry yamada.model.ComponentRegistry
         Patches struct = struct("Key", {}, "Start", {}, "End", {}, "Text", {})
         Definitions containers.Map
         Emitted string = ""
@@ -29,16 +29,16 @@ classdef SourceStrategyExperiment < handle
             arguments (Input)
                 source (1, 1) string
                 mode (1, 1) string {mustBeMember(mode, ["deferred", "eager"])}
-                registry (1, 1) macd.model.ComponentRegistry
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             obj.Registry = registry;
             obj.Mode = mode;
             obj.Source = source;
-            [obj.Document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
-            assert(~macd.validation.ModelValidator.hasErrors(diagnostics));
+            [obj.Document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
+            assert(~yamada.validation.ModelValidator.hasErrors(diagnostics));
             parsed = obj.Document;
-            obj.Document = macd.model.DocumentModel(parsed.ClassName);
-            obj.Document.Components = macd.model.SubtreeSnapshot(parsed, parsed.RootComponentId).materialize();
+            obj.Document = yamada.model.DocumentModel(parsed.ClassName);
+            obj.Document.Components = yamada.model.SubtreeSnapshot(parsed, parsed.RootComponentId).materialize();
             obj.Document.RootComponentId = parsed.RootComponentId;
             obj.Document.OriginalText = source;
             obj.Document.Metadata = parsed.Metadata;
@@ -47,7 +47,7 @@ classdef SourceStrategyExperiment < handle
             obj.Document.HistoryLimit = 200;
             obj.Definitions = containers.Map("KeyType", "char", "ValueType", "any");
             % Retain every model span, not only the ranges changed by the workload.
-            snapshot = macd.model.SubtreeSnapshot(obj.Document, obj.Document.RootComponentId);
+            snapshot = yamada.model.SubtreeSnapshot(obj.Document, obj.Document.RootComponentId);
             obj.collect(snapshot.Records, "records");
             analysis = obj.Document.sourceAnalysis();
             for index = 1:numel(analysis.Statements)
@@ -84,7 +84,7 @@ classdef SourceStrategyExperiment < handle
             % attach Bind the prototype to the real editor document after its ordinary Open flow.
             arguments (Input)
                 obj (1, 1) SourceStrategyExperiment
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
             end
             assert(document.OriginalText == obj.Source && document.HistoryIndex == 0);
             obj.Document = document;
@@ -114,14 +114,14 @@ classdef SourceStrategyExperiment < handle
             assert(isempty(component.Children) || ...
                 ~(definition.AbsoluteGeometryImpact || definition.GridGeometryImpact == "required"), ...
                 "Descendant geometry requires an additional proof outside this prototype.");
-            encoded = macd.source.LiteralEncoder.encode(value);
-            [decoded, literal] = macd.source.MatlabLiteralParser.parse(encoded);
+            encoded = yamada.source.LiteralEncoder.encode(value);
+            [decoded, literal] = yamada.source.MatlabLiteralParser.parse(encoded);
             assert(literal && isequaln(decoded, value));
             assert(~contains(encoded, string(newline)) && ~contains(encoded, string(char(13))));
-            states = macd.model.PropertyStateResolver.resolve(component, definitions);
-            transaction = macd.model.PropertyStateResolver.transaction(states);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
+            transaction = yamada.model.PropertyStateResolver.transaction(states);
             transaction.stage(path, value);
-            message = macd.validation.PropertyBatchValidator.validate(definitions, transaction);
+            message = yamada.validation.PropertyBatchValidator.validate(definitions, transaction);
             assert(strlength(message) == 0, "%s", message);
             % Compute the patch before changing either model or source.
             key = name + "." + path;
@@ -152,7 +152,7 @@ classdef SourceStrategyExperiment < handle
                 component.restoreSettings(records);
                 sequence = 1;
                 if ~isempty(component.Settings), sequence = max([component.Settings.Sequence]) + 1; end
-                setting = macd.model.PropertySetting(path, value, struct("Method", "assignment", ...
+                setting = yamada.model.PropertySetting(path, value, struct("Method", "assignment", ...
                     "Syntax", "dot", "Sequence", sequence, "SourceSnapshotId", "experiment"));
                 component.recordSetting(setting);
                 replacement = component.getProperty(path).toStruct();
@@ -193,7 +193,7 @@ classdef SourceStrategyExperiment < handle
             if obj.Mode == "eager", return, end
             if strlength(obj.Emitted) > 0, source = obj.Emitted; return, end
             edits = rmfield(obj.Patches, "Key");
-            edits = macd.source.CallbackSourceEdits.combineInsertions(edits);
+            edits = yamada.source.CallbackSourceEdits.combineInsertions(edits);
             [~, order] = sort([edits.Start], "descend");
             for index = order
                 edit = edits(index);
@@ -212,9 +212,9 @@ classdef SourceStrategyExperiment < handle
                 checkpoint (1, 1) struct
             end
             source = obj.emit();
-            source = macd.source.SourceWriter.normalize(source, obj.Document.LineEnding);
-            [saved, diagnostics] = macd.source.AppSourceParser.parseText(source, obj.Registry, path);
-            assert(~macd.validation.ModelValidator.hasErrors(diagnostics));
+            source = yamada.source.SourceWriter.normalize(source, obj.Document.LineEnding);
+            [saved, diagnostics] = yamada.source.AppSourceParser.parseText(source, obj.Registry, path);
+            assert(~yamada.validation.ModelValidator.hasErrors(diagnostics));
             assert(numel(saved.Components) == numel(obj.Document.Components));
             for component = obj.Document.Components
                 other = saved.getComponentByName(component.Name);
@@ -224,7 +224,7 @@ classdef SourceStrategyExperiment < handle
                 assert(isempty(parent) == isempty(savedParent));
                 if ~isempty(parent), assert(parent.Name == savedParent.Name); end
                 definitions = obj.Definitions(char(component.Name));
-                expected = macd.model.PropertyStateResolver.resolve(component, definitions);
+                expected = yamada.model.PropertyStateResolver.resolve(component, definitions);
                 actual = saved.getEffectivePropertyStates(obj.Registry, other.Id);
                 for state = expected
                     if ~state.IsKnown, continue, end
@@ -237,10 +237,10 @@ classdef SourceStrategyExperiment < handle
                 entry = saved.getComponentByName(request.Name).getProperty(request.Path);
                 assert(~isempty(entry) && isequaln(entry.LiteralValue, request.Value));
             end
-            snapshot = macd.model.SubtreeSnapshot(saved, saved.RootComponentId);
+            snapshot = yamada.model.SubtreeSnapshot(saved, saved.RootComponentId);
             % Re-emission proves that the output still represents current edit intentions.
-            assert(source == macd.source.SourceWriter.normalize(obj.emit(), obj.Document.LineEnding));
-            macd.source.SourceWriter.write(path, source, obj.Document.LineEnding);
+            assert(source == yamada.source.SourceWriter.normalize(obj.emit(), obj.Document.LineEnding));
+            yamada.source.SourceWriter.write(path, source, obj.Document.LineEnding);
             obj.Document.markSaved();
             checkpoint = struct("SourceText", source, "Snapshot", snapshot);
 
@@ -266,7 +266,7 @@ classdef SourceStrategyExperiment < handle
                 value
                 key (1, 1) string
             end
-            if isa(value, "macd.model.SourceSpan")
+            if isa(value, "yamada.model.SourceSpan")
                 for index = 1:numel(value)
                     if value(index).isKnown(), obj.add(key + ":" + index, value(index).StartOffset, value(index).EndOffset); end
                 end

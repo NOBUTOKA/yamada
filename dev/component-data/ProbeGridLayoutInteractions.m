@@ -91,7 +91,7 @@ end
 
 % Record getter values separately from source occurrences and policy decisions.
 file = fopen(outputPath, "w", "n", "UTF-8");
-assert(file >= 0, "macd:ProbeGridLayoutInteractions:WriteFailed", "Cannot open probe output.");
+assert(file >= 0, "yamada:ProbeGridLayoutInteractions:WriteFailed", "Cannot open probe output.");
 fileCleanup = onCleanup(@() fclose(file));
 fprintf(file, "%s\n", jsonencode(struct("matlabRelease", "R2024a", "results", results), "PrettyPrint", true));
 fprintf("GRID_LAYOUT_PROBE Cases=%d Errors=%d\n", numel(results), sum(strlength(string({results.Error})) > 0));

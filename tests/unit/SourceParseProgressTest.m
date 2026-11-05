@@ -8,16 +8,16 @@ classdef (TestTags = {'ui', 'parser'}) SourceParseProgressTest < matlab.unittest
     methods (Test)
         function centralParserShowsAndClosesNotification(testCase)
             % centralParserShowsAndClosesNotification Cover valid and diagnostic-producing source loads.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             parent = uifigure("Visible", "on", "Position", [100 100 320 200]); cleanup = onCleanup(@() delete(parent));
-            display = macd.source.SourceParseProgress(registry, parent);
+            display = yamada.source.SourceParseProgress(registry, parent);
             registrationCleanup = onCleanup(@() delete(display));
             listener = addlistener(display, "Started", @(~, ~) testCase.capture(display.Dialog)); %#ok<NASGU>
             root = fileparts(fileparts(mfilename("fullpath")));
             source = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
-            macd.source.AppSourceParser.parseText(source, registry);
+            yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyEmpty(display.Dialog);
-            [~, diagnostics] = macd.source.AppSourceParser.parseText("invalid source", registry);
+            [~, diagnostics] = yamada.source.AppSourceParser.parseText("invalid source", registry);
             testCase.verifyNotEmpty(diagnostics); testCase.verifyEmpty(display.Dialog);
             testCase.verifyNumElements(testCase.Seen, 2);
             testCase.verifyEqual(string({testCase.Seen.Title}), ["Loading", "Loading"]);
@@ -27,23 +27,23 @@ classdef (TestTags = {'ui', 'parser'}) SourceParseProgressTest < matlab.unittest
 
         function exceptionClosesNotificationAndRegistrationsAreIndependent(testCase)
             % exceptionClosesNotificationAndRegistrationsAreIndependent Release dialogs on errors without selecting another editor.
-            first = macd.model.ComponentRegistry.createDefault(); second = macd.model.ComponentRegistry.createDefault();
+            first = yamada.model.ComponentRegistry.createDefault(); second = yamada.model.ComponentRegistry.createDefault();
             parent = uifigure("Visible", "on", "Position", [100 100 320 200]); cleanup = onCleanup(@() delete(parent));
-            display = macd.source.SourceParseProgress(first, parent);
+            display = yamada.source.SourceParseProgress(first, parent);
             registrationCleanup = onCleanup(@() delete(display));
-            testCase.verifyEmpty(macd.source.SourceParseProgress.find(second));
+            testCase.verifyEmpty(yamada.source.SourceParseProgress.find(second));
             listener = addlistener(display, "Started", @(~, ~) delete(first)); %#ok<NASGU>
             root = fileparts(fileparts(mfilename("fullpath")));
             source = string(fileread(fullfile(root, "fixtures", "SmallPreviewFixtureApp.m")));
             thrown = false;
             try
-                macd.source.AppSourceParser.parseText(source, first);
+                yamada.source.AppSourceParser.parseText(source, first);
             catch
                 thrown = true;
             end
             testCase.verifyTrue(thrown); testCase.verifyEmpty(display.Dialog);
             delete(display);
-            testCase.verifyEmpty(macd.source.SourceParseProgress.find(second));
+            testCase.verifyEmpty(yamada.source.SourceParseProgress.find(second));
         end
     end
     methods (Access = private)

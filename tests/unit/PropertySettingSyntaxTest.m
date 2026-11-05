@@ -9,9 +9,9 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
 
             for expression = ["""A"" + findText() + ""B""", "'A' + findText() + 'B'"]
                 source = "app.DropDown = uidropdown(app.UIFigure, Value=" + expression + ");";
-                statement = macd.source.MatlabLexicalScanner.splitStatements(source);
+                statement = yamada.source.MatlabLexicalScanner.splitStatements(source);
                 [~, factoryArguments, settings] = ...
-                    macd.source.PropertySettingSyntax.factory(statement, testCase.definition(), "snapshot");
+                    yamada.source.PropertySettingSyntax.factory(statement, testCase.definition(), "snapshot");
                 testCase.verifyEmpty(factoryArguments);
                 testCase.verifyEqual(settings.ValueKind, "expression");
                 testCase.verifyEqual(settings.SourceExpression, expression);
@@ -27,9 +27,9 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
                 "      ""Items"", [""A"", ""B""], ...", ...
                 "      Value = ""B"", ...", ...
                 "      ItemsData = [10 20]); % trailing comment"], sprintf("\r\n"));
-            statement = macd.source.MatlabLexicalScanner.splitStatements(source);
+            statement = yamada.source.MatlabLexicalScanner.splitStatements(source);
             [parent, factoryArguments, settings, skipped, supported] = ...
-                macd.source.PropertySettingSyntax.factory(statement, testCase.definition(), "snapshot");
+                yamada.source.PropertySettingSyntax.factory(statement, testCase.definition(), "snapshot");
             testCase.verifyTrue(supported);
             testCase.verifyEqual(parent, "UIFigure");
             testCase.verifyEmpty(skipped);
@@ -46,9 +46,9 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
             % capturesExpressionWithoutLosingFollowingArguments Preserve opaque values without execution.
 
             source = "app.DropDown = uidropdown(app.UIFigure, Value=chooseValue(), Items=[""A"", ""B""]);";
-            statement = macd.source.MatlabLexicalScanner.splitStatements(source);
+            statement = yamada.source.MatlabLexicalScanner.splitStatements(source);
             [~, factoryArguments, settings, skipped, supported] = ...
-                macd.source.PropertySettingSyntax.factory(statement, testCase.definition(), "snapshot");
+                yamada.source.PropertySettingSyntax.factory(statement, testCase.definition(), "snapshot");
             testCase.verifyTrue(supported);
             testCase.verifyEqual(factoryArguments, {"Items", ["A", "B"]});
             testCase.verifyEqual(skipped, "Value");
@@ -62,9 +62,9 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
             % retainsQuotedDelimitersAndNestedLiteralRanges Keep commas and parentheses inside values.
 
             source = "app.DropDown = uidropdown(app.UIFigure, 'Items', {'A,B','C)D'}, 'Value', 'C)D');";
-            statement = macd.source.MatlabLexicalScanner.splitStatements(source);
+            statement = yamada.source.MatlabLexicalScanner.splitStatements(source);
             [~, ~, settings, ~, supported] = ...
-                macd.source.PropertySettingSyntax.factory(statement, testCase.definition(), "snapshot");
+                yamada.source.PropertySettingSyntax.factory(statement, testCase.definition(), "snapshot");
             testCase.verifyTrue(supported);
             testCase.verifyNumElements(settings, 2);
             testCase.verifyEqual(testCase.slice(source, settings(1).ValueSpan), "{'A,B','C)D'}");
@@ -75,8 +75,8 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
             % retainsOriginalAssignmentSpanAcrossContinuation Separate normalized values from source ownership.
 
             source = strjoin(["  app.DropDown.Value = [1 ... % value comment", "      2];"], newline);
-            statement = macd.source.MatlabLexicalScanner.splitStatements(source);
-            setting = macd.source.PropertySettingSyntax.assignment(statement, "snapshot", 7);
+            statement = yamada.source.MatlabLexicalScanner.splitStatements(source);
+            setting = yamada.source.PropertySettingSyntax.assignment(statement, "snapshot", 7);
             testCase.verifyEqual(setting.Path, "Value");
             testCase.verifyEqual(setting.LiteralValue, [1 2]);
             testCase.verifyEqual(setting.Sequence, 7);
@@ -88,8 +88,8 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
             % duplicateConstructorKeysRemainUncertain Avoid assuming last-key-wins constructor semantics.
 
             source = "app.DropDown = uidropdown(app.UIFigure, 'Value', 'A', Value='B');";
-            statement = macd.source.MatlabLexicalScanner.splitStatements(source);
-            [~, ~, settings] = macd.source.PropertySettingSyntax.factory(statement, testCase.definition(), "snapshot");
+            statement = yamada.source.MatlabLexicalScanner.splitStatements(source);
+            [~, ~, settings] = yamada.source.PropertySettingSyntax.factory(statement, testCase.definition(), "snapshot");
             testCase.verifyNumElements(settings, 2);
             testCase.verifyFalse(any([settings.IsCertain]));
             testCase.verifyFalse(any([settings.IsEditable]));
@@ -98,12 +98,12 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
         function snapshotRecordIsIndependentAndRestorable(testCase)
             % snapshotRecordIsIndependentAndRestorable Preserve immutable source data across value snapshots.
 
-            setting = macd.model.PropertySetting("Value", [10 20], ...
+            setting = yamada.model.PropertySetting("Value", [10 20], ...
                 struct("SourceSnapshotId", "one", "Sequence", 3));
             record = setting.toStruct();
             record.Value(1) = 99;
             testCase.verifyEqual(setting.LiteralValue, [10 20]);
-            restored = macd.model.PropertySetting(record.Path, record.Value, record.Location);
+            restored = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
             testCase.verifyEqual(restored.Id, setting.Id);
             testCase.verifyEqual(restored.LiteralValue, [99 20]);
         end
@@ -113,10 +113,10 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
         function definition = definition()
             % definition Create a nonvisual factory surface for lexical tests.
             arguments (Output)
-                definition (1, 1) macd.model.ComponentDefinition
+                definition (1, 1) yamada.model.ComponentDefinition
             end
 
-            definition = macd.model.ComponentDefinition.fromPaths("uidropdown", ...
+            definition = yamada.model.ComponentDefinition.fromPaths("uidropdown", ...
                 "matlab.ui.control.DropDown", "uifigure", false, {}, ...
                 ["Items", "ItemsData", "Value", "Editable"], struct());
         end
@@ -125,7 +125,7 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
             % slice Read a token's exact source spelling using its retained offsets.
             arguments (Input)
                 source (1, 1) string
-                span (1, 1) macd.model.SourceSpan
+                span (1, 1) yamada.model.SourceSpan
             end
             arguments (Output)
                 text (1, 1) string

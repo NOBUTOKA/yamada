@@ -8,8 +8,8 @@ classdef (TestTags = {'fast', 'inspector'}) InspectorValueFormatterTest < matlab
             % encodesSupportedLiteral Render a supported scalar through LiteralEncoder.
 
             % Keep source-safe scalar display unchanged.
-            entry = macd.model.PropertyEntry("Text", "Button");
-            text = macd.ui.InspectorValueFormatter.format(entry);
+            entry = yamada.model.PropertyEntry("Text", "Button");
+            text = yamada.ui.InspectorValueFormatter.format(entry);
             testCase.verifyEqual(text, """Button""");
         end
 
@@ -17,9 +17,9 @@ classdef (TestTags = {'fast', 'inspector'}) InspectorValueFormatterTest < matlab
             % preservesSourceExpression Display source-backed values without evaluation.
 
             % Preserve the parser's source text as the existing inspector contract.
-            entry = macd.model.PropertyEntry();
+            entry = yamada.model.PropertyEntry();
             entry.setSourceExpression("app.updateTheme");
-            text = macd.ui.InspectorValueFormatter.format(entry);
+            text = yamada.ui.InspectorValueFormatter.format(entry);
             testCase.verifyEqual(text, "app.updateTheme");
         end
 

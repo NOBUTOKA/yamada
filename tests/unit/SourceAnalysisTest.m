@@ -7,13 +7,13 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
             % localPatchesMatchIndependentLexing Rescan bounded windows while preserving all current code offsets.
             lines = "app.Field" + (1:50) + ".Value = 9;";
             source = strjoin(lines, string(sprintf("\r\n")));
-            original = macd.source.SourceAnalysis(source);
+            original = yamada.source.SourceAnalysis(source);
             values = strfind(source, " = 9");
             edits = [struct("Start", values(10) + 3, "End", values(10) + 3, "Text", "10000"), ...
                 struct("Start", values(40) + 3, "End", values(40) + 3, "Text", "123")];
-            batch = macd.source.SourcePatchBatch(source, edits);
+            batch = yamada.source.SourcePatchBatch(source, edits);
             [actual, local, statistics] = original.withPatches(batch);
-            expected = macd.source.SourceAnalysis(batch.AfterText);
+            expected = yamada.source.SourceAnalysis(batch.AfterText);
             testCase.verifyTrue(local);
             testCase.verifyFalse(statistics.FullScan);
             testCase.verifyGreaterThan(statistics.ReusedStatements, 0);
@@ -21,38 +21,38 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
             testCase.verifyEqual(actual.Statements, expected.Statements);
             testCase.verifyEqual(actual.Layout, expected.Layout);
             testCase.verifyTrue(original.matches(source));
-            testCase.verifyEqual(original.Statements, macd.source.SourceAnalysis(source).Statements);
+            testCase.verifyEqual(original.Statements, yamada.source.SourceAnalysis(source).Statements);
         end
 
         function insertDeleteAndLexicalBoundaryChangesMatchFullScan(testCase)
             % insertDeleteAndLexicalBoundaryChangesMatchFullScan Rebind inserted/deleted statements and reject fused guards.
             source = "a = 1;" + string(sprintf("\r\n")) + "b = 2;" + string(sprintf("\r\n")) + "c = 3;";
-            original = macd.source.SourceAnalysis(source);
+            original = yamada.source.SourceAnalysis(source);
             first = original.Statements(2).Span;
-            batches = [macd.source.SourcePatchBatch(source, struct("Start", first.StartOffset, ...
+            batches = [yamada.source.SourcePatchBatch(source, struct("Start", first.StartOffset, ...
                 "End", first.EndOffset, "Text", "")), ...
-                macd.source.SourcePatchBatch(source, struct("Start", first.StartOffset, ...
+                yamada.source.SourcePatchBatch(source, struct("Start", first.StartOffset, ...
                 "End", first.StartOffset - 1, "Text", "added = 12;" + string(sprintf("\r\n")))), ...
-                macd.source.SourcePatchBatch(source, struct("Start", strlength(source) + 1, ...
+                yamada.source.SourcePatchBatch(source, struct("Start", strlength(source) + 1, ...
                 "End", strlength(source), "Text", "tail = 4;"))];
             for batch = batches
                 actual = original.withPatches(batch);
-                expected = macd.source.SourceAnalysis(batch.AfterText);
+                expected = yamada.source.SourceAnalysis(batch.AfterText);
                 testCase.verifyEqual(actual.Statements, expected.Statements);
                 testCase.verifyEqual(actual.Layout, expected.Layout);
             end
-            original = macd.source.SourceAnalysis("abc");
-            batch = macd.source.SourcePatchBatch("abc", struct("Start", 4, "End", 3, "Text", "def"));
+            original = yamada.source.SourceAnalysis("abc");
+            batch = yamada.source.SourcePatchBatch("abc", struct("Start", 4, "End", 3, "Text", "def"));
             [actual, local] = original.withPatches(batch);
             testCase.verifyFalse(local);
-            testCase.verifyEqual(actual.Statements, macd.source.SourceAnalysis("abcdef").Statements);
+            testCase.verifyEqual(actual.Statements, yamada.source.SourceAnalysis("abcdef").Statements);
         end
 
         function numericStatementLookupsMatchIndependentSearch(testCase)
             % numericStatementLookupsMatchIndependentSearch Preserve start-only and complete-range ownership matching.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(analysisSource(), registry);
-            for analysis = [macd.source.SourceAnalysis(analysisSource()), document.sourceAnalysis()]
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(analysisSource(), registry);
+            for analysis = [yamada.source.SourceAnalysis(analysisSource()), document.sourceAnalysis()]
                 statements = analysis.Statements;
                 for statement = statements
                     span = statement.Span;
@@ -65,18 +65,18 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
                         testCase.verifyEqual(actual, zeros(size(actual)));
                         testCase.verifyEqual(analysis.statementIndices(span, matchEnd), expected);
                     end
-                    shifted = macd.model.SourceSpan(span.StartOffset, span.EndOffset + 1);
+                    shifted = yamada.model.SourceSpan(span.StartOffset, span.EndOffset + 1);
                     testCase.verifyEmpty(analysis.statementIndices(shifted));
                     testCase.verifyEqual(analysis.statementIndices(shifted, false), ...
                         analysis.statementIndices(span, false));
                 end
-                testCase.verifyEmpty(analysis.statementIndices(macd.model.SourceSpan()));
+                testCase.verifyEmpty(analysis.statementIndices(yamada.model.SourceSpan()));
             end
         end
 
         function tracesMatchIndependentCompilerAcrossOffsetInputs(testCase)
             % tracesMatchIndependentCompilerAcrossOffsetInputs Preserve trace keys and independent returned values.
-            analysis = macd.source.SourceAnalysis(analysisSource());
+            analysis = yamada.source.SourceAnalysis(analysisSource());
             statements = analysis.Statements;
             offsets = [statements(contains(string({statements.Text}), "= uifigure")).Span.StartOffset, ...
                 statements(contains(string({statements.Text}), "= uilabel")).Span.StartOffset];
@@ -84,7 +84,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
             inputs = {[], offsets, offsets(1), fliplr(offsets), offsets};
             for input = inputs
                 [order, diagnostics, certain, layout, returns] = ...
-                    macd.source.CallbackSourceAnalyzer.initializationStatements(statements, input{1});
+                    yamada.source.CallbackSourceAnalyzer.initializationStatements(statements, input{1});
                 trace = analysis.initialization(input{1});
                 testCase.verifyEqual(trace.Order, order);
                 testCase.verifyEqual(trace.Diagnostics, diagnostics);
@@ -108,7 +108,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
                 "if true" + newline + "app.Label = uilabel(app.UIFigure);" + newline + "end"), ...
                 source + newline + "if true"];
             for current = sources
-                analysis = macd.source.SourceAnalysis(current);
+                analysis = yamada.source.SourceAnalysis(current);
                 statements = analysis.Statements;
                 spans = [statements.Span];
                 offsets = [spans.StartOffset];
@@ -126,8 +126,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
 
         function candidatesShareDerivedInputButNotComponentValues(testCase)
             % candidatesShareDerivedInputButNotComponentValues Keep shared analysis independent of mutable records.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(analysisSource(), registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(analysisSource(), registry);
             context = document.evaluationContext(registry);
             analysis = document.sourceAnalysis();
             candidate = document.structuralCandidate();
@@ -140,9 +140,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
 
         function sourceChangesReplaceOnlyTheChangedDocumentAnalysis(testCase)
             % sourceChangesReplaceOnlyTheChangedDocumentAnalysis Reject a stale source while preserving the original.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = analysisSource();
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             candidate = document.structuralCandidate();
             original = document.sourceAnalysis();
             candidate.OriginalText = source + newline + "% Changed source version";
@@ -151,16 +151,16 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
             testCase.verifyTrue(original.matches(source));
             testCase.verifyTrue(replacement.matches(candidate.OriginalText));
             testCase.verifyEqual(document.sourceAnalysis(), original);
-            [~, diagnostics] = macd.source.RoundTripGenerator(registry).generate(candidate);
+            [~, diagnostics] = yamada.source.RoundTripGenerator(registry).generate(candidate);
             testCase.verifyTrue(any(string({diagnostics.Code}) == "stale-source-snapshot"));
         end
 
         function opaqueValuesRemainUnknownAndReadOnly(testCase)
             % opaqueValuesRemainUnknownAndReadOnly Never execute or upgrade opaque source through a shared cache.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = replace(analysisSource(), "app.Label.FontSize = 12;", ...
                 "app.Label.FontSize = externalValue();");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             candidate = document.structuralCandidate();
             testCase.verifyEqual(document.sourceAnalysis(), candidate.sourceAnalysis());
             for current = [document, candidate]
@@ -177,7 +177,7 @@ end
 function result = originalCallbackInsertion(analysis, offsets)
 % originalCallbackInsertion Retain the original exhaustive search as an independent reference.
 arguments (Input)
-    analysis (1, 1) macd.source.SourceAnalysis
+    analysis (1, 1) yamada.source.SourceAnalysis
     offsets double
 end
 arguments (Output)

@@ -11,11 +11,11 @@ classdef (TestTags = {'model', 'preview', 'ui'}) PropertyStateRuntimeTest < matl
             cleanup = onCleanup(@() path(originalPath));
             addpath(fullfile(projectRoot, "dev", "component-data"));
             observations = ProbeApplicationInteractions();
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             unresolved = ["numeric-exclude-lower", "numeric-exclude-upper", "numeric-limit-while-exclusive"];
             for observation = observations
                 definition = registry.get(observation.Factory, observation.CreationArguments);
-                component = macd.model.ComponentRecord("owned-runtime", "Owned", ...
+                component = yamada.model.ComponentRecord("owned-runtime", "Owned", ...
                     observation.Factory, definition.DeclaredType, "parsed");
                 component.CreationArguments = observation.CreationArguments;
                 sequence = 0;
@@ -29,9 +29,9 @@ classdef (TestTags = {'model', 'preview', 'ui'}) PropertyStateRuntimeTest < matl
                     sequence = sequence + 1;
                     component.recordSetting(testCase.setting(pairs{index}, pairs{index + 1}, sequence, "assignment"));
                 end
-                [states, diagnostics] = macd.model.PropertyStateResolver.resolve(component, definition.Properties);
+                [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definition.Properties);
                 if ~observation.Success
-                    testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics), observation.Case);
+                    testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics), observation.Case);
                     continue
                 end
                 testCase.verifyEmpty(diagnostics, observation.Case);
@@ -64,7 +64,7 @@ classdef (TestTags = {'model', 'preview', 'ui'}) PropertyStateRuntimeTest < matl
 
         function auditedDefaultSeedsMatchOwnedNativeControls(testCase)
             % auditedDefaultSeedsMatchOwnedNativeControls Verify every promoted seed without using it to construct controls.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
             for id = registry.listVariantIds()
@@ -99,13 +99,13 @@ classdef (TestTags = {'model', 'preview', 'ui'}) PropertyStateRuntimeTest < matl
                 method (1, 1) string
             end
             arguments (Output)
-                setting (1, 1) macd.model.PropertySetting
+                setting (1, 1) yamada.model.PropertySetting
             end
             syntax = "dot";
             statementId = "assignment-" + sequence;
             if method == "nameValue", syntax = "quotedPair"; statementId = "owned-constructor"; end
-            span = macd.model.SourceSpan(sequence * 10, sequence * 10 + 1);
-            setting = macd.model.PropertySetting(path, value, struct("Method", method, "Syntax", syntax, ...
+            span = yamada.model.SourceSpan(sequence * 10, sequence * 10 + 1);
+            setting = yamada.model.PropertySetting(path, value, struct("Method", method, "Syntax", syntax, ...
                 "Sequence", sequence, "SourceSnapshotId", "owned-runtime", ...
                 "StatementId", statementId, "SourceSpan", span, "ValueSpan", span));
         end

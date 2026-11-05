@@ -6,7 +6,7 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
     methods (Test)
         function generatedOwnedClassesExecuteAllSixStyleCases(testCase)
             % generatedOwnedClassesExecuteAllSixStyleCases Check three existing styles with constructor and assignment additions.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             folder = string(tempname());
             mkdir(folder);
             originalPath = path;
@@ -24,14 +24,14 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
                         body = ["app.Control = uidropdown(app.UIFigure, Items=[""A"" ""B""]);", ...
                             "app.Control.ItemsData = [10 20];"];
                     end
-                    document = macd.source.AppSourceParser.parseText(testCase.source(className, body), registry);
+                    document = yamada.source.AppSourceParser.parseText(testCase.source(className, body), registry);
                     component = document.getComponentByName("Control");
                     value = 20;
                     if property == "Tooltip", value = "Hint"; end
                     document.setProperty(component.Id, property, value, registry);
-                    source = macd.source.RoundTripGenerator(registry).generate(document);
+                    source = yamada.source.RoundTripGenerator(registry).generate(document);
                     testCase.assertGreaterThan(strlength(source), 0);
-                    macd.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
+                    yamada.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
                     app = feval(className);
                     appCleanup = onCleanup(@() delete(app));
                     actual = app.Control.(property);
@@ -45,7 +45,7 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
 
         function relocatedOwnedClassesMatchNativeStateAndPreview(testCase)
             % relocatedOwnedClassesMatchNativeStateAndPreview Execute all source styles and constructor layout removal.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             folder = string(tempname());
             mkdir(folder);
             originalPath = path;
@@ -73,19 +73,19 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
                 source = replace(source, "UIFigure matlab.ui.Figure", ...
                     strjoin(["UIFigure matlab.ui.Figure", "Left matlab.ui.container.Panel", ...
                     "Right matlab.ui.container.Panel", "Grid matlab.ui.container.GridLayout"], sprintf("\r\n")));
-                document = macd.source.AppSourceParser.parseText(source, registry);
+                document = yamada.source.AppSourceParser.parseText(source, registry);
                 component = document.getComponentByName("Control");
                 document.setProperty(component.Id, "Value", 20, registry);
                 target = document.getComponentByName("Right");
                 if style == "grid", target = document.getComponentByName("Grid"); end
                 document.reparentSubtree(component.Id, target.Id, registry, [], [], [10 20 100 22]);
-                source = macd.source.RoundTripGenerator(registry).generate(document);
-                macd.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
+                source = yamada.source.RoundTripGenerator(registry).generate(document);
+                yamada.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
                 app = feval(className);
                 appCleanup = onCleanup(@() delete(app));
                 figure = uifigure("Visible", "off");
                 figureCleanup = onCleanup(@() delete(figure));
-                [handles, diagnostics] = macd.ui.PreviewRenderer(registry).render(document, uipanel(figure));
+                [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, uipanel(figure));
                 testCase.assertEmpty(diagnostics, style + ": " + strjoin(string({diagnostics.Message}), " | "));
                 testCase.verifyEqual(app.Control.Value, 20);
                 testCase.verifyEqual(handles(char(component.Id)).Value, app.Control.Value);
@@ -107,7 +107,7 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
 
         function copiedOwnedClassesRetainNativeEffectiveValues(testCase)
             % copiedOwnedClassesRetainNativeEffectiveValues Compare copied bounded, item, rounded, and automatic states with native originals.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             folder = string(tempname());
             mkdir(folder);
             originalPath = path;
@@ -132,24 +132,24 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
                     end
                     height = 22;
                     if type == "Slider", height = 3; end
-                    position = macd.source.LiteralEncoder.encode([10 20 100 height]);
+                    position = yamada.source.LiteralEncoder.encode([10 20 100 height]);
                     body = ["app.Left = uipanel(app.UIFigure);", control, "app.Control.Position = " + position + ";", ...
                         "app.Right = uipanel(app.UIFigure);"];
                     source = testCase.source(className, body);
                     source = replace(source, "Control matlab.ui.control.DropDown", "Control matlab.ui.control." + type);
                     source = replace(source, "UIFigure matlab.ui.Figure", strjoin(["UIFigure matlab.ui.Figure", ...
                         "Left matlab.ui.container.Panel", "Right matlab.ui.container.Panel"], sprintf("\r\n")));
-                    document = macd.source.AppSourceParser.parseText(source, registry);
+                    document = yamada.source.AppSourceParser.parseText(source, registry);
                     component = document.getComponentByName("Control");
                     target = document.getComponentByName("Right");
                     pasted = document.pasteSubtree(document.copySubtree(component.Id, registry), target.Id, registry);
-                    source = macd.source.RoundTripGenerator(registry).generate(document);
-                    macd.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
+                    source = yamada.source.RoundTripGenerator(registry).generate(document);
+                    yamada.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
                     app = feval(className);
                     appCleanup = onCleanup(@() delete(app));
                     figure = uifigure("Visible", "off");
                     figureCleanup = onCleanup(@() delete(figure));
-                    [handles, diagnostics] = macd.ui.PreviewRenderer(registry).render(document, uipanel(figure));
+                    [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, uipanel(figure));
                     testCase.assertEmpty(diagnostics, scenario + ": " + strjoin(string({diagnostics.Message}), " | "));
                     copied = app.(pasted.Name);
                     testCase.verifyEqual(copied.Value, app.Control.Value, scenario);
@@ -173,26 +173,26 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
 
         function multilineConstructorInsertionCompilesAndPreviewMatches(testCase)
             % multilineConstructorInsertionCompilesAndPreviewMatches Verify source token trivia against actual MATLAB syntax.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             className = "OwnedInsertion" + erase(string(java.util.UUID.randomUUID()), "-");
             body = ["app.Control = uidropdown(app.UIFigure, ... % factory", ...
                 "    'Items', {'A','B'}, ... % labels", "    'ItemsData', [10 20] ... % data", "    );"];
-            document = macd.source.AppSourceParser.parseText(testCase.source(className, body), registry);
+            document = yamada.source.AppSourceParser.parseText(testCase.source(className, body), registry);
             component = document.getComponentByName("Control");
             document.setProperty(component.Id, "Value", 20, registry);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
             folder = string(tempname());
             mkdir(folder);
             originalPath = path;
             addpath(folder);
             cleanup = onCleanup(@() PropertyInsertionRuntimeTest.cleanFolder(folder, originalPath));
-            macd.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
+            yamada.source.SourceWriter.write(fullfile(folder, className + ".m"), source);
             app = feval(className);
             appCleanup = onCleanup(@() delete(app));
             figure = uifigure("Visible", "off");
             figureCleanup = onCleanup(@() delete(figure));
             panel = uipanel(figure);
-            [handles, diagnostics] = macd.ui.PreviewRenderer(registry).render(document, panel);
+            [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, panel);
             testCase.verifyEmpty(diagnostics);
             testCase.verifyEqual(handles(char(component.Id)).Value, app.Control.Value);
             testCase.verifyEqual(app.Control.Value, 20);

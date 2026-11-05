@@ -3,12 +3,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
     %   Cached configurations remain independent, and unsafe or stale inputs retain
     %   full source preflight without executing an input application.
     properties (Access = private)
-        Registry macd.model.ComponentRegistry
+        Registry yamada.model.ComponentRegistry
     end
     methods (TestClassSetup)
         function loadRegistry(testCase)
             % loadRegistry Use the production catalog for every local proof.
-            testCase.Registry = macd.model.ComponentRegistry.createDefault();
+            testCase.Registry = yamada.model.ComponentRegistry.createDefault();
         end
     end
     methods (Test)
@@ -21,7 +21,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
                 document.setProperty(button.Id, "FontSize", 14, testCase.Registry);
                 parent = document.getComponent(field.ParentId);
                 document.insertComponent(testCase.Registry, "uilabel", parent.Id);
-                plan = macd.source.PropertySourcePlan.combined(document, parent, testCase.Registry);
+                plan = yamada.source.PropertySourcePlan.combined(document, parent, testCase.Registry);
                 original = document.OriginalText;
                 document.setProperty(field.Id, "Value", 2, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
@@ -31,8 +31,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
                 testCase.verifyEqual(older.Document.getComponentByName("Field").getProperty("Value").LiteralValue, 1);
                 testCase.verifyEqual(document.OriginalText, original);
                 document.undo(); document.redo();
-                source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+                source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+                parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
                 testCase.verifyEqual(parsed.getComponentByName("Field").getProperty("Value").LiteralValue, 2);
                 testCase.verifyEqual(numel(parsed.Components), numel(document.Components));
             end
@@ -54,8 +54,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
                     document.setProperty(ids(index), paths(index), values{index}, testCase.Registry);
                     document.validatePropertyCommit(testCase.Registry);
                 end
-                source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+                source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+                parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
                 for index = 1:numel(paths)
                     owner = document.getComponent(ids(index));
                     testCase.verifyEqual(parsed.getComponentByName(owner.Name).getProperty(paths(index)).LiteralValue, values{index});
@@ -72,11 +72,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
                 document = testCase.fixture("flat", factory);
                 field = document.getComponentByName("Field");
                 parent = document.getComponent(field.ParentId);
-                macd.source.PropertySourcePlan.combined(document, parent, testCase.Registry);
+                yamada.source.PropertySourcePlan.combined(document, parent, testCase.Registry);
                 document.setProperty(field.Id, "Value", 2.5, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
-                source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
-                parsed = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+                source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+                parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
                 testCase.verifyEqual(parsed.getComponentByName("Field").getProperty("Value").LiteralValue, 2.5);
             end
         end
@@ -86,7 +86,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
             document = testCase.fixture("flat");
             field = document.getComponentByName("Field");
             parent = document.getComponent(field.ParentId);
-            macd.source.PropertySourcePlan.combined(document, parent, testCase.Registry);
+            yamada.source.PropertySourcePlan.combined(document, parent, testCase.Registry);
             document.Metadata.AdditionalInput = "changed after shared proof";
             document.setProperty(field.Id, "Value", 2, testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
@@ -98,17 +98,17 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
             document = testCase.fixture("flat");
             button = document.getComponentByName("Button");
             parent = document.getComponent(button.ParentId);
-            plan = macd.source.PropertySourcePlan.combined(document, parent, testCase.Registry);
+            plan = yamada.source.PropertySourcePlan.combined(document, parent, testCase.Registry);
             plan.Document.getComponentByName("Button").setProperty("Text", "Foreign mutation");
             before = document.OriginalText;
             testCase.verifyError(@() document.setProperty(button.Id, "FontColor", [2 0 0], testCase.Registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyEqual(button.getProperty("FontColor").LiteralValue, [0 0 0]);
             document.setProperty(button.Id, "Text", "Accepted", testCase.Registry);
             testCase.verifyEqual(button.getProperty("Text").LiteralValue, "Accepted");
             testCase.verifyEqual(document.OriginalText, before);
-            source = macd.source.RoundTripGenerator(testCase.Registry).generate(document);
+            source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
             testCase.verifyFalse(contains(source, "Foreign mutation"));
         end
 
@@ -116,7 +116,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
             % descendantGeometryKeepsCompletePreflight Retain full validation for layout-changing container inputs.
             document = testCase.fixture("flat");
             root = document.getComponent(document.RootComponentId);
-            macd.source.PropertySourcePlan.combined(document, root, testCase.Registry);
+            yamada.source.PropertySourcePlan.combined(document, root, testCase.Registry);
             document.setProperty(root.Id, "AutoResizeChildren", "on", testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
             testCase.verifyEqual(root.getProperty("AutoResizeChildren").LiteralValue, "on");
@@ -131,7 +131,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
                 factory (1, 1) string = "uieditfield"
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
             end
             type = "matlab.ui.control.NumericEditField";
             if factory == "uispinner", type = "matlab.ui.control.Spinner"; end
@@ -161,7 +161,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
             source = strjoin(["classdef SharedPropertyFixture < handle", "properties", declarations, "end", ...
                 "methods", "function app = SharedPropertyFixture", "createComponents(app);", "end", ...
                 "function createComponents(app)", body, "end", "end", "end"], sprintf("\r\n"));
-            document = macd.source.AppSourceParser.parseText(source, testCase.Registry);
+            document = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
         end
     end
     methods (Static, Access = private)

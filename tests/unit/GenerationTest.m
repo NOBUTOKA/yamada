@@ -6,9 +6,9 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
     methods (Test)
         function generatedDestructorHasNoArgumentValidation(testCase)
             % generatedDestructorHasNoArgumentValidation Keep generated cleanup recognizable as a destructor.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("DestructorApp", registry);
-            source = macd.source.NewAppGenerator(registry).generate(document);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("DestructorApp", registry);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
 
             % Inspect only the destructor, leaving validation on ordinary methods intact.
             destructor = extractAfter(source, "function delete(app)");
@@ -21,15 +21,15 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             % generatesMinimalRunnableClass Verify the canonical handle-based skeleton.
 
             % Generate from the same empty model used by the future editor.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("GeneratedApp", registry);
-            generator = macd.source.NewAppGenerator(registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("GeneratedApp", registry);
+            generator = yamada.source.NewAppGenerator(registry);
 
             [source, diagnostics] = generator.generate(document);
 
             % Check required runtime structure, formatting, and license isolation.
             testCase.verifyGreaterThan(strlength(source), 0);
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifySubstring(source, ...
                 "classdef GeneratedApp < handle");
             testCase.verifySubstring(source, ...
@@ -63,8 +63,8 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
         function omitsCatalogReadOnlyPropertiesFromGeneratedSource(testCase)
             % omitsCatalogReadOnlyPropertiesFromGeneratedSource Honor setter capabilities across components.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("GridOutputApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("GridOutputApp", registry);
             outer = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             inner = document.insertComponent(registry, "uigridlayout", outer.Id);
             testCase.verifyEmpty(outer.getProperty("Position"));
@@ -82,10 +82,10 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             table = document.insertComponent(registry, "uitable", document.RootComponentId);
             table.setProperty("DisplayData", {});
             document.setProperty(outer.Id, "RowHeight", {"fit", "1x"});
-            generator = macd.source.NewAppGenerator(registry);
+            generator = yamada.source.NewAppGenerator(registry);
             [source, diagnostics] = generator.generate(document);
 
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyFalse(contains(source, "app." + outer.Name + ".Position ="));
             testCase.verifyFalse(contains(source, "app." + inner.Name + ".Position ="));
             testCase.verifyEmpty(regexp(source, ...
@@ -118,7 +118,7 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
                 "    end", ...
                 "end"], newline);
 
-            [rewritten, diagnostics] = macd.source.AppClassIdentityRewriter.rewrite( ...
+            [rewritten, diagnostics] = yamada.source.AppClassIdentityRewriter.rewrite( ...
                 source, "SavedApp");
 
             testCase.verifyEmpty(diagnostics);
@@ -135,10 +135,10 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             % generatesChildFromRegistryDrivenRecord Verify generic child output.
 
             % Add a registry-defined label to the shared document hierarchy.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("LabelApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("LabelApp", registry);
             definition = registry.get("uilabel");
-            label = macd.model.ComponentRecord( ...
+            label = yamada.model.ComponentRecord( ...
                 "label-1", "GreetingLabel", definition.Factory, ...
                 definition.DeclaredType, "generated");
             label.setProperty("Text", "It's ready");
@@ -146,7 +146,7 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             document.addComponent(label, document.RootComponentId);
 
             % Confirm parent calls and escaped literals in generated source.
-            source = macd.source.NewAppGenerator(registry).generate(document);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
 
             testCase.verifySubstring(source, ...
                 "app.GreetingLabel = uilabel(app.UIFigure);");
@@ -157,21 +157,21 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
         function generatesAndParsesDateOnlyProperties(testCase)
             % generatesAndParsesDateOnlyProperties Round-trip allowlisted native date values.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("DateApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("DateApp", registry);
             definition = registry.getById("uidatepicker");
-            picker = macd.model.ComponentRecord("date-1", "DatePicker", ...
+            picker = yamada.model.ComponentRecord("date-1", "DatePicker", ...
                 definition.Factory, definition.DeclaredType, "generated");
             picker.setProperty("Value", datetime(2024, 2, 29));
             picker.setProperty("Limits", [datetime(2024, 1, 1) datetime(2024, 12, 31)]);
             picker.setProperty("DisabledDates", datetime(2024, 3, 1));
             document.addComponent(picker, document.RootComponentId);
 
-            [source, diagnostics] = macd.source.NewAppGenerator(registry).generate(document);
-            [parsed, parseDiagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            [source, diagnostics] = yamada.source.NewAppGenerator(registry).generate(document);
+            [parsed, parseDiagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
             parsedPicker = parsed.getComponentByName("DatePicker");
 
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifySubstring(source, ...
                 "app.DatePicker.Value = datetime(2024, 2, 29);");
             testCase.verifyEqual(parsedPicker.getProperty("Value").LiteralValue, ...
@@ -180,20 +180,20 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
                 [datetime(2024, 1, 1) datetime(2024, 12, 31)]);
             testCase.verifyEqual(parsedPicker.getProperty("DisabledDates").LiteralValue, ...
                 datetime(2024, 3, 1));
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(parseDiagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(parseDiagnostics));
         end
 
         function invalidClassNameBlocksGeneration(testCase)
             % invalidClassNameBlocksGeneration Verify fatal name validation.
 
             % Attempt generation from an intentionally invalid class identity.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("not valid", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("not valid", registry);
 
-            [source, diagnostics] = macd.source.NewAppGenerator(registry).generate(document);
+            [source, diagnostics] = yamada.source.NewAppGenerator(registry).generate(document);
 
             testCase.verifyEqual(source, "");
-            testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyEqual(diagnostics(1).Code, "invalid-class-name");
         end
 
@@ -208,7 +208,7 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
                 japaneseText);
 
             % Read raw bytes so encoding and newline assertions are independent.
-            macd.source.SourceWriter.write(filePath, source, "LF");
+            yamada.source.SourceWriter.write(filePath, source, "LF");
             fileId = fopen(filePath, "r");
             closeFile = onCleanup(@() fclose(fileId));
             bytes = fread(fileId, Inf, "*uint8")';
@@ -228,14 +228,14 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             % sourceExpressionIsNeverSilentlyGeneratedAsEmpty Verify safe failure.
 
             % Replace a safe literal with an unevaluated source expression.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExpressionApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExpressionApp", registry);
             root = document.getComponent(document.RootComponentId);
             entry = root.getProperty("Name");
             entry.setSourceExpression("getAppName()");
 
             % Require an explicit diagnostic instead of destructive coercion.
-            [source, diagnostics] = macd.source.NewAppGenerator(registry).generate(document);
+            [source, diagnostics] = yamada.source.NewAppGenerator(registry).generate(document);
 
             testCase.verifyEqual(source, "");
             testCase.verifyEqual(diagnostics(end).Code, ...

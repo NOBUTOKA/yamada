@@ -9,11 +9,11 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.PropertyDefinition("Visible", [], false, true, ...
+            definition = yamada.model.PropertyDefinition("Visible", [], false, true, ...
                 struct("editor", "onOff"));
-            control = macd.ui.inspector.PropertyEditorFactory.create( ...
+            control = yamada.ui.inspector.PropertyEditorFactory.create( ...
                 figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "on", true);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "on", true);
             drawnow;
             testCase.verifyClass(control, "matlab.ui.control.CheckBox");
             testCase.verifyTrue(control.Value);
@@ -30,7 +30,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             cases = {
                 "uifigure", "Pointer", ...
                 ["arrow", "ibeam", "crosshair", "watch", "topl", "custom", ...
@@ -53,12 +53,12 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             for caseIndex = 1:size(cases, 1)
                 definition = registry.getById(cases{caseIndex, 1});
                 definition = definition.Properties([definition.Properties.Path] == cases{caseIndex, 2});
-                control = macd.ui.inspector.PropertyEditorFactory.create( ...
+                control = yamada.ui.inspector.PropertyEditorFactory.create( ...
                     figure, definition, @(~) []);
-                macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+                yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
                     control, cases{caseIndex, 3}(1), true);
                 drawnow;
-                testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+                testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
                 testCase.verifyEqual(string(control.Items), cases{caseIndex, 3});
                 testCase.verifyEqual(string(control.Enable), "on");
                 delete(control);
@@ -71,11 +71,11 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.PropertyDefinition("Icon", [], false, true, ...
+            definition = yamada.model.PropertyDefinition("Icon", [], false, true, ...
                 struct("editor", "filePath"));
-            control = macd.ui.inspector.PropertyEditorFactory.create( ...
+            control = yamada.ui.inspector.PropertyEditorFactory.create( ...
                 figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 0 0]", true);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 0 0]", true);
             drawnow;
             testCase.verifyFalse(control.Editable);
             clear cleanup
@@ -86,11 +86,11 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.PropertyDefinition("Text", [], false, true, ...
+            definition = yamada.model.PropertyDefinition("Text", [], false, true, ...
                 struct("editor", "multilineText"));
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
                 @(value) setappdata(figure, "committed", value));
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "", true, {'Line one'; 'Line two'});
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "", true, {'Line one'; 'Line two'});
             control.Value = {'Line one'; 'Line two'; 'Line three'};
             callback = control.ValueChangedFcn;
             callback(control, struct());
@@ -98,7 +98,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             committed = getappdata(figure, "committed");
             testCase.verifyTrue(isrow(committed));
             testCase.verifyEqual(committed, {'Line one', 'Line two', 'Line three'});
-            testCase.verifyEqual(macd.source.LiteralEncoder.encode(committed), ...
+            testCase.verifyEqual(yamada.source.LiteralEncoder.encode(committed), ...
                 "{'Line one', 'Line two', 'Line three'}");
             clear cleanup
         end
@@ -110,36 +110,36 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            component = macd.model.ComponentRegistry.createDefault().getById("uidatepicker");
+            component = yamada.model.ComponentRegistry.createDefault().getById("uidatepicker");
             scalar = component.Properties([component.Properties.Path] == "Value");
-            scalarControl = macd.ui.inspector.PropertyEditorFactory.create(figure, scalar, ...
+            scalarControl = yamada.ui.inspector.PropertyEditorFactory.create(figure, scalar, ...
                 @(value) setappdata(figure, "scalarDate", value));
             selected = datetime(2024, 2, 29);
-            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
                 scalarControl, "", true, selected);
             scalarControl.Value = datetime(2024, 3, 1);
             scalarControl.ValueChangedFcn(scalarControl, struct());
 
             limits = component.Properties([component.Properties.Path] == "Limits");
-            limitsControl = macd.ui.inspector.PropertyEditorFactory.create(figure, limits, ...
+            limitsControl = yamada.ui.inspector.PropertyEditorFactory.create(figure, limits, ...
                 @(value) setappdata(figure, "dateLimits", value));
             range = [datetime(2024, 1, 1) datetime(2024, 12, 31)];
-            macd.ui.inspector.PropertyEditorFactory.synchronize(limitsControl, "", true, range);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(limitsControl, "", true, range);
             parts = limitsControl.UserData;
             parts.Start.Value = datetime(2024, 2, 1);
             parts.Start.ValueChangedFcn(parts.Start, struct());
 
             list = component.Properties([component.Properties.Path] == "DisabledDates");
-            listControl = macd.ui.inspector.PropertyEditorFactory.create(figure, list, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+            listControl = yamada.ui.inspector.PropertyEditorFactory.create(figure, list, @(~) []);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
                 listControl, "", true, datetime.empty(0, 1));
             drawnow;
-            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(scalar));
+            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(scalar));
             testCase.verifyClass(scalarControl, "matlab.ui.control.DatePicker");
             testCase.verifyEqual(getappdata(figure, "scalarDate"), datetime(2024, 3, 1));
             testCase.verifyEqual(getappdata(figure, "dateLimits"), ...
                 [datetime(2024, 2, 1) datetime(2024, 12, 31)]);
-            testCase.verifyEqual(string(listControl.Tag), "macd-inspector-date-list-editor");
+            testCase.verifyEqual(string(listControl.Tag), "yamada-inspector-date-list-editor");
             testCase.verifyEqual(string(listControl.Enable), "on");
             clear cleanup
         end
@@ -152,11 +152,11 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.PropertyDefinition("Color", [], false, true, ...
+            definition = yamada.model.PropertyDefinition("Color", [], false, true, ...
                 struct("editor", "color"));
-            control = macd.ui.inspector.PropertyEditorFactory.create( ...
+            control = yamada.ui.inspector.PropertyEditorFactory.create( ...
                 figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 0 0]", true);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 0 0]", true);
             drawnow;
             testCase.verifyClass(control, "matlab.ui.control.Button");
             testCase.verifyEqual(control.BackgroundColor, [1 0 0]);
@@ -168,12 +168,12 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.PropertyDefinition("Items", [], false, true, ...
+            definition = yamada.model.PropertyDefinition("Items", [], false, true, ...
                 struct("editor", "stringList"));
-            control = macd.ui.inspector.PropertyEditorFactory.create( ...
+            control = yamada.ui.inspector.PropertyEditorFactory.create( ...
                 figure, definition, @(~) []);
             values = ["Light", "Dark"];
-            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
                 control, "<unsupported: string array>", true, values);
             drawnow;
             testCase.verifyClass(control, "matlab.ui.control.Button");
@@ -186,13 +186,13 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uidropdown");
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uidropdown");
             definition = definition.Properties([definition.Properties.Path] == "ItemsData");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
                 control, "[1 2]", true, [1 2], struct("Items", ["First", "Second"]));
             drawnow;
-            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
             testCase.verifyClass(control, "matlab.ui.control.Button");
             testCase.verifyEqual(string(control.Enable), "on");
             testCase.verifyEqual(string(control.Text), "[1 2]");
@@ -206,13 +206,13 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uidropdown");
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uidropdown");
             definition = definition.Properties([definition.Properties.Path] == "ItemsData");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
             relatedValues = struct("Paths", ["Items", "Value"], ...
                 "Values", {{["First", "Second"], "First"}}, ...
                 "KnownValues", [true true]);
-            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
                 control, "[1 2]", true, [1 2], relatedValues);
             drawnow;
             testCase.verifyTrue(control.UserData.HasItems);
@@ -225,10 +225,10 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uidropdown");
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uidropdown");
             definition = definition.Properties([definition.Properties.Path] == "ItemsData");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
                 control, "<unsupported: struct>", true, struct("Code", 1));
             drawnow;
             testCase.verifyEqual(string(control.Enable), "off");
@@ -241,15 +241,15 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uihyperlink");
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uihyperlink");
             definition = definition.Properties([definition.Properties.Path] == "URL");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
                 @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'https://example.com'", true, ...
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "'https://example.com'", true, ...
                 "https://example.com");
             drawnow;
-            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyEqual(string(control.Tag), "macd-inspector-property-editor");
+            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyEqual(string(control.Tag), "yamada-inspector-property-editor");
             testCase.verifyEqual(string(control.Value), "https://example.com");
             testCase.verifyTrue(control.Editable);
             clear cleanup
@@ -260,15 +260,15 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uidatepicker");
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uidatepicker");
             definition = definition.Properties([definition.Properties.Path] == "Placeholder");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
                 @(value) setappdata(figure, "committed", value));
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "''", true, '');
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "''", true, '');
             control.Value = "No date selected";
             control.ValueChangedFcn(control, struct());
             drawnow;
-            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
             testCase.verifyEqual(getappdata(figure, "committed"), 'No date selected');
             clear cleanup
         end
@@ -281,17 +281,17 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uidropdown");
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uidropdown");
             definition = definition.Properties([definition.Properties.Path] == "Value");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
                 @(value) setappdata(figure, "committed", value));
             related = struct("Paths", ["Items", "ItemsData"], ...
                 "Values", {{["First", "Second"], [10 20]}}, ...
                 "KnownValues", [true true]);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "10", true, ...
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "10", true, ...
                 10, related);
             drawnow;
-            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
             testCase.verifyClass(control, "matlab.ui.control.DropDown");
             testCase.verifyEqual(string(control.Items), ["First", "Second"]);
             control.Value = "Second";
@@ -301,7 +301,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             updated = struct("Paths", ["Items", "ItemsData"], ...
                 "Values", {{["First", "Third"], [10 30]}}, ...
                 "KnownValues", [true true]);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "10", true, 10, updated);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "10", true, 10, updated);
             testCase.verifyEqual(string(control.Items), ["First", "Third"]);
             testCase.verifyEqual(string(control.Value), "First");
             clear cleanup
@@ -314,14 +314,14 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uilistbox");
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uilistbox");
             definition = definition.Properties([definition.Properties.Path] == "Value");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
                 @(value) setappdata(figure, "committed", value));
             related = struct("Paths", ["Items", "ItemsData", "Multiselect"], ...
                 "Values", {{["One", "Two", "Three"], [10 20 30], "on"}}, ...
                 "KnownValues", [true true true]);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[10 30]", true, ...
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "[10 30]", true, ...
                 [10 30], related);
             drawnow;
             testCase.verifyClass(control, "matlab.ui.control.ListBox");
@@ -339,17 +339,17 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
             setappdata(figure, "changes", struct.empty);
-            definition = macd.model.ComponentRegistry.createDefault().getById("uidatepicker");
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uidatepicker");
             definition = definition.Properties([definition.Properties.Path] == "DisabledDaysOfWeek");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) [], ...
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) [], ...
                 @(changes) captureBatch(figure, changes));
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 3]", true, [1 3]);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 3]", true, [1 3]);
             control.ButtonPushedFcn(control, struct());
-            dialog = findall(0, "Tag", "macd-inspector-day-of-week-dialog");
-            buttons = findall(dialog, "Tag", "macd-inspector-day-of-week-button");
+            dialog = findall(0, "Tag", "yamada-inspector-day-of-week-dialog");
+            buttons = findall(dialog, "Tag", "yamada-inspector-day-of-week-button");
             monday = buttons(string({buttons.Text}) == "Mon");
             monday.Value = true;
-            applyButton = findall(dialog, "Tag", "macd-inspector-day-of-week-apply");
+            applyButton = findall(dialog, "Tag", "yamada-inspector-day-of-week-apply");
             applyButton.ButtonPushedFcn(applyButton, struct());
 
             changes = getappdata(figure, "changes");
@@ -367,27 +367,27 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
             setappdata(figure, "changes", struct.empty);
-            component = macd.model.ComponentRegistry.createDefault().getById("uitable");
+            component = yamada.model.ComponentRegistry.createDefault().getById("uitable");
             paths = ["Data", "ColumnName", "RowName"];
             relatedValues = struct("Paths", paths, ...
                 "Values", {{[1 2], {'First', 'Second'}, {'One'}}}, ...
                 "KnownValues", [true true true]);
             for index = 1:numel(paths)
                 definition = component.Properties([component.Properties.Path] == paths(index));
-                control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) [], ...
+                control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) [], ...
                     @(changes) captureBatch(figure, changes));
-                macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+                yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
                     control, "", true, relatedValues.Values{index}, relatedValues);
-                testCase.verifyEqual(string(control.Tag), "macd-inspector-table-data-editor");
+                testCase.verifyEqual(string(control.Tag), "yamada-inspector-table-data-editor");
                 testCase.verifyEqual(string(control.Enable), "on");
                 if paths(index) == "Data"
                     control.ButtonPushedFcn(control, struct());
                 end
             end
-            dialog = findall(0, "Tag", "macd-inspector-table-data-dialog");
-            table = findall(dialog, "Tag", "macd-table-data-editor-table");
+            dialog = findall(0, "Tag", "yamada-inspector-table-data-dialog");
+            table = findall(dialog, "Tag", "yamada-table-data-editor-table");
             table.Data(2, 2:3) = ["3", "4"];
-            applyButton = findall(dialog, "Tag", "macd-table-data-apply");
+            applyButton = findall(dialog, "Tag", "yamada-table-data-apply");
             applyButton.ButtonPushedFcn(applyButton, struct());
 
             changes = getappdata(figure, "changes");
@@ -403,14 +403,14 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uidatepicker");
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uidatepicker");
             definition = definition.Properties([definition.Properties.Path] == "Value");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
             limits = [datetime(2024, 1, 1) datetime(2024, 12, 31)];
             disabledDates = [datetime(2024, 3, 1); datetime(2024, 3, 2)];
             relatedValues = struct("Paths", ["Limits", "DisabledDates", "DisabledDaysOfWeek"], ...
                 "Values", {{limits, disabledDates, [1 7]}}, "KnownValues", [true true true]);
-            macd.ui.inspector.PropertyEditorFactory.synchronize( ...
+            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
                 control, "", true, datetime(2024, 2, 29), relatedValues);
             drawnow;
             testCase.verifyEqual(control.Limits, limits);
@@ -424,13 +424,13 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uibutton-push");
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uibutton-push");
             definition = definition.Properties([definition.Properties.Path] == "Icon");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "'icon.png'", true, "icon.png");
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "'icon.png'", true, "icon.png");
             drawnow;
-            testCase.verifyTrue(macd.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyEqual(string(control.Tag), "macd-inspector-asset-editor");
+            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyEqual(string(control.Tag), "yamada-inspector-asset-editor");
             testCase.verifyEqual(string(control.UserData.Edit.Value), "icon.png");
             testCase.verifyEqual(string(control.UserData.Browse.Enable), "on");
             clear cleanup

@@ -37,9 +37,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
             conditions(document, source.Id, registry, [10 10 80 22]);
             document.setProperty(source.Id, "Tooltip", "New hint", registry);
             measured = [12 15 100 28];
-            actual = macd.model.DocumentEditAvailability.reparenting(document, source.Id, registry, measured);
+            actual = yamada.model.DocumentEditAvailability.reparenting(document, source.Id, registry, measured);
             independent = document.structuralCandidate(registry);
-            expected = macd.model.DocumentEditAvailability.reparenting(independent, source.Id, registry, measured);
+            expected = yamada.model.DocumentEditAvailability.reparenting(independent, source.Id, registry, measured);
             testCase.verifyEqual(orderParents(actual), orderParents(expected));
         end
 
@@ -78,7 +78,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
                     case "history"
                         document.undo();
                 end
-                actual = macd.model.DocumentEditAvailability.copying(document, source.Id, registry);
+                actual = yamada.model.DocumentEditAvailability.copying(document, source.Id, registry);
                 if kind == "readonly", testCase.verifyFalse(actual.Enabled); end
             end
         end
@@ -87,12 +87,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
             % formerlyUnencodableValuesAreRechecked Do not carry a disabled Copy answer after repairing unsupported data.
             [document, registry, source] = fixture(Depth);
             source.setProperty("Text", categorical("Old unsupported text"));
-            before = macd.model.DocumentEditAvailability.copying(document, source.Id, registry);
+            before = yamada.model.DocumentEditAvailability.copying(document, source.Id, registry);
             testCase.assertFalse(before.Enabled);
             [~, found] = document.evaluationContext(registry).lookup("eligibility:copy:" + source.Id);
             testCase.assertTrue(found);
             document.setProperty(source.Id, "Text", "Recovered", registry);
-            after = macd.model.DocumentEditAvailability.copying(document, source.Id, registry);
+            after = yamada.model.DocumentEditAvailability.copying(document, source.Id, registry);
             testCase.verifyTrue(after.Enabled);
         end
     end
@@ -113,9 +113,9 @@ end
 function [copy, deletion, parents] = conditions(document, id, registry, measured)
 % conditions Read independent immutable command and destination answers for one component.
 arguments (Input)
-    document (1, 1) macd.model.DocumentModel
+    document (1, 1) yamada.model.DocumentModel
     id (1, 1) string
-    registry (1, 1) macd.model.ComponentRegistry
+    registry (1, 1) yamada.model.ComponentRegistry
     measured (1, 4) double
 end
 arguments (Output)
@@ -123,9 +123,9 @@ arguments (Output)
     deletion (1, 1) struct
     parents struct
 end
-copy = macd.model.DocumentEditAvailability.copying(document, id, registry);
-deletion = macd.model.DocumentEditAvailability.deletion(document, id, registry);
-parents = macd.model.DocumentEditAvailability.reparenting(document, id, registry, measured);
+copy = yamada.model.DocumentEditAvailability.copying(document, id, registry);
+deletion = yamada.model.DocumentEditAvailability.deletion(document, id, registry);
+parents = yamada.model.DocumentEditAvailability.reparenting(document, id, registry, measured);
 end
 
 function [document, registry, source] = fixture(depth)
@@ -134,12 +134,12 @@ arguments (Input)
     depth (1, 1) double {mustBeInteger, mustBeNonnegative}
 end
 arguments (Output)
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
-    source (1, 1) macd.model.ComponentRecord
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
+    source (1, 1) yamada.model.ComponentRecord
 end
-registry = macd.model.ComponentRegistry.createDefault();
-document = macd.model.NewAppFactory.createEmpty("EligibilityCarryFixture", registry);
+registry = yamada.model.ComponentRegistry.createDefault();
+document = yamada.model.NewAppFactory.createEmpty("EligibilityCarryFixture", registry);
 left = document.insertComponent(registry, "uipanel", document.RootComponentId);
 right = document.insertComponent(registry, "uipanel", document.RootComponentId);
 destination = document.insertComponent(registry, "uigridlayout", right.Id);
@@ -160,8 +160,8 @@ else
     source.setProperty("Position", [10 10 80 22]);
 end
 name = source.Name;
-text = macd.source.NewAppGenerator(registry).generate(document);
-document = macd.source.AppSourceParser.parseText(text, registry);
+text = yamada.source.NewAppGenerator(registry).generate(document);
+document = yamada.source.AppSourceParser.parseText(text, registry);
 source = document.getComponentByName(name);
 end
 

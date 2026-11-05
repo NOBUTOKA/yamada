@@ -6,10 +6,10 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
     methods (Test)
         function cleanupRethrowPreservesCertainInitialization(testCase)
             % cleanupRethrowPreservesCertainInitialization Trace the successful constructor path only when proven.
-            registry = macd.model.ComponentRegistry.createDefault();
-            original = macd.model.NewAppFactory.createEmpty("GuardedApp", registry);
-            source = macd.source.NewAppGenerator(registry).generate(original);
-            [document, diagnostics] = macd.source.AppSourceParser.parseText(source, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            original = yamada.model.NewAppFactory.createEmpty("GuardedApp", registry);
+            source = yamada.source.NewAppGenerator(registry).generate(original);
+            [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyEmpty(diagnostics);
             testCase.verifyTrue(document.getComponent(document.RootComponentId).getProperty("Name").IsEditable);
             testCase.verifyFalse(document.getComponent(document.RootComponentId).getProperty("CloseRequestFcn").IsEditable);
@@ -17,17 +17,17 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
 
             % Swallowing an exception does not prove that initialization completed.
             source = replace(source, "                rethrow(exception);", "");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyFalse(document.getComponent(document.RootComponentId).getProperty("Name").IsEditable);
         end
 
         function rejectsOtherBasesAndMissingOrMultipleFigures(testCase)
             % rejectsOtherBasesAndMissingOrMultipleFigures Enforce the supported class and root count.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for base = ["matlab.apps.AppBase", "OtherBase"]
                 text = "classdef UnsupportedApp < " + base + newline + "end";
-                [~, diagnostics] = macd.source.AppSourceParser.parseText(text, registry);
-                testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+                [~, diagnostics] = yamada.source.AppSourceParser.parseText(text, registry);
+                testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
             end
             for count = [0 2]
                 lines = ["classdef RootApp < handle"; "properties"; ...
@@ -36,30 +36,30 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
                 if count > 0
                     lines = [lines; "app.UIFigure = uifigure();"; "app.OtherFigure = uifigure();"]; %#ok<AGROW>
                 end
-                [document, diagnostics] = macd.source.AppSourceParser.parseText( ...
+                [document, diagnostics] = yamada.source.AppSourceParser.parseText( ...
                     strjoin([lines; "end"; "end"; "end"], newline), registry);
                 testCase.verifyEqual(nnz(string({document.Components.Factory}) == "uifigure"), count);
                 testCase.verifyTrue(any(string({diagnostics.Code}) == "invalid-root-count"));
-                testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+                testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
             end
         end
 
         function defaultCloseCanBeEditedDeletedAndUndone(testCase)
             % defaultCloseCanBeEditedDeletedAndUndone Preserve the shutdown fallback across source edits.
-            registry = macd.model.ComponentRegistry.createDefault();
-            original = macd.model.NewAppFactory.createEmpty("CloseApp", registry);
-            generator = macd.source.RoundTripGenerator(registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            original = yamada.model.NewAppFactory.createEmpty("CloseApp", registry);
+            generator = yamada.source.RoundTripGenerator(registry);
             source = generator.generate(original);
-            document = macd.source.AppSourceParser.parseText(source, registry);
-            states = macd.source.CallbackSourceAnalyzer.analyze(document, document.RootComponentId, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
+            states = yamada.source.CallbackSourceAnalyzer.analyze(document, document.RootComponentId, registry);
             testCase.verifyEqual(states(string({states.Name}) == "CloseRequestFcn").State, "absent");
             document.applyCallbackAction(document.RootComponentId, "CloseRequestFcn", "Add", registry);
             added = generator.generate(document);
             testCase.verifySubstring(added, "CloseRequestFcn = @app.");
-            reopened = macd.source.AppSourceParser.parseText(added, registry);
+            reopened = yamada.source.AppSourceParser.parseText(added, registry);
             reopened.applyCallbackAction(reopened.RootComponentId, "CloseRequestFcn", "Delete", registry);
             restored = generator.generate(reopened);
-            testCase.verifySubstring(restored, macd.source.CallbackSourceEdits.defaultClose("UIFigure"));
+            testCase.verifySubstring(restored, yamada.source.CallbackSourceEdits.defaultClose("UIFigure"));
             testCase.verifyEqual(count(restored, ".CloseRequestFcn ="), 1);
             reopened.undo();
             testCase.verifyEqual(generator.generate(reopened), added);
@@ -74,7 +74,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             tag = document.ClassName + "-button";
             button.setProperty("Tag", tag);
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-            source = macd.source.NewAppGenerator(registry).generate(document);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
             source = replace(source, "% Add callback behavior here.", ...
                 "source.UserData = event; app." + button.Name + ".Text = source.Text + "" changed"";");
             app = testCase.instantiate(document, source);
@@ -94,7 +94,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             % closeAndExplicitDeleteDestroyOwnerAndFigure Cover normal close and programmatic owner deletion.
             for action = ["close", "delete"]
                 [document, registry] = testCase.runtimeDocument();
-                app = testCase.instantiate(document, macd.source.NewAppGenerator(registry).generate(document));
+                app = testCase.instantiate(document, yamada.source.NewAppGenerator(registry).generate(document));
                 figure = findall(0, "Type", "figure", "Name", document.ClassName);
                 testCase.assertNumElements(figure, 1);
                 cleanup = onCleanup(@() delete(app));
@@ -109,7 +109,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
         function figureDeletionPreservesUserDeleteCallback(testCase)
             % figureDeletionPreservesUserDeleteCallback Keep user callbacks while releasing the owner.
             [document, registry] = testCase.runtimeDocument();
-            app = testCase.instantiate(document, macd.source.NewAppGenerator(registry).generate(document));
+            app = testCase.instantiate(document, yamada.source.NewAppGenerator(registry).generate(document));
             figure = findall(0, "Type", "figure", "Name", document.ClassName);
             testCase.assertNumElements(figure, 1);
             cleanup = onCleanup(@() delete(app));
@@ -125,7 +125,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
         function outputlessStartupRetainsOwnerUntilClose(testCase)
             % outputlessStartupRetainsOwnerUntilClose Retain an app through its figure without a caller variable.
             [document, registry] = testCase.runtimeDocument();
-            testCase.installSource(document, macd.source.NewAppGenerator(registry).generate(document));
+            testCase.installSource(document, yamada.source.NewAppGenerator(registry).generate(document));
             feval(document.ClassName);
             figure = findall(0, "Type", "figure", "Name", document.ClassName);
             testCase.assertNumElements(figure, 1);
@@ -143,7 +143,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             % canceledCloseKeepsOwnerUntilExplicitDelete Keep the shutdown decision outside the destructor.
             [document, registry] = testCase.runtimeDocument();
             document.applyCallbackAction(document.RootComponentId, "CloseRequestFcn", "Add", registry);
-            source = macd.source.NewAppGenerator(registry).generate(document);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
             source = replace(source, "            delete(app);", "            return");
             app = testCase.instantiate(document, source);
             cleanup = onCleanup(@() delete(app));
@@ -162,7 +162,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             for stage = ["before-figure", "after-figure"]
                 [document, registry] = testCase.runtimeDocument();
                 button = document.insertComponent(registry, "uibutton", document.RootComponentId);
-                source = macd.source.NewAppGenerator(registry).generate(document);
+                source = yamada.source.NewAppGenerator(registry).generate(document);
                 anchor = "app." + button.Name + " = uibutton(app.UIFigure);";
                 if stage == "before-figure"
                     anchor = "app.UIFigure = uifigure(""Visible"", ""off"");";
@@ -178,7 +178,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             % editorFigureDeletionReleasesOwner Dispose editor state when its figure is directly deleted.
             app = yamada();
             cleanup = onCleanup(@() delete(app));
-            figure = findall(0, "Tag", "macd-yamada-editor");
+            figure = findall(0, "Tag", "yamada-editor");
             testCase.assertNumElements(figure, 1);
             delete(figure);
             testCase.verifyFalse(isvalid(app));
@@ -203,7 +203,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
 
                 % Exercise the exact command without an assignment or semicolon.
                 evalin("base", "yamada");
-                figure = findall(0, "Tag", "macd-yamada-editor");
+                figure = findall(0, "Tag", "yamada-editor");
                 testCase.assertNumElements(figure, 1);
                 details = functions(figure.CloseRequestFcn);
                 owner = details.workspace{1}.app;
@@ -229,12 +229,12 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
                 ~
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
             end
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             name = "HandleApp" + erase(string(java.util.UUID.randomUUID()), "-");
-            document = macd.model.NewAppFactory.createEmpty(name, registry);
+            document = yamada.model.NewAppFactory.createEmpty(name, registry);
             document.getComponent(document.RootComponentId).setProperty("Visible", "off");
         end
 
@@ -242,7 +242,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             % instantiate Install and run only source generated by the runtime test itself.
             arguments (Input)
                 testCase (1, 1) HandleAppMigrationTest
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
                 source (1, 1) string
             end
             arguments (Output)
@@ -256,11 +256,11 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             % installSource Scope generated runtime code to temporary fixtures and a temporary path.
             arguments (Input)
                 testCase (1, 1) HandleAppMigrationTest
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
                 source (1, 1) string
             end
             folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
-            macd.source.SourceWriter.write(fullfile(folder.Folder, document.ClassName + ".m"), source, "CRLF");
+            yamada.source.SourceWriter.write(fullfile(folder.Folder, document.ClassName + ".m"), source, "CRLF");
             testCase.applyFixture(matlab.unittest.fixtures.PathFixture(folder.Folder));
         end
     end

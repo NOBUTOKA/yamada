@@ -7,7 +7,7 @@ classdef (TestTags = {'compatibility', 'catalog'}) CatalogPromotionTest < matlab
             % runtimeCatalogRetainsGroupingProvenance Verify runtime data names the reviewed grouping input.
 
             % Read raw JSON so the provenance check does not depend on registry details.
-            root = macd.catalog.ComponentCatalogLoader.defaultCatalogRoot();
+            root = yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot();
             manifest = jsondecode(fileread(fullfile(root, "catalog.json")));
             groups = jsondecode(fileread(fullfile(root, "property-groups", "groups.json")));
             profiles = jsondecode(fileread(fullfile(root, "order-profiles.json")));

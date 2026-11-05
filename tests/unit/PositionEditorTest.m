@@ -8,10 +8,10 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
             figure = uifigure("Visible", "off", "Position", [100 100 270 160]);
             cleanup = onCleanup(@() delete(figure));
             grid = uigridlayout(figure, [1 1]);
-            definition = macd.model.ComponentRegistry.createDefault().getById("uiswitch-rocker").getProperty("Position");
-            control = macd.ui.inspector.PropertyEditorFactory.create(grid, definition, @(value) capture(figure, value));
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uiswitch-rocker").getProperty("Position");
+            control = yamada.ui.inspector.PropertyEditorFactory.create(grid, definition, @(value) capture(figure, value));
             related = struct("Paths", "Orientation", "Values", {{"vertical"}}, "KnownValues", true);
-            macd.ui.inspector.PropertyEditorFactory.synchronize(control, "", true, [10 20 20 45], related);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "", true, [10 20 20 45], related);
             drawnow;
             parts = control.UserData;
             testCase.verifyEqual(string({parts.Fields.Tooltip}), ["X", "Y", "Width", "Height"]);
@@ -38,14 +38,14 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
             % fixedDimensionTooltipsFollowOrientation Keep a fixed side readable without disabling the other fields.
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
-            definition = macd.model.ComponentRegistry.createDefault().getById("uislider-slider").getProperty("Position");
-            control = macd.ui.inspector.PropertyEditorFactory.create(figure, definition, @(value) capture(figure, value));
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uislider-slider").getProperty("Position");
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(value) capture(figure, value));
             for orientation = ["horizontal", "vertical"]
                 related = struct("Paths", "Orientation", "Values", {{orientation}}, "KnownValues", true);
                 value = [10 20 100 3];
                 fixed = 4;
                 if orientation == "vertical", value(3:4) = [3 100]; fixed = 3; end
-                macd.ui.inspector.PropertyEditorFactory.synchronize(control, "", true, value, related);
+                yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "", true, value, related);
                 parts = control.UserData;
                 expected = ["X", "Y", "Width", "Height"];
                 expected(fixed) = expected(fixed) + " (fixed)";
@@ -64,11 +64,11 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
             grid = uigridlayout(figure, [1 1]);
-            definition = macd.model.ComponentRegistry.createDefault().getById("uilabel").getProperty("Position");
-            row = macd.ui.inspector.InspectorPropertyRow(grid, 1, "old", definition, ...
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uilabel").getProperty("Position");
+            row = yamada.ui.inspector.InspectorPropertyRow(grid, 1, "old", definition, ...
                 @(id, ~, value) captureMessage(figure, id, value));
             row.synchronize("", true, [1 2 100 30]);
-            control = findall(figure, "Tag", "macd-inspector-position-editor");
+            control = findall(figure, "Tag", "yamada-inspector-position-editor");
             field = control.UserData.Fields(1);
             old = field.ValueChangedFcn;
             row.rebind("new");
@@ -87,7 +87,7 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
             % liveInspectorUsesOneUndoForBothLinkedSizes Verify palette, Inspector, model, and Preview agreement.
             app = yamada();
             cleanup = onCleanup(@() delete(app));
-            figure = findall(0, "Type", "figure", "Tag", "macd-yamada-editor");
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(item) any(string(item.ColumnName) == "Component") && ...
@@ -97,7 +97,7 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
             drawnow;
             component = app.Document.getComponent(app.SelectedComponentId);
             history = app.Document.HistoryIndex;
-            control = findall(figure, "Tag", "macd-inspector-position-editor");
+            control = findall(figure, "Tag", "yamada-inspector-position-editor");
             parts = control.UserData;
             before = [parts.Fields.Value];
             testCase.verifyEqual(string(parts.Fields(3).Editable), "on");
@@ -110,7 +110,7 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
             undo = menus(erase(string({menus.Text}), "&") == "Undo");
             undo.MenuSelectedFcn(undo, struct());
             drawnow;
-            control = findall(figure, "Tag", "macd-inspector-position-editor");
+            control = findall(figure, "Tag", "yamada-inspector-position-editor");
             testCase.verifyEqual([control.UserData.Fields.Value], before);
         end
     end

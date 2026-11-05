@@ -8,10 +8,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
     methods (Test)
         function freshSettingsDoNotRevalidateUnrelatedFields(testCase, Layout)
             % freshSettingsDoNotRevalidateUnrelatedFields Compare scoped results with full validation after each insertion.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             [document, names] = makeFixture(registry, string(Layout));
             baseline = document.validatePropertyCommit(registry);
-            testCase.assertFalse(macd.validation.ModelValidator.hasErrors(baseline));
+            testCase.assertFalse(yamada.validation.ModelValidator.hasErrors(baseline));
             paths = ["Value", "Tooltip", "FontSize"];
             values = {2, "New hint", 17};
             for index = 1:3
@@ -19,15 +19,15 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
                 testCase.assertEmpty(component.getProperty(paths(index)));
                 document.setProperty(component.Id, paths(index), values{index}, registry);
                 actual = document.validatePropertyCommit(registry);
-                expected = macd.validation.ModelValidator.validate(document, registry);
+                expected = yamada.validation.ModelValidator.validate(document, registry);
                 testCase.verifyEqual(actual, expected);
                 testCase.verifyEqual(document.HistoryIndex, index);
                 % No caller-owned diagnostic refresh can replace the retained proof.
-                document.Diagnostics = macd.model.Diagnostic("presentation", "warning", "Presentation only.");
+                document.Diagnostics = yamada.model.Diagnostic("presentation", "warning", "Presentation only.");
                 testCase.verifyEqual(document.validatePropertyCommit(registry), expected);
             end
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            parsed = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
             for index = 1:3
                 testCase.verifyEqual(parsed.getComponentByName(names(index)).getProperty(paths(index)).LiteralValue, values{index});
             end
@@ -36,7 +36,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
         function pendingScopesRejectChangedInputs(testCase, Layout)
             % pendingScopesRejectChangedInputs Never reuse a pending scope after another document or catalog write.
             for kind = ["entry", "metadata", "registry", "history"]
-                registry = macd.model.ComponentRegistry.createDefault();
+                registry = yamada.model.ComponentRegistry.createDefault();
                 [document, names] = makeFixture(registry, string(Layout));
                 document.validatePropertyCommit(registry);
                 target = document.getComponentByName(names(1));
@@ -52,19 +52,19 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
                         document.undo();
                 end
                 actual = document.validatePropertyCommit(registry);
-                testCase.verifyEqual(actual, macd.validation.ModelValidator.validate(document, registry));
+                testCase.verifyEqual(actual, yamada.validation.ModelValidator.validate(document, registry));
             end
         end
 
         function preparedCommitsCanChainFullProofs(testCase, Layout)
             % preparedCommitsCanChainFullProofs Reuse complete pre-commit proofs across distinct edits without a post-check.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             [document, names] = makeFixture(registry, string(Layout));
             document.validatePropertyCommit(registry);
             document.setProperty(document.getComponentByName(names(1)).Id, "Tooltip", "First", registry);
             document.setProperty(document.getComponentByName(names(2)).Id, "Tooltip", "Second", registry);
             actual = document.validatePropertyCommit(registry);
-            testCase.verifyEqual(actual, macd.validation.ModelValidator.validate(document, registry));
+            testCase.verifyEqual(actual, yamada.validation.ModelValidator.validate(document, registry));
         end
     end
 end
@@ -72,15 +72,15 @@ end
 function [document, names, depth] = makeFixture(registry, layout)
 % makeFixture Build independent numeric owners under zero, one, or several grid ancestors.
 arguments (Input)
-    registry (1, 1) macd.model.ComponentRegistry
+    registry (1, 1) yamada.model.ComponentRegistry
     layout (1, 1) string
 end
 arguments (Output)
-    document (1, 1) macd.model.DocumentModel
+    document (1, 1) yamada.model.DocumentModel
     names (1, :) string
     depth (1, 1) double
 end
-document = macd.model.NewAppFactory.createEmpty("ScopedValidationFixture", registry);
+document = yamada.model.NewAppFactory.createEmpty("ScopedValidationFixture", registry);
 parent = document.RootComponentId;
 depth = double(layout ~= "absolute");
 if layout == "nested", depth = 4; end
@@ -99,8 +99,8 @@ for index = 1:12
     end
     names(end + 1) = component.Name; %#ok<AGROW>
 end
-source = macd.source.NewAppGenerator(registry).generate(document);
-document = macd.source.AppSourceParser.parseText(source, registry);
+source = yamada.source.NewAppGenerator(registry).generate(document);
+document = yamada.source.AppSourceParser.parseText(source, registry);
 end
 
 %{

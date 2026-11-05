@@ -8,7 +8,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             [document, handles, panel, grid, first, second, cleanup] = ...
                 testCase.renderGrid([40 50], [60 70]);
             testCase.addTeardown(@() delete(cleanup));
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, second.Id, 7);
 
             firstIndex = find(string({data.children.id}) == first.Id, 1);
@@ -35,13 +35,13 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             [document, handles, panel, grid, first, ~, cleanup, registry] = ...
                 testCase.renderGrid([40 50], [60 70]);
             testCase.addTeardown(@() delete(cleanup));
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             snapshot = builder.nativeInputs(handles, panel);
             expected = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry, snapshot);
             preview = handles(char(grid.Id));
             preview.RowHeight = {80, 90};
             drawnow;
-            macd.ui.waitForPreviewLayout(ancestor(panel, "figure"), preview);
+            yamada.ui.waitForPreviewLayout(ancestor(panel, "figure"), preview);
             drawnow;
             actual = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry, snapshot);
             testCase.verifyEqual(actual, expected);
@@ -54,7 +54,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             [document, handles, panel, grid, first, second, cleanup, registry] = ...
                 testCase.renderGrid([40 50], [60 70]);
             testCase.addTeardown(@() delete(cleanup));
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             [before, safe] = builder.cacheInputs(document, registry, grid.Id);
             testCase.assertTrue(safe);
             expected = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry);
@@ -81,7 +81,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             % cacheInputsRejectLiveDataAndFollowCatalogRevision Keep unresolved mutable inputs on the full path.
             [document, ~, ~, grid, ~, ~, cleanup, registry] = testCase.renderGrid([40 50], [60 70]);
             testCase.addTeardown(@() delete(cleanup));
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             [before, safe] = builder.cacheInputs(document, registry, grid.Id);
             testCase.assertTrue(safe);
             registry.register(registry.get("uigridlayout"));
@@ -100,7 +100,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             testCase.addTeardown(@() delete(cleanup));
             original = first.settingSnapshot();
             history = document.HistoryIndex;
-            before = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(handles, panel);
+            before = yamada.ui.GridLayoutOverlayDataBuilder.nativeInputs(handles, panel);
             testCase.verifyTrue(before.Cacheable);
             ids = cellfun(@(item) item.id, before.Controls);
             gridInput = before.Controls{find(ids == grid.Id, 1)};
@@ -114,10 +114,10 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             testCase.verifyEqual(firstInput.pixels, expected);
 
             % A renderer-owned frame is absent from the component map but changes canvas coordinates.
-            frame = findall(panel, "Tag", "macd-preview-frame");
+            frame = findall(panel, "Tag", "yamada-preview-frame");
             frame.Position(1:2) = frame.Position(1:2) + [17 13];
             drawnow;
-            moved = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(handles, panel);
+            moved = yamada.ui.GridLayoutOverlayDataBuilder.nativeInputs(handles, panel);
             for index = 1:numel(before.Controls)
                 testCase.verifyEqual(moved.Controls{index}.Position, before.Controls{index}.Position);
                 testCase.verifyEqual(moved.Controls{index}.pixels - before.Controls{index}.pixels, ...
@@ -126,7 +126,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             testCase.verifyNotEqual(moved.Ancestors, before.Ancestors);
             native = handles(char(grid.Id));
             native.RowSpacing = native.RowSpacing + 3;
-            spaced = macd.ui.GridLayoutOverlayDataBuilder.nativeInputs(handles, panel);
+            spaced = yamada.ui.GridLayoutOverlayDataBuilder.nativeInputs(handles, panel);
             testCase.verifyNotEqual(spaced, moved);
             testCase.verifyEqual(first.settingSnapshot(), original);
             testCase.verifyEqual(document.HistoryIndex, history);
@@ -137,7 +137,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             [document, handles, panel, grid, first, ~, cleanup, registry] = ...
                 testCase.renderGrid({"fit", "fit"}, [60 70]);
             testCase.addTeardown(@() delete(cleanup));
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             document.setProperty(first.Id, "Layout.Row", [1 2]);
             pending = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry);
             testCase.verifyFalse(pending.geometryAvailable);
@@ -161,7 +161,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             [document, handles, panel, grid, first, ~, cleanup, registry] = ...
                 testCase.renderGrid({"fit", "1x"}, [60 70]);
             testCase.addTeardown(@() delete(cleanup));
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             baseline = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry);
             testCase.assertTrue(baseline.geometryAvailable);
             stamp = builder.nativeInputs(handles, panel);
@@ -185,7 +185,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             [document, handles, panel, grid, ~, second, cleanup, registry] = ...
                 testCase.renderGrid([40 50], [60 70]);
             testCase.addTeardown(@() delete(cleanup));
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             baseline = builder.build(document, handles, panel, grid.Id, second.Id, 7);
             for opaqueCount = 0:2
                 if opaqueCount > 0
@@ -206,8 +206,8 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
         function alignsNestedFitTracksInAnOffsetParentCell(testCase)
             % alignsNestedFitTracksInAnOffsetParentCell Avoid adding nested grid coordinates twice.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("NestedFitGridApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("NestedFitGridApp", registry);
             outer = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             document.setProperty(outer.Id, "RowHeight", {180, "1x"});
             document.setProperty(outer.Id, "ColumnWidth", {230, "1x"});
@@ -227,11 +227,11 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [21 31 760 560]);
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
             GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(inner.Id)));
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build( ...
                 document, handles, panel, inner.Id, label.Id, 15);
 
@@ -256,7 +256,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             [document, handles, panel, grid, ~, second, cleanup] = ...
                 testCase.renderGrid({'fit', '1x'}, {'1x', '1x'});
             testCase.addTeardown(@() delete(cleanup));
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, second.Id, 8);
 
             testCase.verifyTrue(data.editable);
@@ -276,7 +276,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             [document, handles, panel, grid, ~, second, cleanup] = ...
                 testCase.renderGrid({40, "1x"}, {"1x", "2x"});
             testCase.addTeardown(@() delete(cleanup));
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, second.Id, 12);
 
             testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
@@ -290,8 +290,8 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
         function publishesSpanningChildAgainstMeasuredTrackBounds(testCase)
             % publishesSpanningChildAgainstMeasuredTrackBounds Preserve an explicit span without size inference.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("SpanningGridOverlayApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("SpanningGridOverlayApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             document.setProperty(grid.Id, "RowHeight", {40, "1x"});
             document.setProperty(grid.Id, "ColumnWidth", {60, "1x"});
@@ -305,12 +305,12 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 760 560]);
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
             GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
 
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, child.Id, 14);
 
             testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
@@ -328,19 +328,19 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
 
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseFile(fullfile(projectRoot, ...
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseFile(fullfile(projectRoot, ...
                 "tests", "fixtures", "SimpleCalculatorApp.m"), registry);
             grid = document.getComponentByName("GridLayout");
             figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 760 560]);
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
             GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
 
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, grid.Id, 9);
             testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
             testCase.verifyEqual(numel(data.rowTracks), 5);
@@ -361,20 +361,20 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
 
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseFile(fullfile(projectRoot, ...
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseFile(fullfile(projectRoot, ...
                 "tests", "fixtures", "ControlGalleryApp.m"), registry);
             grid = document.getComponentByName("FormGrid");
             selected = document.getComponentByName("DueDatePicker");
             figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 760 560]);
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
             GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
 
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, selected.Id, 10);
 
             testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
@@ -400,8 +400,8 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
         function publishesCollapsedEmptyFitTrack(testCase)
             % publishesCollapsedEmptyFitTrack Keep an explicitly empty fit row addressable at zero height.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("CollapsedFitGridApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("CollapsedFitGridApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             document.setProperty(grid.Id, "RowHeight", {"fit", "1x"});
             document.setProperty(grid.Id, "ColumnWidth", {"1x"});
@@ -412,19 +412,19 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 760 560]);
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
             GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
 
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, child.Id, 11);
 
             testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
             testCase.verifyEqual(data.rowTracks(1).bounds(4), 0, "AbsTol", 1);
             testCase.verifyEqual(data.rowTracks(1).bounds(2), ...
                 data.innerBounds(2) + data.innerBounds(4), "AbsTol", 1);
-            changes = macd.model.GridChildPlacementPlanner.move( ...
+            changes = yamada.model.GridChildPlacementPlanner.move( ...
                 document, grid.Id, child.Id, 1, 1, 2, 1);
             document.applyGridLayoutEdit(grid.Id, changes);
             testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, 1);
@@ -434,8 +434,8 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
         function publishesAdjacentCollapsedFitTracks(testCase)
             % publishesAdjacentCollapsedFitTracks Keep every adjacent empty fit track addressable.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("AdjacentCollapsedFitGridApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("AdjacentCollapsedFitGridApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             document.setProperty(grid.Id, "RowHeight", {"fit", "fit", "1x"});
             document.setProperty(grid.Id, "ColumnWidth", {"fit", "fit", "1x"});
@@ -446,12 +446,12 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 760 560]);
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
             GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
 
-            builder = macd.ui.GridLayoutOverlayDataBuilder();
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, child.Id, 13);
 
             testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
@@ -459,7 +459,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             testCase.verifyEqual(data.rowTracks(2).bounds(4), 0, "AbsTol", 1);
             testCase.verifyEqual(data.columnTracks(1).bounds(3), 0, "AbsTol", 1);
             testCase.verifyEqual(data.columnTracks(2).bounds(3), 0, "AbsTol", 1);
-            changes = macd.model.GridChildPlacementPlanner.move( ...
+            changes = yamada.model.GridChildPlacementPlanner.move( ...
                 document, grid.Id, child.Id, 1, 1, 3, 3);
             document.applyGridLayoutEdit(grid.Id, changes);
             testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, 1);
@@ -478,18 +478,18 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
                 columnWidth
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
+                document (1, 1) yamada.model.DocumentModel
                 handles containers.Map
                 panel (1, 1) matlab.ui.container.Panel
-                grid (1, 1) macd.model.ComponentRecord
-                first (1, 1) macd.model.ComponentRecord
-                second (1, 1) macd.model.ComponentRecord
+                grid (1, 1) yamada.model.ComponentRecord
+                first (1, 1) yamada.model.ComponentRecord
+                second (1, 1) yamada.model.ComponentRecord
                 cleanup (1, 1) onCleanup
-                registry (1, 1) macd.model.ComponentRegistry
+                registry (1, 1) yamada.model.ComponentRegistry
             end
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("GridOverlayApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("GridOverlayApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             document.setProperty(grid.Id, "RowHeight", rowHeight);
             document.setProperty(grid.Id, "ColumnWidth", columnWidth);
@@ -504,7 +504,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 760 560]);
-            renderer = macd.ui.PreviewRenderer(registry);
+            renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
             GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
@@ -531,7 +531,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
                 end
                 prior = current;
             end
-            error("macd:GridLayoutOverlayDataBuilderTest:UnstableLayout", ...
+            error("yamada:GridLayoutOverlayDataBuilderTest:UnstableLayout", ...
                 "GridLayout geometry did not stabilize in the test figure.");
         end
 

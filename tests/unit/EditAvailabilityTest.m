@@ -6,15 +6,15 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
         function queriesDoNotGenerateOrReparseCandidateSource(testCase)
             % queriesDoNotGenerateOrReparseCandidateSource Preserve query results, source, history, and clipboard contents.
             [document, registry, left, right, leaf] = EditAvailabilityTest.fixture(true);
-            clipboard = macd.model.ComponentClipboard();
+            clipboard = yamada.model.ComponentClipboard();
             clipboard.copy(document, leaf.Id, registry);
             before = document.GeneratedText;
             history = document.HistoryIndex;
             copied = clipboard.availability("Copy", document, leaf.Id, registry);
             cut = clipboard.availability("Cut", document, leaf.Id, registry);
             pasted = clipboard.availability("Paste", document, right.Id, registry);
-            deleted = macd.model.DocumentEditAvailability.deletion(document, leaf.Id, registry);
-            states = macd.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
+            deleted = yamada.model.DocumentEditAvailability.deletion(document, leaf.Id, registry);
+            states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
             testCase.verifyTrue(copied.Enabled);
             testCase.verifyTrue(cut.Enabled);
             testCase.verifyTrue(pasted.Enabled);
@@ -29,15 +29,15 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
         function hierarchyChangesInvalidateConditionsImmediately(testCase)
             % hierarchyChangesInvalidateConditionsImmediately Do not retain an enabled state after direct changes.
             [document, registry, left, right, leaf] = EditAvailabilityTest.fixture(false);
-            clipboard = macd.model.ComponentClipboard();
+            clipboard = yamada.model.ComponentClipboard();
             testCase.verifyTrue(clipboard.availability("Copy", document, left.Id, registry).Enabled);
             leaf.IsEditable = false;
             testCase.verifyFalse(clipboard.availability("Copy", document, left.Id, registry).Enabled);
-            testCase.verifyFalse(macd.model.DocumentEditAvailability.deletion(document, left.Id, registry).Enabled);
-            states = macd.model.DocumentEditAvailability.reparenting(document, left.Id, registry);
+            testCase.verifyFalse(yamada.model.DocumentEditAvailability.deletion(document, left.Id, registry).Enabled);
+            states = yamada.model.DocumentEditAvailability.reparenting(document, left.Id, registry);
             testCase.verifyFalse(any([states.Enabled]));
             leaf.IsEditable = true;
-            states = macd.model.DocumentEditAvailability.reparenting(document, left.Id, registry);
+            states = yamada.model.DocumentEditAvailability.reparenting(document, left.Id, registry);
             testCase.verifyFalse(states(string({states.Id}) == leaf.Id).Enabled);
             testCase.verifyTrue(states(string({states.Id}) == right.Id).Enabled);
         end
@@ -45,14 +45,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
         function rootAndMissingTargetsHaveReasons(testCase)
             % rootAndMissingTargetsHaveReasons Disable invalid commands without throwing from query APIs.
             [document, registry] = EditAvailabilityTest.fixture(false);
-            clipboard = macd.model.ComponentClipboard();
+            clipboard = yamada.model.ComponentClipboard();
             for id = [document.RootComponentId "missing"]
                 for action = ["Copy" "Cut" "Paste"]
                     state = clipboard.availability(action, document, id, registry);
                     testCase.verifyFalse(state.Enabled);
                     testCase.verifyNotEmpty(state.Reason);
                 end
-                state = macd.model.DocumentEditAvailability.deletion(document, id, registry);
+                state = yamada.model.DocumentEditAvailability.deletion(document, id, registry);
                 testCase.verifyFalse(state.Enabled);
                 testCase.verifyNotEmpty(state.Reason);
             end
@@ -64,12 +64,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             grid = document.insertComponent(registry, "uigridlayout", right.Id);
             grid.setProperty("RowHeight", {"1x"});
             grid.setProperty("ColumnWidth", {"1x"});
-            clipboard = macd.model.ComponentClipboard();
+            clipboard = yamada.model.ComponentClipboard();
             clipboard.copy(document, leaf.Id, registry);
             testCase.verifyTrue(clipboard.availability("Paste", document, grid.Id, registry).Enabled);
             inserted = clipboard.paste(document, grid.Id, registry);
             testCase.verifyFalse(clipboard.availability("Paste", document, grid.Id, registry).Enabled);
-            states = macd.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
+            states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
             testCase.verifyFalse(states(string({states.Id}) == grid.Id).Enabled);
             document.removeSubtree(inserted.Id, registry);
             testCase.verifyTrue(clipboard.availability("Paste", document, grid.Id, registry).Enabled);
@@ -77,45 +77,45 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
 
         function generatedSelectedTabReferencesConstrainLaterEdits(testCase)
             % generatedSelectedTabReferencesConstrainLaterEdits Keep editor-generated internal links valid.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("GeneratedReferenceFixture", registry);
-            right = macd.model.ComponentRecord("right", "Right", "uipanel", "matlab.ui.container.Panel", "generated");
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("GeneratedReferenceFixture", registry);
+            right = yamada.model.ComponentRecord("right", "Right", "uipanel", "matlab.ui.container.Panel", "generated");
             right.setProperty("Position", [10 10 300 200]);
             document.addComponent(right, document.RootComponentId);
-            group = macd.model.ComponentRecord("group", "Group", "uitabgroup", "matlab.ui.container.TabGroup", "generated");
+            group = yamada.model.ComponentRecord("group", "Group", "uitabgroup", "matlab.ui.container.TabGroup", "generated");
             group.setProperty("Position", [10 10 200 150]);
             document.addComponent(group, document.RootComponentId);
-            tab = macd.model.ComponentRecord("tab", "Selected", "uitab", "matlab.ui.container.Tab", "generated");
+            tab = yamada.model.ComponentRecord("tab", "Selected", "uitab", "matlab.ui.container.Tab", "generated");
             document.addComponent(tab, group.Id);
             entry = group.setProperty("SelectedTab", []);
             entry.setSourceExpression("app.Selected");
             entry.Metadata.SubtreeReferenceId = tab.Id;
-            second = macd.model.ComponentRecord("second-group", "SecondGroup", "uitabgroup", "matlab.ui.container.TabGroup", "generated");
+            second = yamada.model.ComponentRecord("second-group", "SecondGroup", "uitabgroup", "matlab.ui.container.TabGroup", "generated");
             second.setProperty("Position", [10 10 200 150]);
             document.addComponent(second, right.Id);
-            states = macd.model.DocumentEditAvailability.reparenting(document, tab.Id, registry);
+            states = yamada.model.DocumentEditAvailability.reparenting(document, tab.Id, registry);
             testCase.verifyFalse(states(string({states.Id}) == second.Id).Enabled);
-            testCase.verifyFalse(macd.model.DocumentEditAvailability.deletion(document, tab.Id, registry).Enabled);
-            testCase.verifyTrue(macd.model.DocumentEditAvailability.deletion(document, group.Id, registry).Enabled);
-            testCase.verifyError(@() document.reparentSubtree(tab.Id, second.Id, registry), "macd:DocumentModel:UnsafeSubtreeEdit");
+            testCase.verifyFalse(yamada.model.DocumentEditAvailability.deletion(document, tab.Id, registry).Enabled);
+            testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, group.Id, registry).Enabled);
+            testCase.verifyError(@() document.reparentSubtree(tab.Id, second.Id, registry), "yamada:DocumentModel:UnsafeSubtreeEdit");
         end
 
         function missingExternalReferenceDisablesStoredPaste(testCase)
             % missingExternalReferenceDisablesStoredPaste Revalidate snapshot targets after direct model changes.
             [document, registry, ~, right] = EditAvailabilityTest.fixture(false);
             definition = registry.get("uicontextmenu");
-            menu = macd.model.ComponentRecord("menu", "Menu", definition.Factory, definition.DeclaredType, "generated");
+            menu = yamada.model.ComponentRecord("menu", "Menu", definition.Factory, definition.DeclaredType, "generated");
             document.addComponent(menu, document.RootComponentId);
             % Load this programmatic-only component before exercising editor insertion commands.
             rightName = right.Name;
-            document = macd.source.AppSourceParser.parseText(macd.source.NewAppGenerator(registry).generate(document), registry);
+            document = yamada.source.AppSourceParser.parseText(yamada.source.NewAppGenerator(registry).generate(document), registry);
             right = document.getComponentByName(rightName);
             menu = document.getComponentByName("Menu");
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
             entry = button.setProperty("ContextMenu", []);
             entry.setSourceExpression("app." + menu.Name);
             entry.Metadata.SubtreeReferenceId = menu.Id;
-            clipboard = macd.model.ComponentClipboard();
+            clipboard = yamada.model.ComponentClipboard();
             clipboard.copy(document, button.Id, registry);
             testCase.verifyTrue(clipboard.availability("Paste", document, right.Id, registry).Enabled);
             document.Components(document.Components == menu) = [];
@@ -129,11 +129,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             [document, registry, ~, right, leaf] = EditAvailabilityTest.fixture(false);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             document.reparentSubtree(leaf.Id, grid.Id, registry);
-            states = macd.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
+            states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
             testCase.verifyFalse(states(string({states.Id}) == right.Id).Enabled);
-            states = macd.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry, [10 20 90 25]);
+            states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry, [10 20 90 25]);
             testCase.verifyTrue(states(string({states.Id}) == right.Id).Enabled);
-            states = macd.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
+            states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
             testCase.verifyFalse(states(string({states.Id}) == right.Id).Enabled);
         end
 
@@ -142,11 +142,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             [original, registry, ~, ~, leaf] = EditAvailabilityTest.fixture(true);
             source = replace(original.OriginalText, "app." + leaf.Name + " = uilabel(app.Panel);", ...
                 "app." + leaf.Name + " = uilabel(app.Panel, 'UnknownSetting', 17);");
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             leaf = document.getComponentByName(leaf.Name);
-            before = macd.model.DocumentEditAvailability.copying(document, leaf.Id, registry);
-            document.Diagnostics = macd.model.Diagnostic.empty;
-            state = macd.model.DocumentEditAvailability.copying(document, leaf.Id, registry);
+            before = yamada.model.DocumentEditAvailability.copying(document, leaf.Id, registry);
+            document.Diagnostics = yamada.model.Diagnostic.empty;
+            state = yamada.model.DocumentEditAvailability.copying(document, leaf.Id, registry);
             testCase.verifyFalse(state.Enabled);
             testCase.verifyNotEmpty(state.Reason);
             testCase.verifyEqual(state, before);
@@ -157,17 +157,17 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             [document, registry, ~, right, leaf] = EditAvailabilityTest.fixture(true);
             before = document.OriginalText;
             history = document.HistoryIndex;
-            states = macd.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
+            states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
             testCase.assertTrue(states(string({states.Id}) == right.Id).Enabled);
             document.reparentSubtree(leaf.Id, right.Id, registry);
             testCase.verifyEqual(document.HistoryIndex, history + 1);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), before);
-            testCase.assertTrue(macd.model.DocumentEditAvailability.deletion(document, leaf.Id, registry).Enabled);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), before);
+            testCase.assertTrue(yamada.model.DocumentEditAvailability.deletion(document, leaf.Id, registry).Enabled);
             document.removeSubtree(leaf.Id, registry);
             testCase.verifyEmpty(document.getComponent(leaf.Id));
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), before);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), before);
         end
     end
 
@@ -178,20 +178,20 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
                 parsed (1, 1) logical
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                left (1, 1) macd.model.ComponentRecord
-                right (1, 1) macd.model.ComponentRecord
-                leaf (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                left (1, 1) yamada.model.ComponentRecord
+                right (1, 1) yamada.model.ComponentRecord
+                leaf (1, 1) yamada.model.ComponentRecord
             end
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("AvailabilityFixture", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("AvailabilityFixture", registry);
             left = document.insertComponent(registry, "uipanel", document.RootComponentId);
             right = document.insertComponent(registry, "uipanel", document.RootComponentId);
             leaf = document.insertComponent(registry, "uilabel", left.Id);
             if ~parsed, return, end
-            source = macd.source.NewAppGenerator(registry).generate(document);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             left = document.getComponentByName(left.Name);
             right = document.getComponentByName(right.Name);
             leaf = document.getComponentByName(leaf.Name);

@@ -12,7 +12,7 @@ end
 % Keep every native object within one hidden test-owned figure.
 figure = uifigure("Visible", "off");
 cleanup = onCleanup(@() delete(figure));
-registry = macd.model.ComponentRegistry.createDefault();
+registry = yamada.model.ComponentRegistry.createDefault();
 ids = ["uibutton-push", "uibutton-state", "uitogglebutton", "uicheckbox", ...
     "uicolorpicker", "uihtml", "uihyperlink", "uiimage", "uilabel", "uilamp", ...
     "uiradiobutton", "uitextarea", "uitree", "uitree-checkbox"];
@@ -68,7 +68,7 @@ end
 
 % Save supplemental native facts separately from reviewed application metadata.
 file = fopen(outputPath, "w", "n", "UTF-8");
-assert(file >= 0, "macd:ProbePositionAliasInteractions:WriteFailed", "Cannot open probe output.");
+assert(file >= 0, "yamada:ProbePositionAliasInteractions:WriteFailed", "Cannot open probe output.");
 fileCleanup = onCleanup(@() fclose(file));
 fprintf(file, "%s\n", jsonencode(struct("matlabRelease", "R2024a", "results", results), "PrettyPrint", true));
 fprintf("POSITION_ALIAS_PROBE Cases=%d Accepted=%d Restricted=%d UnexpectedErrors=%d\n", ...

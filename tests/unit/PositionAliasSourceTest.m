@@ -11,11 +11,11 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             for index = 1:size(cases, 1)
                 [document, registry, control] = testCase.fixture(cases{index, 1}, cases{index, 2});
                 before = control.CreationArguments;
-                values = macd.model.PropertyApplicationPlanner.forPreviewArguments(control, registry);
+                values = yamada.model.PropertyApplicationPlanner.forPreviewArguments(control, registry);
                 testCase.verifyFalse(any(ismember(string(values(1:2:end)), ...
                     ["CreateFcn", "DeleteFcn", "HTMLSource", "Position", "InnerPosition", "OuterPosition"])));
                 testCase.verifyEqual(control.CreationArguments, before);
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
             end
         end
 
@@ -34,7 +34,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             position = testCase.state(document, registry, control, "Position");
             testCase.verifyEqual(position.ExplicitValue, [10 20 130 35]);
             testCase.verifyNotEqual(position.LastSettingId, position.EffectSettingId);
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
             testCase.verifyEqual(control.settingSnapshot(), before);
         end
 
@@ -45,7 +45,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
                 "app.Control.InnerPosition = [30 40 150 45];"]);
             before = control.settingSnapshot();
             testCase.verifyError(@() document.setProperty(control.Id, "Position", [50 60 170 55], registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(control.settingSnapshot(), before);
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
@@ -60,10 +60,10 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
                 [document, registry, control] = testCase.fixture(bodies{index});
                 original = document.OriginalText;
                 document.setProperty(control.Id, "Position", [50 60 170 55], registry);
-                generator = macd.source.RoundTripGenerator(registry);
+                generator = yamada.source.RoundTripGenerator(registry);
                 source = generator.generate(document);
                 testCase.verifyEqual(generator.generate(document), source);
-                reopened = macd.source.AppSourceParser.parseText(source, registry);
+                reopened = yamada.source.AppSourceParser.parseText(source, registry);
                 other = reopened.getComponentByName("Control");
                 method = "nameValue";
                 if index == 1, method = "assignment"; end
@@ -98,7 +98,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
                 testCase.verifyEqual(SourceAssertions.retained(control.settingSnapshot(), before), SourceAssertions.semantics(before));
                 testCase.verifyEqual(document.HistoryIndex, 1);
                 document.undo();
-                testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
                 document.redo();
                 testCase.verifyEqual(testCase.state(document, registry, document.getComponent(copy.Id), "Position").EffectiveValue, [40 50 150 45]);
             end
@@ -114,8 +114,8 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
                 testCase.verifyFalse(state.IsKnown);
                 testCase.verifyEqual(state.ReasonCode, "position-alias");
             end
-            testCase.verifyError(@() document.copySubtree(control.Id, registry), "macd:DocumentModel:UnsafeSubtreeCopy");
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+            testCase.verifyError(@() document.copySubtree(control.Id, registry), "yamada:DocumentModel:UnsafeSubtreeCopy");
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
             [document, registry, control] = testCase.fixture([body, "app.Control.Position = [50 60 170 55];"]);
             testCase.verifyEqual(testCase.state(document, registry, control, "InnerPosition").EffectiveValue, [50 60 170 55]);
         end
@@ -137,7 +137,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             before = control.settingSnapshot();
             parent = control.ParentId;
             testCase.verifyError(@() document.reparentSubtree(control.Id, target.Id, registry, [], [], [60 70 150 45]), ...
-                "macd:DocumentModel:UnsafeSubtreeEdit");
+                "yamada:DocumentModel:UnsafeSubtreeEdit");
             testCase.verifyEqual(control.ParentId, parent);
             testCase.verifyEqual(control.settingSnapshot(), before);
             testCase.verifyEqual(document.HistoryIndex, 0);
@@ -177,7 +177,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             source = document.GeneratedText;
             testCase.verifySubstring(source, "app.Control.InnerPosition = [30 40 150 45];");
             testCase.verifyEqual(testCase.state(document, registry, control, "Position").EffectiveValue, [60 70 150 45]);
-            reopened = macd.source.AppSourceParser.parseText(source, registry);
+            reopened = yamada.source.AppSourceParser.parseText(source, registry);
             testCase.verifyEqual(testCase.state(reopened, registry, reopened.getComponentByName("Control"), "Position").EffectiveValue, [60 70 150 45]);
         end
     end
@@ -191,7 +191,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             callback = "'setappdata(groot, ''" + key + "'', true)'";
             [document, registry, control] = testCase.fixture( ...
                 "app.Control = uibutton(app.Left, Text='Owned', CreateFcn=" + callback + ", DeleteFcn=" + callback + ");");
-            [handles, diagnostics] = macd.ui.PreviewRenderer(registry).render(document, figure);
+            [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, figure);
             testCase.assertTrue(isKey(handles, char(control.Id)));
             testCase.verifyEmpty(handles(char(control.Id)).CreateFcn);
             testCase.verifyEmpty(handles(char(control.Id)).DeleteFcn);
@@ -209,8 +209,8 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             figure = uifigure("Visible", "off");
             figureCleanup = onCleanup(@() delete(figure));
             [document, registry, control] = testCase.fixture( ...
-                "app.Control = uiimage(app.Left, ImageSource=" + macd.source.LiteralEncoder.encode(imagePath) + ", Position=[10 20 130 35]);", "uiimage");
-            [handles, diagnostics] = macd.ui.PreviewRenderer(registry).render(document, figure);
+                "app.Control = uiimage(app.Left, ImageSource=" + yamada.source.LiteralEncoder.encode(imagePath) + ", Position=[10 20 130 35]);", "uiimage");
+            [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, figure);
             testCase.assertTrue(isKey(handles, char(control.Id)));
             testCase.verifyEqual(string(handles(char(control.Id)).ImageSource), imagePath);
             testCase.verifyFalse(any(string({diagnostics.Code}) == "preview-property-failed"));
@@ -227,7 +227,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
                 "app.Control.InnerPosition = [10 20 130 35] + [0 0 0 0];"], "uibutton-push", []};
             for index = 1:size(cases, 1)
                 [document, registry, control] = testCase.fixture(cases{index, 1}, cases{index, 2});
-                [handles, diagnostics] = macd.ui.PreviewRenderer(registry).render(document, figure);
+                [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, figure);
                 testCase.verifyTrue(isKey(handles, char(control.Id)));
                 if isempty(cases{index, 3})
                     testCase.verifyTrue(any(string({diagnostics.Code}) == "preview-position-unknown"));
@@ -258,12 +258,12 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
                 grid (1, 1) logical = false
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                control (1, 1) macd.model.ComponentRecord
-                target (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                control (1, 1) yamada.model.ComponentRecord
+                target (1, 1) yamada.model.ComponentRecord
             end
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             definition = registry.getById(id);
             gridDeclaration = strings(1, 0);
             gridCreation = strings(1, 0);
@@ -279,7 +279,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
                 "app.Left = uipanel(app.UIFigure, Units='pixels', Position=[1 1 200 300]);", gridCreation, body, ...
                 "app.Right = uipanel(app.UIFigure, Units='pixels', Position=[220 1 200 300]);", ...
                 "end", "end", "end"], sprintf('\r\n'));
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             control = document.getComponentByName("Control");
             target = document.getComponentByName("Right");
         end
@@ -287,13 +287,13 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
         function resolution = state(document, registry, control, path)
             % state Select a shared effective result from the public document projection.
             arguments (Input)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                control (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                control (1, 1) yamada.model.ComponentRecord
                 path (1, 1) string
             end
             arguments (Output)
-                resolution (1, 1) macd.model.PropertyState
+                resolution (1, 1) yamada.model.PropertyState
             end
             states = document.getEffectivePropertyStates(registry, control.Id);
             resolution = states(arrayfun(@(item) item.Definition.Path == path, states)).Resolution;

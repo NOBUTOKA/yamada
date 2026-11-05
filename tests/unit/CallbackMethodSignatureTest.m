@@ -22,7 +22,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackMethodSignatureTest < matlab.un
             source = strjoin(["classdef Example < handle"; "methods (Static)"; ...
                 "function ignored(app, event)"; "end"; "end"; "methods (Access = private)"; ...
                 "function [first, second] = run(app, ..."; "source, event)"; "end"; "end"; "end"], newline);
-            analysis = macd.source.SourceAnalysis(source);
+            analysis = yamada.source.SourceAnalysis(source);
             testCase.verifyTrue(analysis.Layout.Valid);
             testCase.verifyEqual(string({analysis.Layout.Methods.Name}), "run");
             testCase.verifyEqual(analysis.Layout.Methods.Signature.Inputs, ["app", "source", "event"]);
@@ -68,7 +68,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackMethodSignatureTest < matlab.un
             source = strjoin(["classdef Example < handle"; "methods (Access = private)"; ...
                 "function run(app, event)"; "value = 12345"; "end"; "end"; "end"], newline);
             offset = strfind(source, "12345");
-            batch = macd.source.SourcePatchBatch(source, struct("Start", offset, "End", offset + 4, "Text", "42"));
+            batch = yamada.source.SourcePatchBatch(source, struct("Start", offset, "End", offset + 4, "Text", "42"));
             [after, local, statistics] = analysis.withPatches(batch, true);
             testCase.verifyTrue(local);
             testCase.verifyFalse(statistics.FullScan);
@@ -83,9 +83,9 @@ classdef (TestTags = {'fast', 'parser'}) CallbackMethodSignatureTest < matlab.un
                 body (:, 1) string
             end
             arguments (Output)
-                analysis (1, 1) macd.source.SourceAnalysis
+                analysis (1, 1) yamada.source.SourceAnalysis
             end
-            analysis = macd.source.SourceAnalysis(strjoin(["classdef Example < handle"; ...
+            analysis = yamada.source.SourceAnalysis(strjoin(["classdef Example < handle"; ...
                 "methods (Access = private)"; body; "end"; "end"], newline));
         end
     end

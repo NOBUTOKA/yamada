@@ -15,7 +15,7 @@ classdef SourceAssertions
             for index = 1:numel(previous), ids(index) = previous(index).Location.Id; end
             current = strings(1, numel(records));
             for index = 1:numel(records), current(index) = records(index).Location.Id; end
-            actual = macdTestSemantics(records(ismember(current, ids)));
+            actual = yamadaTestSemantics(records(ismember(current, ids)));
         end
 
         function actual = semantics(records)
@@ -26,13 +26,13 @@ classdef SourceAssertions
             arguments (Output)
                 actual struct
             end
-            actual = macdTestSemantics(records);
+            actual = yamadaTestSemantics(records);
         end
     end
 end
 
-function records = macdTestSemantics(records)
-% macdTestSemantics Normalize physical locations without hiding changed explicit settings.
+function records = yamadaTestSemantics(records)
+% yamadaTestSemantics Normalize physical locations without hiding changed explicit settings.
 arguments (Input)
     records struct
 end

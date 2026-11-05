@@ -10,7 +10,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DialogTransactionTest < matl
 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
-            macd.ui.inspector.ItemsDataEditorDialog.open( ...
+            yamada.ui.inspector.ItemsDataEditorDialog.open( ...
                 ["One", "Two"], [1 2], "ItemsData", ...
                 @(changes) captureBatch(owner, changes));
             dialog = dialogByName("Edit item data");
@@ -39,13 +39,13 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DialogTransactionTest < matl
             state = struct();
             state.Items = ["One", "Two"];
             state.ItemsData = [1 2];
-            macd.ui.inspector.ItemsDataEditorDialog.openComposite( ...
+            yamada.ui.inspector.ItemsDataEditorDialog.openComposite( ...
                 state, @(changes) captureBatch(owner, changes), false);
-            dialog = findall(0, "Tag", "macd-items-editor-dialog");
-            table = findall(dialog, "Tag", "macd-items-editor-table");
+            dialog = findall(0, "Tag", "yamada-items-editor-dialog");
+            table = findall(dialog, "Tag", "yamada-items-editor-table");
             table.Data(1, 1) = "Updated";
             table.Data(1, 2) = "5";
-            apply = findall(dialog, "Tag", "macd-items-editor-apply");
+            apply = findall(dialog, "Tag", "yamada-items-editor-apply");
             apply.ButtonPushedFcn(apply, struct());
 
             changes = getappdata(owner, "batch");
@@ -63,7 +63,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DialogTransactionTest < matl
 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
-            macd.ui.inspector.StructuredDataEditorDialog.open([1 2], "NodeData", ...
+            yamada.ui.inspector.StructuredDataEditorDialog.open([1 2], "NodeData", ...
                 @(changes) captureBatch(owner, changes));
             dialog = dialogByName("Edit data");
             dialog.Visible = "off";
@@ -87,7 +87,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DialogTransactionTest < matl
 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
-            macd.ui.inspector.StringListEditorDialog.open(["One", "Two"], "Items", ...
+            yamada.ui.inspector.StringListEditorDialog.open(["One", "Two"], "Items", ...
                 @(changes) captureBatch(owner, changes));
             dialog = dialogByName("Edit list");
             dialog.Visible = "off";
@@ -113,7 +113,7 @@ end
 
 drawnow;
 dialogs = findall(0, "Type", "figure", "Name", name);
-assert(isscalar(dialogs), "macd:DialogTransactionTest:MissingDialog", ...
+assert(isscalar(dialogs), "yamada:DialogTransactionTest:MissingDialog", ...
     "Expected one dialog named ""%s"".", name);
 dialog = dialogs;
 end

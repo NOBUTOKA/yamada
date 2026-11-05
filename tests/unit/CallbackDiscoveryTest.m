@@ -6,7 +6,7 @@ classdef (TestTags = {'fast', 'catalog'}) CallbackDiscoveryTest < matlab.unittes
     methods (Test)
         function reviewedSuffixesAvoidComponentWordsWithoutMouseEventGuessing(testCase)
             % reviewedSuffixesAvoidComponentWordsWithoutMouseEventGuessing Use explicit suffixes and preserve legacy catalog behavior.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             cases = {"uibutton", {}, "ButtonPushedFcn", "HogeButton", "HogeButtonPushed"; ...
                 "uibutton", {'state'}, "ValueChangedFcn", "HogeButton", "HogeButtonValueChanged"; ...
                 "uimenu", {}, "MenuSelectedFcn", "FileMenu", "FileMenuSelected"; ...
@@ -15,22 +15,22 @@ classdef (TestTags = {'fast', 'catalog'}) CallbackDiscoveryTest < matlab.unittes
             for index = 1:size(cases, 1)
                 definitions = registry.getEffectiveCallbacks(cases{index, 1}, "", cases{index, 2});
                 definition = definitions(string({definitions.Path}) == cases{index, 3});
-                testCase.verifyEqual(macd.source.ComponentNameRewriter.defaultHandler( ...
+                testCase.verifyEqual(yamada.source.ComponentNameRewriter.defaultHandler( ...
                     cases{index, 4}, cases{index, 3}, definition.HandlerSuffix), cases{index, 5});
             end
-            testCase.verifyEqual(macd.source.ComponentNameRewriter.defaultHandler("HogeButton", "ButtonPushedFcn"), ...
+            testCase.verifyEqual(yamada.source.ComponentNameRewriter.defaultHandler("HogeButton", "ButtonPushedFcn"), ...
                 "HogeButtonButtonPushed");
             metadata = struct("valueSchema", struct("kind", "callback"), "handlerSuffix", "");
-            testCase.verifyError(@() macd.model.PropertyDefinition("ButtonPushedFcn", [], false, false, metadata), ...
-                "macd:ComponentCatalogLoader:InvalidCatalog");
+            testCase.verifyError(@() yamada.model.PropertyDefinition("ButtonPushedFcn", [], false, false, metadata), ...
+                "yamada:ComponentCatalogLoader:InvalidCatalog");
             metadata.handlerSuffix = "Pushed();delete(app)";
-            testCase.verifyError(@() macd.model.PropertyDefinition("ButtonPushedFcn", [], false, false, metadata), ...
-                "macd:ComponentCatalogLoader:InvalidCatalog");
+            testCase.verifyError(@() yamada.model.PropertyDefinition("ButtonPushedFcn", [], false, false, metadata), ...
+                "yamada:ComponentCatalogLoader:InvalidCatalog");
         end
 
         function discoversEveryVariantInCatalogOrder(testCase)
             % discoversEveryVariantInCatalogOrder Compare discovery with each concrete catalog surface.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             ids = registry.listVariantIds();
 
             % Include every direct parent so contextual properties cannot leak into discovery.
@@ -65,7 +65,7 @@ classdef (TestTags = {'fast', 'catalog'}) CallbackDiscoveryTest < matlab.unittes
 
         function distinguishesButtonConstructionStyles(testCase)
             % distinguishesButtonConstructionStyles Resolve binding names from the concrete button style.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             push = registry.getEffectiveCallbacks("uibutton", "uifigure", {});
             state = registry.getEffectiveCallbacks("uibutton", "uifigure", {'state'});
             testCase.verifyTrue(any(string({push.Path}) == "ButtonPushedFcn"));

@@ -6,9 +6,9 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
         function capturesParentFirstInChildOrder(testCase)
             % capturesParentFirstInChildOrder Preserve tree order regardless of collection order.
             [document, panel, nested, leaf] = SubtreeSnapshotTest.fixture();
-            sibling = document.insertComponent(macd.model.ComponentRegistry.createDefault(), ...
+            sibling = document.insertComponent(yamada.model.ComponentRegistry.createDefault(), ...
                 "uilabel", panel.Id);
-            snapshot = macd.model.SubtreeSnapshot(document, panel.Id);
+            snapshot = yamada.model.SubtreeSnapshot(document, panel.Id);
             testCase.verifyEqual(string({snapshot.Records.Id}), [panel.Id nested.Id leaf.Id sibling.Id]);
             testCase.verifyEqual(snapshot.RootId, panel.Id);
         end
@@ -20,7 +20,7 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
             expression = leaf.setProperty("UserData", []);
             expression.setSourceExpression("app.SomeValue");
             leaf.Metadata = struct("Nested", {{struct("Value", "Before")}});
-            snapshot = macd.model.SubtreeSnapshot(document, panel.Id);
+            snapshot = yamada.model.SubtreeSnapshot(document, panel.Id);
             leaf.setProperty("Text", "After");
             expression.setSourceExpression("app.OtherValue");
             leaf.Metadata.Nested{1}.Value = "After";
@@ -35,11 +35,11 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
         function rejectsMissingAndUnlinkedChildren(testCase)
             % rejectsMissingAndUnlinkedChildren Detect incomplete parent-child relationships.
             [document, panel, nested] = SubtreeSnapshotTest.fixture();
-            testCase.verifyError(@() macd.model.SubtreeSnapshot(document, "missing"), ...
-                "macd:SubtreeSnapshot:MissingComponent");
+            testCase.verifyError(@() yamada.model.SubtreeSnapshot(document, "missing"), ...
+                "yamada:SubtreeSnapshot:MissingComponent");
             panel.removeChild(nested.Id);
-            testCase.verifyError(@() macd.model.SubtreeSnapshot(document, panel.Id), ...
-                "macd:SubtreeSnapshot:InvalidHierarchy");
+            testCase.verifyError(@() yamada.model.SubtreeSnapshot(document, panel.Id), ...
+                "yamada:SubtreeSnapshot:InvalidHierarchy");
         end
 
         function rejectsCyclesAndDuplicateIdentities(testCase)
@@ -47,12 +47,12 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
             [document, panel, ~, leaf] = SubtreeSnapshotTest.fixture();
             panel.ParentId = leaf.Id;
             leaf.addChild(panel.Id);
-            testCase.verifyError(@() macd.model.SubtreeSnapshot(document, panel.Id), ...
-                "macd:SubtreeSnapshot:InvalidHierarchy");
+            testCase.verifyError(@() yamada.model.SubtreeSnapshot(document, panel.Id), ...
+                "yamada:SubtreeSnapshot:InvalidHierarchy");
             [document, panel] = SubtreeSnapshotTest.fixture();
             document.Components(end + 1) = panel;
-            testCase.verifyError(@() macd.model.SubtreeSnapshot(document, panel.Id), ...
-                "macd:SubtreeSnapshot:InvalidHierarchy");
+            testCase.verifyError(@() yamada.model.SubtreeSnapshot(document, panel.Id), ...
+                "yamada:SubtreeSnapshot:InvalidHierarchy");
         end
 
         function rejectsHandlesInsideNestedPayloads(testCase)
@@ -60,8 +60,8 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
             [document, panel, ~, leaf] = SubtreeSnapshotTest.fixture();
             leaf.Metadata = struct("Nested", {{struct("Live", panel)}});
             history = document.HistoryIndex;
-            testCase.verifyError(@() macd.model.SubtreeSnapshot(document, panel.Id), ...
-                "macd:SubtreeSnapshot:UnsupportedValue");
+            testCase.verifyError(@() yamada.model.SubtreeSnapshot(document, panel.Id), ...
+                "yamada:SubtreeSnapshot:UnsupportedValue");
             testCase.verifyEqual(document.HistoryIndex, history);
             testCase.verifyEqual(document.getComponent(leaf.Id), leaf);
         end
@@ -71,7 +71,7 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
             [document, panel] = SubtreeSnapshotTest.fixture();
             document.markSaved();
             history = document.HistoryIndex;
-            macd.model.SubtreeSnapshot(document, panel.Id);
+            yamada.model.SubtreeSnapshot(document, panel.Id);
             testCase.verifyFalse(document.IsDirty);
             testCase.verifyEqual(document.HistoryIndex, history);
         end
@@ -81,14 +81,14 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
         function [document, panel, nested, leaf] = fixture()
             % fixture Create a three-level subtree using approved registry insertions.
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                panel (1, 1) macd.model.ComponentRecord
-                nested (1, 1) macd.model.ComponentRecord
-                leaf (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                panel (1, 1) yamada.model.ComponentRecord
+                nested (1, 1) yamada.model.ComponentRecord
+                leaf (1, 1) yamada.model.ComponentRecord
             end
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("SnapshotApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("SnapshotApp", registry);
             panel = document.insertComponent(registry, "uipanel", document.RootComponentId);
             nested = document.insertComponent(registry, "uipanel", panel.Id);
             leaf = document.insertComponent(registry, "uilabel", nested.Id);

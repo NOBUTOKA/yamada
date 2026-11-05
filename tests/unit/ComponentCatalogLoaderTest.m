@@ -23,7 +23,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
             component.properties{2}.metadata.gridGeometryImpact = "fit";
             component.properties{2}.metadata.absoluteGeometryImpact = false;
             testCase.writeJson(root, "components/uilabel.json", component);
-            definition = macd.catalog.ComponentCatalogLoader.load(root).get("uilabel");
+            definition = yamada.catalog.ComponentCatalogLoader.load(root).get("uilabel");
             testCase.verifyEqual(definition.getProperty("Text").GridGeometryImpact, "fit");
             testCase.verifyFalse(definition.getProperty("Text").AbsoluteGeometryImpact);
             testCase.verifyEqual(definition.getProperty("Position").GridGeometryImpact, "required");
@@ -45,7 +45,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
             component.properties{2}.metadata.application = struct( ...
                 "applyAfter", {{"Visible"}}, "effectPolicy", "none");
             testCase.writeJson(root, "components/uilabel.json", component);
-            definition = macd.catalog.ComponentCatalogLoader.load(root).get("uilabel");
+            definition = yamada.catalog.ComponentCatalogLoader.load(root).get("uilabel");
             testCase.verifyEqual(string({definition.Properties.Path}), ...
                 ["Position", "Visible", "Text", "Layout.Row", "Layout.Column"]);
             policy = definition.getProperty("Text").Application;
@@ -103,7 +103,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
 
             % Load one component whose property sequence mixes group and local entries.
             root = testCase.createCatalog();
-            registry = macd.catalog.ComponentCatalogLoader.load(root);
+            registry = yamada.catalog.ComponentCatalogLoader.load(root);
             definition = registry.get("uilabel");
             testCase.verifyEqual(definition.Factory, "uilabel");
             testCase.verifyEqual(string({definition.Properties.Path}), ...
@@ -169,7 +169,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
             component.properties{2}.metadata.applicableStyles = "standard";
             component.properties{2}.metadata.auditDisposition = "readOnly";
             testCase.writeJson(root, "components/uilabel.json", component);
-            definition = macd.catalog.ComponentCatalogLoader.load(root).get("uilabel").Properties(3);
+            definition = yamada.catalog.ComponentCatalogLoader.load(root).get("uilabel").Properties(3);
             testCase.verifyEqual(definition.DisplayName, "Caption");
             testCase.verifyEqual(definition.Category, "Content");
             testCase.verifyEqual(definition.Order, 30);
@@ -258,11 +258,11 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
 
             % Capture the exception so each test can verify its actionable context.
             try
-                macd.catalog.ComponentCatalogLoader.load(root);
+                yamada.catalog.ComponentCatalogLoader.load(root);
                 testCase.assertFail("Expected catalog loading to fail.");
             catch exception
                 testCase.verifyEqual(string(exception.identifier), ...
-                    "macd:ComponentCatalogLoader:InvalidCatalog");
+                    "yamada:ComponentCatalogLoader:InvalidCatalog");
             end
         end
 

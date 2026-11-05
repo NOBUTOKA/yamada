@@ -6,31 +6,31 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
     methods (Test)
         function independentFontEditsRetainConditionResults(testCase)
             % independentFontEditsRetainConditionResults Reuse conditions without freezing native placement or command data.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             [document, ~, children] = CommittedPropertySourcePlanTest.gridFixture(registry, 2);
             label = children(1);
             document.setProperty(label.Id, "FontSize", 23, registry);
             document.validatePropertyCommit(registry);
             measured = [20 20 100 22];
-            beforeCopy = macd.model.DocumentEditAvailability.copying(document, label.Id, registry);
-            beforeDelete = macd.model.DocumentEditAvailability.deletion(document, label.Id, registry);
-            beforeParents = macd.model.DocumentEditAvailability.reparenting(document, label.Id, registry, measured);
+            beforeCopy = yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
+            beforeDelete = yamada.model.DocumentEditAvailability.deletion(document, label.Id, registry);
+            beforeParents = yamada.model.DocumentEditAvailability.reparenting(document, label.Id, registry, measured);
             testCase.assertTrue(beforeCopy.Enabled);
             testCase.assertTrue(beforeDelete.Enabled);
             document.setPropertyBatch(label.Id, ...
-                macd.model.PropertyTransaction.singleChange("FontSize", 31), registry);
+                yamada.model.PropertyTransaction.singleChange("FontSize", 31), registry);
             document.validatePropertyCommit(registry);
 
             % Condition reads must use immutable prior answers for the same measured rectangle.
-            afterCopy = macd.model.DocumentEditAvailability.copying(document, label.Id, registry);
-            afterDelete = macd.model.DocumentEditAvailability.deletion(document, label.Id, registry);
-            afterParents = macd.model.DocumentEditAvailability.reparenting(document, label.Id, registry, measured);
+            afterCopy = yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
+            afterDelete = yamada.model.DocumentEditAvailability.deletion(document, label.Id, registry);
+            afterParents = yamada.model.DocumentEditAvailability.reparenting(document, label.Id, registry, measured);
             testCase.verifyEqual(afterCopy, beforeCopy);
             testCase.verifyEqual(afterDelete, beforeDelete);
             testCase.verifyEqual(afterParents, beforeParents);
 
             % Changed fit geometry must still recompute destination conditions.
-            macd.model.DocumentEditAvailability.reparenting(document, label.Id, registry, [20 20 100 40]);
+            yamada.model.DocumentEditAvailability.reparenting(document, label.Id, registry, [20 20 100 40]);
             snapshot = document.copySubtree(label.Id, registry);
             font = snapshot.Records(1).Properties(string({snapshot.Records(1).Properties.Path}) == "FontSize");
             testCase.verifyEqual(font.LiteralValue, 31);
@@ -42,14 +42,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
         function inheritedConditionsInvalidateOnSemanticChanges(testCase)
             % inheritedConditionsInvalidateOnSemanticChanges Reject stale permissions after ownership and catalog changes.
             for kind = ["readonly", "metadata", "registry"]
-                registry = macd.model.ComponentRegistry.createDefault();
+                registry = yamada.model.ComponentRegistry.createDefault();
                 [document, label] = CommittedPropertySourcePlanTest.fixture(registry, false);
                 document.setProperty(label.Id, "FontSize", 23, registry);
                 document.validatePropertyCommit(registry);
-                macd.model.DocumentEditAvailability.copying(document, label.Id, registry);
+                yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
                 document.setProperty(label.Id, "FontSize", 31, registry);
                 document.validatePropertyCommit(registry);
-                macd.model.DocumentEditAvailability.copying(document, label.Id, registry);
+                yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
                 switch kind
                     case "readonly"
                         label.IsEditable = false;
@@ -58,25 +58,25 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                     case "registry"
                         registry.register(registry.get("uilabel"));
                 end
-                state = macd.model.DocumentEditAvailability.copying(document, label.Id, registry);
+                state = yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
                 if kind == "readonly", testCase.verifyFalse(state.Enabled); end
             end
         end
 
         function localCommitReusesOnlyProvenModelValidation(testCase)
             % localCommitReusesOnlyProvenModelValidation Avoid duplicate checks while retaining full save verification.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for inGrid = [false true]
                 for batch = [false true]
                     [document, label] = CommittedPropertySourcePlanTest.fixture(registry, inGrid);
                     document.setProperty(label.Id, "FontSize", 23, registry);
                     baseline = document.validatePropertyCommit(registry);
-                    document.Diagnostics = macd.model.Diagnostic("preview-only", "warning", "Derived presentation data.");
+                    document.Diagnostics = yamada.model.Diagnostic("preview-only", "warning", "Derived presentation data.");
 
                     % Apply the edit and compare its diagnostics with independent validation.
                     if batch
                         document.setPropertyBatch(label.Id, ...
-                            macd.model.PropertyTransaction.singleChange("FontSize", 31), registry);
+                            yamada.model.PropertyTransaction.singleChange("FontSize", 31), registry);
                     else
                         document.setProperty(label.Id, "FontSize", 31, registry);
                     end
@@ -87,12 +87,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                     testCase.verifyEqual(document.HistoryIndex, 2);
 
                     % Direct validation and the save checkpoint retain their complete checks.
-                    expected = macd.validation.ModelValidator.validate(document, registry);
-                    source = macd.source.RoundTripGenerator(registry).generate(document);
-                    checkpoint = macd.model.SavedSourceCheckpoint(document, source, ...
+                    expected = yamada.validation.ModelValidator.validate(document, registry);
+                    source = yamada.source.RoundTripGenerator(registry).generate(document);
+                    checkpoint = yamada.model.SavedSourceCheckpoint(document, source, ...
                         fullfile(tempdir, document.ClassName + ".m"), registry);
                     testCase.verifyEqual(actual, expected);
-                    testCase.verifyEqual(checkpoint.SourceText, macd.source.SourceWriter.normalize(source, document.LineEnding));
+                    testCase.verifyEqual(checkpoint.SourceText, yamada.source.SourceWriter.normalize(source, document.LineEnding));
                 end
             end
         end
@@ -100,7 +100,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
         function commitValidationRejectsStaleProofs(testCase)
             % commitValidationRejectsStaleProofs Revalidate semantic, catalog, history, and unpreflighted changes.
             for kind = ["metadata", "entry", "registry", "history", "unproven", "structure"]
-                registry = macd.model.ComponentRegistry.createDefault();
+                registry = yamada.model.ComponentRegistry.createDefault();
                 [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
                 document.setProperty(label.Id, "FontSize", 23, registry);
                 document.validatePropertyCommit(registry);
@@ -119,32 +119,32 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                         document.insertComponent(registry, "uilabel", document.RootComponentId);
                 end
                 actual = document.validatePropertyCommit(registry);
-                testCase.verifyEqual(actual, macd.validation.ModelValidator.validate(document, registry));
+                testCase.verifyEqual(actual, yamada.validation.ModelValidator.validate(document, registry));
             end
         end
 
         function repeatedNumericEditsAvoidWholeSourcePreflight(testCase)
             % repeatedNumericEditsAvoidWholeSourcePreflight Reuse proven placement for saved and unsaved settings.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for inGrid = [false true]
                 for sourceBacked = [false true]
                     for batch = [false true]
                         [document, label] = CommittedPropertySourcePlanTest.fixture(registry, inGrid);
                         if sourceBacked
                             label.setProperty("FontSize", 17);
-                            source = macd.source.RoundTripGenerator(registry).generate(document);
-                            document = macd.source.AppSourceParser.parseText(source, registry);
+                            source = yamada.source.RoundTripGenerator(registry).generate(document);
+                            document = yamada.source.AppSourceParser.parseText(source, registry);
                             label = document.getComponentByName(label.Name);
                         end
                         original = document.OriginalText;
                         document.setProperty(label.Id, "FontSize", 23, registry);
                         settings = label.Settings;
-                        previousPlan = macd.source.PropertySourcePlan.combined(document, label, registry);
+                        previousPlan = yamada.source.PropertySourcePlan.combined(document, label, registry);
 
                         % Measure the complete model transaction, including committed source sharing.
                         if batch
                             document.setPropertyBatch(label.Id, ...
-                                macd.model.PropertyTransaction.singleChange("FontSize", 37), registry);
+                                yamada.model.PropertyTransaction.singleChange("FontSize", 37), registry);
                         else
                             document.setProperty(label.Id, "FontSize", 37, registry);
                         end
@@ -160,12 +160,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                         testCase.verifyEqual(font.EffectiveValue, 37);
 
                         % Compare emission against a fresh full-preflight reference and exercise history.
-                        reference = macd.source.AppSourceParser.parseText(original, registry);
+                        reference = yamada.source.AppSourceParser.parseText(original, registry);
                         referenceLabel = reference.getComponentByName(label.Name);
                         reference.setProperty(referenceLabel.Id, "FontSize", 37, registry);
-                        source = macd.source.RoundTripGenerator(registry).generate(document);
-                        testCase.verifyEqual(source, macd.source.RoundTripGenerator(registry).generate(reference));
-                        parsed = macd.source.AppSourceParser.parseText(source, registry);
+                        source = yamada.source.RoundTripGenerator(registry).generate(document);
+                        testCase.verifyEqual(source, yamada.source.RoundTripGenerator(registry).generate(reference));
+                        parsed = yamada.source.AppSourceParser.parseText(source, registry);
                         testCase.verifyEqual(parsed.getComponentByName(label.Name).getProperty("FontSize").LiteralValue, 37);
                         document.undo();
                         testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 23);
@@ -178,16 +178,16 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function localNumericEditsRejectInvalidValuesAtomically(testCase)
             % localNumericEditsRejectInvalidValuesAtomically Keep range failures outside the live model and history.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
             document.setProperty(label.Id, "FontSize", 23, registry);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifyError(@() document.setPropertyBatch(label.Id, ...
-                macd.model.PropertyTransaction.singleChange("FontSize", -1), registry), ...
-                "macd:DocumentModel:UnsafePropertyEdit");
+                yamada.model.PropertyTransaction.singleChange("FontSize", -1), registry), ...
+                "yamada:DocumentModel:UnsafePropertyEdit");
             testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 23);
             testCase.verifyEqual(document.HistoryIndex, 1);
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), source);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             document.setProperty(label.Id, "FontSize", 31, registry);
             testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 31);
         end
@@ -195,7 +195,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
         function numericCheckpointInvalidatesAfterExternalChanges(testCase)
             % numericCheckpointInvalidatesAfterExternalChanges Require full preflight after writes or catalog/history changes.
             for kind = ["metadata", "entry", "registry", "history"]
-                registry = macd.model.ComponentRegistry.createDefault();
+                registry = yamada.model.ComponentRegistry.createDefault();
                 [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
                 document.setProperty(label.Id, "FontSize", 23, registry);
                 switch kind
@@ -217,11 +217,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function siblingStateReadsDoNotClonePerChild(testCase)
             % siblingStateReadsDoNotClonePerChild Bound document copies when siblings read one grid result.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for count = [2 8]
                 [document, grid, children] = CommittedPropertySourcePlanTest.gridFixture(registry, count);
                 document.setPropertyBatch(children(1).Id, ...
-                    macd.model.PropertyTransaction.singleChange("FontSize", 23), registry);
+                    yamada.model.PropertyTransaction.singleChange("FontSize", 23), registry);
                 original = document.OriginalText;
                 rows = zeros(1, count);
                 effects = zeros(1, count);
@@ -242,8 +242,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                 testCase.verifyEqual(document.HistoryIndex, 1);
 
                 % Compare finite values with independently generated and reparsed initialization.
-                source = macd.source.RoundTripGenerator(registry).generate(document);
-                parsed = macd.source.AppSourceParser.parseText(source, registry);
+                source = yamada.source.RoundTripGenerator(registry).generate(document);
+                parsed = yamada.source.AppSourceParser.parseText(source, registry);
                 expected = parsed.getComponentByName(grid.Name);
                 actualStates = document.getEffectivePropertyStates(registry, grid.Id);
                 expectedStates = parsed.getEffectivePropertyStates(registry, expected.Id);
@@ -258,10 +258,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function gridValuesInvalidateAcrossWritesAndHistory(testCase)
             % gridValuesInvalidateAcrossWritesAndHistory Keep cached tracks and coordinates tied to current input.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             [document, grid, children] = CommittedPropertySourcePlanTest.gridFixture(registry, 2);
             document.setPropertyBatch(children(1).Id, ...
-                macd.model.PropertyTransaction.singleChange("FontSize", 23), registry);
+                yamada.model.PropertyTransaction.singleChange("FontSize", 23), registry);
             document.getEffectivePropertyStates(registry, grid.Id);
 
             % A compound placement edit must invalidate all earlier geometry values.
@@ -301,20 +301,20 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function committedEditsDoNotReparseForStateConsumers(testCase)
             % committedEditsDoNotReparseForStateConsumers Reuse complete source for single and batch edits.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             for inGrid = [false true]
                 for batch = [false true]
                     [document, label] = CommittedPropertySourcePlanTest.fixture(registry, inGrid);
                     original = document.OriginalText;
                     if batch
                         document.setPropertyBatch(label.Id, ...
-                            macd.model.PropertyTransaction.singleChange("FontSize", 23), registry);
+                            yamada.model.PropertyTransaction.singleChange("FontSize", 23), registry);
                     else
                         document.setProperty(label.Id, "FontSize", 23, registry);
                     end
 
                     % Check state consumers after distinct accepted source edits.
-                    plan = macd.source.PropertySourcePlan.plan(document, label, registry);
+                    plan = yamada.source.PropertySourcePlan.plan(document, label, registry);
                     states = document.getEffectivePropertyStates(registry, label.Id);
                     testCase.verifyEqual(plan.Component.getProperty("FontSize").LiteralValue, 23);
                     state = states(arrayfun(@(item) item.Definition.Path == "FontSize", states)).Resolution;
@@ -323,20 +323,20 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                     testCase.verifyEqual(document.OriginalText, original);
                     testCase.verifyEqual(document.HistoryIndex, 1);
                     document.undo();
-                    testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), original);
+                    testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), original);
                 end
             end
         end
 
         function committedPlansRemainIndependentAndInvalidateOnWrites(testCase)
             % committedPlansRemainIndependentAndInvalidateOnWrites Never borrow stale values or caller mutations.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
             document.setPropertyBatch(label.Id, ...
-                macd.model.PropertyTransaction.singleChange("FontSize", 23), registry);
-            first = macd.source.PropertySourcePlan.plan(document, label, registry);
+                yamada.model.PropertyTransaction.singleChange("FontSize", 23), registry);
+            first = yamada.source.PropertySourcePlan.plan(document, label, registry);
             first.Component.setProperty("FontSize", 99);
-            second = macd.source.PropertySourcePlan.plan(document, label, registry);
+            second = yamada.source.PropertySourcePlan.plan(document, label, registry);
             testCase.verifyEqual(second.Component.getProperty("FontSize").LiteralValue, 23);
             testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 23);
 
@@ -344,12 +344,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             label.setProperty("FontSize", 31);
             [~, found] = document.evaluationContext(registry).configuration("combined", label.Name);
             testCase.verifyFalse(found);
-            updated = macd.source.PropertySourcePlan.plan(document, label, registry);
+            updated = yamada.source.PropertySourcePlan.plan(document, label, registry);
             testCase.verifyEqual(updated.Component.getProperty("FontSize").LiteralValue, 31);
             registry.register(registry.get("uilabel"));
             [~, found] = document.evaluationContext(registry).configuration("combined", label.Name);
             testCase.verifyFalse(found);
-            updated = macd.source.PropertySourcePlan.plan(document, label, registry);
+            updated = yamada.source.PropertySourcePlan.plan(document, label, registry);
             testCase.verifyEqual(updated.Component.getProperty("FontSize").LiteralValue, 31);
             testCase.verifyEqual(document.HistoryIndex, 1);
         end
@@ -359,19 +359,19 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
         function [document, grid, children] = gridFixture(registry, count)
             % gridFixture Parse a grid with explicit independent child coordinates.
             arguments (Input)
-                registry (1, 1) macd.model.ComponentRegistry
+                registry (1, 1) yamada.model.ComponentRegistry
                 count (1, 1) double {mustBePositive, mustBeInteger}
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                grid (1, 1) macd.model.ComponentRecord
-                children (1, :) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                grid (1, 1) yamada.model.ComponentRecord
+                children (1, :) yamada.model.ComponentRecord
             end
-            document = macd.model.NewAppFactory.createEmpty("SharedGridFixture", registry);
+            document = yamada.model.NewAppFactory.createEmpty("SharedGridFixture", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             grid.setProperty("RowHeight", repmat({"1x"}, 1, count));
             grid.setProperty("ColumnWidth", {"1x"});
-            children = macd.model.ComponentRecord.empty;
+            children = yamada.model.ComponentRecord.empty;
             for index = 1:count
                 child = document.insertComponent(registry, "uilabel", grid.Id);
                 child.setProperty("Layout.Row", index);
@@ -380,24 +380,24 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             end
             names = string({children.Name});
             gridName = grid.Name;
-            source = macd.source.NewAppGenerator(registry).generate(document);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             grid = document.getComponentByName(gridName);
-            children = macd.model.ComponentRecord.empty;
+            children = yamada.model.ComponentRecord.empty;
             for name = names, children(end + 1) = document.getComponentByName(name); end %#ok<AGROW>
         end
 
         function [document, label] = fixture(registry, inGrid)
             % fixture Create parsed controls with no explicit font setting in either parent layout.
             arguments (Input)
-                registry (1, 1) macd.model.ComponentRegistry
+                registry (1, 1) yamada.model.ComponentRegistry
                 inGrid (1, 1) logical
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                label (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                label (1, 1) yamada.model.ComponentRecord
             end
-            document = macd.model.NewAppFactory.createEmpty("CommittedSourceFixture", registry);
+            document = yamada.model.NewAppFactory.createEmpty("CommittedSourceFixture", registry);
             parentId = document.RootComponentId;
             if inGrid
                 grid = document.insertComponent(registry, "uigridlayout", parentId);
@@ -405,8 +405,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             end
             label = document.insertComponent(registry, "uilabel", parentId);
             name = label.Name;
-            source = macd.source.NewAppGenerator(registry).generate(document);
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            source = yamada.source.NewAppGenerator(registry).generate(document);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             label = document.getComponentByName(name);
         end
     end

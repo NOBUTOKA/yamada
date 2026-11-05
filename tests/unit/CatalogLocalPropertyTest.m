@@ -9,12 +9,12 @@ classdef (TestTags = {'ui', 'model', 'generation'}) CatalogLocalPropertyTest < m
     methods (Test)
         function provesIndependentLiteralsAcrossAllVariants(testCase, Variant)
             % provesIndependentLiteralsAcrossAllVariants Exercise every eligible source-owned independent contract.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             variants = string(Variant);
             total = 0; exercisedVariants = 0;
             for variant = reshape(variants, 1, [])
                 definition = registry.getById(variant);
-                document = macd.model.NewAppFactory.createEmpty("CatalogLocalFixture", registry);
+                document = yamada.model.NewAppFactory.createEmpty("CatalogLocalFixture", registry);
                 if definition.IsRoot
                     component = document.getComponent(document.RootComponentId);
                 else
@@ -22,7 +22,7 @@ classdef (TestTags = {'ui', 'model', 'generation'}) CatalogLocalPropertyTest < m
                     component = fixtureComponent(document, definition, parentId, "Subject");
                 end
                 figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
-                renderer = macd.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
+                renderer = yamada.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
                 native = [];
                 if definition.IsRoot, native = figure;
                 elseif isKey(handles, char(component.Id)), native = handles(char(component.Id)); end
@@ -46,12 +46,12 @@ classdef (TestTags = {'ui', 'model', 'generation'}) CatalogLocalPropertyTest < m
                     component.setProperty(property.Path, seed);
                     paths(end + 1) = property.Path; values{end + 1} = replacement; %#ok<AGROW>
                 end
-                [source, diagnostics] = macd.source.NewAppGenerator(registry).generate(document);
-                testCase.assertFalse(macd.validation.ModelValidator.hasErrors(diagnostics), variant + ": " + strjoin(string({diagnostics.Message}), "; ") + "; Paths=" + strjoin(paths, ","));
+                [source, diagnostics] = yamada.source.NewAppGenerator(registry).generate(document);
+                testCase.assertFalse(yamada.validation.ModelValidator.hasErrors(diagnostics), variant + ": " + strjoin(string({diagnostics.Message}), "; ") + "; Paths=" + strjoin(paths, ","));
                 testCase.assertGreaterThan(strlength(source), 0, variant);
-                parsed = macd.source.AppSourceParser.parseText(source, registry);
+                parsed = yamada.source.AppSourceParser.parseText(source, registry);
                 subject = parsed.getComponentByName(component.Name);
-                earlier = macd.source.PropertySourcePlan.combined(parsed, subject, registry);
+                earlier = yamada.source.PropertySourcePlan.combined(parsed, subject, registry);
                 before = parsed.OriginalText;
                 count = 0;
                 for index = 1:numel(paths)
@@ -61,8 +61,8 @@ classdef (TestTags = {'ui', 'model', 'generation'}) CatalogLocalPropertyTest < m
                     parsed.validatePropertyCommit(registry);
                     count = count + 1;
                 end
-                emitted = macd.source.RoundTripGenerator(registry).generate(parsed);
-                reference = macd.source.AppSourceParser.parseText(emitted, registry);
+                emitted = yamada.source.RoundTripGenerator(registry).generate(parsed);
+                reference = yamada.source.AppSourceParser.parseText(emitted, registry);
                 referenceSubject = reference.getComponentByName(component.Name);
                 for index = 1:numel(paths)
                     actual = subject.getProperty(paths(index));
@@ -93,22 +93,22 @@ function values = catalogVariants()
 arguments (Output)
     values cell
 end
-registry = macd.model.ComponentRegistry.createDefault();
+registry = yamada.model.ComponentRegistry.createDefault();
 values = cellstr(registry.listVariantIds());
 end
 
 function component = fixtureComponent(document, definition, parentId, name)
 % fixtureComponent Add one catalog record without broadening the product insertion UI.
 arguments (Input)
-    document (1, 1) macd.model.DocumentModel
-    definition (1, 1) macd.model.ComponentDefinition
+    document (1, 1) yamada.model.DocumentModel
+    definition (1, 1) yamada.model.ComponentDefinition
     parentId (1, 1) string
     name (1, 1) string
 end
 arguments (Output)
-    component (1, 1) macd.model.ComponentRecord
+    component (1, 1) yamada.model.ComponentRecord
 end
-component = macd.model.ComponentRecord("test-" + name, name, definition.Factory, definition.DeclaredType, "generated");
+component = yamada.model.ComponentRecord("test-" + name, name, definition.Factory, definition.DeclaredType, "generated");
 component.CreationArguments = definition.CreationArguments;
 document.addComponent(component, parentId);
 end
@@ -116,9 +116,9 @@ end
 function id = fixtureParent(document, registry, definition)
 % fixtureParent Recursively construct the minimal catalog-allowed native parent hierarchy.
 arguments (Input)
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
-    definition (1, 1) macd.model.ComponentDefinition
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
+    definition (1, 1) yamada.model.ComponentDefinition
 end
 arguments (Output)
     id (1, 1) string
@@ -133,7 +133,7 @@ end
 function [valid, seed, replacement] = catalogLiteralPair(property, native, root)
 % catalogLiteralPair Derive two exact serializable values from the native and catalog contracts.
 arguments (Input)
-    property (1, 1) macd.model.PropertyDefinition
+    property (1, 1) yamada.model.PropertyDefinition
     native
     root (1, 1) logical
 end
@@ -185,12 +185,12 @@ else
 end
 % Check schema and native setter acceptance before generating source fixtures.
 for value = {seed, replacement}
-    transaction = macd.model.PropertyTransaction(property.Path, value);
+    transaction = yamada.model.PropertyTransaction(property.Path, value);
     transaction.stage(property.Path, value{1});
-    if strlength(macd.validation.PropertyBatchValidator.validate(property, transaction)) > 0, return, end
+    if strlength(yamada.validation.PropertyBatchValidator.validate(property, transaction)) > 0, return, end
     try
-        encoded = macd.source.LiteralEncoder.encode(value{1});
-        [decoded, literal] = macd.source.MatlabLiteralParser.parse(encoded);
+        encoded = yamada.source.LiteralEncoder.encode(value{1});
+        [decoded, literal] = yamada.source.MatlabLiteralParser.parse(encoded);
         if ~literal || ~isequaln(decoded, value{1}) || contains(encoded, string(newline)), return, end
     catch
         return

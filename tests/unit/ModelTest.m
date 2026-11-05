@@ -10,8 +10,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             % registryInsertionSeedsSafeGeometry Verify model-owned palette insertion.
 
             % Insert two controls through the same registry used by the editor.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             first = document.insertComponent(registry, "uilabel", ...
                 document.RootComponentId);
             second = document.insertComponent(registry, "uibutton", ...
@@ -32,8 +32,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             % insertionPreservesSelectedComponentVariant Create a non-default catalog style.
 
             % Pass the selected style arguments through the model insertion boundary.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("VariantApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("VariantApp", registry);
             variant = registry.getById("uibutton-state");
             component = document.insertComponent(registry, variant.Factory, ...
                 document.RootComponentId, variant.CreationArguments);
@@ -45,8 +45,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             % insertionUsesVariantDefaultSize Preserve a style-specific initial size.
 
             % Keep vertical switch variants at their documented MATLAB dimensions.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("SwitchApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("SwitchApp", registry);
             variant = registry.getById("uiswitch-rocker");
             component = document.insertComponent(registry, variant.Factory, ...
                 document.RootComponentId, variant.CreationArguments);
@@ -59,8 +59,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             % gridInsertionSeedsLayoutCoordinates Verify grid insertion defaults.
 
             % Build a grid parent and insert a label beneath it.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("GridApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("GridApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", ...
                 document.RootComponentId);
             label = document.insertComponent(registry, "uilabel", grid.Id);
@@ -69,15 +69,15 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyEqual(label.getProperty("Layout.Column").LiteralValue, 1);
             testCase.verifyError(@() document.insertComponent( ...
                 registry, "uilabel", label.Id), ...
-                "macd:DocumentModel:InvalidInsertionParent");
+                "yamada:DocumentModel:InvalidInsertionParent");
         end
 
         function propertyEditsUndoAndRedo(testCase)
             % propertyEditsUndoAndRedo Verify reversible literal property changes.
 
             % Change one model value, then traverse both history directions.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             label = document.insertComponent(registry, "uilabel", ...
                 document.RootComponentId);
             document.setProperty(label.Id, "Position", [30 40 120 30]);
@@ -94,8 +94,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
         function propertyBatchesAreAtomicAndUndoAsOneEdit(testCase)
             % propertyBatchesAreAtomicAndUndoAsOneEdit Verify one reversible multi-property mutation.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             label = document.insertComponent(registry, "uilabel", ...
                 document.RootComponentId);
             initialHistoryCount = numel(document.History);
@@ -117,15 +117,15 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
         function propertyBatchPreflightLeavesValuesUntouched(testCase)
             % propertyBatchPreflightLeavesValuesUntouched Reject duplicate paths before mutation.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             label = document.insertComponent(registry, "uilabel", ...
                 document.RootComponentId);
             changes = [struct("Path", "Text", "Value", "First"), ...
                 struct("Path", "Text", "Value", "Second")];
 
             testCase.verifyError(@() document.setPropertyBatch(label.Id, changes), ...
-                "macd:DocumentModel:InvalidPropertyBatch");
+                "yamada:DocumentModel:InvalidPropertyBatch");
             testCase.verifyEmpty(label.getProperty("Text"));
         end
 
@@ -133,8 +133,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             % insertionUndoRemovesWithoutDeletionIntent Verify generated undo semantics.
 
             % Undoing a new component must not create a source deletion request.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             label = document.insertComponent(registry, "uilabel", ...
                 document.RootComponentId);
             document.undo();
@@ -151,8 +151,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testPath = mfilename("fullpath");
             fixturePath = string(fullfile(fileparts(fileparts(testPath)), ...
                 "fixtures", "SimpleCalculatorApp.m"));
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseFile(fixturePath, registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseFile(fixturePath, registry);
             target = document.getComponentByName("LeftValueLabel");
             document.removeComponent(target.Id);
             testCase.verifyEmpty(document.getComponent(target.Id));
@@ -170,8 +170,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             % geometryValidationRejectsUnsafeLiterals Verify canvas geometry checks.
 
             % Negative size and invalid grid coordinates must block generation safely.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             label = document.insertComponent(registry, "uilabel", ...
                 document.RootComponentId);
             grid = document.insertComponent(registry, "uigridlayout", ...
@@ -179,52 +179,52 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             gridLabel = document.insertComponent(registry, "uilabel", grid.Id);
             label.setProperty("Position", [10 10 -1 30]);
             gridLabel.setProperty("Layout.Row", [0 2]);
-            diagnostics = macd.validation.ModelValidator.validate(document, registry);
+            diagnostics = yamada.validation.ModelValidator.validate(document, registry);
 
             testCase.verifyTrue(any([diagnostics.Code] == "invalid-position"));
             testCase.verifyTrue(any([diagnostics.Code] == "invalid-grid-coordinate"));
-            testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function geometryValidationAcceptsGridSpans(testCase)
             % geometryValidationAcceptsGridSpans Accept positive integer grid ranges.
 
             % Grid row and column values may span two adjacent tracks.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", ...
                 document.RootComponentId);
             label = document.insertComponent(registry, "uilabel", grid.Id);
             label.setProperty("Layout.Row", [1 2]);
             label.setProperty("Layout.Column", [1 2]);
-            diagnostics = macd.validation.ModelValidator.validate(document, registry);
+            diagnostics = yamada.validation.ModelValidator.validate(document, registry);
 
             % The context schema and geometry check must agree on valid spans.
             diagnosticCodes = string({diagnostics.Code});
             testCase.verifyFalse(any(diagnosticCodes == "invalid-catalog-property"));
             testCase.verifyFalse(any(diagnosticCodes == "invalid-grid-coordinate"));
-            testCase.verifyFalse(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function geometryValidationRejectsInvalidGridTrackLists(testCase)
             % geometryValidationRejectsInvalidGridTrackLists Reject literals the public GridLayout setter rejects.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             grid.setProperty("RowHeight", {'auto'});
 
-            diagnostics = macd.validation.ModelValidator.validate(document, registry);
+            diagnostics = yamada.validation.ModelValidator.validate(document, registry);
 
             testCase.verifyTrue(any([diagnostics.Code] == "invalid-grid-track-list"));
-            testCase.verifyTrue(macd.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function gridLayoutEditsAreAtomicAndUndoable(testCase)
             % gridLayoutEditsAreAtomicAndUndoable Keep track and direct-child changes in one history step.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             nestedGrid = document.insertComponent(registry, "uigridlayout", grid.Id);
             label = document.insertComponent(registry, "uilabel", grid.Id);
@@ -258,8 +258,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
         function gridLayoutEditsRejectReadOnlyTargetsBeforeMutation(testCase)
             % gridLayoutEditsRejectReadOnlyTargetsBeforeMutation Avoid partial changes around source expressions.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             label = document.insertComponent(registry, "uilabel", grid.Id);
             readOnly = label.getProperty("Layout.Row");
@@ -271,7 +271,7 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
                 "Value", {{'fit', 80}, 2});
 
             testCase.verifyError(@() document.applyGridLayoutEdit(grid.Id, changes), ...
-                "macd:DocumentModel:ReadOnlyProperty");
+                "yamada:DocumentModel:ReadOnlyProperty");
             testCase.verifyEmpty(grid.getProperty("RowHeight"));
             testCase.verifyEqual(label.getProperty("Layout.Row").SourceExpression, "currentRow");
             testCase.verifyEqual(document.HistoryIndex, historyIndex);
@@ -280,15 +280,15 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
         function gridStructuralPlannerRemapsExplicitChildrenDeterministically(testCase)
             % gridStructuralPlannerRemapsExplicitChildrenDeterministically Plan safe insert and delete effects.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             first = document.insertComponent(registry, "uilabel", grid.Id);
             second = document.insertComponent(registry, "uilabel", grid.Id);
             document.setProperty(first.Id, "Layout.Row", [1 2]);
             document.setProperty(second.Id, "Layout.Row", 3);
 
-            changes = macd.model.GridLayoutStructuralEditPlanner.insert( ...
+            changes = yamada.model.GridLayoutStructuralEditPlanner.insert( ...
                 document, grid.Id, "row", 2, [20 30 40]);
             document.applyGridLayoutEdit(grid.Id, changes);
             testCase.verifyEqual(grid.getProperty("RowHeight").LiteralValue, ...
@@ -296,7 +296,7 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyEqual(first.getProperty("Layout.Row").LiteralValue, [1 3]);
             testCase.verifyEqual(second.getProperty("Layout.Row").LiteralValue, 4);
             document.undo();
-            changes = macd.model.GridLayoutStructuralEditPlanner.delete( ...
+            changes = yamada.model.GridLayoutStructuralEditPlanner.delete( ...
                 document, grid.Id, "row", 2, [20 30 40]);
             document.applyGridLayoutEdit(grid.Id, changes);
             testCase.verifyEqual(grid.getProperty("RowHeight").LiteralValue, [20 40]);
@@ -307,8 +307,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
         function gridChildPlacementPlannerPreservesSpanAndAllowsOverlap(testCase)
             % gridChildPlacementPlannerPreservesSpanAndAllowsOverlap Allow overlap while validating grid bounds.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             document.setProperty(grid.Id, "RowHeight", {"1x", "1x", "1x", "1x"});
             document.setProperty(grid.Id, "ColumnWidth", {"1x", "1x", "1x", "1x"});
@@ -319,22 +319,22 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             document.setProperty(occupied.Id, "Layout.Row", 4);
             document.setProperty(occupied.Id, "Layout.Column", 4);
 
-            changes = macd.model.GridChildPlacementPlanner.move( ...
+            changes = yamada.model.GridChildPlacementPlanner.move( ...
                 document, grid.Id, moving.Id, 2, 2, 4, 4);
             document.applyGridLayoutEdit(grid.Id, changes);
             testCase.verifyEqual(moving.getProperty("Layout.Row").LiteralValue, [2 3]);
             testCase.verifyEqual(moving.getProperty("Layout.Column").LiteralValue, [2 3]);
-            changes = macd.model.GridChildPlacementPlanner.move( ...
+            changes = yamada.model.GridChildPlacementPlanner.move( ...
                 document, grid.Id, moving.Id, 3, 3, 4, 4);
             document.applyGridLayoutEdit(grid.Id, changes);
             testCase.verifyEqual(moving.getProperty("Layout.Row").LiteralValue, [3 4]);
             testCase.verifyEqual(moving.getProperty("Layout.Column").LiteralValue, [3 4]);
-            changes = macd.model.GridChildPlacementPlanner.resize( ...
+            changes = yamada.model.GridChildPlacementPlanner.resize( ...
                 document, grid.Id, moving.Id, 1, 3, 1, 3, 4, 4);
             document.applyGridLayoutEdit(grid.Id, changes);
             testCase.verifyEqual(moving.getProperty("Layout.Row").LiteralValue, [1 3]);
             testCase.verifyEqual(moving.getProperty("Layout.Column").LiteralValue, [1 3]);
-            changes = macd.model.GridChildPlacementPlanner.resize( ...
+            changes = yamada.model.GridChildPlacementPlanner.resize( ...
                 document, grid.Id, moving.Id, 1, 4, 1, 4, 4, 4);
             document.applyGridLayoutEdit(grid.Id, changes);
             testCase.verifyEqual(moving.getProperty("Layout.Row").LiteralValue, [1 4]);
@@ -343,31 +343,31 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyEqual(occupied.getProperty("Layout.Column").LiteralValue, 4);
 
             % Overlap remains valid source while invalid coordinates remain rejected.
-            generator = macd.source.RoundTripGenerator(registry);
+            generator = yamada.source.RoundTripGenerator(registry);
             [~, diagnostics] = generator.generate(document);
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyError(@() macd.model.GridChildPlacementPlanner.move( ...
+            testCase.verifyError(@() yamada.model.GridChildPlacementPlanner.move( ...
                 document, grid.Id, moving.Id, 2, 1, 4, 4), ...
-                "macd:GridChildPlacementPlanner:OutOfBounds");
-            testCase.verifyError(@() macd.model.GridChildPlacementPlanner.resize( ...
+                "yamada:GridChildPlacementPlanner:OutOfBounds");
+            testCase.verifyError(@() yamada.model.GridChildPlacementPlanner.resize( ...
                 document, grid.Id, moving.Id, 1, 5, 1, 4, 4, 4), ...
-                "macd:GridChildPlacementPlanner:OutOfBounds");
-            testCase.verifyError(@() macd.model.GridChildPlacementPlanner.resize( ...
+                "yamada:GridChildPlacementPlanner:OutOfBounds");
+            testCase.verifyError(@() yamada.model.GridChildPlacementPlanner.resize( ...
                 document, grid.Id, moving.Id, NaN, 4, 1, 4, 4, 4), ...
-                "macd:GridChildPlacementPlanner:InvalidTarget");
+                "yamada:GridChildPlacementPlanner:InvalidTarget");
         end
 
         function modelValidationUsesTheInspectorPropertySchema(testCase)
             % modelValidationUsesTheInspectorPropertySchema Reject catalog-invalid values outside the Inspector.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             definition = registry.get("uidatepicker");
-            picker = macd.model.ComponentRecord("picker", "Picker", "uidatepicker", definition.DeclaredType);
+            picker = yamada.model.ComponentRecord("picker", "Picker", "uidatepicker", definition.DeclaredType);
             document.addComponent(picker, document.RootComponentId);
             picker.setProperty("Limits", [datetime(2024, 12, 31) datetime(2024, 1, 1)]);
 
-            diagnostics = macd.validation.ModelValidator.validate(document, registry);
+            diagnostics = yamada.validation.ModelValidator.validate(document, registry);
 
             invalid = diagnostics([diagnostics.Code] == "invalid-catalog-property");
             testCase.verifyNotEmpty(invalid);
@@ -379,7 +379,7 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             % effectivePropertiesFollowDirectParentContext Verify geometry follows the direct parent.
 
             % Compare the resolved surface without exposing registry implementation state.
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             gridPaths = string({registry.getEffectiveProperties("uilabel", "uigridlayout").Path});
             absolutePaths = string({registry.getEffectiveProperties("uilabel", "uifigure").Path});
             tabPaths = string({registry.getEffectiveProperties("uitab", "uitabgroup").Path});
@@ -394,24 +394,24 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
         function activeGridResolutionKeepsNestedGridContextsSeparate(testCase)
             % activeGridResolutionKeepsNestedGridContextsSeparate Resolve only the nearest Grid Layout.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             outer = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             inner = document.insertComponent(registry, "uigridlayout", outer.Id);
             label = document.insertComponent(registry, "uilabel", inner.Id);
 
-            testCase.verifyEqual(macd.model.ActiveGridResolver.resolve(document, outer.Id), outer.Id);
-            testCase.verifyEqual(macd.model.ActiveGridResolver.resolve(document, inner.Id), inner.Id);
-            testCase.verifyEqual(macd.model.ActiveGridResolver.resolve(document, label.Id), inner.Id);
-            testCase.verifyEqual(macd.model.ActiveGridResolver.resolve( ...
+            testCase.verifyEqual(yamada.model.ActiveGridResolver.resolve(document, outer.Id), outer.Id);
+            testCase.verifyEqual(yamada.model.ActiveGridResolver.resolve(document, inner.Id), inner.Id);
+            testCase.verifyEqual(yamada.model.ActiveGridResolver.resolve(document, label.Id), inner.Id);
+            testCase.verifyEqual(yamada.model.ActiveGridResolver.resolve( ...
                 document, document.RootComponentId), "");
         end
         function propertyStatesKeepDefaultsImplicit(testCase)
             % propertyStatesKeepDefaultsImplicit Join definitions without creating entries.
 
             % A catalog capability remains absent until the document explicitly assigns it.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             label = document.insertComponent(registry, "uilabel", document.RootComponentId);
             states = document.getEffectivePropertyStates(registry, label.Id);
             paths = arrayfun(@(state) state.Definition.Path, states);
@@ -425,8 +425,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             % generatedPropertyResetIsUndoable Remove and restore one generated literal.
 
             % Reset stores absence rather than the catalog default and keeps redo reversible.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             label = document.insertComponent(registry, "uilabel", document.RootComponentId);
             document.setProperty(label.Id, "Text", "Ready");
             document.resetProperty(label.Id, "Text");
@@ -443,22 +443,22 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             % parsedPropertyResetIsRejected Keep parsed assignments until owned deletion exists.
 
             % Source preservation takes precedence over removing a parsed literal.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseFile(fullfile( ...
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseFile(fullfile( ...
                 fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m"), registry);
             label = document.getComponentByName("LeftValueLabel");
             testCase.verifyError(@() document.resetProperty(label.Id, "Text"), ...
-                "macd:DocumentModel:ParsedPropertyResetUnsupported");
+                "yamada:DocumentModel:ParsedPropertyResetUnsupported");
         end
 
         function newAndParsedDocumentsHaveExpectedDirtyStates(testCase)
             % newAndParsedDocumentsHaveExpectedDirtyStates Start factory and parsed models clean.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            newDocument = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            newDocument = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             fixturePath = fullfile(fileparts(fileparts(mfilename("fullpath"))), ...
                 "fixtures", "SimpleCalculatorApp.m");
-            parsedDocument = macd.source.AppSourceParser.parseFile(fixturePath, registry);
+            parsedDocument = yamada.source.AppSourceParser.parseFile(fixturePath, registry);
 
             testCase.verifyFalse(newDocument.IsDirty);
             testCase.verifyFalse(parsedDocument.IsDirty);
@@ -467,8 +467,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
         function savedCheckpointControlsUndoAndRedoDirtyState(testCase)
             % savedCheckpointControlsUndoAndRedoDirtyState Retain only one exact clean history point.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             label = document.insertComponent(registry, "uilabel", document.RootComponentId);
             document.markSaved();
             document.setProperty(label.Id, "Text", "Ready");
@@ -484,8 +484,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
         function branchReplacementAndHistoryTrimmingRemainConservativelyDirty(testCase)
             % branchReplacementAndHistoryTrimmingRemainConservativelyDirty Preserve only certain checkpoints.
 
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
             document.HistoryLimit = 2;
             label = document.insertComponent(registry, "uilabel", document.RootComponentId);
             document.markSaved();
@@ -496,7 +496,7 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             document.undo();
             testCase.verifyTrue(document.IsDirty);
 
-            trimmed = macd.model.NewAppFactory.createEmpty("TrimmedApp", registry);
+            trimmed = yamada.model.NewAppFactory.createEmpty("TrimmedApp", registry);
             trimmed.HistoryLimit = 2;
             trimmedLabel = trimmed.insertComponent(registry, "uilabel", ...
                 trimmed.RootComponentId);
@@ -512,11 +512,11 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             % publicPropertiesProvideMetadataHelp Verify documented public state.
 
             % Inspect every public model class through MATLAB property metadata.
-            classNames = ["macd.model.ComponentRecord", ...
-                "macd.model.ComponentDefinition", "macd.model.Diagnostic", ...
-                "macd.model.DocumentModel", "macd.model.ParentContextRule", ...
-                "macd.model.PropertyDefinition", ...
-                "macd.model.PropertyEntry", "macd.model.SourceSpan"];
+            classNames = ["yamada.model.ComponentRecord", ...
+                "yamada.model.ComponentDefinition", "yamada.model.Diagnostic", ...
+                "yamada.model.DocumentModel", "yamada.model.ParentContextRule", ...
+                "yamada.model.PropertyDefinition", ...
+                "yamada.model.PropertyEntry", "yamada.model.SourceSpan"];
             for className = classNames
                 classMetadata = meta.class.fromName(char(className));
                 propertyMetadata = classMetadata.PropertyList;
@@ -532,20 +532,20 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             end
 
             % Confirm internal registry storage remains inaccessible to callers.
-            registryMetadata = ?macd.model.ComponentRegistry;
+            registryMetadata = ?yamada.model.ComponentRegistry;
             definitions = findobj(registryMetadata.PropertyList, ...
                 "Name", "Definitions");
             testCase.verifyEqual(string(definitions.GetAccess), "private");
 
             % Keep externally readable invariants writable only by their owners.
             readOnlyProperties = { ...
-                ?macd.model.ComponentRecord, "Id"; ...
-                ?macd.model.ComponentDefinition, "Factory"; ...
-                ?macd.model.Diagnostic, "Code"; ...
-                ?macd.model.DocumentModel, "IsDirty"; ...
-                ?macd.model.PropertyDefinition, "Path"; ...
-                ?macd.model.PropertyEntry, "ValueKind"; ...
-                ?macd.model.SourceSpan, "StartOffset"};
+                ?yamada.model.ComponentRecord, "Id"; ...
+                ?yamada.model.ComponentDefinition, "Factory"; ...
+                ?yamada.model.Diagnostic, "Code"; ...
+                ?yamada.model.DocumentModel, "IsDirty"; ...
+                ?yamada.model.PropertyDefinition, "Path"; ...
+                ?yamada.model.PropertyEntry, "ValueKind"; ...
+                ?yamada.model.SourceSpan, "StartOffset"};
             for index = 1:size(readOnlyProperties, 1)
                 classMetadata = readOnlyProperties{index, 1};
                 propertyName = readOnlyProperties{index, 2};

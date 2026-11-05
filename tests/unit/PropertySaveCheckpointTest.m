@@ -42,7 +42,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             second = testCase.save(document, registry);
             testCase.verifyNotEqual(first.SourceSnapshotId, second.SourceSnapshotId);
             testCase.verifySubstring(second.SourceText, "日本語の長い説明");
-            reopened = macd.source.AppSourceParser.parseText(second.SourceText, registry);
+            reopened = yamada.source.AppSourceParser.parseText(second.SourceText, registry);
             other = reopened.getComponentByName("Control");
             reopened.setProperty(other.Id, "Value", 'A', registry);
             third = testCase.save(reopened, registry);
@@ -64,12 +64,12 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             second = testCase.save(document, registry);
             document.undo();
             testCase.verifyTrue(document.IsDirty);
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), first.SourceText);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), first.SourceText);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), original);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), original);
             document.redo();
             document.redo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), second.SourceText);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), second.SourceText);
             testCase.verifyTrue(document.IsDirty);
             testCase.verifyEqual(document.SavedSource.SourceText, second.SourceText);
             testCase.verifyEqual(string({control.Settings(ismember(string({control.Settings.Id}), settingIds)).Id}), settingIds);
@@ -82,18 +82,18 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             % exactSavedBytesOwnNormalizedUnicodePositions Match saved offsets after mixed line endings and Save As renaming.
             [document, registry, control] = testCase.fixture("app.Control = uidropdown(app.Left, Items=[""A"" ""B""]); ");
             mixed = replace(document.OriginalText, "app.Left =", newline + "app.Left =");
-            document = macd.source.AppSourceParser.parseText(mixed, registry);
+            document = yamada.source.AppSourceParser.parseText(mixed, registry);
             document.LineEnding = "LF";
             control = document.getComponentByName(control.Name);
             document.setProperty(control.Id, "Tooltip", "保存値 日本語", registry);
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            source = macd.source.AppClassIdentityRewriter.rewrite(source, "RenamedSavedApp");
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.AppClassIdentityRewriter.rewrite(source, "RenamedSavedApp");
             path = string(tempname) + ".m";
             cleanup = onCleanup(@() delete(path));
-            checkpoint = macd.model.SavedSourceCheckpoint(document, source, path, registry);
-            macd.source.SourceWriter.write(path, checkpoint.SourceText, document.LineEnding);
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, path, registry);
+            yamada.source.SourceWriter.write(path, checkpoint.SourceText, document.LineEnding);
             document.confirmSavedSource(checkpoint, registry);
-            bytes = macd.ui.DocumentLifecycleService().readSourceBytes(path);
+            bytes = yamada.ui.DocumentLifecycleService().readSourceBytes(path);
             testCase.verifyFalse(numel(bytes) >= 3 && isequal(bytes(1:3), uint8([239 187 191])));
             testCase.verifyEqual(string(native2unicode(bytes, 'UTF-8')), checkpoint.SourceText);
             testCase.verifyFalse(contains(checkpoint.SourceText, sprintf('\r')));
@@ -102,7 +102,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             settings = record.Settings(string({record.Settings.Path}) == "Tooltip");
             span = settings.Location.ValueSpan;
             testCase.verifyEqual(extractBetween(checkpoint.SourceText, span.StartOffset, span.EndOffset), ...
-                macd.source.LiteralEncoder.encode("保存値 日本語"));
+                yamada.source.LiteralEncoder.encode("保存値 日本語"));
             document.setProperty(control.Id, "Value", 'B', registry);
             next = testCase.save(document, registry);
             testCase.verifySubstring(next.SourceText, "classdef RenamedSavedApp");
@@ -115,8 +115,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             document.setProperty(control.Id, "Tooltip", "Long changed length", registry);
             document.setProperty(control.Id, "Value", 'B', registry);
             document.undo();
-            source = macd.source.AppClassIdentityRewriter.rewrite(document.CurrentText, "RenamedHistoryApp");
-            checkpoint = macd.model.SavedSourceCheckpoint(document, source, "RenamedHistoryApp.m", registry);
+            source = yamada.source.AppClassIdentityRewriter.rewrite(document.CurrentText, "RenamedHistoryApp");
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, "RenamedHistoryApp.m", registry);
             document.confirmSavedSource(checkpoint, registry);
             testCase.verifyEqual(document.HistoryIndex, 1);
             document.undo();
@@ -134,11 +134,11 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             [document, registry, control] = testCase.fixture([ ...
                 "app.Control = uidropdown(app.Left, Items=[""A"" ""B""]);", ...
                 "app.Left.Title = 'Independent';", "app.Control.Value = 'A';"]);
-            changes = [macd.model.PropertyTransaction.singleChange("Tooltip", "Long changed hint"), ...
-                macd.model.PropertyTransaction.singleChange("Value", 'B')];
+            changes = [yamada.model.PropertyTransaction.singleChange("Tooltip", "Long changed hint"), ...
+                yamada.model.PropertyTransaction.singleChange("Value", 'B')];
             document.setPropertyBatch(control.Id, changes, registry);
-            source = macd.source.AppClassIdentityRewriter.rewrite(document.CurrentText, "RenamedSeparatedApp");
-            checkpoint = macd.model.SavedSourceCheckpoint(document, source, "RenamedSeparatedApp.m", registry);
+            source = yamada.source.AppClassIdentityRewriter.rewrite(document.CurrentText, "RenamedSeparatedApp");
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, "RenamedSeparatedApp.m", registry);
             document.confirmSavedSource(checkpoint, registry);
             document.undo();
             testCase.verifyEmpty(control.getProperty("Tooltip"));
@@ -154,11 +154,11 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             [document, registry, control] = testCase.fixture("app.Control = uidropdown(app.Left, Items=[""A"" ""B""], Value='A');");
             checkpoint = testCase.save(document, registry);
             source = replace(checkpoint.SourceText, "Value='A'", "Value='B'");
-            testCase.verifyError(@() macd.model.SavedSourceCheckpoint(document, source, "Other.m", registry), ...
-                "macd:SavedSourceCheckpoint:StateMismatch");
+            testCase.verifyError(@() yamada.model.SavedSourceCheckpoint(document, source, "Other.m", registry), ...
+                "yamada:SavedSourceCheckpoint:StateMismatch");
             document.setProperty(control.Id, "Value", 'B', registry);
             testCase.verifyError(@() document.confirmSavedSource(checkpoint, registry), ...
-                "macd:SavedSourceCheckpoint:StaleCheckpoint");
+                "yamada:SavedSourceCheckpoint:StaleCheckpoint");
             testCase.verifyTrue(document.IsDirty);
             testCase.verifyEqual(document.SavedSource.SourceText, checkpoint.SourceText);
             testCase.verifyEqual(document.HistoryIndex, 1);
@@ -171,7 +171,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             control.getProperty("Value").setLiteral('B');
             testCase.verifyEqual(document.HistoryIndex, checkpoint.HistoryIndex);
             testCase.verifyError(@() checkpoint.assertCurrent(document, registry), ...
-                "macd:SavedSourceCheckpoint:StaleCheckpoint");
+                "yamada:SavedSourceCheckpoint:StaleCheckpoint");
             testCase.verifyEqual(document.SavedSource.SourceText, checkpoint.SourceText);
         end
 
@@ -190,18 +190,18 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             testCase.verifyFalse(any(string({deleted.Snapshot.Records.Name}) == control.Name));
             testCase.verifyTrue(any(string({deleted.Snapshot.Records.Name}) == copy.Name));
             document.undo();
-            testCase.verifyEqual(macd.source.SourceWriter.normalize( ...
-                macd.source.RoundTripGenerator(registry).generate(document), document.LineEnding), pasted.SourceText);
+            testCase.verifyEqual(yamada.source.SourceWriter.normalize( ...
+                yamada.source.RoundTripGenerator(registry).generate(document), document.LineEnding), pasted.SourceText);
             document.undo();
-            testCase.verifyEqual(macd.source.SourceWriter.normalize( ...
-                macd.source.RoundTripGenerator(registry).generate(document), document.LineEnding), moved.SourceText);
+            testCase.verifyEqual(yamada.source.SourceWriter.normalize( ...
+                yamada.source.RoundTripGenerator(registry).generate(document), document.LineEnding), moved.SourceText);
             document.undo();
-            testCase.verifyEqual(macd.source.RoundTripGenerator(registry).generate(document), original);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), original);
             document.redo();
             document.redo();
             document.redo();
-            testCase.verifyEqual(macd.source.SourceWriter.normalize( ...
-                macd.source.RoundTripGenerator(registry).generate(document), document.LineEnding), deleted.SourceText);
+            testCase.verifyEqual(yamada.source.SourceWriter.normalize( ...
+                yamada.source.RoundTripGenerator(registry).generate(document), document.LineEnding), deleted.SourceText);
             testCase.verifyEqual(document.SavedSource.SourceText, deleted.SourceText);
         end
 
@@ -213,7 +213,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
                 "app.Control.MajorTicksMode = 'auto';"], "matlab.ui.control.Slider");
             checkpoint = testCase.save(document, registry);
             testCase.verifyEqual(control.getProperty("Value").LiteralValue, 20);
-            saved = macd.source.AppSourceParser.parseText(checkpoint.SourceText, registry);
+            saved = yamada.source.AppSourceParser.parseText(checkpoint.SourceText, registry);
             other = saved.getComponentByName("Control");
             states = saved.getEffectivePropertyStates(registry, other.Id);
             value = states(arrayfun(@(state) state.Definition.Path == "Value", states)).Resolution;
@@ -247,15 +247,15 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
         function checkpoint = save(document, registry)
             % save Confirm owned generated text without performing filesystem I/O.
             arguments (Input)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
-                checkpoint (1, 1) macd.model.SavedSourceCheckpoint
+                checkpoint (1, 1) yamada.model.SavedSourceCheckpoint
             end
-            source = macd.source.RoundTripGenerator(registry).generate(document);
-            source = macd.source.AppClassIdentityRewriter.rewrite(source, document.ClassName);
-            checkpoint = macd.model.SavedSourceCheckpoint(document, source, document.ClassName + ".m", registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            source = yamada.source.AppClassIdentityRewriter.rewrite(source, document.ClassName);
+            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, document.ClassName + ".m", registry);
             document.confirmSavedSource(checkpoint, registry);
         end
 
@@ -266,12 +266,12 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
                 declaredType (1, 1) string = "matlab.ui.control.DropDown"
             end
             arguments (Output)
-                document (1, 1) macd.model.DocumentModel
-                registry (1, 1) macd.model.ComponentRegistry
-                control (1, 1) macd.model.ComponentRecord
-                target (1, 1) macd.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                control (1, 1) yamada.model.ComponentRecord
+                target (1, 1) yamada.model.ComponentRecord
             end
-            registry = macd.model.ComponentRegistry.createDefault();
+            registry = yamada.model.ComponentRegistry.createDefault();
             source = strjoin(["classdef SavedSettingApp < handle", "properties", ...
                 "UIFigure matlab.ui.Figure", "Left matlab.ui.container.Panel", "Right matlab.ui.container.Panel", ...
                 "Control " + declaredType, "end", "methods", ...
@@ -279,7 +279,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
                 "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
                 "app.Left = uipanel(app.UIFigure);", body, ...
                 "app.Right = uipanel(app.UIFigure);", "end", "end", "end"], sprintf('\r\n'));
-            document = macd.source.AppSourceParser.parseText(source, registry);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
             control = document.getComponentByName("Control");
             target = document.getComponentByName("Right");
         end

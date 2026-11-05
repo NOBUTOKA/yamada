@@ -26,7 +26,7 @@ root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
 addpath(root);
 if ~isfolder(options.OutputFolder), mkdir(options.OutputFolder); end
 fixture = makeUpdateFixture(options);
-service = macd.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, fixture), ...
+service = yamada.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, fixture), ...
     "ConfirmUnsavedChangesFcn", @() "Discard"));
 results = struct("action", {}, "index", {}, "callbackSeconds", {}, "settledSeconds", {}, ...
     "nativeObjects", {}, "timers", {}, "history", {}, "pendingValueOwners", {}, "status", {}, "geometryAvailable", {}, "reason", {}, "layoutPolls", {}, "events", {});
@@ -34,8 +34,8 @@ startupClock = tic;
 app = yamada(service);
 startupSeconds = toc(startupClock);
 cleanup = onCleanup(@() delete(app));
-figure = findall(0, "Tag", "macd-yamada-editor");
-setappdata(figure, "macdPerformanceMeasurement", true);
+figure = findall(0, "Tag", "yamada-editor");
+setappdata(figure, "yamadaPerformanceMeasurement", true);
 setappdata(figure, "distributionEvents", struct("seconds", {}, "revision", {}, "available", {}, "reason", {}, "activeGridId", {}));
 probe = timer.empty;
 if options.Trace
@@ -124,10 +124,10 @@ if options.Profile && options.Samples > 0 && options.Additions > 0
     assert(app.Document.getComponent(target.Id).getProperty("Value").LiteralValue == options.Samples + 20);
 end
 % Verify emitted edits without timing the final audit as an interactive operation.
-registry = macd.model.ComponentRegistry.createDefault();
-[source, diagnostics] = macd.source.RoundTripGenerator(registry).generate(app.Document);
+registry = yamada.model.ComponentRegistry.createDefault();
+[source, diagnostics] = yamada.source.RoundTripGenerator(registry).generate(app.Document);
 assert(~any(string({diagnostics.Severity}) == "error"));
-parsed = macd.source.AppSourceParser.parseText(source, registry);
+parsed = yamada.source.AppSourceParser.parseText(source, registry);
 assert(numel(parsed.Components) == numel(app.Document.Components));
 for number = 1:options.ComponentCount
     name = "Field" + number;
@@ -137,7 +137,7 @@ end
 % Check that a delayed native update has not been mistaken for settled geometry.
 runAction("idle-observation", 1, @() pause(2), false);
 if ~isempty(probe), clear probeCleanup, end
-overlay = findall(figure, "Tag", "macd-interaction-overlay");
+overlay = findall(figure, "Tag", "yamada-interaction-overlay");
 writeUpdateJson(fullfile(options.OutputFolder, "grid-state.json"), overlay.Data.gridEditor);
 writeUpdateJson(fullfile(options.OutputFolder, "measurements.json"), struct("options", options, "startupSeconds", startupSeconds, "samples", results));
 clear cleanup
@@ -160,11 +160,11 @@ clear cleanup
             save(fullfile(options.OutputFolder, action + ".mat"), "profileData");
             exportUpdateProfile(fullfile(options.OutputFolder, action + ".json"), profileData);
         end
-        overlay = findall(figure, "Tag", "macd-interaction-overlay");
+        overlay = findall(figure, "Tag", "yamada-interaction-overlay");
         grid = overlay.Data.gridEditor;
         results(end + 1) = struct("action", action, "index", index, "callbackSeconds", callbackSeconds, ...
             "settledSeconds", elapsed, "nativeObjects", numel(findall(figure)), "timers", numel(timerfindall), ...
-            "history", app.Document.HistoryIndex, "pendingValueOwners", pendingValueOwners(app.Document), "status", string(findall(figure, "Tag", "macd-status").Text), "geometryAvailable", grid.geometryAvailable, ...
+            "history", app.Document.HistoryIndex, "pendingValueOwners", pendingValueOwners(app.Document), "status", string(findall(figure, "Tag", "yamada-status").Text), "geometryAvailable", grid.geometryAvailable, ...
             "reason", string(grid.readOnlyReason), "layoutPolls", layoutPolls(), "events", getappdata(figure, "distributionEvents"));
         writeUpdateJson(fullfile(options.OutputFolder, "measurements.json"), struct("options", options, "startupSeconds", startupSeconds, "samples", results));
         publishUpdateProgress(options.OutputFolder, "complete", action);
@@ -183,7 +183,7 @@ if isappdata(figure, "distributionOverlay")
 end
 % Reacquire the disposable HTML handle only after a full Preview reconstruction.
 if isempty(overlay) || ~isvalid(overlay)
-    overlay = findall(figure, "Tag", "macd-interaction-overlay");
+    overlay = findall(figure, "Tag", "yamada-interaction-overlay");
     if isempty(overlay), return, end
     setappdata(figure, "distributionOverlay", overlay);
 end
@@ -204,7 +204,7 @@ end
 function value = recordedNumericValue(component)
 % recordedNumericValue Read a fixture's stored scalar or its known numeric default.
 arguments (Input)
-    component (1, 1) macd.model.ComponentRecord
+    component (1, 1) yamada.model.ComponentRecord
 end
 arguments (Output)
     value (1, 1) double
@@ -217,7 +217,7 @@ end
 function count = pendingValueOwners(document)
 % pendingValueOwners Count numeric Value settings inserted without an original source span.
 arguments (Input)
-    document (1, 1) macd.model.DocumentModel
+    document (1, 1) yamada.model.DocumentModel
 end
 arguments (Output)
     count (1, 1) double
@@ -271,9 +271,9 @@ while true
         end
     end
     recordOverlay(figure);
-    overlay = findall(figure, "Tag", "macd-interaction-overlay");
-    acknowledged = isappdata(figure, "macdRenderedRevision") && ...
-        isequal(getappdata(figure, "macdRenderedRevision"), overlay.Data.gridEditor.revision);
+    overlay = findall(figure, "Tag", "yamada-interaction-overlay");
+    acknowledged = isappdata(figure, "yamadaRenderedRevision") && ...
+        isequal(getappdata(figure, "yamadaRenderedRevision"), overlay.Data.gridEditor.revision);
     if ~active && acknowledged, return, end
     assert(toc(started) < 240, "The update did not settle within 240 seconds.");
     pause(0.01);
@@ -364,7 +364,7 @@ source = strjoin(["classdef UpdateDistributionFixture < handle"; "properties"; .
     properties; "end"; "methods"; "function app = UpdateDistributionFixture"; "createComponents(app);"; ...
     "end"; "function createComponents(app)"; body; "end"; "end"; "end"], sprintf('\r\n'));
 fixture = fullfile(options.OutputFolder, "UpdateDistributionFixture.m");
-macd.source.SourceWriter.write(fixture, source, "CRLF");
+yamada.source.SourceWriter.write(fixture, source, "CRLF");
 end
 
 function exportUpdateProfile(path, profileData)
@@ -434,9 +434,9 @@ arguments (Input)
     propertyPath (1, 1) string
     value
 end
-labels = findall(figure, "Tag", "macd-inspector-property-label");
+labels = findall(figure, "Tag", "yamada-inspector-property-label");
 label = labels(string({labels.Text}) == propertyPath);
-editor = findall(label.Parent, "Tag", "macd-inspector-property-editor");
+editor = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
 if isa(editor, "matlab.ui.control.EditField") || isa(editor, "matlab.ui.control.TextArea")
     editor.Value = char(string(value));
 else

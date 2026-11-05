@@ -3,8 +3,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PreparedCommitVa
     methods (Test)
         function implicitGridValuesSurviveDistinctPreparedChanges(testCase)
             % implicitGridValuesSurviveDistinctPreparedChanges Preserve absent source settings without repeating grid resolution.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(sourceFixture(), registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(sourceFixture(), registry);
             second = document.getComponentByName("Second");
             testCase.verifyEmpty(second.getProperty("Layout.Row"));
             resolved = document.getEffectivePropertyStates(registry, second.Id);
@@ -24,8 +24,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PreparedCommitVa
 
         function partialParsingNeverProvidesAFullLoadProof(testCase)
             % partialParsingNeverProvidesAFullLoadProof Require established validation for components outside a limited parse.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(sourceFixture(), registry, "", "Second");
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(sourceFixture(), registry, "", "Second");
             owner = document.getComponentByName("Second");
             document.setProperty(owner.Id, "Tooltip", "limited", registry);
             document.validatePropertyCommit(registry);
@@ -34,15 +34,15 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PreparedCommitVa
 
         function layoutChangesAndExternalWritesRetainValidation(testCase)
             % layoutChangesAndExternalWritesRetainValidation Recompute affected configuration and reject stale baseline proofs.
-            registry = macd.model.ComponentRegistry.createDefault();
-            document = macd.source.AppSourceParser.parseText(sourceFixture(), registry);
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.source.AppSourceParser.parseText(sourceFixture(), registry);
             grid = document.getComponentByName("Grid");
             document.setProperty(grid.Id, "RowHeight", {100, 120, 140}, registry);
             document.validatePropertyCommit(registry);
             verifyIndependent(testCase, document, registry);
             document.Metadata.OtherWriter = true;
             testCase.verifyEqual(document.validatePropertyCommit(registry), ...
-                macd.validation.ModelValidator.validate(document, registry));
+                yamada.validation.ModelValidator.validate(document, registry));
             verifyIndependent(testCase, document, registry);
         end
 
@@ -51,7 +51,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PreparedCommitVa
             ending = string(sprintf("\r\n"));
             source = strjoin(["app.A = uilabel(app.UIFigure, ...", "    'Text', 'A'); % comment", ...
                 "app.A.Tooltip = 'hint';", "app.B = uibutton(app.UIFigure);"], ending);
-            analysis = macd.source.SourceAnalysis(source);
+            analysis = yamada.source.SourceAnalysis(source);
             statements = analysis.Statements; spans = [statements.Span];
             for boundary = 0:strlength(source)
                 [before, after] = analysis.statementNeighbors(boundary);
@@ -60,11 +60,11 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PreparedCommitVa
             end
             anchor = strfind(source, "app.B") - 1;
             edits = struct("Start", anchor + 1, "End", anchor, "Text", "app.C = uilabel(app.UIFigure);" + ending);
-            expected = macd.source.SourceFormatting.separateComponents(source, edits);
-            actual = macd.source.SourceFormatting.separateComponents(source, edits, analysis);
+            expected = yamada.source.SourceFormatting.separateComponents(source, edits);
+            actual = yamada.source.SourceFormatting.separateComponents(source, edits, analysis);
             testCase.verifyEqual(actual, expected);
-            testCase.verifyError(@() macd.source.SourceFormatting.separateComponents(source + "x", edits, analysis), ...
-                "macd:SourceFormatting:StaleAnalysis");
+            testCase.verifyError(@() yamada.source.SourceFormatting.separateComponents(source + "x", edits, analysis), ...
+                "yamada:SourceFormatting:StaleAnalysis");
         end
     end
 end
@@ -73,10 +73,10 @@ function verifyIndependent(testCase, document, registry)
 % verifyIndependent Compare all effective states with fresh full parsing rather than reusing candidate caches.
 arguments (Input)
     testCase (1, 1) matlab.unittest.TestCase
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
 end
-expected = macd.source.AppSourceParser.parseText(document.CurrentText, registry);
+expected = yamada.source.AppSourceParser.parseText(document.CurrentText, registry);
 for owner = document.Components
     actual = document.getEffectivePropertyStates(registry, owner.Id);
     fresh = expected.getEffectivePropertyStates(registry, expected.getComponentByName(owner.Name).Id);

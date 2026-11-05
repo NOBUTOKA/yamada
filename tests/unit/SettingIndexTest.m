@@ -19,8 +19,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SettingIndexTest < matlab.
             testCase.verifyEqual(values, before);
             current = owner.Settings;
             record = current(1).toStruct();
-            independent = macd.model.PropertySetting(record.Path, record.Value, record.Location);
-            independent = independent.withLocations(struct("SourceSpan", macd.model.SourceSpan(1, 2)));
+            independent = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
+            independent = independent.withLocations(struct("SourceSpan", yamada.model.SourceSpan(1, 2)));
             testCase.verifyNotEqual(owner.Settings(1).SourceSpan, independent.SourceSpan);
             verifyIndexes(testCase, document, registry);
         end
@@ -101,22 +101,22 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SettingIndexTest < matlab.
 
         function constructorOrderDoesNotFollowRecycledSlotNumbers(testCase)
             % constructorOrderDoesNotFollowRecycledSlotNumbers Derive constructor ordinals from physical pair order.
-            store = macd.model.SourceSettingStore();
-            dummy = macd.model.PropertySetting("Text", "temporary", struct("SourceSpan", macd.model.SourceSpan(1, 9)));
+            store = yamada.model.SourceSettingStore();
+            dummy = yamada.model.PropertySetting("Text", "temporary", struct("SourceSpan", yamada.model.SourceSpan(1, 9)));
             released = store.replace("removed", zeros(1, 0), dummy);
             location = struct("Method", "nameValue", "Syntax", "quotedPair", "StatementId", "factory", ...
-                "SourceSpan", macd.model.SourceSpan(20, 80), "SourceSnapshotId", "epoch");
-            location.Id = 1; location.ValueSpan = macd.model.SourceSpan(40, 43);
-            first = macd.model.PropertySetting("Text", "first", location);
-            location.Id = 3; location.ValueSpan = macd.model.SourceSpan(60, 63);
-            last = macd.model.PropertySetting("Tooltip", "last", location);
+                "SourceSpan", yamada.model.SourceSpan(20, 80), "SourceSnapshotId", "epoch");
+            location.Id = 1; location.ValueSpan = yamada.model.SourceSpan(40, 43);
+            first = yamada.model.PropertySetting("Text", "first", location);
+            location.Id = 3; location.ValueSpan = yamada.model.SourceSpan(60, 63);
+            last = yamada.model.PropertySetting("Tooltip", "last", location);
             slots = store.replace("owner", zeros(1, 0), [first last]);
-            store.replace("removed", released, macd.model.PropertySetting.empty);
-            location.Id = 2; location.ValueSpan = macd.model.SourceSpan(50, 53);
-            middle = macd.model.PropertySetting("Tag", "middle", location);
+            store.replace("removed", released, yamada.model.PropertySetting.empty);
+            location.Id = 2; location.ValueSpan = yamada.model.SourceSpan(50, 53);
+            middle = yamada.model.PropertySetting("Tag", "middle", location);
             slots = store.replace("owner", slots, [first middle last]);
             testCase.verifyEqual(slots, [store.get(slots).Id]);
-            batch = macd.source.SourcePatchBatch(string(repmat('x', 1, 100)));
+            batch = yamada.source.SourcePatchBatch(string(repmat('x', 1, 100)));
             execution = struct("RangeStarts", 20, "RangeEnds", 80, "Visits", 1, "Assignment", 0, "Creation", 10);
             projection = store.prepare(batch, execution, "unrelated");
             store.publish(projection);
@@ -126,14 +126,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SettingIndexTest < matlab.
 
         function storesReleaseRemovedSlotsWithoutSharingValues(testCase)
             % storesReleaseRemovedSlotsWithoutSharingValues Reuse storage slots without exposing deleted settings or stale order.
-            store = macd.model.SourceSettingStore();
-            first = macd.model.PropertySetting("Text", "first", struct("SourceSpan", macd.model.SourceSpan(10, 30)));
-            second = macd.model.PropertySetting("Text", "second", struct("SourceSpan", macd.model.SourceSpan(2, 8)));
+            store = yamada.model.SourceSettingStore();
+            first = yamada.model.PropertySetting("Text", "first", struct("SourceSpan", yamada.model.SourceSpan(10, 30)));
+            second = yamada.model.PropertySetting("Text", "second", struct("SourceSpan", yamada.model.SourceSpan(2, 8)));
             a = store.replace("a", zeros(1, 0), first);
             b = store.replace("b", zeros(1, 0), second);
             [values, owners] = store.inSourceOrder();
             testCase.verifyEqual(owners, ["b", "a"]);
-            store.replace("a", a, macd.model.PropertySetting.empty);
+            store.replace("a", a, yamada.model.PropertySetting.empty);
             c = store.replace("c", zeros(1, 0), first);
             testCase.verifyGreaterThan(c, max([a b]));
             testCase.verifyEqual(store.get(b).LiteralValue, second.LiteralValue);
@@ -147,12 +147,12 @@ end
 function [document, registry] = fixture()
 % fixture Parse an owned handle-app input with one document-owned setting store.
 arguments (Output)
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
 end
-registry = macd.model.ComponentRegistry.createDefault();
+registry = yamada.model.ComponentRegistry.createDefault();
 root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
-document = macd.source.AppSourceParser.parseText(string(fileread(fullfile(root, ...
+document = yamada.source.AppSourceParser.parseText(string(fileread(fullfile(root, ...
     "tests", "fixtures", "SmallPreviewFixtureApp.m"))), registry);
 end
 
@@ -160,11 +160,11 @@ function verifyIndexes(testCase, document, registry)
 % verifyIndexes Compare canonical membership, settings and source spans with independent full parsing.
 arguments (Input)
     testCase (1, 1) matlab.unittest.TestCase
-    document (1, 1) macd.model.DocumentModel
-    registry (1, 1) macd.model.ComponentRegistry
+    document (1, 1) yamada.model.DocumentModel
+    registry (1, 1) yamada.model.ComponentRegistry
 end
 [settings, owners] = document.settingsInSourceOrder();
-parsed = macd.source.AppSourceParser.parseText(document.CurrentText, registry);
+parsed = yamada.source.AppSourceParser.parseText(document.CurrentText, registry);
 for owner = document.Components
     other = parsed.getComponentByName(owner.Name);
     testCase.verifyEqual(owner.SourceSpans, other.SourceSpans);
@@ -177,7 +177,7 @@ for owner = document.Components
         end
     end
 end
-testCase.verifyEqual(document.evaluationContext(registry).inputs(), macd.model.EvaluationContext(document, registry).inputs());
+testCase.verifyEqual(document.evaluationContext(registry).inputs(), yamada.model.EvaluationContext(document, registry).inputs());
 end
 
 %{
