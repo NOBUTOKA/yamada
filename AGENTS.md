@@ -28,6 +28,17 @@
 - Keep automated process monitoring, execution time limits, and durable test progress and result logging active. These automated checks do not require repeated model-side log reads, analysis, or routine progress commentary while merely waiting.
 - Treat an estimated completion time or an observation timeout as a time to inspect the existing run, not as evidence that it stopped. Do not stop or restart a test run solely because a wait ended.
 
+## Branch and pull request workflow
+
+- Follow the shared workflow in `CONTRIBUTING.md` and the maintainer procedure in `doc/RELEASING.md`.
+- Use `main` as the integration branch; do not introduce a permanent `develop` branch. Before editing, inspect the working tree and create a purpose-specific branch from current `main`, or continue the task's existing suitable branch. Use the `codex/` prefix for agent-created branches. Preserve unrelated changes.
+- Submit changes through a pull request, including documentation and maintenance changes. Do not commit or push directly to `main`, merge a pull request, or bypass repository rules unless the user explicitly authorizes that action.
+- Commit verified local work proactively. When the task authorizes preparing changes for review, pushing its work branch and opening a draft pull request are permitted; never force-push without explicit authorization. Report any unavailable remote operation with concrete user steps.
+- Keep `AGENTS.md` changes in a separate commit. Preserve that commit when merging; do not squash it together with other files.
+- Published versions are fixed by tags such as `v1.0.0` and GitHub Releases, not by freezing `main`. Create a `release/<major>.<minor>` branch only when parallel stabilization or maintenance requires it, and account for fixes in both the maintenance branch and `main`.
+- Prepare and verify release artifacts and release text before requesting final authorization to push release tags or publish a release. Never move a published tag or replace a published artifact to fix a release; publish a new patch version.
+- Use `yamada` without parentheses or an output assignment as the documented normal launch command. Handle-returning forms are for development and tests. Verify no-output startup and cleanup before release; documentation alone does not establish runtime correctness.
+
 ## Commit discipline
 
 - Commit implementation changes in cohesive feature-sized units. After completing a cohesive implementation change and passing its relevant MATLAB unit test suite, proactively create the Git commit without waiting for a user request. Treat this local commit as a normal implementation step, not as an external publication action.
