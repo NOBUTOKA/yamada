@@ -18,20 +18,8 @@ classdef SourceWriter
             % Normalize lines before performing byte-level UTF-8 encoding.
             source = yamada.source.SourceWriter.normalize(source, lineEnding);
             bytes = unicode2native(char(source), "UTF-8");
-            % Use binary mode to prevent a second Windows newline translation.
-            [fileId, message] = fopen(filePath, "wb");
-            if fileId < 0
-                error("yamada:SourceWriter:OpenFailed", "%s", message);
-            end
-            cleanup = onCleanup(@() fclose(fileId));
-            % Verify that the complete encoded buffer reaches the target.
-            count = fwrite(fileId, bytes, "uint8");
-            if count ~= numel(bytes)
-                error("yamada:SourceWriter:WriteFailed", ...
-                    "Not all source bytes were written.");
-            end
-            % Close eagerly so callers can immediately read or move the file.
-            clear cleanup
+            % Stage complete output before asking Windows to replace the destination.
+            yamada.source.SourceWriter.writeProtected(filePath, bytes);
         end
 
         function source = normalize(source, lineEnding)
@@ -52,6 +40,102 @@ classdef SourceWriter
     end
 
     methods (Static, Access = private)
+        function writeProtected(filePath, bytes)
+            % writeProtected Commit flushed bytes through Windows replacement with recovery.
+            arguments (Input)
+                filePath (1, 1) string
+                bytes uint8
+            end
+
+            % Refuse unsupported hosts rather than falling back to truncating writes.
+            if ~ispc || ~NET.isNETSupported
+                error("yamada:SourceWriter:UnsupportedPlatform", ...
+                    "Protected source saving requires Windows with .NET support.");
+            end
+            % Resolve ordinary relative paths against MATLAB's current folder.
+            if ~System.IO.Path.IsPathRooted(filePath)
+                filePath = fullfile(string(pwd), filePath);
+            end
+            target = string(System.IO.Path.GetFullPath(filePath));
+            folder = string(System.IO.Path.GetDirectoryName(target));
+            token = string(System.Guid.NewGuid().ToString("N"));
+            staged = fullfile(folder, ".yamada-" + token + ".tmp");
+            backup = fullfile(folder, ".yamada-" + token + ".bak");
+
+            % Create exclusively beside the destination and flush before closing.
+            stream = System.IO.FileStream(staged, System.IO.FileMode.CreateNew, ...
+                System.IO.FileAccess.Write, System.IO.FileShare.None);
+            stagedCleanup = onCleanup(@() yamada.source.SourceWriter.closeAndRemove(stream, staged));
+            buffer = NET.convertArray(bytes, "System.Byte");
+            stream.Write(buffer, 0, buffer.Length);
+            stream.Flush(true);
+            stream.Dispose();
+
+            % Preserve destination metadata and keep a native recovery copy.
+            try
+                if System.IO.File.Exists(target)
+                    System.IO.File.Replace(staged, target, backup, false);
+                else
+                    % This move refuses to overwrite a concurrently created file.
+                    System.IO.File.Move(staged, target);
+                end
+            catch exception
+                if System.IO.File.Exists(backup)
+                    % Windows can move the original to its backup before failing.
+                    if ~System.IO.File.Exists(target) && ~System.IO.Directory.Exists(target)
+                        try
+                            System.IO.File.Move(backup, target);
+                        catch recoveryException
+                            exception = addCause(exception, recoveryException);
+                        end
+                    end
+                    if System.IO.File.Exists(backup)
+                        failure = MException("yamada:SourceWriter:RecoveryRequired", ...
+                            "Save failed. The original file is retained at: %s", backup);
+                        throw(addCause(failure, exception));
+                    end
+                end
+                rethrow(exception);
+            end
+
+            % Cleanup refusal must not turn a committed save into a reported failure.
+            yamada.source.SourceWriter.removeTemporary(backup);
+            clear stagedCleanup
+        end
+
+        function closeAndRemove(stream, filePath)
+            % closeAndRemove Close the staging handle before attempting cleanup.
+            arguments (Input)
+                stream System.IO.FileStream
+                filePath (1, 1) string
+            end
+
+            try
+                stream.Dispose();
+            catch
+                % Preserve the original write or close error during unwinding.
+            end
+            yamada.source.SourceWriter.removeTemporary(filePath);
+        end
+
+        function removeTemporary(filePath)
+            % removeTemporary Remove an owned temporary file without masking save status.
+            arguments (Input)
+                filePath (1, 1) string
+            end
+
+            try
+                System.IO.File.Delete(filePath);
+            catch exception
+                try
+                    warning("yamada:SourceWriter:CleanupFailed", ...
+                        "Temporary save file retained at %s: %s", filePath, exception.message);
+                catch
+                    % Warning-as-error settings must not mask the committed save.
+                end
+            end
+        end
+
         function result = defaultLineEnding()
             % defaultLineEnding Return the host platform convention for new output.
             arguments (Output)

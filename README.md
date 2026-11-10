@@ -30,7 +30,7 @@
 
 ## Supported Environment
 
-- MATLAB R2024a on 64-bit Windows, with a graphical session and JVM enabled
+- MATLAB R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
 
 The 1.0.0 release target is R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. MATLAB is required; this is not a standalone application. Runtime dependency analysis identifies MATLAB only; Node.js and development tools are not required to use the editor.
 
