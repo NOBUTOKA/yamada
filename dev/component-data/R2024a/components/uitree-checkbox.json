@@ -66,7 +66,7 @@
       "path": "CheckedNodes",
       "categoryId": "nodes",
       "order": 1,
-      "summary": "Checked nodes",
+      "summary": "Nodes currently checked in the tree.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "TreeNode object",
@@ -117,7 +117,7 @@
       "path": "SelectedNodes",
       "categoryId": "nodes",
       "order": 2,
-      "summary": "Selected node",
+      "summary": "Nodes currently selected in the tree.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "TreeNode object"
@@ -167,7 +167,7 @@
       "path": "FontName",
       "categoryId": "fontandcolor",
       "order": 1,
-      "summary": "Font name",
+      "summary": "Typeface used to render text.",
       "documentedAcceptedValues": [
         "system supported font name"
       ],
@@ -213,7 +213,7 @@
       "path": "FontSize",
       "categoryId": "fontandcolor",
       "order": 2,
-      "summary": "Font size",
+      "summary": "Size used to render text.",
       "documentedAcceptedValues": [
         "positive number"
       ],
@@ -261,7 +261,7 @@
       "path": "FontWeight",
       "categoryId": "fontandcolor",
       "order": 3,
-      "summary": "Font weight",
+      "summary": "Weight used to render text.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'bold'"
@@ -312,7 +312,7 @@
       "path": "FontAngle",
       "categoryId": "fontandcolor",
       "order": 4,
-      "summary": "Font angle",
+      "summary": "Upright or italic text style.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'italic'"
@@ -363,7 +363,7 @@
       "path": "FontColor",
       "categoryId": "fontandcolor",
       "order": 5,
-      "summary": "Font color",
+      "summary": "Color used to render text.",
       "documentedDefault": "[0 0 0]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -415,7 +415,7 @@
       "path": "BackgroundColor",
       "categoryId": "fontandcolor",
       "order": 6,
-      "summary": "Background color",
+      "summary": "Color behind the component content.",
       "documentedDefault": "[1 1 1]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -467,7 +467,7 @@
       "path": "StyleConfigurations",
       "categoryId": "fontandcolor",
       "order": 7,
-      "summary": "Configurations of added styles",
+      "summary": "Style settings associated with the component.",
       "documentedDefault": "empty n -by-3 table array",
       "documentedAcceptedValues": [
         "n -by-3 table array"
@@ -516,7 +516,7 @@
       "path": "Visible",
       "categoryId": "interactivity",
       "order": 1,
-      "summary": "State of visibility",
+      "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -564,7 +564,7 @@
       "path": "Editable",
       "categoryId": "interactivity",
       "order": 2,
-      "summary": "Node text editability",
+      "summary": "Whether the user can change the displayed value.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -612,7 +612,7 @@
       "path": "Enable",
       "categoryId": "interactivity",
       "order": 3,
-      "summary": "Operational state of tree",
+      "summary": "Whether the control accepts user interaction.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -660,7 +660,7 @@
       "path": "Tooltip",
       "categoryId": "interactivity",
       "order": 4,
-      "summary": "Tooltip",
+      "summary": "Help text displayed when the pointer rests on the component.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -712,7 +712,7 @@
       "path": "ContextMenu",
       "categoryId": "interactivity",
       "order": 5,
-      "summary": "Context menu",
+      "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "ContextMenu object"
@@ -760,7 +760,7 @@
       "path": "Position",
       "categoryId": "position",
       "order": 1,
-      "summary": "Location and size",
+      "summary": "Component rectangle [left bottom width height] in its configured units.",
       "documentedDefault": "[20 20 150 300]",
       "documentedAcceptedValues": [
         "[left bottom width height]"
@@ -818,7 +818,7 @@
       "path": "InnerPosition",
       "categoryId": "position",
       "order": 2,
-      "summary": "Location and size",
+      "summary": "Inner rectangle [left bottom width height] in its configured units.",
       "documentedDefault": "[20 20 150 300]",
       "documentedAcceptedValues": [
         "[left bottom width height]"
@@ -878,7 +878,7 @@
       "path": "OuterPosition",
       "categoryId": "position",
       "order": 3,
-      "summary": "Location and size",
+      "summary": "Outer rectangle [left bottom width height] in its configured units.",
       "documentedDefault": "[20 20 150 300]",
       "documentedAcceptedValues": [
         "[left bottom width height]"
@@ -934,7 +934,7 @@
       "path": "Layout",
       "categoryId": "position",
       "order": 4,
-      "summary": "Layout options",
+      "summary": "Placement settings supplied by the parent layout.",
       "documentedDefault": "empty LayoutOptions array",
       "documentedAcceptedValues": [
         "GridLayoutOptions object"
@@ -983,7 +983,7 @@
       "path": "CheckedNodesChangedFcn",
       "categoryId": "callbacks",
       "order": 1,
-      "summary": "Checked nodes changed callback",
+      "summary": "Callback invoked for the checked nodes changed event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1050,7 +1050,7 @@
       "path": "SelectionChangedFcn",
       "categoryId": "callbacks",
       "order": 2,
-      "summary": "Selection changed callback",
+      "summary": "Callback invoked for the selection changed event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1117,7 +1117,7 @@
       "path": "NodeExpandedFcn",
       "categoryId": "callbacks",
       "order": 3,
-      "summary": "Node expanded callback",
+      "summary": "Callback invoked for the node expanded event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1184,7 +1184,7 @@
       "path": "NodeCollapsedFcn",
       "categoryId": "callbacks",
       "order": 4,
-      "summary": "Node collapsed callback",
+      "summary": "Callback invoked for the node collapsed event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1251,7 +1251,7 @@
       "path": "NodeTextChangedFcn",
       "categoryId": "callbacks",
       "order": 5,
-      "summary": "Node text changed callback",
+      "summary": "Callback invoked for the node text changed event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1318,7 +1318,7 @@
       "path": "ClickedFcn",
       "categoryId": "callbacks",
       "order": 6,
-      "summary": "Clicked function",
+      "summary": "Callback invoked for the clicked event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1385,7 +1385,7 @@
       "path": "DoubleClickedFcn",
       "categoryId": "callbacks",
       "order": 7,
-      "summary": "Double-clicked function",
+      "summary": "Callback invoked for the double clicked event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1452,7 +1452,7 @@
       "path": "CreateFcn",
       "categoryId": "callbacks",
       "order": 8,
-      "summary": "Creation function",
+      "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1519,7 +1519,7 @@
       "path": "DeleteFcn",
       "categoryId": "callbacks",
       "order": 9,
-      "summary": "Deletion function",
+      "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1586,7 +1586,7 @@
       "path": "Interruptible",
       "categoryId": "callbackexecutioncontrol",
       "order": 1,
-      "summary": "Callback interruption",
+      "summary": "Whether another callback can interrupt the running callback.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1634,7 +1634,7 @@
       "path": "BusyAction",
       "categoryId": "callbackexecutioncontrol",
       "order": 2,
-      "summary": "Callback queuing",
+      "summary": "How a callback is handled while another callback is busy.",
       "documentedDefault": "'queue'",
       "documentedAcceptedValues": [
         "'cancel'"
@@ -1685,7 +1685,7 @@
       "path": "BeingDeleted",
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
-      "summary": "Deletion status",
+      "summary": "Whether destruction of this object is in progress.",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -1733,7 +1733,7 @@
       "path": "Parent",
       "categoryId": "parentchild",
       "order": 1,
-      "summary": "Parent container",
+      "summary": "Container that owns this component.",
       "documentedDefault": "Figure object",
       "documentedAcceptedValues": [
         "Panel object",
@@ -1784,7 +1784,7 @@
       "path": "Children",
       "categoryId": "parentchild",
       "order": 2,
-      "summary": "Children",
+      "summary": "Components owned directly by this container.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "array of TreeNode objects"
@@ -1832,7 +1832,7 @@
       "path": "HandleVisibility",
       "categoryId": "parentchild",
       "order": 3,
-      "summary": "Visibility of object handle",
+      "summary": "Whether handle-search operations expose this object.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "'callback'",
@@ -1882,7 +1882,7 @@
       "path": "Type",
       "categoryId": "identifiers",
       "order": 1,
-      "summary": "Type of graphics object",
+      "summary": "MATLAB graphics type identifying the object.",
       "documentedAcceptedValues": [
         "'uicheckboxtree'"
       ],
@@ -1930,7 +1930,7 @@
       "path": "Tag",
       "categoryId": "identifiers",
       "order": 2,
-      "summary": "Object identifier",
+      "summary": "Identifier available to application code.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -1980,7 +1980,7 @@
       "path": "UserData",
       "categoryId": "identifiers",
       "order": 3,
-      "summary": "User data",
+      "summary": "Application-defined data attached to the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "array"

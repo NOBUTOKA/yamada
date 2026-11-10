@@ -59,7 +59,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Title",
-            "description": "Title",
+            "description": "Heading displayed with the component.",
             "categoryId": "title",
             "category": "Title",
             "order": 1,
@@ -95,7 +95,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TitlePosition",
-            "description": "Location of title",
+            "description": "Choice controlling title position.",
             "categoryId": "title",
             "category": "Title",
             "order": 2,
@@ -145,7 +145,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ForegroundColor",
-            "description": "Title color",
+            "description": "Color used in front of the component background.",
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 1,
@@ -181,7 +181,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BackgroundColor",
-            "description": "Background color",
+            "description": "Color behind the component content.",
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 2,
@@ -217,7 +217,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BorderType",
-            "description": "Button group border",
+            "description": "Choice controlling border type.",
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 3,
@@ -260,7 +260,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BorderWidth",
-            "description": "Border width",
+            "description": "Numeric setting for border width.",
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 4,
@@ -297,7 +297,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BorderColor",
-            "description": "Border color",
+            "description": "Color used for border color.",
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 5,
@@ -340,7 +340,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
-            "description": "Font name",
+            "description": "Typeface used to render text.",
             "categoryId": "font",
             "category": "Font",
             "order": 1,
@@ -375,7 +375,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
-            "description": "Font size",
+            "description": "Size used to render text.",
             "categoryId": "font",
             "category": "Font",
             "order": 2,
@@ -414,7 +414,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
-            "description": "Font weight",
+            "description": "Weight used to render text.",
             "categoryId": "font",
             "category": "Font",
             "order": 3,
@@ -453,7 +453,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
-            "description": "Font angle",
+            "description": "Upright or italic text style.",
             "categoryId": "font",
             "category": "Font",
             "order": 4,
@@ -492,7 +492,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontUnits",
-            "description": "Font unit of measurement",
+            "description": "Measurement unit used for text size.",
             "categoryId": "font",
             "category": "Font",
             "order": 5,
@@ -541,7 +541,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
-            "description": "State of visibility",
+            "description": "Whether this component is displayed.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
@@ -577,7 +577,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SelectedObject",
-            "description": "Currently selected radio button or toggle button",
+            "description": "Control currently chosen in the button group.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
@@ -611,7 +611,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
-            "description": "Context menu",
+            "description": "Menu opened for this component by a context-menu gesture.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 3,
@@ -652,7 +652,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Position",
-            "description": "Location and size of button group, including borders and title",
+            "description": "Component rectangle [left bottom width height] in its configured units.",
             "categoryId": "position",
             "category": "Position",
             "order": 1,
@@ -688,7 +688,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "InnerPosition",
-            "description": "Location and size of button group, excluding borders and title",
+            "description": "Inner rectangle [left bottom width height] in its configured units.",
             "categoryId": "position",
             "category": "Position",
             "order": 2,
@@ -726,7 +726,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "OuterPosition",
-            "description": "Location and size of button group, including borders and title",
+            "description": "Outer rectangle [left bottom width height] in its configured units.",
             "categoryId": "position",
             "category": "Position",
             "order": 3,
@@ -764,7 +764,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Units",
-            "description": "Units of measurement",
+            "description": "Measurement unit used for component geometry.",
             "categoryId": "position",
             "category": "Position",
             "order": 4,
@@ -814,7 +814,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SelectionChangedFcn",
-            "description": "Selection changed callback",
+            "description": "Callback invoked for the selection changed event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 1,
@@ -857,7 +857,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SizeChangedFcn",
-            "description": "Size change callback",
+            "description": "Callback invoked for the size changed event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 2,
@@ -900,7 +900,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ButtonDownFcn",
-            "description": "Button-press callback function",
+            "description": "Callback invoked for the button down event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 3,
@@ -943,7 +943,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CreateFcn",
-            "description": "Creation function",
+            "description": "Callback invoked for the create event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 4,
@@ -986,7 +986,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "DeleteFcn",
-            "description": "Deletion function",
+            "description": "Callback invoked for the delete event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 5,
@@ -1036,7 +1036,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
-            "description": "Callback interruption",
+            "description": "Whether another callback can interrupt the running callback.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 1,
@@ -1072,7 +1072,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
-            "description": "Callback queuing",
+            "description": "How a callback is handled while another callback is busy.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 2,
@@ -1111,7 +1111,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
-            "description": "Deletion status",
+            "description": "Whether destruction of this object is in progress.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 3,
@@ -1145,7 +1145,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HitTest",
-            "description": "Ability to become current object",
+            "description": "Whether this object responds to pointer hit testing.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 4,
@@ -1188,7 +1188,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Parent",
-            "description": "Parent container",
+            "description": "Container that owns this component.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 1,
@@ -1222,7 +1222,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Children",
-            "description": "ButtonGroup children",
+            "description": "Components owned directly by this container.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 2,
@@ -1256,7 +1256,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HandleVisibility",
-            "description": "Visibility of object handle",
+            "description": "Whether handle-search operations expose this object.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 3,
@@ -1298,7 +1298,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Type",
-            "description": "Type of graphics object",
+            "description": "MATLAB graphics type identifying the object.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 1,
@@ -1332,7 +1332,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tag",
-            "description": "Object identifier",
+            "description": "Identifier available to application code.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 2,
@@ -1367,7 +1367,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "UserData",
-            "description": "User data",
+            "description": "Application-defined data attached to the component.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 3,
@@ -1408,7 +1408,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Buttons",
-            "description": "Buttons managed by button group",
+            "description": "Buttons included in the toolbar.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 1,
@@ -1442,7 +1442,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Enable",
-            "description": "Operational state",
+            "description": "Whether the control accepts user interaction.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 2,
@@ -1478,7 +1478,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tooltip",
-            "description": "Tooltip",
+            "description": "Help text displayed when the pointer rests on the component.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 3,
@@ -1515,7 +1515,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Scrollable",
-            "description": "Ability to scroll",
+            "description": "Whether scrolling is available for the container.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 4,
@@ -1551,7 +1551,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "AutoResizeChildren",
-            "description": "Automatically resize children",
+            "description": "Whether the container resizes its children automatically.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 5,
@@ -1587,7 +1587,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Layout",
-            "description": "Layout options",
+            "description": "Placement settings supplied by the parent layout.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 6,
@@ -1628,7 +1628,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ShadowColor",
-            "description": "Border shadow color",
+            "description": "Color used for shadow color.",
             "categoryId": "figurebasedappsonly",
             "category": "figure -Based Apps Only",
             "order": 1,

@@ -1,8 +1,8 @@
 # Component Property Audit Guidelines
 
-This document defines the release-independent procedure for auditing MATLAB UI component properties. Release-specific documentation transcripts live in directories such as `R2024a`; the same procedure applies when adding another release such as `R2023b`.
+This document defines the release-independent procedure for auditing MATLAB UI component properties. Release-specific API-fact ledgers live in directories such as `R2024a`; the same procedure applies when adding another release such as `R2023b`.
 
-The development transcript records both documentation facts and product audit decisions. It is not itself the runtime component catalog and does not authorize editing, source generation, or Safe Preview assignment. Promotion into the runtime catalog is a separate, tested step.
+The development ledger records both API facts and product audit decisions. It is not itself the runtime component catalog and does not authorize editing, source generation, or Safe Preview assignment. Promotion into the runtime catalog is a separate, tested step.
 
 ## Design principles
 
@@ -13,6 +13,10 @@ The development transcript records both documentation facts and product audit de
 5. Never infer Safe Preview safety from editability or visual effect alone.
 6. Express cross-property constraints in one direction, from the dependent property to the property it depends on.
 7. Keep executable behavior in allowlisted MATLAB code. JSON names symbolic schemas, editors, validators, policies, and reasons only.
+
+## Presentation Text and Value Facts
+
+Use `ProjectPropertyText.ps1` for project-authored summaries; do not import official headings as UI descriptions. `UpdateProjectPropertyText.ps1` refreshes the mirrored ledger text, and catalog promotion uses the same authored definitions. Preserve source URLs and factual API names, literal defaults, enum tokens, types, shapes, and bounds; these are not permission to republish reference narrative or examples. Canonical reference notation is informative only. Enum normalization and multiline classification must use `valueContract`, never wording in `documentedDefault` or `documentedAcceptedValues`. Update the shared description definitions and semantic tests when extending the ledger.
 
 ## Evidence hierarchy
 

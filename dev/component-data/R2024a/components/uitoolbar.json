@@ -54,7 +54,7 @@
       "path": "Visible",
       "categoryId": "interactivity",
       "order": 1,
-      "summary": "State of visibility",
+      "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -99,7 +99,7 @@
       "path": "ContextMenu",
       "categoryId": "interactivity",
       "order": 2,
-      "summary": "Context menu",
+      "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "ContextMenu object"
@@ -144,7 +144,7 @@
       "path": "CreateFcn",
       "categoryId": "callbacks",
       "order": 1,
-      "summary": "Component creation function",
+      "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -208,7 +208,7 @@
       "path": "DeleteFcn",
       "categoryId": "callbacks",
       "order": 2,
-      "summary": "Component deletion function",
+      "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -272,7 +272,7 @@
       "path": "Interruptible",
       "categoryId": "callbackexecutioncontrol",
       "order": 1,
-      "summary": "Callback interruption",
+      "summary": "Whether another callback can interrupt the running callback.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical values"
@@ -317,7 +317,7 @@
       "path": "BusyAction",
       "categoryId": "callbackexecutioncontrol",
       "order": 2,
-      "summary": "Callback queuing",
+      "summary": "How a callback is handled while another callback is busy.",
       "documentedDefault": "'queue'",
       "documentedAcceptedValues": [
         "'cancel'"
@@ -365,7 +365,7 @@
       "path": "BeingDeleted",
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
-      "summary": "Deletion status",
+      "summary": "Whether destruction of this object is in progress.",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -410,7 +410,7 @@
       "path": "HitTest",
       "categoryId": "callbackexecutioncontrol",
       "order": 4,
-      "summary": "Ability to become current object (not recommended)",
+      "summary": "Whether this object responds to pointer hit testing.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -455,7 +455,7 @@
       "path": "Parent",
       "categoryId": "parentchild",
       "order": 1,
-      "summary": "Parent object",
+      "summary": "Container that owns this component.",
       "documentedAcceptedValues": [
         "Figure object"
       ],
@@ -499,7 +499,7 @@
       "path": "Children",
       "categoryId": "parentchild",
       "order": 2,
-      "summary": "Toolbar children",
+      "summary": "Components owned directly by this container.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "1-D array of component objects"
@@ -544,7 +544,7 @@
       "path": "HandleVisibility",
       "categoryId": "parentchild",
       "order": 3,
-      "summary": "Visibility of object handle",
+      "summary": "Whether handle-search operations expose this object.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "'callback'",
@@ -591,7 +591,7 @@
       "path": "Type",
       "categoryId": "identifiers",
       "order": 1,
-      "summary": "Type of graphics object",
+      "summary": "MATLAB graphics type identifying the object.",
       "documentedAcceptedValues": [
         "'uitoolbar'"
       ],
@@ -636,7 +636,7 @@
       "path": "Tag",
       "categoryId": "identifiers",
       "order": 2,
-      "summary": "Object identifier",
+      "summary": "Identifier available to application code.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -683,7 +683,7 @@
       "path": "UserData",
       "categoryId": "identifiers",
       "order": 3,
-      "summary": "User data",
+      "summary": "Application-defined data attached to the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "array"
@@ -729,7 +729,7 @@
       "path": "BackgroundColor",
       "categoryId": "uifigurebasedappsonly",
       "order": 1,
-      "summary": "Background color",
+      "summary": "Color behind the component content.",
       "documentedDefault": "[0.9569 0.9569 0.9569]",
       "documentedAcceptedValues": [
         "RGB triplet",

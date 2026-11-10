@@ -93,6 +93,7 @@ When adding or changing a standard component or property, update the versioned J
 - Preserve the boundary that prevents catalog data or identifiers from invoking arbitrary MATLAB code.
 - Keep tests consistent with the changed catalog behavior.
 - Do not silently import behavior observed in another MATLAB release into the R2024a catalog.
+- Keep property descriptions project-authored through `dev/component-data/ProjectPropertyText.ps1`. Preserve factual API tokens and source references; do not copy reference-page narrative or infer semantic contracts from its wording. Refresh ledger descriptions with `UpdateProjectPropertyText.ps1` before promotion.
 
 ## Testing
 
@@ -127,6 +128,8 @@ Optional native MATLAB observations and catalog-promotion provenance checks live
 addpath(fullfile(pwd, "dev", "compatibility"));
 compatibilityResults = runCompatibilityChecks();
 ```
+
+For catalog text or promotion changes, also run the PowerShell checks `tests/verifyCatalogProvenance.ps1` and `tests/verifyComponentLedgerSchema.ps1`. They verify reproducible regeneration, independence from reference wording, semantic preservation, and rejection of malformed ledger input before mutation.
 
 ## HTML Editing Canvas Overlay
 

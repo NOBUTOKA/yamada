@@ -64,7 +64,7 @@
       "path": "Value",
       "categoryId": "button",
       "order": 1,
-      "summary": "State of toggle button",
+      "summary": "Current value of the control.",
       "documentedAcceptedValues": [
         "1",
         "0"
@@ -114,7 +114,7 @@
       "path": "Text",
       "categoryId": "button",
       "order": 2,
-      "summary": "Button label",
+      "summary": "Text rendered by the component.",
       "documentedDefault": "'Toggle Button'",
       "documentedAcceptedValues": [
         "character vector",
@@ -163,7 +163,7 @@
       "path": "WordWrap",
       "categoryId": "button",
       "order": 3,
-      "summary": "Word wrapping to fit component width",
+      "summary": "Whether text can continue onto another display line.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -208,7 +208,7 @@
       "path": "Icon",
       "categoryId": "button",
       "order": 4,
-      "summary": "Predefined or custom icon",
+      "summary": "Image displayed beside the component text.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -255,7 +255,7 @@
       "path": "FontName",
       "categoryId": "fontandcolor",
       "order": 1,
-      "summary": "Font name",
+      "summary": "Typeface used to render text.",
       "documentedAcceptedValues": [
         "system supported font name"
       ],
@@ -298,7 +298,7 @@
       "path": "FontSize",
       "categoryId": "fontandcolor",
       "order": 2,
-      "summary": "Font size",
+      "summary": "Size used to render text.",
       "documentedAcceptedValues": [
         "positive number"
       ],
@@ -343,7 +343,7 @@
       "path": "FontWeight",
       "categoryId": "fontandcolor",
       "order": 3,
-      "summary": "Font weight",
+      "summary": "Weight used to render text.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'bold'"
@@ -391,7 +391,7 @@
       "path": "FontAngle",
       "categoryId": "fontandcolor",
       "order": 4,
-      "summary": "Font angle",
+      "summary": "Upright or italic text style.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'italic'"
@@ -439,7 +439,7 @@
       "path": "FontColor",
       "categoryId": "fontandcolor",
       "order": 5,
-      "summary": "Font color",
+      "summary": "Color used to render text.",
       "documentedDefault": "[0 0 0]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -488,7 +488,7 @@
       "path": "BackgroundColor",
       "categoryId": "fontandcolor",
       "order": 6,
-      "summary": "Background color",
+      "summary": "Color behind the component content.",
       "documentedDefault": "[0.96 0.96 0.96]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -537,7 +537,7 @@
       "path": "Visible",
       "categoryId": "interactivity",
       "order": 1,
-      "summary": "State of visibility",
+      "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -582,7 +582,7 @@
       "path": "Enable",
       "categoryId": "interactivity",
       "order": 2,
-      "summary": "Operational state of button",
+      "summary": "Whether the control accepts user interaction.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -627,7 +627,7 @@
       "path": "Tooltip",
       "categoryId": "interactivity",
       "order": 3,
-      "summary": "Tooltip",
+      "summary": "Help text displayed when the pointer rests on the component.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -676,7 +676,7 @@
       "path": "ContextMenu",
       "categoryId": "interactivity",
       "order": 4,
-      "summary": "Context menu",
+      "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "ContextMenu object"
@@ -721,7 +721,7 @@
       "path": "Position",
       "categoryId": "position",
       "order": 1,
-      "summary": "Location and size of button",
+      "summary": "Component rectangle [left bottom width height] in its configured units.",
       "documentedDefault": "[10 40 100 22]",
       "documentedAcceptedValues": [
         "[left bottom width height]"
@@ -779,7 +779,7 @@
       "path": "InnerPosition",
       "categoryId": "position",
       "order": 2,
-      "summary": "Location and size of button",
+      "summary": "Inner rectangle [left bottom width height] in its configured units.",
       "documentedDefault": "[10 10 100 22]",
       "documentedAcceptedValues": [
         "[left bottom width height]"
@@ -839,7 +839,7 @@
       "path": "OuterPosition",
       "categoryId": "position",
       "order": 3,
-      "summary": "Outer location and size of button",
+      "summary": "Outer rectangle [left bottom width height] in its configured units.",
       "documentedDefault": "[10 10 100 22]",
       "documentedAcceptedValues": [
         "[left bottom width height]"
@@ -895,7 +895,7 @@
       "path": "HorizontalAlignment",
       "categoryId": "position",
       "order": 4,
-      "summary": "Horizontal alignment of icon and text",
+      "summary": "Horizontal alignment of the displayed content.",
       "documentedDefault": "'center'",
       "documentedAcceptedValues": [
         "'left'",
@@ -945,7 +945,7 @@
       "path": "VerticalAlignment",
       "categoryId": "position",
       "order": 5,
-      "summary": "Vertical alignment of icon and text",
+      "summary": "Vertical alignment of the displayed content.",
       "documentedDefault": "'center'",
       "documentedAcceptedValues": [
         "'top'",
@@ -995,7 +995,7 @@
       "path": "IconAlignment",
       "categoryId": "position",
       "order": 6,
-      "summary": "Location of button icon",
+      "summary": "Placement of the icon relative to the text.",
       "documentedDefault": "'left'",
       "documentedAcceptedValues": [
         "'right'",
@@ -1053,7 +1053,7 @@
       "path": "CreateFcn",
       "categoryId": "callbacks",
       "order": 1,
-      "summary": "Creation function",
+      "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1117,7 +1117,7 @@
       "path": "DeleteFcn",
       "categoryId": "callbacks",
       "order": 2,
-      "summary": "Deletion function",
+      "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1181,7 +1181,7 @@
       "path": "Interruptible",
       "categoryId": "callbackexecutioncontrol",
       "order": 1,
-      "summary": "Callback interruption",
+      "summary": "Whether another callback can interrupt the running callback.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1226,7 +1226,7 @@
       "path": "BusyAction",
       "categoryId": "callbackexecutioncontrol",
       "order": 2,
-      "summary": "Callback queuing",
+      "summary": "How a callback is handled while another callback is busy.",
       "documentedDefault": "'queue'",
       "documentedAcceptedValues": [
         "'cancel'"
@@ -1274,7 +1274,7 @@
       "path": "BeingDeleted",
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
-      "summary": "Deletion status",
+      "summary": "Whether destruction of this object is in progress.",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -1319,7 +1319,7 @@
       "path": "Parent",
       "categoryId": "parentchild",
       "order": 1,
-      "summary": "Parent container",
+      "summary": "Container that owns this component.",
       "documentedAcceptedValues": [
         "ButtonGroup object"
       ],
@@ -1363,7 +1363,7 @@
       "path": "HandleVisibility",
       "categoryId": "parentchild",
       "order": 2,
-      "summary": "Visibility of object handle",
+      "summary": "Whether handle-search operations expose this object.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "'callback'",
@@ -1410,7 +1410,7 @@
       "path": "Type",
       "categoryId": "identifiers",
       "order": 1,
-      "summary": "Type of graphics object",
+      "summary": "MATLAB graphics type identifying the object.",
       "documentedAcceptedValues": [
         "'uitogglebutton'"
       ],
@@ -1455,7 +1455,7 @@
       "path": "Tag",
       "categoryId": "identifiers",
       "order": 2,
-      "summary": "Object identifier",
+      "summary": "Identifier available to application code.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -1502,7 +1502,7 @@
       "path": "UserData",
       "categoryId": "identifiers",
       "order": 3,
-      "summary": "User data",
+      "summary": "Application-defined data attached to the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "array"

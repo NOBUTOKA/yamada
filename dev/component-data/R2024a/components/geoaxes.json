@@ -99,7 +99,7 @@
       "path": "Basemap",
       "categoryId": "maps",
       "order": 1,
-      "summary": "Map on which to plot data",
+      "summary": "Map background selected for geographic display.",
       "documentedDefault": "'streets-light'",
       "documentedAcceptedValues": [
         "'streets-dark'",
@@ -167,7 +167,7 @@
       "path": "LatitudeLimits",
       "categoryId": "maps",
       "order": 2,
-      "summary": "Latitude limits of map",
+      "summary": "Latitude interval shown by the map.",
       "documentedAcceptedValues": [
         "1-by-2 vector of real, finite values"
       ],
@@ -212,7 +212,7 @@
       "path": "LongitudeLimits",
       "categoryId": "maps",
       "order": 3,
-      "summary": "Longitude limits of map",
+      "summary": "Longitude interval shown by the map.",
       "documentedAcceptedValues": [
         "1-by-2 vector of real, finite values"
       ],
@@ -257,7 +257,7 @@
       "path": "MapCenter",
       "categoryId": "maps",
       "order": 4,
-      "summary": "Center point of map in latitude and longitude",
+      "summary": "Latitude and longitude of the map center.",
       "documentedAcceptedValues": [
         "two-element numeric vector of real, finite values"
       ],
@@ -312,7 +312,7 @@
       "path": "MapCenterMode",
       "categoryId": "maps",
       "order": 5,
-      "summary": "Selection mode for map center",
+      "summary": "Automatic or explicit control of MapCenter.",
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
@@ -380,9 +380,9 @@
       "path": "ZoomLevel",
       "categoryId": "maps",
       "order": 6,
-      "summary": "Magnification level of map",
+      "summary": "Map magnification level.",
       "documentedAcceptedValues": [
-        "real, finite, numeric scalar between 0 and 25, inclusive"
+        "numeric scalar; real; finite; 0 <= value <= 25"
       ],
       "valueContract": {
         "kind": "number",
@@ -436,7 +436,7 @@
       "path": "ZoomLevelMode",
       "categoryId": "maps",
       "order": 7,
-      "summary": "Selection mode for zoom level",
+      "summary": "Automatic or explicit control of ZoomLevel.",
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
@@ -504,7 +504,7 @@
       "path": "Scalebar",
       "categoryId": "maps",
       "order": 8,
-      "summary": "Scale bar",
+      "summary": "Distance-scale object associated with the geographic axes.",
       "documentedAcceptedValues": [
         "GeographicScalebar object"
       ],
@@ -549,7 +549,7 @@
       "path": "FontName",
       "categoryId": "font",
       "order": 1,
-      "summary": "Font name",
+      "summary": "Typeface used to render text.",
       "documentedAcceptedValues": [
         "supported font name",
         "\"FixedWidth\""
@@ -593,7 +593,7 @@
       "path": "FontSize",
       "categoryId": "font",
       "order": 2,
-      "summary": "Font size",
+      "summary": "Size used to render text.",
       "documentedAcceptedValues": [
         "numeric scalar"
       ],
@@ -649,7 +649,7 @@
       "path": "FontSizeMode",
       "categoryId": "font",
       "order": 3,
-      "summary": "Selection mode for font size",
+      "summary": "Automatic or explicit control of FontSize.",
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
@@ -717,7 +717,7 @@
       "path": "FontWeight",
       "categoryId": "font",
       "order": 4,
-      "summary": "Character thickness",
+      "summary": "Weight used to render text.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'bold'"
@@ -765,7 +765,7 @@
       "path": "FontAngle",
       "categoryId": "font",
       "order": 5,
-      "summary": "Character slant",
+      "summary": "Upright or italic text style.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'italic'"
@@ -813,7 +813,7 @@
       "path": "LabelFontSizeMultiplier",
       "categoryId": "font",
       "order": 6,
-      "summary": "Scale factor for label font size",
+      "summary": "Text-size multiplier for labels relative to axes text.",
       "documentedDefault": "1.1",
       "documentedAcceptedValues": [
         "numeric value greater than 0"
@@ -858,7 +858,7 @@
       "path": "TitleFontSizeMultiplier",
       "categoryId": "font",
       "order": 7,
-      "summary": "Scale factor for title font size",
+      "summary": "Text-size multiplier for the title relative to axes text.",
       "documentedDefault": "1.1",
       "documentedAcceptedValues": [
         "numeric value greater than 0"
@@ -903,7 +903,7 @@
       "path": "TitleFontWeight",
       "categoryId": "font",
       "order": 8,
-      "summary": "Title character thickness",
+      "summary": "Choice controlling title font weight.",
       "documentedDefault": "'bold'",
       "documentedAcceptedValues": [
         "'normal'"
@@ -951,7 +951,7 @@
       "path": "SubtitleFontWeight",
       "categoryId": "font",
       "order": 9,
-      "summary": "Subtitle character thickness",
+      "summary": "Choice controlling subtitle font weight.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'bold'"
@@ -999,7 +999,7 @@
       "path": "FontUnits",
       "categoryId": "font",
       "order": 10,
-      "summary": "Font size units",
+      "summary": "Measurement unit used for text size.",
       "documentedDefault": "'points'",
       "documentedAcceptedValues": [
         "'inches'",
@@ -1061,7 +1061,7 @@
       "path": "TickDir",
       "categoryId": "ticks",
       "order": 1,
-      "summary": "Tick mark direction",
+      "summary": "Choice controlling tick dir.",
       "documentedDefault": "'in'",
       "documentedAcceptedValues": [
         "'out'",
@@ -1116,7 +1116,7 @@
       "path": "TickDirMode",
       "categoryId": "ticks",
       "order": 2,
-      "summary": "Selection mode for tick mark direction",
+      "summary": "Automatic or explicit control of TickDir.",
       "documentedDefault": "'manual'",
       "documentedAcceptedValues": [
         "'auto'"
@@ -1167,7 +1167,7 @@
       "path": "TickLength",
       "categoryId": "ticks",
       "order": 3,
-      "summary": "Tick mark length",
+      "summary": "Numeric values used for tick length.",
       "documentedDefault": "[0.01 0.025]",
       "documentedAcceptedValues": [
         "two-element vector"
@@ -1211,7 +1211,7 @@
       "path": "TickLabelFormat",
       "categoryId": "ticks",
       "order": 4,
-      "summary": "Tick label format",
+      "summary": "Formatting specification used for tick text.",
       "documentedDefault": "\"dms\"",
       "documentedAcceptedValues": [
         "\"dd\"",
@@ -1260,7 +1260,7 @@
       "path": "LatitudeAxis",
       "categoryId": "rulers",
       "order": 1,
-      "summary": "Latitude ruler",
+      "summary": "Ruler object used for geographic latitude.",
       "documentedAcceptedValues": [
         "GeographicRuler object"
       ],
@@ -1304,7 +1304,7 @@
       "path": "LongitudeAxis",
       "categoryId": "rulers",
       "order": 2,
-      "summary": "Longitude ruler",
+      "summary": "Ruler object used for geographic longitude.",
       "documentedAcceptedValues": [
         "GeographicRuler"
       ],
@@ -1348,7 +1348,7 @@
       "path": "AxisColor",
       "categoryId": "rulers",
       "order": 3,
-      "summary": "Color of axis lines, tick values, and labels",
+      "summary": "Color used for axis color.",
       "documentedDefault": "[0.1500 0.1500 0.1500]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -1396,7 +1396,7 @@
       "path": "Grid",
       "categoryId": "grids",
       "order": 1,
-      "summary": "Visibility of latitude and longitude lines",
+      "summary": "Whether the plotted grid is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1441,7 +1441,7 @@
       "path": "GridLineStyle",
       "categoryId": "grids",
       "order": 2,
-      "summary": "Line style for grid lines",
+      "summary": "Choice controlling grid line style.",
       "documentedDefault": "'-'",
       "documentedAcceptedValues": [
         "'--'",
@@ -1495,7 +1495,7 @@
       "path": "GridColor",
       "categoryId": "grids",
       "order": 3,
-      "summary": "Color of grid lines",
+      "summary": "Color used for grid color.",
       "documentedDefault": "[0.15 0.15 0.15]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -1556,7 +1556,7 @@
       "path": "GridColorMode",
       "categoryId": "grids",
       "order": 4,
-      "summary": "Property for setting grid color",
+      "summary": "Automatic or explicit control of GridColor.",
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
@@ -1624,10 +1624,10 @@
       "path": "GridAlpha",
       "categoryId": "grids",
       "order": 5,
-      "summary": "Grid-line transparency",
+      "summary": "Numeric setting for grid alpha.",
       "documentedDefault": "0.15",
       "documentedAcceptedValues": [
-        "value in the range [0,1]"
+        "0 <= value <= 1"
       ],
       "valueContract": {
         "kind": "number",
@@ -1681,7 +1681,7 @@
       "path": "GridAlphaMode",
       "categoryId": "grids",
       "order": 6,
-      "summary": "Selection mode for GridAlpha",
+      "summary": "Automatic or explicit control of GridAlpha.",
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
@@ -1749,7 +1749,7 @@
       "path": "Title",
       "categoryId": "labels",
       "order": 1,
-      "summary": "Text object for title",
+      "summary": "Heading displayed with the component.",
       "documentedAcceptedValues": [
         "text object"
       ],
@@ -1792,7 +1792,7 @@
       "path": "Subtitle",
       "categoryId": "labels",
       "order": 2,
-      "summary": "Text object for subtitle",
+      "summary": "Secondary heading displayed below the title.",
       "documentedAcceptedValues": [
         "text object"
       ],
@@ -1835,7 +1835,7 @@
       "path": "TitleHorizontalAlignment",
       "categoryId": "labels",
       "order": 3,
-      "summary": "Title and subtitle horizontal alignment",
+      "summary": "Choice controlling title horizontal alignment.",
       "documentedDefault": "'center'",
       "documentedAcceptedValues": [
         "'left'",
@@ -1885,7 +1885,7 @@
       "path": "LatitudeLabel",
       "categoryId": "labels",
       "order": 4,
-      "summary": "Latitude axis label",
+      "summary": "Text used for latitude label.",
       "documentedAcceptedValues": [
         "Text object"
       ],
@@ -1928,7 +1928,7 @@
       "path": "LongitudeLabel",
       "categoryId": "labels",
       "order": 5,
-      "summary": "Longitude axis label",
+      "summary": "Text used for longitude label.",
       "documentedAcceptedValues": [
         "Text object"
       ],
@@ -1971,7 +1971,7 @@
       "path": "Legend",
       "categoryId": "labels",
       "order": 6,
-      "summary": "Legend associated with geographic axes",
+      "summary": "Legend object associated with these axes.",
       "documentedDefault": "empty GraphicsPlaceholder",
       "documentedAcceptedValues": [
         "Legend object"
@@ -2017,8 +2017,8 @@
       "path": "ColorOrder",
       "categoryId": "multipleplots",
       "order": 1,
-      "summary": "Color order",
-      "documentedDefault": "seven predefined colors",
+      "summary": "Sequence of colors selected for successive plots.",
+      "documentedDefault": "MATLAB default seven-color sequence",
       "documentedAcceptedValues": [
         "three-column matrix of RGB triplets"
       ],
@@ -2062,8 +2062,8 @@
       "path": "LineStyleOrder",
       "categoryId": "multipleplots",
       "order": 2,
-      "summary": "Line style order",
-      "documentedDefault": "\"-\" solid line",
+      "summary": "Sequence of line patterns selected for successive plots.",
+      "documentedDefault": "\"-\"",
       "documentedAcceptedValues": [
         "character vector",
         "cell array of character vectors",
@@ -2110,7 +2110,7 @@
       "path": "LineStyleCyclingMethod",
       "categoryId": "multipleplots",
       "order": 3,
-      "summary": "How to cycle through line styles",
+      "summary": "How color and line-pattern sequences advance together.",
       "documentedDefault": "\"aftercolor\"",
       "documentedAcceptedValues": [
         "\"beforecolor\"",
@@ -2156,7 +2156,7 @@
       "path": "NextSeriesIndex",
       "categoryId": "multipleplots",
       "order": 4,
-      "summary": "SeriesIndex value for next object",
+      "summary": "Series index assigned to the next plotted object.",
       "documentedAcceptedValues": [
         "whole number"
       ],
@@ -2201,7 +2201,7 @@
       "path": "NextPlot",
       "categoryId": "multipleplots",
       "order": 5,
-      "summary": "Properties to reset",
+      "summary": "How a subsequent plot affects the existing axes content.",
       "documentedDefault": "'replace'",
       "documentedAcceptedValues": [
         "'add'",
@@ -2253,7 +2253,7 @@
       "path": "SortMethod",
       "categoryId": "multipleplots",
       "order": 6,
-      "summary": "Order for rendering objects",
+      "summary": "Choice controlling sort method.",
       "documentedAcceptedValues": [
         "'depth'",
         "'childorder'"
@@ -2301,7 +2301,7 @@
       "path": "ColorOrderIndex",
       "categoryId": "multipleplots",
       "order": 7,
-      "summary": "Color order index",
+      "summary": "Position within the color sequence for the next plot.",
       "documentedDefault": "1",
       "documentedAcceptedValues": [
         "positive integer"
@@ -2346,7 +2346,7 @@
       "path": "LineStyleOrderIndex",
       "categoryId": "multipleplots",
       "order": 8,
-      "summary": "Line style order index",
+      "summary": "Position within the line-pattern sequence for the next plot.",
       "documentedDefault": "1",
       "documentedAcceptedValues": [
         "positive integer"
@@ -2391,7 +2391,7 @@
       "path": "Colormap",
       "categoryId": "colorandtransparencymaps",
       "order": 1,
-      "summary": "Color map",
+      "summary": "Sequence of colors used to map indexed data.",
       "documentedDefault": "parula",
       "documentedAcceptedValues": [
         "m -by- 3 array of RGB triplets"
@@ -2436,7 +2436,7 @@
       "path": "ColorScale",
       "categoryId": "colorandtransparencymaps",
       "order": 2,
-      "summary": "Scale for color mapping",
+      "summary": "Choice controlling color scale.",
       "documentedDefault": "'linear'",
       "documentedAcceptedValues": [
         "'log'"
@@ -2484,10 +2484,10 @@
       "path": "CLim",
       "categoryId": "colorandtransparencymaps",
       "order": 3,
-      "summary": "Color limits for colormap",
+      "summary": "Numeric values used for clim.",
       "documentedDefault": "[0 1]",
       "documentedAcceptedValues": [
-        "two-element vector of the form [cmin cmax]"
+        "vector[2]: [cmin cmax]"
       ],
       "valueContract": {
         "kind": "numericArray",
@@ -2540,7 +2540,7 @@
       "path": "CLimMode",
       "categoryId": "colorandtransparencymaps",
       "order": 4,
-      "summary": "Selection mode for CLim",
+      "summary": "Automatic or explicit control of CLim.",
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
@@ -2608,10 +2608,10 @@
       "path": "Alphamap",
       "categoryId": "colorandtransparencymaps",
       "order": 5,
-      "summary": "Transparency map",
-      "documentedDefault": "array of 64 values from 0 to 1",
+      "summary": "Sequence of transparency values used for indexed data.",
+      "documentedDefault": "array[64]; 0 <= value <= 1",
       "documentedAcceptedValues": [
-        "array of finite alpha values from 0 to 1"
+        "alpha array; finite; 0 <= value <= 1"
       ],
       "valueContract": {
         "kind": "numericArray",
@@ -2653,7 +2653,7 @@
       "path": "AlphaScale",
       "categoryId": "colorandtransparencymaps",
       "order": 6,
-      "summary": "Scale for transparency mapping",
+      "summary": "Choice controlling alpha scale.",
       "documentedDefault": "'linear'",
       "documentedAcceptedValues": [
         "'log'"
@@ -2701,10 +2701,10 @@
       "path": "ALim",
       "categoryId": "colorandtransparencymaps",
       "order": 7,
-      "summary": "Alpha limits for alphamap",
+      "summary": "Numeric values used for alim.",
       "documentedDefault": "[0 1]",
       "documentedAcceptedValues": [
-        "two-element vector of the form [amin amax]"
+        "vector[2]: [amin amax]"
       ],
       "valueContract": {
         "kind": "numericArray",
@@ -2757,7 +2757,7 @@
       "path": "ALimMode",
       "categoryId": "colorandtransparencymaps",
       "order": 8,
-      "summary": "Selection mode for ALim",
+      "summary": "Automatic or explicit control of ALim.",
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'manual'"
@@ -2825,7 +2825,7 @@
       "path": "Color",
       "categoryId": "boxstyling",
       "order": 1,
-      "summary": "Background color",
+      "summary": "Color used by the component.",
       "documentedDefault": "[1 1 1]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -2874,7 +2874,7 @@
       "path": "LineWidth",
       "categoryId": "boxstyling",
       "order": 2,
-      "summary": "Width of lines",
+      "summary": "Width used to draw lines.",
       "documentedDefault": "0.5",
       "documentedAcceptedValues": [
         "positive scalar value"
@@ -2919,7 +2919,7 @@
       "path": "Box",
       "categoryId": "boxstyling",
       "order": 3,
-      "summary": "Outline around geographic axes",
+      "summary": "Whether box is enabled.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -2964,7 +2964,7 @@
       "path": "OuterPosition",
       "categoryId": "position",
       "order": 1,
-      "summary": "Size and position of geographic axes, including labels and margins",
+      "summary": "Outer rectangle [left bottom width height] in its configured units.",
       "documentedDefault": "[0 0 1 1]",
       "documentedAcceptedValues": [
         "four-element vector"
@@ -3012,7 +3012,7 @@
       "path": "InnerPosition",
       "categoryId": "position",
       "order": 2,
-      "summary": "Inner size and location",
+      "summary": "Inner rectangle [left bottom width height] in its configured units.",
       "documentedDefault": "[0.1300 0.1100 0.7750 0.8150]",
       "documentedAcceptedValues": [
         "four-element vector"
@@ -3061,7 +3061,7 @@
       "path": "Position",
       "categoryId": "position",
       "order": 3,
-      "summary": "Size and position of geographic axes, not including labels or margins",
+      "summary": "Component rectangle [left bottom width height] in its configured units.",
       "documentedDefault": "[0.1300 0.1100 0.7750 0.8150]",
       "documentedAcceptedValues": [
         "four-element vector"
@@ -3113,9 +3113,9 @@
       "path": "TightInset",
       "categoryId": "position",
       "order": 4,
-      "summary": "Margins for text labels",
+      "summary": "Margins [left bottom right top] needed around the plotted area.",
       "documentedAcceptedValues": [
-        "four-element vector of the form [left bottom right top]"
+        "vector[4]: [left bottom right top]"
       ],
       "documentedReadOnly": true,
       "valueContract": {
@@ -3158,7 +3158,7 @@
       "path": "PositionConstraint",
       "categoryId": "position",
       "order": 5,
-      "summary": "Position to hold constant",
+      "summary": "Rectangle kept fixed while related geometry changes.",
       "documentedAcceptedValues": [
         "\"outerposition\"",
         "\"innerposition\""
@@ -3203,7 +3203,7 @@
       "path": "Units",
       "categoryId": "position",
       "order": 6,
-      "summary": "Position units",
+      "summary": "Measurement unit used for component geometry.",
       "documentedDefault": "'normalized'",
       "documentedAcceptedValues": [
         "'inches'",
@@ -3267,7 +3267,7 @@
       "path": "Layout",
       "categoryId": "position",
       "order": 7,
-      "summary": "Layout options",
+      "summary": "Placement settings supplied by the parent layout.",
       "documentedDefault": "empty LayoutOptions array",
       "documentedAcceptedValues": [
         "TiledChartLayoutOptions object",
@@ -3314,7 +3314,7 @@
       "path": "InteractionOptions",
       "categoryId": "interactivity",
       "order": 1,
-      "summary": "Options to customize interaction behavior",
+      "summary": "Options used by the axes interaction tools.",
       "documentedAcceptedValues": [
         "GeographicAxesInteractionOptions object"
       ],
@@ -3358,7 +3358,7 @@
       "path": "Toolbar",
       "categoryId": "interactivity",
       "order": 2,
-      "summary": "Data exploration toolbar",
+      "summary": "Toolbar associated with the window or axes.",
       "documentedAcceptedValues": [
         "AxesToolbar object"
       ],
@@ -3402,7 +3402,7 @@
       "path": "Interactions",
       "categoryId": "interactivity",
       "order": 3,
-      "summary": "Interactions",
+      "summary": "Interaction tools enabled on the axes.",
       "documentedAcceptedValues": [
         "array of interaction objects",
         "[]"
@@ -3445,7 +3445,7 @@
       "path": "Visible",
       "categoryId": "interactivity",
       "order": 4,
-      "summary": "State of visibility",
+      "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -3490,7 +3490,7 @@
       "path": "CurrentPoint",
       "categoryId": "interactivity",
       "order": 5,
-      "summary": "Location of mouse pointer",
+      "summary": "Pointer location reported in the component coordinates.",
       "documentedAcceptedValues": [
         "2-by-3 array"
       ],
@@ -3535,7 +3535,7 @@
       "path": "ContextMenu",
       "categoryId": "interactivity",
       "order": 6,
-      "summary": "Context menu",
+      "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "ContextMenu object"
@@ -3580,7 +3580,7 @@
       "path": "Selected",
       "categoryId": "interactivity",
       "order": 7,
-      "summary": "Selection state",
+      "summary": "Whether the object is selected.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -3625,7 +3625,7 @@
       "path": "SelectionHighlight",
       "categoryId": "interactivity",
       "order": 8,
-      "summary": "Display of selection handles",
+      "summary": "Whether selection highlight is enabled.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -3670,7 +3670,7 @@
       "path": "ButtonDownFcn",
       "categoryId": "callbacks",
       "order": 1,
-      "summary": "Mouse-click callback",
+      "summary": "Callback invoked for the button down event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -3734,7 +3734,7 @@
       "path": "CreateFcn",
       "categoryId": "callbacks",
       "order": 2,
-      "summary": "Creation function",
+      "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -3798,7 +3798,7 @@
       "path": "DeleteFcn",
       "categoryId": "callbacks",
       "order": 3,
-      "summary": "Deletion function",
+      "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -3862,7 +3862,7 @@
       "path": "Interruptible",
       "categoryId": "callbackexecutioncontrol",
       "order": 1,
-      "summary": "Callback interruption",
+      "summary": "Whether another callback can interrupt the running callback.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -3907,7 +3907,7 @@
       "path": "BusyAction",
       "categoryId": "callbackexecutioncontrol",
       "order": 2,
-      "summary": "Callback queuing",
+      "summary": "How a callback is handled while another callback is busy.",
       "documentedDefault": "'queue'",
       "documentedAcceptedValues": [
         "'cancel'"
@@ -3955,7 +3955,7 @@
       "path": "PickableParts",
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
-      "summary": "Ability to capture mouse clicks",
+      "summary": "Parts of the object eligible for pointer hit testing.",
       "documentedDefault": "'visible'",
       "documentedAcceptedValues": [
         "'all'",
@@ -4005,7 +4005,7 @@
       "path": "HitTest",
       "categoryId": "callbackexecutioncontrol",
       "order": 4,
-      "summary": "Response to captured mouse clicks",
+      "summary": "Whether this object responds to pointer hit testing.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -4050,7 +4050,7 @@
       "path": "BeingDeleted",
       "categoryId": "callbackexecutioncontrol",
       "order": 5,
-      "summary": "Deletion status",
+      "summary": "Whether destruction of this object is in progress.",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -4095,7 +4095,7 @@
       "path": "Parent",
       "categoryId": "parentchild",
       "order": 1,
-      "summary": "Parent container",
+      "summary": "Container that owns this component.",
       "documentedAcceptedValues": [
         "Figure object",
         "Panel object",
@@ -4143,7 +4143,7 @@
       "path": "Children",
       "categoryId": "parentchild",
       "order": 2,
-      "summary": "Children",
+      "summary": "Components owned directly by this container.",
       "documentedAcceptedValues": [
         "empty GraphicsPlaceholder array",
         "array of graphics objects"
@@ -4188,7 +4188,7 @@
       "path": "HandleVisibility",
       "categoryId": "parentchild",
       "order": 3,
-      "summary": "Visibility of object handle",
+      "summary": "Whether handle-search operations expose this object.",
       "documentedDefault": "\"on\"",
       "documentedAcceptedValues": [
         "\"off\"",
@@ -4235,7 +4235,7 @@
       "path": "Type",
       "categoryId": "identifiers",
       "order": 1,
-      "summary": "Type of graphics object",
+      "summary": "MATLAB graphics type identifying the object.",
       "documentedDefault": "'geoaxes'",
       "documentedReadOnly": true,
       "valueContract": {
@@ -4278,7 +4278,7 @@
       "path": "Tag",
       "categoryId": "identifiers",
       "order": 2,
-      "summary": "Object identifier",
+      "summary": "Identifier available to application code.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -4325,7 +4325,7 @@
       "path": "UserData",
       "categoryId": "identifiers",
       "order": 3,
-      "summary": "User data",
+      "summary": "Application-defined data attached to the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "array"

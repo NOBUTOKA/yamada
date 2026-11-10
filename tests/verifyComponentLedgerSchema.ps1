@@ -12,6 +12,7 @@ Set-StrictMode -Version Latest
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $toolRoot = Join-Path $projectRoot 'dev/component-data'
 . (Join-Path $toolRoot 'ComponentLedger.ps1')
+. (Join-Path $toolRoot 'ProjectPropertyText.ps1')
 
 function Assert-Condition {
     param([bool]$Condition, [string]$Message)
@@ -40,7 +41,7 @@ try {
     Copy-Item -LiteralPath (Join-Path $toolRoot 'R2024a') -Destination $releaseRoot -Recurse
     Assert-ComponentLedgerSchema -ReleaseDirectory $releaseRoot
     $documents = @(Get-ChildItem -LiteralPath (Join-Path $releaseRoot 'components') -Filter '*.json' -File)
-    $entries = @('ApplyGeometryImpactReview', 'ApplyApplicationPolicyReview', 'GenerateGroupingArtifacts', 'GenerateGroupingDesign', 'PromoteGroupingToRuntimeCatalog')
+    $entries = @('UpdateProjectPropertyText', 'ApplyGeometryImpactReview', 'ApplyApplicationPolicyReview', 'GenerateGroupingArtifacts', 'GenerateGroupingDesign', 'PromoteGroupingToRuntimeCatalog')
     foreach ($entry in $entries) { Invoke-PipelineEntry $entry $releaseRoot $catalogRoot }
     Assert-ComponentLedgerSchema -ReleaseDirectory $releaseRoot
 
@@ -50,7 +51,8 @@ try {
     Assert-Condition ($baseline -ceq (Get-TreeDigest $temporaryRoot)) 'Valid schema regeneration is not reproducible.'
     $runtime = Get-Content -LiteralPath (Join-Path $catalogRoot 'components/uiaxes.json') -Raw | ConvertFrom-Json
     $ticks = @($runtime.categories | ForEach-Object { $_.entries }) | Where-Object path -CEQ 'XTick'
-    Assert-Condition ($ticks.metadata.description -ceq 'Tick values') 'The grouped official heading did not reach runtime metadata.'
+    $expectedTicks = Get-ProjectPropertySummary ([pscustomobject]@{path='XTick';valueContract=@{kind='numericArray'}})
+    Assert-Condition ($ticks.metadata.description -ceq $expectedTicks) 'The project-authored property description did not reach runtime metadata.'
 
     $label = Get-Content -LiteralPath (Join-Path $catalogRoot 'components/uilabel.json') -Raw | ConvertFrom-Json
     $text = @($label.categories | ForEach-Object { $_.entries }) | Where-Object path -CEQ 'Text'

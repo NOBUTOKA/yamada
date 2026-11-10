@@ -54,7 +54,7 @@
       "path": "State",
       "categoryId": "toggletool",
       "order": 1,
-      "summary": "Toggle tool state",
+      "summary": "Whether state is enabled.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -99,7 +99,7 @@
       "path": "Icon",
       "categoryId": "toggletool",
       "order": 2,
-      "summary": "Icon source or file",
+      "summary": "Image displayed beside the component text.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -146,7 +146,7 @@
       "path": "CData",
       "categoryId": "toggletool",
       "order": 3,
-      "summary": "Image array",
+      "summary": "Color or image data associated with the object.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "m -by- n -by-3 truecolor image array"
@@ -189,7 +189,7 @@
       "path": "Separator",
       "categoryId": "toggletool",
       "order": 4,
-      "summary": "Separator line mode",
+      "summary": "Whether separator is enabled.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -234,7 +234,7 @@
       "path": "Visible",
       "categoryId": "interactivity",
       "order": 1,
-      "summary": "State of visibility",
+      "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -279,7 +279,7 @@
       "path": "Enable",
       "categoryId": "interactivity",
       "order": 2,
-      "summary": "Operational state",
+      "summary": "Whether the control accepts user interaction.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -324,7 +324,7 @@
       "path": "Tooltip",
       "categoryId": "interactivity",
       "order": 3,
-      "summary": "Tooltip",
+      "summary": "Help text displayed when the pointer rests on the component.",
       "documentedAcceptedValues": [
         "character vector",
         "string scalar",
@@ -370,7 +370,7 @@
       "path": "ContextMenu",
       "categoryId": "interactivity",
       "order": 4,
-      "summary": "Context menu",
+      "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "ContextMenu object"
@@ -415,7 +415,7 @@
       "path": "TooltipString",
       "categoryId": "interactivity",
       "order": 5,
-      "summary": "Tooltip (not recommended)",
+      "summary": "Help text displayed when the pointer rests on the tool.",
       "documentedAcceptedValues": [
         "character vector",
         "string scalar",
@@ -461,7 +461,7 @@
       "path": "ClickedCallback",
       "categoryId": "callbacks",
       "order": 1,
-      "summary": "Tool clicked callback",
+      "summary": "Callback invoked for the clicked event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -525,7 +525,7 @@
       "path": "OnCallback",
       "categoryId": "callbacks",
       "order": 2,
-      "summary": "Toggle tool on callback",
+      "summary": "Callback invoked for the on event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -589,7 +589,7 @@
       "path": "OffCallback",
       "categoryId": "callbacks",
       "order": 3,
-      "summary": "Toggle tool off callback",
+      "summary": "Callback invoked for the off event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -653,7 +653,7 @@
       "path": "CreateFcn",
       "categoryId": "callbacks",
       "order": 4,
-      "summary": "Component creation function",
+      "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -717,7 +717,7 @@
       "path": "DeleteFcn",
       "categoryId": "callbacks",
       "order": 5,
-      "summary": "Component deletion function",
+      "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -781,7 +781,7 @@
       "path": "Interruptible",
       "categoryId": "callbackexecutioncontrol",
       "order": 1,
-      "summary": "Callback interruption",
+      "summary": "Whether another callback can interrupt the running callback.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical values"
@@ -826,7 +826,7 @@
       "path": "BusyAction",
       "categoryId": "callbackexecutioncontrol",
       "order": 2,
-      "summary": "Callback queuing",
+      "summary": "How a callback is handled while another callback is busy.",
       "documentedDefault": "'queue'",
       "documentedAcceptedValues": [
         "'cancel'"
@@ -874,7 +874,7 @@
       "path": "BeingDeleted",
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
-      "summary": "Deletion status",
+      "summary": "Whether destruction of this object is in progress.",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -919,7 +919,7 @@
       "path": "HitTest",
       "categoryId": "callbackexecutioncontrol",
       "order": 4,
-      "summary": "Ability to become current object (not recommended)",
+      "summary": "Whether this object responds to pointer hit testing.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -964,7 +964,7 @@
       "path": "Parent",
       "categoryId": "parentchild",
       "order": 1,
-      "summary": "Parent object",
+      "summary": "Container that owns this component.",
       "documentedAcceptedValues": [
         "Toolbar object"
       ],
@@ -1008,7 +1008,7 @@
       "path": "HandleVisibility",
       "categoryId": "parentchild",
       "order": 2,
-      "summary": "Visibility of object handle",
+      "summary": "Whether handle-search operations expose this object.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "'callback'",
@@ -1055,7 +1055,7 @@
       "path": "Type",
       "categoryId": "identifiers",
       "order": 1,
-      "summary": "Type of graphics object",
+      "summary": "MATLAB graphics type identifying the object.",
       "documentedAcceptedValues": [
         "'uitoggletool'"
       ],
@@ -1100,7 +1100,7 @@
       "path": "Tag",
       "categoryId": "identifiers",
       "order": 2,
-      "summary": "Object identifier",
+      "summary": "Identifier available to application code.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -1147,7 +1147,7 @@
       "path": "UserData",
       "categoryId": "identifiers",
       "order": 3,
-      "summary": "User data",
+      "summary": "Application-defined data attached to the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "array"

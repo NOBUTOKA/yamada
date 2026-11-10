@@ -79,7 +79,7 @@
       "path": "Title",
       "categoryId": "title",
       "order": 1,
-      "summary": "Title",
+      "summary": "Heading displayed with the component.",
       "documentedAcceptedValues": [
         "character vector",
         "string scalar",
@@ -125,7 +125,7 @@
       "path": "TitlePosition",
       "categoryId": "title",
       "order": 2,
-      "summary": "Location of title",
+      "summary": "Choice controlling title position.",
       "documentedDefault": "'lefttop'",
       "documentedAcceptedValues": [
         "'centertop'",
@@ -181,7 +181,7 @@
       "path": "ForegroundColor",
       "categoryId": "colorandstyling",
       "order": 1,
-      "summary": "Title color",
+      "summary": "Color used in front of the component background.",
       "documentedDefault": "[0 0 0]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -230,7 +230,7 @@
       "path": "BackgroundColor",
       "categoryId": "colorandstyling",
       "order": 2,
-      "summary": "Background color",
+      "summary": "Color behind the component content.",
       "documentedDefault": "[0.94 0.94 0.94]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -279,7 +279,7 @@
       "path": "BorderType",
       "categoryId": "colorandstyling",
       "order": 3,
-      "summary": "Panel border",
+      "summary": "Choice controlling border type.",
       "documentedAcceptedValues": [
         "'line'",
         "'none'",
@@ -335,7 +335,7 @@
       "path": "BorderWidth",
       "categoryId": "colorandstyling",
       "order": 4,
-      "summary": "Border width",
+      "summary": "Numeric setting for border width.",
       "documentedDefault": "1",
       "documentedAcceptedValues": [
         "positive integer value"
@@ -381,7 +381,7 @@
       "path": "BorderColor",
       "categoryId": "colorandstyling",
       "order": 5,
-      "summary": "Border color",
+      "summary": "Color used for border color.",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -429,7 +429,7 @@
       "path": "FontName",
       "categoryId": "font",
       "order": 1,
-      "summary": "Font name",
+      "summary": "Typeface used to render text.",
       "documentedAcceptedValues": [
         "system supported font name"
       ],
@@ -472,7 +472,7 @@
       "path": "FontSize",
       "categoryId": "font",
       "order": 2,
-      "summary": "Font size",
+      "summary": "Size used to render text.",
       "documentedAcceptedValues": [
         "positive number"
       ],
@@ -531,7 +531,7 @@
       "path": "FontWeight",
       "categoryId": "font",
       "order": 3,
-      "summary": "Font weight",
+      "summary": "Weight used to render text.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'bold'"
@@ -579,7 +579,7 @@
       "path": "FontAngle",
       "categoryId": "font",
       "order": 4,
-      "summary": "Font angle",
+      "summary": "Upright or italic text style.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'italic'"
@@ -627,7 +627,7 @@
       "path": "FontUnits",
       "categoryId": "font",
       "order": 5,
-      "summary": "Font unit of measurement",
+      "summary": "Measurement unit used for text size.",
       "documentedAcceptedValues": [
         "'pixels'",
         "'points'",
@@ -688,7 +688,7 @@
       "path": "Visible",
       "categoryId": "interactivity",
       "order": 1,
-      "summary": "State of visibility",
+      "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -733,7 +733,7 @@
       "path": "ContextMenu",
       "categoryId": "interactivity",
       "order": 2,
-      "summary": "Context menu",
+      "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "ContextMenu object"
@@ -778,7 +778,7 @@
       "path": "Position",
       "categoryId": "position",
       "order": 1,
-      "summary": "Location and size of panel, including borders and title",
+      "summary": "Component rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -834,7 +834,7 @@
       "path": "InnerPosition",
       "categoryId": "position",
       "order": 2,
-      "summary": "Location and size of panel, excluding borders and title",
+      "summary": "Inner rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -883,7 +883,7 @@
       "path": "OuterPosition",
       "categoryId": "position",
       "order": 3,
-      "summary": "Location and size of panel, including borders and title",
+      "summary": "Outer rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -931,7 +931,7 @@
       "path": "Units",
       "categoryId": "position",
       "order": 4,
-      "summary": "Units of measurement",
+      "summary": "Measurement unit used for component geometry.",
       "documentedAcceptedValues": [
         "'pixels'",
         "'normalized'",
@@ -994,7 +994,7 @@
       "path": "SizeChangedFcn",
       "categoryId": "callbacks",
       "order": 1,
-      "summary": "Size change callback",
+      "summary": "Callback invoked for the size changed event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1058,7 +1058,7 @@
       "path": "ButtonDownFcn",
       "categoryId": "callbacks",
       "order": 2,
-      "summary": "Button-press callback function",
+      "summary": "Callback invoked for the button down event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1122,7 +1122,7 @@
       "path": "CreateFcn",
       "categoryId": "callbacks",
       "order": 3,
-      "summary": "Creation function",
+      "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1186,7 +1186,7 @@
       "path": "DeleteFcn",
       "categoryId": "callbacks",
       "order": 4,
-      "summary": "Deletion function",
+      "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1250,7 +1250,7 @@
       "path": "Interruptible",
       "categoryId": "callbackexecutioncontrol",
       "order": 1,
-      "summary": "Callback interruption",
+      "summary": "Whether another callback can interrupt the running callback.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1295,7 +1295,7 @@
       "path": "BusyAction",
       "categoryId": "callbackexecutioncontrol",
       "order": 2,
-      "summary": "Callback queuing",
+      "summary": "How a callback is handled while another callback is busy.",
       "documentedDefault": "'queue'",
       "documentedAcceptedValues": [
         "'cancel'"
@@ -1343,7 +1343,7 @@
       "path": "BeingDeleted",
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
-      "summary": "Deletion status",
+      "summary": "Whether destruction of this object is in progress.",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -1388,7 +1388,7 @@
       "path": "HitTest",
       "categoryId": "callbackexecutioncontrol",
       "order": 4,
-      "summary": "Ability to become current object",
+      "summary": "Whether this object responds to pointer hit testing.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1433,7 +1433,7 @@
       "path": "Parent",
       "categoryId": "parentchild",
       "order": 1,
-      "summary": "Parent container",
+      "summary": "Container that owns this component.",
       "documentedDefault": "Figure object",
       "documentedAcceptedValues": [
         "Panel object",
@@ -1481,7 +1481,7 @@
       "path": "Children",
       "categoryId": "parentchild",
       "order": 2,
-      "summary": "Panel children",
+      "summary": "Components owned directly by this container.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "1-D array of component objects"
@@ -1526,7 +1526,7 @@
       "path": "HandleVisibility",
       "categoryId": "parentchild",
       "order": 3,
-      "summary": "Visibility of object handle",
+      "summary": "Whether handle-search operations expose this object.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "'callback'",
@@ -1573,7 +1573,7 @@
       "path": "Type",
       "categoryId": "identifiers",
       "order": 1,
-      "summary": "Type of graphics object",
+      "summary": "MATLAB graphics type identifying the object.",
       "documentedAcceptedValues": [
         "'uipanel'"
       ],
@@ -1618,7 +1618,7 @@
       "path": "Tag",
       "categoryId": "identifiers",
       "order": 2,
-      "summary": "Object identifier",
+      "summary": "Identifier available to application code.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -1665,7 +1665,7 @@
       "path": "UserData",
       "categoryId": "identifiers",
       "order": 3,
-      "summary": "User data",
+      "summary": "Application-defined data attached to the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "array"
@@ -1711,7 +1711,7 @@
       "path": "Scrollable",
       "categoryId": "uifigurebasedappsonly",
       "order": 1,
-      "summary": "Ability to scroll",
+      "summary": "Whether scrolling is available for the container.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1756,7 +1756,7 @@
       "path": "Enable",
       "categoryId": "uifigurebasedappsonly",
       "order": 2,
-      "summary": "Operational state",
+      "summary": "Whether the control accepts user interaction.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1801,7 +1801,7 @@
       "path": "Tooltip",
       "categoryId": "uifigurebasedappsonly",
       "order": 3,
-      "summary": "Tooltip",
+      "summary": "Help text displayed when the pointer rests on the component.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -1850,7 +1850,7 @@
       "path": "AutoResizeChildren",
       "categoryId": "uifigurebasedappsonly",
       "order": 4,
-      "summary": "Automatically resize children",
+      "summary": "Whether the container resizes its children automatically.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1895,7 +1895,7 @@
       "path": "Layout",
       "categoryId": "uifigurebasedappsonly",
       "order": 5,
-      "summary": "Layout options",
+      "summary": "Placement settings supplied by the parent layout.",
       "documentedDefault": "empty LayoutOptions array",
       "documentedAcceptedValues": [
         "GridLayoutOptions object"
@@ -1941,7 +1941,7 @@
       "path": "ShadowColor",
       "categoryId": "figurebasedappsonly",
       "order": 1,
-      "summary": "Border shadow color",
+      "summary": "Color used for shadow color.",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",

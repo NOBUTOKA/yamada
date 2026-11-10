@@ -1,20 +1,27 @@
-# R2024a component documentation transcript
+# R2024a component development ledger
 
-This directory contains the release-fixed development inputs used to build the runtime component catalog. The component transcripts record public MATLAB documentation and audited property behavior, while [`runtime-component-metadata.json`](runtime-component-metadata.json) records construction, palette, overlay, and resize capabilities that do not belong to individual documented properties.
+This directory contains the release-fixed development inputs used to build the runtime component catalog. The component records retain public MATLAB API facts and audited property behavior, while [`runtime-component-metadata.json`](runtime-component-metadata.json) records construction, palette, overlay, and resize capabilities that do not belong to individual documented properties.
 
-The transcript is not a runtime dependency and must not be loaded by `ComponentCatalogLoader`. A listed property is not implicitly editable, safe for Preview, serializable, or supported by source generation.
+The ledger is not a runtime dependency and must not be loaded by `ComponentCatalogLoader`. A listed property is not implicitly editable, safe for Preview, serializable, or supported by source generation.
+
+
+## Project-Owned Presentation Text
+
+Property summaries are project-authored descriptions composed from API identifiers and reviewed value contracts by `ProjectPropertyText.ps1`. Refresh the ledger with `UpdateProjectPropertyText.ps1`, then promote it with `PromoteGroupingToRuntimeCatalog.ps1`. Promotion obtains descriptions from the same project-owned definitions, so a stale or imported reference heading cannot silently reappear in the runtime UI.
+
+Do not copy reference-page narrative, examples, or images into this ledger. Keep API names, literal defaults, enum tokens, type/shape facts, numeric limits, and source URLs exact where needed; use canonical notation for explanatory value text. Keep existing category IDs/order and semantic policies unchanged unless a separately reviewed product change requires otherwise. Historical statements below describe earlier collection/review work, not a requirement to restore verbatim wording. See [source and resource provenance](../../../doc/THIRD_PARTY_NOTICES.md).
 
 ## Schema v3 design
 
 `schema.json` version 3 defines one concrete component variant per file. A variant has its own stable `id`, documented factory arguments, declared type, categories, and complete property surface. For example, `uibutton-push` and `uibutton-state` are separate records even though both use `uibutton` as their factory.
 
-Properties remain a flat list. Each property carries `categoryId` and an order within that category, while `documentationCategories` records the source-page category heading and order. This avoids nesting that would make future shared property groups and parent-dependent surface composition awkward, without discarding the original documentation grouping. The source-page default is kept in `documentedDefault`, separately from the remaining accepted-value text in `documentedAcceptedValues`.
+Properties remain a flat list. Each property carries `categoryId` and an order within that category, while `documentationCategories` records the source-page category heading and order. This avoids nesting that would make future shared property groups and parent-dependent surface composition awkward, without discarding the original documentation grouping. Reference defaults and accepted values use API tokens or canonical factual notation in `documentedDefault` and `documentedAcceptedValues`. Reviewed behavior is carried by `valueContract`, not inferred from these strings.
 
-The 48 component files in [`components`](components) are the complete version 3 transcript. They were regenerated from their linked R2024a reference pages and carry an initial product audit for every property: normalized value contract, display effect, Safe Preview policy, required editor kind, and disposition. Variant applicability is implicit in the containing file. Parent-dependent geometry is recorded separately in [`parent-context-rules.json`](parent-context-rules.json), so `Layout.Row` and `Layout.Column` are not duplicated into each child variant. The promotion script combines these inputs with the grouping design and `runtime-component-metadata.json`; it does not depend on an older runtime catalog.
+The 48 component files in [`components`](components) form the version 3 development ledger. Their API facts were checked against linked R2024a references and carry an initial product audit for every property: normalized value contract, display effect, Safe Preview policy, required editor kind, and disposition. Variant applicability is implicit in the containing file. Parent-dependent geometry is recorded separately in [`parent-context-rules.json`](parent-context-rules.json), so `Layout.Row` and `Layout.Column` are not duplicated into each child variant. The promotion script combines these inputs with the grouping design and `runtime-component-metadata.json`; it does not depend on an older runtime catalog.
 
 ## Source and verification rules
 
-- Transcribe public properties only from the linked, release-fixed MathWorks reference page for the target release. MathWorks archive paths use lowercase release identifiers, for example `/help/releases/r2024a/`; do not substitute an unversioned current-release page or an uppercase archive path.
+- Record API facts from the linked, release-fixed MathWorks reference page for the target release. MathWorks archive paths use lowercase release identifiers, for example `/help/releases/r2024a/`; do not substitute an unversioned current-release page or an uppercase archive path.
 - Record a property even when it is read-only, callback-based, handle-valued, or unsuitable for Safe Preview.
 - Use `documentedReadOnly` only when the reference explicitly marks the property read-only.
 - Do not include hidden, private, or implementation properties returned by MATLAB class metadata.
@@ -22,7 +29,7 @@ The 48 component files in [`components`](components) are the complete version 3 
 
 ## Progress
 
-| Factory | Documented types/styles | Transcript status | Property count |
+| Factory | Documented types/styles | Ledger status | Property count |
 | --- | --- | --- | ---: |
 | `axes` | `default` | complete | 155 |
 | `geoaxes` | `default` | complete | 85 |

@@ -79,7 +79,7 @@
       "path": "Data",
       "categoryId": "table",
       "order": 1,
-      "summary": "Table data",
+      "summary": "Data supplied to this component.",
       "documentedAcceptedValues": [
         "table array",
         "numeric array",
@@ -133,7 +133,7 @@
       "path": "ColumnName",
       "categoryId": "table",
       "order": 2,
-      "summary": "Column names",
+      "summary": "Labels displayed above the table columns.",
       "documentedAcceptedValues": [
         "'numbered'",
         "n-by-1 cell array of character vectors",
@@ -188,7 +188,7 @@
       "path": "ColumnWidth",
       "categoryId": "table",
       "order": 3,
-      "summary": "Width of table columns",
+      "summary": "Sizes or weights assigned to the columns.",
       "documentedDefault": "'auto'",
       "documentedAcceptedValues": [
         "'fit'",
@@ -239,7 +239,7 @@
       "path": "ColumnEditable",
       "categoryId": "table",
       "order": 4,
-      "summary": "Ability to edit column cells",
+      "summary": "Whether users can edit cells in each column.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "logical 1-by- n array",
@@ -288,7 +288,7 @@
       "path": "ColumnRearrangeable",
       "categoryId": "table",
       "order": 5,
-      "summary": "Ability to rearrange table columns",
+      "summary": "Whether users can change the column order.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -333,7 +333,7 @@
       "path": "ColumnFormat",
       "categoryId": "table",
       "order": 6,
-      "summary": "Cell display format",
+      "summary": "Display or input format of each table column.",
       "documentedDefault": "empty cell array ( {} )",
       "documentedAcceptedValues": [
         "1-by- n cell array of character vectors"
@@ -381,7 +381,7 @@
       "path": "RowName",
       "categoryId": "table",
       "order": 7,
-      "summary": "Row names",
+      "summary": "Labels displayed beside the table rows.",
       "documentedAcceptedValues": [
         "'numbered'",
         "n-by-1 cell array of character vectors",
@@ -436,7 +436,7 @@
       "path": "FontName",
       "categoryId": "font",
       "order": 1,
-      "summary": "Font name",
+      "summary": "Typeface used to render text.",
       "documentedAcceptedValues": [
         "system supported font name"
       ],
@@ -479,7 +479,7 @@
       "path": "FontSize",
       "categoryId": "font",
       "order": 2,
-      "summary": "Font size",
+      "summary": "Size used to render text.",
       "documentedAcceptedValues": [
         "positive number"
       ],
@@ -538,7 +538,7 @@
       "path": "FontWeight",
       "categoryId": "font",
       "order": 3,
-      "summary": "Font weight",
+      "summary": "Weight used to render text.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'bold'"
@@ -586,7 +586,7 @@
       "path": "FontAngle",
       "categoryId": "font",
       "order": 4,
-      "summary": "Font angle",
+      "summary": "Upright or italic text style.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'italic'"
@@ -634,7 +634,7 @@
       "path": "FontUnits",
       "categoryId": "font",
       "order": 5,
-      "summary": "Font unit of measurement",
+      "summary": "Measurement unit used for text size.",
       "documentedAcceptedValues": [
         "'pixels'",
         "'points'",
@@ -695,7 +695,7 @@
       "path": "Visible",
       "categoryId": "interactivity",
       "order": 1,
-      "summary": "State of visibility",
+      "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -740,7 +740,7 @@
       "path": "Enable",
       "categoryId": "interactivity",
       "order": 2,
-      "summary": "Operational state of table",
+      "summary": "Whether the control accepts user interaction.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "'inactive'",
@@ -790,7 +790,7 @@
       "path": "Tooltip",
       "categoryId": "interactivity",
       "order": 3,
-      "summary": "Tooltip",
+      "summary": "Help text displayed when the pointer rests on the component.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -839,7 +839,7 @@
       "path": "ContextMenu",
       "categoryId": "interactivity",
       "order": 4,
-      "summary": "Context menu",
+      "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "ContextMenu object"
@@ -884,7 +884,7 @@
       "path": "ForegroundColor",
       "categoryId": "colorandstyling",
       "order": 1,
-      "summary": "Cell text color",
+      "summary": "Color used in front of the component background.",
       "documentedDefault": "[0 0 0]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -933,7 +933,7 @@
       "path": "BackgroundColor",
       "categoryId": "colorandstyling",
       "order": 2,
-      "summary": "Table background color",
+      "summary": "Color behind the component content.",
       "documentedDefault": "[1 1 1; 0.94 0.94 0.94]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -983,7 +983,7 @@
       "path": "RowStriping",
       "categoryId": "colorandstyling",
       "order": 3,
-      "summary": "Alternate row shading",
+      "summary": "Whether alternating table rows use different backgrounds.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1028,7 +1028,7 @@
       "path": "Position",
       "categoryId": "position",
       "order": 1,
-      "summary": "Location and size of table",
+      "summary": "Component rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -1084,7 +1084,7 @@
       "path": "InnerPosition",
       "categoryId": "position",
       "order": 2,
-      "summary": "Location and size of table",
+      "summary": "Inner rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -1132,7 +1132,7 @@
       "path": "OuterPosition",
       "categoryId": "position",
       "order": 3,
-      "summary": "Location and size of table",
+      "summary": "Outer rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -1180,7 +1180,7 @@
       "path": "Units",
       "categoryId": "position",
       "order": 4,
-      "summary": "Units of measurement",
+      "summary": "Measurement unit used for component geometry.",
       "documentedDefault": "'pixels'",
       "documentedAcceptedValues": [
         "'normalized'",
@@ -1249,7 +1249,7 @@
       "path": "CellEditCallback",
       "categoryId": "callbacks",
       "order": 1,
-      "summary": "Cell edit callback function",
+      "summary": "Callback invoked for the cell edit event.",
       "documentedAcceptedValues": [
         "function handle",
         "cell array",
@@ -1312,7 +1312,7 @@
       "path": "ButtonDownFcn",
       "categoryId": "callbacks",
       "order": 2,
-      "summary": "Button-press callback function",
+      "summary": "Callback invoked for the button down event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1376,7 +1376,7 @@
       "path": "KeyPressFcn",
       "categoryId": "callbacks",
       "order": 3,
-      "summary": "Key press callback function",
+      "summary": "Callback invoked for the key press event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1440,7 +1440,7 @@
       "path": "KeyReleaseFcn",
       "categoryId": "callbacks",
       "order": 4,
-      "summary": "Key-release callback function",
+      "summary": "Callback invoked for the key release event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1504,7 +1504,7 @@
       "path": "CreateFcn",
       "categoryId": "callbacks",
       "order": 5,
-      "summary": "Creation function",
+      "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1568,7 +1568,7 @@
       "path": "DeleteFcn",
       "categoryId": "callbacks",
       "order": 6,
-      "summary": "Deletion function",
+      "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1632,7 +1632,7 @@
       "path": "CellSelectionCallback",
       "categoryId": "callbacks",
       "order": 7,
-      "summary": "Cell selection callback function",
+      "summary": "Callback invoked for the cell selection event.",
       "documentedAcceptedValues": [
         "function handle",
         "cell array",
@@ -1695,7 +1695,7 @@
       "path": "Interruptible",
       "categoryId": "callbackexecutioncontrol",
       "order": 1,
-      "summary": "Callback interruption",
+      "summary": "Whether another callback can interrupt the running callback.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1740,7 +1740,7 @@
       "path": "BusyAction",
       "categoryId": "callbackexecutioncontrol",
       "order": 2,
-      "summary": "Callback queuing",
+      "summary": "How a callback is handled while another callback is busy.",
       "documentedDefault": "'queue'",
       "documentedAcceptedValues": [
         "'cancel'"
@@ -1788,7 +1788,7 @@
       "path": "BeingDeleted",
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
-      "summary": "Deletion status",
+      "summary": "Whether destruction of this object is in progress.",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -1833,7 +1833,7 @@
       "path": "HitTest",
       "categoryId": "callbackexecutioncontrol",
       "order": 4,
-      "summary": "Ability to become current object",
+      "summary": "Whether this object responds to pointer hit testing.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1878,7 +1878,7 @@
       "path": "Parent",
       "categoryId": "parentchild",
       "order": 1,
-      "summary": "Parent container",
+      "summary": "Container that owns this component.",
       "documentedDefault": "Figure object",
       "documentedAcceptedValues": [
         "Panel object",
@@ -1926,7 +1926,7 @@
       "path": "Children",
       "categoryId": "parentchild",
       "order": 2,
-      "summary": "Children of table",
+      "summary": "Components owned directly by this container.",
       "documentedAcceptedValues": [
         "empty array"
       ],
@@ -1970,7 +1970,7 @@
       "path": "HandleVisibility",
       "categoryId": "parentchild",
       "order": 3,
-      "summary": "Visibility of object handle",
+      "summary": "Whether handle-search operations expose this object.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "'callback'",
@@ -2017,7 +2017,7 @@
       "path": "Type",
       "categoryId": "identifiers",
       "order": 1,
-      "summary": "Type of graphics object",
+      "summary": "MATLAB graphics type identifying the object.",
       "documentedAcceptedValues": [
         "'uitable'"
       ],
@@ -2062,7 +2062,7 @@
       "path": "Tag",
       "categoryId": "identifiers",
       "order": 2,
-      "summary": "Object identifier",
+      "summary": "Identifier available to application code.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -2109,7 +2109,7 @@
       "path": "UserData",
       "categoryId": "identifiers",
       "order": 3,
-      "summary": "User data",
+      "summary": "Application-defined data attached to the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "array"
@@ -2155,7 +2155,7 @@
       "path": "DisplayData",
       "categoryId": "uifigurebasedappsonly",
       "order": 1,
-      "summary": "Table data in current display",
+      "summary": "Data in the current displayed order.",
       "documentedAcceptedValues": [
         "table array",
         "numeric array",
@@ -2205,7 +2205,7 @@
       "path": "ColumnSortable",
       "categoryId": "uifigurebasedappsonly",
       "order": 2,
-      "summary": "Ability to sort columns",
+      "summary": "Whether users can sort each column.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "logical 1-by- n array",
@@ -2254,7 +2254,7 @@
       "path": "StyleConfigurations",
       "categoryId": "uifigurebasedappsonly",
       "order": 3,
-      "summary": "Configurations of added styles",
+      "summary": "Style settings associated with the component.",
       "documentedDefault": "empty n -by-3 table array",
       "documentedAcceptedValues": [
         "n -by-3 table array"
@@ -2300,7 +2300,7 @@
       "path": "Selection",
       "categoryId": "uifigurebasedappsonly",
       "order": 4,
-      "summary": "Table selection",
+      "summary": "Current selection reported by the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "positive integer",
@@ -2353,7 +2353,7 @@
       "path": "DisplaySelection",
       "categoryId": "uifigurebasedappsonly",
       "order": 5,
-      "summary": "Table selection in current display",
+      "summary": "Whether the table indicates its current selection.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "positive integer",
@@ -2401,7 +2401,7 @@
       "path": "SelectionType",
       "categoryId": "uifigurebasedappsonly",
       "order": 6,
-      "summary": "Table selection type",
+      "summary": "Choice controlling selection type.",
       "documentedDefault": "'cell'",
       "documentedAcceptedValues": [
         "'row'",
@@ -2453,7 +2453,7 @@
       "path": "Multiselect",
       "categoryId": "uifigurebasedappsonly",
       "order": 7,
-      "summary": "Multiple element selection",
+      "summary": "Whether more than one item can be selected.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -2498,7 +2498,7 @@
       "path": "SelectionChangedFcn",
       "categoryId": "uifigurebasedappsonly",
       "order": 8,
-      "summary": "Selection changed callback",
+      "summary": "Callback invoked for the selection changed event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -2562,7 +2562,7 @@
       "path": "DisplayDataChangedFcn",
       "categoryId": "uifigurebasedappsonly",
       "order": 9,
-      "summary": "Display data changed callback",
+      "summary": "Callback invoked for the display data changed event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -2626,7 +2626,7 @@
       "path": "ClickedFcn",
       "categoryId": "uifigurebasedappsonly",
       "order": 10,
-      "summary": "Clicked callback",
+      "summary": "Callback invoked for the clicked event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -2690,7 +2690,7 @@
       "path": "DoubleClickedFcn",
       "categoryId": "uifigurebasedappsonly",
       "order": 11,
-      "summary": "Double-clicked callback",
+      "summary": "Callback invoked for the double clicked event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -2754,7 +2754,7 @@
       "path": "Layout",
       "categoryId": "uifigurebasedappsonly",
       "order": 12,
-      "summary": "Layout options",
+      "summary": "Placement settings supplied by the parent layout.",
       "documentedDefault": "empty LayoutOptions array",
       "documentedAcceptedValues": [
         "GridLayoutOptions object"
@@ -2800,7 +2800,7 @@
       "path": "Extent",
       "categoryId": "figurebasedappsonly",
       "order": 1,
-      "summary": "Size of enclosing rectangle",
+      "summary": "Measured bounds needed by the displayed content.",
       "documentedAcceptedValues": [
         "four-element row vector"
       ],

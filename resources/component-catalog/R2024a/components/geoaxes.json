@@ -38,7 +38,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Basemap",
-            "description": "Map on which to plot data",
+            "description": "Map background selected for geographic display.",
             "categoryId": "maps",
             "category": "Maps",
             "order": 1,
@@ -87,7 +87,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LatitudeLimits",
-            "description": "Latitude limits of map",
+            "description": "Latitude interval shown by the map.",
             "categoryId": "maps",
             "category": "Maps",
             "order": 2,
@@ -121,7 +121,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LongitudeLimits",
-            "description": "Longitude limits of map",
+            "description": "Longitude interval shown by the map.",
             "categoryId": "maps",
             "category": "Maps",
             "order": 3,
@@ -155,7 +155,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MapCenter",
-            "description": "Center point of map in latitude and longitude",
+            "description": "Latitude and longitude of the map center.",
             "categoryId": "maps",
             "category": "Maps",
             "order": 4,
@@ -190,7 +190,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MapCenterMode",
-            "description": "Selection mode for map center",
+            "description": "Automatic or explicit control of MapCenter.",
             "categoryId": "maps",
             "category": "Maps",
             "order": 5,
@@ -232,7 +232,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZoomLevel",
-            "description": "Magnification level of map",
+            "description": "Map magnification level.",
             "categoryId": "maps",
             "category": "Maps",
             "order": 6,
@@ -268,7 +268,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZoomLevelMode",
-            "description": "Selection mode for zoom level",
+            "description": "Automatic or explicit control of ZoomLevel.",
             "categoryId": "maps",
             "category": "Maps",
             "order": 7,
@@ -310,7 +310,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Scalebar",
-            "description": "Scale bar",
+            "description": "Distance-scale object associated with the geographic axes.",
             "categoryId": "maps",
             "category": "Maps",
             "order": 8,
@@ -351,7 +351,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
-            "description": "Font name",
+            "description": "Typeface used to render text.",
             "categoryId": "font",
             "category": "Font",
             "order": 1,
@@ -386,7 +386,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
-            "description": "Font size",
+            "description": "Size used to render text.",
             "categoryId": "font",
             "category": "Font",
             "order": 2,
@@ -422,7 +422,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSizeMode",
-            "description": "Selection mode for font size",
+            "description": "Automatic or explicit control of FontSize.",
             "categoryId": "font",
             "category": "Font",
             "order": 3,
@@ -464,7 +464,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
-            "description": "Character thickness",
+            "description": "Weight used to render text.",
             "categoryId": "font",
             "category": "Font",
             "order": 4,
@@ -503,7 +503,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
-            "description": "Character slant",
+            "description": "Upright or italic text style.",
             "categoryId": "font",
             "category": "Font",
             "order": 5,
@@ -542,7 +542,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LabelFontSizeMultiplier",
-            "description": "Scale factor for label font size",
+            "description": "Text-size multiplier for labels relative to axes text.",
             "categoryId": "font",
             "category": "Font",
             "order": 6,
@@ -576,7 +576,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TitleFontSizeMultiplier",
-            "description": "Scale factor for title font size",
+            "description": "Text-size multiplier for the title relative to axes text.",
             "categoryId": "font",
             "category": "Font",
             "order": 7,
@@ -610,7 +610,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TitleFontWeight",
-            "description": "Title character thickness",
+            "description": "Choice controlling title font weight.",
             "categoryId": "font",
             "category": "Font",
             "order": 8,
@@ -649,7 +649,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SubtitleFontWeight",
-            "description": "Subtitle character thickness",
+            "description": "Choice controlling subtitle font weight.",
             "categoryId": "font",
             "category": "Font",
             "order": 9,
@@ -688,7 +688,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontUnits",
-            "description": "Font size units",
+            "description": "Measurement unit used for text size.",
             "categoryId": "font",
             "category": "Font",
             "order": 10,
@@ -738,7 +738,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TickDir",
-            "description": "Tick mark direction",
+            "description": "Choice controlling tick dir.",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 1,
@@ -782,7 +782,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TickDirMode",
-            "description": "Selection mode for tick mark direction",
+            "description": "Automatic or explicit control of TickDir.",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 2,
@@ -824,7 +824,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TickLength",
-            "description": "Tick mark length",
+            "description": "Numeric values used for tick length.",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 3,
@@ -859,7 +859,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TickLabelFormat",
-            "description": "Tick label format",
+            "description": "Formatting specification used for tick text.",
             "categoryId": "ticks",
             "category": "Ticks",
             "order": 4,
@@ -900,7 +900,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "LatitudeAxis",
-            "description": "Latitude ruler",
+            "description": "Ruler object used for geographic latitude.",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 1,
@@ -934,7 +934,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "LongitudeAxis",
-            "description": "Longitude ruler",
+            "description": "Ruler object used for geographic longitude.",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 2,
@@ -968,7 +968,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "AxisColor",
-            "description": "Color of axis lines, tick values, and labels",
+            "description": "Color used for axis color.",
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 3,
@@ -1011,7 +1011,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Grid",
-            "description": "Visibility of latitude and longitude lines",
+            "description": "Whether the plotted grid is displayed.",
             "categoryId": "grids",
             "category": "Grids",
             "order": 1,
@@ -1047,7 +1047,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridLineStyle",
-            "description": "Line style for grid lines",
+            "description": "Choice controlling grid line style.",
             "categoryId": "grids",
             "category": "Grids",
             "order": 2,
@@ -1089,7 +1089,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridColor",
-            "description": "Color of grid lines",
+            "description": "Color used for grid color.",
             "categoryId": "grids",
             "category": "Grids",
             "order": 3,
@@ -1125,7 +1125,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridColorMode",
-            "description": "Property for setting grid color",
+            "description": "Automatic or explicit control of GridColor.",
             "categoryId": "grids",
             "category": "Grids",
             "order": 4,
@@ -1167,7 +1167,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridAlpha",
-            "description": "Grid-line transparency",
+            "description": "Numeric setting for grid alpha.",
             "categoryId": "grids",
             "category": "Grids",
             "order": 5,
@@ -1203,7 +1203,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "GridAlphaMode",
-            "description": "Selection mode for GridAlpha",
+            "description": "Automatic or explicit control of GridAlpha.",
             "categoryId": "grids",
             "category": "Grids",
             "order": 6,
@@ -1252,7 +1252,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Title",
-            "description": "Text object for title",
+            "description": "Heading displayed with the component.",
             "categoryId": "labels",
             "category": "Labels",
             "order": 1,
@@ -1287,7 +1287,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Subtitle",
-            "description": "Text object for subtitle",
+            "description": "Secondary heading displayed below the title.",
             "categoryId": "labels",
             "category": "Labels",
             "order": 2,
@@ -1322,7 +1322,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "TitleHorizontalAlignment",
-            "description": "Title and subtitle horizontal alignment",
+            "description": "Choice controlling title horizontal alignment.",
             "categoryId": "labels",
             "category": "Labels",
             "order": 3,
@@ -1362,7 +1362,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LatitudeLabel",
-            "description": "Latitude axis label",
+            "description": "Text used for latitude label.",
             "categoryId": "labels",
             "category": "Labels",
             "order": 4,
@@ -1397,7 +1397,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LongitudeLabel",
-            "description": "Longitude axis label",
+            "description": "Text used for longitude label.",
             "categoryId": "labels",
             "category": "Labels",
             "order": 5,
@@ -1432,7 +1432,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Legend",
-            "description": "Legend associated with geographic axes",
+            "description": "Legend object associated with these axes.",
             "categoryId": "labels",
             "category": "Labels",
             "order": 6,
@@ -1473,7 +1473,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorOrder",
-            "description": "Color order",
+            "description": "Sequence of colors selected for successive plots.",
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 1,
@@ -1509,7 +1509,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineStyleOrder",
-            "description": "Line style order",
+            "description": "Sequence of line patterns selected for successive plots.",
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 2,
@@ -1546,7 +1546,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineStyleCyclingMethod",
-            "description": "How to cycle through line styles",
+            "description": "How color and line-pattern sequences advance together.",
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 3,
@@ -1580,7 +1580,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "NextSeriesIndex",
-            "description": "SeriesIndex value for next object",
+            "description": "Series index assigned to the next plotted object.",
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 4,
@@ -1614,7 +1614,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "NextPlot",
-            "description": "Properties to reset",
+            "description": "How a subsequent plot affects the existing axes content.",
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 5,
@@ -1655,7 +1655,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SortMethod",
-            "description": "Order for rendering objects",
+            "description": "Choice controlling sort method.",
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 6,
@@ -1694,7 +1694,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorOrderIndex",
-            "description": "Color order index",
+            "description": "Position within the color sequence for the next plot.",
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 7,
@@ -1728,7 +1728,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineStyleOrderIndex",
-            "description": "Line style order index",
+            "description": "Position within the line-pattern sequence for the next plot.",
             "categoryId": "multipleplots",
             "category": "Multiple Plots",
             "order": 8,
@@ -1769,7 +1769,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Colormap",
-            "description": "Color map",
+            "description": "Sequence of colors used to map indexed data.",
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 1,
@@ -1805,7 +1805,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColorScale",
-            "description": "Scale for color mapping",
+            "description": "Choice controlling color scale.",
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 2,
@@ -1844,7 +1844,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLim",
-            "description": "Color limits for colormap",
+            "description": "Numeric values used for clim.",
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 3,
@@ -1879,7 +1879,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CLimMode",
-            "description": "Selection mode for CLim",
+            "description": "Automatic or explicit control of CLim.",
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 4,
@@ -1921,7 +1921,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Alphamap",
-            "description": "Transparency map",
+            "description": "Sequence of transparency values used for indexed data.",
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 5,
@@ -1957,7 +1957,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "AlphaScale",
-            "description": "Scale for transparency mapping",
+            "description": "Choice controlling alpha scale.",
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 6,
@@ -1996,7 +1996,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALim",
-            "description": "Alpha limits for alphamap",
+            "description": "Numeric values used for alim.",
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 7,
@@ -2031,7 +2031,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ALimMode",
-            "description": "Selection mode for ALim",
+            "description": "Automatic or explicit control of ALim.",
             "categoryId": "colorandtransparencymaps",
             "category": "Color and Transparency Maps",
             "order": 8,
@@ -2080,7 +2080,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Color",
-            "description": "Background color",
+            "description": "Color used by the component.",
             "categoryId": "boxstyling",
             "category": "Box Styling",
             "order": 1,
@@ -2116,7 +2116,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "LineWidth",
-            "description": "Width of lines",
+            "description": "Width used to draw lines.",
             "categoryId": "boxstyling",
             "category": "Box Styling",
             "order": 2,
@@ -2152,7 +2152,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Box",
-            "description": "Outline around geographic axes",
+            "description": "Whether box is enabled.",
             "categoryId": "boxstyling",
             "category": "Box Styling",
             "order": 3,
@@ -2195,7 +2195,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "OuterPosition",
-            "description": "Size and position of geographic axes, including labels and margins",
+            "description": "Outer rectangle [left bottom width height] in its configured units.",
             "categoryId": "position",
             "category": "Position",
             "order": 1,
@@ -2234,7 +2234,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "InnerPosition",
-            "description": "Inner size and location",
+            "description": "Inner rectangle [left bottom width height] in its configured units.",
             "categoryId": "position",
             "category": "Position",
             "order": 2,
@@ -2272,7 +2272,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Position",
-            "description": "Size and position of geographic axes, not including labels or margins",
+            "description": "Component rectangle [left bottom width height] in its configured units.",
             "categoryId": "position",
             "category": "Position",
             "order": 3,
@@ -2308,7 +2308,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "TightInset",
-            "description": "Margins for text labels",
+            "description": "Margins [left bottom right top] needed around the plotted area.",
             "categoryId": "position",
             "category": "Position",
             "order": 4,
@@ -2342,7 +2342,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "PositionConstraint",
-            "description": "Position to hold constant",
+            "description": "Rectangle kept fixed while related geometry changes.",
             "categoryId": "position",
             "category": "Position",
             "order": 5,
@@ -2376,7 +2376,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Units",
-            "description": "Position units",
+            "description": "Measurement unit used for component geometry.",
             "categoryId": "position",
             "category": "Position",
             "order": 6,
@@ -2420,7 +2420,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Layout",
-            "description": "Layout options",
+            "description": "Placement settings supplied by the parent layout.",
             "categoryId": "position",
             "category": "Position",
             "order": 7,
@@ -2461,7 +2461,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "InteractionOptions",
-            "description": "Options to customize interaction behavior",
+            "description": "Options used by the axes interaction tools.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
@@ -2495,7 +2495,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Toolbar",
-            "description": "Data exploration toolbar",
+            "description": "Toolbar associated with the window or axes.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
@@ -2529,7 +2529,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interactions",
-            "description": "Interactions",
+            "description": "Interaction tools enabled on the axes.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 3,
@@ -2563,7 +2563,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
-            "description": "State of visibility",
+            "description": "Whether this component is displayed.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 4,
@@ -2599,7 +2599,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "CurrentPoint",
-            "description": "Location of mouse pointer",
+            "description": "Pointer location reported in the component coordinates.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 5,
@@ -2633,7 +2633,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
-            "description": "Context menu",
+            "description": "Menu opened for this component by a context-menu gesture.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 6,
@@ -2667,7 +2667,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Selected",
-            "description": "Selection state",
+            "description": "Whether the object is selected.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 7,
@@ -2703,7 +2703,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SelectionHighlight",
-            "description": "Display of selection handles",
+            "description": "Whether selection highlight is enabled.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 8,
@@ -2746,7 +2746,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ButtonDownFcn",
-            "description": "Mouse-click callback",
+            "description": "Callback invoked for the button down event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 1,
@@ -2789,7 +2789,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CreateFcn",
-            "description": "Creation function",
+            "description": "Callback invoked for the create event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 2,
@@ -2832,7 +2832,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "DeleteFcn",
-            "description": "Deletion function",
+            "description": "Callback invoked for the delete event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 3,
@@ -2882,7 +2882,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
-            "description": "Callback interruption",
+            "description": "Whether another callback can interrupt the running callback.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 1,
@@ -2918,7 +2918,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
-            "description": "Callback queuing",
+            "description": "How a callback is handled while another callback is busy.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 2,
@@ -2957,7 +2957,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "PickableParts",
-            "description": "Ability to capture mouse clicks",
+            "description": "Parts of the object eligible for pointer hit testing.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 3,
@@ -2997,7 +2997,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HitTest",
-            "description": "Response to captured mouse clicks",
+            "description": "Whether this object responds to pointer hit testing.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 4,
@@ -3033,7 +3033,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
-            "description": "Deletion status",
+            "description": "Whether destruction of this object is in progress.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 5,
@@ -3074,7 +3074,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Parent",
-            "description": "Parent container",
+            "description": "Container that owns this component.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 1,
@@ -3108,7 +3108,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Children",
-            "description": "Children",
+            "description": "Components owned directly by this container.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 2,
@@ -3142,7 +3142,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HandleVisibility",
-            "description": "Visibility of object handle",
+            "description": "Whether handle-search operations expose this object.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 3,
@@ -3184,7 +3184,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Type",
-            "description": "Type of graphics object",
+            "description": "MATLAB graphics type identifying the object.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 1,
@@ -3218,7 +3218,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tag",
-            "description": "Object identifier",
+            "description": "Identifier available to application code.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 2,
@@ -3253,7 +3253,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "UserData",
-            "description": "User data",
+            "description": "Application-defined data attached to the component.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 3,
