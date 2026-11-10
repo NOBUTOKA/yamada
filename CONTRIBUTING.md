@@ -9,6 +9,21 @@ Thank you for your interest in contributing to `yamada`. Reproducing bugs, propo
 - Discuss new features, behavior changes, large refactorings, and expansions of supported syntax or components in an issue before implementation.
 - Keep each issue or pull request focused on one reviewable purpose.
 
+## Branch Workflow
+
+Use `main` as the shared integration branch for the next release. There is no permanent `develop` branch. Published versions are identified by immutable release tags such as `v1.0.0` and their GitHub Releases; merging a pull request does not publish a Toolbox.
+
+1. Create a focused work branch from up-to-date `main`, or use a branch in your fork. Agent-created branches use `codex/<purpose>`; other contributors may use descriptive names such as `feature/<purpose>` or `fix/<purpose>`.
+2. Make the change and run the relevant checks before submitting a pull request. Include the results and explain any checks not run. For documentation-only changes, inspect the diff and links and run `git diff --check`; MATLAB tests are unnecessary unless executable examples or behavior change.
+3. Open a pull request targeting `main`. Draft pull requests are welcome while work is incomplete. Check the final diff and validation evidence before merging; rerun affected checks if the change or integration base invalidates that evidence.
+4. A maintainer merges the pull request after reviewing scope, source safety, and validation. A separate person's approval is not mandatory for sole-maintainer work. Delete the work branch when it is no longer needed.
+
+Use pull requests for documentation and maintenance changes too. Do not push changes directly to `main` or routinely bypass its protection. Keep changes to `AGENTS.md` in a commit containing no other files; preserve that separation in the merge method rather than squashing it into unrelated changes.
+
+Create `release/<major>.<minor>` only when a release needs stabilization or maintenance while `main` advances. For a patch to an older release, branch from its published tag if that maintenance branch does not exist. Prefer fixing on `main` and backporting the necessary commits through a pull request; for an old-version-specific fix, record whether `main` also needs it. Do not merge unrelated next-version features into a maintenance branch.
+
+See [the release procedure](doc/RELEASING.md) for versioning, publication checks, and repository protection settings.
+
 ## Reporting Bugs
 
 Include as much of the following information as possible in a reproducible bug report:
@@ -29,10 +44,12 @@ Development and verification currently target MATLAB R2024a. After cloning the r
 ```matlab
 projectRoot = "/path/to/yamada";
 addpath(projectRoot);
-editor = yamada();
+yamada
 ```
 
 No versioned release or Toolbox package is available yet, so development uses the repository source directly.
+
+The documented normal launch command is `yamada`, without parentheses or an output assignment. Development and tests may retain the returned handle when they need to inspect or explicitly clean up the editor.
 
 See the [product specification](SPECIFICATION.md) for the public feature set, input and output contract, and safety limitations. The [roadmap](ROADMAP.md) lists unfinished work as independent contribution candidates. Update the specification when a change affects externally visible behavior. Use the [architecture reference](doc/ARCHITECTURE.md) for current layer responsibilities, data flow, and extension boundaries.
 
@@ -50,6 +67,7 @@ See the [product specification](SPECIFICATION.md) for the public feature set, in
 | `dev/component-data` | R2024a component data and catalog-generation scripts |
 | `dev/compatibility` | Opt-in native MATLAB observations and catalog-promotion checks |
 | `doc/ARCHITECTURE.md` | Developer reference for implemented layers, data flow, and extension boundaries |
+| `doc/RELEASING.md` | Maintainer workflow, release gates, versioning, and GitHub settings |
 | `tests/unit` | MATLAB unit tests |
 | `tests/fixtures` | Input fixtures for source preservation, parsing, and preview |
 | `tests/runYamadaTests.m` | Developer-only quick, area, and full test-profile runner |
