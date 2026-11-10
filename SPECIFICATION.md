@@ -1,6 +1,6 @@
 # yamada Product Specification
 
-This document describes the current public feature scope, input and output contract, and safety limitations of the development version of `yamada`. It is not a roadmap for future implementation.
+This document defines the feature scope, input and output contract, and safety limitations selected for `yamada` 1.0.0. Packaging and release acceptance remain pending; this document does not announce a published release or guarantee unverified distribution workflows.
 
 The supported class directly inherits from `handle` and owns exactly one `uifigure`. Every other UI component must be a descendant of that figure, either directly or through nested containers. This hierarchy is a user precondition: there is no new dedicated descendant-membership validation or diagnostic, and behavior outside it is not guaranteed. Existing model consistency and safe-edit validation remain in place. Arbitrary inheritance graphs, dynamic construction, AppBase compatibility, and automatic source conversion are outside the contract.
 
@@ -14,11 +14,16 @@ Users can create a new handle class from an empty canvas or open an existing han
 
 ## Supported Environment
 
-- Development and verification target: MATLAB R2024a
+- Release target: MATLAB R2024a on 64-bit Windows, with a graphical session and JVM enabled
+- Required MathWorks product: MATLAB; runtime dependency analysis does not identify an additional toolbox
+- Launch command: `yamada`, without parentheses or an output assignment
+- Planned distribution: MATLAB Toolbox (`.mltbx`) with an Apps gallery entry; installation and Apps launch require release acceptance testing
 - Input: A `.m` file defining a class derived from `handle`
 - Output: A `.m` file defining an ordinary MATLAB class
 
-Compatibility with MATLAB releases other than R2024a is not guaranteed. No versioned release, MATLAB Toolbox package, or standalone application is currently available.
+Other MATLAB releases, macOS, Linux, MATLAB Online, and headless operation are outside the 1.0.0 support contract. MATLAB remains required; no standalone executable is planned. No versioned release or MATLAB Toolbox package is currently available. Development tools, including Node.js for isolated overlay tests, are not runtime requirements.
+
+The release-specific catalog is fixed to R2024a. Editor layout synchronization and activation notifications include internal MATLAB dependencies, so compatibility must not be inferred from a newer release accepting the source syntax. See the [architecture reference](doc/ARCHITECTURE.md#resource-and-development-data-boundary) and [release plan](doc/RELEASE_1_0_0_PLAN.md) for resource boundaries and remaining release gates.
 
 ## Supported Operations
 
@@ -38,7 +43,7 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
 
 ### Existing applications
 
-- Open an handle `.m` file with a common App Designer-like or programmatic structure.
+- Open a handle `.m` file with a common App Designer-like or programmatic structure.
 - Statically parse supported declarations, creation statements, parent-child relationships, and direct property assignments.
 - Display parsed components in the hierarchy browser, Safe Preview, and Property Inspector.
 - Edit property assignments and components whose source ownership can be determined safely.
@@ -137,7 +142,7 @@ Because of this limitation, Safe Preview may not reproduce the input application
 
 - Output is ordinary handle `.m` source that can be reviewed and compared as text.
 - Files are written as UTF-8 without a BOM.
-- A new file includes the class and component declarations, creation method, application registration, and cleanup required for execution.
+- A new file includes the class and component declarations, creation method, callback-based owner retention, and cleanup required for execution; it does not use AppBase registration services.
 - New files use the host platform's standard line ending; existing files preserve the detected CRLF or LF convention.
 - Generated comments and help text are written in English.
 - `yamada` does not automatically add, replace, or remove the project's GPL notice in an application created or opened by the user.

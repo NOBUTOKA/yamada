@@ -351,10 +351,17 @@ Preview invalidation distinguishes current source-coordinate changes from visual
 Runtime code resolves resources relative to the project root:
 
 - `resources/component-catalog/R2024a` is loaded by the registry;
-- `resources/EditorInteractionOverlay.html` is loaded by `yamada`; and
+- `resources/EditorInteractionOverlay.html` and `resources/RootResizeGuide.html` are loaded by `yamada`;
+- `resources/stabilize-request.js` is loaded by `waitForPreviewLayout` and executed only in the editor-owned figure window; and
 - development ledgers and generation scripts under `dev/component-data` are not runtime dependencies.
 
 The development ledger is the review surface for catalog research and audit decisions. Promotion scripts generate the grouped runtime catalog; loader and baseline tests verify that the promoted variants reconstruct the audited intrinsic and parent-effective property surfaces without capability drift.
+
+The distribution must preserve the relative layout of `yamada.m`, `+yamada`, and these resources. Only the distribution root needs to be added to the MATLAB path; tests, development tools, and documentation transcripts must not be added as runtime search folders. Static MATLAB dependency analysis does not enumerate all HTML, JavaScript, or catalog resources, so packaging requires an explicit resource inclusion contract.
+
+The editor requires MATLAB's JVM for UUIDs and canonical path comparisons, and a graphical session for UI components and the CEF-based layout adapter. The `FigureActivated` event, figure/controller access, CEF `executeJS`, message-service subscriptions, and browser ViewModel modules are release-specific integration points. Layout-adapter exceptions are caught by the editor and enter its bounded geometry-recovery path; this is not a promise of compatibility on other releases. Activation-listener setup and the MATLAB-installation `icons/undo.mat` and `icons/redo.mat` loads occur during shell construction, where failures abort construction and trigger owner cleanup. These MATLAB files and internal modules are dependencies of the installed MATLAB, not files to copy into the Toolbox. The 1.0.0 support contract is R2024a on Windows; independent validation is required before widening it.
+
+Runtime component factories are drawn from the validated catalog and finite Preview policy. The `feval` calls in component/default construction invoke those approved MATLAB factories, not the input app's constructor, callbacks, or arbitrary expressions. The distributed catalog is trusted product data and must not be replaced with unreviewed executable factory definitions. See [source and resource provenance](THIRD_PARTY_NOTICES.md) for redistribution boundaries.
 
 ## Extending the Architecture
 

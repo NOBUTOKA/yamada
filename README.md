@@ -30,9 +30,9 @@
 
 ## Supported Environment
 
-- MATLAB R2024a
+- MATLAB R2024a on 64-bit Windows, with a graphical session and JVM enabled
 
-Compatibility with MATLAB releases other than R2024a is not currently guaranteed.
+The 1.0.0 release target is R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. MATLAB is required; this is not a standalone application. Runtime dependency analysis identifies MATLAB only; Node.js and development tools are not required to use the editor.
 
 ## Getting Started
 
@@ -41,14 +41,10 @@ Clone the repository, or download and extract it from **Code > Download ZIP** on
 ```matlab
 projectRoot = "/path/to/yamada";
 addpath(projectRoot);
-editor = yamada();
+yamada
 ```
 
-If the application object remains after you close the editor, delete it explicitly:
-
-```matlab
-delete(editor);
-```
+The normal launch command requires neither parentheses nor an output assignment. Development and tests may retain the returned handle for inspection and explicit cleanup.
 
 ## Basic Usage
 
@@ -98,7 +94,7 @@ Paste uses the nearest compatible container, starting with the selected or right
 
 In Safe Preview, drag a selected component into another visible container. A dashed guide shows the proposed placement; red indicates an invalid target. Grid destinations snap to cells and retain spans. Occupied or out-of-range rectangles are rejected. Drop commits the parent and placement together as one Undo step. Escape or pointer cancellation discards the draft. Moving within the same parent continues to use the existing position or grid-placement tools.
 
-Subtree operations require catalog-compatible parents and provable source ownership. The root UIFigure, programmatic-only construction families, and native FigureTools subtrees are excluded. Copy/Cut accept supported literals and static `SelectedTab`/`ContextMenu` references: internal references follow the copies; external context menus retain their identity in the same document. Other expressions, executable callback bindings, and ambiguous source are rejected without dropping their contents. Reparenting preserves existing callback methods; pending callback edits on parsed moved nodes currently require Save and Reload Source, or Undo, before moving. Review the generated diff before saving.
+Subtree operations require catalog-compatible parents and provable source ownership. The root UIFigure, programmatic-only construction families, and native FigureTools subtrees are excluded. Copy/Cut accept supported literals and static `SelectedTab`/`ContextMenu` references: internal references follow the copies; external context menus retain their identity in the same document. Copy omits catalog-declared callback bindings on the component and its descendants, including pending callback additions, while retaining the originals and their handler methods. Pasted components have no copied callbacks. Nonempty construction callbacks that make effective configuration unknown still prevent Copy. Cut/Delete retain their callback and surviving-reference safeguards. Other unsupported expressions and ambiguous source are rejected without dropping their contents. Reparenting preserves existing callback methods; pending callback edits on parsed moved nodes currently require Save and Reload Source, or Undo, before moving. Review the generated diff before saving.
 
 ### Manage callbacks
 
@@ -137,6 +133,8 @@ See the [product specification](SPECIFICATION.md) for the current supported beha
 - [Roadmap](ROADMAP.md) - Independent tasks planned beyond the current supported behavior
 - [Architecture reference](doc/ARCHITECTURE.md) - Implemented layers, data flow, safety boundaries, and extension points
 - [Contributing guide](CONTRIBUTING.md) - Issues, development setup, tests, and pull requests
+- [1.0.0 release plan](doc/RELEASE_1_0_0_PLAN.md) - Preparation stages, remaining release gates, and progress
+- [Source and resource provenance](doc/THIRD_PARTY_NOTICES.md) - Runtime resources, upstream references, and redistribution review boundaries
 
 ## Feedback and Contributions
 
