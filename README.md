@@ -102,15 +102,16 @@ Drag a component on the canvas into a panel, tab, or other suitable container. M
 
 For a Grid Layout destination, the component snaps to cells. A move into occupied cells is rejected. You can undo a completed move with one **Undo** action. For a move blocked by recent callback changes, save and use **Reload Source** before trying again.
 
-### Add or remove callbacks
+### Choose or disconnect callbacks
 
 Callbacks let you run MATLAB code when a user interacts with your app, such as clicking a button.
 
 1. Right-click the component in **Hierarchy** and select **Manage Callbacks...**.
-2. Choose **Add** beside an available callback to create its method in the app's `.m` code.
-3. Use **Delete** to remove a callback and its method. **This also deletes the code inside that method.** Review the diff before saving, or use **Undo** to restore it.
+2. Use the dropdown beside a callback to select an existing method, or choose `<New...>` and enter a name to create one.
+3. Choose `<Disconnect>` to stop that callback from calling its method. **The method and its code stay in the file**, so you can reconnect it later. This dialog does not delete methods.
 
-Changes take effect as you make them; **Close** closes the dialog without canceling them. Some existing callbacks cannot be changed safely through this dialog. Hover over a disabled button to read the reason. Use MATLAB to edit callback method bodies; yamada does not run them.
+Changes take effect as you make them; **Close** closes the dialog without canceling them. Use **Undo** to reverse a change. Some existing callbacks cannot be changed safely through this dialog; hover over the disabled dropdown to read the reason. Use MATLAB to edit callback code or delete unused methods; yamada does not run the callbacks.
+
 
 ### Edit code in MATLAB and reload it
 
