@@ -50,65 +50,76 @@ The normal launch command requires neither parentheses nor an output assignment.
 
 ### Create a new application
 
-1. Select **File > New** and enter a MATLAB class name.
+1. Select **File > New** and enter a MATLAB class name, such as `MyApp`.
 2. Add components from the palette on the left.
-3. Select a component on the canvas or in the hierarchy browser, then edit its supported properties in the Property Inspector on the right.
-4. Select **Tools > Validate** to validate the document model.
-5. Select **Tools > Diff Preview** to review the generated source, then use **File > Save** to save it as a `.m` file. Save opens Save As for a new document or when its saved target no longer exists. Save As asks before replacing an existing target; subsequent Save writes directly to a confirmed existing path without another replacement prompt.
+3. Select a component on the canvas or in **Hierarchy**, then change its settings in the Property Inspector on the right. Drag components to move them, or drag their resize handles to change their size.
+4. Select **Tools > Validate** and review any reported problems.
+5. Select **Tools > Diff Preview** to see the code changes before saving.
+6. Select **File > Save** and choose where to save the `.m` file. Use **File > Save As** to save another copy.
 
-An untouched empty document starts clean. The title gains an asterisk after the first edit that has not been saved.
-
-### Edit a Grid Layout
-
-Select a Grid Layout or one of its children. The canvas activates the nearest Grid Layout and shows its immediate rows, columns, and child occupancy without changing the selected component in the Inspector.
-
-- Click a row or column settings button beside the grid to choose **Fit**, a fixed pixel value, or a flexible `x` weight. The same popover inserts and deletes tracks.
-- Drag the selected child to move its occupied cells. Drag one of its edge or corner handles to change its row or column span. The candidate is cell-snapped and commits only when released.
-- For a selected nested Grid Layout, drag its frame or empty background to move it within the parent grid. Its handles change the parent-cell span while its row and column settings continue to edit the inner grid.
-- Use the Inspector for `RowSpacing`, `ColumnSpacing`, `Padding` (in MATLAB order `[left bottom right top]`), `BackgroundColor`, `Visible`, and `Scrollable`. It also remains the exact-value fallback for a child's `Layout.Row` and `Layout.Column`.
-
-Track editing accepts supported literal values and Preview defaults; a source-backed track list remains read-only. Moving or resizing a child requires editable, explicit `Layout.Row` and `Layout.Column` values and unambiguous realized geometry. Track insertion or deletion is rejected when an affected child has an implicit or expression-backed placement, or the change would leave a child without a valid track. Stale canvas actions are also rejected. Moving and resizing children may create overlapping placements, as MATLAB allows. Source-backed values are preserved.
+An asterisk in the window title means you have unsaved changes. **Undo** and **Redo** let you step backward and forward through your edits.
 
 ### Edit an existing application
 
-1. Select **File > Open** and choose a `.m` file whose class derives from `handle`.
-2. Review the parsed hierarchy, Safe Preview, and diagnostics.
-3. Modify supported components and properties.
-4. Validate the document and review the diff. Save to a new file if you want to preserve the original.
+1. Select **File > Open** and choose a supported MATLAB application `.m` file. See [Scope and Limitations](#scope-and-limitations) for the supported application format.
+2. Inspect its components on the canvas and in **Hierarchy**. Check any messages shown in the diagnostics area.
+3. Edit the components and settings you need. Some settings may be read-only or unavailable for an existing application.
+4. Check **Tools > Validate** and **Tools > Diff Preview**, then save. Choose **Save As** if you want to keep the original file.
+
+The canvas shows a preview without running your application or its callbacks. It may not show everything that appears when you run the app in MATLAB.
+
+### Arrange components in a Grid Layout
+
+A Grid Layout arranges components in rows and columns. Select the grid or a component inside it to show its row and column controls.
+
+- Click a row or column settings button beside the grid. Choose **Fit** to size it to its contents, a fixed pixel size, or a flexible weight such as `1x` to share the available space. The same controls let you insert or delete rows and columns.
+- Drag a component to another cell. Drag its resize handles to make it cover more or fewer rows or columns.
+- Use the Property Inspector to enter exact row and column positions, or to adjust spacing and padding.
+- For a grid inside another grid, drag its frame or empty background to move the whole inner grid. Its row and column controls still edit the inner grid.
+
+Some grid changes are unavailable when yamada cannot safely update the existing code. Review the explanation shown for the unavailable or rejected action. Moving components can leave them overlapping, so check the result on the canvas.
 
 ### Rename a component
 
-Select a component in **Hierarchy** and press **F2**, click the same selected node again, or choose **Edit > Rename Component** (**F2**). Edit the name within the hierarchy view; **Enter** commits and **Escape** cancels. Invalid or conflicting names remain in the editor with an explanation so you can correct them.
+Select a component in **Hierarchy** and press **F2**, or choose **Edit > Rename Component**. Type its new MATLAB name and press **Enter**; press **Escape** to cancel. If the name cannot be used, an explanation appears so you can correct it.
 
-Renaming changes the MATLAB property identifier and its static `app.Name` references. Component IDs, displayed `Text` or `Title`, and the app class name stay unchanged. Exclusively owned callback methods follow only when their names match the editor's default generated naming convention; custom or shared handler names stay unchanged. Class, property, and method help comments follow renamed identifiers, including callback H1 lines and help examples. Ordinary comments and code string literals are preserved. Undo and Redo treat the rename as one edit. Source using dynamic dispatch or unresolved app aliases is rejected with an explanation; references in other files are outside this operation's scope.
+This changes the component's name in the MATLAB code, such as `app.Button`, and updates supported references in the same file. To change the text a user sees on a button or window, edit its **Text** or **Title** setting instead. References in other files are not updated.
 
 ### Copy, cut, and paste components
 
-Select a component in Hierarchy and use **Edit > Copy / Cut / Paste**, or **Ctrl+C / Ctrl+X / Ctrl+V**. The same commands are available by right-clicking a Hierarchy node. Right-click Copy targets that node without changing selection. The same shortcuts work in Safe Preview. Edit menu shortcut hints use a separate column, including F2 for Rename. Text fields retain their normal clipboard shortcuts.
+Select a component in **Hierarchy** or on the canvas, then use **Edit > Copy / Cut / Paste**, or **Ctrl+C / Ctrl+X / Ctrl+V**. These commands are also available by right-clicking a component in **Hierarchy**.
 
-The component and all descendants form one unit. Copy captures independent data; later edits to the original do not change it. Cut removes the subtree immediately. Paste creates fresh IDs and unique MATLAB property names and selects the inserted root. Copy adds `Copy` to names; Cut retains the original names when available and adds a numeric suffix only on collision. Cut and Paste each take one Undo step. Repeated Paste is supported.
+- Copying or cutting a container includes the components inside it. **Cut** removes them immediately; **Undo** restores them.
+- Select the destination container before pasting. If it cannot contain the copied component, yamada looks for a suitable enclosing container. Hover over the status line to check the destination or read why an action is unavailable.
+- Pasted components receive names that do not conflict with existing components. You can paste the same copy more than once.
+- **Copy does not copy callbacks.** The original components and their callback code remain unchanged. Add callbacks to the pasted components separately if needed. Cut or Delete may be unavailable for components with callbacks.
 
-Paste uses the nearest compatible container, starting with the selected or right-clicked node and walking up its ancestors. Absolute copies receive a small offset; grid copies use a free rectangle while retaining their span. Hover over the status line to see command availability, reasons, and the resolved Paste destination. The clipboard belongs to this editor document; successful New, Open, or Reload Source clears it. OS and cross-document clipboards are not used.
+The component clipboard works within the current document only. Switching documents or successfully reloading the current one clears it. Shortcuts inside text fields keep their normal text-editing behavior.
 
-### Move a subtree to another container
+### Move components into another container
 
-In Safe Preview, drag a selected component into another visible container. A dashed guide shows the proposed placement; red indicates an invalid target. Grid destinations snap to cells and retain spans. Occupied or out-of-range rectangles are rejected. Drop commits the parent and placement together as one Undo step. Escape or pointer cancellation discards the draft. Moving within the same parent continues to use the existing position or grid-placement tools.
+Drag a component on the canvas into a panel, tab, or other suitable container. Moving a container also moves the components inside it. A dashed guide shows the destination; red means the proposed move is unavailable. Release the mouse to finish, or press **Escape** to cancel.
 
-Subtree operations require catalog-compatible parents and provable source ownership. The root UIFigure, programmatic-only construction families, and native FigureTools subtrees are excluded. Copy/Cut accept supported literals and static `SelectedTab`/`ContextMenu` references: internal references follow the copies; external context menus retain their identity in the same document. Copy omits catalog-declared callback bindings on the component and its descendants, including pending callback additions, while retaining the originals and their handler methods. Pasted components have no copied callbacks. Nonempty construction callbacks that make effective configuration unknown still prevent Copy. Cut/Delete retain their callback and surviving-reference safeguards. Other unsupported expressions and ambiguous source are rejected without dropping their contents. Reparenting preserves existing callback methods; pending callback edits on parsed moved nodes currently require Save and Reload Source, or Undo, before moving. Review the generated diff before saving.
+For a Grid Layout destination, the component snaps to cells. A move into occupied cells is rejected. You can undo a completed move with one **Undo** action. For a move blocked by recent callback changes, save and use **Reload Source** before trying again.
 
-### Manage callbacks
+### Add or remove callbacks
 
-Right-click a component in **Hierarchy** and choose **Manage Callbacks...**. Right-clicking an unselected component leaves the current selection, Properties, and Preview selection unchanged. The popup title identifies the component being managed; its scrollable rows list callbacks supported by that component's catalog variant.
+Callbacks let you run MATLAB code when a user interacts with your app, such as clicking a button.
 
-- **Add** creates an assignment and a uniquely named method together. Ordinary callbacks start empty; CloseRequestFcn starts with `delete(app)`.
-- **Delete** removes the assignment and the entire handler method, including its body. Each action is one Undo/Redo operation and applies immediately; **Close** only closes the popup.
-- Existing shared methods, arbitrary anonymous functions, constructor bindings, conditional/repeated assignments, dynamic references, and source whose ownership cannot be established have both buttons disabled. Hover over the row or buttons to read the reason.
+1. Right-click the component in **Hierarchy** and select **Manage Callbacks...**.
+2. Choose **Add** beside an available callback to create its method in the app's `.m` code.
+3. Use **Delete** to remove a callback and its method. **This also deletes the code inside that method.** Review the diff before saving, or use **Undo** to restore it.
 
-Generated callbacks use `@app.Handler` with `(app, source, event)` inputs. The default close callback deletes the app. Adding an editable CloseRequestFcn replaces that fallback, and deleting the handler restores it. A figure-bound destruction listener releases the owner without replacing a user's DeleteFcn.
+Changes take effect as you make them; **Close** closes the dialog without canceling them. Some existing callbacks cannot be changed safely through this dialog. Hover over a disabled button to read the reason. Use MATLAB to edit callback method bodies; yamada does not run them.
 
-Existing two-input anonymous wrappers are also recognized when they only call one owned app method and forward an ordered subset of their named inputs, for example `@(~, event) app.SomeButtonPushed(event)`, `@(~,~) app.SomeButtonPushed()`, or `@(source,event) app.SomeButtonPushed(source,event)`. Their registration syntax and handler signatures are preserved. Certain direct handles and these forwarding registrations do not produce the generic property-expression warning on Open; they remain protected source managed through Manage Callbacks. Computed arguments, other captured values, and an input named `app` remain unsupported.
+### Edit code in MATLAB and reload it
 
-Review the source diff before saving. To edit a handler body in MATLAB, first save in yamada, edit and save the `.m` file in MATLAB, then use the toolbar **Refresh** button, **Edit > Reload Source (F5)**, or **F5**. Reload reads the saved file; it cannot read unsaved MATLAB editor buffers. New documents need to be saved first. Local unsaved changes prompt Save/Discard/Cancel. If the file also changed outside yamada, Save As must use a different file so external edits remain intact. Successful reload resets Undo/Redo, closes the callback popup and retains the selected component by a unique name where possible. Failed reload keeps the current document. The opened application's callbacks are never run by the editor or Safe Preview.
+1. Save your changes in yamada first.
+2. Edit and save the app's `.m` file in MATLAB.
+3. Return to yamada and use the toolbar **Refresh** button, **Edit > Reload Source**, or **F5**.
+
+Reload reads the saved file, so unsaved changes in MATLAB's editor are not included. A successful reload clears yamada's Undo/Redo history. If you also have unsaved changes in yamada, follow the Save, Discard, or Cancel prompt. When both copies have changed, save your yamada edits under a different filename if you want to keep both versions.
+
 
 ## Scope and Limitations
 
