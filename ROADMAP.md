@@ -4,6 +4,15 @@ This roadmap contains unfinished work for the public development version of `yam
 
 The [product specification](SPECIFICATION.md) remains authoritative for current behavior. A roadmap item becomes part of the supported public contract only after its implementation, tests, and user documentation are complete.
 
+## Continue Measured Performance Improvements
+
+Retain the current editing, source-preservation, history, and validation contracts while investigating remaining costs. The historical plans and measurements are preserved on the [`codex/investigation-pre-v1` investigation branch](https://github.com/NOBUTOKA/yamada/tree/codex/investigation-pre-v1); they are not runtime dependencies or current latency guarantees.
+
+- Measure repeated overlay component traversal, rectangle reads, tab visibility checks, and ancestor lookups before changing geometry synchronization.
+- Investigate Inspector updates driven by committed atomic edits and affected rows, including typed values, availability, explanations, dependent choices, and composite rows. Retain complete synchronization for selection, reload, and changed row structure.
+- Investigate repeated source-range candidates and insertion-boundary enumeration while preserving snapshot independence, current offsets, setting order, save behavior, and history.
+- Use matched clean baselines, workload and fixture identities, and separate ordinary latency, profiling, and endurance results. Reassess existing measurements against current code before drawing conclusions; obtain agreement before narrowing behavior or safety guarantees.
+
 ## Add Component-Reference Property Editors
 
 Ninety-five audited component-reference surfaces, including `ContextMenu`, `Parent`, and `SelectedTab`, are currently visible but read-only with the `deferredComponentReference` reason.
@@ -90,7 +99,7 @@ Create a MATLAB Toolbox (`.mltbx`) only after the editor reaches the quality bar
 - Define stable Toolbox metadata, including its identifier, semantic version, summary, author, license, minimum MATLAB release, and supported platforms.
 - Add a reproducible packaging script based on `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox` rather than relying only on manually saved packaging-project state.
 - Include the runtime MATLAB source, the release-specific component catalog, `EditorInteractionOverlay.html`, the license, and public documentation; exclude repository metadata, development-only catalog tooling, tests, and build output.
-- Decide whether the first package launches through the `yamada()` command only or also exposes an App Gallery entry, and document the supported entry point.
+- Support the normal `yamada` command and an Apps gallery entry in the first package; verify no-output startup, owner retention, and cleanup for both entry points.
 - Analyze required files and products, then declare only verified MATLAB-release and platform compatibility. Initially treat R2024a as the sole supported release unless additional releases have been tested.
 - Install the built package into an isolated MATLAB environment and verify that the installed copy, rather than the source checkout, launches successfully; discovers its catalog and HTML overlay; completes representative New, Open, Save, and Save As workflows; and uninstalls cleanly.
 - Publish the `.mltbx` and release notes with the corresponding tagged release only after the package artifact and installation smoke tests pass.

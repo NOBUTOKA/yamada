@@ -1,10 +1,10 @@
 # yamada Product Specification
 
-This document describes the current public feature scope, input and output contract, and safety limitations of the development version of `yamada`. It is not a roadmap for future implementation.
+This document defines the feature scope, input and output contract, and safety limitations selected for `yamada` 1.0.0. Packaging and release acceptance remain pending; this document does not announce a published release or guarantee unverified distribution workflows.
 
 The supported class directly inherits from `handle` and owns exactly one `uifigure`. Every other UI component must be a descendant of that figure, either directly or through nested containers. This hierarchy is a user precondition: there is no new dedicated descendant-membership validation or diagnostic, and behavior outside it is not guaranteed. Existing model consistency and safe-edit validation remain in place. Arbitrary inheritance graphs, dynamic construction, AppBase compatibility, and automatic source conversion are outside the contract.
 
-Generated callbacks are bound methods with `(app, source, event)` inputs. The default CloseRequestFcn deletes the owner. Add replaces the default binding with an editable close handler initialized to delete the app; Delete restores the default binding. The destructor releases owned resources without argument validation or a cancel decision. A source-bound ObjectBeingDestroyed listener handles direct figure deletion without replacing user DeleteFcn code and ignores owner destruction already in progress. No-output startup retains the owner through figure callbacks; constructor failure cleans up a partially created figure.
+Generated callbacks are bound methods with `(app, source, event)` inputs. The default CloseRequestFcn deletes the owner. New replaces the default binding with an editable close handler initialized to delete the app; Disconnect restores the default binding while retaining that handler method. The destructor releases owned resources without argument validation or a cancel decision. A source-bound ObjectBeingDestroyed listener handles direct figure deletion without replacing user DeleteFcn code and ignores owner destruction already in progress. No-output startup retains the owner through figure callbacks; constructor failure cleans up a partially created figure.
 
 ## Purpose
 
@@ -14,11 +14,16 @@ Users can create a new handle class from an empty canvas or open an existing han
 
 ## Supported Environment
 
-- Development and verification target: MATLAB R2024a
+- Release target: MATLAB R2024a on 64-bit Windows, with a graphical session and JVM enabled
+- Required MathWorks product: MATLAB; runtime dependency analysis does not identify an additional toolbox
+- Launch command: `yamada`, without parentheses or an output assignment
+- Planned distribution: MATLAB Toolbox (`.mltbx`) with an Apps gallery entry; installation and Apps launch require release acceptance testing
 - Input: A `.m` file defining a class derived from `handle`
 - Output: A `.m` file defining an ordinary MATLAB class
 
-Compatibility with MATLAB releases other than R2024a is not guaranteed. No versioned release, MATLAB Toolbox package, or standalone application is currently available.
+Other MATLAB releases, macOS, Linux, MATLAB Online, and headless operation are outside the 1.0.0 support contract. MATLAB remains required; no standalone executable is planned. No versioned release or MATLAB Toolbox package is currently available. Development tools, including Node.js for isolated overlay tests, are not runtime requirements.
+
+The release-specific catalog is fixed to R2024a. Editor layout synchronization and activation notifications include internal MATLAB dependencies, so compatibility must not be inferred from a newer release accepting the source syntax. See the [architecture reference](doc/ARCHITECTURE.md#resource-and-development-data-boundary) and [release plan](doc/RELEASE_1_0_0_PLAN.md) for resource boundaries and remaining release gates.
 
 ## Supported Operations
 
@@ -38,7 +43,7 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
 
 ### Existing applications
 
-- Open an handle `.m` file with a common App Designer-like or programmatic structure.
+- Open a handle `.m` file with a common App Designer-like or programmatic structure.
 - Statically parse supported declarations, creation statements, parent-child relationships, and direct property assignments.
 - Display parsed components in the hierarchy browser, Safe Preview, and Property Inspector.
 - Edit property assignments and components whose source ownership can be determined safely.
@@ -67,11 +72,12 @@ Compatibility with MATLAB releases other than R2024a is not guaranteed. No versi
 
 - Right-clicking a Hierarchy node opens an editor-owned context menu for that node without changing the selected component, Inspector, or Preview selection. Empty space and stale/deleted targets cannot reuse a previous command target.
 - Manage Callbacks opens one independent modal popup for the target. Callback rows come from the effective component/style/parent catalog surface, excluding callback execution-control properties. Long lists scroll.
-- Add creates a unique instance method and an `@app.Method` binding. Ordinary handlers start empty; CloseRequestFcn starts with `delete(app)`. Delete removes both the owned binding and the complete owned method, including its body and immediately following help. Closing the popup retains edits.
-- Each action preflights complete source generation and records one Undo/Redo step. Failure leaves intentions, source preview, diagnostics, history and dirty state unchanged. Undo restores exact original source bodies; unrelated code is kept.
-- Existing direct createComponents assignments using `@app.Method` can be deleted when the method is unique and has no other detected references. Empty bindings can be replaced safely.
-- Shared/missing methods, arbitrary anonymous functions, constructor bindings, conditional/repeated assignments, indirect/dynamic references, and unproven structural scopes disable both Add and Delete with an explanatory tooltip.
-- A two-input anonymous wrapper may identify an owned handler when its body is exactly one `app.Handler(...)` call with zero arguments or an ordered subset of the wrapper's named inputs. Ignored inputs may use `~`. This includes `@(~, event) app.SomeButtonPushed(event)` and `@(~,~) app.SomeButtonPushed()`. Named wrapper inputs must be distinct valid identifiers other than `app`; computed arguments, captured argument values, and additional expressions remain unsupported. Certain catalog callback registrations using direct method handles or these wrappers are retained as source-backed bindings without generic `source-expression` warnings or unknown-source regions. This does not grant ordinary literal-property editing or exclusive handler ownership. Existing ownership and sharing checks still apply, and unchanged wrapper syntax and method signatures are preserved.
+- Each row has a dropdown containing `<New...>`, `<Disconnect>`, and eligible existing methods. New prompts for a valid unused name and creates the method and binding together. Ordinary new handlers start empty; CloseRequestFcn starts with `delete(app)`.
+- Selecting an existing method connects or replaces only the binding. Methods may be shared by multiple callbacks. Disconnect removes the selected binding and retains every method body, including a method just created through New. The management UI has no method-deletion command. Closing the popup retains edits.
+- Each change validates its source edits and records one Undo/Redo step. Failure leaves source, diagnostics, history, and dirty state unchanged. Disconnecting an already absent binding is a no-op.
+- Eligible methods are discovered without executing user code. New three-input handlers use `@app.Method`; compatible existing methods with fewer inputs use forwarding wrappers. Unsupported signatures are excluded; unresolved type constraints can remain visible with an unchecked indication.
+- Arbitrary callback expressions and registrations whose source cannot be changed safely disable the dropdown with an explanation. Being shared does not by itself prevent a method from being connected or disconnected; changing a binding does not edit its method body.
+- A two-input anonymous wrapper may identify a handler when its body is exactly one `app.Handler(...)` call with zero arguments or an ordered subset of the wrapper's named inputs. Ignored inputs may use `~`. This includes `@(~, event) app.SomeButtonPushed(event)` and `@(~,~) app.SomeButtonPushed()`. Named wrapper inputs must be distinct valid identifiers other than `app`; computed arguments, captured argument values, and additional expressions remain unsupported. Recognized direct handles and forwarding registrations remain source-backed bindings rather than ordinary literal-property edits. Unchanged wrapper syntax and method signatures are preserved.
 - The popup refreshes after edits and history changes, reuses an existing instance for the same target, and closes when its target or document expires.
 - Source parsing, source generation and Safe Preview never execute handlers. MATLAB remains the editor for handler bodies. Refresh / Edit > Reload Source / F5 read saved disk source and atomically replace the document after successful parsing. Reload clears history and stale callback spans, closes the popup and preserves selection by a unique component name where possible. Local dirty changes require Save/Discard/Cancel; concurrent external edits require a different Save As target, Discard, or Cancel. Unreadable, invalid or changing files do not replace the current document. Unsaved MATLAB buffers are outside the reload operation.
 
@@ -137,7 +143,7 @@ Because of this limitation, Safe Preview may not reproduce the input application
 
 - Output is ordinary handle `.m` source that can be reviewed and compared as text.
 - Files are written as UTF-8 without a BOM.
-- A new file includes the class and component declarations, creation method, application registration, and cleanup required for execution.
+- A new file includes the class and component declarations, creation method, callback-based owner retention, and cleanup required for execution; it does not use AppBase registration services.
 - New files use the host platform's standard line ending; existing files preserve the detected CRLF or LF convention.
 - Generated comments and help text are written in English.
 - `yamada` does not automatically add, replace, or remove the project's GPL notice in an application created or opened by the user.
