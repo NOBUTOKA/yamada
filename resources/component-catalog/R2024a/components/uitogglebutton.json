@@ -37,7 +37,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Value",
-            "description": "State of toggle button",
+            "description": "Current value of the control.",
             "categoryId": "button",
             "category": "Button",
             "order": 1,
@@ -71,7 +71,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Text",
-            "description": "Button label",
+            "description": "Text rendered by the component.",
             "categoryId": "button",
             "category": "Button",
             "order": 2,
@@ -108,7 +108,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "WordWrap",
-            "description": "Word wrapping to fit component width",
+            "description": "Whether text can continue onto another display line.",
             "categoryId": "button",
             "category": "Button",
             "order": 3,
@@ -144,7 +144,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Icon",
-            "description": "Predefined or custom icon",
+            "description": "Image displayed beside the component text.",
             "categoryId": "button",
             "category": "Button",
             "order": 4,
@@ -187,7 +187,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
-            "description": "Font name",
+            "description": "Typeface used to render text.",
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 1,
@@ -222,7 +222,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
-            "description": "Font size",
+            "description": "Size used to render text.",
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 2,
@@ -259,7 +259,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
-            "description": "Font weight",
+            "description": "Weight used to render text.",
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 3,
@@ -298,7 +298,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
-            "description": "Font angle",
+            "description": "Upright or italic text style.",
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 4,
@@ -337,7 +337,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontColor",
-            "description": "Font color",
+            "description": "Color used to render text.",
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 5,
@@ -373,7 +373,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BackgroundColor",
-            "description": "Background color",
+            "description": "Color behind the component content.",
             "categoryId": "fontandcolor",
             "category": "Font and Color",
             "order": 6,
@@ -416,7 +416,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
-            "description": "State of visibility",
+            "description": "Whether this component is displayed.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
@@ -452,7 +452,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Enable",
-            "description": "Operational state of button",
+            "description": "Whether the control accepts user interaction.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
@@ -488,7 +488,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tooltip",
-            "description": "Tooltip",
+            "description": "Help text displayed when the pointer rests on the component.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 3,
@@ -525,7 +525,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
-            "description": "Context menu",
+            "description": "Menu opened for this component by a context-menu gesture.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 4,
@@ -566,7 +566,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Position",
-            "description": "Location and size of button",
+            "description": "Component rectangle [left bottom width height] in its configured units.",
             "categoryId": "position",
             "category": "Position",
             "order": 1,
@@ -600,7 +600,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "InnerPosition",
-            "description": "Location and size of button",
+            "description": "Inner rectangle [left bottom width height] in its configured units.",
             "categoryId": "position",
             "category": "Position",
             "order": 2,
@@ -634,7 +634,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "OuterPosition",
-            "description": "Outer location and size of button",
+            "description": "Outer rectangle [left bottom width height] in its configured units.",
             "categoryId": "position",
             "category": "Position",
             "order": 3,
@@ -668,7 +668,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HorizontalAlignment",
-            "description": "Horizontal alignment of icon and text",
+            "description": "Horizontal alignment of the displayed content.",
             "categoryId": "position",
             "category": "Position",
             "order": 4,
@@ -708,7 +708,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "VerticalAlignment",
-            "description": "Vertical alignment of icon and text",
+            "description": "Vertical alignment of the displayed content.",
             "categoryId": "position",
             "category": "Position",
             "order": 5,
@@ -748,7 +748,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "IconAlignment",
-            "description": "Location of button icon",
+            "description": "Placement of the icon relative to the text.",
             "categoryId": "position",
             "category": "Position",
             "order": 6,
@@ -799,7 +799,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CreateFcn",
-            "description": "Creation function",
+            "description": "Callback invoked for the create event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 1,
@@ -842,7 +842,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "DeleteFcn",
-            "description": "Deletion function",
+            "description": "Callback invoked for the delete event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 2,
@@ -892,7 +892,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
-            "description": "Callback interruption",
+            "description": "Whether another callback can interrupt the running callback.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 1,
@@ -928,7 +928,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
-            "description": "Callback queuing",
+            "description": "How a callback is handled while another callback is busy.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 2,
@@ -967,7 +967,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
-            "description": "Deletion status",
+            "description": "Whether destruction of this object is in progress.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 3,
@@ -1008,7 +1008,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Parent",
-            "description": "Parent container",
+            "description": "Container that owns this component.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 1,
@@ -1042,7 +1042,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HandleVisibility",
-            "description": "Visibility of object handle",
+            "description": "Whether handle-search operations expose this object.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 2,
@@ -1084,7 +1084,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Type",
-            "description": "Type of graphics object",
+            "description": "MATLAB graphics type identifying the object.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 1,
@@ -1118,7 +1118,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tag",
-            "description": "Object identifier",
+            "description": "Identifier available to application code.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 2,
@@ -1153,7 +1153,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "UserData",
-            "description": "User data",
+            "description": "Application-defined data attached to the component.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 3,

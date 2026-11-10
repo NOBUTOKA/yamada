@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-Normalizes complete documented enum choices and omits non-design-time inner geometry.
+Normalizes reviewed enum choices and omits non-design-time inner geometry.
 
 .DESCRIPTION
 Reads one release-fixed component ledger. For editable enum properties, it
-records valueContract.values only when quoted documentation tokens establish
-at least two distinct choices. It also marks InnerPosition as omitted because
+uses the reviewed valueContract.values rather than parsing reference wording.
+It also marks InnerPosition as omitted because
 the inspector exposes Position as the design-time geometry surface.
 
 .EXAMPLE
@@ -21,24 +21,15 @@ param(
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
-function Get-DocumentedEnumValues {
+function Get-ReviewedEnumValues {
     param([object]$Property)
 
     $values = [System.Collections.Generic.List[string]]::new()
-    $sources = @()
-    if ($null -ne $Property.PSObject.Properties["documentedDefault"]) {
-        $sources += [string]$Property.documentedDefault
-    }
-    if ($null -ne $Property.PSObject.Properties["documentedAcceptedValues"]) {
-        $sources += @($Property.documentedAcceptedValues | ForEach-Object { [string]$_ })
-    }
-    foreach ($source in $sources) {
-        if ($null -eq $source) { continue }
-        foreach ($match in [regex]::Matches([string]$source, "'(?:''|[^'])*'")) {
-            $value = $match.Value.Substring(1, $match.Value.Length - 2).Replace("''", "'")
-            if (-not [string]::IsNullOrEmpty($value) -and -not $values.Contains($value)) {
-                $values.Add($value)
-            }
+    if ($null -eq $Property.valueContract.PSObject.Properties['values']) { return @() }
+    foreach ($value in @($Property.valueContract.values)) {
+        $text = [string]$value
+        if (-not [string]::IsNullOrEmpty($text) -and -not $values.Contains($text)) {
+            $values.Add($text)
         }
     }
     return @($values)
@@ -72,7 +63,7 @@ foreach ($file in @(Get-ChildItem -LiteralPath $componentPath -Filter '*.json' -
         if ([string]$property.valueContract.kind -ne "enum" -or [string]$property.disposition.kind -ne "editable") {
             continue
         }
-        $values = @(Get-DocumentedEnumValues $property)
+        $values = @(Get-ReviewedEnumValues $property)
         if ($values.Count -lt 2) { continue }
         $property.valueContract | Add-Member -NotePropertyName values -NotePropertyValue $values -Force
         $enumCount++

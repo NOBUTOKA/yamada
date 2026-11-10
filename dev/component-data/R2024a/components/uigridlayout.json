@@ -64,7 +64,7 @@
       "path": "ColumnWidth",
       "categoryId": "grid",
       "order": 1,
-      "summary": "Column width",
+      "summary": "Sizes or weights assigned to the columns.",
       "documentedDefault": "{'1x','1x'}",
       "documentedAcceptedValues": [
         "cell array",
@@ -130,7 +130,7 @@
       "path": "RowHeight",
       "categoryId": "grid",
       "order": 2,
-      "summary": "Row height",
+      "summary": "Sizes or weights assigned to the grid rows.",
       "documentedDefault": "{'1x','1x'}",
       "documentedAcceptedValues": [
         "cell array",
@@ -196,7 +196,7 @@
       "path": "ColumnSpacing",
       "categoryId": "grid",
       "order": 3,
-      "summary": "Column spacing",
+      "summary": "Gap between adjacent grid columns.",
       "documentedDefault": "10",
       "documentedAcceptedValues": [
         "number"
@@ -239,7 +239,7 @@
       "path": "RowSpacing",
       "categoryId": "grid",
       "order": 4,
-      "summary": "Row spacing",
+      "summary": "Gap between adjacent grid rows.",
       "documentedDefault": "10",
       "documentedAcceptedValues": [
         "number"
@@ -282,7 +282,7 @@
       "path": "Padding",
       "categoryId": "grid",
       "order": 5,
-      "summary": "Padding",
+      "summary": "Container padding [left bottom right top].",
       "documentedDefault": "[10 10 10 10]",
       "documentedAcceptedValues": [
         "[left bottom right top]"
@@ -325,7 +325,7 @@
       "path": "BackgroundColor",
       "categoryId": "color",
       "order": 1,
-      "summary": "Background color",
+      "summary": "Color behind the component content.",
       "documentedDefault": "[0.94 0.94 0.94]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -374,7 +374,7 @@
       "path": "Visible",
       "categoryId": "interactivity",
       "order": 1,
-      "summary": "Visibility of children",
+      "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -419,7 +419,7 @@
       "path": "Scrollable",
       "categoryId": "interactivity",
       "order": 2,
-      "summary": "Ability to scroll",
+      "summary": "Whether scrolling is available for the container.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -464,7 +464,7 @@
       "path": "ContextMenu",
       "categoryId": "interactivity",
       "order": 3,
-      "summary": "Context menu",
+      "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "ContextMenu object"
@@ -509,7 +509,7 @@
       "path": "Position",
       "categoryId": "position",
       "order": 1,
-      "summary": "Location and size of grid layout manager",
+      "summary": "Component rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -558,7 +558,7 @@
       "path": "InnerPosition",
       "categoryId": "position",
       "order": 2,
-      "summary": "Location and size of grid layout manager, excluding padding",
+      "summary": "Inner rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -607,7 +607,7 @@
       "path": "OuterPosition",
       "categoryId": "position",
       "order": 3,
-      "summary": "Location and size of grid layout manager",
+      "summary": "Outer rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -656,7 +656,7 @@
       "path": "Layout",
       "categoryId": "position",
       "order": 4,
-      "summary": "Layout options",
+      "summary": "Placement settings supplied by the parent layout.",
       "documentedDefault": "empty LayoutOptions array",
       "documentedAcceptedValues": [
         "GridLayoutOptions object"
@@ -702,7 +702,7 @@
       "path": "CreateFcn",
       "categoryId": "callbacks",
       "order": 1,
-      "summary": "Creation function",
+      "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -766,7 +766,7 @@
       "path": "DeleteFcn",
       "categoryId": "callbacks",
       "order": 2,
-      "summary": "Deletion function",
+      "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -830,7 +830,7 @@
       "path": "Interruptible",
       "categoryId": "callbackexecutioncontrol",
       "order": 1,
-      "summary": "Callback interruption",
+      "summary": "Whether another callback can interrupt the running callback.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -875,7 +875,7 @@
       "path": "BusyAction",
       "categoryId": "callbackexecutioncontrol",
       "order": 2,
-      "summary": "Callback queuing",
+      "summary": "How a callback is handled while another callback is busy.",
       "documentedDefault": "'queue'",
       "documentedAcceptedValues": [
         "'cancel'"
@@ -923,7 +923,7 @@
       "path": "BeingDeleted",
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
-      "summary": "Deletion status",
+      "summary": "Whether destruction of this object is in progress.",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -968,7 +968,7 @@
       "path": "Parent",
       "categoryId": "parentchild",
       "order": 1,
-      "summary": "Parent container",
+      "summary": "Container that owns this component.",
       "documentedDefault": "Figure object",
       "documentedAcceptedValues": [
         "Panel object",
@@ -1016,7 +1016,7 @@
       "path": "Children",
       "categoryId": "parentchild",
       "order": 2,
-      "summary": "Children",
+      "summary": "Components owned directly by this container.",
       "documentedAcceptedValues": [
         "empty GraphicsPlaceholderArray",
         "array of UI component objects"
@@ -1061,7 +1061,7 @@
       "path": "HandleVisibility",
       "categoryId": "parentchild",
       "order": 3,
-      "summary": "Visibility of object handle",
+      "summary": "Whether handle-search operations expose this object.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "'callback'",
@@ -1108,7 +1108,7 @@
       "path": "Type",
       "categoryId": "identifiers",
       "order": 1,
-      "summary": "Type of graphics object",
+      "summary": "MATLAB graphics type identifying the object.",
       "documentedAcceptedValues": [
         "'uigridlayout'"
       ],
@@ -1153,7 +1153,7 @@
       "path": "Tag",
       "categoryId": "identifiers",
       "order": 2,
-      "summary": "Object identifier",
+      "summary": "Identifier available to application code.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -1200,7 +1200,7 @@
       "path": "UserData",
       "categoryId": "identifiers",
       "order": 3,
-      "summary": "User data",
+      "summary": "Application-defined data attached to the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "array"

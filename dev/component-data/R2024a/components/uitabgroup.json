@@ -64,7 +64,7 @@
       "path": "TabLocation",
       "categoryId": "tabs",
       "order": 1,
-      "summary": "Tab label location",
+      "summary": "Choice controlling tab location.",
       "documentedDefault": "'top'",
       "documentedAcceptedValues": [
         "'bottom'",
@@ -116,7 +116,7 @@
       "path": "SelectedTab",
       "categoryId": "tabs",
       "order": 2,
-      "summary": "Currently selected tab",
+      "summary": "Tab currently displayed by the tab group.",
       "documentedAcceptedValues": [
         "Tab object"
       ],
@@ -162,7 +162,7 @@
       "path": "Visible",
       "categoryId": "interactivity",
       "order": 1,
-      "summary": "State of visibility",
+      "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -207,7 +207,7 @@
       "path": "ContextMenu",
       "categoryId": "interactivity",
       "order": 2,
-      "summary": "Context menu",
+      "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "ContextMenu object"
@@ -252,7 +252,7 @@
       "path": "Position",
       "categoryId": "position",
       "order": 1,
-      "summary": "Location and size of tab group",
+      "summary": "Component rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -303,7 +303,7 @@
       "path": "InnerPosition",
       "categoryId": "position",
       "order": 2,
-      "summary": "Location and size of tab group excluding borders and tab titles",
+      "summary": "Inner rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -351,7 +351,7 @@
       "path": "OuterPosition",
       "categoryId": "position",
       "order": 3,
-      "summary": "Location and size of tab group",
+      "summary": "Outer rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -399,7 +399,7 @@
       "path": "Units",
       "categoryId": "position",
       "order": 4,
-      "summary": "Units of measurement",
+      "summary": "Measurement unit used for component geometry.",
       "documentedAcceptedValues": [
         "'pixels'",
         "'normalized'",
@@ -455,7 +455,7 @@
       "path": "SelectionChangedFcn",
       "categoryId": "callbacks",
       "order": 1,
-      "summary": "Selection changed callback",
+      "summary": "Callback invoked for the selection changed event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -519,7 +519,7 @@
       "path": "SizeChangedFcn",
       "categoryId": "callbacks",
       "order": 2,
-      "summary": "Size change callback",
+      "summary": "Callback invoked for the size changed event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -583,7 +583,7 @@
       "path": "ButtonDownFcn",
       "categoryId": "callbacks",
       "order": 3,
-      "summary": "Button-press callback function",
+      "summary": "Callback invoked for the button down event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -647,7 +647,7 @@
       "path": "CreateFcn",
       "categoryId": "callbacks",
       "order": 4,
-      "summary": "Creation function",
+      "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -711,7 +711,7 @@
       "path": "DeleteFcn",
       "categoryId": "callbacks",
       "order": 5,
-      "summary": "Deletion function",
+      "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -775,7 +775,7 @@
       "path": "Interruptible",
       "categoryId": "callbackexecutioncontrol",
       "order": 1,
-      "summary": "Callback interruption",
+      "summary": "Whether another callback can interrupt the running callback.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -820,7 +820,7 @@
       "path": "BusyAction",
       "categoryId": "callbackexecutioncontrol",
       "order": 2,
-      "summary": "Callback queuing",
+      "summary": "How a callback is handled while another callback is busy.",
       "documentedDefault": "'queue'",
       "documentedAcceptedValues": [
         "'cancel'"
@@ -868,7 +868,7 @@
       "path": "BeingDeleted",
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
-      "summary": "Deletion status",
+      "summary": "Whether destruction of this object is in progress.",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -913,7 +913,7 @@
       "path": "Parent",
       "categoryId": "parentchild",
       "order": 1,
-      "summary": "Parent container",
+      "summary": "Container that owns this component.",
       "documentedDefault": "Figure object",
       "documentedAcceptedValues": [
         "Panel object",
@@ -961,7 +961,7 @@
       "path": "Children",
       "categoryId": "parentchild",
       "order": 2,
-      "summary": "TabGroup children",
+      "summary": "Components owned directly by this container.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "1-D array of Tab objects"
@@ -1006,7 +1006,7 @@
       "path": "HandleVisibility",
       "categoryId": "parentchild",
       "order": 3,
-      "summary": "Visibility of object handle",
+      "summary": "Whether handle-search operations expose this object.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "'callback'",
@@ -1053,7 +1053,7 @@
       "path": "Type",
       "categoryId": "identifiers",
       "order": 1,
-      "summary": "Type of graphics object",
+      "summary": "MATLAB graphics type identifying the object.",
       "documentedAcceptedValues": [
         "'uitabgroup'"
       ],
@@ -1098,7 +1098,7 @@
       "path": "Tag",
       "categoryId": "identifiers",
       "order": 2,
-      "summary": "Object identifier",
+      "summary": "Identifier available to application code.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -1145,7 +1145,7 @@
       "path": "UserData",
       "categoryId": "identifiers",
       "order": 3,
-      "summary": "User data",
+      "summary": "Application-defined data attached to the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "array"
@@ -1191,7 +1191,7 @@
       "path": "Tooltip",
       "categoryId": "uifigurebasedappsonly",
       "order": 1,
-      "summary": "Tooltip",
+      "summary": "Help text displayed when the pointer rests on the component.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -1240,7 +1240,7 @@
       "path": "AutoResizeChildren",
       "categoryId": "uifigurebasedappsonly",
       "order": 2,
-      "summary": "Automatically resize children",
+      "summary": "Whether the container resizes its children automatically.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1285,7 +1285,7 @@
       "path": "Layout",
       "categoryId": "uifigurebasedappsonly",
       "order": 3,
-      "summary": "Layout options",
+      "summary": "Placement settings supplied by the parent layout.",
       "documentedDefault": "empty LayoutOptions array",
       "documentedAcceptedValues": [
         "GridLayoutOptions object"

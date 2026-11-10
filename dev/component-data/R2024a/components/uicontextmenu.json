@@ -44,7 +44,7 @@
       "path": "ContextMenuOpeningFcn",
       "categoryId": "callbacks",
       "order": 1,
-      "summary": "Context menu opening callback function",
+      "summary": "Callback invoked for the context menu opening event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -108,7 +108,7 @@
       "path": "CreateFcn",
       "categoryId": "callbacks",
       "order": 2,
-      "summary": "Creation function",
+      "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -172,7 +172,7 @@
       "path": "DeleteFcn",
       "categoryId": "callbacks",
       "order": 3,
-      "summary": "Deletion function",
+      "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -236,7 +236,7 @@
       "path": "Interruptible",
       "categoryId": "callbackexecutioncontrol",
       "order": 1,
-      "summary": "Callback interruption",
+      "summary": "Whether another callback can interrupt the running callback.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -281,7 +281,7 @@
       "path": "BusyAction",
       "categoryId": "callbackexecutioncontrol",
       "order": 2,
-      "summary": "Callback queuing",
+      "summary": "How a callback is handled while another callback is busy.",
       "documentedDefault": "'queue'",
       "documentedAcceptedValues": [
         "'cancel'"
@@ -329,7 +329,7 @@
       "path": "BeingDeleted",
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
-      "summary": "Deletion status",
+      "summary": "Whether destruction of this object is in progress.",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -374,7 +374,7 @@
       "path": "Parent",
       "categoryId": "parentchild",
       "order": 1,
-      "summary": "Parent object",
+      "summary": "Container that owns this component.",
       "documentedAcceptedValues": [
         "Figure object"
       ],
@@ -418,7 +418,7 @@
       "path": "Children",
       "categoryId": "parentchild",
       "order": 2,
-      "summary": "Context menu children",
+      "summary": "Components owned directly by this container.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "vector of Menu objects"
@@ -463,7 +463,7 @@
       "path": "HandleVisibility",
       "categoryId": "parentchild",
       "order": 3,
-      "summary": "Visibility of object handle",
+      "summary": "Whether handle-search operations expose this object.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "'callback'",
@@ -510,7 +510,7 @@
       "path": "Type",
       "categoryId": "identifiers",
       "order": 1,
-      "summary": "Type of graphics object",
+      "summary": "MATLAB graphics type identifying the object.",
       "documentedAcceptedValues": [
         "'uicontextmenu'"
       ],
@@ -555,7 +555,7 @@
       "path": "Tag",
       "categoryId": "identifiers",
       "order": 2,
-      "summary": "Object identifier",
+      "summary": "Identifier available to application code.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -602,7 +602,7 @@
       "path": "UserData",
       "categoryId": "identifiers",
       "order": 3,
-      "summary": "User data",
+      "summary": "Application-defined data attached to the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "array"

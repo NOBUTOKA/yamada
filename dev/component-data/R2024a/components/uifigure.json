@@ -79,7 +79,7 @@
       "path": "Color",
       "categoryId": "windowappearance",
       "order": 1,
-      "summary": "Background color",
+      "summary": "Color used by the component.",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -127,7 +127,7 @@
       "path": "WindowStyle",
       "categoryId": "windowappearance",
       "order": 2,
-      "summary": "Window style",
+      "summary": "Choice controlling window style.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'modal'",
@@ -177,7 +177,7 @@
       "path": "WindowState",
       "categoryId": "windowappearance",
       "order": 3,
-      "summary": "Window state",
+      "summary": "Choice controlling window state.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'minimized'",
@@ -229,7 +229,7 @@
       "path": "Position",
       "categoryId": "positionandsize",
       "order": 1,
-      "summary": "Location and size of UI figure, excluding borders and title bar",
+      "summary": "Component rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -281,7 +281,7 @@
       "path": "Units",
       "categoryId": "positionandsize",
       "order": 2,
-      "summary": "Units of measurement",
+      "summary": "Measurement unit used for component geometry.",
       "documentedDefault": "'pixels'",
       "documentedAcceptedValues": [
         "'normalized'",
@@ -345,7 +345,7 @@
       "path": "InnerPosition",
       "categoryId": "positionandsize",
       "order": 3,
-      "summary": "Location and size of UI figure, excluding borders and title bar",
+      "summary": "Inner rectangle [left bottom width height] in its configured units.",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -392,7 +392,7 @@
       "path": "Resize",
       "categoryId": "positionandsize",
       "order": 4,
-      "summary": "Resizable",
+      "summary": "Whether the user can resize the window.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -446,7 +446,7 @@
       "path": "AutoResizeChildren",
       "categoryId": "positionandsize",
       "order": 5,
-      "summary": "Automatically resize children",
+      "summary": "Whether the container resizes its children automatically.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -491,7 +491,7 @@
       "path": "Colormap",
       "categoryId": "plotting",
       "order": 1,
-      "summary": "Color map for UIAxes content",
+      "summary": "Sequence of colors used to map indexed data.",
       "documentedDefault": "parula",
       "documentedAcceptedValues": [
         "m -by- 3 array of RGB triplets"
@@ -536,10 +536,10 @@
       "path": "Alphamap",
       "categoryId": "plotting",
       "order": 2,
-      "summary": "Transparency map for axes content",
-      "documentedDefault": "vector of 64 values between 0 and 1",
+      "summary": "Sequence of transparency values used for indexed data.",
+      "documentedDefault": "vector[64]; 0 <= value <= 1",
       "documentedAcceptedValues": [
-        "vector of values between 0 and 1"
+        "vector; 0 <= value <= 1"
       ],
       "valueContract": {
         "kind": "numericArray",
@@ -579,7 +579,7 @@
       "path": "Pointer",
       "categoryId": "mousepointer",
       "order": 1,
-      "summary": "Pointer symbol",
+      "summary": "Pointer shape displayed over the window.",
       "documentedDefault": "'arrow'",
       "documentedAcceptedValues": [
         "'ibeam'",
@@ -657,7 +657,7 @@
       "path": "PointerShapeCData",
       "categoryId": "mousepointer",
       "order": 2,
-      "summary": "Custom pointer symbol",
+      "summary": "Pixel data for a custom pointer shape.",
       "documentedDefault": "16-by-16 matrix",
       "documentedAcceptedValues": [
         "32-by-32 matrix"
@@ -702,7 +702,7 @@
       "path": "PointerShapeHotSpot",
       "categoryId": "mousepointer",
       "order": 3,
-      "summary": "Active pixel of pointer",
+      "summary": "Active pixel location within a custom pointer image.",
       "documentedDefault": "[1 1]",
       "documentedAcceptedValues": [
         "two-element vector"
@@ -747,7 +747,7 @@
       "path": "Visible",
       "categoryId": "interactivity",
       "order": 1,
-      "summary": "State of visibility",
+      "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -792,7 +792,7 @@
       "path": "CurrentAxes",
       "categoryId": "interactivity",
       "order": 2,
-      "summary": "Target axes in current UI figure",
+      "summary": "Graphics object associated with the current axes setting.",
       "documentedAcceptedValues": [
         "UIAxes object",
         "Axes object",
@@ -839,7 +839,7 @@
       "path": "CurrentObject",
       "categoryId": "interactivity",
       "order": 3,
-      "summary": "Current object",
+      "summary": "Graphics object associated with the current object setting.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "child object of UI figure"
@@ -884,7 +884,7 @@
       "path": "CurrentPoint",
       "categoryId": "interactivity",
       "order": 4,
-      "summary": "Current point",
+      "summary": "Pointer location reported in the component coordinates.",
       "documentedAcceptedValues": [
         "two-element vector"
       ],
@@ -928,7 +928,7 @@
       "path": "CurrentCharacter",
       "categoryId": "interactivity",
       "order": 5,
-      "summary": "Current character",
+      "summary": "Choice controlling current character.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character"
@@ -974,7 +974,7 @@
       "path": "SelectionType",
       "categoryId": "interactivity",
       "order": 6,
-      "summary": "Mouse selection type",
+      "summary": "Choice controlling selection type.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'extend'",
@@ -1028,7 +1028,7 @@
       "path": "Scrollable",
       "categoryId": "interactivity",
       "order": 7,
-      "summary": "Ability to scroll",
+      "summary": "Whether scrolling is available for the container.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1073,7 +1073,7 @@
       "path": "ContextMenu",
       "categoryId": "interactivity",
       "order": 8,
-      "summary": "Context menu",
+      "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "ContextMenu object"
@@ -1118,7 +1118,7 @@
       "path": "ButtonDownFcn",
       "categoryId": "commoncallbacks",
       "order": 1,
-      "summary": "Button down callback",
+      "summary": "Callback invoked for the button down event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1182,7 +1182,7 @@
       "path": "CreateFcn",
       "categoryId": "commoncallbacks",
       "order": 2,
-      "summary": "Creation function",
+      "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1254,7 +1254,7 @@
       "path": "DeleteFcn",
       "categoryId": "commoncallbacks",
       "order": 3,
-      "summary": "Deletion function",
+      "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1323,7 +1323,7 @@
       "path": "KeyPressFcn",
       "categoryId": "keyboardcallbacks",
       "order": 1,
-      "summary": "Key-press callback",
+      "summary": "Callback invoked for the key press event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1387,7 +1387,7 @@
       "path": "KeyReleaseFcn",
       "categoryId": "keyboardcallbacks",
       "order": 2,
-      "summary": "Key-release callback",
+      "summary": "Callback invoked for the key release event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1451,7 +1451,7 @@
       "path": "CloseRequestFcn",
       "categoryId": "windowcallbacks",
       "order": 1,
-      "summary": "Close request callback",
+      "summary": "Callback invoked for the close request event.",
       "documentedDefault": "'closereq'",
       "documentedAcceptedValues": [
         "function handle",
@@ -1515,7 +1515,7 @@
       "path": "SizeChangedFcn",
       "categoryId": "windowcallbacks",
       "order": 2,
-      "summary": "Size change callback",
+      "summary": "Callback invoked for the size changed event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1579,7 +1579,7 @@
       "path": "WindowButtonDownFcn",
       "categoryId": "windowcallbacks",
       "order": 3,
-      "summary": "Window button down callback",
+      "summary": "Callback invoked for the window button down event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1643,7 +1643,7 @@
       "path": "WindowButtonMotionFcn",
       "categoryId": "windowcallbacks",
       "order": 4,
-      "summary": "Window button motion callback",
+      "summary": "Callback invoked for the window button motion event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1707,7 +1707,7 @@
       "path": "WindowButtonUpFcn",
       "categoryId": "windowcallbacks",
       "order": 5,
-      "summary": "Window button up callback",
+      "summary": "Callback invoked for the window button up event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1771,7 +1771,7 @@
       "path": "WindowKeyPressFcn",
       "categoryId": "windowcallbacks",
       "order": 6,
-      "summary": "Window key-press callback",
+      "summary": "Callback invoked for the window key press event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1835,7 +1835,7 @@
       "path": "WindowKeyReleaseFcn",
       "categoryId": "windowcallbacks",
       "order": 7,
-      "summary": "Window key-release callback",
+      "summary": "Callback invoked for the window key release event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1899,7 +1899,7 @@
       "path": "WindowScrollWheelFcn",
       "categoryId": "windowcallbacks",
       "order": 8,
-      "summary": "Window scroll wheel callback",
+      "summary": "Callback invoked for the window scroll wheel event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1963,7 +1963,7 @@
       "path": "Interruptible",
       "categoryId": "callbackexecutioncontrol",
       "order": 1,
-      "summary": "Callback interruption",
+      "summary": "Whether another callback can interrupt the running callback.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -2008,7 +2008,7 @@
       "path": "BusyAction",
       "categoryId": "callbackexecutioncontrol",
       "order": 2,
-      "summary": "Callback queuing",
+      "summary": "How a callback is handled while another callback is busy.",
       "documentedDefault": "'queue'",
       "documentedAcceptedValues": [
         "'cancel'"
@@ -2056,7 +2056,7 @@
       "path": "BeingDeleted",
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
-      "summary": "Deletion status",
+      "summary": "Whether destruction of this object is in progress.",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -2101,7 +2101,7 @@
       "path": "Parent",
       "categoryId": "parentchildren",
       "order": 1,
-      "summary": "Parent object",
+      "summary": "Container that owns this component.",
       "documentedAcceptedValues": [
         "root object"
       ],
@@ -2146,7 +2146,7 @@
       "path": "Children",
       "categoryId": "parentchildren",
       "order": 2,
-      "summary": "Children of Figure object",
+      "summary": "Components owned directly by this container.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "1-D array of component objects"
@@ -2191,7 +2191,7 @@
       "path": "HandleVisibility",
       "categoryId": "parentchildren",
       "order": 3,
-      "summary": "Visibility of object handle",
+      "summary": "Whether handle-search operations expose this object.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "'callback'",
@@ -2238,7 +2238,7 @@
       "path": "Name",
       "categoryId": "identifiers",
       "order": 1,
-      "summary": "Name",
+      "summary": "Name displayed for the window.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -2283,7 +2283,7 @@
       "path": "Icon",
       "categoryId": "identifiers",
       "order": 2,
-      "summary": "Icon source or file",
+      "summary": "Image displayed beside the component text.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -2330,7 +2330,7 @@
       "path": "Number",
       "categoryId": "identifiers",
       "order": 3,
-      "summary": "Number",
+      "summary": "Numeric identifier assigned to the figure.",
       "documentedAcceptedValues": [
         "integer",
         "[]"
@@ -2376,7 +2376,7 @@
       "path": "NumberTitle",
       "categoryId": "identifiers",
       "order": 4,
-      "summary": "Use number title",
+      "summary": "Whether number title is enabled.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -2421,7 +2421,7 @@
       "path": "IntegerHandle",
       "categoryId": "identifiers",
       "order": 5,
-      "summary": "Use integer handle",
+      "summary": "Whether integer handle is enabled.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -2466,7 +2466,7 @@
       "path": "Type",
       "categoryId": "identifiers",
       "order": 6,
-      "summary": "Type of graphics object",
+      "summary": "MATLAB graphics type identifying the object.",
       "documentedAcceptedValues": [
         "'figure'"
       ],
@@ -2511,7 +2511,7 @@
       "path": "Tag",
       "categoryId": "identifiers",
       "order": 7,
-      "summary": "Object identifier",
+      "summary": "Identifier available to application code.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -2558,7 +2558,7 @@
       "path": "UserData",
       "categoryId": "identifiers",
       "order": 8,
-      "summary": "User data",
+      "summary": "Application-defined data attached to the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "array"

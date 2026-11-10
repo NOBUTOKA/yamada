@@ -30,6 +30,7 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 . (Join-Path $PSScriptRoot 'ApplicationPolicy.ps1')
 . (Join-Path $PSScriptRoot 'ComponentLedger.ps1')
+. (Join-Path $PSScriptRoot 'ProjectPropertyText.ps1')
 Assert-ComponentLedgerSchema -ReleaseDirectory $ReleaseDirectory
 
 function Write-Utf8JsonFile {
@@ -87,7 +88,7 @@ function Get-PropertyMetadata {
     }
     $metadata = [ordered]@{
         displayName = [string]$SourceProperty.path
-        description = [string]$SourceProperty.summary
+        description = Get-ProjectPropertySummary $SourceProperty
         categoryId = [string]$Category.id
         category = [string]$Category.displayName
         order = $Order

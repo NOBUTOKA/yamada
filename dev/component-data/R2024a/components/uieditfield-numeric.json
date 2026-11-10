@@ -66,7 +66,7 @@
       "path": "Value",
       "categoryId": "value",
       "order": 1,
-      "summary": "Value in edit field",
+      "summary": "Current value of the control.",
       "documentedDefault": "0",
       "documentedAcceptedValues": [
         "numeric value"
@@ -138,7 +138,7 @@
       "path": "Limits",
       "categoryId": "value",
       "order": 2,
-      "summary": "Minimum and maximum edit field values",
+      "summary": "Lower and upper limits of the control value.",
       "documentedDefault": "[-Inf Inf]",
       "documentedAcceptedValues": [
         "two-element numeric array"
@@ -201,7 +201,7 @@
       "path": "RoundFractionalValues",
       "categoryId": "value",
       "order": 3,
-      "summary": "Rounding of fractional values",
+      "summary": "Whether fractional input is rounded to a whole number.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -263,7 +263,7 @@
       "path": "ValueDisplayFormat",
       "categoryId": "value",
       "order": 4,
-      "summary": "Value display format",
+      "summary": "Text used for value display format.",
       "documentedDefault": "'%11.4g'",
       "documentedAcceptedValues": [
         "character vector",
@@ -308,7 +308,7 @@
       "path": "AllowEmpty",
       "categoryId": "value",
       "order": 5,
-      "summary": "Ability to clear edit field",
+      "summary": "Whether an empty entry is accepted.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -366,7 +366,7 @@
       "path": "Placeholder",
       "categoryId": "value",
       "order": 6,
-      "summary": "Placeholder text",
+      "summary": "Hint displayed while the control has no entered text.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "string scalar",
@@ -411,7 +411,7 @@
       "path": "HorizontalAlignment",
       "categoryId": "value",
       "order": 7,
-      "summary": "Horizontal alignment of numbers",
+      "summary": "Horizontal alignment of the displayed content.",
       "documentedDefault": "'right'",
       "documentedAcceptedValues": [
         "'left'",
@@ -461,7 +461,7 @@
       "path": "LowerLimitInclusive",
       "categoryId": "value",
       "order": 8,
-      "summary": "Lower limit inclusiveness",
+      "summary": "Whether the lower limit itself is accepted.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -514,7 +514,7 @@
       "path": "UpperLimitInclusive",
       "categoryId": "value",
       "order": 9,
-      "summary": "Upper limit inclusiveness",
+      "summary": "Whether the upper limit itself is accepted.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -567,7 +567,7 @@
       "path": "FontName",
       "categoryId": "fontandcolor",
       "order": 1,
-      "summary": "Font name",
+      "summary": "Typeface used to render text.",
       "documentedAcceptedValues": [
         "system supported font name"
       ],
@@ -610,7 +610,7 @@
       "path": "FontSize",
       "categoryId": "fontandcolor",
       "order": 2,
-      "summary": "Font size",
+      "summary": "Size used to render text.",
       "documentedAcceptedValues": [
         "positive number"
       ],
@@ -655,7 +655,7 @@
       "path": "FontWeight",
       "categoryId": "fontandcolor",
       "order": 3,
-      "summary": "Font weight",
+      "summary": "Weight used to render text.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'bold'"
@@ -703,7 +703,7 @@
       "path": "FontAngle",
       "categoryId": "fontandcolor",
       "order": 4,
-      "summary": "Font angle",
+      "summary": "Upright or italic text style.",
       "documentedDefault": "'normal'",
       "documentedAcceptedValues": [
         "'italic'"
@@ -751,7 +751,7 @@
       "path": "FontColor",
       "categoryId": "fontandcolor",
       "order": 5,
-      "summary": "Font color",
+      "summary": "Color used to render text.",
       "documentedDefault": "[0 0 0]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -800,7 +800,7 @@
       "path": "BackgroundColor",
       "categoryId": "fontandcolor",
       "order": 6,
-      "summary": "Background color",
+      "summary": "Color behind the component content.",
       "documentedDefault": "[1 1 1]",
       "documentedAcceptedValues": [
         "RGB triplet",
@@ -849,7 +849,7 @@
       "path": "Visible",
       "categoryId": "interactivity",
       "order": 1,
-      "summary": "State of visibility",
+      "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -894,7 +894,7 @@
       "path": "Editable",
       "categoryId": "interactivity",
       "order": 2,
-      "summary": "Editability of edit field",
+      "summary": "Whether the user can change the displayed value.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -939,7 +939,7 @@
       "path": "Enable",
       "categoryId": "interactivity",
       "order": 3,
-      "summary": "Operational state of edit field",
+      "summary": "Whether the control accepts user interaction.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -984,7 +984,7 @@
       "path": "Tooltip",
       "categoryId": "interactivity",
       "order": 4,
-      "summary": "Tooltip",
+      "summary": "Help text displayed when the pointer rests on the component.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -1033,7 +1033,7 @@
       "path": "ContextMenu",
       "categoryId": "interactivity",
       "order": 5,
-      "summary": "Context menu",
+      "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
         "ContextMenu object"
@@ -1078,7 +1078,7 @@
       "path": "Position",
       "categoryId": "position",
       "order": 1,
-      "summary": "Location and size of edit field",
+      "summary": "Component rectangle [left bottom width height] in its configured units.",
       "documentedDefault": "[100 100 100 22]",
       "documentedAcceptedValues": [
         "[left bottom width height]"
@@ -1128,7 +1128,7 @@
       "path": "InnerPosition",
       "categoryId": "position",
       "order": 2,
-      "summary": "Inner location and size of edit field",
+      "summary": "Inner rectangle [left bottom width height] in its configured units.",
       "documentedDefault": "[100 100 100 22]",
       "documentedAcceptedValues": [
         "[left bottom width height]"
@@ -1180,7 +1180,7 @@
       "path": "OuterPosition",
       "categoryId": "position",
       "order": 3,
-      "summary": "Outer location and size of edit field",
+      "summary": "Outer rectangle [left bottom width height] in its configured units.",
       "documentedDefault": "[100 100 100 22]]",
       "documentedAcceptedValues": [
         "[left bottom width height]"
@@ -1233,7 +1233,7 @@
       "path": "Layout",
       "categoryId": "position",
       "order": 4,
-      "summary": "Layout options",
+      "summary": "Placement settings supplied by the parent layout.",
       "documentedDefault": "empty LayoutOptions array",
       "documentedAcceptedValues": [
         "GridLayoutOptions object"
@@ -1282,7 +1282,7 @@
       "path": "ValueChangedFcn",
       "categoryId": "callbacks",
       "order": 1,
-      "summary": "Value changed callback",
+      "summary": "Callback invoked for the value changed event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1349,7 +1349,7 @@
       "path": "CreateFcn",
       "categoryId": "callbacks",
       "order": 2,
-      "summary": "Creation function",
+      "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1416,7 +1416,7 @@
       "path": "DeleteFcn",
       "categoryId": "callbacks",
       "order": 3,
-      "summary": "Deletion function",
+      "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "function handle",
@@ -1483,7 +1483,7 @@
       "path": "Interruptible",
       "categoryId": "callbackexecutioncontrol",
       "order": 1,
-      "summary": "Callback interruption",
+      "summary": "Whether another callback can interrupt the running callback.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
@@ -1528,7 +1528,7 @@
       "path": "BusyAction",
       "categoryId": "callbackexecutioncontrol",
       "order": 2,
-      "summary": "Callback queuing",
+      "summary": "How a callback is handled while another callback is busy.",
       "documentedDefault": "'queue'",
       "documentedAcceptedValues": [
         "'cancel'"
@@ -1576,7 +1576,7 @@
       "path": "BeingDeleted",
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
-      "summary": "Deletion status",
+      "summary": "Whether destruction of this object is in progress.",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -1624,7 +1624,7 @@
       "path": "Parent",
       "categoryId": "parentchild",
       "order": 1,
-      "summary": "Parent container",
+      "summary": "Container that owns this component.",
       "documentedDefault": "Figure object",
       "documentedAcceptedValues": [
         "Panel object",
@@ -1675,7 +1675,7 @@
       "path": "HandleVisibility",
       "categoryId": "parentchild",
       "order": 2,
-      "summary": "Visibility of object handle",
+      "summary": "Whether handle-search operations expose this object.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "'callback'",
@@ -1725,7 +1725,7 @@
       "path": "Type",
       "categoryId": "identifiers",
       "order": 1,
-      "summary": "Type of graphics object",
+      "summary": "MATLAB graphics type identifying the object.",
       "documentedAcceptedValues": [
         "'uinumericeditfield'"
       ],
@@ -1773,7 +1773,7 @@
       "path": "Tag",
       "categoryId": "identifiers",
       "order": 2,
-      "summary": "Object identifier",
+      "summary": "Identifier available to application code.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
@@ -1823,7 +1823,7 @@
       "path": "UserData",
       "categoryId": "identifiers",
       "order": 3,
-      "summary": "User data",
+      "summary": "Application-defined data attached to the component.",
       "documentedDefault": "[]",
       "documentedAcceptedValues": [
         "array"

@@ -36,11 +36,13 @@ foreach ($file in @(Get-ChildItem -LiteralPath $componentPath -Filter '*.json' -
     $document = Get-Content -Raw -LiteralPath $file.FullName | ConvertFrom-Json
     $changed = $false
     foreach ($property in @($document.properties)) {
-        $isText = [string]$property.path -eq "Text" -and [string]$property.valueContract.kind -eq "stringList" -and
-            (@($property.documentedAcceptedValues) -join " ") -match "cell array of character vectors"
-        $isTooltip = [string]$property.path -eq "Tooltip" -and [string]$property.valueContract.kind -eq "stringList"
+        $isText = [string]$property.path -eq "Text" -and
+            [string]$property.valueContract.kind -in @("stringList", "multilineText") -and
+            'cell' -in @($property.valueContract.matlabClasses) -and
+            'string' -in @($property.valueContract.matlabClasses)
+        $isTooltip = [string]$property.path -eq "Tooltip" -and [string]$property.valueContract.kind -in @("stringList", "multilineText")
         $isTextAreaValue = [string]$document.id -eq "uitextarea" -and [string]$property.path -eq "Value" -and
-            [string]$property.valueContract.kind -eq "stringList"
+            [string]$property.valueContract.kind -in @("stringList", "multilineText")
         if (-not ($isText -or $isTooltip -or $isTextAreaValue)) { continue }
 
         $property.valueContract.kind = "multilineText"

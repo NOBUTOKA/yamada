@@ -60,7 +60,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Data",
-            "description": "Table data",
+            "description": "Data supplied to this component.",
             "categoryId": "table",
             "category": "Table",
             "order": 1,
@@ -98,7 +98,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColumnName",
-            "description": "Column names",
+            "description": "Labels displayed above the table columns.",
             "categoryId": "table",
             "category": "Table",
             "order": 2,
@@ -137,7 +137,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColumnWidth",
-            "description": "Width of table columns",
+            "description": "Sizes or weights assigned to the columns.",
             "categoryId": "table",
             "category": "Table",
             "order": 3,
@@ -174,7 +174,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColumnEditable",
-            "description": "Ability to edit column cells",
+            "description": "Whether users can edit cells in each column.",
             "categoryId": "table",
             "category": "Table",
             "order": 4,
@@ -210,7 +210,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColumnRearrangeable",
-            "description": "Ability to rearrange table columns",
+            "description": "Whether users can change the column order.",
             "categoryId": "table",
             "category": "Table",
             "order": 5,
@@ -246,7 +246,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColumnFormat",
-            "description": "Cell display format",
+            "description": "Display or input format of each table column.",
             "categoryId": "table",
             "category": "Table",
             "order": 6,
@@ -282,7 +282,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "RowName",
-            "description": "Row names",
+            "description": "Labels displayed beside the table rows.",
             "categoryId": "table",
             "category": "Table",
             "order": 7,
@@ -328,7 +328,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontName",
-            "description": "Font name",
+            "description": "Typeface used to render text.",
             "categoryId": "font",
             "category": "Font",
             "order": 1,
@@ -363,7 +363,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontSize",
-            "description": "Font size",
+            "description": "Size used to render text.",
             "categoryId": "font",
             "category": "Font",
             "order": 2,
@@ -402,7 +402,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontWeight",
-            "description": "Font weight",
+            "description": "Weight used to render text.",
             "categoryId": "font",
             "category": "Font",
             "order": 3,
@@ -441,7 +441,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontAngle",
-            "description": "Font angle",
+            "description": "Upright or italic text style.",
             "categoryId": "font",
             "category": "Font",
             "order": 4,
@@ -480,7 +480,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "FontUnits",
-            "description": "Font unit of measurement",
+            "description": "Measurement unit used for text size.",
             "categoryId": "font",
             "category": "Font",
             "order": 5,
@@ -529,7 +529,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
-            "description": "State of visibility",
+            "description": "Whether this component is displayed.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
@@ -565,7 +565,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Enable",
-            "description": "Operational state of table",
+            "description": "Whether the control accepts user interaction.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
@@ -605,7 +605,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tooltip",
-            "description": "Tooltip",
+            "description": "Help text displayed when the pointer rests on the component.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 3,
@@ -642,7 +642,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
-            "description": "Context menu",
+            "description": "Menu opened for this component by a context-menu gesture.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 4,
@@ -683,7 +683,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ForegroundColor",
-            "description": "Cell text color",
+            "description": "Color used in front of the component background.",
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 1,
@@ -719,7 +719,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BackgroundColor",
-            "description": "Table background color",
+            "description": "Color behind the component content.",
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 2,
@@ -755,7 +755,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "RowStriping",
-            "description": "Alternate row shading",
+            "description": "Whether alternating table rows use different backgrounds.",
             "categoryId": "colorandstyling",
             "category": "Color and Styling",
             "order": 3,
@@ -798,7 +798,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Position",
-            "description": "Location and size of table",
+            "description": "Component rectangle [left bottom width height] in its configured units.",
             "categoryId": "position",
             "category": "Position",
             "order": 1,
@@ -834,7 +834,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "InnerPosition",
-            "description": "Location and size of table",
+            "description": "Inner rectangle [left bottom width height] in its configured units.",
             "categoryId": "position",
             "category": "Position",
             "order": 2,
@@ -872,7 +872,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "OuterPosition",
-            "description": "Location and size of table",
+            "description": "Outer rectangle [left bottom width height] in its configured units.",
             "categoryId": "position",
             "category": "Position",
             "order": 3,
@@ -910,7 +910,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Units",
-            "description": "Units of measurement",
+            "description": "Measurement unit used for component geometry.",
             "categoryId": "position",
             "category": "Position",
             "order": 4,
@@ -961,7 +961,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CellEditCallback",
-            "description": "Cell edit callback function",
+            "description": "Callback invoked for the cell edit event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 1,
@@ -1004,7 +1004,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ButtonDownFcn",
-            "description": "Button-press callback function",
+            "description": "Callback invoked for the button down event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 2,
@@ -1047,7 +1047,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "KeyPressFcn",
-            "description": "Key press callback function",
+            "description": "Callback invoked for the key press event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 3,
@@ -1090,7 +1090,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "KeyReleaseFcn",
-            "description": "Key-release callback function",
+            "description": "Callback invoked for the key release event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 4,
@@ -1133,7 +1133,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CreateFcn",
-            "description": "Creation function",
+            "description": "Callback invoked for the create event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 5,
@@ -1176,7 +1176,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "DeleteFcn",
-            "description": "Deletion function",
+            "description": "Callback invoked for the delete event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 6,
@@ -1219,7 +1219,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CellSelectionCallback",
-            "description": "Cell selection callback function",
+            "description": "Callback invoked for the cell selection event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 7,
@@ -1269,7 +1269,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
-            "description": "Callback interruption",
+            "description": "Whether another callback can interrupt the running callback.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 1,
@@ -1305,7 +1305,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
-            "description": "Callback queuing",
+            "description": "How a callback is handled while another callback is busy.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 2,
@@ -1344,7 +1344,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
-            "description": "Deletion status",
+            "description": "Whether destruction of this object is in progress.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 3,
@@ -1378,7 +1378,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HitTest",
-            "description": "Ability to become current object",
+            "description": "Whether this object responds to pointer hit testing.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 4,
@@ -1421,7 +1421,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Parent",
-            "description": "Parent container",
+            "description": "Container that owns this component.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 1,
@@ -1455,7 +1455,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Children",
-            "description": "Children of table",
+            "description": "Components owned directly by this container.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 2,
@@ -1489,7 +1489,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HandleVisibility",
-            "description": "Visibility of object handle",
+            "description": "Whether handle-search operations expose this object.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 3,
@@ -1531,7 +1531,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Type",
-            "description": "Type of graphics object",
+            "description": "MATLAB graphics type identifying the object.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 1,
@@ -1565,7 +1565,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tag",
-            "description": "Object identifier",
+            "description": "Identifier available to application code.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 2,
@@ -1600,7 +1600,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "UserData",
-            "description": "User data",
+            "description": "Application-defined data attached to the component.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 3,
@@ -1641,7 +1641,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "DisplayData",
-            "description": "Table data in current display",
+            "description": "Data in the current displayed order.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 1,
@@ -1675,7 +1675,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ColumnSortable",
-            "description": "Ability to sort columns",
+            "description": "Whether users can sort each column.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 2,
@@ -1711,7 +1711,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "StyleConfigurations",
-            "description": "Configurations of added styles",
+            "description": "Style settings associated with the component.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 3,
@@ -1745,7 +1745,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Selection",
-            "description": "Table selection",
+            "description": "Current selection reported by the component.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 4,
@@ -1785,7 +1785,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "DisplaySelection",
-            "description": "Table selection in current display",
+            "description": "Whether the table indicates its current selection.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 5,
@@ -1819,7 +1819,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SelectionType",
-            "description": "Table selection type",
+            "description": "Choice controlling selection type.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 6,
@@ -1859,7 +1859,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Multiselect",
-            "description": "Multiple element selection",
+            "description": "Whether more than one item can be selected.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 7,
@@ -1895,7 +1895,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SelectionChangedFcn",
-            "description": "Selection changed callback",
+            "description": "Callback invoked for the selection changed event.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 8,
@@ -1938,7 +1938,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "DisplayDataChangedFcn",
-            "description": "Display data changed callback",
+            "description": "Callback invoked for the display data changed event.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 9,
@@ -1981,7 +1981,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ClickedFcn",
-            "description": "Clicked callback",
+            "description": "Callback invoked for the clicked event.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 10,
@@ -2024,7 +2024,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "DoubleClickedFcn",
-            "description": "Double-clicked callback",
+            "description": "Callback invoked for the double clicked event.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 11,
@@ -2067,7 +2067,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Layout",
-            "description": "Layout options",
+            "description": "Placement settings supplied by the parent layout.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 12,
@@ -2108,7 +2108,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Extent",
-            "description": "Size of enclosing rectangle",
+            "description": "Measured bounds needed by the displayed content.",
             "categoryId": "figurebasedappsonly",
             "category": "figure -Based Apps Only",
             "order": 1,

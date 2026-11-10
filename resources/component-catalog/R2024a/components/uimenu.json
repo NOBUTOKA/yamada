@@ -38,7 +38,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Text",
-            "description": "Menu label",
+            "description": "Text rendered by the component.",
             "categoryId": "menu",
             "category": "Menu",
             "order": 1,
@@ -73,7 +73,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Accelerator",
-            "description": "Keyboard shortcut",
+            "description": "Text used for accelerator.",
             "categoryId": "menu",
             "category": "Menu",
             "order": 2,
@@ -108,7 +108,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Separator",
-            "description": "Separator line mode",
+            "description": "Whether separator is enabled.",
             "categoryId": "menu",
             "category": "Menu",
             "order": 3,
@@ -144,7 +144,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Checked",
-            "description": "Menu check indicator",
+            "description": "Whether the menu item is checked.",
             "categoryId": "menu",
             "category": "Menu",
             "order": 4,
@@ -180,7 +180,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ForegroundColor",
-            "description": "Menu label color",
+            "description": "Color used in front of the component background.",
             "categoryId": "menu",
             "category": "Menu",
             "order": 5,
@@ -223,7 +223,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
-            "description": "State of visibility",
+            "description": "Whether this component is displayed.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
@@ -259,7 +259,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Enable",
-            "description": "Operational state",
+            "description": "Whether the control accepts user interaction.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
@@ -295,7 +295,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
-            "description": "Context menu",
+            "description": "Menu opened for this component by a context-menu gesture.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 3,
@@ -336,7 +336,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "MenuSelectedFcn",
-            "description": "Menu selected callback function",
+            "description": "Callback invoked for the menu selected event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 1,
@@ -379,7 +379,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CreateFcn",
-            "description": "Creation function",
+            "description": "Callback invoked for the create event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 2,
@@ -422,7 +422,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "DeleteFcn",
-            "description": "Deletion function",
+            "description": "Callback invoked for the delete event.",
             "categoryId": "callbacks",
             "category": "Callbacks",
             "order": 3,
@@ -472,7 +472,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
-            "description": "Callback interruption",
+            "description": "Whether another callback can interrupt the running callback.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 1,
@@ -508,7 +508,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
-            "description": "Callback queuing",
+            "description": "How a callback is handled while another callback is busy.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 2,
@@ -547,7 +547,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
-            "description": "Deletion status",
+            "description": "Whether destruction of this object is in progress.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 3,
@@ -588,7 +588,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Parent",
-            "description": "Parent object",
+            "description": "Container that owns this component.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 1,
@@ -622,7 +622,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Children",
-            "description": "Menu children",
+            "description": "Components owned directly by this container.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 2,
@@ -656,7 +656,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HandleVisibility",
-            "description": "Visibility of object handle",
+            "description": "Whether handle-search operations expose this object.",
             "categoryId": "parentchild",
             "category": "Parent/Child",
             "order": 3,
@@ -698,7 +698,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Type",
-            "description": "Type of graphics object",
+            "description": "MATLAB graphics type identifying the object.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 1,
@@ -732,7 +732,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tag",
-            "description": "Object identifier",
+            "description": "Identifier available to application code.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 2,
@@ -767,7 +767,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "UserData",
-            "description": "User data",
+            "description": "Application-defined data attached to the component.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 3,
@@ -808,7 +808,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tooltip",
-            "description": "Tooltip",
+            "description": "Help text displayed when the pointer rests on the component.",
             "categoryId": "uifigurebasedappsonly",
             "category": "uifigure -Based Apps Only",
             "order": 1,

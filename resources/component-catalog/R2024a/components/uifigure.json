@@ -22,7 +22,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Color",
-            "description": "Background color",
+            "description": "Color used by the component.",
             "categoryId": "windowappearance",
             "category": "Window Appearance",
             "order": 1,
@@ -58,7 +58,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "WindowStyle",
-            "description": "Window style",
+            "description": "Choice controlling window style.",
             "categoryId": "windowappearance",
             "category": "Window Appearance",
             "order": 2,
@@ -98,7 +98,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "WindowState",
-            "description": "Window state",
+            "description": "Choice controlling window state.",
             "categoryId": "windowappearance",
             "category": "Window Appearance",
             "order": 3,
@@ -146,7 +146,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Position",
-            "description": "Location and size of UI figure, excluding borders and title bar",
+            "description": "Component rectangle [left bottom width height] in its configured units.",
             "categoryId": "positionandsize",
             "category": "Position and Size",
             "order": 1,
@@ -183,7 +183,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Units",
-            "description": "Units of measurement",
+            "description": "Measurement unit used for component geometry.",
             "categoryId": "positionandsize",
             "category": "Position and Size",
             "order": 2,
@@ -227,7 +227,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "InnerPosition",
-            "description": "Location and size of UI figure, excluding borders and title bar",
+            "description": "Inner rectangle [left bottom width height] in its configured units.",
             "categoryId": "positionandsize",
             "category": "Position and Size",
             "order": 3,
@@ -264,7 +264,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Resize",
-            "description": "Resizable",
+            "description": "Whether the user can resize the window.",
             "categoryId": "positionandsize",
             "category": "Position and Size",
             "order": 4,
@@ -302,7 +302,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "AutoResizeChildren",
-            "description": "Automatically resize children",
+            "description": "Whether the container resizes its children automatically.",
             "categoryId": "positionandsize",
             "category": "Position and Size",
             "order": 5,
@@ -345,7 +345,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Colormap",
-            "description": "Color map for UIAxes content",
+            "description": "Sequence of colors used to map indexed data.",
             "categoryId": "plotting",
             "category": "Plotting",
             "order": 1,
@@ -381,7 +381,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Alphamap",
-            "description": "Transparency map for axes content",
+            "description": "Sequence of transparency values used for indexed data.",
             "categoryId": "plotting",
             "category": "Plotting",
             "order": 2,
@@ -422,7 +422,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Pointer",
-            "description": "Pointer symbol",
+            "description": "Pointer shape displayed over the window.",
             "categoryId": "mousepointer",
             "category": "Mouse Pointer",
             "order": 1,
@@ -476,7 +476,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "PointerShapeCData",
-            "description": "Custom pointer symbol",
+            "description": "Pixel data for a custom pointer shape.",
             "categoryId": "mousepointer",
             "category": "Mouse Pointer",
             "order": 2,
@@ -510,7 +510,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "PointerShapeHotSpot",
-            "description": "Active pixel of pointer",
+            "description": "Active pixel location within a custom pointer image.",
             "categoryId": "mousepointer",
             "category": "Mouse Pointer",
             "order": 3,
@@ -551,7 +551,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Visible",
-            "description": "State of visibility",
+            "description": "Whether this component is displayed.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 1,
@@ -587,7 +587,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CurrentAxes",
-            "description": "Target axes in current UI figure",
+            "description": "Graphics object associated with the current axes setting.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 2,
@@ -621,7 +621,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CurrentObject",
-            "description": "Current object",
+            "description": "Graphics object associated with the current object setting.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 3,
@@ -655,7 +655,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CurrentPoint",
-            "description": "Current point",
+            "description": "Pointer location reported in the component coordinates.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 4,
@@ -689,7 +689,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CurrentCharacter",
-            "description": "Current character",
+            "description": "Choice controlling current character.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 5,
@@ -724,7 +724,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SelectionType",
-            "description": "Mouse selection type",
+            "description": "Choice controlling selection type.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 6,
@@ -765,7 +765,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Scrollable",
-            "description": "Ability to scroll",
+            "description": "Whether scrolling is available for the container.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 7,
@@ -801,7 +801,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ContextMenu",
-            "description": "Context menu",
+            "description": "Menu opened for this component by a context-menu gesture.",
             "categoryId": "interactivity",
             "category": "Interactivity",
             "order": 8,
@@ -842,7 +842,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ButtonDownFcn",
-            "description": "Button down callback",
+            "description": "Callback invoked for the button down event.",
             "categoryId": "commoncallbacks",
             "category": "Common Callbacks",
             "order": 1,
@@ -885,7 +885,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CreateFcn",
-            "description": "Creation function",
+            "description": "Callback invoked for the create event.",
             "categoryId": "commoncallbacks",
             "category": "Common Callbacks",
             "order": 2,
@@ -931,7 +931,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "DeleteFcn",
-            "description": "Deletion function",
+            "description": "Callback invoked for the delete event.",
             "categoryId": "commoncallbacks",
             "category": "Common Callbacks",
             "order": 3,
@@ -981,7 +981,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "KeyPressFcn",
-            "description": "Key-press callback",
+            "description": "Callback invoked for the key press event.",
             "categoryId": "keyboardcallbacks",
             "category": "Keyboard Callbacks",
             "order": 1,
@@ -1024,7 +1024,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "KeyReleaseFcn",
-            "description": "Key-release callback",
+            "description": "Callback invoked for the key release event.",
             "categoryId": "keyboardcallbacks",
             "category": "Keyboard Callbacks",
             "order": 2,
@@ -1074,7 +1074,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "CloseRequestFcn",
-            "description": "Close request callback",
+            "description": "Callback invoked for the close request event.",
             "categoryId": "windowcallbacks",
             "category": "Window Callbacks",
             "order": 1,
@@ -1117,7 +1117,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "SizeChangedFcn",
-            "description": "Size change callback",
+            "description": "Callback invoked for the size changed event.",
             "categoryId": "windowcallbacks",
             "category": "Window Callbacks",
             "order": 2,
@@ -1160,7 +1160,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "WindowButtonDownFcn",
-            "description": "Window button down callback",
+            "description": "Callback invoked for the window button down event.",
             "categoryId": "windowcallbacks",
             "category": "Window Callbacks",
             "order": 3,
@@ -1203,7 +1203,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "WindowButtonMotionFcn",
-            "description": "Window button motion callback",
+            "description": "Callback invoked for the window button motion event.",
             "categoryId": "windowcallbacks",
             "category": "Window Callbacks",
             "order": 4,
@@ -1246,7 +1246,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "WindowButtonUpFcn",
-            "description": "Window button up callback",
+            "description": "Callback invoked for the window button up event.",
             "categoryId": "windowcallbacks",
             "category": "Window Callbacks",
             "order": 5,
@@ -1289,7 +1289,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "WindowKeyPressFcn",
-            "description": "Window key-press callback",
+            "description": "Callback invoked for the window key press event.",
             "categoryId": "windowcallbacks",
             "category": "Window Callbacks",
             "order": 6,
@@ -1332,7 +1332,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "WindowKeyReleaseFcn",
-            "description": "Window key-release callback",
+            "description": "Callback invoked for the window key release event.",
             "categoryId": "windowcallbacks",
             "category": "Window Callbacks",
             "order": 7,
@@ -1375,7 +1375,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "WindowScrollWheelFcn",
-            "description": "Window scroll wheel callback",
+            "description": "Callback invoked for the window scroll wheel event.",
             "categoryId": "windowcallbacks",
             "category": "Window Callbacks",
             "order": 8,
@@ -1425,7 +1425,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Interruptible",
-            "description": "Callback interruption",
+            "description": "Whether another callback can interrupt the running callback.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 1,
@@ -1461,7 +1461,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "BusyAction",
-            "description": "Callback queuing",
+            "description": "How a callback is handled while another callback is busy.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 2,
@@ -1500,7 +1500,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "BeingDeleted",
-            "description": "Deletion status",
+            "description": "Whether destruction of this object is in progress.",
             "categoryId": "callbackexecutioncontrol",
             "category": "Callback Execution Control",
             "order": 3,
@@ -1541,7 +1541,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Parent",
-            "description": "Parent object",
+            "description": "Container that owns this component.",
             "categoryId": "parentchildren",
             "category": "Parent/Children",
             "order": 1,
@@ -1575,7 +1575,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Children",
-            "description": "Children of Figure object",
+            "description": "Components owned directly by this container.",
             "categoryId": "parentchildren",
             "category": "Parent/Children",
             "order": 2,
@@ -1609,7 +1609,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "HandleVisibility",
-            "description": "Visibility of object handle",
+            "description": "Whether handle-search operations expose this object.",
             "categoryId": "parentchildren",
             "category": "Parent/Children",
             "order": 3,
@@ -1651,7 +1651,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Name",
-            "description": "Name",
+            "description": "Name displayed for the window.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 1,
@@ -1686,7 +1686,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Icon",
-            "description": "Icon source or file",
+            "description": "Image displayed beside the component text.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 2,
@@ -1722,7 +1722,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Number",
-            "description": "Number",
+            "description": "Numeric identifier assigned to the figure.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 3,
@@ -1756,7 +1756,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "NumberTitle",
-            "description": "Use number title",
+            "description": "Whether number title is enabled.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 4,
@@ -1792,7 +1792,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "IntegerHandle",
-            "description": "Use integer handle",
+            "description": "Whether integer handle is enabled.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 5,
@@ -1828,7 +1828,7 @@
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "Type",
-            "description": "Type of graphics object",
+            "description": "MATLAB graphics type identifying the object.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 6,
@@ -1862,7 +1862,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Tag",
-            "description": "Object identifier",
+            "description": "Identifier available to application code.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 7,
@@ -1897,7 +1897,7 @@
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "UserData",
-            "description": "User data",
+            "description": "Application-defined data attached to the component.",
             "categoryId": "identifiers",
             "category": "Identifiers",
             "order": 8,

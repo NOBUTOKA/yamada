@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://yamada.dev/schemas/component-data/R2024a/component.schema.json",
-  "title": "yamada R2024a component documentation transcript",
-  "description": "Development-only transcript of public MATLAB component documentation and release audit decisions. Schema version 3 represents one concrete component variant per file. It is not the runtime component catalog and does not authorize editing or Safe Preview application.",
+  "title": "yamada R2024a component development ledger",
+  "description": "Development-only record of public MATLAB API facts and project audit decisions. Schema version 3 represents one concrete component variant per file. It is not the runtime component catalog and does not authorize editing or Safe Preview application.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -161,17 +161,17 @@
           "minimum": 1
         },
         "summary": {
-          "description": "Official property heading summary.",
+          "description": "Project-authored property description derived from API identifiers and reviewed contracts.",
           "type": "string",
           "minLength": 1
         },
         "documentedDefault": {
-          "description": "Default-value text transcribed from the official heading, when supplied.",
+          "description": "Reference default expressed as API literal or canonical factual notation; not evaluated.",
           "type": "string",
           "minLength": 1
         },
         "documentedAcceptedValues": {
-          "description": "Accepted-value text transcribed from the official heading, excluding documentedDefault.",
+          "description": "API tokens, type names, and canonical factual value notation; not a source of semantic contracts.",
           "type": "array",
           "items": {
             "type": "string"
@@ -198,7 +198,7 @@
           }
         },
         "valueContract": {
-          "description": "Normalized semantic value contract. Original documentation text remains in documentedAcceptedValues.",
+          "description": "Reviewed semantic value contract. Tooling must use this contract rather than parse human-readable reference notation.",
           "$ref": "#/$defs/valueContract"
         },
         "application": {
