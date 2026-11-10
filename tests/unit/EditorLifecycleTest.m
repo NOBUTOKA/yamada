@@ -441,6 +441,39 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyEqual(string(fileread(target)), first.SourceText);
         end
 
+        function lockedFileKeepsCheckpointAndAllowsRetry(testCase)
+            % lockedFileKeepsCheckpointAndAllowsRetry Keep edits and history until native replacement succeeds.
+            target = string(tempname) + ".m";
+            targetCleanup = onCleanup(@() deleteTemporaryFile(target));
+            service = yamada.ui.DocumentLifecycleService(struct( ...
+                "RequestSavePathFcn", @(~) deal(true, target)));
+            app = yamada(service);
+            appCleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Save As...");
+            first = app.Document.SavedSource;
+            root = app.Document.getComponent(app.Document.RootComponentId);
+            app.Document.setProperty(root.Id, "Name", "Retry after lock");
+            history = app.Document.HistoryIndex;
+            current = app.Document.CurrentText;
+            stream = System.IO.FileStream(target, System.IO.FileMode.Open, ...
+                System.IO.FileAccess.Read, System.IO.FileShare.Read);
+            streamCleanup = onCleanup(@() stream.Dispose());
+
+            invokeEditorMenu("Save");
+            testCase.verifyTrue(app.Document.IsDirty);
+            testCase.verifyEqual(app.Document.HistoryIndex, history);
+            testCase.verifyEqual(app.Document.CurrentText, current);
+            testCase.verifyEqual(app.Document.SavedSource.SourceSnapshotId, first.SourceSnapshotId);
+            testCase.verifyEqual(string(fileread(target)), first.SourceText);
+
+            % Retry the same pending save after releasing the real filesystem lock.
+            clear streamCleanup
+            invokeEditorMenu("Save");
+            testCase.verifyFalse(app.Document.IsDirty);
+            testCase.verifyEqual(app.Document.HistoryIndex, history);
+            testCase.verifySubstring(string(fileread(target)), "Retry after lock");
+        end
+
         function canceledAndFailedSavesKeepTheDocumentDirty(testCase)
             % canceledAndFailedSavesKeepTheDocumentDirty Preserve state after unsuccessful writes.
 

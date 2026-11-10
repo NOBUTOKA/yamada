@@ -14,7 +14,7 @@ Users can create a new handle class from an empty canvas or open an existing han
 
 ## Supported Environment
 
-- Release target: MATLAB R2024a on 64-bit Windows, with a graphical session and JVM enabled
+- Release target: MATLAB R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
 - Required MathWorks product: MATLAB; runtime dependency analysis does not identify an additional toolbox
 - Launch command: `yamada`, without parentheses or an output assignment
 - Planned distribution: MATLAB Toolbox (`.mltbx`) with an Apps gallery entry; installation and Apps launch require release acceptance testing
@@ -143,6 +143,7 @@ Because of this limitation, Safe Preview may not reproduce the input application
 
 - Output is ordinary handle `.m` source that can be reviewed and compared as text.
 - Files are written as UTF-8 without a BOM.
+- On Windows, saving writes and flushes a temporary file beside the destination before using the operating system's replacement mechanism. A failed staging write leaves the existing file untouched. If replacement fails after Windows has moved the original to a recovery file, yamada attempts to restore it; if restoration is blocked, the error reports the retained original's location. Failed saving retains unsaved edits and the last successful save checkpoint. This does not replace backups or guarantee recovery from power loss or storage failure.
 - A new file includes the class and component declarations, creation method, callback-based owner retention, and cleanup required for execution; it does not use AppBase registration services.
 - New files use the host platform's standard line ending; existing files preserve the detected CRLF or LF convention.
 - Generated comments and help text are written in English.
