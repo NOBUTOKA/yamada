@@ -28,4 +28,4 @@ Reduce the time spent selecting components, updating properties, and refreshing 
 
 ## Install and launch from MATLAB
 
-Distribute yamada as a `.mltbx` installer, with the `yamada` command and an Apps gallery entry. Verify the installed copy can start, create and open apps, edit and save source, and uninstall. The [release procedure](doc/RELEASING.md) describes the package contents and acceptance checks.
+Validate the `.mltbx` installer and both launch paths on the final release candidate. Check that the installed copy can create and open apps, edit and save source, and uninstall. The [release procedure](doc/RELEASING.md) describes the package contents and acceptance checks.

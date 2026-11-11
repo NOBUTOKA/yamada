@@ -14,6 +14,8 @@ Use `major.minor.patch`: `1.0.0` for the first stable release, `1.0.1` for compa
 
 Use `1.0.0` in Toolbox metadata, `v1.0.0` as the Git tag, `yamada 1.0.0` as the Release title, and `yamada-1.0.0.mltbx` as the asset name. Keep one authoritative version value when packaging is implemented and validate derived names against it. Keep the Toolbox UUID stable across versions.
 
+The version, permanent UUID, author, public contact, description, and compatibility are defined in [`dev/release/toolbox.json`](../dev/release/toolbox.json). Use [`buildYamadaToolbox`](../dev/release/buildYamadaToolbox.m) to create a candidate, input manifest, and `SHA256SUMS`; see the [build procedure](../dev/release/README.md). The default output is ignored under `build/`. Existing candidates are not overwritten.
+
 ## Repository Settings
 
 A repository administrator configures GitHub Settings > Rules > Rulesets with an active branch ruleset targeting `main`. Inspect any existing rules before adding another ruleset because overlapping rules also apply.
@@ -34,13 +36,13 @@ GitHub documents these controls in [Available rules for rulesets](https://docs.g
 2. Confirm the MATLAB releases, platforms, and required products actually verified. Initially target R2024a; declare only platforms validated for the artifact. Audit internal MATLAB dependencies and their failure behavior.
 3. Reconcile README, specification, examples, and release notes with the implementation. Document installation, update, removal, limitations, and bug reporting. Use `yamada` as the normal launch command; reserve handle-returning forms for development and tests.
 4. Audit runtime resources and redistribution rights. Package runtime MATLAB code, the release-specific JSON catalog, `EditorInteractionOverlay.html`, `RootResizeGuide.html`, `stabilize-request.js`, license notices, and appropriate user documentation. Explicitly exclude development tools, tests, investigation reports, logs, repository metadata, and build output.
-5. Implement and review reproducible packaging with R2024a-supported `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox`. Define the fixed UUID, version, metadata, supported environments, file list, and minimal MATLAB path. Include an Apps gallery entry alongside the documented command.
+5. Review the explicit packaging inputs and metadata, then build with the R2024a-supported `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox` procedure. Include the Apps gallery entry alongside the documented command, and verify both paths using the installed candidate.
 
 ## Validate the Candidate
 
-Record the source commit, MATLAB release/update, operating system, commands, terminal results, and artifact SHA-256. Keep generated logs and measurement artifacts in ignored local results or the investigation branch.
+Record the source commit, MATLAB release/update, operating system, commands, completed test summaries, and artifact SHA-256. Keep generated logs and measurement artifacts in ignored local results or the investigation branch.
 
-- Run the full MATLAB regression suite as described in `CONTRIBUTING.md`, relevant HTML/JavaScript checks, and applicable static and convention checks.
+- Run the full MATLAB regression suite as described in `CONTRIBUTING.md`, relevant HTML/JavaScript checks, and applicable static and convention checks. Use a licensed MATLAB session and retain the completed test results.
 - Build from the final intended source commit. Install the resulting Toolbox with the source checkout absent from the MATLAB path and confirm the resolved entry point belongs to the installed copy.
 - Launch with `yamada` without parentheses or an output assignment. Verify the app survives startup and cleans up correctly when closed.
 - Exercise New/Open, component and property editing, Validate, Diff Preview, Save/Save As, and reopen. Cover subtree operations, rename, callback management, and Undo/Redo.
@@ -51,10 +53,10 @@ If candidate code or packaged contents change, repeat affected checks and rebuil
 
 ## Publish
 
-1. Merge reviewed release preparation through a pull request. Resolve any remaining blockers and complete validation of the final commit and artifact.
-2. Prepare a draft GitHub Release with the version, source commit, `.mltbx`, checksum, supported environments, installation and `yamada` launch instructions, features, known limitations, and changes from the prior release. GitHub's automatic source archives are distinct from the installable Toolbox asset.
-3. Obtain the maintainer's final authorization before pushing the release tag or publishing.
-4. Tag the verified source commit as `v<version>`, push the tag, and publish the matching Release and asset. Verify that the tag, Toolbox metadata, asset name, checksum, and release notes agree.
+1. GPG-sign the final release commit on a work branch and integrate it through a PR while preserving that signed commit. Build from that exact clean revision, resolve remaining blockers, and complete final artifact acceptance. Prepare the detached `.mltbx.asc` signature for the accepted artifact. If a separate merge commit is used, verify the intended release tree and repeat affected acceptance checks after integration.
+2. Prepare a draft GitHub Release with the version, source commit, `.mltbx`, `.mltbx.asc`, `SHA256SUMS`, supported environments, installation and `yamada` launch instructions, features, known limitations, and changes from the prior release. GitHub's automatic source archives are distinct from the installable Toolbox asset.
+3. Review the installer, detached signature, checksums, and Release text together before publishing.
+4. GPG-sign the `v<version>` tag pointing to the accepted source commit, then push the tag and publish the matching assets. Verify that source identity, Toolbox metadata, asset name, checksum, and release notes agree. Resolve any signing failure before publishing.
 5. Download the published asset and verify its checksum and public documentation links. Record completion without committing generated measurement reports to `main`.
 
 Never move a published tag or replace its artifact to repair a release. Explain serious known problems on the Release page, direct users to a safe version, and publish a new patch release.

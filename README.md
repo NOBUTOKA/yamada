@@ -23,15 +23,15 @@ The 1.0.0 release target is R2024a on Windows only. Other MATLAB releases, macOS
 
 ## Getting Started
 
-Clone the repository, or download and extract it from **Code > Download ZIP** on GitHub. Add the repository root to the MATLAB path and start `yamada`.
+Version 1.0.0 is being prepared and has not been published yet. Once published, download `yamada-1.0.0.mltbx` from [GitHub Releases](https://github.com/NOBUTOKA/yamada/releases), open it in MATLAB, and follow the installation dialog. Then enter:
 
 ```matlab
-projectRoot = "/path/to/yamada";
-addpath(projectRoot);
 yamada
 ```
 
-The normal launch command requires neither parentheses nor an output assignment. Development and tests may retain the returned handle for inspection and explicit cleanup.
+You can also launch the installed app from MATLAB's **Apps** tab. See [Getting Started](doc/GETTING_STARTED.md) for a walkthrough, the included example, and update/removal instructions. The normal launch command requires neither parentheses nor an output assignment.
+
+To run a development checkout before the release is published, clone the repository or extract **Code > Download ZIP**, add only its root to the MATLAB path, and enter `yamada`. See the [contributing guide](https://github.com/NOBUTOKA/yamada/blob/main/CONTRIBUTING.md) for development setup.
 
 ## Basic Usage
 
@@ -117,13 +117,15 @@ The preview uses supported initialization settings. Some components and properti
 
 ## Documentation
 
+- [Getting Started](doc/GETTING_STARTED.md) - Installation, first steps, example, updates, and removal
+- [Changelog](CHANGELOG.md) - Changes by version
 - [Product specification](SPECIFICATION.md) - Current scope, input and output contract, and safety limitations
-- [Roadmap](ROADMAP.md) - Independent tasks planned beyond the current supported behavior
-- [Contributing guide](CONTRIBUTING.md) - Issues, development setup, tests, and pull requests
+- [Roadmap](https://github.com/NOBUTOKA/yamada/blob/main/ROADMAP.md) - Independent tasks planned beyond the current supported behavior
+- [Contributing guide](https://github.com/NOBUTOKA/yamada/blob/main/CONTRIBUTING.md) - Issues, development setup, tests, and pull requests
 
 ## Feedback and Contributions
 
-Bug reports, feature proposals, documentation improvements, and code contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request. Please discuss large features and design changes in an issue before starting implementation.
+Bug reports, feature proposals, documentation improvements, and code contributions are welcome. Use [GitHub Issues](https://github.com/NOBUTOKA/yamada/issues) for reports; public contact: nobutoka@gmail.com. Read [CONTRIBUTING.md](https://github.com/NOBUTOKA/yamada/blob/main/CONTRIBUTING.md) before opening an issue or pull request. Please discuss large features and design changes in an issue before starting implementation.
 
 ## License
 
