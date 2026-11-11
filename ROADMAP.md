@@ -96,13 +96,10 @@ The editor currently tracks one selected component ID. Establish a selection mod
 
 Create a MATLAB Toolbox (`.mltbx`) only after the editor reaches the quality bar for a versioned public release and the release-blocking workflows above pass.
 
-- Define stable Toolbox metadata, including its identifier, semantic version, summary, author, license, minimum MATLAB release, and supported platforms.
-- Add a reproducible packaging script based on `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox` rather than relying only on manually saved packaging-project state.
-- Include the runtime MATLAB source, the release-specific component catalog, `EditorInteractionOverlay.html`, the license, and public documentation; exclude repository metadata, development-only catalog tooling, tests, and build output.
-- Support the normal `yamada` command and an Apps gallery entry in the first package; verify no-output startup, owner retention, and cleanup for both entry points.
-- Analyze required files and products, then declare only verified MATLAB-release and platform compatibility. Initially treat R2024a as the sole supported release unless additional releases have been tested.
+- Complete release-candidate acceptance using the explicit R2024a/Windows package build in `dev/release` and the final source revision.
+- Verify both command and Apps gallery workflows on the installed final artifact, including no-output owner lifetime and cleanup.
 - Install the built package into an isolated MATLAB environment and verify that the installed copy, rather than the source checkout, launches successfully; discovers its catalog and HTML overlay; completes representative New, Open, Save, and Save As workflows; and uninstalls cleanly.
-- Publish the `.mltbx` and release notes with the corresponding tagged release only after the package artifact and installation smoke tests pass.
+- Have the maintainer sign the final release commit, tag, and `.mltbx`; publish the installer, detached signature, SHA-256 list, and release notes only after acceptance and final authorization.
 
 ## Offer an Explicit Save As Line-Ending Choice
 

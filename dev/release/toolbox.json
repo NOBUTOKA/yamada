@@ -1,0 +1,14 @@
+{
+  "name": "yamada",
+  "version": "1.0.0",
+  "identifier": "222df787-1420-4fae-a7b7-68d9990d2559",
+  "author": "Nobuto Kaitoh",
+  "email": "nobutoka@gmail.com",
+  "company": "",
+  "summary": "A visual editor for MATLAB handle-class GUI applications using ordinary .m source files.",
+  "description": "Create or open handle-class applications with one uifigure and edit their UI components graphically. yamada preserves ordinary MATLAB source and previews supported UI without executing the input application. Requires MATLAB R2024a on Windows with a graphical session, JVM, and .NET support.",
+  "minimumMatlabRelease": "R2024a",
+  "maximumMatlabRelease": "R2024a",
+  "license": "GPL-3.0-or-later",
+  "projectUrl": "https://github.com/NOBUTOKA/yamada"
+}

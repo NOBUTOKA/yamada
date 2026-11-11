@@ -26,3 +26,6 @@ Thumbs.db
 .vscode/
 .idea/
 
+
+# Local release candidates and manifests
+/build/

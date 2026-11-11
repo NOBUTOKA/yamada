@@ -1,6 +1,6 @@
 # Source and Resource Provenance
 
-This document identifies runtime and development inputs for distribution review. It does not grant permission to redistribute third-party material or certify that an unresolved input is covered by the project's GPL. The [1.0.0 plan](RELEASE_1_0_0_PLAN.md) records outstanding release gates.
+This document identifies runtime and development inputs for distribution review. It does not grant permission to redistribute third-party material or certify that an unresolved input is covered by the project's GPL. The [1.0.0 plan](https://github.com/NOBUTOKA/yamada/blob/main/doc/RELEASE_1_0_0_PLAN.md) records outstanding release gates.
 
 ## Project Code and Editor Resources
 
@@ -28,8 +28,12 @@ The editor loads Undo/Redo image data from the user's installed MATLAB and acces
 
 ## Fixtures, User Applications, and Investigation Material
 
-Preserved test inputs have their original notices and the adaptation record in [the fixture README](../tests/fixtures/README.md). Some fixtures have no file-level redistribution notice; their presence in a test tree is not evidence of a separate upstream grant. Do not automatically turn these preserved inputs into public Toolbox examples. Use a small project-owned example with explicit provenance in the packaging stage, and include retained fixtures in the tagged-source review where appropriate.
+Preserved test inputs have their original notices and the adaptation record in [the fixture README](https://github.com/NOBUTOKA/yamada/blob/main/tests/fixtures/README.md). Some fixtures have no file-level redistribution notice; their presence in a test tree is not evidence of a separate upstream grant. Do not automatically turn these preserved inputs into public Toolbox examples. Use a small project-owned example with explicit provenance in the packaging stage, and include retained fixtures in the tagged-source review where appropriate.
 
 Generated and user-supplied apps do not automatically inherit the editor's GPL. The editor must not insert, replace, or remove their license notices without the user's explicit request.
 
 Historical performance plans and reports are preserved unchanged on the [`codex/investigation-pre-v1` branch](https://github.com/NOBUTOKA/yamada/tree/codex/investigation-pre-v1). They are excluded from the release branch's source and the Toolbox; unfinished implementation work remains in the roadmap. Existing history is retained.
+
+## Included Tutorial and Screenshots
+
+`examples/WelcomeApp.m` and the screenshots under `doc/images` are project-owned tutorial material created for yamada. The example carries the project GPL notice; it is not adapted from a preserved input fixture or MathWorks documentation. The screenshots show yamada itself and this owned example. No separately downloaded artwork or MathWorks branding is supplied as an application icon.

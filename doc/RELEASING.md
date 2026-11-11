@@ -1,6 +1,6 @@
 # Releasing yamada
 
-This is the maintainer procedure for preparing, validating, publishing, and maintaining versioned MATLAB Toolbox releases. It defines release gates; it does not claim that packaging automation or installation verification already exists. The first planned release is `1.0.0`.
+This is the maintainer procedure for building, validating, publishing, and maintaining versioned MATLAB Toolbox releases. It defines the repeatable build workflow and release acceptance gates. The first planned release is `1.0.0`.
 
 ## Branches and Publication
 
@@ -13,6 +13,8 @@ Preserve cohesive commits. An `AGENTS.md` commit must contain only that file and
 Use `major.minor.patch`: `1.0.0` for the first stable release, `1.0.1` for compatible fixes, `1.1.0` for compatible feature additions, and `2.0.0` for breaking changes. Compatibility includes supported input source, preservation and generation behavior, and documented user workflows, not just callable MATLAB APIs. Describe intentional compatibility changes in release notes. MATLAB release compatibility such as R2024a is a separate setting.
 
 Use `1.0.0` in Toolbox metadata, `v1.0.0` as the Git tag, `yamada 1.0.0` as the Release title, and `yamada-1.0.0.mltbx` as the asset name. Keep one authoritative version value when packaging is implemented and validate derived names against it. Keep the Toolbox UUID stable across versions.
+
+The version, permanent UUID, author, public contact, description, and compatibility are defined in [`dev/release/toolbox.json`](../dev/release/toolbox.json). Use [`buildYamadaToolbox`](../dev/release/buildYamadaToolbox.m) to create a candidate, input manifest, and `SHA256SUMS`; see the [build procedure](../dev/release/README.md). The default output is ignored under `build/`. Existing candidates are not overwritten.
 
 ## Repository Settings
 
@@ -34,7 +36,7 @@ GitHub documents these controls in [Available rules for rulesets](https://docs.g
 2. Confirm the MATLAB releases, platforms, and required products actually verified. Initially target R2024a; declare only platforms validated for the artifact. Audit internal MATLAB dependencies and their failure behavior.
 3. Reconcile README, specification, examples, and release notes with the implementation. Document installation, update, removal, limitations, and bug reporting. Use `yamada` as the normal launch command; reserve handle-returning forms for development and tests.
 4. Audit runtime resources and redistribution rights. Package runtime MATLAB code, the release-specific JSON catalog, `EditorInteractionOverlay.html`, `RootResizeGuide.html`, `stabilize-request.js`, license notices, and appropriate user documentation. Explicitly exclude development tools, tests, investigation reports, logs, repository metadata, and build output. Keep investigation artifacts out of `main` under the project integration policy.
-5. Implement and review reproducible packaging with R2024a-supported `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox`. Define the fixed UUID, version, metadata, supported environments, file list, and minimal MATLAB path. Decide whether to include an Apps gallery entry in addition to the documented command.
+5. Review the explicit packaging inputs and metadata, then build with the R2024a-supported `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox` procedure. Include the Apps gallery entry alongside the documented command, and verify both paths using the installed candidate.
 
 ## Validate the Candidate
 
@@ -51,13 +53,15 @@ If candidate code or packaged contents change, repeat affected checks and rebuil
 
 ## Publish
 
-1. Merge reviewed release preparation through a pull request. Resolve any remaining blockers and complete validation of the final commit and artifact.
-2. Prepare a draft GitHub Release with the version, source commit, `.mltbx`, checksum, supported environments, installation and `yamada` launch instructions, features, known limitations, and changes from the prior release. GitHub's automatic source archives are distinct from the installable Toolbox asset.
+1. Prepare a maintainer GPG-signed final release commit on a work branch and integrate it through a PR while preserving that signed commit. Build from that exact clean revision, resolve remaining blockers, and complete final artifact acceptance. Have the maintainer prepare the detached `.mltbx.asc` signature before requesting publication authorization. If a separate merge commit is used, verify the intended release tree and repeat affected acceptance checks after integration.
+2. Prepare a draft GitHub Release with the version, source commit, `.mltbx`, `.mltbx.asc`, `SHA256SUMS`, supported environments, installation and `yamada` launch instructions, features, known limitations, and changes from the prior release. Use the [Release text draft](../dev/release/RELEASE_NOTES.md). GitHub's automatic source archives are distinct from the installable Toolbox asset.
 3. Obtain the maintainer's final authorization before pushing the release tag or publishing. When an agent prepares the release, present the concrete artifact and release text for that decision.
-4. Tag the verified source commit as `v<version>`, push the tag, and publish the matching Release and asset. Verify that the tag, Toolbox metadata, asset name, checksum, and release notes agree.
+4. Have the maintainer GPG-sign the `v<version>` tag pointing to the accepted source commit, then push the tag and publish the matching assets. Verify that source identity, Toolbox metadata, asset name, checksum, and release notes agree. Hardware-key interaction belongs to the maintainer; do not publish an unsigned substitute if signing fails.
 5. Download the published asset and verify its checksum and public documentation links. Record completion without committing generated measurement reports to `main`.
 
 Never move a published tag or replace its artifact to repair a release. Explain serious known problems on the Release page, direct users to a safe version, and publish a new patch release.
+
+Do not add public-key fingerprints or signature/checksum verification tutorials to user-facing documentation. Release assets still include the detached GPG signature and SHA-256 checksum list. Maintainers validate these artifacts before publishing.
 
 ## After Release
 

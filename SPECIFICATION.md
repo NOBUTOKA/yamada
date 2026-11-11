@@ -23,7 +23,7 @@ Users can create a new handle class from an empty canvas or open an existing han
 
 Other MATLAB releases, macOS, Linux, MATLAB Online, and headless operation are outside the 1.0.0 support contract. MATLAB remains required; no standalone executable is planned. No versioned release or MATLAB Toolbox package is currently available. Development tools, including Node.js for isolated overlay tests, are not runtime requirements.
 
-The release-specific catalog is fixed to R2024a. Editor layout synchronization and activation notifications include internal MATLAB dependencies, so compatibility must not be inferred from a newer release accepting the source syntax. See the [architecture reference](doc/ARCHITECTURE.md#resource-and-development-data-boundary) and [release plan](doc/RELEASE_1_0_0_PLAN.md) for resource boundaries and remaining release gates.
+The release-specific catalog is fixed to R2024a. Editor layout synchronization and activation notifications include internal MATLAB dependencies, so compatibility must not be inferred from a newer release accepting the source syntax. See the [architecture reference](https://github.com/NOBUTOKA/yamada/blob/main/doc/ARCHITECTURE.md#resource-and-development-data-boundary) and [release plan](https://github.com/NOBUTOKA/yamada/blob/main/doc/RELEASE_1_0_0_PLAN.md) for resource boundaries and remaining release gates.
 
 ## Supported Operations
 
