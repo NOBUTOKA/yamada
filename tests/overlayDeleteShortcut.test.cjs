@@ -1,3 +1,7 @@
+// Copyright (C) 2026 Nobuto Kaitoh
+// SPDX-License-Identifier: GPL-3.0-or-later
+// This file is part of yamada. See LICENSE for the license text.
+
 // Keep Delete local to Preview selection, excluding native HTML editors and drafts.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');

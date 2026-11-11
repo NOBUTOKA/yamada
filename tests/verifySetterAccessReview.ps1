@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Nobuto Kaitoh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# This file is part of yamada. See LICENSE for the license text.
+
 <#
 .SYNOPSIS
 Verifies reproducible setter review application and atomic rejection of invalid evidence.
