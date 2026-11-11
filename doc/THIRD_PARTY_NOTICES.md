@@ -36,4 +36,4 @@ Historical performance plans and reports are preserved unchanged on the [`codex/
 
 ## Included Tutorial and Screenshots
 
-`examples/WelcomeApp.m` and the screenshots under `doc/images` are project-owned tutorial material created for yamada. The example carries the project GPL notice; it is not adapted from a preserved input fixture or MathWorks documentation. The screenshots show yamada itself and this owned example. No separately downloaded artwork or MathWorks branding is supplied as an application icon.
+`examples/WelcomeApp.m` is an original project example licensed under GPL-3.0-or-later. The project-owned screenshots under `doc/images` show yamada and this example.

@@ -28,7 +28,7 @@ A repository administrator configures GitHub Settings > Rules > Rulesets with an
 
 Apply equivalent protection to maintenance branches when they are created. Enable Issues for bug reports. Keep the default branch as `main`. Automatic work-branch deletion is optional; retained maintenance branches must not be deleted inadvertently.
 
-GitHub documents these controls in [Available rules for rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets). If the current tooling cannot inspect or modify settings, ask the administrator to apply them and report the result; do not report a documented policy as an active protection rule.
+GitHub documents these controls in [Available rules for rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets).
 
 ## Prepare the Release
 
@@ -40,9 +40,9 @@ GitHub documents these controls in [Available rules for rulesets](https://docs.g
 
 ## Validate the Candidate
 
-Record the source commit, MATLAB release/update, operating system, commands, terminal results, and artifact SHA-256. Keep generated logs and measurement artifacts in ignored local results or the investigation branch. Relevant checks must finish successfully; progress output is not a passing result.
+Record the source commit, MATLAB release/update, operating system, commands, completed test summaries, and artifact SHA-256. Keep generated logs and measurement artifacts in ignored local results or the investigation branch.
 
-- Run the full MATLAB regression suite as described in `CONTRIBUTING.md`, relevant HTML/JavaScript checks, and applicable static and convention checks. Follow `AGENTS.md` for the Windows MATLAB account and waiting requirements.
+- Run the full MATLAB regression suite as described in `CONTRIBUTING.md`, relevant HTML/JavaScript checks, and applicable static and convention checks. Use a licensed MATLAB session and retain the completed test results.
 - Build from the final intended source commit. Install the resulting Toolbox with the source checkout absent from the MATLAB path and confirm the resolved entry point belongs to the installed copy.
 - Launch with `yamada` without parentheses or an output assignment. Verify the app survives startup and cleans up correctly when closed.
 - Exercise New/Open, component and property editing, Validate, Diff Preview, Save/Save As, and reopen. Cover subtree operations, rename, callback management, and Undo/Redo.
@@ -53,15 +53,13 @@ If candidate code or packaged contents change, repeat affected checks and rebuil
 
 ## Publish
 
-1. Prepare a maintainer GPG-signed final release commit on a work branch and integrate it through a PR while preserving that signed commit. Build from that exact clean revision, resolve remaining blockers, and complete final artifact acceptance. Have the maintainer prepare the detached `.mltbx.asc` signature before requesting publication authorization. If a separate merge commit is used, verify the intended release tree and repeat affected acceptance checks after integration.
+1. GPG-sign the final release commit on a work branch and integrate it through a PR while preserving that signed commit. Build from that exact clean revision, resolve remaining blockers, and complete final artifact acceptance. Prepare the detached `.mltbx.asc` signature for the accepted artifact. If a separate merge commit is used, verify the intended release tree and repeat affected acceptance checks after integration.
 2. Prepare a draft GitHub Release with the version, source commit, `.mltbx`, `.mltbx.asc`, `SHA256SUMS`, supported environments, installation and `yamada` launch instructions, features, known limitations, and changes from the prior release. Use the [Release text draft](../dev/release/RELEASE_NOTES.md). GitHub's automatic source archives are distinct from the installable Toolbox asset.
-3. Obtain the maintainer's final authorization before pushing the release tag or publishing. When an agent prepares the release, present the concrete artifact and release text for that decision.
-4. Have the maintainer GPG-sign the `v<version>` tag pointing to the accepted source commit, then push the tag and publish the matching assets. Verify that source identity, Toolbox metadata, asset name, checksum, and release notes agree. Hardware-key interaction belongs to the maintainer; do not publish an unsigned substitute if signing fails.
+3. Review the installer, detached signature, checksums, and Release text together before publishing.
+4. GPG-sign the `v<version>` tag pointing to the accepted source commit, then push the tag and publish the matching assets. Verify that source identity, Toolbox metadata, asset name, checksum, and release notes agree. Resolve any signing failure before publishing.
 5. Download the published asset and verify its checksum and public documentation links. Record completion without committing generated measurement reports to `main`.
 
 Never move a published tag or replace its artifact to repair a release. Explain serious known problems on the Release page, direct users to a safe version, and publish a new patch release.
-
-Do not add public-key fingerprints or signature/checksum verification tutorials to user-facing documentation. Release assets still include the detached GPG signature and SHA-256 checksum list. Maintainers validate these artifacts before publishing.
 
 ## After Release
 

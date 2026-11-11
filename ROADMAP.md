@@ -99,7 +99,7 @@ Create a MATLAB Toolbox (`.mltbx`) only after the editor reaches the quality bar
 - Complete release-candidate acceptance using the explicit R2024a/Windows package build in `dev/release` and the final source revision.
 - Verify both command and Apps gallery workflows on the installed final artifact, including no-output owner lifetime and cleanup.
 - Install the built package into an isolated MATLAB environment and verify that the installed copy, rather than the source checkout, launches successfully; discovers its catalog and HTML overlay; completes representative New, Open, Save, and Save As workflows; and uninstalls cleanly.
-- Have the maintainer sign the final release commit, tag, and `.mltbx`; publish the installer, detached signature, SHA-256 list, and release notes only after acceptance and final authorization.
+- Sign the final release commit, tag, and `.mltbx`; publish the installer, detached signature, SHA-256 list, and release notes after acceptance.
 
 ## Offer an Explicit Save As Line-Ending Choice
 

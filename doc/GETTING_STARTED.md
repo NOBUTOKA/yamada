@@ -28,7 +28,7 @@ You can also select **yamada** in MATLAB's **Apps** tab. You do not need to add 
 
 ## Edit the included example
 
-The installed Toolbox includes the project-owned [WelcomeApp example](../examples/WelcomeApp.m). In MATLAB, locate it with:
+The installed Toolbox includes the [WelcomeApp example](../examples/WelcomeApp.m). In MATLAB, locate it with:
 
 ```matlab
 fullfile(fileparts(which("yamada")), "examples", "WelcomeApp.m")
@@ -54,4 +54,4 @@ To remove yamada, open **Home > Add-Ons > Manage Add-Ons**, find **yamada**, and
 
 Only MATLAB R2024a on Windows is a supported release target. Apps must directly inherit from `handle`, own one `uifigure`, and use supported source syntax. `.mlapp` and AppBase inputs are outside the supported format. Some properties are read-only, and the preview may differ from a running application. See the [specification](../SPECIFICATION.md) and [README](../README.md) for details.
 
-Keep your application under version control or make backups. Saving stages complete output before replacing an existing file, but it does not guarantee recovery from power loss or storage failure. Use [GitHub Issues](https://github.com/NOBUTOKA/yamada/issues) for bug reports; include MATLAB version, Windows version, and reproducible steps. Public contact: nobutoka@gmail.com.
+Keep your application under version control or make backups. Saving does not guarantee recovery from power loss or storage failure. Use [GitHub Issues](https://github.com/NOBUTOKA/yamada/issues) for bug reports; include MATLAB version, Windows version, and reproducible steps. Public contact: nobutoka@gmail.com.
