@@ -72,6 +72,8 @@ See the [product specification](SPECIFICATION.md) for the public feature set, in
 | `tests/fixtures` | Input fixtures for source preservation, parsing, and preview |
 | `tests/runYamadaTests.m` | Developer-only quick, area, and full test-profile runner |
 
+Use the [roadmap](ROADMAP.md) to find proposed work. The [architecture reference](doc/ARCHITECTURE.md) describes the contracts to preserve when changing the model, source handling, or Preview.
+
 ## MATLAB Code Conventions
 
 - Project-owned MATLAB source and test files must use UTF-8 without a BOM and CRLF line endings.

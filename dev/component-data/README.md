@@ -6,7 +6,7 @@ For contributors updating a component catalog, this guide describes the generati
 
 Each ledger component file describes one concrete factory variant. The release directory contains the schemas, reviewed property contracts, component capabilities, and parent-context rules. Keep documented API facts, observed runtime behavior, and product policy in their respective fields. Refresh presentation text with `UpdateProjectPropertyText.ps1`. Enum and multiline classification use the typed `valueContract` fields.
 
-Validate complete component documents against the release schema before generating output. Generate grouping inputs with `GenerateGroupingArtifacts.ps1`, resolve group ownership and ordering through the reviewed grouping design, then run `GenerateGroupingDesign.ps1` and `PromoteGroupingToRuntimeCatalog.ps1`. The editor loads the promoted catalog under `resources/component-catalog/`.
+The generators validate complete component documents against the release schema before writing output. Use the release ledger page for the commands and input paths. The editor loads the promoted catalog under `resources/component-catalog/`.
 
 ## Expansion and runtime contracts
 

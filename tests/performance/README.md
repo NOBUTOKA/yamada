@@ -4,7 +4,7 @@ For contributors measuring editor changes, this guide explains how to run repeat
 
 Record the baseline and candidate revisions and use matching source trees, fixtures, and workload hashes.
 
-Run the tests necessary for the changed behavior before measuring performance; a full regression suite is not a prerequisite for each measurement or implementation trial. Use a full regression when a meaningful change affects shared contracts broadly, when consolidating an implementation stage, or before integration as warranted by its scope. Keep regression tests and latency measurements in separate, non-overlapping MATLAB processes. Do not rerun a completed full suite merely because another speed measurement is needed.
+Run the checks relevant to the behavior being measured. Use separate MATLAB sessions for regression tests and timing, and run only one measurement workload at a time.
 
 Use successive edits to different component/property pairs as the default interactive workload. Include mixed property paths and value kinds where the fixture supports them, and measure selection separately from each property commit. Repeated changes to the same property on the same component are diagnostic controls only: use them when needed to isolate cache, reuse, or history behavior, label them explicitly, and do not substitute their warmed latency for ordinary editing performance. Distinct numeric fields edited once each are a valid focused workload, but do not cover mixed property kinds.
 
@@ -109,7 +109,7 @@ The rendering acknowledgement belongs to the HTML overlay, not every native cont
 
 `ParentEachAddition=false` keeps the newly added Label selected for subsequent Palette insertions. It measures consecutive sibling insertion with the existing Inspector surface reuse. The default true explicitly selects the parent before every insertion; selection latency is recorded separately, while the insertion itself changes Inspector type from the parent to a Label.
 
-`ProfileParentSelection` profiles each explicit parent selection before an addition. It labels those samples `profile-selection-add-parent` and saves the matching raw/profile JSON files; do not include them among ordinary selection times. The flag defaults to false and does not change the application. Combine it with `Profile` to retain the same preceding property-profile sequence when investigating a cold parent selection from an earlier distribution run.
+`ProfileParentSelection` profiles each explicit parent selection before an addition. It labels those samples `profile-selection-add-parent` and saves the matching raw/profile JSON files; do not include them among ordinary selection times. The flag defaults to false. Combine it with `Profile` to collect property and parent-selection profiles in the same run.
 
 `ExplicitValues=false` omits numeric Value assignments from the fixture so edits insert new settings. `AlternatingValueChanges` changes Field1 through the chosen `AlternatingTargetCount` repeatedly, timing selection separately and checking each committed value. Samples record `pendingValueOwners`, the number of numeric Value settings without an original source span. Final source audit compares every numeric field, including untouched fields at their known default zero.
 

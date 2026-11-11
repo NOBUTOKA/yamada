@@ -11,7 +11,7 @@ For contributors maintaining the R2024a catalog, this page identifies the releas
 | [`category-scope-classification.json`](category-scope-classification.json) and [`grouping-design-input.json`](grouping-design-input.json) | Reviewed grouping scope, ownership, and ordering inputs |
 | [`grouping/`](grouping) | Generated grouping candidates, expansion data, and parity results in JSON |
 
-The ledger records documented facts and runtime observations separately. The [setter-access review](SETTER_ACCESS_RUNTIME_REVIEW.json), [constructor syntax review](CONSTRUCTOR_SYNTAX_REVIEW.json), and [enum review decisions](ENUM_REVIEW_DECISIONS.json) supply reviewed evidence for those fields. Historical evidence entries referring to the former audit guidelines identify the rules in use when those entries were recorded.
+The ledger records documented facts and runtime observations separately. The [setter-access review](SETTER_ACCESS_RUNTIME_REVIEW.json), [constructor syntax review](CONSTRUCTOR_SYNTAX_REVIEW.json), and [enum review decisions](ENUM_REVIEW_DECISIONS.json) supply reviewed evidence for those fields.
 
 Run these commands from the repository root after reviewing any changes to the release inputs:
 

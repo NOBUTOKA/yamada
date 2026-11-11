@@ -4,7 +4,7 @@ For maintainers preparing a release, this guide covers candidate validation, ver
 
 ## Branches and Publication
 
-Use the [contributor workflow](../CONTRIBUTING.md#branch-workflow): focused work branches and pull requests into `main`, with no permanent `develop`. `main` holds verified integrated development for the next release. A merge is not a publication. Use a release branch only when stabilization or maintenance must proceed in parallel with development.
+Use the [contributor workflow](../CONTRIBUTING.md#branch-workflow): focused work branches and pull requests into `main`, with no permanent `develop`. `main` holds verified integrated development for the next release. Use a release branch only when stabilization or maintenance must proceed in parallel with development.
 
 Preserve cohesive commits. An `AGENTS.md` commit must contain only that file and must remain separate when merged; use a merge commit or rebase merge for a pull request that also contains other changes. Squash merging is suitable only when it does not violate this separation.
 
@@ -16,7 +16,7 @@ Use `1.0.0` in Toolbox metadata, `v1.0.0` as the Git tag, `yamada 1.0.0` as the 
 
 ## Repository Settings
 
-A repository administrator configures GitHub Settings > Rules > Rulesets with an active branch ruleset targeting `main`. This document describes the intended settings, not evidence that the remote configuration has been applied. Inspect any existing rules before adding another ruleset because overlapping rules also apply.
+A repository administrator configures GitHub Settings > Rules > Rulesets with an active branch ruleset targeting `main`. Inspect any existing rules before adding another ruleset because overlapping rules also apply.
 
 - Require a pull request before merging, with zero required approvals for sole-maintainer operation.
 - Restrict deletions and block force pushes. Do not configure routine bypass actors.
@@ -33,12 +33,12 @@ GitHub documents these controls in [Available rules for rulesets](https://docs.g
 1. Confirm the version's supported feature set against `SPECIFICATION.md`. Classify known issues as release blockers or documented limitations. Source loss, corrupt saves, execution of input application code, and failure of essential installed workflows block publication.
 2. Confirm the MATLAB releases, platforms, and required products actually verified. Initially target R2024a; declare only platforms validated for the artifact. Audit internal MATLAB dependencies and their failure behavior.
 3. Reconcile README, specification, examples, and release notes with the implementation. Document installation, update, removal, limitations, and bug reporting. Use `yamada` as the normal launch command; reserve handle-returning forms for development and tests.
-4. Audit runtime resources and redistribution rights. Package runtime MATLAB code, the release-specific JSON catalog, `EditorInteractionOverlay.html`, `RootResizeGuide.html`, `stabilize-request.js`, license notices, and appropriate user documentation. Explicitly exclude development tools, tests, investigation reports, logs, repository metadata, and build output. Keep investigation artifacts out of `main` under the project integration policy.
-5. Implement and review reproducible packaging with R2024a-supported `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox`. Define the fixed UUID, version, metadata, supported environments, file list, and minimal MATLAB path. Decide whether to include an Apps gallery entry in addition to the documented command.
+4. Audit runtime resources and redistribution rights. Package runtime MATLAB code, the release-specific JSON catalog, `EditorInteractionOverlay.html`, `RootResizeGuide.html`, `stabilize-request.js`, license notices, and appropriate user documentation. Explicitly exclude development tools, tests, investigation reports, logs, repository metadata, and build output.
+5. Implement and review reproducible packaging with R2024a-supported `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox`. Define the fixed UUID, version, metadata, supported environments, file list, and minimal MATLAB path. Include an Apps gallery entry alongside the documented command.
 
 ## Validate the Candidate
 
-Record the source commit, MATLAB release/update, operating system, commands, terminal results, and artifact SHA-256. Keep generated logs and measurement artifacts in ignored local results or the investigation branch. Relevant checks must finish successfully; progress output is not a passing result.
+Record the source commit, MATLAB release/update, operating system, commands, terminal results, and artifact SHA-256. Keep generated logs and measurement artifacts in ignored local results or the investigation branch.
 
 - Run the full MATLAB regression suite as described in `CONTRIBUTING.md`, relevant HTML/JavaScript checks, and applicable static and convention checks.
 - Build from the final intended source commit. Install the resulting Toolbox with the source checkout absent from the MATLAB path and confirm the resolved entry point belongs to the installed copy.
@@ -65,4 +65,4 @@ Monitor issues and reproduce reports with the installed version and stated envir
 
 If `main` already contains later features, create `release/<major>.<minor>` from the published tag to maintain that release line. Prefer fixing on `main` and backporting only required commits through a maintenance pull request. For a maintenance-only fix, explicitly assess and record applicability to `main`. Validate and publish each patch using the same candidate and publication gates.
 
-Keep completed work out of `ROADMAP.md`; preserve unfinished successor work and consolidate durable implementation contracts in `doc/ARCHITECTURE.md`. Improve issue templates and CI incrementally. File Exchange distribution and additional MATLAB/platform support are follow-up work, each with its own verification.
+Keep completed work out of `ROADMAP.md`; preserve unfinished successor work and consolidate durable implementation contracts in `doc/ARCHITECTURE.md`.
