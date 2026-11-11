@@ -2,9 +2,9 @@
 
 For users deciding whether to update, this log describes changes and compatibility limits by version.
 
-## 1.0.0 — Unreleased
+## 1.0.0
 
-Initial stable release candidate for MATLAB R2024a on 64-bit Windows.
+Initial stable release for MATLAB R2024a on 64-bit Windows.
 
 - Create and edit ordinary MATLAB handle-class GUI applications with a Safe Preview, component hierarchy, Property Inspector, validation, and source diff.
 - Arrange components, edit Grid Layouts, rename components, and manage callback bindings while preserving method bodies.

@@ -6,7 +6,7 @@ For users new to yamada, this guide covers installation, a first edit, updates, 
 
 ## Install and launch
 
-Once version 1.0.0 is published, download `yamada-1.0.0.mltbx` from [GitHub Releases](https://github.com/NOBUTOKA/yamada/releases). Open the downloaded file in MATLAB and follow the installation dialog. MATLAB R2024a on 64-bit Windows is required, with a graphical session, JVM, and .NET support.
+To install version 1.0.0, download `yamada-1.0.0.mltbx` from [GitHub Releases](https://github.com/NOBUTOKA/yamada/releases). Open the downloaded file in MATLAB and follow the installation dialog. MATLAB R2024a on 64-bit Windows is required, with a graphical session, JVM, and .NET support.
 
 In the Command Window, enter:
 

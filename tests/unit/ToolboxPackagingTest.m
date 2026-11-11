@@ -1,4 +1,4 @@
-classdef (TestTags = {'packaging', 'lifecycle'}) ToolboxPackagingTest < matlab.unittest.TestCase
+classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < matlab.unittest.TestCase
     % ToolboxPackagingTest Verify shipped inputs and generated Toolbox registration.
     %   A real package build checks archive bytes and native metadata instead of
     %   asserting only the settings passed to the packaging function.
