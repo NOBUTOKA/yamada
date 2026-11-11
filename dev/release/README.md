@@ -1,5 +1,7 @@
 # Building yamada release candidates
 
+For maintainers building and signing a Toolbox candidate, this guide describes the build inputs, output files, and signing command.
+
 Add `dev/release` to the MATLAB path and run `buildYamadaToolbox`. The build requires MATLAB R2024a on Windows. Its default output is the ignored `build/1.0.0` directory; pass a new output folder to keep multiple candidates. Existing output files are never replaced.
 
 ```matlab
@@ -25,4 +27,4 @@ The script checks candidate identity, SHA-256, clean-build provenance, integrati
 
 Publish the accepted `.mltbx`, its `.mltbx.asc`, and `SHA256SUMS` as Release assets. Keep the build manifest as local verification evidence. Sign `v1.0.0` and make it point to the same release source commit.
 
-`RELEASE_NOTES.md` is the draft Release text. Source and installer acceptance checks remain mandatory before publication; a successful package build alone does not satisfy them.
+See the [release procedure](../../doc/RELEASING.md) for candidate acceptance and publication.

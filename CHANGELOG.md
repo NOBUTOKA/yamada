@@ -1,5 +1,7 @@
 # Changelog
 
+For users deciding whether to update, this log describes changes and compatibility limits by version.
+
 ## 1.0.0 — Unreleased
 
 Initial stable release candidate for MATLAB R2024a on 64-bit Windows.

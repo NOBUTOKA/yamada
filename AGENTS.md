@@ -1,8 +1,9 @@
 # Project instructions
 
+For contributors using coding agents, this file defines the repository conventions and verification workflow agents must follow when changing yamada.
+
 - MATLAB source files and test files must use UTF-8 encoding without a BOM.
 - MATLAB source files and test files must use CRLF line endings.
-- On this Windows host, run MATLAB verification through an escalated command so it uses the interactive `excelsior\nobut` account. The normal Codex sandbox runs as `excelsior\codexsandboxoffline`, which cannot communicate with that user's MathWorks Service Host and online license. Do not set `MATLAB_PREFDIR` to a temporary directory for these verification runs.
 - Write each Markdown prose paragraph on one source line. Use line breaks only where Markdown structure requires them, preserving code blocks, tables, and list structure.
 - Write comments in MATLAB source files in English.
 - Every project-owned MATLAB function and method, including test methods and local test helpers, must have an English docstring comment immediately after its function declaration. The docstring must briefly state the purpose and, where useful, describe inputs, outputs, or important side effects.
@@ -79,4 +80,3 @@ along with yamada. If not, see <https://www.gnu.org/licenses/>.
 
 - Do not add or replace license notices in third-party files or preserved input fixtures. Keep their original notices and record their provenance when they are added.
 - App classes created or opened as user output are not automatically licensed under the editor's GPL. Do not insert, replace, or remove a license notice in generated or user-supplied app source unless the user explicitly requests it.
-

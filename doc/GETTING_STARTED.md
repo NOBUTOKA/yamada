@@ -1,5 +1,7 @@
 # Getting Started with yamada
 
+For users new to yamada, this guide covers installation, a first edit, updates, and removal.
+
 `yamada` edits MATLAB GUI applications stored as ordinary `.m` class files. Its canvas previews supported UI components without running your app or its callbacks.
 
 ## Install and launch
@@ -48,7 +50,7 @@ Use **Undo** and **Redo** to step through edits. An asterisk in the window title
 
 Before updating, save your work and close yamada. Install the newer `.mltbx` using MATLAB's installation dialog; releases retain the same Toolbox identifier. Keep your own applications outside the installed Toolbox folder.
 
-To remove yamada, open **Home > Add-Ons > Manage Add-Ons**, find **yamada**, and choose **Uninstall**. Removal should also remove the Toolbox path and Apps entry. Your separately saved applications remain your own files.
+To remove yamada, open **Home > Add-Ons > Manage Add-Ons**, find **yamada**, and choose **Uninstall**. MATLAB removes the Toolbox path and Apps entry when it uninstalls the Toolbox. Your separately saved applications remain your own files.
 
 ## Scope and help
 
