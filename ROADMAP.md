@@ -1,113 +1,31 @@
 # yamada Roadmap
 
-This roadmap contains unfinished work for the public development version of `yamada`. Each section is an independent, reviewable task rather than part of a numbered delivery hierarchy. The order below does not promise delivery order.
+For users following planned features and contributors choosing work, this roadmap describes what each improvement would let users do and the limits to preserve. The [product specification](SPECIFICATION.md) describes current behavior.
 
-The [product specification](SPECIFICATION.md) remains authoritative for current behavior. A roadmap item becomes part of the supported public contract only after its implementation, tests, and user documentation are complete.
+## Easier property editing
 
-## Continue Measured Performance Improvements
+- **Reset properties from the Inspector.** Show when a property can be reset and let users undo the reset. Explain when an existing source expression prevents the change.
+- **Choose related components from the Inspector.** Add selectors for supported references such as `ContextMenu` and `SelectedTab`, with choices limited to valid targets in the same application.
+- **Choose component styles in the palette.** Offer a distinct creation choice for each supported style, with the correct initial settings and allowed parents.
 
-Retain the current editing, source-preservation, history, and validation contracts while investigating remaining costs. The historical plans and measurements are preserved on the [`codex/investigation-pre-v1` investigation branch](https://github.com/NOBUTOKA/yamada/tree/codex/investigation-pre-v1); they are not runtime dependencies or current latency guarantees.
+## More ways to arrange components
 
-- Measure repeated overlay component traversal, rectangle reads, tab visibility checks, and ancestor lookups before changing geometry synchronization.
-- Investigate Inspector updates driven by committed atomic edits and affected rows, including typed values, availability, explanations, dependent choices, and composite rows. Retain complete synchronization for selection, reload, and changed row structure.
-- Investigate repeated source-range candidates and insertion-boundary enumeration while preserving snapshot independence, current offsets, setting order, save behavior, and history.
-- Use matched clean baselines, workload and fixture identities, and separate ordinary latency, profiling, and endurance results. Reassess existing measurements against current code before drawing conclusions; obtain agreement before narrowing behavior or safety guarantees.
+- **Select multiple components.** Support rectangle selection on the canvas and range selection in the hierarchy. Keep one active component for existing Inspector and geometry tools until group editing is available.
+- **Edit native hierarchies.** Add, reorder, move, and remove supported menus, toolbar tools, and tree nodes in the hierarchy. Provide a focused editing view for menu bars, submenus, context menus, and toolbar items, including context-menu assignment.
 
-## Add Component-Reference Property Editors
+## Broader axes support
 
-Ninety-five audited component-reference surfaces, including `ContextMenu`, `Parent`, and `SelectedTab`, are currently visible but read-only with the `deferredComponentReference` reason.
+- **Create and edit programmatic axes.** Extend the supported palette and Inspector operations for Cartesian, geographic, and polar axes where creation and source generation can be verified.
+- **Recognize axes setup calls.** Read settings expressed through calls such as `xlabel`, `ylabel`, `title`, and `xlim`. Support edits where the target and affected settings can be determined from source.
 
-- Define an allowlisted selector contract for each safely editable reference family and its permitted target types.
-- Validate references against document identity, hierarchy, parent rules, and source ownership before committing them.
-- Keep cyclic, ambiguous, expression-backed, or unsupported references read-only with actionable diagnostics.
-- Cover Inspector interaction, atomic history, Safe Preview, and localized source generation for every enabled reference family.
+## More control when saving
 
-## Expose Property Reset in the Inspector
+- **Choose line endings in Save As.** Offer CRLF or LF as an explicit choice. Keep the current default for new files and preserve the detected convention of existing files unless the user chooses another.
 
-`DocumentModel.resetProperty` and reversible reset history already exist, but the Inspector has no per-property reset action.
+## More responsive editing
 
-- Show reset availability from the effective property state without obscuring explicit, default, and source-backed values.
-- Route reset through the existing model transaction and undo/redo history.
-- Disable reset when source ownership or the reset policy does not permit a safe change, and explain the reason inline.
-- Test singleton and composite Inspector rows, Preview refresh, source removal, and undo/redo restoration.
+Reduce the time spent selecting components, updating properties, and refreshing the preview, particularly in large or deeply nested apps. Keep source preservation, validation, and Undo/Redo guarantees. Contributors can use the [performance guide](tests/performance/README.md) to compare changes under matching conditions.
 
-## Expose Every Supported Construction Style in the Palette
+## Install and launch from MATLAB
 
-The catalog selects style-specific property surfaces from creation arguments, but the palette does not provide a dedicated construction choice for every audited factory style.
-
-- Add clear palette choices for supported styles without duplicating factory definitions in MATLAB code.
-- Seed the correct creation arguments, defaults, display names, icons, and parent eligibility from the catalog.
-- Verify insertion, Inspector projection, Safe Preview, generation, and round-trip behavior for each exposed style.
-
-## Support Programmatic Axes Construction and Editing
-
-Programmatic-only Cartesian, geographic, and polar axes are cataloged and source-preserved, but their specialized construction and editing paths remain restricted.
-
-- Define safe creation arguments, permitted parents, Preview behavior, and geometry rules for each axes family.
-- Add palette and Inspector surfaces only where source generation is deterministic.
-- Preserve unsupported axes expressions and runtime-only state without executing the input application.
-- Add construction/destruction, generation, and opened-source round-trip tests.
-
-## Recognize Axes Configuration Function Calls
-
-Recognize axes configuration expressed through functions such as `ylabel(ax, ...)`, `xlabel`, `title`, `xlim`, and related calls, alongside direct property assignments. This is separate future work from the current performance changes.
-
-- Audit applicable functions, overloads, target ownership, returned handles, and effects on axes or child text objects.
-- Preserve recognized and unsupported forms without executing user code; expose editing and insertion where source ownership and deterministic generation can be established.
-- Integrate recognized calls into setting order, effective state, localized validation, Preview, and atomic Undo/Redo without treating them as arbitrary property assignments.
-
-## Support Native Menu, Toolbar, and Tree-Node Hierarchies
-
-Native menus, toolbar tools, and tree nodes are represented in parsed source but do not yet have complete insertion and hierarchy-editing workflows.
-
-- Define parent-specific insertion, ordering, reparenting, and deletion rules.
-- Provide hierarchy-first editing where a canvas representation would be misleading or unavailable.
-- Preserve callback and nonliteral source while editing only unambiguously owned declarations, construction calls, and assignments.
-- Verify undo/redo, diagnostics, generation, and no-edit source preservation for each hierarchy family.
-
-## Edit Application Menu Bars and Context Menus
-
-Provide a dedicated editing workflow for menu bars, submenus, context menus, toolbars, and their items in the application being edited. This builds on the native hierarchy operations above; it does not change the editor's own menus.
-
-- Present a hierarchy-focused editor for adding and arranging menu and toolbar items, editing supported labels and other literal properties, and choosing which components own a context menu.
-- Define the supported menu and tool properties, parent rules, and component references in the catalog and model before enabling each editing control.
-- Keep callbacks, expressions, and source whose ownership is ambiguous visible but read-only. Do not execute the opened application or its callbacks.
-- Route edits through validated, atomic document transactions so Undo/Redo, Safe Preview limitations, diagnostics, and source generation stay consistent.
-- Test new and opened applications with nested menus, context-menu assignment, toolbar items, unsupported source, and no-edit round trips.
-
-## Add Range and Multiple Selection
-
-The editor currently tracks one selected component ID. Establish a selection model that can represent several components before adding group edit commands.
-
-- Support a drag-selection rectangle in Safe Preview and Shift-based range selection in the hierarchy view. Define Ctrl/Command selection toggling and a stable anchor for repeated range extensions.
-- Keep selected component IDs, the active component, hierarchy highlighting, and Preview/HTML-overlay highlighting synchronized. Selection alone must not modify the document or mark it dirty.
-- Define how nested components, overlapping bounds, hidden tabs, scrolling, and clicks on empty space affect selection. Avoid selecting a descendant twice when an ancestor is selected for a later group operation.
-- Keep the existing Inspector and single-component geometry tools tied to the active component until group editing has its own validated behavior.
-- Test mouse and keyboard selection in both views, selection after hierarchy refresh and document replacement, and interaction with Grid Layout overlays.
-
-## Verify Packaging and End-to-End Workflows
-
-- Verify catalog and HTML-overlay resource discovery from the distributed layout, not only from a repository checkout.
-- Complete new-app and existing-app workflows through the shared model, Preview, validation, generator, diff, Save, and Save As paths.
-- Verify recoverable save targets, save/reopen behavior, UTF-8 without BOM, preserved CRLF/LF conventions, and cleanup of every UI fixture.
-- Add the end-to-end checks required before publishing a versioned release.
-
-## Package a Public Release as a MATLAB Toolbox
-
-Create a MATLAB Toolbox (`.mltbx`) only after the editor reaches the quality bar for a versioned public release and the release-blocking workflows above pass.
-
-- Define stable Toolbox metadata, including its identifier, semantic version, summary, author, license, minimum MATLAB release, and supported platforms.
-- Add a reproducible packaging script based on `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox` rather than relying only on manually saved packaging-project state.
-- Include the runtime MATLAB source, the release-specific component catalog, `EditorInteractionOverlay.html`, the license, and public documentation; exclude repository metadata, development-only catalog tooling, tests, and build output.
-- Support the normal `yamada` command and an Apps gallery entry in the first package; verify no-output startup, owner retention, and cleanup for both entry points.
-- Analyze required files and products, then declare only verified MATLAB-release and platform compatibility. Initially treat R2024a as the sole supported release unless additional releases have been tested.
-- Install the built package into an isolated MATLAB environment and verify that the installed copy, rather than the source checkout, launches successfully; discovers its catalog and HTML overlay; completes representative New, Open, Save, and Save As workflows; and uninstalls cleanly.
-- Publish the `.mltbx` and release notes with the corresponding tagged release only after the package artifact and installation smoke tests pass.
-
-## Offer an Explicit Save As Line-Ending Choice
-
-New documents currently use the host-default line ending, while opened documents preserve detected CRLF or LF source.
-
-- Optionally expose CRLF and LF choices in Save As without changing the default behavior.
-- Keep the chosen convention explicit in generated-source Preview and file tests.
-- Do not normalize an opened file silently.
+Distribute yamada as a `.mltbx` installer, with the `yamada` command and an Apps gallery entry. Verify the installed copy can start, create and open apps, edit and save source, and uninstall. The [release procedure](doc/RELEASING.md) describes the package contents and acceptance checks.

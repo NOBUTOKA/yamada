@@ -1,10 +1,6 @@
 # yamada Product Specification
 
-This document defines the feature scope, input and output contract, and safety limitations selected for `yamada` 1.0.0. Packaging and release acceptance remain pending; this document does not announce a published release or guarantee unverified distribution workflows.
-
-The supported class directly inherits from `handle` and owns exactly one `uifigure`. Every other UI component must be a descendant of that figure, either directly or through nested containers. This hierarchy is a user precondition: there is no new dedicated descendant-membership validation or diagnostic, and behavior outside it is not guaranteed. Existing model consistency and safe-edit validation remain in place. Arbitrary inheritance graphs, dynamic construction, AppBase compatibility, and automatic source conversion are outside the contract.
-
-Generated callbacks are bound methods with `(app, source, event)` inputs. The default CloseRequestFcn deletes the owner. New replaces the default binding with an editable close handler initialized to delete the app; Disconnect restores the default binding while retaining that handler method. The destructor releases owned resources without argument validation or a cancel decision. A source-bound ObjectBeingDestroyed listener handles direct figure deletion without replacing user DeleteFcn code and ignores owner destruction already in progress. No-output startup retains the owner through figure callbacks; constructor failure cleans up a partially created figure.
+For users evaluating or using yamada, this specification defines the supported behavior, application format, and safety limits of version 1.0.0.
 
 ## Purpose
 
@@ -15,15 +11,13 @@ Users can create a new handle class from an empty canvas or open an existing han
 ## Supported Environment
 
 - Release target: MATLAB R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
-- Required MathWorks product: MATLAB; runtime dependency analysis does not identify an additional toolbox
+- Required MathWorks product: MATLAB, without additional toolboxes
 - Launch command: `yamada`, without parentheses or an output assignment
-- Planned distribution: MATLAB Toolbox (`.mltbx`) with an Apps gallery entry; installation and Apps launch require release acceptance testing
+- Planned distribution: MATLAB Toolbox (`.mltbx`) with an Apps gallery entry
 - Input: A `.m` file defining a class derived from `handle`
 - Output: A `.m` file defining an ordinary MATLAB class
 
-Other MATLAB releases, macOS, Linux, MATLAB Online, and headless operation are outside the 1.0.0 support contract. MATLAB remains required; no standalone executable is planned. No versioned release or MATLAB Toolbox package is currently available. Development tools, including Node.js for isolated overlay tests, are not runtime requirements.
-
-The release-specific catalog is fixed to R2024a. Editor layout synchronization and activation notifications include internal MATLAB dependencies, so compatibility must not be inferred from a newer release accepting the source syntax. See the [architecture reference](doc/ARCHITECTURE.md#resource-and-development-data-boundary) and [release plan](doc/RELEASE_1_0_0_PLAN.md) for resource boundaries and remaining release gates.
+Other MATLAB releases, macOS, Linux, MATLAB Online, and headless operation are outside the 1.0.0 support contract. MATLAB remains required; no standalone executable is planned. No versioned release or MATLAB Toolbox package is currently available.
 
 ## Supported Operations
 
@@ -43,8 +37,10 @@ The release-specific catalog is fixed to R2024a. Editor layout synchronization a
 
 ### Existing applications
 
+Supported input classes directly inherit from `handle` and own exactly one `uifigure`. All other UI components must be descendants of that figure. Applications outside this hierarchy, arbitrary inheritance graphs, dynamic construction, and AppBase input are unsupported.
+
 - Open a handle `.m` file with a common App Designer-like or programmatic structure.
-- Statically parse supported declarations, creation statements, parent-child relationships, and direct property assignments.
+- Read supported declarations, creation calls, parent relationships, and property assignments from the source. Supported initialization can span helpers declared in the same class and called from the constructor. Dynamic or recursive initialization may leave some settings unresolved.
 - Display parsed components in the hierarchy browser, Safe Preview, and Property Inspector.
 - Edit property assignments and components whose source ownership can be determined safely.
 - Reviewed axes value/Mode pairs follow their original initialization order. A later automatic mode can make the effective value unknown; the editor keeps the explicit source input and reports that uncertainty. New initialization applies an explicitly requested final mode after its corresponding value.
@@ -55,31 +51,26 @@ The release-specific catalog is fixed to R2024a. Editor layout synchronization a
 - Show diagnostics for unsupported or ambiguous structures.
 - Track unsaved edits in the editor title. New, Open, and closing the editor offer Save, Discard, or Cancel when required; a canceled or failed save leaves the current document open.
 
-### Subtree editing and component clipboard
+### Copy, cut, paste, delete, and move
 
-- Copy, Cut, Paste, Delete, and parent changes treat one component and all its descendants as an ordered unit. A failed preflight leaves model, history, diagnostics, source preview, clipboard and selection unchanged.
-- Copy captures independent value data and does not dirty the document or add history. Cut deletes immediately. Paste allocates fresh IDs and unique names, including collision checks against source members and pending names. Copy uses a Copy suffix; Cut reuses original names, with numeric suffixes on collision. Each Cut, Paste, Delete, or parent change is one Undo/Redo step. Undo does not rewind the clipboard. Parent changes preserve existing component IDs and handles.
-- Edit menus, Ctrl+C/X/V and Hierarchy context menus share commands and availability checks. Context targets do not change selection when opening a menu or copying. Text-entry controls and inline renaming retain their shortcuts. Preview HTML forwards Ctrl+C/X/V to those same commands with selected-ID and revision validation. Edit menus show shortcut hints; Rename shows F2 in the same column. Cut selects the former parent; Paste selects the inserted root.
-- Paste resolves the nearest catalog-compatible ancestor, including the target itself. It retains descendant order and internal placement, offsets absolute roots, and finds a free grid rectangle without expanding tracks. Clipboard ownership is limited to one document in one editor instance. Successful New/Open/Reload clears it; canceled or failed replacement retains it.
-- Parent changes use Safe Preview cross-container dragging with candidate guides. No parent-change menu command or dedicated destination window is provided. Absolute/grid changes commit Position and Layout.Row/Column together. Grid-to-absolute placement requires a literal position or verified preview pixels. Explicit grid drops never fall back to another free cell. Invalid, occupied, cyclic, stale or canceled drops leave the model unchanged.
-- The root UIFigure and noneditable, programmatic-only or FigureTools subtrees cannot be copied or reparented. Other catalog families are enabled only when complete hierarchy, placement and generation preflight succeeds. Native menu, toolbar and tree editing is not expanded into a comprehensive workflow here.
-- Copy supports safely encodable literals and two static component-reference families: SelectedTab on a TabGroup must name its direct child Tab; ContextMenu must name a context menu under the same document root. Internal targets receive copied identities; external targets retain their same-document identity and are revalidated at Paste. Generated assignments follow target creation.
-- Copy omits catalog-declared callback properties on the selected component and all descendants, including constructor arguments and pending callback additions. The original bindings and handler methods remain unchanged; pasted components have no copied callbacks. Callback ownership does not need to be editable for Copy. Nonempty construction callbacks that make effective configuration unknown still prevent Copy.
-- Other expressions and unknown object payloads prevent Copy/Cut rather than being omitted. Callback bindings still prevent Delete/Cut, and Delete/Cut reject surviving external references. Reparenting retains callback methods and proven direct bindings, but rejects ambiguous initialization dependencies and unsupported internal references. Pending callback edits on parsed moved nodes are not combined with relocation; Save and Reload Source, or Undo, is required first.
-- Opened-source changes use proven original-offset spans; original text remains the source snapshot. Parsed relocation and generated insertion share creation ordering. Unsupported source is preserved or the operation is refused. Input applications, handlers and expressions are never executed by these operations.
+- These operations act on a component and its descendants. Copy leaves the document clean if there were no previous edits. Cut removes the subtree immediately. Cut, Paste, Delete, and moving a subtree are each one Undo/Redo step. Undo leaves the clipboard available.
+- Copy gives pasted components unique names with a `Copy` suffix. Paste after Cut tries the original names and uses numeric suffixes on collisions. Cut selects the former parent and Paste selects the inserted component. Clipboard contents belong to the current document in one editor window. A successful New, Open, or Reload clears them.
+- Paste uses the closest compatible container, offsets absolutely positioned components, and looks for free cells in a grid without adding tracks. Drag a component on the canvas to change its parent. An explicit grid drop uses the indicated cell. Rejected or canceled operations leave the current document and clipboard intact.
+- Copy and moving require editable subtrees. The root figure, programmatic-only components, and figure tools are outside those operations. Cycles, unsupported values, ambiguous initialization, and references that would be broken can prevent an operation.
+- Copy supports literal settings and two static reference types. A Tab Group can refer to one of its own tabs through `SelectedTab`. A component can refer to a context menu in the same app through `ContextMenu`. Copied targets are connected to their copies. Targets outside the copied subtree keep their original references when still valid.
+- Copy leaves callback bindings behind and preserves the original method bodies. A construction callback that makes the initial configuration unknown can still prevent Copy. Other expressions or unknown values can prevent Copy or Cut. Existing callback bindings block Cut and Delete. A supported move preserves those bindings. Save and reload, or undo pending callback edits, before moving an opened subtree whose bindings have just changed.
 
 ### Callback management
 
-- Right-clicking a Hierarchy node opens an editor-owned context menu for that node without changing the selected component, Inspector, or Preview selection. Empty space and stale/deleted targets cannot reuse a previous command target.
-- Manage Callbacks opens one independent modal popup for the target. Callback rows come from the effective component/style/parent catalog surface, excluding callback execution-control properties. Long lists scroll.
-- Each row has a dropdown containing `<New...>`, `<Disconnect>`, and eligible existing methods. New prompts for a valid unused name and creates the method and binding together. Ordinary new handlers start empty; CloseRequestFcn starts with `delete(app)`.
-- Selecting an existing method connects or replaces only the binding. Methods may be shared by multiple callbacks. Disconnect removes the selected binding and retains every method body, including a method just created through New. The management UI has no method-deletion command. Closing the popup retains edits.
-- Each change validates its source edits and records one Undo/Redo step. Failure leaves source, diagnostics, history, and dirty state unchanged. Disconnecting an already absent binding is a no-op.
-- Eligible methods are discovered without executing user code. New three-input handlers use `@app.Method`; compatible existing methods with fewer inputs use forwarding wrappers. Unsupported signatures are excluded; unresolved type constraints can remain visible with an unchecked indication.
-- Arbitrary callback expressions and registrations whose source cannot be changed safely disable the dropdown with an explanation. Being shared does not by itself prevent a method from being connected or disconnected; changing a binding does not edit its method body.
-- A two-input anonymous wrapper may identify a handler when its body is exactly one `app.Handler(...)` call with zero arguments or an ordered subset of the wrapper's named inputs. Ignored inputs may use `~`. This includes `@(~, event) app.SomeButtonPushed(event)` and `@(~,~) app.SomeButtonPushed()`. Named wrapper inputs must be distinct valid identifiers other than `app`; computed arguments, captured argument values, and additional expressions remain unsupported. Recognized direct handles and forwarding registrations remain source-backed bindings rather than ordinary literal-property edits. Unchanged wrapper syntax and method signatures are preserved.
-- The popup refreshes after edits and history changes, reuses an existing instance for the same target, and closes when its target or document expires.
-- Source parsing, source generation and Safe Preview never execute handlers. MATLAB remains the editor for handler bodies. Refresh / Edit > Reload Source / F5 read saved disk source and atomically replace the document after successful parsing. Reload clears history and stale callback spans, closes the popup and preserves selection by a unique component name where possible. Local dirty changes require Save/Discard/Cancel; concurrent external edits require a different Save As target, Discard, or Cancel. Unreadable, invalid or changing files do not replace the current document. Unsaved MATLAB buffers are outside the reload operation.
+Right-click a component in **Hierarchy** and choose **Manage Callbacks**. The dialog applies to that component without changing the current selection. Each row offers **New**, **Disconnect**, and compatible existing methods. New creates a named method and connects it. New close handlers start with `delete(app)`. A method can be connected to several callbacks.
+
+Disconnect removes the binding and keeps the method body. Disconnecting the close handler of a new app restores the default close behavior. Close the dialog to keep your edits, or use Undo to reverse an individual change. Use MATLAB's editor to change or remove method bodies.
+
+Supported bindings include direct method handles and two-input forwarding functions such as `@(~, event) app.SomeButtonPushed(event)`. A forwarding function can pass its named inputs in order or call the method with no arguments. Expressions with computed or captured arguments and incompatible signatures restrict editing. The dialog explains unavailable bindings and indicates when argument types could not be checked.
+
+### Reload externally edited code
+
+Use **Edit > Reload Source**, the toolbar refresh button, or **F5** after saving the file in MATLAB. Reload reads the disk file, closes callback dialogs, clears Undo/Redo, and keeps the selected component where its name still identifies it uniquely. If you have unsaved edits in yamada, choose Save, Discard, or Cancel. If both copies changed, save the yamada edits under another filename to retain both versions. A failed reload leaves the current document open.
 
 ## Standard Component Catalog
 
@@ -103,9 +94,9 @@ Transient operations such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolo
 - It does not call the input class constructor, callbacks, or helper methods.
 - It does not evaluate arbitrary MATLAB expressions through `eval` or an equivalent mechanism.
 - Safe Preview applies only catalog-approved components and values that can be interpreted safely.
-- Parsed constructor arguments obey the same Preview policy as assignments. Skipped properties, including executable callbacks and HTML sources, remain in source and do not reach Preview construction. Named image sources use the existing local-asset adapter after construction.
-- Safe Preview draws the root UIFigure client area at its model pixel width and height, using its supported Color value. A dark gray area marks the space outside the figure, with a visible dark margin even at scroll limits. A fixed dark divider separates the figure from native scroll bars while scrolling. Scroll bars expose parts larger than the editor pane. The preview heading retains the editor's light panel background and dark text.
-- Resizing the editor window changes only the viewport. Root UIFigure resize handles appear on all eight directions for an editable literal Position, even in an empty new document or when a child is selected. Each drag is one undoable model edit. A dashed outline previews the proposed figure bounds during the drag without a numeric size label. Left and bottom drags update the screen origin to keep the opposite edge fixed; right and top drags retain the origin. A thin gray frame marks all four edges of the figure.
+- Constructor arguments and later assignments follow the same preview rules. The editor keeps callbacks and HTML sources in the code and skips them in the preview. Supported local image files can appear in the preview.
+- Safe Preview draws the figure at its configured pixel size. Scroll to reach parts of the figure or components outside the visible pane.
+- Resizing the editor window changes the viewing area. Drag a figure resize handle to change the app window size when Position is editable. A dashed outline shows the proposed bounds and each completed drag is one Undo step. Left and bottom handles keep the opposite edge fixed.
 - The scrollable editing area also includes visible component bounds outside the UIFigure. After shrinking the figure, stranded components remain accessible as selectable outlines on the dark background and can be dragged back into the figure. The figure canvas keeps its actual model size.
 - Unmanaged callbacks, nonliteral expressions, and unsupported statements remain in the original source where possible; callback management changes only proven binding/method ranges.
 - Diagnostics distinguish state that cannot be previewed from state that cannot be preserved safely.
@@ -114,23 +105,22 @@ Because of this limitation, Safe Preview may not reproduce the input application
 
 ## Property Setting Effects
 
-- Property histories retain constructor name-value arguments and later assignments, including earlier occurrences, comments, and source positions. Existing values are replaced at their original occurrence. New settings normally use an assignment at a proven insertion point; a verified constructor-only component may keep the name-value form.
-- The catalog distinguishes reviewed independent inputs, finite modeled effects, unsupported effects, and unaudited effects. Missing effect metadata does not prove independence. Unaudited (`unknown`) literals remain editable under existing product, value-schema, and source-ownership rules, using a stored-input assumption. Identified unsupported effects still prevent affected edits before mutation. Omitted/read-only properties and nonliteral source values keep their separate restrictions; unknown constructor support still falls back to assignment.
+- An edit replaces the existing value where it was set, including a constructor name-value argument or a later assignment. Earlier settings and nearby comments are preserved. New settings usually use assignments, with name-value arguments for supported constructor-only components.
+- An editable literal can still have effects yamada has not modeled. In that case the Inspector shows the stored input. Settings with known unsupported effects can block an edit. Source expressions and read-only properties retain their own editing restrictions.
 - RadioButton and ToggleButton selection uses the owning ButtonGroup and sibling creation order. Generated and copied values are applied after sibling creation. Mixed RadioButton/ToggleButton groups and unresolved selection references remain outside the supported contract. No handle-reference editor is provided.
 - Nonempty construction callbacks, uncataloged setters, and unsupported Parent/Children assignments prevent guarantees about initial values, including those of destination siblings. Unknown initialization calls are preserved and diagnosed, but their effects are the user's responsibility and do not make every component state uneditable. Modeled values describe recognized initialization settings, not the effects of arbitrary code. Reviewed data calls require inert literal inputs. Callback registration alone does not imply that its body executed.
 - Finite geometry rules cover reviewed stored Position inputs, slider thickness, and selected knob/gauge square adjustments. Decoration-dependent getters and child positions affected by later ancestor resizing remain unknown. Axes aspect/camera coupling and unresolved tree/tab references are explicitly bounded rather than approximated as independent values.
-- Copy, move, generation, and save preflight use the same state contract. Reparsed output verifies supported rules; it does not prove arbitrary MATLAB behavior. Items/ItemsData length differences remain outside this implementation.
+- Copy, move, and save check the settings and component relationships yamada supports. Mismatched `Items` and `ItemsData` lengths are outside the supported editing scope.
 
 ## Editing and Source Preservation
 
-- New and existing applications use the same component model, validation, Preview, and generation pipeline.
 - Generating an existing source file without edits does not change its original text.
 - Edits make localized changes only to declarations, creation statements, and assignments whose ownership can be determined safely.
 - New settings normally stay before the next unknown statement. If recognized setting dependencies require a later interval, insertion follows those prerequisites without moving existing statements or interpreting unknown code. Values and order are checked for the component and necessary hierarchy context; arbitrary user-code effects remain outside this guarantee.
-- Checkbox Tree supports literal `Position` edits in its original assignment or constructor argument. Existing writable `InnerPosition` settings are preserved; the Inspector continues to use `Position` as its geometry editing surface.
-- Position uses one inline Inspector property row containing four vertically stacked numeric fields in original `[X Y Width Height]` order. Each field has an `X`, `Y`, `W`, or `H` heading on its left. Their tooltips are `X`, `Y`, `Width`, and `Height`. Fixed slider dimensions remain readable but cannot be edited; their tooltips are `Width (fixed)` or `Height (fixed)` according to Orientation.
-- Fixed aspect ratios are indicated by two labels, `┓` above `┛`, aligned in the same column to the right of Width and Height. Editing either linked size updates its partner before committing a single Position vector, so Undo restores both sizes together. The links indicate a native constraint and are not unlock buttons.
-- Reviewed Position constraints cover square Lamp/Knob/Gauge families, fixed-thickness sliders, all Switch styles, and the semicircular Gauge. Position normalization and orientation exchange use shared finite rules in source-state resolution, the inline editor, Safe Preview, and canvas resize handling. Switch and semicircular Gauge Position are editable within the normal literal/source-ownership contract; decoration-dependent aliases remain outside that finite policy. Linear Gauge width and height are independent: Inspector edits and Preview resizing preserve both requested dimensions without an aspect link; Orientation changes exchange the dimensions in actual setter order. Grid-managed and natively read-only Position properties keep their existing restrictions.
+- Checkbox Tree supports literal `Position` edits in its original assignment or constructor argument. The Inspector edits `Position` and preserves existing writable `InnerPosition` settings.
+- The Position row shows `X`, `Y`, `W`, and `H` in MATLAB vector order. A slider dimension fixed by its orientation is displayed read-only.
+- An aspect-link marker indicates a fixed width-to-height relationship. Editing either linked size adjusts both dimensions in one Undo step.
+- Reviewed Position constraints cover square Lamp/Knob/Gauge families, fixed-thickness sliders, all Switch styles, and the semicircular Gauge. Switch and semicircular Gauge Position are editable within the normal literal/source-ownership contract; decoration-dependent aliases remain outside that finite policy. Linear Gauge width and height are independent: Inspector edits and Preview resizing preserve both requested dimensions without an aspect link; Orientation changes exchange the dimensions in actual setter order. Grid-managed and natively read-only Position properties keep their existing restrictions.
 
 - If an insertion point or ownership range required for addition or deletion is ambiguous, the edit or save is rejected with a diagnostic.
 - Failed validation of a supported value restricts Preview or saving as necessary for safety.
@@ -142,14 +132,15 @@ Because of this limitation, Safe Preview may not reproduce the input application
 ## Output
 
 - Output is ordinary handle `.m` source that can be reviewed and compared as text.
+- Generated apps stay open when launched without an output variable and release their window when closed. Generated callback methods receive `(app, source, event)`; disconnecting a callback retains its method body.
 - Files are written as UTF-8 without a BOM.
-- On Windows, saving writes and flushes a temporary file beside the destination before using the operating system's replacement mechanism. A failed staging write leaves the existing file untouched. If replacement fails after Windows has moved the original to a recovery file, yamada attempts to restore it; if restoration is blocked, the error reports the retained original's location. Failed saving retains unsaved edits and the last successful save checkpoint. This does not replace backups or guarantee recovery from power loss or storage failure.
+- If writing the temporary copy fails, the existing file keeps its original contents. If Windows moves the original during a failed replacement, yamada tries to restore it and reports the recovery location if needed. A failed save keeps your unsaved edits and last successful save state. Keep backups for power loss or storage failure.
 - A new file includes the class and component declarations, creation method, callback-based owner retention, and cleanup required for execution; it does not use AppBase registration services.
 - New files use the host platform's standard line ending; existing files preserve the detected CRLF or LF convention.
 - Generated comments and help text are written in English.
 - `yamada` does not automatically add, replace, or remove the project's GPL notice in an application created or opened by the user.
 - Save As requires explicit replacement approval for an existing target. A normal Save writes only to the current confirmed path and does not repeat that approval.
-- Before saving, the editor reparses the output without executing it and checks supported known initial values and component parent links. Successful saving retains Undo/Redo and original source ownership, and records the saved output's positions separately. Reopening or Reload Source establishes fresh ownership from the saved file. A failed write does not advance the saved checkpoint.
+- Before saving, yamada checks that the output still represents the supported settings and component hierarchy. Save retains Undo/Redo. Reopening or reloading reads the saved file and starts a new history.
 
 ## Out of Scope
 
@@ -160,7 +151,3 @@ Because of this limitation, Safe Preview may not reproduce the input application
 - Complete round-tripping of arbitrary MATLAB syntax
 - Preview by executing the input application
 - Visual editing of application-specific computational logic
-
-## Updating This Specification
-
-Update this document and the [README](README.md) when a change affects externally visible behavior, input requirements, output, or safety limitations. See [CONTRIBUTING.md](CONTRIBUTING.md) for development and contribution guidance.

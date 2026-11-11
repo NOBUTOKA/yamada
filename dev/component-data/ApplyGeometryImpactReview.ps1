@@ -49,7 +49,7 @@ function Set-GeometryImpact {
     $Property | Add-Member -Force -NotePropertyName gridGeometryImpact -NotePropertyValue $grid
     $Property | Add-Member -Force -NotePropertyName absoluteGeometryImpact -NotePropertyValue $absolute
     $Property | Add-Member -Force -NotePropertyName geometryEvidence -NotePropertyValue @([ordered]@{
-        kind = 'inference'; source = 'PROPERTY_AUDIT_GUIDELINES.md#geometry-impact'; detail = $detail
+        kind = 'inference'; source = 'README.md#geometry-impact'; detail = $detail
     })
 }
 

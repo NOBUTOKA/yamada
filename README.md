@@ -8,31 +8,18 @@
 
 ## Features
 
-- Create a runnable `handle` subclass from an empty canvas
-- Statically parse an existing `.m` class that follows a common App Designer-like structure
-- Use a component palette, hierarchy browser, editing canvas, and typed Property Inspector
-- Edit Position in four vertically stacked numeric fields, with linked aspect ratios and tooltips identifying fixed dimensions
-- Move and resize absolutely positioned components; edit Grid Layout tracks and direct-child placements on the Safe Preview
-- Add and delete components and edit supported properties, including literal Checkbox Tree `Position` settings
-- Preserve existing initialization settings and apply reviewed dependencies when adding properties, including supported axes value/Mode pairs
-- Preserve manual grid-width holds when adding upstream axes widths, and track stored color values separately from automatic rendering modes
-- Resolve reviewed position aliases consistently in the Inspector, Safe Preview, and subtree copies, including Lamp's square size constraint
-- Resolve Grid Layout tracks and implicit child placements from initialization order, and reject track edits whose requested size would be lost to occupancy
-- Resolve RadioButton/ToggleButton selection using the owning group and sibling initialization order, including copied groups
-- Allow unaudited (`unknown`) properties under existing product and source-edit rules, using their stored literal inputs; refuse identified unsupported effects
-- Copy, cut, paste, delete, and reparent complete component subtrees with atomic Undo/Redo
-- Rename component properties in the hierarchy, including static source references and default callback names
-- Manage callback bindings from a Hierarchy context menu, reusing methods or creating named handlers; disconnect bindings while retaining method bodies
-- View validation diagnostics and compare the original and generated source before saving
-- Track unsaved edits and guard New, Open, and Close with Save, Discard, or Cancel
-- Preserve unsupported code and nonliteral expressions where possible, and build a Safe Preview without running the input application or its callbacks
-- Produce an ordinary, reviewable text-based `.m` source file **rather than a binary file**
+- Create a new MATLAB GUI app or open a supported `.m` class for editing.
+- Add components, edit properties, and arrange components on the canvas or in a Grid Layout.
+- Rename, copy, cut, paste, and move supported components and their children. Undo or redo edits.
+- Connect callbacks to new or existing methods and disconnect them while retaining the method bodies.
+- Preview supported UI components without running the input app or its callbacks.
+- Review diagnostics and source changes before saving an ordinary MATLAB `.m` file.
 
 ## Supported Environment
 
 - MATLAB R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
 
-The 1.0.0 release target is R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. MATLAB is required; this is not a standalone application. Runtime dependency analysis identifies MATLAB only; Node.js and development tools are not required to use the editor.
+The 1.0.0 release target is R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
 
 ## Getting Started
 
@@ -124,29 +111,15 @@ Reload reads the saved file, so unsaved changes in MATLAB's editor are not inclu
 
 ## Scope and Limitations
 
-`yamada` catalogs standard persistent MATLAB R2024a UI components, containers, axes, instrumentation controls, menus, and toolbar tools. See the [product specification](SPECIFICATION.md) for the detailed component and property scope.
+Supported apps directly inherit from `handle` and own one `uifigure`. All their UI components must be descendants of that figure. Use an ordinary `.m` class with component creation and settings that yamada can read from source. `.mlapp` files and AppBase apps are outside the supported format.
 
-Supported classes directly inherit from `handle` and own exactly one `uifigure`. All other UI components must be descendants of that figure, including through panels, grids, and tabs. Descendant membership is a user precondition without a dedicated check; behavior outside it is not guaranteed. The source must use the supported statically analyzable syntax. AppBase input and automatic conversion are not supported.
-
-The following boundaries protect the input source:
-
-- `.mlapp` files and their internal format are not supported.
-- The input application's constructor, callbacks, helper methods, and arbitrary expressions are never executed.
-- Initial property values follow statically resolved same-class calls from the constructor, including ordinary initialization helpers. Method names are unrestricted; callback registrations and anonymous callback bodies are excluded. Repeated calls retain their order. Dynamic calls, recursion, and unsupported call expressions produce diagnostics without executing source. For constructor-free fragments, a single identifiable factory-owning method is used with a warning. Runtime-only writes do not replace initial values or make those properties read-only; initialization expressions remain source-backed and read-only.
-- Dynamic component creation and ambiguous source structures are restricted when they cannot be edited safely; diagnostics explain the restriction.
-- Inclusion in the catalog does not mean that every component or property can be previewed, inserted, and edited to the same extent. Unsupported values may remain visible but read-only.
-- Full App Designer compatibility and complete round-tripping of arbitrary MATLAB syntax are not goals.
-
-See the [product specification](SPECIFICATION.md) for the current supported behavior, input and output contract, and safety limitations.
+The preview uses supported initialization settings. Some components and properties have limited editing or preview support, especially when their values depend on expressions or runtime code. The editor shows diagnostics when it cannot safely apply a change. See the [product specification](SPECIFICATION.md) for supported syntax, operations, and source-preservation limits.
 
 ## Documentation
 
 - [Product specification](SPECIFICATION.md) - Current scope, input and output contract, and safety limitations
 - [Roadmap](ROADMAP.md) - Independent tasks planned beyond the current supported behavior
-- [Architecture reference](doc/ARCHITECTURE.md) - Implemented layers, data flow, safety boundaries, and extension points
 - [Contributing guide](CONTRIBUTING.md) - Issues, development setup, tests, and pull requests
-- [1.0.0 release plan](doc/RELEASE_1_0_0_PLAN.md) - Preparation stages, remaining release gates, and progress
-- [Source and resource provenance](doc/THIRD_PARTY_NOTICES.md) - Runtime resources, upstream references, and redistribution review boundaries
 
 ## Feedback and Contributions
 

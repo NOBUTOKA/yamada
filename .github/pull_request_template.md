@@ -1,10 +1,12 @@
+<!-- For contributors submitting a pull request: describe the change, its safety effects, and validation for reviewers. -->
+
 ## Change
 
 Describe the concrete problem and resulting behavior. Link the related issue, if any.
 
 ## Scope and Safety
 
-Describe effects on source preservation, Safe Preview, and the supported input/output contract. For documentation-only changes, state that runtime behavior is unchanged. Include UI examples when useful.
+Describe effects on source preservation, Safe Preview, and the supported input/output contract. Describe only the effects relevant to this change. Include UI examples when useful.
 
 ## Validation
 

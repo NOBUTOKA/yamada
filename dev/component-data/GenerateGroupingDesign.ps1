@@ -349,5 +349,4 @@ $summary = @(
     ''
 )
 foreach ($profile in @($profileAnalysis.profiles)) { $summary += "- $($profile.id): $($profile.assignedVariantIds.Count) variant(s)" }
-Write-Utf8File (Join-Path $outputPath 'GROUPING_DESIGN_SUMMARY.md') (($summary -join [Environment]::NewLine) + [Environment]::NewLine)
 Write-Output (($summary | Select-Object -First 9) -join [Environment]::NewLine)

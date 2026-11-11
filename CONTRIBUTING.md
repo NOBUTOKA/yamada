@@ -1,6 +1,6 @@
 # Contributing to yamada
 
-Thank you for your interest in contributing to `yamada`. Reproducing bugs, proposing features, improving documentation, adding tests, and changing the code or component catalog are all valuable contributions.
+For contributors proposing or submitting changes, this guide explains the project workflow, development setup, and checks required for a pull request.
 
 ## Before You Start
 
@@ -72,6 +72,8 @@ See the [product specification](SPECIFICATION.md) for the public feature set, in
 | `tests/fixtures` | Input fixtures for source preservation, parsing, and preview |
 | `tests/runYamadaTests.m` | Developer-only quick, area, and full test-profile runner |
 
+Use the [roadmap](ROADMAP.md) to find proposed work. The [architecture reference](doc/ARCHITECTURE.md) describes the contracts to preserve when changing the model, source handling, or Preview.
+
 ## MATLAB Code Conventions
 
 - Project-owned MATLAB source and test files must use UTF-8 without a BOM and CRLF line endings.
@@ -87,7 +89,7 @@ Follow the formatting of existing code, and do not include unrelated formatting 
 
 ## Changing the Component Catalog
 
-When adding or changing a standard component or property, update the versioned JSON catalog rather than hard-coding declarative specifications in `ComponentRegistry`.
+When adding or changing a standard component or property, start with the [catalog generation guide](dev/component-data/README.md) and update the versioned JSON catalog rather than hard-coding declarative specifications in `ComponentRegistry`.
 
 - Check the official MATLAB R2024a documentation and, when necessary, verify behavior in the R2024a runtime.
 - Preserve the boundary that prevents catalog data or identifiers from invoking arbitrary MATLAB code.
@@ -133,14 +135,7 @@ For catalog text or promotion changes, also run the PowerShell checks `tests/ver
 
 ## HTML Editing Canvas Overlay
 
-Canvas selection, drag movement, eight-direction resizing, and Tab Group selection use `resources/EditorInteractionOverlay.html`, which is loaded as a transparent `uihtml` layer. The native Preview components do not process these editing gestures directly.
-
-- `yamada.m` sends the canvas dimensions, component IDs, display positions, outline shapes, selection state, and tab information to HTML through `InteractionOverlay.Data`.
-- The HTML renders SVG outlines and resize handles, converts DOM coordinates to a bottom-left origin, and sends the pointer phase, coordinates, target ID, and handle type back to MATLAB through `sendEventToMATLAB`.
-- MATLAB handles the Preview-to-source scale, component-specific resize constraints, and candidate geometry during a gesture. The completed gesture is then committed as one change to `DocumentModel` and the undo/redo history.
-- The HTML overlay and Preview handles are disposable presentation and input state; neither is the authoritative document state.
-
-The sending and receiving code in `EditorInteractionOverlay.html` and `yamada.m` must agree on the overlay `Data` structure and event format. Related interaction tests are in `tests/unit/EditorInteractionTest.m`.
+For overlay data flow, event handling, and source-update responsibilities, see the [architecture reference](doc/ARCHITECTURE.md#safe-preview-and-canvas-overlay). Overlay changes should include the relevant browser tests and `tests/unit/EditorInteractionTest.m`.
 
 ## Pull Requests
 

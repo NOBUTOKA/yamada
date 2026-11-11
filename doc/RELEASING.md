@@ -1,10 +1,10 @@
 # Releasing yamada
 
-This is the maintainer procedure for preparing, validating, publishing, and maintaining versioned MATLAB Toolbox releases. It defines release gates; it does not claim that packaging automation or installation verification already exists. The first planned release is `1.0.0`.
+For maintainers preparing a release, this guide covers candidate validation, versioning, publication, and ongoing release maintenance.
 
 ## Branches and Publication
 
-Use the [contributor workflow](../CONTRIBUTING.md#branch-workflow): focused work branches and pull requests into `main`, with no permanent `develop`. `main` holds verified integrated development for the next release. A merge is not a publication. Use a release branch only when stabilization or maintenance must proceed in parallel with development.
+Use the [contributor workflow](../CONTRIBUTING.md#branch-workflow): focused work branches and pull requests into `main`, with no permanent `develop`. `main` holds verified integrated development for the next release. Use a release branch only when stabilization or maintenance must proceed in parallel with development.
 
 Preserve cohesive commits. An `AGENTS.md` commit must contain only that file and must remain separate when merged; use a merge commit or rebase merge for a pull request that also contains other changes. Squash merging is suitable only when it does not violate this separation.
 
@@ -16,7 +16,7 @@ Use `1.0.0` in Toolbox metadata, `v1.0.0` as the Git tag, `yamada 1.0.0` as the 
 
 ## Repository Settings
 
-A repository administrator configures GitHub Settings > Rules > Rulesets with an active branch ruleset targeting `main`. This document describes the intended settings, not evidence that the remote configuration has been applied. Inspect any existing rules before adding another ruleset because overlapping rules also apply.
+A repository administrator configures GitHub Settings > Rules > Rulesets with an active branch ruleset targeting `main`. Inspect any existing rules before adding another ruleset because overlapping rules also apply.
 
 - Require a pull request before merging, with zero required approvals for sole-maintainer operation.
 - Restrict deletions and block force pushes. Do not configure routine bypass actors.
@@ -26,21 +26,21 @@ A repository administrator configures GitHub Settings > Rules > Rulesets with an
 
 Apply equivalent protection to maintenance branches when they are created. Enable Issues for bug reports. Keep the default branch as `main`. Automatic work-branch deletion is optional; retained maintenance branches must not be deleted inadvertently.
 
-GitHub documents these controls in [Available rules for rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets). If the current tooling cannot inspect or modify settings, ask the administrator to apply them and report the result; do not report a documented policy as an active protection rule.
+GitHub documents these controls in [Available rules for rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets).
 
 ## Prepare the Release
 
 1. Confirm the version's supported feature set against `SPECIFICATION.md`. Classify known issues as release blockers or documented limitations. Source loss, corrupt saves, execution of input application code, and failure of essential installed workflows block publication.
 2. Confirm the MATLAB releases, platforms, and required products actually verified. Initially target R2024a; declare only platforms validated for the artifact. Audit internal MATLAB dependencies and their failure behavior.
 3. Reconcile README, specification, examples, and release notes with the implementation. Document installation, update, removal, limitations, and bug reporting. Use `yamada` as the normal launch command; reserve handle-returning forms for development and tests.
-4. Audit runtime resources and redistribution rights. Package runtime MATLAB code, the release-specific JSON catalog, `EditorInteractionOverlay.html`, `RootResizeGuide.html`, `stabilize-request.js`, license notices, and appropriate user documentation. Explicitly exclude development tools, tests, investigation reports, logs, repository metadata, and build output. Keep investigation artifacts out of `main` under the project integration policy.
-5. Implement and review reproducible packaging with R2024a-supported `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox`. Define the fixed UUID, version, metadata, supported environments, file list, and minimal MATLAB path. Decide whether to include an Apps gallery entry in addition to the documented command.
+4. Audit runtime resources and redistribution rights. Package runtime MATLAB code, the release-specific JSON catalog, `EditorInteractionOverlay.html`, `RootResizeGuide.html`, `stabilize-request.js`, license notices, and appropriate user documentation. Explicitly exclude development tools, tests, investigation reports, logs, repository metadata, and build output.
+5. Implement and review reproducible packaging with R2024a-supported `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox`. Define the fixed UUID, version, metadata, supported environments, file list, and minimal MATLAB path. Include an Apps gallery entry alongside the documented command.
 
 ## Validate the Candidate
 
-Record the source commit, MATLAB release/update, operating system, commands, terminal results, and artifact SHA-256. Keep generated logs and measurement artifacts in ignored local results or the investigation branch. Relevant checks must finish successfully; progress output is not a passing result.
+Record the source commit, MATLAB release/update, operating system, commands, terminal results, and artifact SHA-256. Keep generated logs and measurement artifacts in ignored local results or the investigation branch.
 
-- Run the full MATLAB regression suite as described in `CONTRIBUTING.md`, relevant HTML/JavaScript checks, and applicable static and convention checks. Follow `AGENTS.md` for the Windows MATLAB account and waiting requirements.
+- Run the full MATLAB regression suite as described in `CONTRIBUTING.md`, relevant HTML/JavaScript checks, and applicable static and convention checks.
 - Build from the final intended source commit. Install the resulting Toolbox with the source checkout absent from the MATLAB path and confirm the resolved entry point belongs to the installed copy.
 - Launch with `yamada` without parentheses or an output assignment. Verify the app survives startup and cleans up correctly when closed.
 - Exercise New/Open, component and property editing, Validate, Diff Preview, Save/Save As, and reopen. Cover subtree operations, rename, callback management, and Undo/Redo.
@@ -53,7 +53,7 @@ If candidate code or packaged contents change, repeat affected checks and rebuil
 
 1. Merge reviewed release preparation through a pull request. Resolve any remaining blockers and complete validation of the final commit and artifact.
 2. Prepare a draft GitHub Release with the version, source commit, `.mltbx`, checksum, supported environments, installation and `yamada` launch instructions, features, known limitations, and changes from the prior release. GitHub's automatic source archives are distinct from the installable Toolbox asset.
-3. Obtain the maintainer's final authorization before pushing the release tag or publishing. When an agent prepares the release, present the concrete artifact and release text for that decision.
+3. Obtain the maintainer's final authorization before pushing the release tag or publishing.
 4. Tag the verified source commit as `v<version>`, push the tag, and publish the matching Release and asset. Verify that the tag, Toolbox metadata, asset name, checksum, and release notes agree.
 5. Download the published asset and verify its checksum and public documentation links. Record completion without committing generated measurement reports to `main`.
 
@@ -65,4 +65,4 @@ Monitor issues and reproduce reports with the installed version and stated envir
 
 If `main` already contains later features, create `release/<major>.<minor>` from the published tag to maintain that release line. Prefer fixing on `main` and backporting only required commits through a maintenance pull request. For a maintenance-only fix, explicitly assess and record applicability to `main`. Validate and publish each patch using the same candidate and publication gates.
 
-Keep completed work out of `ROADMAP.md`; preserve unfinished successor work and consolidate durable implementation contracts in `doc/ARCHITECTURE.md`. Improve issue templates and CI incrementally. File Exchange distribution and additional MATLAB/platform support are follow-up work, each with its own verification.
+Keep completed work out of `ROADMAP.md`; preserve unfinished successor work and consolidate durable implementation contracts in `doc/ARCHITECTURE.md`.
