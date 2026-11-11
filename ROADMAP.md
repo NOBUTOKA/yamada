@@ -1,12 +1,12 @@
 # yamada Roadmap
 
-This roadmap contains unfinished work for the public development version of `yamada`. Each section is an independent, reviewable task rather than part of a numbered delivery hierarchy. The order below does not promise delivery order.
+For users following planned features and contributors choosing work, this roadmap describes improvements such as selecting multiple components, resetting properties, editing axes and menus, and speeding up the editor. The entries describe scope without setting delivery dates.
 
 The [product specification](SPECIFICATION.md) remains authoritative for current behavior. A roadmap item becomes part of the supported public contract only after its implementation, tests, and user documentation are complete.
 
 ## Continue Measured Performance Improvements
 
-Retain the current editing, source-preservation, history, and validation contracts while investigating remaining costs. The historical plans and measurements are preserved on the [`codex/investigation-pre-v1` investigation branch](https://github.com/NOBUTOKA/yamada/tree/codex/investigation-pre-v1); they are not runtime dependencies or current latency guarantees.
+Retain the current editing, source-preservation, history, and validation contracts while investigating remaining costs.
 
 - Measure repeated overlay component traversal, rectangle reads, tab visibility checks, and ancestor lookups before changing geometry synchronization.
 - Investigate Inspector updates driven by committed atomic edits and affected rows, including typed values, availability, explanations, dependent choices, and composite rows. Retain complete synchronization for selection, reload, and changed row structure.

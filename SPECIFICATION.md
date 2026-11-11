@@ -1,10 +1,6 @@
 # yamada Product Specification
 
-This document defines the feature scope, input and output contract, and safety limitations selected for `yamada` 1.0.0. Packaging and release acceptance remain pending; this document does not announce a published release or guarantee unverified distribution workflows.
-
-The supported class directly inherits from `handle` and owns exactly one `uifigure`. Every other UI component must be a descendant of that figure, either directly or through nested containers. This hierarchy is a user precondition: there is no new dedicated descendant-membership validation or diagnostic, and behavior outside it is not guaranteed. Existing model consistency and safe-edit validation remain in place. Arbitrary inheritance graphs, dynamic construction, AppBase compatibility, and automatic source conversion are outside the contract.
-
-Generated callbacks are bound methods with `(app, source, event)` inputs. The default CloseRequestFcn deletes the owner. New replaces the default binding with an editable close handler initialized to delete the app; Disconnect restores the default binding while retaining that handler method. The destructor releases owned resources without argument validation or a cancel decision. A source-bound ObjectBeingDestroyed listener handles direct figure deletion without replacing user DeleteFcn code and ignores owner destruction already in progress. No-output startup retains the owner through figure callbacks; constructor failure cleans up a partially created figure.
+For users evaluating or using yamada, this specification defines the supported behavior, application format, and safety limits of version 1.0.0.
 
 ## Purpose
 
@@ -23,7 +19,7 @@ Users can create a new handle class from an empty canvas or open an existing han
 
 Other MATLAB releases, macOS, Linux, MATLAB Online, and headless operation are outside the 1.0.0 support contract. MATLAB remains required; no standalone executable is planned. No versioned release or MATLAB Toolbox package is currently available. Development tools, including Node.js for isolated overlay tests, are not runtime requirements.
 
-The release-specific catalog is fixed to R2024a. Editor layout synchronization and activation notifications include internal MATLAB dependencies, so compatibility must not be inferred from a newer release accepting the source syntax. See the [architecture reference](doc/ARCHITECTURE.md#resource-and-development-data-boundary) and [release plan](doc/RELEASE_1_0_0_PLAN.md) for resource boundaries and remaining release gates.
+The release-specific catalog is fixed to R2024a. Editor layout synchronization and activation notifications include internal MATLAB dependencies, so compatibility must not be inferred from a newer release accepting the source syntax. See the [architecture reference](doc/ARCHITECTURE.md#resource-and-development-data-boundary) for runtime resource and dependency boundaries.
 
 ## Supported Operations
 
@@ -42,6 +38,8 @@ The release-specific catalog is fixed to R2024a. Editor layout synchronization a
 - Validate the document, review the source diff, and save a runnable handle `.m` file.
 
 ### Existing applications
+
+Supported input classes directly inherit from `handle` and own exactly one `uifigure`. All other UI components must be descendants of that figure. Applications outside this hierarchy, arbitrary inheritance graphs, dynamic construction, and AppBase input are unsupported.
 
 - Open a handle `.m` file with a common App Designer-like or programmatic structure.
 - Statically parse supported declarations, creation statements, parent-child relationships, and direct property assignments.
@@ -142,6 +140,7 @@ Because of this limitation, Safe Preview may not reproduce the input application
 ## Output
 
 - Output is ordinary handle `.m` source that can be reviewed and compared as text.
+- Generated apps stay open when launched without an output variable and release their window when closed. Generated callback methods receive `(app, source, event)`; disconnecting a callback retains its method body.
 - Files are written as UTF-8 without a BOM.
 - On Windows, saving writes and flushes a temporary file beside the destination before using the operating system's replacement mechanism. A failed staging write leaves the existing file untouched. If replacement fails after Windows has moved the original to a recovery file, yamada attempts to restore it; if restoration is blocked, the error reports the retained original's location. Failed saving retains unsaved edits and the last successful save checkpoint. This does not replace backups or guarantee recovery from power loss or storage failure.
 - A new file includes the class and component declarations, creation method, callback-based owner retention, and cleanup required for execution; it does not use AppBase registration services.
@@ -160,7 +159,3 @@ Because of this limitation, Safe Preview may not reproduce the input application
 - Complete round-tripping of arbitrary MATLAB syntax
 - Preview by executing the input application
 - Visual editing of application-specific computational logic
-
-## Updating This Specification
-
-Update this document and the [README](README.md) when a change affects externally visible behavior, input requirements, output, or safety limitations. See [CONTRIBUTING.md](CONTRIBUTING.md) for development and contribution guidance.

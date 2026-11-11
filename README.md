@@ -145,8 +145,6 @@ See the [product specification](SPECIFICATION.md) for the current supported beha
 - [Roadmap](ROADMAP.md) - Independent tasks planned beyond the current supported behavior
 - [Architecture reference](doc/ARCHITECTURE.md) - Implemented layers, data flow, safety boundaries, and extension points
 - [Contributing guide](CONTRIBUTING.md) - Issues, development setup, tests, and pull requests
-- [1.0.0 release plan](doc/RELEASE_1_0_0_PLAN.md) - Preparation stages, remaining release gates, and progress
-- [Source and resource provenance](doc/THIRD_PARTY_NOTICES.md) - Runtime resources, upstream references, and redistribution review boundaries
 
 ## Feedback and Contributions
 

@@ -1,5 +1,7 @@
 # Handle-class input fixtures
 
+For contributors changing parser and editor tests, this page records the origin and adaptations of preserved inputs.
+
 These fixtures were adapted from AppBase inputs on 2026-10-21 and consolidated directly in `tests/fixtures/` on 2026-11-03. They replace the pre-migration versions at the same paths; earlier versions remain available in Git history. Original notices are retained in each file; no editor license was newly imposed on user output.
 
 Adaptations: inherit from `handle`, replace the App Designer callback wrapper with a bound method accepting source and event, replace app registration with a default close callback and a figure destruction listener, and remove the App Designer no-output clear idiom. The fixture class identities and UI data remain unchanged. These files are preserved input data, not editor runtime code.

@@ -1,6 +1,6 @@
 # yamada Architecture
 
-This document is a developer reference for the architecture implemented in the current `yamada` source tree. It describes stable responsibilities, data flow, and extension boundaries; it is not a delivery plan. See the [product specification](../SPECIFICATION.md) for supported public behavior and the [roadmap](../ROADMAP.md) for unfinished work.
+For contributors changing yamada, this reference explains the implemented responsibilities, data flow, and safety boundaries to preserve during development.
 
 ## Architectural Principles
 
@@ -250,6 +250,15 @@ The renderer returns a map from stable component IDs to disposable Preview handl
 
 Tab content geometry is published only after observed layout values stabilize. Inactive-tab child outlines are omitted, and the active tab selection remains disposable Preview state unless a supported model property is explicitly edited.
 
+Canvas selection, drag movement, eight-direction resizing, and Tab Group selection use `resources/EditorInteractionOverlay.html`, which is loaded as a transparent `uihtml` layer. The native Preview components do not process these editing gestures directly.
+
+- `yamada.m` sends the canvas dimensions, component IDs, display positions, outline shapes, selection state, and tab information to HTML through `InteractionOverlay.Data`.
+- The HTML renders SVG outlines and resize handles, converts DOM coordinates to a bottom-left origin, and sends the pointer phase, coordinates, target ID, and handle type back to MATLAB through `sendEventToMATLAB`.
+- MATLAB handles the Preview-to-source scale, component-specific resize constraints, and candidate geometry during a gesture. The completed gesture is then committed as one change to `DocumentModel` and the undo/redo history.
+- The HTML overlay and Preview handles are disposable presentation and input state; neither is the authoritative document state.
+
+The sending and receiving code in `EditorInteractionOverlay.html` and `yamada.m` must agree on the overlay `Data` structure and event format. Related interaction tests are in `tests/unit/EditorInteractionTest.m`.
+
 ### Grid Layout Visual Editor
 
 The editor follows one model-to-canvas-to-model flow. `DocumentModel` holds track values and child placements. `PreviewRenderer` draws disposable MATLAB controls from that model. `GridLayoutOverlayDataBuilder` combines model values with the controls' realized geometry into a versioned payload. The HTML overlay draws the grid UI and sends a proposed action to `yamada`, which validates it and commits one model change before rebuilding the Preview. The Inspector edits ordinary component properties alongside this canvas workflow. Preview and HTML are disposable views of the document state.
@@ -365,7 +374,7 @@ The distribution must preserve the relative layout of `yamada.m`, `+yamada`, and
 
 The editor requires MATLAB's JVM for UUIDs and canonical path comparisons, and a graphical session for UI components and the CEF-based layout adapter. The `FigureActivated` event, figure/controller access, CEF `executeJS`, message-service subscriptions, and browser ViewModel modules are release-specific integration points. Layout-adapter exceptions are caught by the editor and enter its bounded geometry-recovery path; this is not a promise of compatibility on other releases. Activation-listener setup and the MATLAB-installation `icons/undo.mat` and `icons/redo.mat` loads occur during shell construction, where failures abort construction and trigger owner cleanup. These MATLAB files and internal modules are dependencies of the installed MATLAB, not files to copy into the Toolbox. The 1.0.0 support contract is R2024a on Windows; independent validation is required before widening it.
 
-Runtime component factories are drawn from the validated catalog and finite Preview policy. The `feval` calls in component/default construction invoke those approved MATLAB factories, not the input app's constructor, callbacks, or arbitrary expressions. The distributed catalog is trusted product data and must not be replaced with unreviewed executable factory definitions. See [source and resource provenance](THIRD_PARTY_NOTICES.md) for redistribution boundaries.
+Runtime component factories are drawn from the validated catalog and finite Preview policy. The `feval` calls in component/default construction invoke those approved MATLAB factories, not the input app's constructor, callbacks, or arbitrary expressions. The distributed catalog is trusted product data and must not be replaced with unreviewed executable factory definitions.
 
 ## Extending the Architecture
 

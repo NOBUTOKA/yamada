@@ -1,6 +1,6 @@
 # Releasing yamada
 
-This is the maintainer procedure for preparing, validating, publishing, and maintaining versioned MATLAB Toolbox releases. It defines release gates; it does not claim that packaging automation or installation verification already exists. The first planned release is `1.0.0`.
+For maintainers preparing a release, this guide covers candidate validation, versioning, publication, and ongoing release maintenance.
 
 ## Branches and Publication
 
@@ -26,7 +26,7 @@ A repository administrator configures GitHub Settings > Rules > Rulesets with an
 
 Apply equivalent protection to maintenance branches when they are created. Enable Issues for bug reports. Keep the default branch as `main`. Automatic work-branch deletion is optional; retained maintenance branches must not be deleted inadvertently.
 
-GitHub documents these controls in [Available rules for rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets). If the current tooling cannot inspect or modify settings, ask the administrator to apply them and report the result; do not report a documented policy as an active protection rule.
+GitHub documents these controls in [Available rules for rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets).
 
 ## Prepare the Release
 
@@ -40,7 +40,7 @@ GitHub documents these controls in [Available rules for rulesets](https://docs.g
 
 Record the source commit, MATLAB release/update, operating system, commands, terminal results, and artifact SHA-256. Keep generated logs and measurement artifacts in ignored local results or the investigation branch. Relevant checks must finish successfully; progress output is not a passing result.
 
-- Run the full MATLAB regression suite as described in `CONTRIBUTING.md`, relevant HTML/JavaScript checks, and applicable static and convention checks. Follow `AGENTS.md` for the Windows MATLAB account and waiting requirements.
+- Run the full MATLAB regression suite as described in `CONTRIBUTING.md`, relevant HTML/JavaScript checks, and applicable static and convention checks.
 - Build from the final intended source commit. Install the resulting Toolbox with the source checkout absent from the MATLAB path and confirm the resolved entry point belongs to the installed copy.
 - Launch with `yamada` without parentheses or an output assignment. Verify the app survives startup and cleans up correctly when closed.
 - Exercise New/Open, component and property editing, Validate, Diff Preview, Save/Save As, and reopen. Cover subtree operations, rename, callback management, and Undo/Redo.
@@ -53,7 +53,7 @@ If candidate code or packaged contents change, repeat affected checks and rebuil
 
 1. Merge reviewed release preparation through a pull request. Resolve any remaining blockers and complete validation of the final commit and artifact.
 2. Prepare a draft GitHub Release with the version, source commit, `.mltbx`, checksum, supported environments, installation and `yamada` launch instructions, features, known limitations, and changes from the prior release. GitHub's automatic source archives are distinct from the installable Toolbox asset.
-3. Obtain the maintainer's final authorization before pushing the release tag or publishing. When an agent prepares the release, present the concrete artifact and release text for that decision.
+3. Obtain the maintainer's final authorization before pushing the release tag or publishing.
 4. Tag the verified source commit as `v<version>`, push the tag, and publish the matching Release and asset. Verify that the tag, Toolbox metadata, asset name, checksum, and release notes agree.
 5. Download the published asset and verify its checksum and public documentation links. Record completion without committing generated measurement reports to `main`.
 

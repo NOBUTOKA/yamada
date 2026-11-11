@@ -1,3 +1,5 @@
+<!-- For contributors submitting a pull request: describe the change, its safety effects, and validation for reviewers. -->
+
 ## Change
 
 Describe the concrete problem and resulting behavior. Link the related issue, if any.
