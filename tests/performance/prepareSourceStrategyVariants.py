@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Nobuto Kaitoh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# This file is part of yamada. See LICENSE for the license text.
+
 from pathlib import Path
 import json,hashlib,shutil
 root=Path(__file__).resolve().parents[2];base=root/'testResults/performance/source-strategy-20261031';base.mkdir(parents=True,exist_ok=True)

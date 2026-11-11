@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Nobuto Kaitoh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# This file is part of yamada. See LICENSE for the license text.
+
 param([Parameter(Mandatory = $true)][string]$TitleFile, [int]$OwnerProcessId)
 
 # Activate only the exact window title supplied by the owning MATLAB verifier.

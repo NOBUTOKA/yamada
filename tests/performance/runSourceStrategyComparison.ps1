@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Nobuto Kaitoh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# This file is part of yamada. See LICENSE for the license text.
+
 param([string]$Phase='ordinary',[switch]$Profiled,[int]$Rounds=2,[string[]]$Layouts=@('absolute','flatgrid','nestedgrid'),[int[]]$Counts=@(10,50,100))
 $ErrorActionPreference='Stop'
 $root=(Get-Location).Path
