@@ -4,6 +4,29 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
     %   only native dialogs and filesystem decisions through the lifecycle service.
 
     methods (Test)
+        function diffPreviewReceivesOriginalAndCommittedSource(testCase)
+            % diffPreviewReceivesOriginalAndCommittedSource Open the comparison from the Tools menu.
+            [target, ~] = reloadFixture();
+            fileCleanup = onCleanup(@() deleteTemporaryFile(target));
+            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            appCleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            addPaletteComponent("Button");
+            original = app.Document.OriginalText;
+            generated = app.Document.CurrentText;
+            testCase.assertNotEqual(original, generated);
+
+            invokeEditorMenu("Diff Preview");
+            window = findall(0, "Type", "figure", "Name", "Source Diff Preview");
+            testCase.addTeardown(@() delete(window));
+            testCase.assertNumElements(window, 1);
+            preview = findall(window, "Tag", "yamada-source-diff");
+            testCase.assertNumElements(preview, 1);
+            testCase.verifyTrue(isfile(preview.HTMLSource));
+            testCase.verifyEqual(preview.Data.Original, original);
+            testCase.verifyEqual(preview.Data.Generated, generated);
+        end
+
         function activationRemembersOnlyDismissedRevision(testCase)
             % activationRemembersOnlyDismissedRevision Suppress repeats while retaining manual reload and resets.
             [target, source] = reloadFixture();

@@ -343,7 +343,9 @@ Ordinary source-property history retains exact forward/inverse source patches, e
 
 Both the editor and generated apps own their figure lifetime explicitly, including launches without an output variable: figure-side registrations retain the owner. `CloseRequestFcn` decides whether closing is allowed and calls `delete(app)` on acceptance; the destructor only releases owned resources, so canceling close leaves the app alive while explicit deletion still cleans it up. A figure-bound `ObjectBeingDestroyed` listener deletes a still-valid owner without replacing user `DeleteFcn` code. Owner deletion skips a figure already being destroyed and guards reentry. Constructor failure deletes the partially constructed owner and rethrows the original exception; destructors contain no argument-validation block.
 
-Diff Preview directly compares the opened `OriginalText` image with committed `CurrentText`; opening Diff does not generate source. The application enables in-place Save only after Open or Save As establishes a confirmed path and validation has no errors. Generated text is written as UTF-8 without a BOM. New documents use the host line-ending convention; opened source preserves detected CRLF or LF text. `SourceWriter` provides the separately tested byte-level utility for callers that need explicit line-ending normalization.
+Diff Preview passes the original and committed source snapshots to an HTML viewer. The viewer aligns matching lines, pairs replacements in each change block, and inserts visual gaps opposite unpaired additions and deletions. The two panes share scroll positions. The viewer treats line-ending styles equally and renders source as literal text.
+
+The application enables in-place Save only after Open or Save As establishes a confirmed path and validation has no errors. Generated text is written as UTF-8 without a BOM. New documents use the host line-ending convention; opened source preserves detected CRLF or LF text. `SourceWriter` provides the separately tested byte-level utility for callers that need explicit line-ending normalization.
 
 `SourceWriter` requires Windows and .NET for protected saving. It exclusively creates a sibling staging file with `System.IO.FileStream`, writes the encoded bytes, calls `Flush(true)`, and closes the stream before publishing. Existing destinations use `System.IO.File.Replace` with a sibling recovery backup and metadata errors enabled; new destinations use the non-overwriting `System.IO.File.Move`. There is no truncate-in-place or copy/delete fallback. A failed replacement restores a displaced original with a non-overwriting move when the destination is absent; otherwise it retains the recovery file and reports its path. Temporary cleanup cannot turn a committed replacement into a reported save failure. Filesystem permissions must allow sibling creation and native replacement, and filesystem or power-loss durability remains outside this contract.
 
@@ -362,7 +364,7 @@ Preview invalidation distinguishes current source-coordinate changes from visual
 Runtime code resolves resources relative to the project root:
 
 - `resources/component-catalog/R2024a` is loaded by the registry;
-- `resources/EditorInteractionOverlay.html` and `resources/RootResizeGuide.html` are loaded by `yamada`;
+- `resources/EditorInteractionOverlay.html`, `resources/RootResizeGuide.html`, and `resources/SourceDiffPreview.html` are loaded by `yamada`;
 - `resources/stabilize-request.js` is loaded by `waitForPreviewLayout` and executed only in the editor-owned figure window; and
 - development ledgers and generation scripts under `dev/component-data` are not runtime dependencies.
 

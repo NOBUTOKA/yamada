@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<!--
+Copyright (C) 2026 Nobuto Kaitoh
+SPDX-License-Identifier: GPL-3.0-or-later
+This file is part of yamada. See LICENSE for the license text.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+body {
+  height: 100vh;
+  margin: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  font: 13px system-ui, sans-serif;
+  color: #20262d;
+  background: #fff;
+}
+header, main { display: grid; grid-template-columns: 44px repeat(2, minmax(0, 1fr)); }
+header { background: #f1f3f5; border: 1px solid #d0d7de; }
+h1 { margin: 0; padding: 7px 12px; font-size: 13px; }
+h1 + h1 { border-left: 1px solid #d0d7de; }
+.map-heading { text-align: center; padding-inline: 0; }
+main { border: 1px solid #d0d7de; border-top: 0; }
+.location-map {
+  position: relative;
+  overflow: hidden;
+  background: #f7f8fa;
+  border-right: 1px solid #d0d7de;
+  cursor: pointer;
+  outline-offset: -2px;
+}
+.location-map[aria-disabled="true"] { cursor: default; }
+.map-marks {
+  position: absolute;
+  inset: 0 3px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  pointer-events: none;
+}
+.map-lane { position: relative; }
+.map-mark { position: absolute; inset-inline: 0; min-height: 2px; }
+.map-mark.added { background: #389454; }
+.map-mark.deleted { background: #cf4f4b; }
+.map-mark.modified { background: #d2a21c; }
+.map-viewport {
+  position: absolute;
+  inset-inline: 0;
+  box-sizing: border-box;
+  min-height: 2px;
+  border: 1px solid #64748b;
+  background: rgba(100, 116, 139, 0.16);
+  pointer-events: none;
+}
+.pane { overflow: scroll; outline-offset: -2px; }
+.pane + .pane { border-left: 1px solid #d0d7de; }
+.lines { width: max-content; min-width: 100%; }
+.row {
+  display: grid;
+  grid-template-columns: 7ch minmax(max-content, 1fr);
+  min-height: 22px;
+  font: 13px/22px Consolas, monospace;
+  white-space: pre;
+  tab-size: 4;
+}
+.gutter { padding-right: 1ch; text-align: right; color: #53606d; user-select: none; }
+.code { padding: 0 2ch 0 1ch; }
+.added { background: #daf5e2; }
+.deleted { background: #ffebe9; }
+.modified { background: #fff0bf; }
+.gap { background: #f1f3f5; }
+</style>
+</head>
+<body>
+<header>
+  <h1 class="map-heading">Map</h1>
+  <h1 id="original-heading">Original source</h1>
+  <h1 id="generated-heading">Generated source</h1>
+</header>
+<main>
+  <div class="location-map" role="scrollbar" tabindex="0" aria-label="Diff location map"
+       aria-orientation="vertical" aria-controls="original-pane generated-pane"
+       aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="map-marks" aria-hidden="true">
+      <div class="map-lane map-original"></div>
+      <div class="map-lane map-generated"></div>
+    </div>
+    <div class="map-viewport" aria-hidden="true"></div>
+  </div>
+  <section id="original-pane" class="pane" aria-labelledby="original-heading" tabindex="0"><div class="lines"></div></section>
+  <section id="generated-pane" class="pane" aria-labelledby="generated-heading" tabindex="0"><div class="lines"></div></section>
+</main>
+<script>
+'use strict';
+
+function splitLines(source) {
+  return source === '' ? [] : source.split(/\r\n|\n|\r/);
+}
+
+// Find an interior point on a shortest edit path by meeting from both ends.
+function middleSplit(left, right, start, endLeft, endRight) {
+  // A completely replaced range has no matching lines to recover.
+  const oldLines = new Set(left.slice(start.left, endLeft));
+  if (!right.slice(start.right, endRight).some(line => oldLines.has(line))) return null;
+
+  const width = endLeft - start.left;
+  const height = endRight - start.right;
+  const delta = width - height;
+  const limit = Math.ceil((width + height) / 2);
+  const offset = limit + 1;
+  const forward = new Int32Array(2 * offset + 1).fill(-1);
+  const backward = new Int32Array(forward.length).fill(-1);
+  forward[offset + 1] = backward[offset + 1] = 0;
+
+  function advance(front, diagonal, distance, reverse) {
+    const index = offset + diagonal;
+    let x = diagonal === -distance || (diagonal !== distance && front[index - 1] < front[index + 1])
+      ? front[index + 1] : front[index - 1] + 1;
+    let y = x - diagonal;
+    while (x < width && y < height) {
+      const leftIndex = reverse ? endLeft - 1 - x : start.left + x;
+      const rightIndex = reverse ? endRight - 1 - y : start.right + y;
+      if (left[leftIndex] !== right[rightIndex]) break;
+      x++;
+      y++;
+    }
+    front[index] = x;
+    return x;
+  }
+
+  const oddDelta = delta % 2 !== 0;
+  for (let distance = 0; distance < limit; distance++) {
+    for (let diagonal = -distance; diagonal <= distance; diagonal += 2) {
+      const x = advance(forward, diagonal, distance, false);
+      const opposite = delta - diagonal;
+      if (oddDelta && Math.abs(opposite) < distance && x + backward[offset + opposite] >= width) {
+        return { left: start.left + x, right: start.right + x - diagonal };
+      }
+    }
+    for (let diagonal = -distance; diagonal <= distance; diagonal += 2) {
+      const x = advance(backward, diagonal, distance, true);
+      const opposite = delta - diagonal;
+      if (!oddDelta && Math.abs(opposite) <= distance && x + forward[offset + opposite] >= width) {
+        const matched = forward[offset + opposite];
+        return { left: start.left + matched, right: start.right + matched - opposite };
+      }
+    }
+  }
+  return null;
+}
+
+function alignedRows(left, right) {
+  const rows = [];
+  let nextLeft = 0;
+  let nextRight = 0;
+
+  // Pair adjacent removals and insertions in order within each change block.
+  function appendChanges(endLeft, endRight) {
+    while (nextLeft < endLeft || nextRight < endRight) {
+      const oldLine = nextLeft < endLeft ? nextLeft++ : null;
+      const newLine = nextRight < endRight ? nextRight++ : null;
+      const kind = oldLine === null ? 'added' : newLine === null ? 'deleted' : 'modified';
+      rows.push({ oldLine, newLine, kind });
+    }
+  }
+
+  function appendMatch(oldLine, newLine) {
+    appendChanges(oldLine, newLine);
+    rows.push({ oldLine, newLine, kind: '' });
+    nextLeft++;
+    nextRight++;
+  }
+
+  function findMatches(firstLeft, endLeft, firstRight, endRight) {
+    while (firstLeft < endLeft && firstRight < endRight && left[firstLeft] === right[firstRight]) {
+      appendMatch(firstLeft++, firstRight++);
+    }
+    let suffix = 0;
+    while (firstLeft < endLeft && firstRight < endRight && left[endLeft - 1] === right[endRight - 1]) {
+      endLeft--;
+      endRight--;
+      suffix++;
+    }
+    if (firstLeft < endLeft && firstRight < endRight) {
+      const split = middleSplit(left, right, { left: firstLeft, right: firstRight }, endLeft, endRight);
+      if (split) {
+        findMatches(firstLeft, split.left, firstRight, split.right);
+        findMatches(split.left, endLeft, split.right, endRight);
+      }
+    }
+    for (let index = 0; index < suffix; index++) appendMatch(endLeft + index, endRight + index);
+  }
+
+  findMatches(0, left.length, 0, right.length);
+  appendChanges(left.length, right.length);
+  return rows;
+}
+
+function renderPane(container, lines, rows, indexKey) {
+  const content = document.createDocumentFragment();
+  const markers = { added: '+', deleted: '−', modified: '~' };
+  for (const row of rows) {
+    const index = row[indexKey];
+    const line = document.createElement('div');
+    line.className = 'row ' + (index === null ? 'gap' : row.kind);
+    if (index !== null) {
+      const gutter = document.createElement('span');
+      gutter.className = 'gutter';
+      gutter.textContent = (markers[row.kind] || ' ') + ' ' + (index + 1);
+      const code = document.createElement('span');
+      code.className = 'code';
+      code.textContent = lines[index];
+      line.append(gutter, code);
+    }
+    content.append(line);
+  }
+  container.replaceChildren(content);
+}
+
+function renderLocationMap(map, rows) {
+  const original = document.createDocumentFragment();
+  const generated = document.createDocumentFragment();
+
+  // Draw each change on the same side as its source row.
+  for (let first = 0; first < rows.length;) {
+    const kind = rows[first].kind;
+    let end = first + 1;
+    while (end < rows.length && rows[end].kind === kind) end++;
+    if (kind) {
+      const sides = kind === 'modified' ? [original, generated] : [kind === 'deleted' ? original : generated];
+      for (const side of sides) {
+        const mark = document.createElement('div');
+        mark.className = 'map-mark ' + kind;
+        mark.style.top = 'min(' + 100 * first / rows.length + '%, calc(100% - 2px))';
+        mark.style.height = 100 * (end - first) / rows.length + '%';
+        side.append(mark);
+      }
+    }
+    first = end;
+  }
+
+  map.querySelector('.map-original').replaceChildren(original);
+  map.querySelector('.map-generated').replaceChildren(generated);
+}
+
+function setup(htmlComponent) {
+  const [original, generated] = document.querySelectorAll('.pane');
+  const [oldContent, newContent] = document.querySelectorAll('.lines');
+  const map = document.querySelector('.location-map');
+  const viewport = map.querySelector('.map-viewport');
+
+  function updateLocationViewport() {
+    const height = original.scrollHeight;
+    const travel = height - original.clientHeight;
+    viewport.style.top = 'min(' + 100 * original.scrollTop / Math.max(1, height) + '%, calc(100% - 2px))';
+    viewport.style.height = (travel > 0 ? 100 * original.clientHeight / height : 100) + '%';
+    map.setAttribute('aria-valuenow', travel > 0 ? Math.round(100 * original.scrollTop / travel) : 0);
+    map.setAttribute('aria-disabled', travel <= 0);
+  }
+
+  function render() {
+    const { Original = '', Generated = '' } = htmlComponent.Data || {};
+    const left = splitLines(Original);
+    const right = splitLines(Generated);
+    const rows = alignedRows(left, right);
+    renderPane(oldContent, left, rows, 'oldLine');
+    renderPane(newContent, right, rows, 'newLine');
+
+    // Give both panes the same horizontal travel even when one has shorter lines.
+    oldContent.style.minWidth = newContent.style.minWidth = '0';
+    const width = Math.ceil(Math.max(oldContent.getBoundingClientRect().width,
+      newContent.getBoundingClientRect().width));
+    oldContent.style.minWidth = newContent.style.minWidth = 'max(100%, ' + width + 'px)';
+    renderLocationMap(map, rows);
+    updateLocationViewport();
+  }
+
+  const positions = new Map();
+
+  function linkScroll(source, target) {
+    source.addEventListener('scroll', () => {
+      const previous = positions.get(source) || { top: 0, left: 0 };
+      const targetPosition = positions.get(target) || { top: 0, left: 0 };
+      if (previous.top !== source.scrollTop) {
+        target.scrollTop = source.scrollTop;
+        targetPosition.top = target.scrollTop;
+        updateLocationViewport();
+      }
+      if (previous.left !== source.scrollLeft) {
+        target.scrollLeft = source.scrollLeft;
+        targetPosition.left = target.scrollLeft;
+      }
+      positions.set(source, { top: source.scrollTop, left: source.scrollLeft });
+      positions.set(target, targetPosition);
+    });
+  }
+
+  linkScroll(original, generated);
+  linkScroll(generated, original);
+  map.addEventListener('click', event => {
+    const bounds = map.getBoundingClientRect();
+    if (bounds.height > 0) {
+      const fraction = (event.clientY - bounds.top) / bounds.height;
+      original.scrollTop = fraction * original.scrollHeight - original.clientHeight / 2;
+    }
+  });
+  map.addEventListener('keydown', event => {
+    const targets = {
+      ArrowUp: original.scrollTop - 22,
+      ArrowDown: original.scrollTop + 22,
+      PageUp: original.scrollTop - original.clientHeight,
+      PageDown: original.scrollTop + original.clientHeight,
+      Home: 0,
+      End: original.scrollHeight
+    };
+    if (!Object.prototype.hasOwnProperty.call(targets, event.key)) return;
+    event.preventDefault();
+    original.scrollTop = targets[event.key];
+  });
+  new ResizeObserver(updateLocationViewport).observe(original);
+  htmlComponent.addEventListener('DataChanged', render);
+  render();
+}
+</script>
+</body>
+</html>
