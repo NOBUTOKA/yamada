@@ -4,10 +4,11 @@ classdef ReparentOverlayDataBuilder
     %   geometry. It does not mutate the model or run an opened application.
 
     methods (Static)
-        function [source, targets] = build(document, handles, canvas, id, revision, visibleFcn, gridFcn, boundsFcn, snapshot)
+        function [source, targets] = build(document, registry, handles, canvas, id, revision, visibleFcn, gridFcn, boundsFcn, snapshot)
             % build Describe the selected source and visible container destinations.
             arguments (Input)
                 document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
                 handles containers.Map
                 canvas (1, 1) matlab.ui.container.Panel
                 id (1, 1) string
@@ -41,6 +42,7 @@ classdef ReparentOverlayDataBuilder
             source.fillsParent = component.Factory == "uigridlayout";
             source.rowSpan = yamada.ui.ReparentOverlayDataBuilder.spanSize(component, "Layout.Row");
             source.columnSpan = yamada.ui.ReparentOverlayDataBuilder.spanSize(component, "Layout.Column");
+            definition = registry.get(component.Factory, component.CreationArguments);
             builder = yamada.ui.GridLayoutOverlayDataBuilder();
 
             % Parent-local origins use the same public InnerPosition transform as grid geometry.
@@ -90,9 +92,12 @@ classdef ReparentOverlayDataBuilder
                 end
                 if any(~isfinite(rectangle)) || any(rectangle(3:4) <= 0), continue, end
                 grid = struct();
-                enabled = true;
+                % Check catalog compatibility here and defer full placement checks to drop.
+                enabled = any(definition.AllowedParentFactories == parent.Factory);
                 reason = "";
-                if parent.Factory == "uigridlayout"
+                if ~enabled
+                    reason = "This component type cannot use that parent.";
+                elseif parent.Factory == "uigridlayout"
                     if isempty(gridFcn)
                         grid = builder.build(document, handles, canvas, parent.Id, id, revision);
                     else
