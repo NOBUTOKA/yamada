@@ -1,9 +1,9 @@
 classdef AxesInspectorEdits
     % AxesInspectorEdits Plan source-preserving axes text and format edits.
-    %   The document reparses the emitted candidate before publishing it.
+    %   Each patch carries typed occurrence changes for indexed publication and history.
 
     methods (Static)
-        function [batch, requested] = plan(document, component, path, value, action)
+        function [batch, requested, forward, inverse, paths] = plan(document, component, path, value, action)
             % plan Build a reversible patch against one exact source snapshot.
             arguments (Input)
                 document (1,1) yamada.model.DocumentModel
@@ -15,6 +15,9 @@ classdef AxesInspectorEdits
             arguments (Output)
                 batch (1,1) yamada.source.SourcePatchBatch
                 requested
+                forward (1,1) struct
+                inverse (1,1) struct
+                paths (1,:) string
             end
 
             assert(any(yamada.model.AxesInspectorProperties.paths(component.Factory) == path), ...
@@ -24,6 +27,11 @@ classdef AxesInspectorEdits
             if ~isempty(settings), original = settings(end); end
             [shared, canShare, titleValue] = yamada.model.AxesInspectorProperties.subtitleLink(component,path);
             source = document.CurrentText;
+            analysis = document.sourceAnalysis();
+            forward = struct("Changes",struct("SettingId",{},"Value",{}), ...
+                "Placements",struct("Statement",{},"Setting",{},"Offset",{}),"RemovedIds",zeros(1,0));
+            inverse = forward;
+            paths = path;
             if action == "share"
                 assert(canShare && ~shared, "yamada:AxesInspectorEdits:Share", ...
                     "This Subtitle override has no proven Title setting to restore.");
@@ -31,6 +39,11 @@ classdef AxesInspectorEdits
                 edit = struct("Start",span.StartOffset,"End",span.EndOffset,"Text","");
                 edits = yamada.source.SourceFormatting.cleanDeletions(source,edit);
                 requested = titleValue;
+                forward.RemovedIds = original.Id;
+                index = analysis.statementIndices(span);
+                assert(isscalar(index));
+                inverse.Placements = struct("Statement",analysis.Statements(index), ...
+                    "Setting",original,"Offset",edits(1).Start-1);
             else
                 if action == "override"
                     assert(shared, "yamada:AxesInspectorEdits:Share", "This setting is already independent.");
@@ -41,7 +54,9 @@ classdef AxesInspectorEdits
                 requested = yamada.source.AxesInspectorEdits.checkedValue(path,value,original);
                 encoded = yamada.source.LiteralEncoder.encode(requested);
                 if isempty(original) || action == "override"
-                    edits = yamada.source.AxesInspectorEdits.insert(document,component,path,encoded,original);
+                    [edits, placement] = yamada.source.AxesInspectorEdits.insert( ...
+                        document,component,path,encoded,requested,original);
+                    forward.Placements = placement;
                 else
                     assert(original.IsCertain && original.ValueKind == "literal" && ...
                         (original.IsEditable || original.Method == "functionCall") && ~isempty(original.ValueSpan), ...
@@ -51,6 +66,18 @@ classdef AxesInspectorEdits
                     assert(~contains(before,[string(newline),string(char(13))]), ...
                         "yamada:AxesInspectorEdits:MultilineSource", "The source argument spans multiple physical lines.");
                     edits = struct("Start",span.StartOffset,"End",span.EndOffset,"Text",encoded);
+                    affected = original;
+                    if original.Method == "functionCall"
+                        affected = component.Settings(string({component.Settings.Method}) == "functionCall");
+                        affected = affected(arrayfun(@(item) isequal(item.SourceSpan,original.SourceSpan) && ...
+                            isequal(item.ValueSpan,span),affected));
+                        assert(all([affected.IsCertain]) && all(string({affected.ValueKind}) == "literal"));
+                    end
+                    paths = unique(string({affected.Path}),"stable");
+                    for setting = affected
+                        forward.Changes(end+1) = struct("SettingId",setting.Id,"Value",{requested});
+                        inverse.Changes(end+1) = struct("SettingId",setting.Id,"Value",{setting.LiteralValue});
+                    end
                 end
             end
             batch = yamada.source.SourcePatchBatch(source,edits);
@@ -116,17 +143,19 @@ classdef AxesInspectorEdits
             result = value;
         end
 
-        function edit = insert(document,component,path,encoded,original)
+        function [edit, placement] = insert(document,component,path,encoded,value,original)
             % insert Emit one setting beside a proven initialization statement.
             arguments (Input)
                 document (1,1) yamada.model.DocumentModel
                 component (1,1) yamada.model.ComponentRecord
                 path (1,1) string
                 encoded (1,1) string
+                value
                 original yamada.model.PropertySetting
             end
             arguments (Output)
                 edit (1,1) struct
+                placement (1,1) struct
             end
             span = component.SourceSpans.Creation;
             assert(~isempty(span) && isfield(component.Metadata,"InitializationCreationCertain") && ...
@@ -140,7 +169,15 @@ classdef AxesInspectorEdits
                 if ~isempty(certain), span = certain(end).SourceSpan; end
             end
             source = document.CurrentText;
+            analysis = document.sourceAnalysis();
+            index = analysis.statementIndices(span);
+            assert(isscalar(index));
+            owner = analysis.Layout.Owner(index);
+            method = analysis.Layout.Methods(string({analysis.Layout.Methods.Name}) == owner);
+            assert(isscalar(method));
             receiver = "app." + component.Name;
+            suffix = "";
+            syntax = "assignment";
             if isempty(original) && (endsWith(path,".String") || path == "TickLabelFormat")
                 switch path
                     case "Title.String"
@@ -156,11 +193,17 @@ classdef AxesInspectorEdits
                     case "TickLabelFormat"
                         name = "geotickformat";
                 end
-                statement = name + "(" + receiver + ", " + encoded + ");";
+                assert(~any(string({analysis.Layout.Methods.Name}) == name), ...
+                    "yamada:AxesInspectorEdits:ShadowedFunction", "A local method shadows this axes function.");
+                prefix = name + "(" + receiver + ", ";
+                suffix = ")";
+                syntax = "functionCall";
             else
-                statement = receiver + "." + path + " = " + encoded + ";";
+                prefix = receiver + "." + path + " = ";
             end
 
+            raw = prefix + encoded + suffix;
+            statement = raw + ";";
             % Keep a trailing comment attached to its original statement.
             tail = char(extractAfter(source,span.EndOffset));
             lineBreak = regexp(tail,'\r?\n','start','once');
@@ -179,6 +222,24 @@ classdef AxesInspectorEdits
                 statement = " " + statement;
             end
             edit = struct("Start",offset+1,"End",offset,"Text",statement);
+            first = offset + strlength(statement) - strlength(raw);
+            sourceSpan = yamada.model.SourceSpan(first,first + strlength(raw));
+            indexed = yamada.source.SourceStatement(raw,sourceSpan,first + (0:strlength(raw)-1));
+            snapshot = "";
+            if isfield(document.Metadata,"SourceSnapshotId"), snapshot = document.Metadata.SourceSnapshotId; end
+            if syntax == "assignment"
+                setting = yamada.source.PropertySettingSyntax.assignment(indexed,snapshot,0);
+            else
+                valueFirst = first + strlength(prefix);
+                location = struct("Method","functionCall","Syntax","call","SourceSpan",sourceSpan, ...
+                    "ValueSpan",yamada.model.SourceSpan(valueFirst,valueFirst+strlength(encoded)-1), ...
+                    "SourceSnapshotId",snapshot,"IsEditable",false);
+                setting = yamada.model.PropertySetting(path,value,location);
+            end
+            batch = yamada.source.SourcePatchBatch(source,edit);
+            [scope, valid] = batch.mapSpan(method.Span);
+            assert(valid);
+            placement = struct("Statement",indexed,"Setting",setting.withScope(owner,scope),"Offset",offset);
         end
     end
 end

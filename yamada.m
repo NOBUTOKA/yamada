@@ -812,6 +812,10 @@ classdef yamada < handle
 
             retainHierarchy = app.Document.canUndo() && app.Document.History{app.Document.HistoryIndex}.Kind == "rename";
             callbackOnly = app.Document.canUndo() && app.Document.History{app.Document.HistoryIndex}.Kind == "callback";
+            axesEdit = struct();
+            if app.Document.canUndo() && app.Document.History{app.Document.HistoryIndex}.Kind == "axes-inspector"
+                axesEdit = app.Document.History{app.Document.HistoryIndex};
+            end
             try
                 app.Document.undo();
             catch exception
@@ -820,7 +824,9 @@ classdef yamada < handle
             end
             app.ensureSelectionExists();
             if retainHierarchy, app.refreshHierarchyLabels(); end
-            if (callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)) || ...
+            if isfield(axesEdit,"Paths")
+                app.refreshViews(yamada.ui.RefreshRequest("properties",axesEdit.ComponentId,axesEdit.Paths));
+            elseif (callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)) || ...
                     (retainHierarchy && app.PreviewRenderer.acknowledgeRenameChanges(app.Document))
                 % History already restored exact current source without rebuilding Preview.
                 app.refreshSourceViews();
@@ -838,6 +844,10 @@ classdef yamada < handle
 
             retainHierarchy = app.Document.canRedo() && app.Document.History{app.Document.HistoryIndex + 1}.Kind == "rename";
             callbackOnly = app.Document.canRedo() && app.Document.History{app.Document.HistoryIndex + 1}.Kind == "callback";
+            axesEdit = struct();
+            if app.Document.canRedo() && app.Document.History{app.Document.HistoryIndex + 1}.Kind == "axes-inspector"
+                axesEdit = app.Document.History{app.Document.HistoryIndex + 1};
+            end
             try
                 app.Document.redo();
             catch exception
@@ -846,7 +856,9 @@ classdef yamada < handle
             end
             app.ensureSelectionExists();
             if retainHierarchy, app.refreshHierarchyLabels(); end
-            if (callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)) || ...
+            if isfield(axesEdit,"Paths")
+                app.refreshViews(yamada.ui.RefreshRequest("properties",axesEdit.ComponentId,axesEdit.Paths));
+            elseif (callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)) || ...
                     (retainHierarchy && app.PreviewRenderer.acknowledgeRenameChanges(app.Document))
                 % History already restored exact current source without rebuilding Preview.
                 app.refreshSourceViews();
@@ -3236,6 +3248,7 @@ classdef yamada < handle
                 message = "Selection changed before the edit could be applied.";
                 return
             end
+            historyIndex = document.HistoryIndex;
             try
                 document.editAxesInspector(id,path,value,action,app.Registry);
             catch exception
@@ -3243,8 +3256,11 @@ classdef yamada < handle
                 app.setStatus(message);
                 return
             end
-            % Function and shared-argument edits can affect more than one visual property.
-            app.refreshShell();
+            % A shared argument can change both the Title and Subtitle.
+            if document.HistoryIndex ~= historyIndex
+                paths = document.History{document.HistoryIndex}.Paths;
+                app.refreshViews(yamada.ui.RefreshRequest("properties",id,paths));
+            end
         end
 
         function openAxesTextSettings(app,id,group)

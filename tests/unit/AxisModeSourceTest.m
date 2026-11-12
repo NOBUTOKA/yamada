@@ -99,10 +99,15 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             % editsAxesTextAndSubtitleLink Preserve a shared call and undo independent Subtitle settings.
             [document, registry, control] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", ...
-                "title(app.Control, 'Before', 'Sub', Color=[1 0 0]);"]);
+                "title('Before', 'Sub', Color=[1 0 0]);"]);
             id = control.Id;
             document.editAxesInspector(id,"Title.String",["First","Second"],"set",registry);
-            testCase.verifySubstring(document.CurrentText,"title(app.Control, {'First', 'Second'}, 'Sub', Color=[1 0 0]);");
+            testCase.verifySubstring(document.CurrentText,"title({'First', 'Second'}, 'Sub', Color=[1 0 0]);");
+            testCase.verifyTrue(any(string({document.Diagnostics.Code}) == "implicit-axes-target"));
+            document.editAxesInspector(id,"Title.Color",[0 0 1],"set",registry);
+            testCase.verifyEqual(control.getSettings("Subtitle.Color").LiteralValue,[0 0 1]);
+            document.undo();
+            testCase.verifyEqual(control.getSettings("Subtitle.Color").LiteralValue,[1 0 0]);
             testCase.verifyTrue(yamada.model.AxesInspectorProperties.subtitleLink(control,"Subtitle.Color"));
             document.editAxesInspector(id,"Subtitle.Color",[],"override",registry);
             testCase.verifyFalse(yamada.model.AxesInspectorProperties.subtitleLink(control,"Subtitle.Color"));
@@ -124,10 +129,18 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             % insertsAndEditsGeographicFormat Generate the explicit target form and update its value locally.
             [document, registry, control] = testCase.fixture( ...
                 "app.Control = geoaxes(app.UIFigure, Basemap='none');","geoaxes");
+            original = document.CurrentText;
             document.editAxesInspector(control.Id,"TickLabelFormat","dd","set",registry);
             testCase.verifySubstring(document.CurrentText,'geotickformat(app.Control, "dd");');
             document.editAxesInspector(control.Id,"TickLabelFormat","-dm","set",registry);
             testCase.verifySubstring(document.CurrentText,'geotickformat(app.Control, "-dm");');
+            testCase.verifyEqual(string(control.getSettings("TickLabelFormat").LiteralValue),"-dm");
+            document.undo();
+            document.undo();
+            testCase.verifyEqual(document.CurrentText,original);
+            testCase.verifyEmpty(control.getSettings("TickLabelFormat"));
+            document.redo();
+            document.redo();
             testCase.verifyEqual(string(control.getSettings("TickLabelFormat").LiteralValue),"-dm");
         end
 

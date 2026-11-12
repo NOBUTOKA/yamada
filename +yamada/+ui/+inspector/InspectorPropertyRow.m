@@ -77,10 +77,13 @@ classdef InspectorPropertyRow < handle
             obj.Editor.Layout.Column = 2;
             if ~isempty(settingsFcn) && ~obj.IsComposite && ...
                     isfield(definition.Metadata,"axesTextMember") && definition.Metadata.axesTextMember == "String"
-                grid.ColumnWidth = {105,"1x",62};
-                obj.SettingsButton = uibutton(grid,"Text","Settings", ...
+                grid.ColumnWidth = {105,"1x",30};
+                buttonCell = uigridlayout(grid,[3 1],"Padding",[0 0 0 0], ...
+                    "RowSpacing",0,"RowHeight",{"1x","fit","1x"},"ColumnWidth",{"1x"});
+                buttonCell.Layout.Column = 3;
+                obj.SettingsButton = uibutton(buttonCell,"Text","⚙","Tooltip","Settings", ...
                     "Tag","yamada-axes-text-settings");
-                obj.SettingsButton.Layout.Column = 3;
+                obj.SettingsButton.Layout.Row = 2;
                 group = definition.Metadata.axesTextGroup;
                 obj.SettingsButton.ButtonPushedFcn = @(~,~) settingsFcn(obj.ComponentId,group);
             end
@@ -395,6 +398,7 @@ classdef InspectorPropertyRow < handle
                 height = 102;
             elseif definition.Editor == "multilineText"
                 height = 84;
+                if isfield(definition.Metadata,"axesTextMember"), height = 44; end
             elseif definition.Editor == "dateTime" && ...
                     isfield(definition.ValueSchema, "shape") && ...
                     string(definition.ValueSchema.shape) == "fixedLengthVector"
