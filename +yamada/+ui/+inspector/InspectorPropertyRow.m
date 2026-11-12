@@ -65,7 +65,7 @@ classdef InspectorPropertyRow < handle
                     commitFcn, id, changes);
             end
             obj.BatchCommitFcn = batchCommitFcn;
-            uilabel(grid, "Text", displayName, "Tooltip", tooltip, ...
+            label = uilabel(grid, "Text", displayName, "Tooltip", tooltip, ...
                 "Tag", "yamada-inspector-property-label");
             if obj.IsComposite
                 obj.Editor = yamada.ui.inspector.PropertyEditorFactory.createComposite( ...
@@ -88,11 +88,18 @@ classdef InspectorPropertyRow < handle
                 obj.SettingsButton.ButtonPushedFcn = @(~,~) settingsFcn(obj.ComponentId,group);
             end
             if ~isempty(settingsFcn) && ~obj.IsComposite && definition.Editor == "colormapPreview"
-                grid.ColumnWidth = {105,"1x","fit"};
-                obj.SettingsButton = uibutton(grid,"Text","Edit Axes Colormap...", ...
+                grid.RowHeight = {24, "1x"};
+                grid.RowSpacing = 4;
+                grid.ColumnWidth = {"1x","fit"};
+                label.Layout.Row = 1;
+                label.Layout.Column = 1;
+                obj.Editor.Layout.Row = 2;
+                obj.Editor.Layout.Column = [1 2];
+                obj.SettingsButton = uibutton(grid,"Text","Edit...","Tooltip","Edit Axes Colormap", ...
                     "Tag","yamada-edit-axes-colormap", ...
                     "ButtonPushedFcn",@(~,~) settingsFcn(obj.ComponentId,"Colormap"));
-                obj.SettingsButton.Layout.Column = 3;
+                obj.SettingsButton.Layout.Row = 1;
+                obj.SettingsButton.Layout.Column = 2;
             end
             obj.captureNormalBackgroundColor();
             obj.rebind(componentId);
@@ -227,6 +234,15 @@ classdef InspectorPropertyRow < handle
                 obj.Editor.Tooltip = strjoin(unique(reasons(strlength(reasons) > 0), "stable"), newline);
             end
             obj.captureNormalBackgroundColor();
+        end
+
+        function reveal(obj, view)
+            % reveal Bring this property's native row into the Inspector viewport.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                view (1, 1) yamada.ui.inspector.InspectorView
+            end
+            view.reveal(obj.Editor.Parent);
         end
 
         function id = identifier(obj)
@@ -401,6 +417,8 @@ classdef InspectorPropertyRow < handle
                     isfield(definition.ValueSchema, "multiselectProperty")
                 % Reserve the List Box selection surface for its optional multi-select mode.
                 height = 84;
+            elseif any(definition.Editor == ["colormap", "colormapPreview"])
+                height = 48;
             elseif definition.Editor == "position"
                 height = 102;
             elseif definition.Editor == "multilineText"

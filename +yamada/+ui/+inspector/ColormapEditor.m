@@ -17,11 +17,15 @@ classdef ColormapEditor
                 "RowHeight",{"1x"},"Tag","yamada-colormap-editor");
             picker = matlab.ui.control.DropDown.empty;
             if editable
-                control.ColumnWidth = {88,"1x"};
+                control.RowHeight = {24, "1x"};
+                control.RowSpacing = 4;
+                control.ColumnWidth = {"1x"};
                 picker = uidropdown(control,"Items",cellstr(yamada.ui.inspector.ColormapEditor.presets()), ...
                     "Tag","yamada-colormap-preset");
+                picker.Layout.Row = 1;
             end
             strip = uiimage(control,"ScaleMethod","stretch","Tag","yamada-colormap-preview");
+            if editable, strip.Layout.Row = 2; end
             control.UserData = struct("Picker",picker,"Strip",strip,"Length",256);
             yamada.ui.inspector.ColormapEditor.bind(control,commitFcn);
         end

@@ -102,9 +102,18 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             cb = findall(figure,"-isa","matlab.graphics.illustration.ColorBar");
             testCase.verifyEqual(string(cb.Label.String),"Temperature");
             link = findall(figure,"Tag","yamada-edit-axes-colormap");
+            testCase.verifyEqual(string(link.Text),"Edit...");
             link.ButtonPushedFcn(link,struct());
             testCase.verifyEqual(app.SelectedComponentId,axesRecord.Id);
             picker = findall(figure,"Tag","yamada-colormap-preset");
+            strip = findall(picker.Parent,"Tag","yamada-colormap-preview");
+            testCase.verifyEqual(picker.Layout.Row,1);
+            testCase.verifyEqual(strip.Layout.Row,2);
+            host = picker.Parent;
+            while ~isa(host,"matlab.ui.container.Panel") || host.Scrollable ~= "on"
+                host = host.Parent;
+            end
+            testCase.verifyTrue(isInScrollView(host,picker));
             previous = picker.Value;
             picker.Value = "Turbo";
             picker.ValueChangedFcn(picker,struct("PreviousValue",previous));

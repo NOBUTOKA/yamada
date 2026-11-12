@@ -23,7 +23,7 @@ classdef InspectorView < handle
                 obj (1, 1) yamada.ui.inspector.InspectorView
             end
 
-            % Panel provides native scrolling; R2024a exposes no scroll-position API here.
+            % The nested content panel preserves the outer panel as the native scroll host.
             obj.Panel = uipanel(parent, "BorderType", "none");
             obj.Panel.Scrollable = "on";
             obj.Panel.AutoResizeChildren = "off";
@@ -49,6 +49,18 @@ classdef InspectorView < handle
             obj.Grid.RowHeight = {"1x"};
             obj.ContentHeight = 1;
             obj.layoutContent();
+        end
+
+        function reveal(obj, row)
+            % reveal Scroll the native panel to a row after layout has settled.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorView
+                row (1, 1) matlab.ui.container.GridLayout
+            end
+            drawnow nocallbacks
+            if isvalid(obj.Panel) && isvalid(row)
+                scroll(obj.Panel, row);
+            end
         end
 
         function result = isScrollable(obj)

@@ -3292,6 +3292,12 @@ classdef yamada < handle
                 app.SelectedComponentId = document.getComponent(id).ParentId;
                 app.synchronizeHierarchySelection();
                 app.refreshInspector();
+                for row = app.InspectorRows
+                    if row.identifier() == "Colormap"
+                        row.reveal(app.InspectorView);
+                        break
+                    end
+                end
                 app.refreshEditCommands();
                 app.scheduleOverlayRefresh();
                 return
