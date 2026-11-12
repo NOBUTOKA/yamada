@@ -17,11 +17,43 @@ body {
   color: #20262d;
   background: #fff;
 }
-header, main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+header, main { display: grid; grid-template-columns: 44px repeat(2, minmax(0, 1fr)); }
 header { background: #f1f3f5; border: 1px solid #d0d7de; }
 h1 { margin: 0; padding: 7px 12px; font-size: 13px; }
 h1 + h1 { border-left: 1px solid #d0d7de; }
+.map-heading { text-align: center; padding-inline: 0; }
 main { border: 1px solid #d0d7de; border-top: 0; }
+.location-map {
+  position: relative;
+  overflow: hidden;
+  background: #f7f8fa;
+  border-right: 1px solid #d0d7de;
+  cursor: pointer;
+  outline-offset: -2px;
+}
+.location-map[aria-disabled="true"] { cursor: default; }
+.map-marks {
+  position: absolute;
+  inset: 0 3px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  pointer-events: none;
+}
+.map-lane { position: relative; }
+.map-mark { position: absolute; inset-inline: 0; min-height: 2px; }
+[data-kind="added"] > .map-mark { background: #389454; }
+[data-kind="deleted"] > .map-mark { background: #cf4f4b; }
+[data-kind="modified"] > .map-mark { background: #d2a21c; }
+.map-viewport {
+  position: absolute;
+  inset-inline: 0;
+  box-sizing: border-box;
+  min-height: 2px;
+  border: 1px solid #64748b;
+  background: rgba(100, 116, 139, 0.16);
+  pointer-events: none;
+}
 .pane { overflow: scroll; outline-offset: -2px; }
 .pane + .pane { border-left: 1px solid #d0d7de; }
 .lines { width: max-content; min-width: 100%; }
@@ -43,12 +75,23 @@ main { border: 1px solid #d0d7de; border-top: 0; }
 </head>
 <body>
 <header>
+  <h1 class="map-heading">Map</h1>
   <h1 id="original-heading">Original source</h1>
   <h1 id="generated-heading">Generated source</h1>
 </header>
 <main>
-  <section class="pane" aria-labelledby="original-heading" tabindex="0"><div class="lines"></div></section>
-  <section class="pane" aria-labelledby="generated-heading" tabindex="0"><div class="lines"></div></section>
+  <div class="location-map" role="scrollbar" tabindex="0" aria-label="Diff location map"
+       aria-orientation="vertical" aria-controls="original-pane generated-pane"
+       aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="map-marks" aria-hidden="true">
+      <div class="map-lane" data-kind="added"></div>
+      <div class="map-lane" data-kind="deleted"></div>
+      <div class="map-lane" data-kind="modified"></div>
+    </div>
+    <div class="map-viewport" aria-hidden="true"></div>
+  </div>
+  <section id="original-pane" class="pane" aria-labelledby="original-heading" tabindex="0"><div class="lines"></div></section>
+  <section id="generated-pane" class="pane" aria-labelledby="generated-heading" tabindex="0"><div class="lines"></div></section>
 </main>
 <script>
 'use strict';
@@ -177,9 +220,47 @@ function renderPane(container, lines, rows, indexKey) {
   container.replaceChildren(content);
 }
 
+function renderLocationMap(map, rows) {
+  const lanes = map.querySelectorAll('.map-lane');
+  const fragments = {};
+  for (const lane of lanes) {
+    fragments[lane.dataset.kind] = document.createDocumentFragment();
+  }
+
+  // Give each change type its own lane so subpixel changes remain distinguishable.
+  for (let first = 0; first < rows.length;) {
+    const kind = rows[first].kind;
+    let end = first + 1;
+    while (end < rows.length && rows[end].kind === kind) end++;
+    if (kind) {
+      const mark = document.createElement('div');
+      mark.className = 'map-mark';
+      mark.style.top = 'min(' + 100 * first / rows.length + '%, calc(100% - 2px))';
+      mark.style.height = 100 * (end - first) / rows.length + '%';
+      fragments[kind].append(mark);
+    }
+    first = end;
+  }
+
+  for (const lane of lanes) {
+    lane.replaceChildren(fragments[lane.dataset.kind]);
+  }
+}
+
 function setup(htmlComponent) {
   const [original, generated] = document.querySelectorAll('.pane');
   const [oldContent, newContent] = document.querySelectorAll('.lines');
+  const map = document.querySelector('.location-map');
+  const viewport = map.querySelector('.map-viewport');
+
+  function updateLocationViewport() {
+    const height = original.scrollHeight;
+    const travel = height - original.clientHeight;
+    viewport.style.top = 'min(' + 100 * original.scrollTop / Math.max(1, height) + '%, calc(100% - 2px))';
+    viewport.style.height = (travel > 0 ? 100 * original.clientHeight / height : 100) + '%';
+    map.setAttribute('aria-valuenow', travel > 0 ? Math.round(100 * original.scrollTop / travel) : 0);
+    map.setAttribute('aria-disabled', travel <= 0);
+  }
 
   function render() {
     const { Original = '', Generated = '' } = htmlComponent.Data || {};
@@ -194,6 +275,8 @@ function setup(htmlComponent) {
     const width = Math.ceil(Math.max(oldContent.getBoundingClientRect().width,
       newContent.getBoundingClientRect().width));
     oldContent.style.minWidth = newContent.style.minWidth = 'max(100%, ' + width + 'px)';
+    renderLocationMap(map, rows);
+    updateLocationViewport();
   }
 
   const positions = new Map();
@@ -205,6 +288,7 @@ function setup(htmlComponent) {
       if (previous.top !== source.scrollTop) {
         target.scrollTop = source.scrollTop;
         targetPosition.top = target.scrollTop;
+        updateLocationViewport();
       }
       if (previous.left !== source.scrollLeft) {
         target.scrollLeft = source.scrollLeft;
@@ -217,6 +301,27 @@ function setup(htmlComponent) {
 
   linkScroll(original, generated);
   linkScroll(generated, original);
+  map.addEventListener('click', event => {
+    const bounds = map.getBoundingClientRect();
+    if (bounds.height > 0) {
+      const fraction = (event.clientY - bounds.top) / bounds.height;
+      original.scrollTop = fraction * original.scrollHeight - original.clientHeight / 2;
+    }
+  });
+  map.addEventListener('keydown', event => {
+    const targets = {
+      ArrowUp: original.scrollTop - 22,
+      ArrowDown: original.scrollTop + 22,
+      PageUp: original.scrollTop - original.clientHeight,
+      PageDown: original.scrollTop + original.clientHeight,
+      Home: 0,
+      End: original.scrollHeight
+    };
+    if (!Object.prototype.hasOwnProperty.call(targets, event.key)) return;
+    event.preventDefault();
+    original.scrollTop = targets[event.key];
+  });
+  new ResizeObserver(updateLocationViewport).observe(original);
   htmlComponent.addEventListener('DataChanged', render);
   render();
 }
