@@ -134,7 +134,7 @@ classdef AppSourceParser
                 "Certain", initializationCertain, "Returns", initializationReturns, "Layout", initializationLayout);
             diagnostics = [diagnostics(:)' initializationDiagnostics(:)'];
             unresolved = initializationDiagnostics(string({initializationDiagnostics.Code}) == "unresolved-initialization-call");
-            document.Metadata.HasUnresolvedInitialization = ~isempty(unresolved);
+            document.Metadata.HasUnresolvedInitialization = false;
             creationOrder = unique(initializationOrder, 'stable');
             creationOrder = [creationOrder setdiff(1:numel(statements), creationOrder, 'stable')];
             creationSettings = containers.Map("KeyType", "char", "ValueType", "any");
@@ -241,6 +241,12 @@ classdef AppSourceParser
 
             % Recover initial writes in execution order, rather than file declaration order.
             created = strings(1, 0);
+            currentAxes = "";
+            blockedCallNames = string({initializationLayout.Methods.Name});
+            unresolvedOffsets = arrayfun(@(item) item.SourceSpan.StartOffset, unresolved);
+            reviewedAxesOffsets = [];
+            document.Metadata.HasAxesSettingCalls = false;
+            document.Metadata.HasImplicitAxesCalls = false;
             sequence = 0;
             for visit = 1:numel(initializationOrder)
                 index = initializationOrder(visit);
@@ -255,6 +261,12 @@ classdef AppSourceParser
                         component.Metadata.InitializationCreationCertain = initializationCertain(visit) && ...
                             nnz(initializationOrder == index) == 1;
                         created(end + 1) = component.Id;
+                        if any(component.Factory == ["axes","uiaxes","polaraxes","geoaxes"])
+                            currentAxes = "";
+                            if component.Metadata.InitializationCreationCertain, currentAxes = component.Name; end
+                        elseif component.Factory == "uifigure"
+                            currentAxes = "";
+                        end
                         for setting = creationSettings(char(component.Id))
                             sequence = sequence + 1;
                             record = setting.toStruct();
@@ -267,7 +279,69 @@ classdef AppSourceParser
                     end
                 end
                 assignment = yamada.source.AppSourceParser.assignmentMatch(statement.Text);
+                if ~isempty(assignment) && (assignment.Path == "CurrentAxes" || ...
+                        any(unresolvedOffsets == statement.Span.StartOffset))
+                    % An unmodeled selection or call invalidates the implicit target.
+                    currentAxes = "";
+                end
                 if isempty(assignment)
+                    % Capture reviewed call effects without executing source or granting write ownership.
+                    if contains(statement.Text,"(")
+                        [name, target, tokens, valueSpans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement);
+                        if name == "axes" && ~any(blockedCallNames == name) && ...
+                                strlength(target) > 0 && isempty(tokens)
+                            selected = document.getComponentByName(target);
+                            currentAxes = "";
+                            if ~isempty(selected) && any(created == selected.Id) && ...
+                                    any(selected.Factory == ["axes","uiaxes","polaraxes","geoaxes"]) && ...
+                                    initializationCertain(visit) && nnz(initializationOrder == index) == 1
+                                currentAxes = target;
+                                reviewedAxesOffsets(end + 1) = statement.Span.StartOffset;
+                            end
+                            continue
+                        end
+                        implicit = strlength(target) == 0;
+                        if implicit && ~isempty(tokens)
+                            document.Metadata.HasImplicitAxesCalls = true;
+                            target = currentAxes;
+                        end
+                        if implicit && ~isempty(tokens) && ...
+                                (strlength(target) == 0 || ~initializationCertain(visit))
+                            diagnostics(end + 1) = yamada.source.AppSourceParser.diagnostic( ...
+                                "unresolved-axes-target", "warning", ...
+                                "No unique axes target can be inferred for this setting.", "", statement.Span);
+                        end
+                        targetComponent = document.getComponentByName(target);
+                        if ~isempty(tokens) && ~isempty(targetComponent) && any(created == targetComponent.Id) && ...
+                                ~any(blockedCallNames == name) && initializationCertain(visit) && nnz(initializationOrder == index) == 1
+                            [paths, values, argumentsUsed] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
+                                forms, targetComponent.Factory, tokens, implicit);
+                            if ~isempty(paths)
+                                if implicit
+                                    diagnostics(end + 1) = yamada.source.AppSourceParser.diagnostic( ...
+                                        "implicit-axes-target", "warning", ...
+                                        "Axes setting uses an implicit target inferred as " + target + ".", ...
+                                        targetComponent.Id, statement.Span);
+                                end
+                                document.Metadata.HasAxesSettingCalls = true;
+                                for effect = 1:numel(paths)
+                                    sequence = sequence + 1;
+                                    valueSpan = valueSpans(argumentsUsed(effect));
+                                    location = struct("Method", "functionCall", "Syntax", "call", ...
+                                        "SourceSpan", statement.Span, "ValueSpan", valueSpan, ...
+                                        "SourceSnapshotId", document.Metadata.SourceSnapshotId, ...
+                                        "Sequence", sequence, "IsEditable", false);
+                                    setting = yamada.model.PropertySetting(paths(effect), values{effect}, location);
+                                    targetComponent.recordSetting(yamada.source.AppSourceParser.scopedSetting(setting, initializationLayout, index));
+                                end
+                                reviewedAxesOffsets(end + 1) = statement.Span.StartOffset;
+                                continue
+                            end
+                        end
+                    end
+                    if any(unresolvedOffsets == statement.Span.StartOffset)
+                        currentAxes = "";
+                    end
                     continue
                 end
                 component = document.getComponentByName(assignment.ComponentName);
@@ -349,6 +423,12 @@ classdef AppSourceParser
                 end
             end
 
+            % Reviewed calls have a finite setting contract; preserve diagnostics for all other calls.
+            reviewed = arrayfun(@(item) item.Code == "unresolved-initialization-call" && ...
+                any(reviewedAxesOffsets == item.SourceSpan.StartOffset), diagnostics);
+            diagnostics(reviewed) = [];
+            document.Metadata.HasUnresolvedInitialization = document.Metadata.HasUnresolvedInitialization || any( ...
+                ~ismember(unresolvedOffsets, reviewedAxesOffsets));
             yamada.model.SourceEffectSummary.refresh(document, registry);
 
             % Combine parser findings with shared model validation diagnostics.

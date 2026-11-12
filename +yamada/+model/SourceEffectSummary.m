@@ -35,7 +35,8 @@ classdef SourceEffectSummary
                             ~(setting.ValueKind == "literal" && isempty(setting.LiteralValue))
                         document.Metadata.HasUnresolvedLifecycleEffects = true;
                     end
-                    if ~any(string({concrete.Properties.Path}) == setting.Path) && ...
+                    if setting.Method ~= "functionCall" && ...
+                            ~any(string({concrete.Properties.Path}) == setting.Path) && ...
                             ~any(setting.Path == ["Layout.Row", "Layout.Column"])
                         document.Metadata.HasUnrecognizedSetter = true;
                     end

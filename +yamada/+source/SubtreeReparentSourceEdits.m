@@ -328,6 +328,10 @@ classdef SubtreeReparentSourceEdits
                     if setting.Method == "nameValue", removed(end + 1) = setting; end %#ok<AGROW>
                     continue
                 end
+                if setting.Method == "functionCall"
+                    error("yamada:SubtreeReparentSourceEdits:UnsafeSource", ...
+                        "A function-based axes setting prevents safe source relocation.");
+                end
                 if ~setting.IsCertain
                     error("yamada:SubtreeReparentSourceEdits:UnsafeSource", "An uncertain occurrence cannot be relocated.");
                 end

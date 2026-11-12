@@ -269,7 +269,7 @@ classdef DocumentModel < handle
             identity = yamada.source.SourcePatchBatch(state.Text);
             for id = changed
                 other = candidate.getComponent(id); old = other.Settings;
-                other.applyProjectedSettings(yamada.model.PropertySetting.empty);
+                other.applyProjectedSettings(old(string({old.Method}) == "functionCall"));
                 [settings, ~, factoryArguments] = yamada.model.SourceSettingRebinder.rebind(candidate, other, state, identity, registry);
                 for index = 1:numel(settings)
                     setting = settings(index); matches = old(string({old.Path}) == setting.Path & string({old.Method}) == setting.Method);
@@ -283,6 +283,12 @@ classdef DocumentModel < handle
                 end
                 settings = obj.canonicalizeSettings(settings);
                 other.synchronizeSourceSettings(settings, factoryArguments);
+            end
+            if isfield(obj.Metadata, "HasImplicitAxesCalls") && obj.Metadata.HasImplicitAxesCalls
+                % Property-token edits preserve creation spans; relocation may change the current axes.
+                spans = arrayfun(@(component) {component.SourceSpans.Creation}, obj.Components);
+                [~, retained] = batch.mapSpanCells(spans);
+                if ~all(retained), candidate.verifyAxesCallOwnership(text, registry); end
             end
             yamada.model.SourceEffectSummary.refresh(candidate, registry);
             candidate.publishCurrentSource(state);
@@ -2934,6 +2940,9 @@ classdef DocumentModel < handle
                 update.assertCurrent(component); update.applyToCandidate(other);
             end
             candidate.bindInsertedComponents(additions, names, analysis, state, registry, allocator);
+            if isfield(obj.Metadata, "HasImplicitAxesCalls") && obj.Metadata.HasImplicitAxesCalls
+                candidate.verifyAxesCallOwnership(batch.AfterText, registry);
+            end
             [candidate.Diagnostics, candidate.UnknownRegions] = yamada.model.SourceLocationUpdate.annotations(obj, batch);
             trace = execution.Trace;
             candidate.Metadata.InitializationContext = struct("Order", trace.Order, "Certain", trace.Certain, ...
@@ -2947,6 +2956,31 @@ classdef DocumentModel < handle
             end
             assert(candidate.hasCurrentValidation(registry), ...
                 "yamada:DocumentModel:InvalidPreparedSource", "The emitted component block must retain its accepted input checks.");
+        end
+
+        function verifyAxesCallOwnership(obj, source, registry)
+            % verifyAxesCallOwnership Reject structural patches that would retarget implicit axes calls.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                source (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
+            for component = obj.Components
+                rebound = parsed.getComponentByName(component.Name);
+                before = component.Settings(string({component.Settings.Method}) == "functionCall");
+                after = yamada.model.PropertySetting.empty;
+                if ~isempty(rebound)
+                    after = rebound.Settings(string({rebound.Settings.Method}) == "functionCall");
+                end
+                beforeStarts = arrayfun(@(setting) setting.SourceSpan.StartOffset, before);
+                afterStarts = arrayfun(@(setting) setting.SourceSpan.StartOffset, after);
+                if ~isequal(string({before.Path}), string({after.Path})) || ~isequal(beforeStarts, afterStarts)
+                    error("yamada:DocumentModel:UnsafeSubtreeEdit", ...
+                        "The structural change would alter axes setting ownership.");
+                end
+            end
         end
 
         function bindInsertedComponents(obj, statements, names, analysis, state, registry, allocator)

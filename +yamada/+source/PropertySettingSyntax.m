@@ -104,6 +104,48 @@ classdef PropertySettingSyntax
             end
         end
 
+        function [name, target, tokens, spans, forms] = axesCall(statement)
+            % axesCall Tokenize an exact catalogued axes call or an axes selection.
+            arguments (Input)
+                statement (1, 1) yamada.source.SourceStatement
+            end
+            arguments (Output)
+                name (1, 1) string
+                target (1, 1) string
+                tokens (1, :) string
+                spans yamada.model.SourceSpan
+                forms cell
+            end
+
+            name = ""; target = ""; tokens = strings(1,0);
+            spans = yamada.model.SourceSpan.empty; forms = {};
+            text = char(statement.Text);
+            [prefix, match] = regexp(text,'^(?<name>[A-Za-z]\w*)\s*\(','end','names','once');
+            if isempty(prefix) || text(end) ~= ')', return, end
+            forms = yamada.catalog.AxesSettingFunctionCatalog.forName(string(match.name));
+            if isempty(forms) && ~strcmp(match.name,'axes'), return, end
+
+            % Keep each argument and its original value range independently.
+            ranges = yamada.source.PropertySettingSyntax.argumentRanges(text,prefix+1,numel(text)-1);
+            if isempty(ranges), return, end
+            first = text(ranges(1,1):ranges(1,2));
+            component = regexp(first,'^app\s*\.\s*([A-Za-z]\w*)$','tokens','once');
+            if ~isempty(component)
+                target = string(component{1});
+                ranges(1,:) = [];
+            end
+            if strcmp(match.name,'axes') && (strlength(target) == 0 || ~isempty(ranges)), return, end
+            name = string(match.name);
+            for index = 1:size(ranges,1)
+                left = ranges(index,1); right = ranges(index,2);
+                token = text(left:right);
+                option = regexp(token,'^[A-Za-z]\w*\s*=\s*(?=\S)','end','once');
+                if ~isempty(option), left = left + option; end
+                tokens(end+1) = string(token); %#ok<AGROW>
+                spans(end+1) = yamada.source.PropertySettingSyntax.span(statement,left,right); %#ok<AGROW>
+            end
+        end
+
         function setting = assignment(statement, snapshotId, sequence, certain)
             % assignment Capture one direct component-property assignment and its value range.
             arguments (Input)
