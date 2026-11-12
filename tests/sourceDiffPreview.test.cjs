@@ -49,9 +49,8 @@ test('handles identical, empty, and entirely replaced source', () => {
     [[0, 0, 'modified'], [1, null, 'deleted']]);
 });
 
-test('maps contiguous changes to their aligned row ranges', () => {
-  const lanes = Object.fromEntries(['added', 'deleted', 'modified'].map(kind => [kind, {
-    dataset: { kind },
+test('maps contiguous changes to the corresponding source sides', () => {
+  const lanes = Object.fromEntries(['original', 'generated'].map(side => ['.map-' + side, {
     replaceChildren(fragment) { this.marks = fragment.children; }
   }]));
   context.document = {
@@ -61,13 +60,17 @@ test('maps contiguous changes to their aligned row ranges', () => {
     }),
     createElement: () => ({ style: {} })
   };
-  const map = { querySelectorAll: () => Object.values(lanes) };
+  const map = { querySelector: selector => lanes[selector] };
   const rows = ['deleted', '', 'modified', 'modified', 'added'].map(kind => ({ kind }));
   context.renderLocationMap(map, rows);
-  const geometry = ({ marks }) => marks.map(({ style }) => [style.top, style.height]);
-  assert.deepEqual(geometry(lanes.deleted), [['min(0%, calc(100% - 2px))', '20%']]);
-  assert.deepEqual(geometry(lanes.modified), [['min(40%, calc(100% - 2px))', '40%']]);
-  assert.deepEqual(geometry(lanes.added), [['min(80%, calc(100% - 2px))', '20%']]);
+  const geometry = ({ marks }) => marks.map(({ className, style }) => [className, style.top, style.height]);
+  const modified = ['map-mark modified', 'min(40%, calc(100% - 2px))', '40%'];
+  assert.deepEqual(geometry(lanes['.map-original']), [
+    ['map-mark deleted', 'min(0%, calc(100% - 2px))', '20%'], modified
+  ]);
+  assert.deepEqual(geometry(lanes['.map-generated']), [
+    modified, ['map-mark added', 'min(80%, calc(100% - 2px))', '20%']
+  ]);
 
   context.renderLocationMap(map, [{ kind: '' }]);
   assert.ok(Object.values(lanes).every(lane => lane.marks.length === 0));

@@ -36,15 +36,15 @@ main { border: 1px solid #d0d7de; border-top: 0; }
   position: absolute;
   inset: 0 3px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1px;
   pointer-events: none;
 }
 .map-lane { position: relative; }
 .map-mark { position: absolute; inset-inline: 0; min-height: 2px; }
-[data-kind="added"] > .map-mark { background: #389454; }
-[data-kind="deleted"] > .map-mark { background: #cf4f4b; }
-[data-kind="modified"] > .map-mark { background: #d2a21c; }
+.map-mark.added { background: #389454; }
+.map-mark.deleted { background: #cf4f4b; }
+.map-mark.modified { background: #d2a21c; }
 .map-viewport {
   position: absolute;
   inset-inline: 0;
@@ -84,9 +84,8 @@ main { border: 1px solid #d0d7de; border-top: 0; }
        aria-orientation="vertical" aria-controls="original-pane generated-pane"
        aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
     <div class="map-marks" aria-hidden="true">
-      <div class="map-lane" data-kind="added"></div>
-      <div class="map-lane" data-kind="deleted"></div>
-      <div class="map-lane" data-kind="modified"></div>
+      <div class="map-lane map-original"></div>
+      <div class="map-lane map-generated"></div>
     </div>
     <div class="map-viewport" aria-hidden="true"></div>
   </div>
@@ -221,30 +220,29 @@ function renderPane(container, lines, rows, indexKey) {
 }
 
 function renderLocationMap(map, rows) {
-  const lanes = map.querySelectorAll('.map-lane');
-  const fragments = {};
-  for (const lane of lanes) {
-    fragments[lane.dataset.kind] = document.createDocumentFragment();
-  }
+  const original = document.createDocumentFragment();
+  const generated = document.createDocumentFragment();
 
-  // Give each change type its own lane so subpixel changes remain distinguishable.
+  // Draw each change on the same side as its source row.
   for (let first = 0; first < rows.length;) {
     const kind = rows[first].kind;
     let end = first + 1;
     while (end < rows.length && rows[end].kind === kind) end++;
     if (kind) {
-      const mark = document.createElement('div');
-      mark.className = 'map-mark';
-      mark.style.top = 'min(' + 100 * first / rows.length + '%, calc(100% - 2px))';
-      mark.style.height = 100 * (end - first) / rows.length + '%';
-      fragments[kind].append(mark);
+      const sides = kind === 'modified' ? [original, generated] : [kind === 'deleted' ? original : generated];
+      for (const side of sides) {
+        const mark = document.createElement('div');
+        mark.className = 'map-mark ' + kind;
+        mark.style.top = 'min(' + 100 * first / rows.length + '%, calc(100% - 2px))';
+        mark.style.height = 100 * (end - first) / rows.length + '%';
+        side.append(mark);
+      }
     }
     first = end;
   }
 
-  for (const lane of lanes) {
-    lane.replaceChildren(fragments[lane.dataset.kind]);
-  }
+  map.querySelector('.map-original').replaceChildren(original);
+  map.querySelector('.map-generated').replaceChildren(generated);
 }
 
 function setup(htmlComponent) {
