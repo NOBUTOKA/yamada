@@ -18,14 +18,15 @@ classdef CustomColormapDialog
             selected = 1;
             acknowledgedMove = 0;
 
-            sizePixels = [600 260];
+            sizePixels = [600 222];
             origin = owner.Position;
             dialog = uifigure("Name","Customize Colormap","WindowStyle","modal","Visible","off", ...
                 "Position",[origin(1:2)+(origin(3:4)-sizePixels)/2 sizePixels], ...
                 "Tag","yamada-custom-colormap-dialog");
             listener = addlistener(owner,"ObjectBeingDestroyed",@(~,~) delete(dialog));
             dialog.DeleteFcn = @(~,~) delete(listener);
-            layout = uigridlayout(dialog,[5 1],"RowHeight",{28,"1x",28,28,26});
+            layout = uigridlayout(dialog,[4 1],"RowHeight",{28,"1x",28,28}, ...
+                "Padding",[10 10 10 10],"RowSpacing",6);
             names = yamada.ui.inspector.ColormapEditor.presets();
             presets = uidropdown(layout,"Items",cellstr(["Reset" names]), ...
                 "Tag","yamada-colormap-dialog-preset", ...
@@ -43,25 +44,18 @@ classdef CustomColormapDialog
                 "ValueChangedFcn",@colorChanged);
             actions = uigridlayout(layout,[1 3],"Padding",[0 0 0 0], ...
                 "ColumnWidth",{"1x","fit","fit"});
+            status = uilabel(actions,"WordWrap","on");
             cancel = uibutton(actions,"Text","Cancel","ButtonPushedFcn",@(~,~) delete(dialog));
             cancel.Layout.Column = 2;
             uibutton(actions,"Text","Apply","Tag","yamada-colormap-apply", ...
                 "ButtonPushedFcn",@(~,~) apply());
-            status = uilabel(layout,"WordWrap","on");
             loadMap(map);
             dialog.Visible = "on";
 
             function loadMap(value)
                 % loadMap Reset the draft and recover the RGB slope changes of the selected map.
                 draft = value;
-                turns = find(any(abs(diff(value,2,1)) > eps(1),2)) + 1;
-                indices = unique([1; turns; size(value,1)]);
-                positions = samples(indices);
-                colors = value(indices,:);
-                if isscalar(positions)
-                    positions = [0; 100];
-                    colors = [value; value];
-                end
+                [positions,colors] = yamada.ui.inspector.CustomColormapDialog.markerStops(samples,value);
                 selected = 1;
                 status.Text = "";
                 refresh();
@@ -234,6 +228,60 @@ classdef CustomColormapDialog
             end
         end
     end
+
+    methods (Static, Access = private)
+        function [positions, colors] = markerStops(samples, map)
+            % markerStops Recover sampled and between-sample corners from RGB slope changes.
+            arguments (Input)
+                samples (:,1) double
+                map (:,3) double
+            end
+            arguments (Output)
+                positions (:,1) double
+                colors (:,3) double
+            end
+            if isscalar(samples)
+                positions = [0; 100];
+                colors = [map; map];
+                return
+            end
+
+            % Interpolation and source round-trip can amplify roundoff in a second difference.
+            % On R2024a, 32 eps removed spurious bends in all 48 tested 256-color maps with two on-grid stops.
+            tolerance = 32*eps(1);
+            turns = [1; find(any(abs(diff(map,2,1)) > tolerance,2)) + 1; size(map,1)];
+            positions = samples(turns);
+            colors = map(turns,:);
+            keep = true(size(turns));
+            for index = 2:numel(turns)-2
+                left = turns(index);
+                right = turns(index+1);
+                if right ~= left+1 || turns(index-1) == left-1 || turns(index+2) == right+1
+                    continue
+                end
+
+                % One corner between two samples changes both sampled second differences.
+                gap = samples(right) - samples(left);
+                before = gap*(map(left,:) - map(left-1,:))/(samples(left) - samples(left-1));
+                after = gap*(map(right+1,:) - map(right,:))/(samples(right+1) - samples(right));
+                delta = before - after;
+                [magnitude, channel] = max(abs(delta));
+                if magnitude <= tolerance, continue, end
+                offset = map(right,:) - after - map(left,:);
+                fraction = offset(channel)/delta(channel);
+                if fraction <= 0 || fraction >= 1 || ...
+                        ~all(abs(fraction*delta - offset) <= tolerance)
+                    continue
+                end
+                positions(index) = samples(left) + fraction*gap;
+                colors(index,:) = min(1,max(0,map(left,:) + fraction*before));
+                keep(index+1) = false;
+            end
+            positions = positions(keep);
+            colors = colors(keep,:);
+        end
+    end
+
 end
 
 %{

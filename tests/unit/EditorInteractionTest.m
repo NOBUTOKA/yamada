@@ -206,6 +206,32 @@ classdef EditorInteractionTest < matlab.uitest.TestCase
             testCase.verifyEqual(app.Document.getComponent(bar.Id).ParentId,axesRecord.Id);
         end
 
+        function reopensCustomColormapWithOriginalStops(testCase)
+            % reopensCustomColormapWithOriginalStops Preserve off-grid corners through source literal round-trip.
+            owner = uifigure("Visible","off");
+            cleanup = onCleanup(@() deleteIfValid(owner));
+            yamada.ui.inspector.CustomColormapDialog.open(owner,autumn(256),@(~) "");
+            dialog = findall(0,"Tag","yamada-custom-colormap-dialog");
+            strip = findall(dialog,"Tag","yamada-colormap-markers");
+            color = findall(dialog,"Tag","yamada-colormap-stop-color");
+            callback = strip.HTMLEventReceivedFcn;
+            for stop = [40.17 60.13]
+                callback(strip,struct("HTMLEventName","add","HTMLEventData",struct("position",stop)));
+                color.Value = [0.2 stop/100 0.8];
+                color.ValueChangedFcn(color,struct());
+            end
+            before = strip.Data;
+            [map,safe] = yamada.source.MatlabLiteralParser.parse(yamada.source.LiteralEncoder.encode(before.map));
+            testCase.assertTrue(safe);
+            delete(dialog);
+            yamada.ui.inspector.CustomColormapDialog.open(owner,map,@(~) "");
+            dialog = findall(0,"Tag","yamada-custom-colormap-dialog");
+            strip = findall(dialog,"Tag","yamada-colormap-markers");
+            testCase.verifyEqual(strip.Data.positions,before.positions,"AbsTol",1e-9);
+            testCase.verifyEqual(strip.Data.colors,before.colors,"AbsTol",1e-11);
+            testCase.verifyEqual(strip.Data.map,map);
+        end
+
         function editsAxesTitleThroughItsInspector(testCase)
             % editsAxesTitleThroughItsInspector Commit body and popup values through native callbacks.
             app = yamada();
