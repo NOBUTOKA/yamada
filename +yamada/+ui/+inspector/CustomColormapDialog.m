@@ -10,126 +10,220 @@ classdef CustomColormapDialog
                 map (:,3) double
                 commitFcn (1,1) function_handle
             end
-            count = size(map,1);
-            assert(count > 0);
-            originalSamples = linspace(0,100,max(2,count)).';
-            positions = linspace(0,100,max(2,count)).';
-            colors = map;
-            if count == 1, colors = [map; map]; end
-            added = false(size(positions));
-            dirty = false;
+            assert(~isempty(map));
+            samples = linspace(0,100,size(map,1)).';
+            draft = map;
+            positions = [];
+            colors = [];
             selected = 1;
+            acknowledgedMove = 0;
 
-            sizePixels = [420 330];
+            sizePixels = [600 260];
             origin = owner.Position;
-            dialog = uifigure("Name","Edit Colormap","WindowStyle","modal","Visible","off", ...
+            dialog = uifigure("Name","Customize Colormap","WindowStyle","modal","Visible","off", ...
                 "Position",[origin(1:2)+(origin(3:4)-sizePixels)/2 sizePixels], ...
                 "Tag","yamada-custom-colormap-dialog");
             listener = addlistener(owner,"ObjectBeingDestroyed",@(~,~) delete(dialog));
             dialog.DeleteFcn = @(~,~) delete(listener);
-            layout = uigridlayout(dialog,[5 1],"RowHeight",{32,"1x",28,28,28});
-            gradient = uiimage(layout,"ScaleMethod","stretch","Tag","yamada-custom-colormap-preview");
-            stops = uilistbox(layout,"Tag","yamada-colormap-stops", ...
-                "ValueChangedFcn",@(source,~) select(source.Value));
-            fields = uigridlayout(layout,[1 4],"Padding",[0 0 0 0], ...
-                "ColumnWidth",{"fit","1x","fit",50});
+            layout = uigridlayout(dialog,[5 1],"RowHeight",{28,"1x",28,28,26});
+            names = yamada.ui.inspector.ColormapEditor.presets();
+            presets = uidropdown(layout,"Items",cellstr(["Reset" names]), ...
+                "Tag","yamada-colormap-dialog-preset", ...
+                "ValueChangedFcn",@(source,event) resetPreset(source.Value,event.PreviousValue));
+            root = fileparts(fileparts(fileparts(fileparts(mfilename("fullpath")))));
+            markers = uihtml(layout,"HTMLSource",fullfile(root,"resources","ColormapMarkers.html"), ...
+                "Tag","yamada-colormap-markers","HTMLEventReceivedFcn",@(~,event) handleMarker(event));
+            fields = uigridlayout(layout,[1 5],"Padding",[0 0 0 0], ...
+                "ColumnWidth",{"fit",80,"fit",50,"1x"});
             uilabel(fields,"Text","Position (%)");
             position = uieditfield(fields,"numeric","Limits",[0 100], ...
-                "Tag","yamada-colormap-stop-position","ValueChangedFcn",@(source,~) move(source.Value));
+                "Tag","yamada-colormap-stop-position","ValueChangedFcn",@positionChanged);
             uilabel(fields,"Text","Color");
             color = uicolorpicker(fields,"Tag","yamada-colormap-stop-color", ...
-                "ValueChangedFcn",@(source,~) changeColor(source.Value));
-            actions = uigridlayout(layout,[1 5],"Padding",[0 0 0 0], ...
-                "ColumnWidth",{"fit","fit","1x","fit","fit"});
-            uibutton(actions,"Text","Add Stop","Tag","yamada-colormap-add-stop", ...
-                "ButtonPushedFcn",@(~,~) add());
-            removeButton = uibutton(actions,"Text","Remove Stop","Tag","yamada-colormap-remove-stop", ...
-                "ButtonPushedFcn",@(~,~) remove());
+                "ValueChangedFcn",@colorChanged);
+            actions = uigridlayout(layout,[1 3],"Padding",[0 0 0 0], ...
+                "ColumnWidth",{"1x","fit","fit"});
             cancel = uibutton(actions,"Text","Cancel","ButtonPushedFcn",@(~,~) delete(dialog));
-            cancel.Layout.Column = 4;
+            cancel.Layout.Column = 2;
             uibutton(actions,"Text","Apply","Tag","yamada-colormap-apply", ...
                 "ButtonPushedFcn",@(~,~) apply());
             status = uilabel(layout,"WordWrap","on");
-            refresh();
+            loadMap(map);
             dialog.Visible = "on";
 
-            function result = interpolate()
-                % interpolate Retain original samples and include newly added stops.
-                samples = union(originalSamples,positions(added));
-                result = interp1(positions,colors,samples,"linear");
-            end
-
-            function refresh()
-                % refresh Show the current stop selection and staged gradient.
-                stops.Items = cellstr(compose("%d  |  %.2f%%", (1:numel(positions)).',positions));
-                stops.ItemsData = 1:numel(positions);
-                stops.Value = selected;
-                position.Value = positions(selected);
-                color.Value = colors(selected,:);
-                endpoint = selected == 1 || selected == numel(positions);
-                position.Editable = ~endpoint;
-                removeButton.Enable = ~endpoint;
-                gradient.ImageSource = yamada.ui.inspector.ColormapEditor.gradient(interpolate());
-            end
-
-            function select(index)
-                % select Switch the active stop without changing the gradient.
-                selected = index;
+            function loadMap(value)
+                % loadMap Reset the draft and recover the RGB slope changes of the selected map.
+                draft = value;
+                turns = find(any(abs(diff(value,2,1)) > eps(1),2)) + 1;
+                indices = unique([1; turns; size(value,1)]);
+                positions = samples(indices);
+                colors = value(indices,:);
+                if isscalar(positions)
+                    positions = [0; 100];
+                    colors = [value; value];
+                end
+                selected = 1;
+                status.Text = "";
                 refresh();
             end
 
-            function move(value)
-                % move Relocate an interior stop within its neighboring interval.
-                if selected > 1 && selected < numel(positions) && ...
-                        value > positions(selected-1) && value < positions(selected+1)
-                    dirty = dirty || positions(selected) ~= value;
-                    positions(selected) = value;
-                    status.Text = "";
+            function resetPreset(choice,previous)
+                % resetPreset Replace the staged RGB values and markers without editing the document.
+                choice = string(choice);
+                if choice == "Reset"
+                    loadMap(map);
+                elseif any(names == choice)
+                    loadMap(feval(char(lower(choice)),size(map,1)));
                 else
+                    presets.Value = previous;
+                end
+            end
+
+            function positionChanged(source,~)
+                % positionChanged Move the marker selected at the time of entry.
+                move(selected,source.Value);
+            end
+
+            function colorChanged(source,~)
+                % colorChanged Recolor the marker selected at the time of entry.
+                changeColor(selected,source.Value);
+            end
+
+            function refresh()
+                % refresh Publish the editable marker positions and the actual staged RGB samples.
+                markers.Data = struct("positions",positions.',"colors",colors,"map",draft,"selected",selected, ...
+                    "acknowledgedMove",acknowledgedMove);
+                position.Value = positions(selected);
+                position.Editable = selected > 1 && selected < numel(positions);
+                color.Value = colors(selected,:);
+            end
+
+            function handleMarker(event)
+                % handleMarker Dispatch validated gestures from the HTML marker strip.
+                name = string(event.HTMLEventName);
+                data = event.HTMLEventData;
+                if ~isstruct(data) || ~isscalar(data), return, end
+                if name == "add"
+                    if isfield(data,"position") && validNumber(data.position), add(data.position); end
+                    return
+                end
+                if ~isfield(data,"index") || ~validNumber(data.index) || ...
+                        data.index ~= fix(data.index) || data.index < 1 || data.index > numel(positions)
+                    return
+                end
+                index = data.index;
+                switch name
+                    case "select"
+                        selected = index;
+                        refresh();
+                    case "move"
+                        if isfield(data,"sequence") && validNumber(data.sequence)
+                            acknowledgedMove = data.sequence;
+                        end
+                        if isfield(data,"position") && validNumber(data.position), move(index,data.position); end
+                    case "remove"
+                        remove(index);
+                    case "pickColor"
+                        selected = index;
+                        refresh();
+                        value = pickColor(colors(index,:));
+                        if isvalid(dialog) && numel(value) == 3, changeColor(index,value); end
+                end
+            end
+
+            function value = pickColor(initialColor)
+                % pickColor Give the desktop picker a hidden classic Figure that it can own.
+                previousFigure = get(groot,"CurrentFigure");
+                target = figure("Visible","off","Color",initialColor,"IntegerHandle","off");
+                cleanup = onCleanup(@() restoreFigure(target,previousFigure));
+                set(groot,"CurrentFigure",target);
+                value = uisetcolor(target);
+                clear cleanup
+            end
+
+            function restoreFigure(target,previousFigure)
+                % restoreFigure Release the picker target and restore the caller's figure context.
+                if isgraphics(target,"figure"), delete(target); end
+                if isempty(previousFigure) || isgraphics(previousFigure,"figure")
+                    set(groot,"CurrentFigure",previousFigure);
+                end
+            end
+
+            function valid = validNumber(value)
+                % validNumber Accept a finite real numeric scalar from a UI event.
+                valid = isnumeric(value) && isscalar(value) && isreal(value) && isfinite(value);
+            end
+
+            function markCustom()
+                % markCustom Allow reselecting the same preset after any staged edit.
+                presets.Items = cellstr(["Custom" "Reset" names]);
+                presets.Value = "Custom";
+                status.Text = "";
+            end
+
+            function updateInterval(first,last)
+                % updateInterval Recompute only samples between the two unchanged boundary stops.
+                inside = samples >= positions(first) & samples <= positions(last);
+                draft(inside,:) = interp1(positions(first:last),colors(first:last,:),samples(inside),"linear");
+            end
+
+            function move(index,value)
+                % move Move an interior stop without crossing its neighbors.
+                if index <= 1 || index >= numel(positions) || ...
+                        value <= positions(index-1) || value >= positions(index+1)
                     status.Text = "Place the stop between its neighbors.";
+                elseif value ~= positions(index)
+                    markCustom();
+                    selected = index;
+                    positions(index) = value;
+                    updateInterval(index-1,index+1);
                 end
                 refresh();
             end
 
-            function changeColor(value)
-                % changeColor Set the active stop's staged RGB triplet.
-                dirty = dirty || ~isequal(colors(selected,:),value);
-                colors(selected,:) = value;
-                status.Text = "";
+            function changeColor(index,value)
+                % changeColor Update the selected stop and its adjacent intervals.
+                if ~isequal(colors(index,:),value)
+                    markCustom();
+                    if size(map,1) == 1
+                        colors = repmat(value,numel(positions),1);
+                        draft = value;
+                    else
+                        colors(index,:) = value;
+                        updateInterval(max(1,index-1),min(numel(positions),index+1));
+                    end
+                end
+                selected = index;
                 refresh();
             end
 
-            function add()
-                % add Insert an interpolated stop next to the current selection.
-                left = min(selected,numel(positions)-1);
-                middle = mean(positions(left:left+1));
-                if middle <= positions(left) || middle >= positions(left+1), return, end
-                added = [added(1:left); true; added(left+1:end)];
-                positions = [positions(1:left); middle; positions(left+1:end)];
-                colors = [colors(1:left,:); mean(colors(left:left+1,:),1); colors(left+1:end,:)];
-                dirty = true;
+            function add(value)
+                % add Insert a stop on the current segment without changing the sampled colors.
+                left = find(positions < value,1,"last");
+                if isempty(left) || left == numel(positions) || positions(left+1) == value, return, end
+                markCustom();
+                rgb = interp1(positions(left:left+1),colors(left:left+1,:),value,"linear");
+                positions = [positions(1:left); value; positions(left+1:end)];
+                colors = [colors(1:left,:); rgb; colors(left+1:end,:)];
                 selected = left+1;
-                status.Text = "";
                 refresh();
             end
 
-            function remove()
-                % remove Delete an interior stop while retaining both endpoints.
-                if selected == 1 || selected == numel(positions), return, end
-                added(selected) = [];
-                positions(selected) = [];
-                colors(selected,:) = [];
-                dirty = true;
-                status.Text = "";
+            function remove(index)
+                % remove Delete an interior stop and reconnect its neighboring stops.
+                if index == 1 || index == numel(positions), return, end
+                markCustom();
+                positions(index) = [];
+                colors(index,:) = [];
+                selected = index-1;
+                updateInterval(index-1,index);
                 refresh();
             end
 
             function apply()
                 % apply Publish the staged RGB matrix once and close on success.
-                if ~dirty, delete(dialog); return, end
-                result = interpolate();
-                if isequal(result,map), delete(dialog); return, end
-                message = commitFcn(result);
+                if isequal(draft,map), delete(dialog); return, end
+                message = commitFcn(draft);
                 if ~isvalid(dialog), return, end
                 if message == "", delete(dialog); else, status.Text = message; end
             end

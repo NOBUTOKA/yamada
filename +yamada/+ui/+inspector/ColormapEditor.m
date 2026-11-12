@@ -99,9 +99,6 @@ classdef ColormapEditor
             pixels = uint8(round(255*map(indices,:)));
             image = repmat(reshape(pixels,1,256,3),8,1,1);
         end
-    end
-
-    methods (Static, Access = private)
         function names = presets()
             % presets List the built-in maps offered by the editor.
             arguments (Output)
@@ -111,6 +108,9 @@ classdef ColormapEditor
                 "Spring","Summer","Autumn","Winter","Jet","HSV","Lines","Colorcube","Prism","Flag","White"];
         end
 
+    end
+
+    methods (Static, Access = private)
         function commit(control, source, event, commitFcn)
             % commit Stage only an allowlisted preset and restore the picker on rejection.
             arguments (Input)
