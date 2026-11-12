@@ -25,7 +25,7 @@ classdef ColormapEditor
                     "Tag","yamada-colormap-preset");
                 picker.Layout.Row = 1;
                 picker.Layout.Column = 1;
-                edit = uibutton(control,"Text","Edit...","Enable","off", ...
+                edit = uibutton(control,"Text","Customize...","Enable","off", ...
                     "Tag","yamada-customize-colormap");
                 edit.Layout.Row = 1;
                 edit.Layout.Column = 2;
