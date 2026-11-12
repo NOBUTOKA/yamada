@@ -3293,7 +3293,7 @@ classdef yamada < handle
                 app.synchronizeHierarchySelection();
                 app.refreshInspector();
                 for row = app.InspectorRows
-                    if row.identifier() == "Colormap"
+                    if row.identifier() == "property:Colormap"
                         row.reveal(app.InspectorView);
                         break
                     end

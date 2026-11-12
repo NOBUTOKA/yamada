@@ -101,6 +101,33 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             editor.ValueChangedFcn(editor,struct());
             cb = findall(figure,"-isa","matlab.graphics.illustration.ColorBar");
             testCase.verifyEqual(string(cb.Label.String),"Temperature");
+            % Use a short viewport so the deep Colormap row requires scrolling.
+            window = figure.Position;
+            figure.Position = [window(1:3) 420];
+            % Establish that Colormap starts below the viewport before exercising the link.
+            barNode = tree.SelectedNodes;
+            axesNode = barNode.Parent;
+            tree.SelectedNodes = axesNode;
+            tree.SelectionChangedFcn(tree,struct("SelectedNodes",axesNode));
+            picker = findall(figure,"Tag","yamada-colormap-preset");
+            host = picker.Parent;
+            while ~isa(host,"matlab.ui.container.Panel") || host.Scrollable ~= "on"
+                host = host.Parent;
+            end
+            scroll(host,"top");
+            drawnow;
+            % Check a direct child at the row position to avoid nested-grid coordinates.
+            pickerPosition = getpixelposition(picker,true);
+            content = host.Children;
+            contentPosition = getpixelposition(content,true);
+            point = pickerPosition(1:2) - contentPosition(1:2) + content.Position(1:2);
+            probe = uipanel(host,"Position",[point 1 1],"BorderType","none");
+            drawnow;
+            testCase.assertFalse(isInScrollView(host,probe), ...
+                "Colormap should start outside the viewport.");
+
+            tree.SelectedNodes = barNode;
+            tree.SelectionChangedFcn(tree,struct("SelectedNodes",barNode));
             link = findall(figure,"Tag","yamada-edit-axes-colormap");
             testCase.verifyEqual(string(link.Text),"Edit...");
             link.ButtonPushedFcn(link,struct());
@@ -109,11 +136,15 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             strip = findall(picker.Parent,"Tag","yamada-colormap-preview");
             testCase.verifyEqual(picker.Layout.Row,1);
             testCase.verifyEqual(strip.Layout.Row,2);
-            host = picker.Parent;
-            while ~isa(host,"matlab.ui.container.Panel") || host.Scrollable ~= "on"
-                host = host.Parent;
+            started = tic;
+            while ~isInScrollView(host,probe) && toc(started) < 3
+                pause(0.05);
             end
-            testCase.verifyTrue(isInScrollView(host,picker));
+            testCase.verifyTrue(isInScrollView(host,probe), ...
+                "Target " + mat2str(point) + ", picker " + mat2str(getpixelposition(picker,true)) + ...
+                ", content " + mat2str(getpixelposition(content,true)) + ...
+                ", viewport " + mat2str(getpixelposition(host,true)));
+            delete(probe);
             previous = picker.Value;
             picker.Value = "Turbo";
             picker.ValueChangedFcn(picker,struct("PreviousValue",previous));

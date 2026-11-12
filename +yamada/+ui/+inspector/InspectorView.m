@@ -57,9 +57,15 @@ classdef InspectorView < handle
                 obj (1, 1) yamada.ui.inspector.InspectorView
                 row (1, 1) matlab.ui.container.GridLayout
             end
-            drawnow nocallbacks
+            drawnow
             if isvalid(obj.Panel) && isvalid(row)
-                scroll(obj.Panel, row);
+                % Subtract the content panel's scrolled position to recover content coordinates.
+                bounds = getpixelposition(row,true);
+                content = getpixelposition(obj.ContentPanel,true);
+                bottom = bounds(2) - content(2) + obj.ContentPanel.Position(2);
+                height = getpixelposition(obj.Panel);
+                bottom = bottom - max(0,(height(4) - bounds(4))/2);
+                scroll(obj.Panel,0,max(0,round(bottom)));
             end
         end
 
