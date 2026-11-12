@@ -742,6 +742,16 @@ classdef yamada < handle
                 state (1, 1) struct
             end
             state = struct("Enabled", false, "Reason", "No component is available.", "ParentId", "");
+            if action == "Add Colorbar"
+                state = struct("Enabled",false,"Reason","Select an editable axes without a ColorBar.");
+                if isempty(app.Document) || app.HierarchyRenameId ~= "" || app.IsReloading, return, end
+                parent = app.Document.getComponent(id);
+                if ~isempty(parent) && parent.IsEditable
+                    definition = app.Registry.get("colorbar");
+                    state.Enabled = yamada.model.SubtreePlacementPlanner.accepts(app.Document,parent,definition);
+                end
+                return
+            end
             if isempty(app.Document) || strlength(app.HierarchyRenameId) > 0 || app.IsReloading, return, end
             if action == "Delete"
                 state = yamada.model.DocumentEditAvailability.deletion(app.Document, id, app.Registry);
@@ -781,7 +791,13 @@ classdef yamada < handle
                 return
             end
             try
-                if action == "Delete"
+                if action == "Add Colorbar"
+                    component = app.Document.insertComponent(app.Registry,"colorbar",id,{},true);
+                    app.SelectedComponentId = component.Id;
+                    app.refreshShell();
+                    app.setStatus("Added " + component.Name);
+                    return
+                elseif action == "Delete"
                     app.deleteComponentButtonPushed(id);
                     return
                 elseif action == "Copy"
@@ -3272,6 +3288,14 @@ classdef yamada < handle
             end
             if isempty(app.Document) || app.SelectedComponentId ~= id, return, end
             document = app.Document;
+            if group == "Colormap"
+                app.SelectedComponentId = document.getComponent(id).ParentId;
+                app.synchronizeHierarchySelection();
+                app.refreshInspector();
+                app.refreshEditCommands();
+                app.scheduleOverlayRefresh();
+                return
+            end
             yamada.ui.inspector.AxesTextSettingsDialog.open(app.UIFigure,group, ...
                 @() app.axesTextSettingsSnapshot(document,id,group), ...
                 @(path,value,action) app.commitAxesSetting(document,id,path,value,action));
@@ -3580,6 +3604,12 @@ classdef yamada < handle
                 end
             end
             states = states(applicable);
+            if component.Factory == "colorbar"
+                mapDefinition = yamada.model.PropertyDefinition("AxesColormap",[],false,false, ...
+                    struct("displayName","Colormap","category","Appearance","editor","colormapPreview"));
+                states(end+1) = struct("Definition",mapDefinition,"Entry",yamada.model.PropertyEntry.empty, ...
+                    "IsExplicit",false,"Resolution",yamada.model.PropertyState(mapDefinition));
+            end
             effectivePaths = arrayfun(@(state) state.Definition.Path, states);
             for index = 1:numel(component.Properties)
                 entry = component.Properties(index);
@@ -3633,7 +3663,21 @@ classdef yamada < handle
             if strlength(component.ParentId) > 0
                 parentFactory = app.Document.getComponent(component.ParentId).Factory;
             end
-            defaults = app.DefaultValueProvider.resolveAll(component, parentFactory, definitions);
+            if component.Factory == "colorbar"
+                defaults = struct("Found",false(1,numel(definitions)),"Values",{cell(1,numel(definitions))});
+                if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles,char(component.Id))
+                    native = app.PreviewHandles(char(component.Id));
+                    for index = 1:numel(definitions)
+                        path = definitions(index).Path;
+                        if isvalid(native) && isprop(native,path)
+                            defaults.Found(index) = true;
+                            defaults.Values{index} = native.(path);
+                        end
+                    end
+                end
+            else
+                defaults = app.DefaultValueProvider.resolveAll(component, parentFactory, definitions);
+            end
             values = cell(1, numel(states));
             known = false(1, numel(states));
             for index = 1:numel(states)
@@ -3720,7 +3764,16 @@ classdef yamada < handle
                     end
                     if editable, members(index).Reason = ""; end
                 end
-                members(index).Path = states(index).Definition.Path;
+                path = states(index).Definition.Path;
+                if path == "AxesColormap" || (path == "Colormap" && isempty(entry))
+                    axesId = component.Id;
+                    if path == "AxesColormap", axesId = component.ParentId; end
+                    if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles,char(axesId))
+                        native = app.PreviewHandles(char(axesId));
+                        if isvalid(native), rawValue = native.Colormap; isKnown = true; end
+                    end
+                end
+                members(index).Path = path;
                 members(index).Value = value;
                 members(index).RawValue = rawValue;
                 members(index).IsEditable = editable;

@@ -64,6 +64,75 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'editorShell', 'ui'})
+        function editsColorbarAndAxesColormap(testCase)
+            % editsColorbarAndAxesColormap Add and edit a ColorBar through its normal Inspector routes.
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            [figure,palette] = editorPalette();
+            names = string(palette.Data(:,1));
+            testCase.verifyFalse(any(names == "ColorBar"));
+            palette.DoubleClickedFcn(palette,struct("InteractionInformation", ...
+                struct("Row",find(names == "UI Axes",1))));
+            axesRecord = app.Document.getComponent(app.SelectedComponentId);
+            tree = findall(figure,"Type","uitree");
+            node = tree.SelectedNodes;
+            menu = tree.ContextMenu;
+            menu.ContextMenuOpeningFcn(menu,struct("InteractionInformation",struct("Node",node)));
+            add = findall(menu,"Tag","yamada-context-add-colorbar");
+            testCase.assertEqual(string(add.Enable),"on");
+            add.MenuSelectedFcn(add,struct());
+            bar = app.Document.getComponent(app.SelectedComponentId);
+            testCase.verifyEqual(bar.ParentId,axesRecord.Id);
+            testCase.verifyEqual(string(tree.SelectedNodes.Parent.NodeData),axesRecord.Id);
+            cb = findall(figure,"-isa","matlab.graphics.illustration.ColorBar");
+            testCase.assertNumElements(cb,1);
+            testCase.verifyTrue(cb.Parent == cb.Axes.Parent);
+
+            labels = findall(figure,"Tag","yamada-inspector-property-label");
+            row = labels(string({labels.Text}) == "Location");
+            location = findall(row.Parent,"Tag","yamada-inspector-property-editor");
+            location.Value = "southoutside";
+            location.ValueChangedFcn(location,struct());
+            cb = findall(figure,"-isa","matlab.graphics.illustration.ColorBar");
+            testCase.verifyEqual(string(cb.Location),"southoutside");
+            label = labels(string({labels.Text}) == "Label");
+            editor = findall(label.Parent,"Tag","yamada-inspector-property-editor");
+            editor.Value = {'Temperature'};
+            editor.ValueChangedFcn(editor,struct());
+            cb = findall(figure,"-isa","matlab.graphics.illustration.ColorBar");
+            testCase.verifyEqual(string(cb.Label.String),"Temperature");
+            link = findall(figure,"Tag","yamada-edit-axes-colormap");
+            link.ButtonPushedFcn(link,struct());
+            testCase.verifyEqual(app.SelectedComponentId,axesRecord.Id);
+            picker = findall(figure,"Tag","yamada-colormap-preset");
+            previous = picker.Value;
+            picker.Value = "Turbo";
+            picker.ValueChangedFcn(picker,struct("PreviousValue",previous));
+            testCase.assertNotEmpty(axesRecord.getSettings("Colormap"),string(picker.Parent.Tooltip));
+            ax = findall(figure,"-isa","matlab.ui.control.UIAxes");
+            testCase.assertNumElements(ax,1);
+            expectedMap = turbo(size(ax.Colormap,1));
+            testCase.verifyLessThanOrEqual(max(abs(ax.Colormap(:)-expectedMap(:))),1e-12, ...
+                strjoin(string({app.Document.Diagnostics.Message}),newline));
+            text = app.Document.CurrentText;
+            registry = yamada.model.ComponentRegistry.createDefault();
+            reopened = yamada.source.AppSourceParser.parseText(text,registry);
+            restoredBar = reopened.getComponentByName(bar.Name);
+            testCase.assertNotEmpty(restoredBar);
+            testCase.verifyEqual(reopened.getComponent(restoredBar.ParentId).Name,axesRecord.Name);
+            testCase.verifyEqual(string(restoredBar.getProperty("Location").LiteralValue),"southoutside");
+            restoredMap = reopened.getComponentByName(axesRecord.Name).getProperty("Colormap").LiteralValue;
+            testCase.verifyLessThanOrEqual(max(abs(restoredMap(:)-expectedMap(:))),1e-12);
+            app.Document.undo();
+            testCase.verifyEmpty(axesRecord.getSettings("Colormap"));
+            app.Document.redo();
+            testCase.verifyEqual(app.Document.CurrentText,text);
+            app.Document.removeSubtree(bar.Id,registry);
+            testCase.verifyEmpty(app.Document.getComponent(bar.Id));
+            app.Document.undo();
+            testCase.verifyEqual(app.Document.getComponent(bar.Id).ParentId,axesRecord.Id);
+        end
+
         function editsAxesTitleThroughItsInspector(testCase)
             % editsAxesTitleThroughItsInspector Commit body and popup values through native callbacks.
             app = yamada();

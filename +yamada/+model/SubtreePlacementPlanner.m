@@ -16,6 +16,11 @@ classdef SubtreePlacementPlanner
                 accepted (1, 1) logical
             end
             accepted = any(definition.AllowedParentFactories == parent.Factory);
+            if accepted && definition.Factory == "colorbar"
+                attached = document.Components(string({document.Components.ParentId}) == parent.Id & ...
+                    ~ismember(string({document.Components.Id}),excludedIds));
+                accepted = ~any(string({attached.Factory}) == "colorbar");
+            end
             family = ["uiradiobutton", "uitogglebutton"];
             if ~accepted || parent.Factory ~= "uibuttongroup" || ~any(definition.Factory == family), return, end
             members = document.Components;

@@ -93,6 +93,11 @@ classdef PropertySettingSyntax
                 index = index + consumed;
             end
 
+            if definition.Factory == "colorbar"
+                % A creation must name its axes. Positional removal commands are opaque.
+                supported = parent ~= "" && numel(factoryArguments) == 2*nnz([settings.FactoryArgumentIndex] > 0);
+            end
+
             % Duplicate keys in one constructor are not treated as ordinary sequential writes.
             paths = string({settings.Path});
             for index = 1:numel(settings)

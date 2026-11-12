@@ -542,6 +542,10 @@ classdef PreviewRenderer < handle
             diagnostics = yamada.model.Diagnostic.empty;
             scope = component;
             parent = document.getComponent(component.ParentId);
+            if component.Factory == "colorbar" && ~isempty(parent)
+                scope = parent;
+                parent = document.getComponent(scope.ParentId);
+            end
             if ~isempty(parent) && isKey(handles, char(parent.Id))
                 nativeParent = handles(char(parent.Id));
                 if isprop(nativeParent, "RowHeight") || isprop(nativeParent, "SelectedObject")

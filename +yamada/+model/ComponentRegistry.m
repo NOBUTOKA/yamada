@@ -18,6 +18,7 @@ classdef ComponentRegistry < handle
         FactoryVariantIds containers.Map
         EffectiveProperties containers.Map
         IndependentDefinitions containers.Map
+        AxesAttachment yamada.model.ComponentDefinition = yamada.model.ComponentDefinition.empty
         ParentContextRules yamada.model.ParentContextRule = yamada.model.ParentContextRule.empty
         InspectorRowDefinitions yamada.model.InspectorRowDefinition = ...
             yamada.model.InspectorRowDefinition.empty
@@ -116,7 +117,8 @@ classdef ComponentRegistry < handle
                 result (1, 1) logical
             end
 
-            result = isKey(obj.FactoryVariantIds, char(factory));
+            result = isKey(obj.FactoryVariantIds, char(factory)) || ...
+                (~isempty(obj.AxesAttachment) && obj.AxesAttachment.Factory == factory);
         end
 
         function definition = get(obj, factory, creationArguments)
@@ -133,6 +135,10 @@ classdef ComponentRegistry < handle
             % Fail explicitly so callers cannot infer unsafe defaults.
             key = char(factory);
             if ~isKey(obj.FactoryVariantIds, key)
+                if ~isempty(obj.AxesAttachment) && obj.AxesAttachment.Factory == factory
+                    definition = obj.AxesAttachment;
+                    return
+                end
                 error("yamada:ComponentRegistry:UnknownFactory", ...
                     "Component factory ""%s"" is not registered.", key);
             end
@@ -384,6 +390,7 @@ classdef ComponentRegistry < handle
                 obj (1, 1) yamada.model.ComponentRegistry
             end
             obj = yamada.catalog.ComponentCatalogLoader.load();
+            obj.AxesAttachment = yamada.model.ColorbarDefinition.create();
         end
     end
 end

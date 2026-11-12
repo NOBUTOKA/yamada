@@ -12,7 +12,8 @@ classdef AxesInspectorProperties
                 result (1,:) string
             end
             result = strings(1,0);
-            if any(factory == ["axes","uiaxes","polaraxes","geoaxes"])
+            if factory == "colorbar", result = "Label"; return, end
+            if any(factory == yamada.model.ColorbarDefinition.targets())
                 result = ["Title","Subtitle"];
             end
             if any(factory == ["axes","uiaxes"])
@@ -49,6 +50,7 @@ classdef AxesInspectorProperties
                 result = [result group + "." + ["String" yamada.model.AxesInspectorProperties.names()]]; %#ok<AGROW>
             end
             if factory == "geoaxes", result(end+1) = "TickLabelFormat"; end
+            if any(factory == yamada.model.ColorbarDefinition.targets()), result(end+1) = "Colormap"; end
         end
 
         function definitionsOut = extend(factory, definitions)
@@ -63,6 +65,21 @@ classdef AxesInspectorProperties
             definitionsOut = reshape(definitions,1,[]);
             groups = yamada.model.AxesInspectorProperties.groups(factory);
             if isempty(groups), return, end
+            if any(factory == yamada.model.ColorbarDefinition.targets())
+                mapIndex = find(string({definitionsOut.Path}) == "Colormap",1);
+                metadata = struct("category","Color and Transparency Maps","editor","colormap", ...
+                    "previewPolicy","apply","absoluteGeometryImpact",false,"gridGeometryImpact","none", ...
+                    "application",struct("effectStatus","independent","effectReason", ...
+                    "The RGB matrix changes the color mapping without changing axes geometry."), ...
+                    "valueSchema",struct("kind","literal","shape","matrix", ...
+                    "matlabClasses","double","allowsEmpty",false));
+                mapDefinition = yamada.model.PropertyDefinition("Colormap",[],false,true,metadata);
+                if isempty(mapIndex)
+                    definitionsOut(end+1) = mapDefinition;
+                else
+                    definitionsOut(mapIndex) = mapDefinition;
+                end
+            end
             % Retain the original object-level definitions for source compatibility.
             for index = 1:numel(groups)
                 group = groups(index);

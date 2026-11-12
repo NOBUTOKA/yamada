@@ -87,6 +87,13 @@ classdef InspectorPropertyRow < handle
                 group = definition.Metadata.axesTextGroup;
                 obj.SettingsButton.ButtonPushedFcn = @(~,~) settingsFcn(obj.ComponentId,group);
             end
+            if ~isempty(settingsFcn) && ~obj.IsComposite && definition.Editor == "colormapPreview"
+                grid.ColumnWidth = {105,"1x","fit"};
+                obj.SettingsButton = uibutton(grid,"Text","Edit Axes Colormap...", ...
+                    "Tag","yamada-edit-axes-colormap", ...
+                    "ButtonPushedFcn",@(~,~) settingsFcn(obj.ComponentId,"Colormap"));
+                obj.SettingsButton.Layout.Column = 3;
+            end
             obj.captureNormalBackgroundColor();
             obj.rebind(componentId);
         end

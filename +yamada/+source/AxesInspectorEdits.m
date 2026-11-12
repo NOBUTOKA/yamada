@@ -97,7 +97,7 @@ classdef AxesInspectorEdits
             end
 
             member = extractAfter(path,".");
-            if path == "TickLabelFormat", member = path; end
+            if any(path == ["TickLabelFormat","Colormap"]), member = path; end
             switch member
                 case "String"
                     lines = string(value);
@@ -137,6 +137,11 @@ classdef AxesInspectorEdits
                     value = string(validatestring(value,["normal","italic"]));
                 case "Interpreter"
                     value = string(validatestring(value,["tex","latex","none"]));
+                case "Colormap"
+                    assert(isa(value,"double") && ismatrix(value) && isreal(value) && ...
+                        ~isempty(value) && size(value,2) == 3 && all(isfinite(value(:))) && ...
+                        all(value(:) >= 0 & value(:) <= 1), ...
+                        "yamada:AxesInspectorEdits:Colormap","Choose a colormap with RGB values between zero and one.");
                 case "TickLabelFormat"
                     value = string(validatestring(value,yamada.model.AxesInspectorProperties.formats()));
             end
@@ -178,7 +183,7 @@ classdef AxesInspectorEdits
             receiver = "app." + component.Name;
             suffix = "";
             syntax = "assignment";
-            if isempty(original) && (endsWith(path,".String") || path == "TickLabelFormat")
+            if isempty(original) && ((endsWith(path,".String") && path ~= "Label.String") || path == "TickLabelFormat")
                 switch path
                     case "Title.String"
                         name = "title";

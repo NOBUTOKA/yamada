@@ -945,7 +945,7 @@ classdef DocumentModel < handle
             end
         end
 
-        function component = insertComponent(obj, registry, factory, parentId, creationArguments)
+        function component = insertComponent(obj, registry, factory, parentId, creationArguments, axesAttachment)
             % insertComponent Create and insert one registry-approved component variant.
             arguments (Input)
                 obj (1, 1) yamada.model.DocumentModel
@@ -953,6 +953,7 @@ classdef DocumentModel < handle
                 factory string
                 parentId string
                 creationArguments cell = {}
+                axesAttachment (1,1) logical = false
             end
             arguments (Output)
                 component (1, 1) yamada.model.ComponentRecord
@@ -961,9 +962,9 @@ classdef DocumentModel < handle
             obj.ensureCurrentSource(registry);
             % Validate the factory and parent before changing document state.
             definition = registry.get(factory, creationArguments);
-            if definition.IsRoot || definition.IsProgrammaticOnly || ...
-                    definition.Category == "FigureTools" || ...
-                    definition.RequiresParentComponent
+            isColorbar = factory == "colorbar" && axesAttachment;
+            if ~isColorbar && (definition.IsRoot || definition.IsProgrammaticOnly || ...
+                    definition.Category == "FigureTools" || definition.RequiresParentComponent)
                 error("yamada:DocumentModel:UnsupportedInsertion", ...
                     "Factory ""%s"" is not eligible for palette insertion.", factory);
             end
@@ -979,7 +980,9 @@ classdef DocumentModel < handle
             end
 
             % Choose a stable MATLAB property name and safe initial geometry.
-            name = obj.uniqueComponentName(obj.displayName(factory));
+            baseName = obj.displayName(factory);
+            if isColorbar, baseName = definition.DisplayName; end
+            name = obj.uniqueComponentName(baseName);
             component = yamada.model.ComponentRecord(obj.newComponentId(), name, ...
                 definition.Factory, definition.DeclaredType, "generated");
             component.CreationArguments = definition.CreationArguments;
