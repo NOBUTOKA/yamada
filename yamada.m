@@ -413,7 +413,7 @@ classdef yamada < handle
         end
 
         function diffButtonPushed(app)
-            % diffButtonPushed Display original and generated source side by side.
+            % diffButtonPushed Compare the original and committed source snapshots.
             arguments (Input)
                 app (1, 1) yamada
             end
@@ -426,17 +426,11 @@ classdef yamada < handle
                 return
             end
             window = uifigure("Name", "Source Diff Preview", "Position", [180 180 1100 650]);
-            grid = uigridlayout(window, [2 2]);
-            grid.RowHeight = {22, "1x"};
-            uilabel(grid, "Text", "Original source");
-            uilabel(grid, "Text", "Generated source");
-            original = uitextarea(grid, "Value", cellstr(app.Document.OriginalText), ...
-                "Editable", "off");
-            original.Layout.Row = 2;
-            original.Layout.Column = 1;
-            generated = uitextarea(grid, "Value", cellstr(source), "Editable", "off");
-            generated.Layout.Row = 2;
-            generated.Layout.Column = 2;
+            grid = uigridlayout(window, [1 1]);
+            diffPath = fullfile(fileparts(mfilename("fullpath")), ...
+                "resources", "SourceDiffPreview.html");
+            uihtml(grid, "HTMLSource", diffPath, "Tag", "yamada-source-diff", ...
+                "Data", struct("Original", app.Document.OriginalText, "Generated", source));
         end
 
         function newDocument(app, className)
