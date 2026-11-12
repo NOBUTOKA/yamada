@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "yamada R2024a axes setting function review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "matlabRelease", "status", "scope", "forms"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "matlabRelease": { "const": "R2024a" },
+    "status": { "const": "reviewDraft" },
+    "scope": { "$ref": "#/$defs/nonemptyString" },
+    "forms": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/form" }
+    }
+  },
+  "$defs": {
+    "nonemptyString": { "type": "string", "minLength": 1 },
+    "identifier": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$" },
+    "propertyPath": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)*$"
+    },
+    "form": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "name", "targetFactories", "target", "outputs",
+        "arguments", "effects", "generationPreference", "documentation"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/propertyPath" },
+        "name": { "$ref": "#/$defs/identifier" },
+        "targetFactories": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["axes", "uiaxes", "polaraxes", "geoaxes"] }
+        },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["position", "implicit"],
+          "properties": {
+            "position": { "const": 1 },
+            "implicit": { "enum": ["inferWithWarning", "explicitOnly"] }
+          }
+        },
+        "outputs": { "const": 0 },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/argument" }
+        },
+        "effects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/effect" }
+        },
+        "generationPreference": { "enum": ["assignment", "function"] },
+        "documentation": {
+          "type": "string",
+          "pattern": "^https://www\\.mathworks\\.com/help/releases/R2024a/"
+        },
+        "optionEffects": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/identifier" },
+          "additionalProperties": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "$ref": "#/$defs/propertyPath" }
+          }
+        },
+        "reviewNotes": { "$ref": "#/$defs/nonemptyString" }
+      },
+      "if": { "properties": { "effects": { "maxItems": 0 } } },
+      "then": { "required": ["reviewNotes"] }
+    },
+    "argument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "type": {
+          "enum": [
+            "textLiteral", "textList", "enum", "finiteNumber",
+            "increasingFinitePair", "increasingFiniteVector"
+          ]
+        },
+        "representations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "characterVector", "stringScalar", "stringVector",
+              "cellOfCharacterVectors", "characterMatrix"
+            ]
+          }
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/nonemptyString" }
+        },
+        "allowsEmpty": { "type": "boolean" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "enum" } } },
+          "then": { "required": ["values"] },
+          "else": { "not": { "required": ["values"] } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "textLiteral" } } },
+          "then": { "required": ["representations"] },
+          "else": { "not": { "required": ["representations"] } }
+        },
+        {
+          "if": { "required": ["allowsEmpty"] },
+          "then": {
+            "properties": { "type": { "enum": ["textList", "increasingFiniteVector"] } }
+          }
+        }
+      ]
+    },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": { "$ref": "#/$defs/propertyPath" },
+        "argument": { "$ref": "#/$defs/identifier" },
+        "literal": { "type": ["string", "number", "boolean"] }
+      },
+      "oneOf": [
+        { "required": ["argument"] },
+        { "required": ["literal"] }
+      ]
+    }
+  }
+}
