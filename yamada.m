@@ -3280,7 +3280,7 @@ classdef yamada < handle
         end
 
         function openAxesTextSettings(app,id,group)
-            % openAxesTextSettings Show the selected text object's details.
+            % openAxesTextSettings Open a specialized Inspector editor or navigate to its owning axes.
             arguments (Input)
                 app (1,1) yamada
                 id (1,1) string
@@ -3296,6 +3296,22 @@ classdef yamada < handle
                 if isscalar(picker), focus(picker); end
                 app.refreshEditCommands();
                 app.scheduleOverlayRefresh();
+                return
+            end
+            if group == "EditColormap"
+                component = document.getComponent(id);
+                settings = component.getSettings("Colormap");
+                if ~isempty(settings)
+                    map = settings(end).LiteralValue;
+                elseif ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles,char(id))
+                    native = app.PreviewHandles(char(id));
+                    if ~isvalid(native), return, end
+                    map = native.Colormap;
+                else
+                    return
+                end
+                yamada.ui.inspector.CustomColormapDialog.open(app.UIFigure,map, ...
+                    @(value) app.commitAxesSetting(document,id,"Colormap",value,"set"));
                 return
             end
             yamada.ui.inspector.AxesTextSettingsDialog.open(app.UIFigure,group, ...

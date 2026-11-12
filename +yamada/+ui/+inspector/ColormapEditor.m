@@ -16,17 +16,26 @@ classdef ColormapEditor
             control = uigridlayout(parent,[1 1],"Padding",[0 0 0 0],"ColumnSpacing",4, ...
                 "RowHeight",{"1x"},"Tag","yamada-colormap-editor");
             picker = matlab.ui.control.DropDown.empty;
+            edit = matlab.ui.control.Button.empty;
             if editable
                 control.RowHeight = {24, "1x"};
                 control.RowSpacing = 4;
-                control.ColumnWidth = {"1x"};
+                control.ColumnWidth = {"1x","fit"};
                 picker = uidropdown(control,"Items",cellstr(yamada.ui.inspector.ColormapEditor.presets()), ...
                     "Tag","yamada-colormap-preset");
                 picker.Layout.Row = 1;
+                picker.Layout.Column = 1;
+                edit = uibutton(control,"Text","Edit...","Enable","off", ...
+                    "Tag","yamada-customize-colormap");
+                edit.Layout.Row = 1;
+                edit.Layout.Column = 2;
             end
             strip = uiimage(control,"ScaleMethod","stretch","Tag","yamada-colormap-preview");
-            if editable, strip.Layout.Row = 2; end
-            control.UserData = struct("Picker",picker,"Strip",strip,"Length",256);
+            if editable
+                strip.Layout.Row = 2;
+                strip.Layout.Column = [1 2];
+            end
+            control.UserData = struct("Picker",picker,"Edit",edit,"Strip",strip,"Length",256);
             yamada.ui.inspector.ColormapEditor.bind(control,commitFcn);
         end
 
@@ -54,9 +63,7 @@ classdef ColormapEditor
             if isnumeric(map) && ismatrix(map) && size(map,2) == 3 && ~isempty(map) && ...
                     isreal(map) && all(isfinite(map(:))) && all(map(:)>=0 & map(:)<=1)
                 parts.Length = size(map,1);
-                indices = round(linspace(1,parts.Length,128));
-                pixels = uint8(round(255*map(indices,:)));
-                parts.Strip.ImageSource = repmat(reshape(pixels,1,128,3),8,1,1);
+                parts.Strip.ImageSource = yamada.ui.inspector.ColormapEditor.gradient(map);
                 label = "Custom";
                 if ~isempty(parts.Picker)
                     for preset = yamada.ui.inspector.ColormapEditor.presets()
@@ -76,8 +83,21 @@ classdef ColormapEditor
                 parts.Picker.Items = cellstr(choices);
                 parts.Picker.Value = label;
                 parts.Picker.Enable = editable;
+                parts.Edit.Enable = editable && label ~= "Unresolved";
             end
             control.UserData = parts;
+        end
+        function image = gradient(map)
+            % gradient Convert literal RGB rows to a native image strip.
+            arguments (Input)
+                map (:,3) double
+            end
+            arguments (Output)
+                image uint8
+            end
+            indices = round(linspace(1,size(map,1),256));
+            pixels = uint8(round(255*map(indices,:)));
+            image = repmat(reshape(pixels,1,256,3),8,1,1);
         end
     end
 

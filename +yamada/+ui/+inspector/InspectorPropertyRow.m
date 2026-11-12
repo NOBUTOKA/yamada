@@ -101,6 +101,10 @@ classdef InspectorPropertyRow < handle
                 obj.SettingsButton.Layout.Row = 1;
                 obj.SettingsButton.Layout.Column = 2;
             end
+            if ~isempty(settingsFcn) && ~obj.IsComposite && definition.Editor == "colormap"
+                obj.SettingsButton = obj.Editor.UserData.Edit;
+                obj.SettingsButton.ButtonPushedFcn = @(~,~) settingsFcn(obj.ComponentId,"EditColormap");
+            end
             obj.captureNormalBackgroundColor();
             obj.rebind(componentId);
         end
@@ -123,6 +127,7 @@ classdef InspectorPropertyRow < handle
             controls = findall(obj.Editor);
             for index = 1:numel(controls)
                 control = controls(index);
+                if isequal(control,obj.SettingsButton), continue, end
                 for name = ["ValueChangedFcn", "ValueChangingFcn", "ButtonPushedFcn"]
                     if ~isprop(control, name), continue, end
                     callback = control.(name);
