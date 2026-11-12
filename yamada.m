@@ -3292,12 +3292,8 @@ classdef yamada < handle
                 app.SelectedComponentId = document.getComponent(id).ParentId;
                 app.synchronizeHierarchySelection();
                 app.refreshInspector();
-                for row = app.InspectorRows
-                    if row.identifier() == "property:Colormap"
-                        row.reveal(app.InspectorView);
-                        break
-                    end
-                end
+                picker = findall(app.InspectorView.contentGrid(),"Tag","yamada-colormap-preset");
+                if isscalar(picker), focus(picker); end
                 app.refreshEditCommands();
                 app.scheduleOverlayRefresh();
                 return

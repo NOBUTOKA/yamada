@@ -1,4 +1,4 @@
-classdef EditorInteractionTest < matlab.unittest.TestCase
+classdef EditorInteractionTest < matlab.uitest.TestCase
     % EditorInteractionTest Verify the editor interaction surfaces.
     %   These tests construct the real programmatic editor, allow its UI to lay
     %   out, inspect public callback wiring through UI handles, and always delete
@@ -116,38 +116,28 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             end
             scroll(host,"top");
             drawnow;
-            % Check a direct child at the row position to avoid nested-grid coordinates.
-            pickerPosition = getpixelposition(picker,true);
-            content = host.Children;
-            contentPosition = getpixelposition(content,true);
-            point = pickerPosition(1:2) - contentPosition(1:2) + content.Position(1:2);
-            probe = uipanel(host,"Position",[point 1 1],"BorderType","none");
-            drawnow;
-            testCase.assertFalse(isInScrollView(host,probe), ...
+            testCase.assertFalse(colormapInViewport(host,picker), ...
                 "Colormap should start outside the viewport.");
 
             tree.SelectedNodes = barNode;
             tree.SelectionChangedFcn(tree,struct("SelectedNodes",barNode));
             link = findall(figure,"Tag","yamada-edit-axes-colormap");
             testCase.verifyEqual(string(link.Text),"Edit...");
-            link.ButtonPushedFcn(link,struct());
+            scroll(host,"bottom");
+            drawnow;
+            testCase.press(link);
             testCase.verifyEqual(app.SelectedComponentId,axesRecord.Id);
             picker = findall(figure,"Tag","yamada-colormap-preset");
             strip = findall(picker.Parent,"Tag","yamada-colormap-preview");
             testCase.verifyEqual(picker.Layout.Row,1);
             testCase.verifyEqual(strip.Layout.Row,2);
             started = tic;
-            while ~isInScrollView(host,probe) && toc(started) < 3
+            while ~(colormapInViewport(host,picker) && colormapInViewport(host,strip)) && toc(started) < 3
                 pause(0.05);
             end
-            testCase.verifyTrue(isInScrollView(host,probe), ...
-                "Target " + mat2str(point) + ", picker " + mat2str(getpixelposition(picker,true)) + ...
-                ", content " + mat2str(getpixelposition(content,true)) + ...
-                ", viewport " + mat2str(getpixelposition(host,true)));
-            delete(probe);
-            previous = picker.Value;
-            picker.Value = "Turbo";
-            picker.ValueChangedFcn(picker,struct("PreviousValue",previous));
+            testCase.verifyTrue(colormapInViewport(host,picker));
+            testCase.verifyTrue(colormapInViewport(host,strip));
+            testCase.choose(picker,"Turbo");
             testCase.assertNotEmpty(axesRecord.getSettings("Colormap"),string(picker.Parent.Tooltip));
             ax = findall(figure,"-isa","matlab.ui.control.UIAxes");
             testCase.assertNumElements(ax,1);
@@ -2139,6 +2129,21 @@ if ~isempty(value) && isvalid(value)
     delete(value);
 end
 end
+
+function visible = colormapInViewport(host, control)
+% colormapInViewport Check native window coordinates after the browser scrolls.
+arguments (Input)
+    host (1,1) matlab.ui.container.Panel
+    control
+end
+arguments (Output)
+    visible (1,1) logical
+end
+viewport = getpixelposition(host,true);
+bounds = getpixelposition(control,true);
+visible = bounds(2) >= viewport(2)-1 && bounds(2)+bounds(4) <= viewport(2)+viewport(4)+1;
+end
+
 
 %{
 Copyright (C) 2026 Nobuto Kaitoh

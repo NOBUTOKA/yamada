@@ -236,15 +236,6 @@ classdef InspectorPropertyRow < handle
             obj.captureNormalBackgroundColor();
         end
 
-        function reveal(obj, view)
-            % reveal Bring this property's native row into the Inspector viewport.
-            arguments (Input)
-                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
-                view (1, 1) yamada.ui.inspector.InspectorView
-            end
-            view.reveal(obj.Editor.Parent);
-        end
-
         function id = identifier(obj)
             % identifier Return the stable projected row identifier for surface comparison.
             arguments (Input)
