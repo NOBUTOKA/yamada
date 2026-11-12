@@ -7,8 +7,7 @@
     "uipanel",
     "uigridlayout",
     "uitab",
-    "uibuttongroup",
-    "uitabgroup"
+    "uibuttongroup"
   ],
   "isRoot": false,
   "creationArguments": [

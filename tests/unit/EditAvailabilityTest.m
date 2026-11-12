@@ -75,6 +75,37 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             testCase.verifyTrue(clipboard.availability("Paste", document, grid.Id, registry).Enabled);
         end
 
+        function tabGroupsAcceptOnlyTabs(testCase)
+            % tabGroupsAcceptOnlyTabs Check catalog, insertion, paste, and reparenting for tab groups.
+            [document, registry, ~, right, leaf] = EditAvailabilityTest.fixture(false);
+            for id = registry.listVariantIds()
+                definition = registry.getById(id);
+                testCase.verifyEqual(any(definition.AllowedParentFactories == "uitabgroup"), ...
+                    definition.Factory == "uitab", id);
+            end
+
+            % Reject direct placement and resolve paste through the usual ancestor fallback.
+            group = document.insertComponent(registry, "uitabgroup", right.Id);
+            history = document.HistoryIndex;
+            testCase.verifyError(@() document.insertComponent(registry, "uilabel", group.Id), ...
+                "yamada:DocumentModel:InvalidInsertionParent");
+            testCase.verifyError(@() document.reparentSubtree(leaf.Id, group.Id, registry), ...
+                "yamada:DocumentModel:UnsafeSubtreeEdit");
+            testCase.verifyEqual(document.HistoryIndex, history);
+            clipboard = yamada.model.ComponentClipboard();
+            clipboard.copy(document, leaf.Id, registry);
+            pasted = clipboard.paste(document, group.Id, registry);
+            testCase.verifyEqual(pasted.ParentId, right.Id);
+
+            % Allow placing tabs in a group and controls inside a tab.
+            tab = document.insertComponent(registry, "uitab", group.Id);
+            testCase.verifyEqual(tab.ParentId, group.Id);
+            pasted = clipboard.paste(document, tab.Id, registry);
+            testCase.verifyEqual(pasted.ParentId, tab.Id);
+            document.reparentSubtree(leaf.Id, tab.Id, registry);
+            testCase.verifyEqual(leaf.ParentId, tab.Id);
+        end
+
         function generatedSelectedTabReferencesConstrainLaterEdits(testCase)
             % generatedSelectedTabReferencesConstrainLaterEdits Keep editor-generated internal links valid.
             registry = yamada.model.ComponentRegistry.createDefault();
