@@ -262,7 +262,7 @@ classdef ComponentRegistry < handle
                 properties = obj.EffectiveProperties(key);
                 return
             end
-            properties = definition.Properties;
+            properties = yamada.model.AxesInspectorProperties.extend(factory,definition.Properties);
             suppressedPaths = strings(1, 0);
             for index = 1:numel(obj.ParentContextRules)
                 rule = obj.ParentContextRules(index);

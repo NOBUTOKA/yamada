@@ -439,7 +439,9 @@ classdef PropertyEditorFactory
                 end
             elseif isa(control, "matlab.ui.control.TextArea")
                 if iscell(rawValue) || (isstring(rawValue) && ~isscalar(rawValue))
-                    control.Value = rawValue;
+                    control.Value = reshape(cellstr(string(rawValue)),[],1);
+                elseif ischar(rawValue) && ~isrow(rawValue) && ~isempty(rawValue)
+                    control.Value = cellstr(rawValue);
                 elseif ischar(rawValue) || (isstring(rawValue) && isscalar(rawValue))
                     control.Value = {char(rawValue)};
                 else

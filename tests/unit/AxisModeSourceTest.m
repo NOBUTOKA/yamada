@@ -95,6 +95,42 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document),document.OriginalText);
         end
 
+        function editsAxesTextAndSubtitleLink(testCase)
+            % editsAxesTextAndSubtitleLink Preserve a shared call and undo independent Subtitle settings.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", ...
+                "title(app.Control, 'Before', 'Sub', Color=[1 0 0]);"]);
+            id = control.Id;
+            document.editAxesInspector(id,"Title.String",["First","Second"],"set",registry);
+            testCase.verifySubstring(document.CurrentText,"title(app.Control, {'First', 'Second'}, 'Sub', Color=[1 0 0]);");
+            testCase.verifyTrue(yamada.model.AxesInspectorProperties.subtitleLink(control,"Subtitle.Color"));
+            document.editAxesInspector(id,"Subtitle.Color",[],"override",registry);
+            testCase.verifyFalse(yamada.model.AxesInspectorProperties.subtitleLink(control,"Subtitle.Color"));
+            document.editAxesInspector(id,"Subtitle.Color",[0 1 0],"set",registry);
+            testCase.verifyEqual(control.getSettings("Title.Color").LiteralValue,[1 0 0]);
+            testCase.verifyEqual(control.getProperty("Subtitle.Color").LiteralValue,[0 1 0]);
+            document.editAxesInspector(id,"Subtitle.Color",[],"share",registry);
+            testCase.verifyTrue(yamada.model.AxesInspectorProperties.subtitleLink(control,"Subtitle.Color"));
+            reopened = yamada.source.AppSourceParser.parseText(document.CurrentText,registry);
+            testCase.verifyTrue(yamada.model.AxesInspectorProperties.subtitleLink( ...
+                reopened.getComponentByName("Control"),"Subtitle.Color"));
+            document.undo();
+            testCase.verifyEqual(control.getProperty("Subtitle.Color").LiteralValue,[0 1 0]);
+            document.redo();
+            testCase.verifyTrue(yamada.model.AxesInspectorProperties.subtitleLink(control,"Subtitle.Color"));
+        end
+
+        function insertsAndEditsGeographicFormat(testCase)
+            % insertsAndEditsGeographicFormat Generate the explicit target form and update its value locally.
+            [document, registry, control] = testCase.fixture( ...
+                "app.Control = geoaxes(app.UIFigure, Basemap='none');","geoaxes");
+            document.editAxesInspector(control.Id,"TickLabelFormat","dd","set",registry);
+            testCase.verifySubstring(document.CurrentText,'geotickformat(app.Control, "dd");');
+            document.editAxesInspector(control.Id,"TickLabelFormat","-dm","set",registry);
+            testCase.verifySubstring(document.CurrentText,'geotickformat(app.Control, "-dm");');
+            testCase.verifyEqual(string(control.getSettings("TickLabelFormat").LiteralValue),"-dm");
+        end
+
         function pendingModeIsAddedAfterExistingConstructorValue(testCase)
             % pendingModeIsAddedAfterExistingConstructorValue Keep the constructor syntax while preserving a requested final auto mode.
             for factory = ["uiaxes", "axes"]

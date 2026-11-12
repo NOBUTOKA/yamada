@@ -64,6 +64,39 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'editorShell', 'ui'})
+        function editsAxesTitleThroughItsInspector(testCase)
+            % editsAxesTitleThroughItsInspector Commit body and popup values through native callbacks.
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            [figure,palette] = editorPalette();
+            index = find(string(palette.Data(:,1)) == "UI Axes",1);
+            palette.DoubleClickedFcn(palette,struct("InteractionInformation",struct("Row",index)));
+            component = app.Document.getComponent(app.SelectedComponentId);
+            labels = findall(figure,"Tag","yamada-inspector-property-label");
+            titleLabel = labels(string({labels.Text}) == "Title");
+            testCase.assertNumElements(titleLabel,1);
+            editor = findall(titleLabel.Parent,"Tag","yamada-inspector-property-editor");
+            editor.Value = {'First line';'Second line'};
+            editor.ValueChangedFcn(editor,struct());
+            testCase.verifyEqual(string(component.getSettings("Title.String").LiteralValue),["First line","Second line"]);
+            testCase.verifySubstring(app.Document.CurrentText,"title(app."+component.Name+",");
+            handles = findall(figure,"-isa","matlab.ui.control.UIAxes");
+            testCase.assertNumElements(handles,1);
+            testCase.verifyEqual(reshape(string(handles.Title.String),1,[]),["First line","Second line"]);
+            labels = findall(figure,"Tag","yamada-inspector-property-label");
+            titleLabel = labels(string({labels.Text}) == "Title");
+            settings = findall(titleLabel.Parent,"Tag","yamada-axes-text-settings");
+            settings.ButtonPushedFcn(settings,struct());
+            dialog = findall(0,"Tag","yamada-axes-text-dialog");
+            testCase.assertNumElements(dialog,1);
+            field = findall(dialog,"Tag","yamada-axes-detail-FontSize");
+            field.Value = 19;
+            field.ValueChangedFcn(field,struct());
+            testCase.verifyEqual(component.getProperty("Title.FontSize").LiteralValue,19);
+            handles = findall(figure,"-isa","matlab.ui.control.UIAxes");
+            testCase.verifyEqual(handles.Title.FontSize,19);
+        end
+
         function hierarchyRenameOwnsTextKeysAndPreservesNodes(testCase)
             % hierarchyRenameOwnsTextKeysAndPreservesNodes Commit and cancel inline names with atomic history.
             app = yamada();

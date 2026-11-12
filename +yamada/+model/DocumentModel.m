@@ -1014,6 +1014,49 @@ classdef DocumentModel < handle
             obj.recordHistory(edit);
         end
 
+        function editAxesInspector(obj,id,path,value,action,registry)
+            % editAxesInspector Validate and publish one axes setting with reversible source ownership.
+            arguments (Input)
+                obj (1,1) yamada.model.DocumentModel
+                id (1,1) string
+                path (1,1) string
+                value
+                action (1,1) string
+                registry (1,1) yamada.model.ComponentRegistry
+            end
+            obj.ensureCurrentSource(registry);
+            assert(obj.currentModelIsBound(), "yamada:DocumentModel:UnsafeAxesSource", ...
+                "The axes source must match the current document.");
+            component = obj.getComponent(id);
+            assert(~isempty(component) && component.IsEditable, ...
+                "yamada:DocumentModel:UnsafeAxesSource", "The selected axes cannot be edited.");
+            [batch, requested] = yamada.source.AxesInspectorEdits.plan(obj,component,path,value,action);
+            if batch.AfterText == obj.CurrentText, return, end
+            [parsed, diagnostics] = yamada.source.AppSourceParser.parseText(batch.AfterText,registry,obj.FilePath);
+            if yamada.validation.ModelValidator.hasErrors(diagnostics)
+                error("yamada:DocumentModel:UnsafeAxesSource","%s",strjoin(string({diagnostics.Message}),newline));
+            end
+            updated = parsed.getComponentByName(component.Name);
+            assert(~isempty(updated), "yamada:DocumentModel:UnsafeAxesSource", "The edited axes was not found.");
+            setting = updated.getSettings(path);
+            assert(~isempty(setting) && setting(end).IsCertain && setting(end).ValueKind == "literal" && ...
+                isequaln(setting(end).LiteralValue,requested), ...
+                "yamada:DocumentModel:UnsafeAxesSource", "The edited setting could not be verified.");
+            if action ~= "set"
+                shared = yamada.model.AxesInspectorProperties.subtitleLink(updated,path);
+                assert(shared == (action == "share"), ...
+                    "yamada:DocumentModel:UnsafeAxesSource", "The Subtitle link could not be verified.");
+            end
+            before = obj.CurrentSource;
+            state = before.withBatch(batch,"",parsed.sourceAnalysis());
+            obj.publishParsedSource(state,registry,parsed);
+            obj.SourcePublication = true;
+            cleanup = onCleanup(@() obj.endSourcePublication());
+            obj.recordHistory(struct("Kind","axes-inspector","ComponentId",id, ...
+                "SourceForward",batch.Edits,"SourceInverse",batch.InverseEdits, ...
+                "SourceBeforeId",before.StateId,"SourceAfterId",obj.CurrentSource.StateId));
+        end
+
         function entry = setProperty(obj, componentId, path, value, registry)
             % setProperty Change one component property and record its prior state.
             arguments (Input)
@@ -3233,6 +3276,12 @@ classdef DocumentModel < handle
                 stateId = edit.SourceBeforeId;
             end
             batch = yamada.source.SourcePatchBatch(obj.CurrentText, edits);
+            if edit.Kind == "axes-inspector"
+                parsed = yamada.source.AppSourceParser.parseText(batch.AfterText,obj.SourceRegistry,obj.FilePath);
+                state = obj.CurrentSource.withBatch(batch,stateId,parsed.sourceAnalysis());
+                obj.publishParsedSource(state,obj.SourceRegistry,parsed);
+                return
+            end
             callback = struct();
             if edit.Kind == "callback" && isfield(edit, "ComponentId") && ...
                     (~isfield(edit, "CallbackOnly") || edit.CallbackOnly)
@@ -3745,6 +3794,8 @@ classdef DocumentModel < handle
                         component.Name = edit.OldName;
                         obj.RenameEdits = edit.Before;
                     end
+                case "axes-inspector"
+                    % Exact source is restored by the shared history publication.
                 case "callback"
                     if forward, obj.CallbackEdits = edit.After; else, obj.CallbackEdits = edit.Before; end
                 case "insert"

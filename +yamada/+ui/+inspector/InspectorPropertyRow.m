@@ -15,11 +15,12 @@ classdef InspectorPropertyRow < handle
         Row struct = struct()
         IsComposite logical = false
         BindingGeneration uint64 = uint64(0)
+        SettingsButton
     end
 
     methods
         function obj = InspectorPropertyRow( ...
-                parent, row, componentId, definition, commitFcn, batchCommitFcn)
+                parent, row, componentId, definition, commitFcn, batchCommitFcn, settingsFcn)
             % InspectorPropertyRow Create one disposable native property-row control set.
             arguments (Input)
                 parent
@@ -28,6 +29,7 @@ classdef InspectorPropertyRow < handle
                 definition
                 commitFcn (1, 1) function_handle
                 batchCommitFcn = []
+                settingsFcn = []
             end
             arguments (Output)
                 obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
@@ -73,6 +75,15 @@ classdef InspectorPropertyRow < handle
                     @(value) obj.commit(value), @(changes) obj.commitBatch(changes));
             end
             obj.Editor.Layout.Column = 2;
+            if ~isempty(settingsFcn) && ~obj.IsComposite && ...
+                    isfield(definition.Metadata,"axesTextMember") && definition.Metadata.axesTextMember == "String"
+                grid.ColumnWidth = {105,"1x",62};
+                obj.SettingsButton = uibutton(grid,"Text","Settings", ...
+                    "Tag","yamada-axes-text-settings");
+                obj.SettingsButton.Layout.Column = 3;
+                group = definition.Metadata.axesTextGroup;
+                obj.SettingsButton.ButtonPushedFcn = @(~,~) settingsFcn(obj.ComponentId,group);
+            end
             obj.captureNormalBackgroundColor();
             obj.rebind(componentId);
         end

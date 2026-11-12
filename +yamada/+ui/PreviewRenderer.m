@@ -733,6 +733,7 @@ classdef PreviewRenderer < handle
                     continue
                 end
                 property = definition.getProperty(entry.Path);
+                if entry.Path == "TickLabelFormat" && component.Factory == "geoaxes", property = yamada.model.PropertyDefinition.empty; end
                 imageSource = ~isempty(property) && property.PreviewPolicy == "adapt" && property.Editor == "asset";
                 if ~imageSource && ~isempty(property) && ...
                         any(property.PreviewPolicy == ["skip", "notRendered"])

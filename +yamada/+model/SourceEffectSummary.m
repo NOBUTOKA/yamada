@@ -37,7 +37,7 @@ classdef SourceEffectSummary
                     end
                     if setting.Method ~= "functionCall" && ...
                             ~any(string({concrete.Properties.Path}) == setting.Path) && ...
-                            ~any(setting.Path == ["Layout.Row", "Layout.Column"])
+                            ~any(setting.Path == ["Layout.Row", "Layout.Column", yamada.model.AxesInspectorProperties.paths(member.Factory)])
                         document.Metadata.HasUnrecognizedSetter = true;
                     end
                 end

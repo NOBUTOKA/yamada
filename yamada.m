@@ -3117,6 +3117,14 @@ classdef yamada < handle
                 message = "Selection changed before the edit could be applied.";
                 return
             end
+            if any(yamada.model.AxesInspectorProperties.paths(component.Factory) == path)
+                if path == "TickLabelFormat"
+                    [value, safe] = yamada.source.MatlabLiteralParser.parse(string(value));
+                    if ~safe, message = "Choose a geographic tick label format."; return, end
+                end
+                message = app.commitAxesSetting(app.Document,componentId,path,value,"set");
+                return
+            end
             definition = app.inspectorDefinition(component, path);
             allowsEmpty = isfield(definition.ValueSchema, "allowsEmpty") && ...
                 definition.ValueSchema.allowsEmpty;
@@ -3208,6 +3216,84 @@ classdef yamada < handle
             % Revalidate and dispatch the accepted property impact without rebuilding the shell.
             app.Document.validatePropertyCommit(app.Registry);
             app.refreshViews(yamada.ui.RefreshRequest("properties", component.Id, string({changes.Path})));
+        end
+
+        function message = commitAxesSetting(app,document,id,path,value,action)
+            % commitAxesSetting Commit axes Inspector input only for the current document and selection.
+            arguments (Input)
+                app (1,1) yamada
+                document (1,1) yamada.model.DocumentModel
+                id (1,1) string
+                path (1,1) string
+                value
+                action (1,1) string
+            end
+            arguments (Output)
+                message (1,1) string
+            end
+            message = "";
+            if isempty(app.Document) || app.Document ~= document || app.SelectedComponentId ~= id
+                message = "Selection changed before the edit could be applied.";
+                return
+            end
+            try
+                document.editAxesInspector(id,path,value,action,app.Registry);
+            catch exception
+                message = string(exception.message);
+                app.setStatus(message);
+                return
+            end
+            % Function and shared-argument edits can affect more than one visual property.
+            app.refreshShell();
+        end
+
+        function openAxesTextSettings(app,id,group)
+            % openAxesTextSettings Show the selected text object's details.
+            arguments (Input)
+                app (1,1) yamada
+                id (1,1) string
+                group (1,1) string
+            end
+            if isempty(app.Document) || app.SelectedComponentId ~= id, return, end
+            document = app.Document;
+            yamada.ui.inspector.AxesTextSettingsDialog.open(app.UIFigure,group, ...
+                @() app.axesTextSettingsSnapshot(document,id,group), ...
+                @(path,value,action) app.commitAxesSetting(document,id,path,value,action));
+        end
+
+        function rows = axesTextSettingsSnapshot(app,document,id,group)
+            % axesTextSettingsSnapshot Copy current literal and native default values for the popup.
+            arguments (Input)
+                app (1,1) yamada
+                document (1,1) yamada.model.DocumentModel
+                id (1,1) string
+                group (1,1) string
+            end
+            arguments (Output)
+                rows (1,:) struct
+            end
+            rows = struct("Path",{},"Value",{},"Editable",{},"Shared",{},"CanShare",{});
+            if isempty(app.Document) || app.Document ~= document || app.SelectedComponentId ~= id, return, end
+            component = document.getComponent(id);
+            for member = yamada.model.AxesInspectorProperties.names()
+                path = group + "." + member;
+                settings = component.getSettings(path);
+                value = [];
+                editable = component.IsEditable;
+                if ~isempty(settings)
+                    setting = settings(end);
+                    editable = editable && setting.IsCertain && setting.ValueKind == "literal" && ...
+                        (setting.IsEditable || setting.Method == "functionCall");
+                    if editable, value = setting.LiteralValue; end
+                elseif ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles,char(id))
+                    preview = app.PreviewHandles(char(id));
+                    value = preview.(group).(member);
+                end
+                [shared, canShare, titleValue] = yamada.model.AxesInspectorProperties.subtitleLink(component,path);
+                if shared, value = titleValue; end
+                rows(end+1) = struct("Path",path,"Value",{value},"Editable",editable && ~shared, ...
+                    "Shared",shared,"CanShare",canShare); %#ok<AGROW>
+            end
         end
 
         function reconcileItemSelectionValues(app, transaction, definitions)
@@ -3336,7 +3422,7 @@ classdef yamada < handle
                     row = yamada.ui.inspector.InspectorPropertyRow(section.contentGrid(), rowIndex, ...
                         component.Id, binding, @(id, path, text) ...
                         app.inspectorValueCommitted(id, path, text), @(id, changes) ...
-                        app.inspectorValuesCommitted(id, changes));
+                        app.inspectorValuesCommitted(id, changes), @(id, group) app.openAxesTextSettings(id,group));
                     section.setRowHeight(rowIndex, rowHeights(rowIndex));
                     app.InspectorRows(end + 1) = row;
                 end
@@ -3468,11 +3554,20 @@ classdef yamada < handle
             applicable = arrayfun(@(state) isempty(state.Definition.ApplicableStyles) || ...
                 any(state.Definition.ApplicableStyles == style), states) & ...
                 arrayfun(@(state) state.Definition.AuditDisposition ~= "omitted", states);
+            groups = yamada.model.AxesInspectorProperties.groups(component.Factory);
+            for index = 1:numel(states)
+                definition = states(index).Definition;
+                if isfield(definition.Metadata,"axesTextMember")
+                    applicable(index) = definition.Metadata.axesTextMember == "String";
+                elseif any(groups == definition.Path)
+                    applicable(index) = false;
+                end
+            end
             states = states(applicable);
             effectivePaths = arrayfun(@(state) state.Definition.Path, states);
             for index = 1:numel(component.Properties)
                 entry = component.Properties(index);
-                if any(effectivePaths == entry.Path)
+                if any(effectivePaths == entry.Path) || any(yamada.model.AxesInspectorProperties.paths(component.Factory) == entry.Path)
                     continue
                 end
                 metadata = struct("category", "Source", "order", index, ...
@@ -3592,6 +3687,22 @@ classdef yamada < handle
                     members(index).Reason = resolved.Reason;
                 elseif ~editable
                     members(index).Reason = resolved.ReadOnlyReason;
+                end
+                if any(yamada.model.AxesInspectorProperties.paths(component.Factory) == states(index).Definition.Path)
+                    settings = component.getSettings(states(index).Definition.Path);
+                    editable = component.IsEditable && isempty(entry);
+                    if ~isempty(settings)
+                        setting = settings(end);
+                        editable = component.IsEditable && setting.IsCertain && setting.ValueKind == "literal" && ...
+                            (setting.IsEditable || setting.Method == "functionCall");
+                        if editable
+                            rawValue = setting.LiteralValue;
+                            isKnown = true;
+                            value = yamada.ui.InspectorValueFormatter.format( ...
+                                yamada.model.PropertyEntry(setting.Path,rawValue));
+                        end
+                    end
+                    if editable, members(index).Reason = ""; end
                 end
                 members(index).Path = states(index).Definition.Path;
                 members(index).Value = value;

@@ -165,8 +165,10 @@ classdef AxesSettingFunctionCatalog
                     name = option{1};
                     token = string(option{2});
                 end
-                specs = form.options(string({form.options.name}) == string(name));
-                if ~isscalar(specs) || any(seen == string(name)), return, end
+                options = yamada.catalog.AxesSettingFunctionCatalog.records(form.options);
+                selected = options(cellfun(@(item) string(item.name) == string(name),options));
+                if ~isscalar(selected) || any(seen == string(name)), return, end
+                specs = selected{1};
                 [value, safe] = yamada.source.MatlabLiteralParser.parse(token);
                 if ~safe || ~yamada.catalog.AxesSettingFunctionCatalog.accepts(specs,value), return, end
                 affected = reshape(string(specs.paths),1,[]);
@@ -209,8 +211,20 @@ classdef AxesSettingFunctionCatalog
                     result = numeric && isrow(value) && numel(value) == 2 && value(1) < value(2);
                 case "increasingFiniteVector"
                     result = numeric && (isempty(value) || (isrow(value) && all(diff(value) > 0)));
-                case "rgbTriplet"
-                    result = numeric && isrow(value) && numel(value) == 3 && all(value >= 0 & value <= 1);
+                case "positiveNumber"
+                    result = numeric && isscalar(value) && value > 0;
+                case "fontName"
+                    result = scalarText && strlength(string(value)) > 0;
+                case "matlabColor"
+                    result = false;
+                    if scalarText || (numeric && isrow(value) && numel(value) == 3)
+                        try
+                            validatecolor(value);
+                            result = true;
+                        catch
+                            % Invalid colors are retained as unsupported source.
+                        end
+                    end
                 otherwise
                     error("yamada:AxesSettingFunctionCatalog:ArgumentKind", "Unknown axes argument kind %s.",spec.type);
             end
