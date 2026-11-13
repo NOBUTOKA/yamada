@@ -4,7 +4,7 @@
 
 ## Important
 
-`yamada` is under active development. Development and verification currently target MATLAB R2024a, and no versioned release is available yet. Review the generated diff before saving, and keep the target file under version control or make a backup.
+Review the generated diff before saving, and keep the target file under version control or make a backup.
 
 ## Features
 
@@ -31,7 +31,7 @@ yamada
 
 You can also launch the installed app from MATLAB's **Apps** tab. See [Getting Started](doc/GETTING_STARTED.md) for a walkthrough, the included example, and update/removal instructions. The normal launch command requires neither parentheses nor an output assignment.
 
-To run a development checkout before the release is published, clone the repository or extract **Code > Download ZIP**, add only its root to the MATLAB path, and enter `yamada`. See the [contributing guide](https://github.com/NOBUTOKA/yamada/blob/main/CONTRIBUTING.md) for development setup.
+To run a development checkout, clone the repository or extract **Code > Download ZIP**, add only its root to the MATLAB path, and enter `yamada`. See the [contributing guide](https://github.com/NOBUTOKA/yamada/blob/main/CONTRIBUTING.md) for development setup.
 
 ## Basic Usage
 
