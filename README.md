@@ -19,11 +19,11 @@
 
 - MATLAB R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
 
-The 1.0.0 release target is R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
+The 1.0.1 release target is R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
 
 ## Getting Started
 
-To install version 1.0.0, download `yamada-1.0.0.mltbx` from [GitHub Releases](https://github.com/NOBUTOKA/yamada/releases), open it in MATLAB, and follow the installation dialog. Then enter:
+To install version 1.0.1, download `yamada-1.0.1.mltbx` from [GitHub Releases](https://github.com/NOBUTOKA/yamada/releases), open it in MATLAB, and follow the installation dialog. Then enter:
 
 ```matlab
 yamada

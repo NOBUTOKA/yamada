@@ -5,7 +5,8 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)] [string] $Artifact,
-    [Parameter(Mandatory)] [string] $SigningKey
+    [Parameter(Mandatory)] [string] $SigningKey,
+    [ValidatePattern('^(main|release/[0-9]+\.[0-9]+)$')] [string] $ReleaseBranch = 'main'
 )
 $ErrorActionPreference = 'Stop'
 $artifactPath = (Resolve-Path -LiteralPath $Artifact).Path
@@ -28,8 +29,8 @@ if ((Get-Content -LiteralPath $checksumPath -Raw).Trim() -ne $expectedChecksum) 
 $repository = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
 & git -C $repository verify-commit $manifest.sourceCommit
 if ($LASTEXITCODE -ne 0) { throw 'The release source commit does not have a verifiable GPG signature.' }
-& git -C $repository merge-base --is-ancestor $manifest.sourceCommit main
-if ($LASTEXITCODE -ne 0) { throw 'The release source commit has not been integrated into main.' }
+& git -C $repository merge-base --is-ancestor $manifest.sourceCommit "refs/heads/$ReleaseBranch"
+if ($LASTEXITCODE -ne 0) { throw "The release source commit has not been integrated into $ReleaseBranch." }
 
 # Keep signed outputs fixed and let GnuPG request hardware interaction itself.
 $signature = $artifactPath + '.asc'

@@ -12,7 +12,7 @@ Preserve cohesive commits. An `AGENTS.md` commit must contain only that file and
 
 Use `major.minor.patch`: `1.0.0` for the first stable release, `1.0.1` for compatible fixes, `1.1.0` for compatible feature additions, and `2.0.0` for breaking changes. Compatibility includes supported input source, preservation and generation behavior, and documented user workflows, not just callable MATLAB APIs. Describe intentional compatibility changes in release notes. MATLAB release compatibility such as R2024a is a separate setting.
 
-Use `1.0.0` in Toolbox metadata, `v1.0.0` as the Git tag, `yamada 1.0.0` as the Release title, and `yamada-1.0.0.mltbx` as the asset name. Set the Toolbox version in the release metadata and verify that the tag, release title, and asset name agree. Keep the Toolbox UUID stable across versions.
+For the 1.0.1 maintenance release, use `1.0.1` in Toolbox metadata, `v1.0.1` as the Git tag, `yamada 1.0.1` as the Release title, and `yamada-1.0.1.mltbx` as the asset name. Set the Toolbox version in the release metadata and verify that the tag, release title, and asset name agree. Keep the Toolbox UUID stable across versions.
 
 The version, permanent UUID, author, public contact, description, and compatibility are defined in [`dev/release/toolbox.json`](../dev/release/toolbox.json). Use [`buildYamadaToolbox`](../dev/release/buildYamadaToolbox.m) to create a candidate, input manifest, and `SHA256SUMS`; see the [build procedure](../dev/release/README.md). The default output is ignored under `build/`. Existing candidates are not overwritten.
 
@@ -49,7 +49,7 @@ Record the source commit, MATLAB release/update, operating system, commands, com
 - Verify source preservation and non-execution of input code. Exercise cancellation, external changes, save failures, Japanese and space-containing paths, and startup from another working folder.
 - Check runtime resource discovery, cleanup of figures/listeners/timers, and uninstallation. For updates, test replacement of an installed earlier version and verify the stable Toolbox identity and resolved paths.
 
-If candidate code or packaged contents change, repeat affected checks and rebuild. Final validation must identify the exact commit and artifact to publish, including after integration into `main`.
+If candidate code or packaged contents change, repeat affected checks and rebuild. Final validation must identify the exact commit and artifact to publish, including after integration into the target release branch.
 
 ## Publish
 

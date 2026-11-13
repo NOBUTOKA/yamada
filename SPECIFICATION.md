@@ -1,6 +1,6 @@
 # yamada Product Specification
 
-For users evaluating or using yamada, this specification defines the supported behavior, application format, and safety limits of version 1.0.0.
+For users evaluating or using yamada, this specification defines the supported behavior, application format, and safety limits of version 1.0.1.
 
 ## Purpose
 
@@ -17,7 +17,7 @@ Users can create a new handle class from an empty canvas or open an existing han
 - Input: A `.m` file defining a class derived from `handle`
 - Output: A `.m` file defining an ordinary MATLAB class
 
-Other MATLAB releases, macOS, Linux, MATLAB Online, and headless operation are outside the 1.0.0 support contract. MATLAB remains required; no standalone executable is planned.
+Other MATLAB releases, macOS, Linux, MATLAB Online, and headless operation are outside the 1.0.1 support contract. MATLAB remains required; no standalone executable is planned.
 
 ## Supported Operations
 
