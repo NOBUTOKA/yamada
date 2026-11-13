@@ -2,6 +2,11 @@
 
 For users deciding whether to update, this log describes changes and compatibility limits by version.
 
+## 1.0.1
+
+- Restrict Tab Group children to tabs and prevent invalid drops into a Tab Group.
+- Update installation and development documentation to reflect the published Toolbox.
+
 ## 1.0.0
 
 Initial stable release for MATLAB R2024a on 64-bit Windows.

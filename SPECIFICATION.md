@@ -1,6 +1,6 @@
 # yamada Product Specification
 
-For users evaluating or using yamada, this specification defines the supported behavior, application format, and safety limits of version 1.0.0.
+For users evaluating or using yamada, this specification defines the supported behavior, application format, and safety limits of version 1.0.1.
 
 ## Purpose
 
@@ -17,7 +17,7 @@ Users can create a new handle class from an empty canvas or open an existing han
 - Input: A `.m` file defining a class derived from `handle`
 - Output: A `.m` file defining an ordinary MATLAB class
 
-Other MATLAB releases, macOS, Linux, MATLAB Online, and headless operation are outside the 1.0.0 support contract. MATLAB remains required; no standalone executable is planned. No versioned release has been published yet.
+Other MATLAB releases, macOS, Linux, MATLAB Online, and headless operation are outside the 1.0.1 support contract. MATLAB remains required; no standalone executable is planned.
 
 ## Supported Operations
 
@@ -83,7 +83,7 @@ The catalog includes the following persistent MATLAB R2024a UI components and cr
 - Instrumentation: `uigauge`, `uiknob`, `uilamp`, and `uiswitch`
 - Extended display and figure tools: `uihtml`, `uicontextmenu`, `uimenu`, `uitoolbar`, `uipushtool`, and `uitoggletool`
 
-Catalog inclusion does not mean that every creation variant supports insertion, Preview, layout, and property editing to the same extent. The parent component, creation variant, or property value may limit available operations. Unsupported state remains read-only where possible and is reported through diagnostics.
+Catalog inclusion does not mean that every creation variant supports insertion, Preview, layout, and property editing to the same extent. The parent component, creation variant, or property value may limit available operations. A Tab Group accepts only Tabs as direct children. To place controls within the group, add them to a Tab. Unsupported state remains read-only where possible and is reported through diagnostics.
 
 Transient operations such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolor`, and file-selection dialogs are out of scope because they are not persistent components in the document.
 

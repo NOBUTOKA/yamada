@@ -2,7 +2,7 @@
 
 For maintainers building and signing a Toolbox candidate, this guide describes the build inputs, output files, and signing command.
 
-Add `dev/release` to the MATLAB path and run `buildYamadaToolbox`. The build requires MATLAB R2024a on Windows. Its default output is the ignored `build/1.0.0` directory; pass a new output folder to keep multiple candidates. Existing output files are never replaced.
+Add `dev/release` to the MATLAB path and run `buildYamadaToolbox`. The build requires MATLAB R2024a on Windows. Its default output is the ignored `build/1.0.1` directory; pass a new output folder to keep multiple candidates. Existing output files are never replaced.
 
 ```matlab
 addpath(fullfile(pwd, "dev", "release"));
@@ -20,11 +20,11 @@ GPG-sign the final release commit on a work branch. Integrate it through a PR wh
 Build from that signed commit in a clean checkout, complete candidate validation, and prepare its detached signature using PowerShell:
 
 ```powershell
-./dev/release/Complete-YamadaRelease.ps1 -Artifact ./build/1.0.0/yamada-1.0.0.mltbx -SigningKey <signing-key>
+./dev/release/Complete-YamadaRelease.ps1 -Artifact ./build/1.0.1/yamada-1.0.1.mltbx -SigningKey <signing-key> -ReleaseBranch release/1.0
 ```
 
-The script checks candidate identity, SHA-256, clean-build provenance, integration into `main`, and the release commit's GPG signature before invoking GnuPG. GnuPG may request a passphrase, PIN, or hardware-key confirmation. A signing error is a publication blocker. Keep the detached signature outside the Toolbox.
+The script checks candidate identity, SHA-256, clean-build provenance, integration into the release branch, and the release commit's GPG signature before invoking GnuPG. GnuPG may request a passphrase, PIN, or hardware-key confirmation. A signing error is a publication blocker. Keep the detached signature outside the Toolbox.
 
-Publish the accepted `.mltbx`, its `.mltbx.asc`, and `SHA256SUMS` as Release assets. Keep the build manifest as local verification evidence. Sign `v1.0.0` and make it point to the same release source commit.
+Publish the accepted `.mltbx`, its `.mltbx.asc`, and `SHA256SUMS` as Release assets. Keep the build manifest as local verification evidence. Sign `v1.0.1` and make it point to the same release source commit.
 
 See the [release procedure](../../doc/RELEASING.md) for candidate acceptance and publication.

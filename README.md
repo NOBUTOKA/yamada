@@ -4,7 +4,7 @@
 
 ## Important
 
-`yamada` is under active development. Development and verification currently target MATLAB R2024a, and no versioned release is available yet. Review the generated diff before saving, and keep the target file under version control or make a backup.
+`yamada` is under active development. Development and verification currently target MATLAB R2024a. Review the generated diff before saving, and keep the target file under version control or make a backup.
 
 ## Features
 
@@ -19,11 +19,11 @@
 
 - MATLAB R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
 
-The 1.0.0 release target is R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
+The 1.0.1 release target is R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
 
 ## Getting Started
 
-To install version 1.0.0, download `yamada-1.0.0.mltbx` from [GitHub Releases](https://github.com/NOBUTOKA/yamada/releases), open it in MATLAB, and follow the installation dialog. Then enter:
+To install version 1.0.1, download `yamada-1.0.1.mltbx` from [GitHub Releases](https://github.com/NOBUTOKA/yamada/releases), open it in MATLAB, and follow the installation dialog. Then enter:
 
 ```matlab
 yamada
@@ -31,7 +31,7 @@ yamada
 
 You can also launch the installed app from MATLAB's **Apps** tab. See [Getting Started](doc/GETTING_STARTED.md) for a walkthrough, the included example, and update/removal instructions. The normal launch command requires neither parentheses nor an output assignment.
 
-To run a development checkout before the release is published, clone the repository or extract **Code > Download ZIP**, add only its root to the MATLAB path, and enter `yamada`. See the [contributing guide](https://github.com/NOBUTOKA/yamada/blob/main/CONTRIBUTING.md) for development setup.
+To run a development checkout, clone the repository or extract **Code > Download ZIP**, add only its root to the MATLAB path, and enter `yamada`. See the [contributing guide](https://github.com/NOBUTOKA/yamada/blob/main/CONTRIBUTING.md) for development setup.
 
 ## Basic Usage
 
