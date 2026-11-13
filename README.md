@@ -4,7 +4,7 @@
 
 ## Important
 
-Review the generated diff before saving, and keep the target file under version control or make a backup.
+`yamada` is under active development. Development and verification currently target MATLAB R2024a. Review the generated diff before saving, and keep the target file under version control or make a backup.
 
 ## Features
 
