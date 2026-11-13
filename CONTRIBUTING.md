@@ -47,7 +47,7 @@ addpath(projectRoot);
 yamada
 ```
 
-No versioned release or Toolbox package is available yet, so development uses the repository source directly.
+Use the repository source for development. Published Toolbox installers are available from [GitHub Releases](https://github.com/NOBUTOKA/yamada/releases).
 
 The documented normal launch command is `yamada`, without parentheses or an output assignment. Development and tests may retain the returned handle when they need to inspect or explicitly clean up the editor.
 
