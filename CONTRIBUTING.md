@@ -13,7 +13,7 @@ For contributors proposing or submitting changes, this guide explains the projec
 
 Use `main` as the shared integration branch for the next release. There is no permanent `develop` branch. Published versions are identified by immutable release tags such as `v1.0.0` and their GitHub Releases; merging a pull request does not publish a Toolbox.
 
-1. Create a focused work branch from up-to-date `main`, or use a branch in your fork. Agent-created branches use `codex/<purpose>`; other contributors may use descriptive names such as `feature/<purpose>` or `fix/<purpose>`.
+1. Create a focused work branch from up-to-date `main`, or use a branch in your fork. Use a descriptive name such as `feature/<purpose>`, `fix/<purpose>`, or `docs/<purpose>`.
 2. Make the change and run the relevant checks before submitting a pull request. Include the results and explain any checks not run. For documentation-only changes, inspect the diff and links and run `git diff --check`; MATLAB tests are unnecessary unless executable examples or behavior change.
 3. Open a pull request targeting `main`. Draft pull requests are welcome while work is incomplete. Check the final diff and validation evidence before merging; rerun affected checks if the change or integration base invalidates that evidence.
 4. A maintainer merges the pull request after reviewing scope, source safety, and validation. A separate person's approval is not mandatory for sole-maintainer work. Delete the work branch when it is no longer needed.
