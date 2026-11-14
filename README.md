@@ -8,8 +8,8 @@
 
 yamada keeps your whole app in an ordinary MATLAB class file, so it fits the tools you already use for the rest of your code:
 
-- **Readable history.** Changes to the layout appear as ordinary text diffs, so the app can live in Git or any other version control system alongside your other code.
 - **Edit anywhere.** Edit the same file in the MATLAB Editor, another text editor, or with an AI agent, then reload it in yamada.
+- **Readable history.** Changes to the layout appear as ordinary text diffs, so the app can live in Git or any other version control system alongside your other code.
 - **Predictable source.** Values keep the type you entered: item data typed as `1`, `2`, `3` is saved as `[1 2 3]`, while `"1"` is saved as text. You can also review the code changes with **Tools > Diff Preview** before saving.
 
 yamada does not replace App Designer's `.mlapp` workflow and cannot open `.mlapp` files. It is for people who want to build GUIs visually while keeping the source as plain MATLAB code.
@@ -17,6 +17,8 @@ yamada does not replace App Designer's `.mlapp` workflow and cannot open `.mlapp
 ## Example
 
 The [SignalExplorer example](examples/SignalExplorer.m) is a small waveform plotter built with nested Grid Layouts. Open it in yamada to add and arrange components in a grid, edit their properties, connect callbacks, and review the resulting source changes with **Diff Preview**.
+
+https://github.com/user-attachments/assets/ef965c59-a430-4c2f-9f11-2f8f3395d9e0
 
 ![yamada editing the SignalExplorer example: a component palette, a safe preview with Grid Layout row and column controls, the component hierarchy, and the Property Inspector](doc/images/signal-explorer.png)
 
