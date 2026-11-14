@@ -102,6 +102,8 @@ When adding or changing a standard component or property, start with the [catalo
 
 Before submitting a pull request, run the tests relevant to your changes and include the results. If you could not run a test, name it and explain why in the pull request.
 
+Run the full suite before submitting a pull request, except for documentation-only changes that do not affect executable examples or behavior. Use quick and area profiles while iterating.
+
 The quick profile contains every non-UI test plus a bounded UI smoke set. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, and `lifecycle`.
 
 From the repository root, run the full suite with:
