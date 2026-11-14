@@ -6,7 +6,7 @@ For maintainers preparing a release, this guide covers candidate validation, ver
 
 Use the [contributor workflow](../CONTRIBUTING.md#branch-workflow): focused work branches and pull requests into `main`, with no permanent `develop`. `main` holds verified integrated development for the next release. Use a release branch only when stabilization or maintenance must proceed in parallel with development.
 
-Preserve cohesive commits. An `AGENTS.md` commit must contain only that file and must remain separate when merged; use a merge commit or rebase merge for a pull request that also contains other changes. Squash merging is suitable only when it does not violate this separation.
+Preserve cohesive commits when merging. Use a merge commit or rebase merge for a pull request whose commits explain separate steps; squash merging is suitable only for a pull request that forms one cohesive change.
 
 ## Version Policy
 
@@ -24,7 +24,7 @@ A repository administrator configures GitHub Settings > Rules > Rulesets with an
 - Restrict deletions and block force pushes. Do not configure routine bypass actors.
 - Do not require Code Owner approval or approval of the most recent push for sole-maintainer operation.
 - Add required status checks only after the actual CI jobs exist and have been verified. Until then, maintainers inspect recorded local verification results in the pull request.
-- Do not require linear history while merge commits are needed to preserve separate `AGENTS.md` commits. Keep at least one merge method available that preserves those commits.
+- Keep at least one merge method available that preserves individual commits.
 
 Apply equivalent protection to maintenance branches when they are created. Enable Issues for bug reports. Keep the default branch as `main`. Automatic work-branch deletion is optional; retained maintenance branches must not be deleted inadvertently.
 

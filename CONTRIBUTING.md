@@ -18,7 +18,7 @@ Use `main` as the shared integration branch for the next release. There is no pe
 3. Open a pull request targeting `main`. Draft pull requests are welcome while work is incomplete. Check the final diff and validation evidence before merging; rerun affected checks if the change or integration base invalidates that evidence.
 4. A maintainer merges the pull request after reviewing scope, source safety, and validation. A separate person's approval is not mandatory for sole-maintainer work. Delete the work branch when it is no longer needed.
 
-Use pull requests for documentation and maintenance changes too. Do not push changes directly to `main` or routinely bypass its protection. Keep changes to `AGENTS.md` in a commit containing no other files; preserve that separation in the merge method rather than squashing it into unrelated changes.
+Use pull requests for documentation and maintenance changes too. Do not push changes directly to `main` or routinely bypass its protection.
 
 Create `release/<major>.<minor>` only when a release needs stabilization or maintenance while `main` advances. For a patch to an older release, branch from its published tag if that maintenance branch does not exist. Prefer fixing on `main` and backporting the necessary commits through a pull request; for an old-version-specific fix, record whether `main` also needs it. Do not merge unrelated next-version features into a maintenance branch.
 
