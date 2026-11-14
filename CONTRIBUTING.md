@@ -72,6 +72,8 @@ See the [product specification](SPECIFICATION.md) for the public feature set, in
 | `tests/fixtures` | Input fixtures for source preservation, parsing, and preview |
 | `tests/runYamadaTests.m` | Developer-only quick, area, and full test-profile runner |
 
+Folders whose names begin with `.`, at any depth, are reserved for tool configuration and local working material. They are not project-owned source: project conventions and their checks do not apply to them, so do not place project-owned MATLAB files there.
+
 Use the [roadmap](ROADMAP.md) to find proposed work. The [architecture reference](doc/ARCHITECTURE.md) describes the contracts to preserve when changing the model, source handling, or Preview.
 
 ## MATLAB Code Conventions
