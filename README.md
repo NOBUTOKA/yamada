@@ -1,6 +1,24 @@
 # yamada - Yet Another MATLAB App Designer Alternative
 
+[![GitHub release](https://img.shields.io/github/v/release/NOBUTOKA/yamada)](https://github.com/NOBUTOKA/yamada/releases/latest) [![View yamada on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/185225-yamada) [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
+
 `yamada` is a visual editor for GUI classes that inherit from `handle` and own a `uifigure`. You can create or open ordinary MATLAB `.m` class files and edit their UI components graphically.
+
+## Why yamada?
+
+yamada keeps your whole app in an ordinary MATLAB class file, so it fits the tools you already use for the rest of your code:
+
+- **Edit anywhere.** Edit the same file in the MATLAB Editor, another text editor, or with an AI agent, then reload it in yamada.
+- **Readable history.** Changes to the layout appear as ordinary text diffs, so the app can live in Git or any other version control system alongside your other code.
+- **Predictable source.** Values keep the type you entered: item data typed as `1`, `2`, `3` is saved as `[1 2 3]`, while `"1"` is saved as text. You can also review the code changes with **Tools > Diff Preview** before saving.
+
+yamada does not replace App Designer's `.mlapp` workflow and cannot open `.mlapp` files. It is for people who want to build GUIs visually while keeping the source as plain MATLAB code.
+
+## Example
+
+This video edits a small example app, [SignalExplorer](examples/SignalExplorer.m), in yamada.
+
+https://github.com/user-attachments/assets/ef965c59-a430-4c2f-9f11-2f8f3395d9e0
 
 ## Important
 
@@ -19,11 +37,11 @@
 
 - MATLAB R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
 
-The 1.0.0 release target is R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
+Release targets are R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
 
 ## Getting Started
 
-To install version 1.0.0, download `yamada-1.0.0.mltbx` from [GitHub Releases](https://github.com/NOBUTOKA/yamada/releases), open it in MATLAB, and follow the installation dialog. Then enter:
+To install, download the `.mltbx` file from the [latest GitHub Release](https://github.com/NOBUTOKA/yamada/releases/latest) or from [File Exchange](https://www.mathworks.com/matlabcentral/fileexchange/185225-yamada), open it in MATLAB, and follow the installation dialog. Then enter:
 
 ```matlab
 yamada

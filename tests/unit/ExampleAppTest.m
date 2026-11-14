@@ -1,7 +1,8 @@
 classdef (TestTags = {'lifecycle'}) ExampleAppTest < matlab.unittest.TestCase
-    % ExampleAppTest Verify the project-owned tutorial application in examples.
-    %   The tutorial runs as an ordinary MATLAB app and stays editable by
-    %   yamada without executing it. These checks need no packaged Toolbox.
+    % ExampleAppTest Verify the project-owned applications in examples.
+    %   The tutorial and showcase apps run as ordinary MATLAB apps and stay
+    %   editable by yamada without executing them. These checks need no
+    %   packaged Toolbox.
 
     properties (Access = private)
         ProjectRoot string
@@ -30,6 +31,37 @@ classdef (TestTags = {'lifecycle'}) ExampleAppTest < matlab.unittest.TestCase
             testCase.verifyFalse(isvalid(app));
             testCase.verifyEmpty(findall(0, "Type", "figure", "Name", "Welcome to yamada"));
         end
+
+        function showcaseExampleRunsAndCloses(testCase)
+            % showcaseExampleRunsAndCloses Exercise the showcase plot callback, grid toggle, and owner cleanup.
+            testCase.applyFixture(matlab.unittest.fixtures.PathFixture(fullfile(testCase.ProjectRoot, "examples")));
+            app = SignalExplorer;
+            testCase.addTeardown(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Name", "Signal Explorer");
+            testCase.assertNumElements(figure, 1);
+            axes = findall(figure, "Type", "axes");
+            testCase.assertNumElements(axes, 1);
+            checkBox = findall(figure, "Type", "uicheckbox");
+            testCase.assertNumElements(checkBox, 1);
+            button = findall(figure, "Text", "Plot");
+            testCase.assertNumElements(button, 1);
+
+            % Plot every waveform, then verify that clearing the check box removes the grid.
+            dropDown = findall(figure, "Type", "uidropdown");
+            for waveform = string(dropDown.Items)
+                dropDown.Value = waveform;
+                button.ButtonPushedFcn(button, struct());
+                testCase.verifyNumElements(findall(axes, "Type", "line"), 1);
+            end
+            checkBox.Value = false;
+            button.ButtonPushedFcn(button, struct());
+            testCase.verifyEqual(string(axes.XGrid), "off");
+            testCase.verifyEqual(string(axes.YGrid), "off");
+
+            close(figure);
+            testCase.verifyFalse(isvalid(app));
+            testCase.verifyEmpty(findall(0, "Type", "figure", "Name", "Signal Explorer"));
+        end
     end
 
     methods (Test, TestTags = {'fast', 'parser'})
@@ -43,6 +75,20 @@ classdef (TestTags = {'lifecycle'}) ExampleAppTest < matlab.unittest.TestCase
             testCase.verifyEqual(document.ClassName, "WelcomeApp");
             testCase.verifyNotEmpty(document.getComponentByName("GreetingLabel"));
             testCase.verifyNotEmpty(document.getComponentByName("GreetButton"));
+            testCase.verifyEqual(findall(0, "Type", "figure"), before);
+        end
+
+        function showcaseExampleIsEditableWithoutExecution(testCase)
+            % showcaseExampleIsEditableWithoutExecution Parse the owned showcase app without creating its window.
+            registry = yamada.model.ComponentRegistry.createDefault();
+            before = findall(0, "Type", "figure");
+            [document, diagnostics] = yamada.source.AppSourceParser.parseFile( ...
+                fullfile(testCase.ProjectRoot, "examples", "SignalExplorer.m"), registry);
+            testCase.verifyEmpty(diagnostics);
+            testCase.verifyEqual(document.ClassName, "SignalExplorer");
+            for name = ["MainGrid", "SettingsGrid", "WaveformDropDown", "AmplitudeSlider", "PlotButton", "SignalAxes"]
+                testCase.verifyNotEmpty(document.getComponentByName(name), name);
+            end
             testCase.verifyEqual(findall(0, "Type", "figure"), before);
         end
     end
