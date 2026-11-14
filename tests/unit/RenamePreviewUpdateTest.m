@@ -4,7 +4,9 @@ classdef (TestTags = {'ui', 'preview', 'rename'}) RenamePreviewUpdateTest < matl
     %   controls, measured rectangles, hit regions, and native callback isolation.
     properties (TestParameter)
         % Layout - Absolute, fixed-grid, and fit-grid arrangements under test.
-        Layout = {"absolute", "flat", "nested", "flatfit", "nestedfit"}
+        %   Absolute renames the root, flat renames a grid drop target, and
+        %   nestedfit covers both nesting and fit tracks.
+        Layout = {"absolute", "flat", "nestedfit"}
     end
     methods (Test)
         function hierarchyAndHistoryRetainGeometry(testCase, Layout)

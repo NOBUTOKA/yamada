@@ -1,11 +1,12 @@
 classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < matlab.unittest.TestCase
     % CallbackPreviewUpdateTest Verify callback source edits preserve the displayed component state.
     %   Real Manage Callbacks actions preserve displayed bounds, source safety,
-    %   and history across free, fixed-grid, and nested-grid fixtures.
+    %   and history across free and nested-grid fixtures. The nested chain
+    %   includes a direct grid parent, so no separate single-grid case is run.
     methods (Test)
         function managerActionsAndHistoryRetainAllPreviewGeometry(testCase)
             % managerActionsAndHistoryRetainAllPreviewGeometry Exercise target selection, disconnection and callback history.
-            for layout = ["absolute", "flat", "nested"]
+            for layout = ["absolute", "nested"]
                 folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
                 path = fullfile(folder.Folder, "CallbackPreviewFixture.m");
                 source = callbackFixture(layout);

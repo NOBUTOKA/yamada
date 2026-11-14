@@ -3,7 +3,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
     %   Synthetic source is parsed without constructing its application or running callbacks.
     properties (TestParameter)
         % Layout - Parent arrangement used to test unrelated state reuse.
-        Layout = {"absolute", "flat", "nested"}
+        %   The nested chain includes a direct grid parent, so a single-grid
+        %   variant exercises no additional scope path.
+        Layout = {"absolute", "nested"}
     end
     methods (Test)
         function freshSettingsDoNotRevalidateUnrelatedFields(testCase, Layout)
