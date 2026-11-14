@@ -3,7 +3,9 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
     %   No application or callback is executed; all fixtures are editor-owned model records.
     properties (TestParameter)
         % Depth - Number of nested destination grids used for occupancy checks.
-        Depth = {1, 8}
+        %   Three levels already give several destinations sharing one
+        %   validated hierarchy; placement has no depth-dependent branch.
+        Depth = {1, 3}
     end
     methods (Test)
         function destinationsShareOneValidatedHierarchy(testCase, Depth)

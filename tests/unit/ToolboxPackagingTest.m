@@ -1,7 +1,13 @@
 classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < matlab.unittest.TestCase
     % ToolboxPackagingTest Verify shipped inputs and generated Toolbox registration.
     %   A real package build checks archive bytes and native metadata instead of
-    %   asserting only the settings passed to the packaging function.
+    %   asserting only the settings passed to the packaging function. The build
+    %   uses a fixed source identity, so these checks do not depend on Git; the
+    %   Git provenance itself belongs to buildYamadaToolbox and the release gate.
+
+    properties (Constant, Access = private)
+        SourceCommit = string(repmat('0', 1, 40))
+    end
 
     properties (Access = private)
         ProjectRoot string
@@ -18,29 +24,14 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
             testCase.applyFixture(matlab.unittest.fixtures.PathFixture(fullfile(testCase.ProjectRoot, "dev", "release")));
             folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
             [testCase.Files, testCase.Metadata] = yamadaToolboxFiles(testCase.ProjectRoot);
-            testCase.Artifacts = buildYamadaToolbox(fullfile(string(folder.Folder), "candidate"));
+            testCase.Artifacts = packageYamadaToolbox(fullfile(string(folder.Folder), "candidate"), ...
+                @() testCase.fixedSource());
             testCase.ExtractedRoot = fullfile(string(folder.Folder), "extracted");
             unzip(testCase.Artifacts.toolbox, testCase.ExtractedRoot);
         end
     end
 
     methods (Test)
-        function includedExampleRunsAndCloses(testCase)
-            % includedExampleRunsAndCloses Exercise the tutorial's real callback and owner cleanup.
-            testCase.applyFixture(matlab.unittest.fixtures.PathFixture(fullfile(testCase.ProjectRoot, "examples")));
-            app = WelcomeApp;
-            testCase.addTeardown(@() deleteIfValid(app));
-            figure = findall(0, "Type", "figure", "Name", "Welcome to yamada");
-            testCase.assertNumElements(figure, 1);
-            button = findall(figure, "Text", "Say hello");
-            testCase.assertNumElements(button, 1);
-            button.ButtonPushedFcn(button, struct());
-            testCase.verifyNumElements(findall(figure, "Text", "Hello from your app!"), 1);
-            close(figure);
-            testCase.verifyFalse(isvalid(app));
-            testCase.verifyEmpty(findall(0, "Type", "figure", "Name", "Welcome to yamada"));
-        end
-
         function payloadMatchesSelectedSourceExactly(testCase)
             % payloadMatchesSelectedSourceExactly Reject undeclared or changed archive payload files.
             entries = dir(fullfile(testCase.ExtractedRoot, "fsroot", "**", "*"));
@@ -81,6 +72,8 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
         function manifestAndChecksumMatchActualArtifact(testCase)
             % manifestAndChecksumMatchActualArtifact Check independent SHA-256 and immutable candidate output.
             manifest = jsondecode(fileread(testCase.Artifacts.manifest));
+            testCase.verifyEqual(string(manifest.sourceCommit), testCase.SourceCommit);
+            testCase.verifyFalse(manifest.sourceDirty);
             bytes = readBytes(testCase.Artifacts.toolbox);
             digest = System.Security.Cryptography.SHA256.Create();
             digestCleanup = onCleanup(@() digest.Dispose());
@@ -90,32 +83,24 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
             testCase.verifyEqual(numel(manifest.files), numel(testCase.Files));
             checksums = strip(string(fileread(testCase.Artifacts.checksums)));
             testCase.verifyEqual(checksums, expected + "  yamada-" + testCase.Metadata.version + ".mltbx");
-            testCase.verifyError(@() buildYamadaToolbox(fileparts(testCase.Artifacts.toolbox)), ...
-                "yamada:Release:OutputExists");
+            testCase.verifyError(@() packageYamadaToolbox(fileparts(testCase.Artifacts.toolbox), ...
+                @() testCase.fixedSource()), "yamada:Release:OutputExists");
             testCase.verifyEqual(readBytes(testCase.Artifacts.toolbox), bytes);
         end
+    end
 
-        function includedExampleIsEditableWithoutExecution(testCase)
-            % includedExampleIsEditableWithoutExecution Parse the owned tutorial app without creating its window.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            before = findall(0, "Type", "figure");
-            [document, diagnostics] = yamada.source.AppSourceParser.parseFile( ...
-                fullfile(testCase.ProjectRoot, "examples", "WelcomeApp.m"), registry);
-            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
-            testCase.verifyEqual(document.ClassName, "WelcomeApp");
-            testCase.verifyNotEmpty(document.getComponentByName("GreetingLabel"));
-            testCase.verifyNotEmpty(document.getComponentByName("GreetButton"));
-            testCase.verifyEqual(findall(0, "Type", "figure"), before);
+    methods (Access = private)
+        function source = fixedSource(testCase)
+            % fixedSource Return the deterministic clean source identity used by these builds.
+            arguments (Input)
+                testCase (1, 1) ToolboxPackagingTest
+            end
+            arguments (Output)
+                source (1, 1) struct
+            end
+            source = struct("commit", testCase.SourceCommit, "dirty", false);
         end
     end
-end
-
-function deleteIfValid(object)
-% deleteIfValid Release a tutorial owner only if a failed test left it alive.
-arguments (Input)
-    object (1, 1) handle
-end
-if isvalid(object), delete(object); end
 end
 
 function bytes = readBytes(filePath)

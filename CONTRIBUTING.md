@@ -72,6 +72,8 @@ See the [product specification](SPECIFICATION.md) for the public feature set, in
 | `tests/fixtures` | Input fixtures for source preservation, parsing, and preview |
 | `tests/runYamadaTests.m` | Developer-only quick, area, and full test-profile runner |
 
+Folders whose names begin with `.`, at any depth, are reserved for tool configuration and local working material. They are not project-owned source: project conventions and their checks do not apply to them, so do not place project-owned MATLAB files there.
+
 Use the [roadmap](ROADMAP.md) to find proposed work. The [architecture reference](doc/ARCHITECTURE.md) describes the contracts to preserve when changing the model, source handling, or Preview.
 
 ## MATLAB Code Conventions
@@ -104,7 +106,7 @@ Before submitting a pull request, run the tests relevant to your changes and inc
 
 Run the full suite before submitting a pull request, except for documentation-only changes that do not affect executable examples or behavior. Use quick and area profiles while iterating.
 
-The quick profile contains every non-UI test plus a bounded UI smoke set. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, and `lifecycle`.
+The quick profile contains every non-UI test except catalog-wide sweeps, plus a bounded UI smoke set. Catalog-wide sweeps, which repeat a check for every catalog variant through rendering, generation, or ledger comparison, carry the `exhaustive` tag instead of `fast`; they run in the full suite and in area profiles that select them. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, `lifecycle`, and `exhaustive`. Run the `exhaustive` area while iterating on catalog changes.
 
 From the repository root, run the full suite with:
 
@@ -118,6 +120,12 @@ The other profiles are available as:
 ```matlab
 quickResults = runYamadaTests("quick");
 areaResults = runYamadaTests("area", ["inspector", "dialog"]);
+```
+
+Any profile can run in parallel by adding `Workers`. The runner starts that many batch MATLAB processes, splits the suite by test class, and returns the combined results in suite order. Each worker needs its own MATLAB session and memory, so choose a count that fits the host; four workers suit an eight-core machine. With the default of one worker, tests run in the current session.
+
+```matlab
+results = runYamadaTests("full", Workers=4);
 ```
 
 To run one test file:

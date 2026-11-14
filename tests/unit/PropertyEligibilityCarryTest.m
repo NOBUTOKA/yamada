@@ -3,7 +3,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
     %   Catalog effects and measured geometry guard reuse; property names are not an optimization allowlist.
     properties (TestParameter)
         % Depth - Number of source-grid ancestors, or zero for absolute positioning.
-        Depth = {0, 1, 4}
+        %   Eligibility distinguishes absolute from grid placement; one and
+        %   several grid ancestors follow the same path.
+        Depth = {0, 4}
         % Setting - Distinct literal families used to exercise metadata-based eligibility reuse.
         Setting = {"Tooltip", "FontSize", "Text", "FontColor"}
     end

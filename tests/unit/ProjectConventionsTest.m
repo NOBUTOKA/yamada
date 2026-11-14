@@ -26,12 +26,13 @@ classdef (TestTags = {'fast', 'testInfrastructure'}) ProjectConventionsTest < ma
             owned = ["Owned.m", fullfile("+yamada", "Owned.m"), ...
                 fullfile("tests", "unit", "OwnedTest.m"), ...
                 fullfile("tests", "fixturesExtra", "OwnedHelper.m"), ...
-                fullfile("testResultsExtra", "OwnedHelper.m")];
+                fullfile("testResultsExtra", "OwnedHelper.m"), ...
+                fullfile("archive.d", "OwnedHelper.m")];
             excluded = [fullfile("tests", "fixtures", "Preserved.m"), ...
                 fullfile("testResults", "nested", "UserOutput.m"), ...
                 fullfile("coverage", "Instrumented.m"), fullfile("slprj", "Generated.m"), ...
-                fullfile(".git", "Stored.m"), fullfile(".codex", "Scratch.m"), ...
-                fullfile(".agents", "Scratch.m")];
+                fullfile(".git", "Stored.m"), fullfile(".tool", "Scratch.m"), ...
+                fullfile("tests", ".cache", "nested", "Scratch.m")];
             % Empty files are unexecuted directory-enumeration fixtures.
             for relative = [owned excluded]
                 path = fullfile(projectRoot, relative);
@@ -87,19 +88,28 @@ classdef (TestTags = {'fast', 'testInfrastructure'}) ProjectConventionsTest < ma
             if strlength(projectRoot) == 0
                 projectRoot = string(fileparts(fileparts(fileparts(mfilename("fullpath")))));
             end
+            % Dot-prefixed folders hold tool or local working material, so skip
+            % them at the top level before recursive enumeration.
             files = dir(fullfile(projectRoot, "*.m"));
             folders = dir(projectRoot);
-            excluded = [".", "..", "testResults", "coverage", "slprj", ".git", ".codex", ".agents"];
+            excluded = ["testResults", "coverage", "slprj"];
             for index = 1:numel(folders)
                 name = string(folders(index).name);
-                if ~folders(index).isdir || any(strcmpi(name, excluded)), continue, end
+                if ~folders(index).isdir || startsWith(name, ".") || ...
+                        any(strcmpi(name, excluded))
+                    continue
+                end
                 files = [files; dir(fullfile(projectRoot, name, "**", "*.m"))]; %#ok<AGROW>
             end
+
+            % Apply the same dot-prefix rule to nested folders by path segment.
+            relative = extractAfter(string({files.folder}) + filesep, strlength(projectRoot));
+            isDotted = contains(relative, filesep + ".");
 
             % Preserved fixtures are excluded by a directory boundary, not a shared prefix.
             fixtureRoot = fullfile(projectRoot, "tests", "fixtures") + filesep;
             isFixture = startsWith(string({files.folder}) + filesep, fixtureRoot, "IgnoreCase", ispc);
-            files = files(~isFixture & ~[files.isdir]);
+            files = files(~isFixture & ~isDotted & ~[files.isdir]);
         end
 
         function bytes = readBytes(filePath)

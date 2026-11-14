@@ -1,10 +1,10 @@
-classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab.unittest.TestCase
+classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittest.TestCase
     % ComponentRegistryBaselineTest Verify promotion of the R2024a grouping catalog.
     %   This class compares every runtime concrete variant with the audited
     %   development ledger and checks that direct-parent projections remain
     %   deterministic across the complete audited R2024a catalog.
 
-    methods (Test)
+    methods (Test, TestTags = {'fast'})
         function cachedParentProjectionIsInvalidatedByRulesAndRegistration(testCase)
             % cachedParentProjectionIsInvalidatedByRulesAndRegistration Observe changes after a cache hit.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -20,7 +20,9 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             replaced = registry.getEffectiveProperties("uilabel", "uigridlayout");
             testCase.verifyEqual(string({replaced.Path}), "Custom");
         end
+    end
 
+    methods (Test, TestTags = {'exhaustive'})
         function runtimeRegistryMatchesAuditedR2024aLedger(testCase)
             % runtimeRegistryMatchesAuditedR2024aLedger Compare every variant with the audited ledger.
 
@@ -84,7 +86,9 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             % Presentation rows have their own reviewed ledger and ordered membership.
             ComponentRegistryBaselineTest.verifyInspectorRows(testCase, registry);
         end
+    end
 
+    methods (Test, TestTags = {'fast'})
         function editablePropertiesProjectToSupportedInspectorEditors(testCase)
             % editablePropertiesProjectToSupportedInspectorEditors Verify every editable capability has a row adapter.
 

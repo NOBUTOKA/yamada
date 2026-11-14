@@ -154,6 +154,8 @@ The development pipeline runs `Assert-ComponentLedgerSchema` from `dev/component
 
 [`ComponentRegistry`](../+yamada/+model/ComponentRegistry.m) is the runtime query boundary. `createDefault` loads the packaged R2024a catalog through [`ComponentCatalogLoader`](../+yamada/+catalog/ComponentCatalogLoader.m).
 
+The loader remembers successful loads in process memory, one entry per catalog root. Before each load it computes a SHA-256 fingerprint over the full path and bytes of every file under the root. It reuses the remembered validated state only when that fingerprint is unchanged; otherwise it validates from source again. Any edit, added file or unreadable file therefore forces full validation, and a failed load is never remembered. Every call returns a new, independent registry, so registration or other mutation by one caller never reaches the cache or another caller. Nothing is written to disk, and the cache is lost when MATLAB clears the loader class.
+
 The schema-version 2 manifest references:
 
 - concrete component variants;
