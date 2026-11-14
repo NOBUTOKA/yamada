@@ -122,6 +122,12 @@ quickResults = runYamadaTests("quick");
 areaResults = runYamadaTests("area", ["inspector", "dialog"]);
 ```
 
+Any profile can run in parallel by adding `Workers`. The runner starts that many batch MATLAB processes, splits the suite by test class, and returns the combined results in suite order. Each worker needs its own MATLAB session and memory, so choose a count that fits the host; four workers suit an eight-core machine. With the default of one worker, tests run in the current session.
+
+```matlab
+results = runYamadaTests("full", Workers=4);
+```
+
 To run one test file:
 
 ```matlab

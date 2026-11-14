@@ -74,6 +74,37 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
                 "yamada:TestSelection:UnsupportedArea");
             testCase.verifyError(@() runYamadaTests("quick", "parser"), ...
                 "yamada:TestSelection:UnexpectedAreas");
+            testCase.verifyError(@() runYamadaTests("quick", Workers=0), ...
+                "MATLAB:validators:mustBePositive");
+        end
+
+        function workerRunsEachClaimedClassOnce(testCase)
+            % workerRunsEachClaimedClassOnce Verify queue claims, saved results, and repeat safety.
+
+            % Expose the developer runner folder for the worker entry point.
+            originalPath = path;
+            pathCleanup = onCleanup(@() path(originalPath));
+            addpath(fileparts(TestSelectionContractTest.testRoot()));
+            fixture = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
+            queue = string(fixture.Folder);
+            mkdir(fullfile(queue, "claims"));
+            mkdir(fullfile(queue, "results"));
+            writelines("InspectorValueFormatterTest", fullfile(queue, "classes.txt"));
+
+            % The first worker claims and runs the listed class.
+            runYamadaTestWorker("quick", "", queue);
+            saved = load(fullfile(queue, "results", "1.mat"), "results");
+            names = string({saved.results.Name});
+            testCase.verifyNotEmpty(names);
+            testCase.verifyTrue(all(startsWith(names, "InspectorValueFormatterTest/")));
+            testCase.verifyTrue(all([saved.results.Passed]));
+
+            % A later worker finds the claim and leaves the saved results untouched.
+            before = dir(fullfile(queue, "results", "1.mat"));
+            runYamadaTestWorker("quick", "", queue);
+            after = dir(fullfile(queue, "results", "1.mat"));
+            testCase.verifyEqual(after.datenum, before.datenum);
+            testCase.verifyNumElements(dir(fullfile(queue, "results", "*.mat")), 1);
         end
 
     end
