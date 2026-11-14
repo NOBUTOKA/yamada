@@ -331,6 +331,12 @@ Editor-owned structural and dependent-property edits carry a known footprint thr
 
 Parent relocation compiles final root placement into the moved initialization block. Parent-dependent settings are removed or replaced as part of that plan; final requested placement writes follow the owner's retained settings and precede its descendants' creation. The relocation candidate is bound once and published directly. The normal editor path does not regenerate the same candidate and then evaluate the document again to ask whether the requested placement survived. Grid structural edits similarly compile track and child-coordinate changes together. Source positions, execution indexes and caches are derived from these primary edits and are not separate Undo entries.
 
+### Application Source Conventions
+
+`NewAppGenerator` owns generated class documentation, and `CallbackSourceEdits` owns callback method templates. Both use concise documentation appropriate for generated applications rather than the project's internal coding conventions.
+
+Source-editing paths preserve user-authored documentation, formatting, and license notices outside supported edits. Project license headers are not automatically applied to generated applications.
+
 ### Canonical setting identity and indexed literal edits
 
 `SourceSettingStore.Records(id)` is the canonical value-record address space for one live document. Positive integer IDs remain stable across value replacement, position projection, and Undo/Redo. Deleted records leave tombstones; `NextId` is a high-water mark that history does not rewind. A separate `Active` vector describes membership in the current store, rather than an intrinsic property of an immutable setting value that can also appear in historical or detached snapshots. Negative IDs are temporary tokens for detached records and are replaced before registration in the canonical store. Their allocator retains only a scalar counter, never a persistent map of closed documents or source revisions.

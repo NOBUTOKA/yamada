@@ -138,7 +138,9 @@ Because of this limitation, Safe Preview may not reproduce the input application
 - A new file includes the class and component declarations, creation method, callback-based owner retention, and cleanup required for execution; it does not use AppBase registration services.
 - New files use the host platform's standard line ending; existing files preserve the detected CRLF or LF convention.
 - Generated comments and help text are written in English.
-- `yamada` does not automatically add, replace, or remove the project's GPL notice in an application created or opened by the user.
+- Newly generated applications include concise English class and method documentation templates, without extensive property help or routine implementation comments.
+- Editing existing applications preserves user-authored documentation and formatting except where supported edits require changes. yamada's internal coding conventions are not imposed on user application source.
+- `yamada` does not automatically add, replace, or remove the project's license notice in an application created or opened by the user.
 - Save As requires explicit replacement approval for an existing target. A normal Save writes only to the current confirmed path and does not repeat that approval.
 - Before saving, yamada checks that the output still represents the supported settings and component hierarchy. Save retains Undo/Redo. Reopening or reloading reads the saved file and starts a new history.
 

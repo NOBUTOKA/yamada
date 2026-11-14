@@ -79,11 +79,12 @@ Use the [roadmap](ROADMAP.md) to find proposed work. The [architecture reference
 - Project-owned MATLAB source and test files must use UTF-8 without a BOM and CRLF line endings.
 - Write source comments, class help, and function and method docstrings in English.
 - Put a purpose-oriented docstring immediately after every project-owned function or method declaration.
-- Use explicit `arguments (Input)` and `arguments (Output)` blocks when practical validation is possible for the signature.
+- Add explicit `arguments (Input)` and `arguments (Output)` blocks to every function and method you add or modify, except nested functions, test methods, and handle-class `delete` methods.
 - Prefer MATLAB `string` values and double-quoted string literals for text.
-- Put English help comments immediately before public properties and use the narrowest practical access.
+- Put English help comments immediately before public properties. Make implementation state `Access = private`, and use `SetAccess = private` for state that other classes only read.
+- Declare a property class whenever all accepted values share one class. Do not add size constraints to property declarations.
 - End each project-owned `.m` file with the same GNU GPL notice used by neighboring files. Do not add the project's GPL notice automatically to saved user applications or preserved input fixtures.
-- Add concise English comments before meaningful operation groups, but avoid comments that merely restate self-explanatory assignments.
+- Add concise English comments before meaningful operation groups and explain non-obvious intent, but avoid comments that merely restate self-explanatory assignments.
 
 Follow the formatting of existing code, and do not include unrelated formatting or line-ending changes in a pull request.
 
