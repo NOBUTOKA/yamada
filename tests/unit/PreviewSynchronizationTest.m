@@ -33,7 +33,9 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                 yamada.ui.RefreshRequest("properties", owner.Id, "Text"));
             testCase.verifyFalse(applied);
         end
+    end
 
+    methods (Test, TestTags = {'exhaustive'})
         function appliesIndependentPropertiesAcrossAllCatalogVariants(testCase)
             % appliesIndependentPropertiesAcrossAllCatalogVariants Match independently rendered values across every eligible variant.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -93,7 +95,9 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             end
             fprintf("CATALOG_DELTA_COVERAGE Variants=%d Changes=%d\n", numel(variants), changes);
         end
+    end
 
+    methods (Test)
         function movesDisjointRangesAndItemsAsResolvedBatches(testCase)
             % movesDisjointRangesAndItemsAsResolvedBatches Preserve final values through otherwise invalid intermediate states.
             registry = yamada.model.ComponentRegistry.createDefault();

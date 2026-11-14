@@ -2,20 +2,25 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
     % TestSelectionContractTest Verify the tags that define documented test profiles.
     %   This class guards the test-tag taxonomy so new tests cannot silently fall
     %   outside the quick profile or broaden its UI smoke coverage by accident.
+    %   Catalog-wide sweeps carry the exhaustive tag and run in full and area
+    %   profiles only.
 
     methods (Test)
-        function quickTagContainsEveryNonUiTestAndOnlyTheUiSmoke(testCase)
-            % quickTagContainsEveryNonUiTestAndOnlyTheUiSmoke Verify fast coverage.
+        function quickTagCoversNonUiTestsExceptSweepsAndOnlyTheUiSmoke(testCase)
+            % quickTagCoversNonUiTestsExceptSweepsAndOnlyTheUiSmoke Verify fast coverage.
 
             [allSuite, uiSuite] = TestSelectionContractTest.discoverSuites();
             quickSuite = testsuite(TestSelectionContractTest.testRoot(), ...
                 "Tag", "fast");
             contractSuite = testsuite(TestSelectionContractTest.testRoot(), ...
                 "Tag", "selectionContract");
+            exhaustiveSuite = testsuite(TestSelectionContractTest.testRoot(), ...
+                "Tag", "exhaustive");
             allNames = string({allSuite.Name});
             uiNames = string({uiSuite.Name});
             quickNames = string({quickSuite.Name});
             contractNames = string({contractSuite.Name});
+            exhaustiveNames = string({exhaustiveSuite.Name});
             expectedUiSmoke = [ ...
                 "PreviewRendererTest/safePreviewMatchesTrustedFixtureProperties", ...
                 "GridLayoutOverlayDataBuilderTest/publishesFixedTrackBoundsAndImmediateChildren", ...
@@ -38,12 +43,17 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
 
             % Bound quick's explicit UI smoke list; the full UI suite may grow.
             testCase.verifyEqual(sort(quickNames), sort([ ...
-                setdiff(allNames, [uiNames, contractNames]), expectedUiSmoke]));
+                setdiff(allNames, [uiNames, contractNames, exhaustiveNames]), expectedUiSmoke]));
             testCase.verifyEqual(sort(intersect(quickNames, uiNames)), sort(expectedUiSmoke));
+
+            % Catalog-wide sweeps stay out of quick but remain in the full suite.
+            testCase.verifyNotEmpty(exhaustiveNames);
+            testCase.verifyEmpty(intersect(quickNames, exhaustiveNames));
 
             % Keep documented areas populated without reconstructing the selector in tests.
             areas = ["parser", "catalog", "model", "generation", "preview", ...
-                "gridOverlay", "inspector", "dialog", "editorShell", "previewTab", "lifecycle"];
+                "gridOverlay", "inspector", "dialog", "editorShell", "previewTab", "lifecycle", ...
+                "exhaustive"];
             for area = areas
                 testCase.verifyTrue(any(arrayfun(@(test) any(strcmp(test.Tags, area)), allSuite)), area);
             end

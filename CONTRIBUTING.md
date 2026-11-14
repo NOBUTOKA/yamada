@@ -106,7 +106,7 @@ Before submitting a pull request, run the tests relevant to your changes and inc
 
 Run the full suite before submitting a pull request, except for documentation-only changes that do not affect executable examples or behavior. Use quick and area profiles while iterating.
 
-The quick profile contains every non-UI test plus a bounded UI smoke set. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, and `lifecycle`.
+The quick profile contains every non-UI test except catalog-wide sweeps, plus a bounded UI smoke set. Catalog-wide sweeps, which repeat a check for every catalog variant through rendering, generation, or ledger comparison, carry the `exhaustive` tag instead of `fast`; they run in the full suite and in area profiles that select them. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, `lifecycle`, and `exhaustive`. Run the `exhaustive` area while iterating on catalog changes.
 
 From the repository root, run the full suite with:
 

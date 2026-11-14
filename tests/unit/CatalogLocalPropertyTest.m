@@ -1,4 +1,4 @@
-classdef (TestTags = {'ui', 'model', 'generation'}) CatalogLocalPropertyTest < matlab.unittest.TestCase
+classdef (TestTags = {'ui', 'model', 'generation', 'exhaustive'}) CatalogLocalPropertyTest < matlab.unittest.TestCase
     % CatalogLocalPropertyTest Compare generic local literal edits with full parsed source across the catalog.
     %   Native getters supply valid inert seeds; source applications and their
     %   callbacks are never instantiated or executed.
