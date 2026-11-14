@@ -16,11 +16,9 @@ yamada does not replace App Designer's `.mlapp` workflow and cannot open `.mlapp
 
 ## Example
 
-The [SignalExplorer example](examples/SignalExplorer.m) is a small waveform plotter built with nested Grid Layouts. Open it in yamada to add and arrange components in a grid, edit their properties, connect callbacks, and review the resulting source changes with **Diff Preview**.
+This video edits a small example app, [SignalExplorer](examples/SignalExplorer.m), in yamada.
 
 https://github.com/user-attachments/assets/ef965c59-a430-4c2f-9f11-2f8f3395d9e0
-
-![yamada editing the SignalExplorer example: a component palette, a safe preview with Grid Layout row and column controls, the component hierarchy, and the Property Inspector](doc/images/signal-explorer.png)
 
 ## Important
 
