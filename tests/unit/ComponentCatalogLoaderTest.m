@@ -37,6 +37,55 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
             testCase.verifyCatalogFailure(root);
         end
 
+        function reusedLoadsReturnIndependentRegistries(testCase)
+            % reusedLoadsReturnIndependentRegistries Keep caller mutations out of later loads of unchanged files.
+            root = testCase.createCatalog();
+            first = yamada.catalog.ComponentCatalogLoader.load(root);
+            second = yamada.catalog.ComponentCatalogLoader.load(root);
+            testCase.verifyNotSameHandle(second, first);
+            testCase.verifyEqual(second.listVariantIds(), first.listVariantIds());
+            testCase.verifyEqual(second.getById("uilabel"), first.getById("uilabel"));
+            testCase.verifyEqual(second.getEffectiveProperties("uilabel", ""), ...
+                first.getEffectiveProperties("uilabel", ""));
+            testCase.verifyEqual(second.Revision, first.Revision);
+
+            % Mutate both returned registries; a third load must still match the files.
+            revision = first.Revision;
+            first.register(first.getById("uilabel"));
+            second.setParentContextRules(yamada.model.ParentContextRule.empty);
+            third = yamada.catalog.ComponentCatalogLoader.load(root);
+            testCase.verifyEqual(third.Revision, revision);
+            testCase.verifyEqual(third.getEffectiveProperties("uilabel", ""), ...
+                first.getEffectiveProperties("uilabel", ""));
+        end
+
+        function changedFilesAreRevalidatedAfterReuse(testCase)
+            % changedFilesAreRevalidatedAfterReuse Reload valid edits and reject invalid edits after a successful load.
+            root = testCase.createCatalog();
+            original = yamada.catalog.ComponentCatalogLoader.load(root).get("uilabel");
+            testCase.assertNotEqual(original.getProperty("Text").GridGeometryImpact, "fit");
+            component = testCase.readJson(root, "components/uilabel.json");
+            component.properties{2}.metadata.gridGeometryImpact = "fit";
+            component.properties{2}.metadata.absoluteGeometryImpact = false;
+            testCase.writeJson(root, "components/uilabel.json", component);
+            edited = yamada.catalog.ComponentCatalogLoader.load(root).get("uilabel");
+            testCase.verifyEqual(edited.getProperty("Text").GridGeometryImpact, "fit");
+
+            % An invalid edit must fail even though a valid registry was remembered.
+            component.properties{2}.metadata.gridGeometryImpact = "guess";
+            testCase.writeJson(root, "components/uilabel.json", component);
+            testCase.verifyCatalogFailure(root);
+
+            % Restoring valid files loads again, and an unreferenced new file still forces validation.
+            component.properties{2}.metadata.gridGeometryImpact = "fit";
+            testCase.writeJson(root, "components/uilabel.json", component);
+            testCase.verifyEqual(yamada.catalog.ComponentCatalogLoader.load(root) ...
+                .get("uilabel").getProperty("Text").GridGeometryImpact, "fit");
+            testCase.writeJson(root, "unreferenced.json", struct("note", "unused"));
+            testCase.verifyEqual(yamada.catalog.ComponentCatalogLoader.load(root) ...
+                .get("uilabel").getProperty("Text").GridGeometryImpact, "fit");
+        end
+
         function loadsApplicationPolicyWithoutChangingInspectorOrder(testCase)
             % loadsApplicationPolicyWithoutChangingInspectorOrder Keep execution and presentation distinct.
 

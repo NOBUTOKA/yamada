@@ -4,12 +4,58 @@ classdef ComponentCatalogLoader
     %   groups, validates catalog data and symbolic behavior names, then returns a
     %   complete ComponentRegistry. A malformed catalog never returns a partial
     %   registry and never invokes catalog-provided executable code.
+    %
+    %   Successful loads are remembered in process memory per catalog root. A
+    %   later load reuses that validated state only when every file under the
+    %   root is byte-identical, and always returns an independent registry.
 
     methods (Static)
         function registry = load(catalogRoot)
             % load Validate one catalog root and return its complete runtime registry.
             arguments (Input)
                 catalogRoot (1, 1) string = yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()
+            end
+            arguments (Output)
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+
+            % Reuse validated state only for byte-identical catalog contents.
+            fingerprint = yamada.catalog.ComponentCatalogLoader.fingerprint(catalogRoot);
+            if strlength(fingerprint) > 0
+                validated = yamada.catalog.ComponentCatalogLoader.validatedCache( ...
+                    "get", catalogRoot, fingerprint);
+                if ~isempty(validated)
+                    registry = validated.duplicate();
+                    return
+                end
+            end
+
+            % Validate from source, then retain a private copy that callers cannot mutate.
+            registry = yamada.catalog.ComponentCatalogLoader.loadUncached(catalogRoot);
+            if strlength(fingerprint) > 0
+                yamada.catalog.ComponentCatalogLoader.validatedCache( ...
+                    "set", catalogRoot, fingerprint, registry.duplicate());
+            end
+        end
+
+        function root = defaultCatalogRoot()
+            % defaultCatalogRoot Return the packaged standard catalog location.
+            arguments (Output)
+                root (1, 1) string
+            end
+
+            % Resolve from this package file so the current folder is irrelevant.
+            sourcePath = mfilename("fullpath");
+            projectRoot = fileparts(fileparts(fileparts(sourcePath)));
+            root = string(fullfile(projectRoot, "resources", "component-catalog", "R2024a"));
+        end
+    end
+
+    methods (Static, Access = private)
+        function registry = loadUncached(catalogRoot)
+            % loadUncached Read and validate one catalog root without consulting the cache.
+            arguments (Input)
+                catalogRoot (1, 1) string
             end
             arguments (Output)
                 registry (1, 1) yamada.model.ComponentRegistry
@@ -64,20 +110,76 @@ classdef ComponentCatalogLoader
             yamada.catalog.ComponentCatalogLoader.validateApplicationContexts(registry);
         end
 
-        function root = defaultCatalogRoot()
-            % defaultCatalogRoot Return the packaged standard catalog location.
+        function digest = fingerprint(catalogRoot)
+            % fingerprint Hash every file path and byte under one catalog root.
+            arguments (Input)
+                catalogRoot (1, 1) string
+            end
             arguments (Output)
-                root (1, 1) string
+                digest (1, 1) string
             end
 
-            % Resolve from this package file so the current folder is irrelevant.
-            sourcePath = mfilename("fullpath");
-            projectRoot = fileparts(fileparts(fileparts(sourcePath)));
-            root = string(fullfile(projectRoot, "resources", "component-catalog", "R2024a"));
-        end
-    end
+            % An empty digest disables reuse whenever the root cannot be read completely.
+            digest = "";
+            if ~isfolder(catalogRoot), return, end
+            try
+                entries = dir(fullfile(catalogRoot, "**", "*"));
+                entries = entries(~[entries.isdir]);
+                paths = sort(string(fullfile({entries.folder}, {entries.name})));
+                hasher = java.security.MessageDigest.getInstance("SHA-256");
+                for index = 1:numel(paths)
+                    fileId = fopen(paths(index), "r");
+                    if fileId < 0, return, end
+                    closer = onCleanup(@() fclose(fileId));
+                    bytes = fread(fileId, Inf, "*uint8");
+                    clear closer
 
-    methods (Static, Access = private)
+                    % Length-delimit each record so adjacent paths and bytes cannot alias.
+                    header = paths(index) + newline + numel(bytes) + newline;
+                    hasher.update(unicode2native(char(header), "UTF-8"));
+                    if ~isempty(bytes), hasher.update(bytes); end
+                end
+                hash = typecast(hasher.digest(), "uint8");
+                digest = string(lower(reshape(dec2hex(hash, 2)', 1, [])));
+            catch
+                digest = "";
+            end
+        end
+
+        function registry = validatedCache(action, catalogRoot, fingerprint, registry)
+            % validatedCache Get or store one validated registry per catalog root.
+            arguments (Input)
+                action (1, 1) string {mustBeMember(action, ["get", "set"])}
+                catalogRoot (1, 1) string
+                fingerprint (1, 1) string
+                registry yamada.model.ComponentRegistry = yamada.model.ComponentRegistry.empty
+            end
+            arguments (Output)
+                registry yamada.model.ComponentRegistry
+            end
+
+            % Process memory holds only successful loads; failures are never stored.
+            persistent entries
+            if isempty(entries)
+                entries = containers.Map("KeyType", "char", "ValueType", "any");
+            end
+            key = char(catalogRoot);
+            if action == "get"
+                registry = yamada.model.ComponentRegistry.empty;
+                if isKey(entries, key)
+                    entry = entries(key);
+                    if entry.Fingerprint == fingerprint, registry = entry.Registry; end
+                end
+                return
+            end
+
+            % Bound memory when many temporary roots are loaded in one session.
+            if entries.Count >= 8 && ~isKey(entries, key)
+                entries = containers.Map("KeyType", "char", "ValueType", "any");
+            end
+            entries(key) = struct("Fingerprint", fingerprint, "Registry", registry);
+        end
+
         function registry = loadVersion2(root, manifest)
             % loadVersion2 Load concrete variants composed from audited group data.
             arguments (Input)

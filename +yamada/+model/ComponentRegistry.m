@@ -51,6 +51,27 @@ classdef ComponentRegistry < handle
         end
     end
 
+    methods (Access = ?yamada.catalog.ComponentCatalogLoader)
+        function copy = duplicate(obj)
+            % duplicate Return an independent registry with the same validated catalog state.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                copy (1, 1) yamada.model.ComponentRegistry
+            end
+
+            % Definitions and derived surfaces are value data; only the maps need new handles.
+            copy = yamada.model.ComponentRegistry();
+            copy.Definitions = copyMap(obj.Definitions);
+            copy.FactoryVariantIds = copyMap(obj.FactoryVariantIds);
+            copy.EffectiveProperties = copyMap(obj.EffectiveProperties);
+            copy.ParentContextRules = obj.ParentContextRules;
+            copy.InspectorRowDefinitions = obj.InspectorRowDefinitions;
+            copy.Revision = obj.Revision;
+        end
+    end
+
     methods
         function obj = ComponentRegistry()
             % ComponentRegistry Create an empty data-driven component registry.
@@ -386,6 +407,21 @@ classdef ComponentRegistry < handle
             obj = yamada.catalog.ComponentCatalogLoader.load();
         end
     end
+end
+
+function copy = copyMap(source)
+% copyMap Copy a char-keyed map into a new handle with the same entries.
+%   containers.Map reports its entry count as its size, so no size is declared.
+arguments (Input)
+    source containers.Map
+end
+arguments (Output)
+    copy containers.Map
+end
+
+copy = containers.Map("KeyType", "char", "ValueType", "any");
+if source.Count == 0, return, end
+copy = containers.Map(keys(source), values(source), "UniformValues", false);
 end
 
 %{
