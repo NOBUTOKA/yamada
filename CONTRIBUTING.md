@@ -13,12 +13,12 @@ For contributors proposing or submitting changes, this guide explains the projec
 
 Use `main` as the shared integration branch for the next release. There is no permanent `develop` branch. Published versions are identified by immutable release tags such as `v1.0.0` and their GitHub Releases; merging a pull request does not publish a Toolbox.
 
-1. Create a focused work branch from up-to-date `main`, or use a branch in your fork. Agent-created branches use `codex/<purpose>`; other contributors may use descriptive names such as `feature/<purpose>` or `fix/<purpose>`.
+1. Create a focused work branch from up-to-date `main`, or use a branch in your fork. Use a descriptive name such as `feature/<purpose>`, `fix/<purpose>`, or `docs/<purpose>`.
 2. Make the change and run the relevant checks before submitting a pull request. Include the results and explain any checks not run. For documentation-only changes, inspect the diff and links and run `git diff --check`; MATLAB tests are unnecessary unless executable examples or behavior change.
 3. Open a pull request targeting `main`. Draft pull requests are welcome while work is incomplete. Check the final diff and validation evidence before merging; rerun affected checks if the change or integration base invalidates that evidence.
 4. A maintainer merges the pull request after reviewing scope, source safety, and validation. A separate person's approval is not mandatory for sole-maintainer work. Delete the work branch when it is no longer needed.
 
-Use pull requests for documentation and maintenance changes too. Do not push changes directly to `main` or routinely bypass its protection. Keep changes to `AGENTS.md` in a commit containing no other files; preserve that separation in the merge method rather than squashing it into unrelated changes.
+Use pull requests for documentation and maintenance changes too. Do not push changes directly to `main` or routinely bypass its protection.
 
 Create `release/<major>.<minor>` only when a release needs stabilization or maintenance while `main` advances. For a patch to an older release, branch from its published tag if that maintenance branch does not exist. Prefer fixing on `main` and backporting the necessary commits through a pull request; for an old-version-specific fix, record whether `main` also needs it. Do not merge unrelated next-version features into a maintenance branch.
 
@@ -79,11 +79,12 @@ Use the [roadmap](ROADMAP.md) to find proposed work. The [architecture reference
 - Project-owned MATLAB source and test files must use UTF-8 without a BOM and CRLF line endings.
 - Write source comments, class help, and function and method docstrings in English.
 - Put a purpose-oriented docstring immediately after every project-owned function or method declaration.
-- Use explicit `arguments (Input)` and `arguments (Output)` blocks when practical validation is possible for the signature.
+- Add explicit `arguments (Input)` and `arguments (Output)` blocks to every function and method you add or modify, except nested functions, test methods, and handle-class `delete` methods.
 - Prefer MATLAB `string` values and double-quoted string literals for text.
-- Put English help comments immediately before public properties and use the narrowest practical access.
+- Put English help comments immediately before public properties. Make implementation state `Access = private`, and use `SetAccess = private` for state that other classes only read.
+- Declare a property class whenever all accepted values share one class. Do not add size constraints to property declarations.
 - End each project-owned `.m` file with the same GNU GPL notice used by neighboring files. Do not add the project's GPL notice automatically to saved user applications or preserved input fixtures.
-- Add concise English comments before meaningful operation groups, but avoid comments that merely restate self-explanatory assignments.
+- Add concise English comments before meaningful operation groups and explain non-obvious intent, but avoid comments that merely restate self-explanatory assignments.
 
 Follow the formatting of existing code, and do not include unrelated formatting or line-ending changes in a pull request.
 
@@ -100,6 +101,8 @@ When adding or changing a standard component or property, start with the [catalo
 ## Testing
 
 Before submitting a pull request, run the tests relevant to your changes and include the results. If you could not run a test, name it and explain why in the pull request.
+
+Run the full suite before submitting a pull request, except for documentation-only changes that do not affect executable examples or behavior. Use quick and area profiles while iterating.
 
 The quick profile contains every non-UI test plus a bounded UI smoke set. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, and `lifecycle`.
 
