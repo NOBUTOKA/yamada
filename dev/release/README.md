@@ -11,7 +11,7 @@ artifacts = buildYamadaToolbox;
 
 `toolbox.json` is the authoritative source for version, permanent UUID, author, public email, summary, description, and release compatibility. The packager explicitly selects runtime code, resources, user documents, screenshots, and the project-owned example. Only the installed distribution root is added to the MATLAB path. The Apps gallery launches `yamada.m` directly.
 
-The build produces the `.mltbx`, `SHA256SUMS`, and a local `build-manifest.json` containing the source commit, dirty-state flag, MATLAB version, selected input hashes, and artifact SHA-256. A build from a dirty tree is a development candidate, not a publishable release. File timestamps and packager-generated metadata can vary between runs; reproducibility means repeatable source selection and configuration, not byte-identical archives.
+The build produces the `.mltbx`, `SHA256SUMS`, and a local `build-manifest.json` containing the source commit, dirty-state flag, MATLAB version, selected input hashes, and artifact SHA-256. `buildYamadaToolbox` reads the commit and dirty state from Git before and after packaging, so it requires Git. The packaging itself is `packageYamadaToolbox`, which takes the source identity from its caller; tests use it with a fixed identity so that they do not need Git. Release candidates must always be built with `buildYamadaToolbox`. A build from a dirty tree is a development candidate, not a publishable release. File timestamps and packager-generated metadata can vary between runs; reproducibility means repeatable source selection and configuration, not byte-identical archives.
 
 ## Final source and signatures
 
