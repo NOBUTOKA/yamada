@@ -61,8 +61,11 @@ classdef (TestTags = {'model', 'catalog', 'preview', 'ui'}) PositionGeometryRunt
             registry = yamada.model.ComponentRegistry.createDefault();
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
-            for id = ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uigauge-semicircular", ...
-                    "uislider-slider", "uislider-range", "uigauge-linear"]
+            ids = ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uigauge-semicircular", ...
+                "uislider-slider", "uislider-range", "uigauge-linear"];
+            % Variants missing from the running release's catalog are reported after the others run.
+            missing = ids(~ismember(ids, registry.listVariantIds()));
+            for id = ids(~ismember(ids, missing))
                 definition = registry.getById(id);
                 orientation = "vertical";
                 if definition.Id == "uigauge-semicircular", orientation = "east"; end
@@ -84,6 +87,7 @@ classdef (TestTags = {'model', 'catalog', 'preview', 'ui'}) PositionGeometryRunt
                     end
                 end
             end
+            for id = missing, assumeCatalogSupports(testCase, id); end
         end
     end
 

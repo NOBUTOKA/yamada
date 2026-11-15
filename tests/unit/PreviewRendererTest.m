@@ -319,8 +319,10 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             end
 
             % Keep each fixture isolated while sharing a stable editor-sized surface.
-            document = yamada.source.AppSourceParser.parseFile( ...
-                fullfile(fixtureFolder, fixtureName + ".m"), registry);
+            % Fixtures in the shared folder may have variants for older release catalogs.
+            path = fullfile(fixtureFolder, fixtureName + ".m");
+            if isfile(path), path = yamadaFixturePath(fixtureName + ".m"); end
+            document = yamada.source.AppSourceParser.parseFile(path, registry);
             panel = uipanel(previewFigure, "Position", [1 1 900 700]);
             renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);

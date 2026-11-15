@@ -377,6 +377,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function emptyValuesUseTheFullAllowedEmptyPath(testCase)
             % emptyValuesUseTheFullAllowedEmptyPath Keep non-scalar requests outside finite scalar local validation.
+            assumeCatalogSupports(testCase, "uieditfield-numeric", "AllowEmpty");
             document = testCase.fixture("absolute", ...
                 ["app.First = uieditfield(PARENT,'numeric');", "app.First.AllowEmpty = 'on';", "app.First.Value = 1;"]);
             first = document.getComponentByName("First");

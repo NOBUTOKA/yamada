@@ -24,8 +24,14 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
             testCase.applyFixture(matlab.unittest.fixtures.PathFixture(fullfile(testCase.ProjectRoot, "dev", "release")));
             folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
             [testCase.Files, testCase.Metadata] = yamadaToolboxFiles(testCase.ProjectRoot);
-            testCase.Artifacts = packageYamadaToolbox(fullfile(string(folder.Folder), "candidate"), ...
-                @() testCase.fixedSource());
+            % Packages are built only on the release target; other releases cannot check them.
+            try
+                testCase.Artifacts = packageYamadaToolbox(fullfile(string(folder.Folder), "candidate"), ...
+                    @() testCase.fixedSource());
+            catch exception
+                if exception.identifier ~= "yamada:Release:UnsupportedBuildHost", rethrow(exception); end
+                testCase.assumeFail(string(exception.message));
+            end
             testCase.ExtractedRoot = fullfile(string(folder.Folder), "extracted");
             unzip(testCase.Artifacts.toolbox, testCase.ExtractedRoot);
         end

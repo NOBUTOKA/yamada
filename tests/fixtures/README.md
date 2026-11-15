@@ -15,3 +15,11 @@ Adaptations: inherit from `handle`, replace the App Designer callback wrapper wi
 | `NavigationDataApp.m` | `dd39fd30736c061bdb95124cd7be1f92e00d5951169fb2c1520d0da23d55f3aa` |
 | `SimpleCalculatorApp.m` | `234b792b0be0a1143e27ee842ac11f560f0e95fa9f30b3822661472b141258c7` |
 | `SmallPreviewFixtureApp.m` | `c28721067cd0468ef432b9b1f46e359ee208f625541a8c7083f43c6f8327b7d0` |
+
+## Release-specific variants
+
+A fixture that uses components or properties missing from an older MATLAB release has a variant in `tests/fixtures/<release>/`. Tests load fixtures through `yamadaFixturePath`, which selects the newest variant not newer than the running release, as the catalog loader does, and otherwise the shared fixture. A variant changes only what that release lacks and keeps every component name, so tests stay shared.
+
+| Variant | Change from the shared fixture |
+| --- | --- |
+| `R2023a/ControlGalleryApp.m` | The color picker (R2024a) becomes a text edit field named `AccentEditField`, and the range slider (R2023b) becomes an ordinary slider with the same name and grid placement. |

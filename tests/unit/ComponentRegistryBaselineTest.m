@@ -25,6 +25,16 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
     methods (Test, TestTags = {'exhaustive'})
         function runtimeRegistryMatchesAuditedLedger(testCase)
             % runtimeRegistryMatchesAuditedLedger Compare every variant with the audited ledger.
+            %   Only the surface release has a ledger transcript; catalogs of
+            %   other releases are checked against their projections by
+            %   tests/verifyReleaseProjection.ps1.
+
+            % Compare only when the running release serves the surface catalog.
+            projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
+            releases = jsondecode(fileread(fullfile(projectRoot, "dev", "component-data", "releases.json")));
+            testCase.assumeEqual(yamada.catalog.ComponentCatalogLoader.defaultRelease(), ...
+                string(releases.surfaceRelease), ...
+                "The audited ledger transcript describes the surface release only.");
 
             % Resolve the generated catalog through the production loader.
             registry = yamada.model.ComponentRegistry.createDefault();

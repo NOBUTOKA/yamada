@@ -63,11 +63,15 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
 
         function emptyRequestsAndDeadHandlesUseTheExistingRenderer(testCase)
             % emptyRequestsAndDeadHandlesUseTheExistingRenderer Keep unsupported values and disposed widgets outside reuse.
-            for kind = ["empty", "deleted"]
+            for kind = ["deleted", "empty"]
+                % An empty numeric Value needs a catalog that documents AllowEmpty.
+                if kind == "empty", assumeCatalogSupports(testCase, "uieditfield-numeric", "AllowEmpty"); end
                 [document, registry] = numericPreviewFixture("absolute");
-                source = replace(document.CurrentText, "app.First.Value = 1;", ...
-                    "app.First.AllowEmpty = ""on"";" + newline + "app.First.Value = 1;");
-                document = yamada.source.AppSourceParser.parseText(source, registry);
+                if kind == "empty"
+                    source = replace(document.CurrentText, "app.First.Value = 1;", ...
+                        "app.First.AllowEmpty = ""on"";" + newline + "app.First.Value = 1;");
+                    document = yamada.source.AppSourceParser.parseText(source, registry);
+                end
                 first = document.getComponentByName("First");
                 figure = uifigure(Visible="off");
                 cleanup = onCleanup(@() delete(figure));

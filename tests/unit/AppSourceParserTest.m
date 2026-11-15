@@ -413,6 +413,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             testPath = mfilename("fullpath");
             testRoot = fileparts(fileparts(testPath));
             result = string(fullfile(testRoot, "fixtures", name));
+            % Shared fixtures may have variants for older release catalogs.
+            if isfile(result), result = yamadaFixturePath(name); end
         end
 
         function filePath = writeTemporaryBytes(bytes)

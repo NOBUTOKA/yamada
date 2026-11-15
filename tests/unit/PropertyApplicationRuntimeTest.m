@@ -1,5 +1,5 @@
 classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) PropertyApplicationRuntimeTest < matlab.unittest.TestCase
-    % PropertyApplicationRuntimeTest Check reviewed rules against owned R2024a controls.
+    % PropertyApplicationRuntimeTest Check reviewed rules against owned controls of the running release.
     %   Only test-authored factory arguments and settings reach native setters.
     %   These tests never execute opened app source or undocumented callbacks.
 
@@ -38,8 +38,11 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             fileCleanup = onCleanup(@() delete(output));
             results = ProbePositionAliasInteractions(output);
             registry = yamada.model.ComponentRegistry.createDefault();
-            testCase.assertNumElements(results, 42);
-            testCase.verifyNumElements(unique(string({results.Id})), 14);
+            % Each reviewed variant in the running catalog contributes its three position aliases.
+            observed = unique(string({results.Id}));
+            testCase.assertNotEmpty(observed);
+            testCase.assertNumElements(results, 3 * numel(observed));
+            testCase.verifyTrue(all(ismember(observed, registry.listVariantIds())));
             for result = results
                 context = result.Id + "." + result.Path;
                 if result.Path == "OuterPosition"
@@ -87,7 +90,9 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             ids = ["uibutton-push", "uibutton-state", "uitogglebutton", "uicheckbox", "uicolorpicker", ...
                 "uihtml", "uihyperlink", "uiimage", "uilabel", "uilamp", "uiradiobutton", "uitextarea", "uitree", "uitree-checkbox"];
             vectors = [10 20 0 0; 10 20 0 35; 10 20 35 0; 10 20 -1 20; 10.1 20.2 0.5 2.3; 10 20 1 1];
-            for id = ids
+            % Variants missing from the running release's catalog are reported after the others run.
+            missing = ids(~ismember(ids, registry.listVariantIds()));
+            for id = ids(~ismember(ids, missing))
                 definition = registry.getById(id);
                 parent = figure;
                 if any(definition.AllowedParentFactories == "uibuttongroup") && ...
@@ -115,6 +120,7 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 end
                 if parent ~= figure, delete(parent); end
             end
+            for id = missing, assumeCatalogSupports(testCase, id); end
         end
 
         function itemDomainsAreEstablishedBeforeSelection(testCase)
@@ -137,26 +143,32 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
         function rangesAndNumericOptionsPrecedeRequestedValues(testCase)
             % rangesAndNumericOptionsPrecedeRequestedValues Apply values outside the default slider range safely.
             [figure, registry] = testCase.environment();
-            cases = {"uislider", {"slider"}, 150; ...
-                "uislider", {"range"}, [140 180]; ...
-                "uiknob", {"continuous"}, 150; ...
-                "uieditfield", {"numeric"}, 150; "uispinner", {}, 150};
-            for index = 1:size(cases, 1)
+            cases = {"uislider", {"slider"}, 150, "uislider-slider"; ...
+                "uislider", {"range"}, [140 180], "uislider-range"; ...
+                "uiknob", {"continuous"}, 150, "uiknob-continuous"; ...
+                "uieditfield", {"numeric"}, 150, "uieditfield-numeric"; "uispinner", {}, 150, "uispinner"};
+            supported = ismember([cases{:, 4}], registry.listVariantIds());
+            for index = find(supported)
                 entries = [yamada.model.PropertyEntry("Value", cases{index, 3}), ...
                     yamada.model.PropertyEntry("Limits", [120 200])];
-                target = testCase.apply(figure, registry, cases{index, 1}, cases{index, 2}, entries);
+                % Construct each variant the way its catalog does.
+                definition = registry.getById(cases{index, 4});
+                target = testCase.apply(figure, registry, definition.Factory, definition.CreationArguments, entries);
                 testCase.verifyEqual(target.Value, cases{index, 3});
                 delete(target);
             end
-            for factory = ["uieditfield", "uispinner"]
-                style = {};
-                if factory == "uieditfield", style = {"numeric"}; end
+            % Empty numeric values exist only where the catalog documents AllowEmpty.
+            for id = ["uieditfield-numeric", "uispinner"]
+                definition = registry.getById(id);
+                if ~any([definition.Properties.Path] == "AllowEmpty"), continue, end
                 entries = [yamada.model.PropertyEntry("Value", []), ...
                     yamada.model.PropertyEntry("AllowEmpty", "on")];
-                target = testCase.apply(figure, registry, factory, style, entries);
+                target = testCase.apply(figure, registry, definition.Factory, definition.CreationArguments, entries);
                 testCase.verifyEmpty(target.Value);
                 delete(target);
             end
+            for index = find(~supported), assumeCatalogSupports(testCase, cases{index, 4}); end
+            assumeCatalogSupports(testCase, "uispinner", "AllowEmpty");
         end
 
         function gaugesAllowOffScaleValuesWithoutClamping(testCase)
@@ -176,11 +188,13 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
         function explicitFinalModesSurviveTickSetterEffects(testCase)
             % explicitFinalModesSurviveTickSetterEffects Restore final automatic modes after explicit tick arrays.
             [figure, registry] = testCase.environment();
-            cases = {"uislider", {"slider"}; "uislider", {"range"}; ...
-                "uiknob", {"continuous"}; "uigauge", {"circular"}; ...
-                "uigauge", {"linear"}; "uigauge", {"ninetydegree"}; ...
-                "uigauge", {"semicircular"}};
-            for index = 1:size(cases, 1)
+            cases = {"uislider", {"slider"}, "uislider-slider"; "uislider", {"range"}, "uislider-range"; ...
+                "uiknob", {"continuous"}, "uiknob-continuous"; "uigauge", {"circular"}, "uigauge-circular"; ...
+                "uigauge", {"linear"}, "uigauge-linear"; "uigauge", {"ninetydegree"}, "uigauge-ninetydegree"; ...
+                "uigauge", {"semicircular"}, "uigauge-semicircular"};
+            % Variants missing from the running release's catalog are reported after the others run.
+            supported = ismember([cases{:, 3}], registry.listVariantIds());
+            for index = find(supported)
                 entries = [yamada.model.PropertyEntry("MajorTicksMode", "auto"), ...
                     yamada.model.PropertyEntry("MinorTicksMode", "auto"), ...
                     yamada.model.PropertyEntry("MajorTickLabelsMode", "auto"), ...
@@ -188,12 +202,15 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                     yamada.model.PropertyEntry("MajorTicks", [0 100]), ...
                     yamada.model.PropertyEntry("MinorTicks", [25 75]), ...
                     yamada.model.PropertyEntry("Limits", [0 100])];
-                target = testCase.apply(figure, registry, cases{index, 1}, cases{index, 2}, entries);
+                % Construct each variant the way its catalog does.
+                definition = registry.getById(cases{index, 3});
+                target = testCase.apply(figure, registry, definition.Factory, definition.CreationArguments, entries);
                 testCase.verifyEqual(string(target.MajorTicksMode), "auto");
                 testCase.verifyEqual(string(target.MinorTicksMode), "auto");
                 testCase.verifyEqual(string(target.MajorTickLabelsMode), "auto");
                 delete(target);
             end
+            for index = find(~supported), assumeCatalogSupports(testCase, cases{index, 3}); end
         end
 
         function axisValueModesAreOrderedAndPreserved(testCase)
