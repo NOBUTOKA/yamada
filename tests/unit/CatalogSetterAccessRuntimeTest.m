@@ -8,7 +8,7 @@ classdef (TestTags = {'catalog', 'ui'}) CatalogSetterAccessRuntimeTest < matlab.
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
             tools = fullfile(root, "dev", "component-data");
             testCase.applyFixture(matlab.unittest.fixtures.PathFixture(tools));
-            release = fullfile(tools, "R2024a");
+            release = fullfile(tools, yamada.catalog.ComponentCatalogLoader.defaultRelease());
             review = jsondecode(fileread(fullfile(release, "SETTER_ACCESS_RUNTIME_REVIEW.json")));
             expected = reshape(review.observations, 1, []);
             testCase.assertNotEmpty(expected);

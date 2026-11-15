@@ -152,7 +152,7 @@ Edit commands, keyboard shortcuts, and Hierarchy context commands use the same d
 
 The development pipeline runs `Assert-ComponentLedgerSchema` from `dev/component-data/ComponentLedger.ps1` before policy application, grouping artifact generation, grouping design, and runtime promotion. It validates every complete concrete document against the release schema before writing outputs. Application graph, source evidence, and grouping parity checks remain separate. Accepted MATLAB classes remain JSON arrays even for a single class; their order has no semantic meaning. Combined official headings supply each named property's description, rather than leaving earlier names blank. Full-schema verification does not establish that a property's setter effects have been audited.
 
-[`ComponentRegistry`](../+yamada/+model/ComponentRegistry.m) is the runtime query boundary. `createDefault` loads the packaged R2024a catalog through [`ComponentCatalogLoader`](../+yamada/+catalog/ComponentCatalogLoader.m).
+[`ComponentRegistry`](../+yamada/+model/ComponentRegistry.m) is the runtime query boundary. `createDefault` loads a packaged catalog through [`ComponentCatalogLoader`](../+yamada/+catalog/ComponentCatalogLoader.m). Each catalog lives in a release-named folder under `resources/component-catalog`, and the loader selects the newest release that is not newer than the running MATLAB, so a newer MATLAB relies on backward compatibility until its own catalog exists. A running release older than every catalog is rejected. Each manifest names its release, and every property-group and Inspector-row artifact must name the same release.
 
 The loader remembers successful loads in process memory, one entry per catalog root. Before each load it computes a SHA-256 fingerprint over the full path and bytes of every file under the root. It reuses the remembered validated state only when that fingerprint is unchanged; otherwise it validates from source again. Any edit, added file or unreadable file therefore forces full validation, and a failed load is never remembered. Every call returns a new, independent registry, so registration or other mutation by one caller never reaches the cache or another caller. Nothing is written to disk, and the cache is lost when MATLAB clears the loader class.
 
@@ -371,7 +371,7 @@ Preview invalidation distinguishes current source-coordinate changes from visual
 
 Runtime code resolves resources relative to the project root:
 
-- `resources/component-catalog/R2024a` is loaded by the registry;
+- one release folder under `resources/component-catalog` is loaded by the registry;
 - `resources/EditorInteractionOverlay.html`, `resources/RootResizeGuide.html`, and `resources/SourceDiffPreview.html` are loaded by `yamada`;
 - `resources/layout-settle-request.js` is loaded by `waitForPreviewLayout` and executed only in the editor-owned figure window; and
 - development ledgers and generation scripts under `dev/component-data` are not runtime dependencies.

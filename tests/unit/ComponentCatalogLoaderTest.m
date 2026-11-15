@@ -6,6 +6,32 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
     %   versioned runtime catalog and its strict validation boundary.
 
     methods (Test)
+        function selectsNewestCatalogNotNewerThanRunningRelease(testCase)
+            % selectsNewestCatalogNotNewerThanRunningRelease Reuse older catalogs on newer releases and reject older ones.
+            available = ["R2024a", "R2023a"];
+            select = @(running) yamada.catalog.ComponentCatalogLoader.selectRelease(available, running);
+            testCase.verifyEqual(select("R2023a"), "R2023a");
+            testCase.verifyEqual(select("R2023b"), "R2023a");
+            testCase.verifyEqual(select("R2024a"), "R2024a");
+            testCase.verifyEqual(select("R2026b"), "R2024a");
+            testCase.verifyError(@() select("R2022b"), "yamada:ComponentCatalogLoader:UnsupportedRelease");
+            % The packaged default follows the same rule for the running release.
+            release = yamada.catalog.ComponentCatalogLoader.defaultRelease();
+            testCase.verifyTrue(release <= string(matlabRelease().Release));
+            [~, folder] = fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot());
+            testCase.verifyEqual(string(folder), release);
+        end
+
+        function rejectsMalformedManifestRelease(testCase)
+            % rejectsMalformedManifestRelease Require a release name in the manifest.
+            root = testCase.createCatalog();
+            manifest = testCase.readJson(root, "catalog.json");
+            manifest.matlabRelease = "latest";
+            testCase.writeJson(root, "catalog.json", manifest);
+            exception = testCase.verifyCatalogFailure(root);
+            testCase.verifySubstring(string(exception.message), "Expected a MATLAB release name");
+        end
+
         function rejectsCallbackSignaturesOnOrdinaryProperties(testCase)
             % rejectsCallbackSignaturesOnOrdinaryProperties Keep callback argument contracts independent of literal value schemas.
             root = testCase.createCatalog();

@@ -400,7 +400,7 @@ classdef ComponentRegistry < handle
 
     methods (Static)
         function obj = createDefault()
-            % createDefault Load the packaged MATLAB R2024a component catalog.
+            % createDefault Load the packaged component catalog selected for the running release.
             arguments (Output)
                 obj (1, 1) yamada.model.ComponentRegistry
             end
