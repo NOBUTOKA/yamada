@@ -14,10 +14,11 @@ classdef ComponentRegistry < handle
     end
 
     properties (Access = private)
-        Definitions containers.Map
-        FactoryVariantIds containers.Map
-        EffectiveProperties containers.Map
-        IndependentDefinitions containers.Map
+        % Array-valued entries use cell values because each key holds one element.
+        Definitions dictionary = dictionary(string([]), yamada.model.ComponentDefinition.empty)
+        FactoryVariantIds dictionary = dictionary(string([]), {})
+        EffectiveProperties dictionary = dictionary(string([]), {})
+        IndependentDefinitions dictionary = dictionary(string([]), {})
         ParentContextRules yamada.model.ParentContextRule = yamada.model.ParentContextRule.empty
         InspectorRowDefinitions yamada.model.InspectorRowDefinition = ...
             yamada.model.InspectorRowDefinition.empty
@@ -36,18 +37,18 @@ classdef ComponentRegistry < handle
             result = true;
             if isempty(definitions), return, end
             definitions = reshape(definitions, 1, []);
-            key = char("definitions:" + strjoin(string({definitions.Path}), "|"));
+            key = "definitions:" + strjoin(string({definitions.Path}), "|");
             if isKey(obj.IndependentDefinitions, key)
-                previous = obj.IndependentDefinitions(key);
+                previous = obj.IndependentDefinitions{key};
                 if isequaln(previous, definitions), return, end
             end
             % Only independent values enter this map; rejected live data is never retained.
             result = yamada.model.InputChangeClock.isValueData(definitions);
             if ~result, return, end
-            if obj.IndependentDefinitions.Count >= 128 && ~isKey(obj.IndependentDefinitions, key)
-                obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
+            if numEntries(obj.IndependentDefinitions) >= 128 && ~isKey(obj.IndependentDefinitions, key)
+                obj.IndependentDefinitions = dictionary(string([]), {});
             end
-            obj.IndependentDefinitions(key) = definitions;
+            obj.IndependentDefinitions{key} = definitions;
         end
     end
 
@@ -61,11 +62,11 @@ classdef ComponentRegistry < handle
                 copy (1, 1) yamada.model.ComponentRegistry
             end
 
-            % Definitions and derived surfaces are value data; only the maps need new handles.
+            % Definitions, derived surfaces, and their dictionaries are all value data.
             copy = yamada.model.ComponentRegistry();
-            copy.Definitions = copyMap(obj.Definitions);
-            copy.FactoryVariantIds = copyMap(obj.FactoryVariantIds);
-            copy.EffectiveProperties = copyMap(obj.EffectiveProperties);
+            copy.Definitions = obj.Definitions;
+            copy.FactoryVariantIds = obj.FactoryVariantIds;
+            copy.EffectiveProperties = obj.EffectiveProperties;
             copy.ParentContextRules = obj.ParentContextRules;
             copy.InspectorRowDefinitions = obj.InspectorRowDefinitions;
             copy.Revision = obj.Revision;
@@ -79,11 +80,7 @@ classdef ComponentRegistry < handle
                 obj (1, 1) yamada.model.ComponentRegistry
             end
 
-            % Store definitions by factory without coupling the model to types.
-            obj.Definitions = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.FactoryVariantIds = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
+            % Definition dictionaries start empty from their property defaults.
             obj.ParentContextRules = [yamada.model.ParentContextRule.grid(); yamada.model.ParentContextRule.absolute()];
             obj.InspectorRowDefinitions = yamada.model.InspectorRowDefinition.empty;
         end
@@ -96,13 +93,13 @@ classdef ComponentRegistry < handle
             end
 
             % Index variants by their stable identifier and factory name.
-            factoryKey = char(definition.Factory);
-            variantKey = char(definition.Id);
-            if isempty(factoryKey) || ~isvarname(factoryKey)
+            factoryKey = string(definition.Factory);
+            variantKey = string(definition.Id);
+            if strlength(factoryKey) == 0 || ~isvarname(char(factoryKey))
                 error("yamada:ComponentRegistry:InvalidFactory", ...
                     "Factory must be a valid MATLAB function name.");
             end
-            if isempty(variantKey)
+            if strlength(variantKey) == 0
                 error("yamada:ComponentRegistry:InvalidVariantId", ...
                     "Component variant ID must not be empty.");
             end
@@ -115,14 +112,14 @@ classdef ComponentRegistry < handle
             end
             obj.Definitions(variantKey) = definition;
             obj.Revision = obj.Revision + 1;
-            obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.EffectiveProperties = dictionary(string([]), {});
+            obj.IndependentDefinitions = dictionary(string([]), {});
             if ~isKey(obj.FactoryVariantIds, factoryKey)
-                obj.FactoryVariantIds(factoryKey) = string(definition.Id);
+                obj.FactoryVariantIds{factoryKey} = variantKey;
             else
-                variants = string(obj.FactoryVariantIds(factoryKey));
+                variants = obj.FactoryVariantIds{factoryKey};
                 if ~any(variants == definition.Id)
-                    obj.FactoryVariantIds(factoryKey) = [variants, definition.Id];
+                    obj.FactoryVariantIds{factoryKey} = [variants, variantKey];
                 end
             end
         end
@@ -137,7 +134,7 @@ classdef ComponentRegistry < handle
                 result (1, 1) logical
             end
 
-            result = isKey(obj.FactoryVariantIds, char(factory));
+            result = isscalar(factory) && isKey(obj.FactoryVariantIds, factory);
         end
 
         function definition = get(obj, factory, creationArguments)
@@ -152,16 +149,11 @@ classdef ComponentRegistry < handle
             end
 
             % Fail explicitly so callers cannot infer unsafe defaults.
-            key = char(factory);
-            if ~isKey(obj.FactoryVariantIds, key)
+            if ~obj.contains(factory)
                 error("yamada:ComponentRegistry:UnknownFactory", ...
-                    "Component factory ""%s"" is not registered.", key);
+                    "Component factory ""%s"" is not registered.", strjoin(factory, ", "));
             end
-            variantIds = string(obj.FactoryVariantIds(key));
-            candidates = yamada.model.ComponentDefinition.empty;
-            for index = 1:numel(variantIds)
-                candidates(end + 1) = obj.Definitions(char(variantIds(index))); %#ok<AGROW>
-            end
+            candidates = obj.Definitions(obj.FactoryVariantIds{factory});
             definition = obj.selectVariant(candidates, creationArguments, factory);
         end
 
@@ -175,7 +167,7 @@ classdef ComponentRegistry < handle
             end
 
             % Sorting makes palettes, tests, and generated output deterministic.
-            factories = sort(string(keys(obj.FactoryVariantIds)));
+            factories = sort(keys(obj.FactoryVariantIds))';
         end
 
         function ids = listVariantIds(obj)
@@ -187,7 +179,7 @@ classdef ComponentRegistry < handle
                 ids string
             end
 
-            ids = sort(string(keys(obj.Definitions)));
+            ids = sort(keys(obj.Definitions))';
         end
 
         function definition = getById(obj, id)
@@ -200,12 +192,11 @@ classdef ComponentRegistry < handle
                 definition (1, 1) yamada.model.ComponentDefinition
             end
 
-            key = char(id);
-            if ~isKey(obj.Definitions, key)
+            if ~isKey(obj.Definitions, id)
                 error("yamada:ComponentRegistry:UnknownVariantId", ...
-                    "Component variant ID ""%s"" is not registered.", key);
+                    "Component variant ID ""%s"" is not registered.", id);
             end
-            definition = obj.Definitions(key);
+            definition = obj.Definitions(id);
         end
 
         function name = displayName(obj, factory)
@@ -230,8 +221,8 @@ classdef ComponentRegistry < handle
             end
             obj.ParentContextRules = rules(:);
             obj.Revision = obj.Revision + 1;
-            obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.EffectiveProperties = dictionary(string([]), {});
+            obj.IndependentDefinitions = dictionary(string([]), {});
         end
 
         function setInspectorRowDefinitions(obj, definitions)
@@ -248,8 +239,8 @@ classdef ComponentRegistry < handle
             end
             obj.InspectorRowDefinitions = definitions(:);
             obj.Revision = obj.Revision + 1;
-            obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.EffectiveProperties = dictionary(string([]), {});
+            obj.IndependentDefinitions = dictionary(string([]), {});
         end
 
         function definitions = inspectorRows(obj)
@@ -278,9 +269,9 @@ classdef ComponentRegistry < handle
 
             % Compose only the parent rule selected by the direct parent factory.
             definition = obj.get(factory, creationArguments);
-            key = char(definition.Id + "|" + parentFactory);
+            key = definition.Id + "|" + parentFactory;
             if isKey(obj.EffectiveProperties, key)
-                properties = obj.EffectiveProperties(key);
+                properties = obj.EffectiveProperties{key};
                 return
             end
             properties = definition.Properties;
@@ -306,7 +297,7 @@ classdef ComponentRegistry < handle
             end
             yamada.model.PropertyApplicationPolicy.orderDefinitions(properties, ...
                 definition.Id + " under " + parentFactory, suppressedPaths);
-            obj.EffectiveProperties(key) = properties;
+            obj.EffectiveProperties{key} = properties;
         end
 
         function result = isReadOnlyProperty(obj, factory, path, creationArguments)
@@ -407,21 +398,6 @@ classdef ComponentRegistry < handle
             obj = yamada.catalog.ComponentCatalogLoader.load();
         end
     end
-end
-
-function copy = copyMap(source)
-% copyMap Copy a char-keyed map into a new handle with the same entries.
-%   containers.Map reports its entry count as its size, so no size is declared.
-arguments (Input)
-    source containers.Map
-end
-arguments (Output)
-    copy containers.Map
-end
-
-copy = containers.Map("KeyType", "char", "ValueType", "any");
-if source.Count == 0, return, end
-copy = containers.Map(keys(source), values(source), "UniformValues", false);
 end
 
 %{

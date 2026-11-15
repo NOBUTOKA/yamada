@@ -76,7 +76,7 @@ classdef DocumentModel < handle
         PropertyValidationDiagnostics yamada.model.Diagnostic = yamada.model.Diagnostic.empty
         SavedHistoryIndex double = NaN
         HasSavedHistoryCheckpoint logical = false
-        ComponentLookup containers.Map
+        ComponentLookup dictionary = dictionary(string([]), [])
         ComponentLookupReady logical = false
         SettingStore yamada.model.SourceSettingStore = yamada.model.SourceSettingStore.empty
     end
@@ -900,7 +900,6 @@ classdef DocumentModel < handle
             end
 
             % Keep the identity map private to this document and normalize its class name.
-            obj.ComponentLookup = containers.Map("KeyType", "char", "ValueType", "double");
             obj.ComponentLookupReady = true;
             obj.ClassName = className;
         end
@@ -1436,12 +1435,12 @@ classdef DocumentModel < handle
                 all(isvalid(obj.Components), "all");
             if reusable
                 if ~obj.ComponentLookupReady
-                    if obj.ComponentLookup.Count > 0
-                        obj.ComponentLookup = containers.Map("KeyType", "char", "ValueType", "double");
+                    if numEntries(obj.ComponentLookup) > 0
+                        obj.ComponentLookup = dictionary(string([]), []);
                     end
                     obj.ComponentLookupReady = true;
                 end
-                key = char(id);
+                key = id;
                 if isKey(obj.ComponentLookup, key)
                     component = obj.Components(obj.ComponentLookup(key));
                     return

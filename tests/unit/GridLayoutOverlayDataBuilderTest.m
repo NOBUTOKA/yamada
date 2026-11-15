@@ -476,7 +476,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             end
             arguments (Output)
                 document (1, 1) yamada.model.DocumentModel
-                handles containers.Map
+                handles dictionary
                 panel (1, 1) matlab.ui.container.Panel
                 grid (1, 1) yamada.model.ComponentRecord
                 first (1, 1) yamada.model.ComponentRecord

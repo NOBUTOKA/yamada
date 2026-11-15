@@ -128,7 +128,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             testCase.verifyEmpty(toolsDocument.Diagnostics);
             testCase.verifyEqual(string({toolsDiagnostics.Code}), "preview-position-unknown");
             testCase.verifyEqual(string({toolsDiagnostics.Severity}), "warning");
-            testCase.verifyEqual(double(toolsHandles.Count), 1);
+            testCase.verifyEqual(numEntries(toolsHandles), 1);
             testCase.verifyTrue(isKey(toolsHandles, "parsed-PreviewLabel"));
             testCase.verifyEqual(string(toolsHandles("parsed-PreviewLabel").Text), ...
                 "Figure tools are ignored in Safe Preview.");
@@ -313,7 +313,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             end
             arguments (Output)
                 document (1, 1) yamada.model.DocumentModel
-                handles containers.Map
+                handles dictionary
                 diagnostics yamada.model.Diagnostic
                 panel (1, 1) matlab.ui.container.Panel
             end

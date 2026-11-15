@@ -3,7 +3,7 @@ classdef DefaultValueProvider < handle
 
     properties (Access = private)
         Registry yamada.model.ComponentRegistry
-        Cache containers.Map
+        Cache dictionary = dictionary(string([]), struct([]))
         ProbeCount double = 0
     end
 
@@ -14,7 +14,6 @@ classdef DefaultValueProvider < handle
                 registry (1, 1) yamada.model.ComponentRegistry
             end
             obj.Registry = registry;
-            obj.Cache = containers.Map("KeyType", "char", "ValueType", "any");
         end
 
         function [found, value] = resolve(obj, component, parentFactory, property)
@@ -63,7 +62,7 @@ classdef DefaultValueProvider < handle
             arguments (Output)
                 count (1, 1) double
             end
-            count = obj.Cache.Count;
+            count = numEntries(obj.Cache);
         end
 
         function count = fixtureProbeCount(obj)

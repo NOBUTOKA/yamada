@@ -275,17 +275,17 @@ function [handles, diagnostics, surface] = synchronizePreview(renderer, document
 arguments (Input)
     renderer (1, 1) yamada.ui.PreviewRenderer
     document (1, 1) yamada.model.DocumentModel
-    handles containers.Map
+    handles dictionary
     parent (1, 1) matlab.ui.Figure
     request (1, 1) yamada.ui.RefreshRequest
 end
 arguments (Output)
-    handles containers.Map
+    handles dictionary
     diagnostics yamada.model.Diagnostic
     surface
 end
 surface = [];
-[applied, diagnostics] = renderer.synchronize(document, handles, request);
+[applied, diagnostics, ~, handles] = renderer.synchronize(document, handles, request);
 if ~applied
     [handles, diagnostics, surface] = renderer.render(document, parent);
 elseif nargout > 2
