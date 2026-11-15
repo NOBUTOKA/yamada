@@ -54,7 +54,7 @@ Save, Save As, New, Open, and editor close pass through the injected [`DocumentL
 
 ## Callback Management
 
-HierarchyContextMenu owns one shared native menu and a transient context target. The hit node comes from ContextMenuOpeningFcn.InteractionInformation.Node; it does not modify the editor's SelectedComponentId. Dispatch checks document identity and component existence again, and hierarchy rebuilds reset the transient target.
+HierarchyContextMenu owns one shared native menu and a transient context target. The hit node comes from ContextMenuOpeningFcn.InteractionInformation.Node; it does not modify the editor's SelectedComponentId. Before R2023b a tree-level menu does not open over nodes and its opening event carries no hit node, as verified on R2023a, so those releases leave the tree without a menu and offer the same menu only from a Preview right-click; a menu per node was measured at four to five times the hierarchy rebuild time and is not used. Dispatch checks document identity and component existence again, and hierarchy rebuilds reset the transient target.
 
 CallbackManagerDialog owns only its modal figure, scrollable rows, explanations, and injected state/action/validity functions. It displays immutable CallbackState results from CallbackSourceAnalyzer. The effective catalog valueSchema.kind identifies callbacks without introducing special Inspector property rows.
 
