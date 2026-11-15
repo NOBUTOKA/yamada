@@ -763,6 +763,8 @@ classdef PropertyStateResolver
             [upper, upperKnown] = stateSwitch(states, "UpperLimitInclusive");
             [rounding, roundingKnown] = stateSwitch(states, "RoundFractionalValues");
             [allowEmpty, emptyKnown] = stateSwitch(states, "AllowEmpty");
+            % A catalog without AllowEmpty describes a release where Value can never be empty.
+            if ~any(string({states.Path}) == "AllowEmpty"), allowEmpty = false; emptyKnown = true; end
             if ~all([limitsKnown lowerKnown upperKnown roundingKnown emptyKnown])
                 states = setUnknown(states, "Value", id, "A numeric value constraint is not known.", "constraint");
                 return
