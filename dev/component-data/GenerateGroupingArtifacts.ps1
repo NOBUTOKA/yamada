@@ -13,7 +13,9 @@ and human judgment candidates for Steps 4 and 6 of the grouping procedure.
 
 When ReleaseDirectory is a generated release projection outside the
 repository, ProvenanceDirectory names the source ledger whose Git history
-records the baseline commit.
+records the baseline commit. The baseline commit is provenance only; it is
+recorded as "unavailable" when Git is not installed or the ledger is not in a
+Git repository.
 
 .EXAMPLE
 ./GenerateGroupingArtifacts.ps1 -ReleaseDirectory ./R2024a
@@ -429,12 +431,13 @@ $repositoryPath = (Resolve-Path -LiteralPath (Join-Path $provenancePath "..\..\.
 $releaseRelativePath = $provenancePath.Substring($repositoryPath.Length + 1).Replace("\", "/")
 $ledgerRelativePaths = @($ledgerInputFiles | ForEach-Object { "$releaseRelativePath/$($_.Substring($releasePath.Length + 1).Replace("\", "/"))" })
 $inputRelativePaths = $ledgerRelativePaths
-$gitCommitOutput = @(& git -C $repositoryPath log -1 --format=%H -- $inputRelativePaths 2>$null)
-if ($LASTEXITCODE -ne 0 -or $gitCommitOutput.Count -eq 0) {
-    $gitCommit = "unavailable"
-}
-else {
-    $gitCommit = ([string]$gitCommitOutput[0]).Trim()
+# Without Git or a repository the baseline commit is unavailable; generation does not depend on it.
+$gitCommit = "unavailable"
+if ($null -ne (Get-Command git -CommandType Application -ErrorAction SilentlyContinue)) {
+    $gitCommitOutput = @(& git -C $repositoryPath log -1 --format=%H -- $inputRelativePaths 2>$null)
+    if ($LASTEXITCODE -eq 0 -and $gitCommitOutput.Count -gt 0) {
+        $gitCommit = ([string]$gitCommitOutput[0]).Trim()
+    }
 }
 
 $matrix = @()

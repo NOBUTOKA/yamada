@@ -198,7 +198,7 @@ addpath(fullfile(pwd, "dev", "compatibility"));
 compatibilityResults = runCompatibilityChecks();
 ```
 
-For catalog text or promotion changes, also run the PowerShell checks `tests/verifyCatalogProvenance.ps1`, `tests/verifyComponentLedgerSchema.ps1`, and `tests/verifyReleaseProjection.ps1`. They verify reproducible regeneration, independence from reference wording, semantic preservation, rejection of malformed ledger input before mutation, and that every committed release catalog is the current projection of the surface ledger. The checks require PowerShell 7 and Git on `PATH`.
+For catalog text or promotion changes, also run the PowerShell checks `tests/verifyCatalogProvenance.ps1`, `tests/verifyComponentLedgerSchema.ps1`, and `tests/verifyReleaseProjection.ps1`. They verify reproducible regeneration, independence from reference wording, semantic preservation, rejection of malformed ledger input before mutation, and that every committed release catalog is the current projection of the surface ledger. The checks require PowerShell 7.
 
 ## HTML Editing Canvas Overlay
 

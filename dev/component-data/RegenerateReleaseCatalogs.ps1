@@ -16,7 +16,8 @@ dev/component-data/projections/<release>.md, and the surface release's grouping
 review artifacts back into its ledger. Catalogs of releases that are only
 known are removed. The release-independent availability index is written to
 resources/component-catalog/availability.json. Projections themselves are
-temporary. Requires PowerShell 7 and Git on PATH.
+temporary. Requires PowerShell 7; Git on PATH is used only to record the
+baseline commit of the ledger inputs.
 
 .EXAMPLE
 ./RegenerateReleaseCatalogs.ps1
