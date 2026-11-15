@@ -68,7 +68,9 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
             testCase.verifySubstring(addon, string(testCase.Metadata.identifier));
             testCase.verifySubstring(addon, "<contact>nobutoka@gmail.com</contact>");
             testCase.verifySubstring(requirements, 'MATLABOnline="false" linux="false" mac="false" win="true"');
-            testCase.verifySubstring(requirements, 'end="R2024a" start="R2024a"');
+            testCase.verifySubstring(requirements, "end=""" + testCase.Metadata.maximumMatlabRelease + """ start=""" + testCase.Metadata.minimumMatlabRelease + """");
+            testCase.verifyEqual(string(testCase.Metadata.minimumMatlabRelease), "R2023a");
+            testCase.verifyEqual(string(testCase.Metadata.maximumMatlabRelease), "R2024a");
             testCase.verifySubstring(paths, "<matlabPath>/</matlabPath>");
             testCase.verifySubstring(gallery, '<callback>yamada</callback>');
             testCase.verifySubstring(gallery, 'label="yamada"');

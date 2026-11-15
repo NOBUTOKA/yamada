@@ -10,7 +10,8 @@ Users can create a new handle class from an empty canvas or open an existing han
 
 ## Supported Environment
 
-- Release target: MATLAB R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
+- Release targets: MATLAB R2023a, R2023b, and R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
+- Cross-release editing: an app created for an older supported release can be edited on a newer one. Editing an app created for a newer release on an older release is not supported; components and properties that the running release lacks are reported as unsupported.
 - Required MathWorks product: MATLAB, without additional toolboxes
 - Launch command: `yamada`, without parentheses or an output assignment
 - Planned distribution: MATLAB Toolbox (`.mltbx`) with an Apps gallery entry
@@ -74,7 +75,7 @@ Use **Edit > Reload Source**, the toolbar refresh button, or **F5** after saving
 
 ## Standard Component Catalog
 
-The catalog includes the following persistent MATLAB R2024a UI components and creation variants:
+The catalog includes the following persistent MATLAB R2024a UI components and creation variants. On an older release, the catalog of that release omits what the release lacks: `uicolorpicker` requires R2024a and the range-slider variant of `uislider` requires R2023b, and some properties of other components are likewise limited to the releases that provide them.
 
 - Basic controls: `uilabel`, `uibutton`, `uicheckbox`, `uicolorpicker`, `uidatepicker`, `uidropdown`, `uieditfield`, `uihyperlink`, `uiimage`, `uilistbox`, `uiradiobutton`, `uislider`, `uispinner`, `uitable`, `uitextarea`, and `uitogglebutton`
 - Containers and layout: `uifigure`, `uipanel`, `uigridlayout`, `uitabgroup`, `uitab`, and `uibuttongroup`

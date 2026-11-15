@@ -22,7 +22,7 @@ https://github.com/user-attachments/assets/ef965c59-a430-4c2f-9f11-2f8f3395d9e0
 
 ## Important
 
-`yamada` is under active development. Development and verification currently target MATLAB R2024a. Review the generated diff before saving, and keep the target file under version control or make a backup.
+`yamada` is under active development. Development and verification currently target MATLAB R2023a through R2024a. Review the generated diff before saving, and keep the target file under version control or make a backup.
 
 ## Features
 
@@ -35,9 +35,9 @@ https://github.com/user-attachments/assets/ef965c59-a430-4c2f-9f11-2f8f3395d9e0
 
 ## Supported Environment
 
-- MATLAB R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
+- MATLAB R2023a, R2023b, or R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
 
-Release targets are R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
+Release targets are R2023a through R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. Each release offers the components and properties that it provides. Editing an app created for a newer MATLAB release in yamada on an older release is not supported: components and properties that the older release lacks are reported as unsupported and cannot be previewed. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
 
 ## Getting Started
 

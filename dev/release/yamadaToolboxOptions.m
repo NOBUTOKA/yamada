@@ -1,5 +1,5 @@
 function [options, metadata] = yamadaToolboxOptions(projectRoot, toolboxRoot)
-% yamadaToolboxOptions Define explicit R2024a packaging inputs and public metadata.
+% yamadaToolboxOptions Define explicit packaging inputs, built on R2024a, and public metadata.
 %   Only the distribution root is added to MATLAB's path. Development inputs,
 %   fixtures, and measurement artifacts are never selected by directory-wide packaging.
 arguments (Input)
