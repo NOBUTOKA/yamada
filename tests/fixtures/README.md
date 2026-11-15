@@ -23,3 +23,4 @@ A fixture that uses components or properties missing from an older MATLAB releas
 | Variant | Change from the shared fixture |
 | --- | --- |
 | `R2023a/ControlGalleryApp.m` | The color picker (R2024a) becomes a text edit field named `AccentEditField`, and the range slider (R2023b) becomes an ordinary slider with the same name and grid placement. |
+| `R2023b/ControlGalleryApp.m` | The color picker (R2024a) becomes a text edit field named `AccentEditField`; the range slider, added in R2023b, is kept. |
