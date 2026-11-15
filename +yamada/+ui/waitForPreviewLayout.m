@@ -1,19 +1,22 @@
 function data = waitForPreviewLayout(figure, target)
 % waitForPreviewLayout Await a matching Web reply without generating an image or polling rectangles.
+%   The figure window forces layout, waits for pending image loads, and
+%   replies after the next animation frame, each wait bounded in the window.
 arguments (Input)
     figure (1, 1) matlab.ui.Figure
-    target
+    target (1, 1) matlab.graphics.Graphics %#ok<INUSA>
 end
 arguments (Output)
     data (1, 1) struct
 end
+% Each browser-side wait gives up after this many milliseconds instead of blocking the editor.
+waitLimitMilliseconds = 500;
 clock = tic;
 % Struct conversion reads deprecated getters; restore warning state before dispatch.
 previous = warning("off", "all");
 warningCleanup = onCleanup(@() warning(previous));
 figureData = struct(figure); controllerData = struct(figureData.Controller);
 hostData = struct(controllerData.PlatformHost); window = hostData.CEF;
-targetData = struct(target); id = string(targetData.Controller.getId());
 clear warningCleanup
 % Subscribe before dispatch so an immediately resolved promise cannot be missed.
 token = string(java.util.UUID.randomUUID());
@@ -24,15 +27,15 @@ subscriptionCleanup = onCleanup(@() message.unsubscribe(subscription));
 watchdog = timer("ExecutionMode", "singleShot", "StartDelay", 10, "TimerFcn", @(~, ~) reply.expire());
 watchdogCleanup = onCleanup(@() deleteWatchdog(watchdog));
 start(watchdog);
-configuration = struct("channel", channel, "token", token, "target", id);
-script = string(fileread(fullfile(fileparts(fileparts(fileparts(mfilename("fullpath")))), "resources", "stabilize-request.js")));
+configuration = struct("channel", channel, "token", token, "limit", waitLimitMilliseconds);
+script = string(fileread(fullfile(fileparts(fileparts(fileparts(mfilename("fullpath")))), "resources", "layout-settle-request.js")));
 script = replace(script, "CFG", string(jsonencode(configuration)));
 window.executeJS(script, 10);
 waitfor(reply, "Done", true);
 data = reply.Data;
 data.matlabSeconds = toc(clock);
 assert(isfield(data, "token") && string(data.token) == token);
-if isfield(data, "error"), error("yamada:PreviewLayout:StabilizeReply", "%s", string(data.error)); end
+if isfield(data, "error"), error("yamada:PreviewLayout:SettleReply", "%s", string(data.error)); end
 clear watchdogCleanup subscriptionCleanup
 end
 
