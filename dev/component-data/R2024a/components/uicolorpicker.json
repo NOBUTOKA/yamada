@@ -1172,5 +1172,22 @@
         }
       ]
     }
-  ]
+  ],
+  "availability": {
+    "releases": {
+      "since": "R2024a"
+    },
+    "evidence": [
+      {
+        "kind": "releaseNotes",
+        "source": "https://www.mathworks.com/help/matlab/release-notes-R2024a.html",
+        "detail": "R2024a introduces the uicolorpicker function."
+      },
+      {
+        "kind": "nativeObservation",
+        "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 23.2.0.2485118 (R2023b) Update 6",
+        "detail": "Calling uicolorpicker fails with MATLAB:UndefinedFunction."
+      }
+    ]
+  }
 }

@@ -3352,7 +3352,24 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2024a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2024a.html",
+            "detail": "R2024a adds InteractionOptions to polar axes and geographic axes."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 23.2.0.2485118 (R2023b) Update 6",
+            "detail": "PolarAxes and GeographicAxes have no InteractionOptions property."
+          }
+        ]
+      }
     },
     {
       "path": "Toolbar",

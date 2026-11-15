@@ -297,7 +297,24 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
         }
-      ]
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2024a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2024a.html",
+            "detail": "R2024a adds a Step property for range sliders."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 23.2.0.2485118 (R2023b) Update 6",
+            "detail": "A RangeSlider has no Step property."
+          }
+        ]
+      }
     },
     {
       "path": "StepMode",
@@ -345,7 +362,24 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
         }
-      ]
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2024a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2024a.html",
+            "detail": "R2024a adds stepping to range sliders, together with its mode."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 23.2.0.2485118 (R2023b) Update 6",
+            "detail": "A RangeSlider has no StepMode property."
+          }
+        ]
+      }
     },
     {
       "path": "MajorTicks",
@@ -1969,5 +2003,22 @@
         }
       ]
     }
-  ]
+  ],
+  "availability": {
+    "releases": {
+      "since": "R2023b"
+    },
+    "evidence": [
+      {
+        "kind": "releaseNotes",
+        "source": "https://www.mathworks.com/help/matlab/release-notes-R2023b.html",
+        "detail": "R2023b introduces range sliders through uislider(parent,\"range\")."
+      },
+      {
+        "kind": "nativeObservation",
+        "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 9.14.0.2891782 (R2023a) Update 8",
+        "detail": "uislider(parent,\"range\") fails with MATLAB:ui:Slider:unknownInput."
+      }
+    ]
+  }
 }

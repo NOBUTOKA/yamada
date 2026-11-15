@@ -302,7 +302,24 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2023b"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2023b.html",
+            "detail": "R2023b adds the ValueIndex property to drop-down, list box, discrete knob, and switch components."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 9.14.0.2891782 (R2023a) Update 8",
+            "detail": "None of these components has a ValueIndex property."
+          }
+        ]
+      }
     },
     {
       "path": "Placeholder",

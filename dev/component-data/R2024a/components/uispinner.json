@@ -130,6 +130,30 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "The value changes displayed state inside the assigned rectangle, not layout metrics."
         }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2023b"
+          },
+          "patch": {
+            "valueContract": {
+              "allowsEmpty": false
+            }
+          },
+          "evidence": [
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2023b.html",
+              "detail": "An empty Value depends on AllowEmpty, which R2023b introduces."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "MATLAB 9.14.0.2891782 (R2023a) Update 8 owned uispinner and numeric uieditfield",
+              "detail": "Assigning [] to Value fails with MATLAB:ui:Spinner:invalidValue and MATLAB:ui:NumericEditField:invalidValue, so Value is not empty and no longer follows AllowEmpty."
+            }
+          ]
+        }
       ]
     },
     {
@@ -401,7 +425,24 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
         }
-      ]
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2023b"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2023b.html",
+            "detail": "R2023b documents AllowEmpty for numeric edit fields and spinners, so their Value can be empty."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m and an owned control, MATLAB 9.14.0.2891782 (R2023a) Update 8",
+            "detail": "AllowEmpty exists only as a hidden, undocumented property, so the R2023a catalog does not offer it."
+          }
+        ]
+      }
     },
     {
       "path": "Placeholder",
@@ -446,7 +487,24 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
         }
-      ]
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2023b"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2023b.html",
+            "detail": "R2023b documents Placeholder for numeric edit fields and spinners."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 9.14.0.2891782 (R2023a) Update 8",
+            "detail": "Placeholder exists only as a hidden, undocumented property, so the R2023a catalog does not offer it."
+          }
+        ]
+      }
     },
     {
       "path": "HorizontalAlignment",

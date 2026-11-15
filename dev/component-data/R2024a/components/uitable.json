@@ -977,6 +977,36 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
         }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2024a"
+          },
+          "patch": {
+            "documentedAcceptedValues": [
+              "RGB triplet",
+              "matrix of color values"
+            ],
+            "valueContract": {
+              "matlabClasses": [
+                "double"
+              ]
+            }
+          },
+          "evidence": [
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2024a.html",
+              "detail": "R2024a lets uitable BackgroundColor accept hexadecimal color codes and color names."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "MATLAB 23.2.0.2485118 (R2023b) Update 6 owned uitable",
+              "detail": "Assigning '#ff0000' or 'red' to BackgroundColor fails with MATLAB:hg:shaped_arrays:NColorPtrType; RGB matrices are accepted."
+            }
+          ]
+        }
       ]
     },
     {
@@ -2395,7 +2425,24 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2023b"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2023b.html",
+            "detail": "R2023b adds the DisplaySelection property to tables."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 9.14.0.2891782 (R2023a) Update 8",
+            "detail": "A Table has no DisplaySelection property."
+          }
+        ]
+      }
     },
     {
       "path": "SelectionType",
