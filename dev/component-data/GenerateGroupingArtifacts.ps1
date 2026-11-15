@@ -409,7 +409,8 @@ $inputFileDigests = @(
         $relativePath = $filePath.Substring($releasePath.Length + 1).Replace("\", "/")
         [ordered]@{
             path   = $relativePath
-            sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $filePath).Hash.ToLowerInvariant()
+            # Hash LF-normalized text so CRLF and LF checkouts record the same digest.
+            sha256 = Get-Sha256 ([IO.File]::ReadAllText($filePath).Replace("`r`n", "`n"))
         }
     }
 )
