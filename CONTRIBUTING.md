@@ -63,8 +63,8 @@ See the [product specification](SPECIFICATION.md) for the public feature set, in
 | `+yamada/+ui` | Safe Preview and Property Inspector |
 | `+yamada/+validation` | Document and property validation |
 | `resources/EditorInteractionOverlay.html` | HTML/SVG overlay for canvas selection, movement, and resizing; see below |
-| `resources/component-catalog/R2024a` | Release-specific component catalog currently loaded at runtime; add sibling release directories for future MATLAB versions |
-| `dev/component-data` | R2024a component data and catalog-generation scripts |
+| `resources/component-catalog/<release>` | Generated component catalog of each release; the runtime loads the newest catalog that is not newer than the running release |
+| `dev/component-data` | Component ledger of the surface release, release list, and catalog-generation scripts |
 | `dev/compatibility` | Opt-in native MATLAB observations and catalog-promotion checks |
 | `doc/ARCHITECTURE.md` | Developer reference for implemented layers, data flow, and extension boundaries |
 | `doc/RELEASING.md` | Maintainer workflow, release gates, versioning, and GitHub settings |
@@ -95,9 +95,10 @@ Follow the formatting of existing code, and do not include unrelated formatting 
 ### Policy
 
 - Project-owned MATLAB source outside the component catalog must run on MATLAB R2023a and every later release. R2023a is a source-compatibility floor, not a support statement: the supported release targets are those listed in the README and the specification, because each target also needs a verified catalog.
-- Absorb release differences in the release-specific component catalog under `resources/component-catalog/<release>` and `dev/component-data/<release>`. Components, creation variants, properties, defaults, value sets, and parent-context effects that differ between releases are catalog data. Do not branch MATLAB source on the running release to reproduce catalog facts, and do not reference a UI component property in MATLAB source when the catalog can supply it.
+- Absorb release differences in the release-specific component catalogs under `resources/component-catalog/<release>`, which are generated from availability annotations in the surface ledger under `dev/component-data`. Components, creation variants, properties, defaults, value sets, and parent-context effects that differ between releases are catalog data. Do not branch MATLAB source on the running release to reproduce catalog facts, and do not reference a UI component property in MATLAB source when the catalog can supply it.
 - When a release difference cannot be expressed as catalog data, such as an undocumented integration point like the Preview layout adapter or a behavior change in a MATLAB function that the editor calls, isolate it behind one adapter with a bounded fallback and record the verified releases in the [architecture reference](doc/ARCHITECTURE.md). Gate on the release with `isMATLABReleaseOlderThan`, not by parsing `version` output or calling `ver` or `verLessThan`; those two are not recommended from R2023b, and from R2023b `version` reports numbers such as 23.2 and 24.1 instead of the earlier 9.x scheme.
 - Verify MATLAB source changes on the minimum release R2023a as well as on the current release target R2024a. See [Testing](#testing) for the required profiles.
+- Keep tests shared across releases. When a test exercises a component or property that only some releases' catalogs contain, gate it with `assumeCatalogSupports`, which checks the loaded catalog rather than the release name, so the test is incomplete instead of failing where the catalog lacks it. Put a fixture variant for an older release in `tests/fixtures/<release>/` and load fixtures through `yamadaFixturePath`; see the [fixture notes](tests/fixtures/README.md#release-specific-variants).
 
 ### Features Unavailable in R2023a
 
@@ -148,10 +149,11 @@ Java and environment:
 
 When adding or changing a standard component or property, start with the [catalog generation guide](dev/component-data/README.md) and update the versioned JSON catalog rather than hard-coding declarative specifications in `ComponentRegistry`.
 
-- Check the official MATLAB R2024a documentation and, when necessary, verify behavior in the R2024a runtime.
+- Edit only the ledger of the surface release named in `dev/component-data/releases.json`, then run `dev/component-data/RegenerateReleaseCatalogs.ps1` to regenerate every release catalog. Do not edit generated catalogs or projection reports by hand.
+- Check the official MATLAB documentation of the surface release and, when necessary, verify behavior in its runtime.
+- Describe a difference in another release as an `availability` range or an `overrides` entry on the affected record, with evidence from the release notes, the documentation, or a native observation of that release. Do not silently import behavior observed in another release into the surface record.
 - Preserve the boundary that prevents catalog data or identifiers from invoking arbitrary MATLAB code.
 - Keep tests consistent with the changed catalog behavior.
-- Do not silently import behavior observed in another MATLAB release into the R2024a catalog.
 - Keep property descriptions project-authored through `dev/component-data/ProjectPropertyText.ps1`. Preserve factual API tokens and source references; do not copy reference-page narrative or infer semantic contracts from its wording. Refresh ledger descriptions with `UpdateProjectPropertyText.ps1` before promotion.
 
 ## Testing
@@ -196,7 +198,7 @@ addpath(fullfile(pwd, "dev", "compatibility"));
 compatibilityResults = runCompatibilityChecks();
 ```
 
-For catalog text or promotion changes, also run the PowerShell checks `tests/verifyCatalogProvenance.ps1` and `tests/verifyComponentLedgerSchema.ps1`. They verify reproducible regeneration, independence from reference wording, semantic preservation, and rejection of malformed ledger input before mutation.
+For catalog text or promotion changes, also run the PowerShell checks `tests/verifyCatalogProvenance.ps1`, `tests/verifyComponentLedgerSchema.ps1`, and `tests/verifyReleaseProjection.ps1`. They verify reproducible regeneration, independence from reference wording, semantic preservation, rejection of malformed ledger input before mutation, and that every committed release catalog is the current projection of the surface ledger. The checks require PowerShell 7 and Git on `PATH`.
 
 ## HTML Editing Canvas Overlay
 

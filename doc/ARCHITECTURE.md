@@ -47,7 +47,7 @@ Save, Save As, New, Open, and editor close pass through the injected [`DocumentL
 | [`+yamada/+source`](../+yamada/+source) | Lexical scanning, conservative parsing, literal encoding, new-source generation, and localized round trips |
 | [`+yamada/+validation`](../+yamada/+validation) | Document invariants and typed candidate-property validation |
 | [`+yamada/+ui`](../+yamada/+ui) | Safe Preview and Inspector presentation/adapters |
-| [`resources/component-catalog/R2024a`](../resources/component-catalog/R2024a) | Runtime component, property, grouping, ordering, context, and Inspector-row data |
+| [`resources/component-catalog/<release>`](../resources/component-catalog) | Runtime component, property, grouping, ordering, context, and Inspector-row data of each release, generated from the surface ledger |
 | [`resources/EditorInteractionOverlay.html`](../resources/EditorInteractionOverlay.html) | Transparent HTML/SVG pointer and selection layer for the canvas |
 | [`dev/component-data`](../dev/component-data) | Audited source data, design artifacts, and reproducible catalog-generation scripts |
 | [`tests`](../tests) | Unit tests and preserved handle-class input fixtures |
@@ -371,7 +371,7 @@ Preview invalidation distinguishes current source-coordinate changes from visual
 
 Runtime code resolves resources relative to the project root:
 
-- one release folder under `resources/component-catalog` is loaded by the registry;
+- one release folder under `resources/component-catalog`, the newest that is not newer than the running release, is loaded by the registry; `availability.json` beside the folders records which releases contain each annotated variant, property, and value and is not needed to load a catalog;
 - `resources/EditorInteractionOverlay.html`, `resources/RootResizeGuide.html`, and `resources/SourceDiffPreview.html` are loaded by `yamada`;
 - `resources/layout-settle-request.js` is loaded by `waitForPreviewLayout` and executed only in the editor-owned figure window; and
 - development ledgers and generation scripts under `dev/component-data` are not runtime dependencies.
@@ -386,7 +386,7 @@ The distribution must preserve the relative layout of `yamada.m`, `+yamada`, and
 
 The editor requires MATLAB's JVM for UUIDs and canonical path comparisons, and a graphical session for UI components and the CEF-based layout adapter. The `FigureActivated` event, figure/controller access, CEF `executeJS` and message-service subscriptions are release-specific integration points. Layout-adapter exceptions are caught by the editor and enter its bounded geometry-recovery path; this is not a promise of compatibility on other releases. Activation-listener setup and the MATLAB-installation `icons/undo.mat` and `icons/redo.mat` loads occur during shell construction, where failures abort construction and trigger owner cleanup. These MATLAB files and internal modules are dependencies of the installed MATLAB, not files to copy into the Toolbox. The 1.0.0 support contract is R2024a on Windows; independent validation is required before widening it.
 
-The MATLAB release boundary has two layers. Project-owned MATLAB source outside the catalog must run on R2023a and later, while release-specific component facts live only in the catalog for each supported release target. Source does not branch on the running release to reproduce catalog data. A difference that cannot be catalog data, such as the undocumented Preview layout adapter, stays isolated in one adapter with a bounded fallback, and this reference records the releases on which it was verified. The R2023a-unavailable features to avoid are listed in [CONTRIBUTING.md](../CONTRIBUTING.md#matlab-release-compatibility).
+The MATLAB release boundary has two layers. Project-owned MATLAB source outside the catalog must run on R2023a and later, while release-specific component facts live only in the catalog for each supported release target. Source does not branch on the running release to reproduce catalog data. The catalogs are generated from one audited ledger of a surface release whose records carry release availability ranges and range-limited overrides; each catalog is the projection of that ledger onto one release, as described in the [catalog generation guide](../dev/component-data/README.md#releases-and-projection). A release without a verified projection uses the newest older catalog. A difference that cannot be catalog data, such as the undocumented Preview layout adapter, stays isolated in one adapter with a bounded fallback, and this reference records the releases on which it was verified. The R2023a-unavailable features to avoid are listed in [CONTRIBUTING.md](../CONTRIBUTING.md#matlab-release-compatibility).
 
 Runtime component factories are drawn from the validated catalog and finite Preview policy. The `feval` calls in component/default construction invoke those approved MATLAB factories, not the input app's constructor, callbacks, or arbitrary expressions. The distributed catalog is trusted product data and must not be replaced with unreviewed executable factory definitions.
 
@@ -394,8 +394,8 @@ Runtime component factories are drawn from the validated catalog and finite Prev
 
 ### Add or change a component or property
 
-1. Update the release-specific audited data under `dev/component-data/R2024a`.
-2. Regenerate or promote the runtime catalog rather than adding declarative inventory to `ComponentRegistry.m`.
+1. Update the audited ledger of the surface release under `dev/component-data/<surface release>`, recording differences in other releases as availability ranges or overrides with evidence.
+2. Regenerate every release catalog with `dev/component-data/RegenerateReleaseCatalogs.ps1` rather than adding declarative inventory to `ComponentRegistry.m` or editing a generated catalog.
 3. Add only allowlisted executable behavior required by a new editor, validator, Preview adapter, or reset policy.
 4. Test loader failure modes, registry parity, parent-context projection, Inspector behavior, Preview safety, validation, and source generation.
 

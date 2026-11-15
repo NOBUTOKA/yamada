@@ -1,6 +1,24 @@
 # Component catalog generation
 
-For contributors updating a component catalog, this guide describes the generation inputs, output contracts, and verification commands. See the [R2024a ledger](R2024a/SUMMARY.md) for the inputs used by that release.
+For contributors updating a component catalog, this guide describes the generation inputs, output contracts, and verification commands. See the [R2024a ledger](R2024a/SUMMARY.md) for the inputs of the current surface release.
+
+## Releases and projection
+
+One ledger describes every release. [`releases.json`](releases.json) lists the known MATLAB releases in chronological order and names the surface release, whose directory holds the ledger; its records describe that release exactly. Each other release has a status: `verified` releases have their annotations checked against native controls and receive a generated catalog, while `known` releases are described by release notes only and receive none, so the runtime loader serves them the newest older catalog.
+
+The surface ledger describes other releases with annotations:
+
+- `availability.releases` on a component document or a property gives a `since` and/or `before` release bound. A record outside its range is absent from that release. A property range must lie within the range of its variant.
+- `overrides` on a component document, a property, or a runtime metadata factory entry applies a JSON merge patch (RFC 7386) for a release range. A range may not include the surface release, and overlapping ranges may not patch the same field.
+- `valueContract.valueAvailability` gives the range of one enum value.
+
+Every annotation carries `evidence` naming release notes, MathWorks documentation, a native observation, or a project decision. `ProbeReleaseSurface.m` records the native surface of the running release and `CompareReleaseSurfaces.m` compares two such records when verifying annotations.
+
+`ProjectReleaseLedger.ps1` projects the ledger onto one release: it applies overrides, removes unavailable variants, properties, and values, repairs dependent grouping data such as shared subsets, inspector rows, and category order, and strips the annotations. It rejects contradictory input, such as an unknown release, a constraint on a removed property, or removal of a default variant, before writing output. Each projection report in `projections/` lists what was removed, overridden, or repaired.
+
+Run `RegenerateReleaseCatalogs.ps1` with PowerShell 7 and Git on `PATH` after changing the ledger or the release list. It refreshes presentation text, projects, groups, and promotes every release with a catalog, writes the projection reports and the surface release's grouping review artifacts, and writes `resources/component-catalog/availability.json`, which records the release range of every annotated variant, property, and value so that another release can explain what it lacks.
+
+To move the surface to a newer release, audit the new release, express the differences of older releases as annotations, update `releases.json`, and regenerate. The catalogs of verified releases must not change unless the audit corrects them.
 
 ## Inputs and output
 
@@ -20,4 +38,4 @@ The `gridGeometryImpact` and `absoluteGeometryImpact` fields describe effects on
 
 ## Verification
 
-Run `tests/verifyComponentLedgerSchema.ps1` and `tests/verifyCatalogProvenance.ps1` from the repository root. For catalog behavior changes, also run the relevant MATLAB catalog, source, Inspector, or Preview checks described in the [contributor guide](../../CONTRIBUTING.md#testing).
+Run `tests/verifyComponentLedgerSchema.ps1`, `tests/verifyCatalogProvenance.ps1`, and `tests/verifyReleaseProjection.ps1` from the repository root. The last one fails when a committed catalog, projection report, or availability index is not the current projection of the ledger. For catalog behavior changes, also run the relevant MATLAB catalog, source, Inspector, or Preview checks described in the [contributor guide](../../CONTRIBUTING.md#testing).
