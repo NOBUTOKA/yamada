@@ -35,6 +35,14 @@ These conventions apply to project-owned source code.
 - Declare a property class whenever all accepted values share one class. Do not add size constraints to property declarations.
 - Make implementation state `Access = private`. Use `SetAccess = private` for state that other classes only read. Grant broader access, including `?ClassName` access lists, only to the classes that need it.
 
+### MATLAB Release Compatibility
+
+- Keep project-owned MATLAB source outside the component catalog compatible with MATLAB R2023a, and absorb release differences in the release-specific catalog rather than branching source on the running release. Follow the policy and the full list of R2023a-unavailable features in the MATLAB Release Compatibility section of `CONTRIBUTING.md` before adopting any MATLAB function, syntax, or option.
+- For dictionaries, do not use `configureDictionary`, `lookup`, `insert`, or `remove`. Create empty dictionaries from typed empty inputs such as `dictionary(string([]), {})`, and remove entries with `d(key) = []`.
+- Use `meta.*` metaclass names, not `matlab.metadata.*`, and test metaclass objects with `isa(value, "meta.class")` instead of comparing class names.
+- Use only argument validators that exist in R2023a; for example, use size constraints instead of `mustBeRow`, `mustBeColumn`, `mustBeMatrix`, or `mustBeScalar`.
+- When a release difference cannot be catalog data, isolate it in one adapter with a bounded fallback, gate it with `isMATLABReleaseOlderThan`, and record the verified releases in `doc/ARCHITECTURE.md`.
+
 ### Exceptions
 
 - Preserve input fixtures as test data without imposing project coding conventions.
@@ -43,7 +51,7 @@ These conventions apply to project-owned source code.
 ## Verification
 
 - Before each commit, run the test files or `area` profiles of `tests/runYamadaTests.m` that cover the changed code.
-- Run the `full` profile before submitting a pull request and before a release. Documentation-only changes use the checks in `CONTRIBUTING.md`, which also lists commands and additional checks.
+- Run the `full` profile on both R2023a and R2024a before submitting a pull request and before a release, starting the runner from each release's executable. If R2023a is unavailable, ask the maintainer in the pull request description to run the R2023a `full` profile. Documentation-only changes use the checks in `CONTRIBUTING.md`, which also lists commands and additional checks.
 - Report completed test results and identify checks that could not be run.
 
 ### Long-Running Tests
