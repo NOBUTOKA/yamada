@@ -91,6 +91,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             [component, definitions] = testCase.fixture("uieditfield-numeric", {"Value", []});
             [~, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyNotEmpty(diagnostics);
+            % Only catalogs that document AllowEmpty can make an empty Value valid.
+            assumeCatalogSupports(testCase, "uieditfield-numeric", "AllowEmpty");
             [component, definitions] = testCase.fixture("uieditfield-numeric", {"AllowEmpty", "on"; "Value", []});
             [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEmpty(diagnostics);

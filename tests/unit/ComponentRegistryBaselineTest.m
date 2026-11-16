@@ -1,8 +1,8 @@
 classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittest.TestCase
-    % ComponentRegistryBaselineTest Verify promotion of the R2024a grouping catalog.
+    % ComponentRegistryBaselineTest Verify promotion of the running release's grouping catalog.
     %   This class compares every runtime concrete variant with the audited
     %   development ledger and checks that direct-parent projections remain
-    %   deterministic across the complete audited R2024a catalog.
+    %   deterministic across the complete audited release catalog.
 
     methods (Test, TestTags = {'fast'})
         function cachedParentProjectionIsInvalidatedByRulesAndRegistration(testCase)
@@ -23,8 +23,18 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
     end
 
     methods (Test, TestTags = {'exhaustive'})
-        function runtimeRegistryMatchesAuditedR2024aLedger(testCase)
-            % runtimeRegistryMatchesAuditedR2024aLedger Compare every variant with the audited ledger.
+        function runtimeRegistryMatchesAuditedLedger(testCase)
+            % runtimeRegistryMatchesAuditedLedger Compare every variant with the audited ledger.
+            %   Only the surface release has a ledger transcript; catalogs of
+            %   other releases are checked against their projections by
+            %   tests/verifyReleaseProjection.ps1.
+
+            % Compare only when the running release serves the surface catalog.
+            projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
+            releases = jsondecode(fileread(fullfile(projectRoot, "dev", "component-data", "releases.json")));
+            testCase.assumeEqual(yamada.catalog.ComponentCatalogLoader.defaultRelease(), ...
+                string(releases.surfaceRelease), ...
+                "The audited ledger transcript describes the surface release only.");
 
             % Resolve the generated catalog through the production loader.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -199,7 +209,7 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
 
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
             ledger = jsondecode(fileread(fullfile(projectRoot, "dev", "component-data", ...
-                "R2024a", "inspector-rows.json")));
+                yamada.catalog.ComponentCatalogLoader.defaultRelease(), "inspector-rows.json")));
             expectedRows = ComponentRegistryBaselineTest.objectList(ledger.rows);
             actualRows = registry.inspectorRows();
             testCase.assertNumElements(actualRows, numel(expectedRows));
@@ -227,14 +237,15 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
         end
 
         function documents = ledgerDocuments()
-            % ledgerDocuments Read the audited R2024a concrete component transcript.
+            % ledgerDocuments Read the audited concrete component transcript of the running catalog release.
             arguments (Output)
                 documents cell
             end
 
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
-            directory = fullfile(projectRoot, "dev", "component-data", "R2024a", "components");
+            directory = fullfile(projectRoot, "dev", "component-data", ...
+                yamada.catalog.ComponentCatalogLoader.defaultRelease(), "components");
             files = dir(fullfile(directory, "*.json"));
             documents = cell(1, numel(files));
             for index = 1:numel(files)

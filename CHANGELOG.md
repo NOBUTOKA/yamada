@@ -2,6 +2,11 @@
 
 For users deciding whether to update, this log describes changes and compatibility limits by version.
 
+## Unreleased
+
+- Support MATLAB R2023a and R2023b in addition to R2024a. Each release offers the components and properties it provides; the color picker requires R2024a and the range slider requires R2023b.
+- Editing an app created for a newer MATLAB release on an older release is not supported.
+
 ## 1.0.0
 
 Initial stable release for MATLAB R2024a on 64-bit Windows.

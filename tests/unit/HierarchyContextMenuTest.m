@@ -13,6 +13,12 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             % nativeRightClickRoutesUnselectedNode Exercise native hit data and unchanged selection.
             [figure, tree, menu, root, button] = testCase.fixture();
             cleanup = onCleanup(@() delete(figure));
+            % Before R2023b tree menus report no hit node, so the menu is offered from Preview only.
+            if isMATLABReleaseOlderThan("R2023b")
+                testCase.verifyEmpty(tree.ContextMenu);
+                return
+            end
+            testCase.verifyEqual(tree.ContextMenu, menu);
             tree.SelectedNodes = root;
             expand(root);
             drawnow;
@@ -83,7 +89,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             registry.register(yamada.model.ComponentDefinition("uifigure", "matlab.ui.Figure"));
             figure.UserData = yamada.ui.HierarchyContextMenu(figure, tree, registry, ...
                 @() testCase.Document, @(id) testCase.receive(id));
-            menu = tree.ContextMenu;
+            menu = findall(figure, "Tag", "yamada-hierarchy-context");
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", tree.Children(1))));
             item = findall(menu, "Tag", "yamada-manage-callbacks");
             testCase.verifyEqual(item.Enable, matlab.lang.OnOffSwitchState.off);
@@ -103,7 +109,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             historyIndex = app.Document.HistoryIndex;
             tree = findall(figure, "Type", "uitree");
             root = tree.Children(1);
-            menu = tree.ContextMenu;
+            menu = findall(figure, "Tag", "yamada-hierarchy-context");
             item = findall(menu, "Tag", "yamada-manage-callbacks");
             inspector = findall(figure, "Tag", "yamada-inspector-property-editor");
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", root)));
@@ -131,7 +137,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             app.Document.applyCallbackAction(app.Document.RootComponentId, "SizeChangedFcn", "Disconnect", registry);
             figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
             tree = findall(figure, "Type", "uitree");
-            menu = tree.ContextMenu;
+            menu = findall(figure, "Tag", "yamada-hierarchy-context");
             item = findall(menu, "Tag", "yamada-manage-callbacks");
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", tree.Children(1))));
             item.MenuSelectedFcn(item, []);
@@ -182,7 +188,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
                 yamada.model.ComponentRegistry.createDefault(), @() testCase.Document, ...
                 @(id) testCase.receive(id));
             figure.UserData = adapter;
-            menu = tree.ContextMenu;
+            menu = findall(figure, "Tag", "yamada-hierarchy-context");
         end
 
         function receive(testCase, componentId)

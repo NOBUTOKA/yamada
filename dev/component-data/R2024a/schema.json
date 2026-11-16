@@ -73,9 +73,112 @@
       "items": {
         "$ref": "#/$defs/property"
       }
+    },
+    "availability": {
+      "description": "MATLAB releases in which this variant exists, when that differs from the releases listed in ../releases.json.",
+      "$ref": "#/$defs/availability"
+    },
+    "overrides": {
+      "description": "Merge patches of this document's variant-level fields for release ranges whose surface differs from the surface release.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/override"
+      }
     }
   },
   "$defs": {
+    "releaseName": {
+      "type": "string",
+      "pattern": "^R[0-9]{4}[ab]$"
+    },
+    "releaseRange": {
+      "description": "Half-open MATLAB release range: since is the first included release and before is the first excluded release.",
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "since": {
+          "$ref": "#/$defs/releaseName"
+        },
+        "before": {
+          "$ref": "#/$defs/releaseName"
+        }
+      }
+    },
+    "releaseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "source",
+        "detail"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "releaseNotes",
+            "mathworksDocumentation",
+            "nativeObservation",
+            "projectDecision"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "availability": {
+      "description": "Release range in which a variant, property, or value exists as documented public API. A release where it is absent or only hidden is outside the range.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "releases",
+        "evidence"
+      ],
+      "properties": {
+        "releases": {
+          "$ref": "#/$defs/releaseRange"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/releaseEvidence"
+          }
+        }
+      }
+    },
+    "override": {
+      "description": "RFC 7386 merge patch applied to the enclosing record for releases in a range: objects merge recursively, null removes a field, and every other value replaces.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "releases",
+        "patch",
+        "evidence"
+      ],
+      "properties": {
+        "releases": {
+          "$ref": "#/$defs/releaseRange"
+        },
+        "patch": {
+          "type": "object",
+          "minProperties": 1
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/releaseEvidence"
+          }
+        }
+      }
+    },
     "source": {
       "type": "object",
       "additionalProperties": false,
@@ -149,6 +252,17 @@
         "path": {
           "type": "string",
           "pattern": "^[A-Za-z][A-Za-z0-9]*(\\.[A-Za-z][A-Za-z0-9]*)?$"
+        },
+        "availability": {
+          "description": "MATLAB releases in which this property exists as documented public API, when that differs from its variant.",
+          "$ref": "#/$defs/availability"
+        },
+        "overrides": {
+          "description": "Merge patches of this property record for release ranges whose surface differs from the surface release.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/override"
+          }
         },
         "categoryId": {
           "description": "Identifier of this property's official documentation category.",
@@ -644,6 +758,35 @@
             "minLength": 1
           },
           "uniqueItems": true
+        },
+        "valueAvailability": {
+          "description": "Release ranges of individual enum values that do not exist in every release of their property.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "value",
+              "releases",
+              "evidence"
+            ],
+            "properties": {
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "releases": {
+                "$ref": "#/$defs/releaseRange"
+              },
+              "evidence": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/releaseEvidence"
+                }
+              }
+            }
+          }
         },
         "constraints": {
           "type": "array",

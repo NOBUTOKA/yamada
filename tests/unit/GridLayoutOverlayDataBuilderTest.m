@@ -359,11 +359,8 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
         function reconstructsParsedControlGalleryFitTracks(testCase)
             % reconstructsParsedControlGalleryFitTracks Include decorated control bounds in fit rows.
 
-            testPath = mfilename("fullpath");
-            projectRoot = fileparts(fileparts(fileparts(testPath)));
             registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.source.AppSourceParser.parseFile(fullfile(projectRoot, ...
-                "tests", "fixtures", "ControlGalleryApp.m"), registry);
+            document = yamada.source.AppSourceParser.parseFile(yamadaFixturePath("ControlGalleryApp.m"), registry);
             grid = document.getComponentByName("FormGrid");
             selected = document.getComponentByName("DueDatePicker");
             figure = uifigure("Visible", "on", "Position", [100 100 800 600]);

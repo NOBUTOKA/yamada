@@ -1,5 +1,5 @@
 classdef (TestTags = {'model', 'preview', 'ui'}) PropertyStateRuntimeTest < matlab.unittest.TestCase
-    % PropertyStateRuntimeTest Compare audited state resolution with owned R2024a controls.
+    % PropertyStateRuntimeTest Compare audited state resolution with owned controls of the running release.
     %   Native fixtures and symbolic replay consume the same fixed literals;
     %   the resolver never calls the factory or executes represented source.
 
@@ -15,6 +15,9 @@ classdef (TestTags = {'model', 'preview', 'ui'}) PropertyStateRuntimeTest < matl
             unresolved = ["numeric-exclude-lower", "numeric-exclude-upper", "numeric-limit-while-exclusive"];
             for observation = observations
                 definition = registry.get(observation.Factory, observation.CreationArguments);
+                % Observations that set a property the running catalog does not document do not apply.
+                written = string([observation.NameValueArguments(1:2:end), observation.Assignments(1:2:end)]);
+                if ~all(ismember(written, string({definition.Properties.Path}))), continue, end
                 component = yamada.model.ComponentRecord("owned-runtime", "Owned", ...
                     observation.Factory, definition.DeclaredType, "parsed");
                 component.CreationArguments = observation.CreationArguments;

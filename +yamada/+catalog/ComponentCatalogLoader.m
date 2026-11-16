@@ -1,6 +1,6 @@
 classdef ComponentCatalogLoader
     % ComponentCatalogLoader Build typed component definitions from strict JSON files.
-    %   The loader reads an explicit R2024a manifest, expands ordered property
+    %   The loader reads an explicit release manifest, expands ordered property
     %   groups, validates catalog data and symbolic behavior names, then returns a
     %   complete ComponentRegistry. A malformed catalog never returns a partial
     %   registry and never invokes catalog-provided executable code.
@@ -39,19 +39,86 @@ classdef ComponentCatalogLoader
         end
 
         function root = defaultCatalogRoot()
-            % defaultCatalogRoot Return the packaged standard catalog location.
+            % defaultCatalogRoot Return the packaged catalog selected for the running release.
             arguments (Output)
                 root (1, 1) string
             end
 
-            % Resolve from this package file so the current folder is irrelevant.
-            sourcePath = mfilename("fullpath");
-            projectRoot = fileparts(fileparts(fileparts(sourcePath)));
-            root = string(fullfile(projectRoot, "resources", "component-catalog", "R2024a"));
+            root = fullfile(yamada.catalog.ComponentCatalogLoader.catalogsFolder(), ...
+                yamada.catalog.ComponentCatalogLoader.defaultRelease());
+        end
+
+        function release = defaultRelease()
+            % defaultRelease Name the packaged catalog release used by the running MATLAB.
+            arguments (Output)
+                release (1, 1) string
+            end
+
+            release = yamada.catalog.ComponentCatalogLoader.selectRelease( ...
+                yamada.catalog.ComponentCatalogLoader.availableReleases( ...
+                yamada.catalog.ComponentCatalogLoader.catalogsFolder()), string(matlabRelease().Release));
+        end
+
+        function release = selectRelease(available, running)
+            % selectRelease Choose the newest catalog release that is not newer than the running release.
+            %   Newer MATLAB releases reuse the newest older catalog, relying on
+            %   backward compatibility until a catalog for that release exists.
+            arguments (Input)
+                available (1, :) string
+                running (1, 1) string
+            end
+            arguments (Output)
+                release (1, 1) string
+            end
+
+            % Release names such as R2023a and R2024b order correctly as text.
+            candidates = sort(available(available <= running));
+            if isempty(candidates)
+                error("yamada:ComponentCatalogLoader:UnsupportedRelease", ...
+                    "No component catalog supports MATLAB %s.", running);
+            end
+            release = candidates(end);
         end
     end
 
     methods (Static, Access = private)
+        function folder = catalogsFolder()
+            % catalogsFolder Return the packaged folder that holds one catalog per release.
+            arguments (Output)
+                folder (1, 1) string
+            end
+
+            % Resolve from this package file so the current folder is irrelevant.
+            projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
+            folder = string(fullfile(projectRoot, "resources", "component-catalog"));
+        end
+
+        function releases = availableReleases(folder)
+            % availableReleases List the release-named catalog folders.
+            arguments (Input)
+                folder (1, 1) string
+            end
+            arguments (Output)
+                releases (1, :) string
+            end
+
+            entries = dir(folder);
+            names = string({entries([entries.isdir]).name});
+            releases = sort(names(yamada.catalog.ComponentCatalogLoader.isReleaseName(names)));
+        end
+
+        function result = isReleaseName(names)
+            % isReleaseName Identify MATLAB release names such as R2023a.
+            arguments (Input)
+                names string
+            end
+            arguments (Output)
+                result logical
+            end
+
+            result = ~cellfun(@isempty, regexp(cellstr(names), '^R\d{4}[ab]$', 'once'));
+        end
+
         function registry = loadUncached(catalogRoot)
             % loadUncached Read and validate one catalog root without consulting the cache.
             arguments (Input)
@@ -74,10 +141,11 @@ classdef ComponentCatalogLoader
                 registry = yamada.catalog.ComponentCatalogLoader.loadVersion2(catalogRoot, manifest);
                 return
             end
-            if manifest.schemaVersion ~= 1 || string(manifest.matlabRelease) ~= "R2024a"
+            if manifest.schemaVersion ~= 1
                 yamada.catalog.ComponentCatalogLoader.fail(catalogRoot + "/catalog.json", ...
-                    "schemaVersion must be 1 and matlabRelease must be R2024a.");
+                    "schemaVersion must be 1 or 2.");
             end
+            yamada.catalog.ComponentCatalogLoader.manifestRelease(manifest, catalogRoot + "/catalog.json");
             groups = yamada.catalog.ComponentCatalogLoader.readGroups(catalogRoot, ...
                 yamada.catalog.ComponentCatalogLoader.stringList(manifest.propertyGroupFiles, ...
                 catalogRoot + "/catalog.json.propertyGroupFiles"));
@@ -190,13 +258,11 @@ classdef ComponentCatalogLoader
                 registry (1, 1) yamada.model.ComponentRegistry
             end
 
-            if string(manifest.matlabRelease) ~= "R2024a"
-                yamada.catalog.ComponentCatalogLoader.fail(root + "/catalog.json", ...
-                    "schemaVersion 2 requires matlabRelease R2024a.");
-            end
+            % Every artifact must describe the release the manifest names.
+            release = yamada.catalog.ComponentCatalogLoader.manifestRelease(manifest, root + "/catalog.json");
             groups = yamada.catalog.ComponentCatalogLoader.readVersion2Groups(root, ...
                 yamada.catalog.ComponentCatalogLoader.stringList(manifest.propertyGroupFiles, ...
-                root + "/catalog.json.propertyGroupFiles"));
+                root + "/catalog.json.propertyGroupFiles"), release);
             if ~isfield(manifest, "orderProfileFiles")
                 yamada.catalog.ComponentCatalogLoader.fail(root + "/catalog.json", ...
                     "schemaVersion 2 requires orderProfileFiles.");
@@ -208,7 +274,7 @@ classdef ComponentCatalogLoader
             if isfield(manifest, "inspectorRowFiles")
                 inspectorRows = yamada.catalog.ComponentCatalogLoader.readInspectorRows(root, ...
                     yamada.catalog.ComponentCatalogLoader.stringList(manifest.inspectorRowFiles, ...
-                    root + "/catalog.json.inspectorRowFiles"));
+                    root + "/catalog.json.inspectorRowFiles"), release);
             end
             files = yamada.catalog.ComponentCatalogLoader.stringList(manifest.componentFiles, ...
                 root + "/catalog.json.componentFiles");
@@ -254,11 +320,12 @@ classdef ComponentCatalogLoader
             end
         end
 
-        function groups = readVersion2Groups(root, files)
-            % readVersion2Groups Load the stable reusable property-group map.
+        function groups = readVersion2Groups(root, files, release)
+            % readVersion2Groups Load the stable reusable property-group map for one release.
             arguments (Input)
                 root (1, 1) string
                 files (1, :) string
+                release (1, 1) string
             end
             arguments (Output)
                 groups containers.Map
@@ -273,9 +340,9 @@ classdef ComponentCatalogLoader
                     ["artifactVersion", "matlabRelease", "groups"], context);
                 yamada.catalog.ComponentCatalogLoader.rejectUnknownFields(document, ...
                     ["artifactVersion", "matlabRelease", "inputSha256", "groups"], context);
-                if document.artifactVersion ~= 1 || string(document.matlabRelease) ~= "R2024a"
+                if document.artifactVersion ~= 1 || string(document.matlabRelease) ~= release
                     yamada.catalog.ComponentCatalogLoader.fail(context, ...
-                        "Expected R2024a property-group artifactVersion 1.");
+                        "Expected " + release + " property-group artifactVersion 1.");
                 end
                 groupList = yamada.catalog.ComponentCatalogLoader.objectList(document.groups, context + ".groups");
                 for groupIndex = 1:numel(groupList)
@@ -324,11 +391,12 @@ classdef ComponentCatalogLoader
             end
         end
 
-        function definitions = readInspectorRows(root, files)
-            % readInspectorRows Load strict presentation-only composite row templates.
+        function definitions = readInspectorRows(root, files, release)
+            % readInspectorRows Load strict presentation-only composite row templates for one release.
             arguments (Input)
                 root (1, 1) string
                 files (1, :) string
+                release (1, 1) string
             end
             arguments (Output)
                 definitions yamada.model.InspectorRowDefinition
@@ -343,9 +411,9 @@ classdef ComponentCatalogLoader
                     ["artifactVersion", "matlabRelease", "rows"], context);
                 yamada.catalog.ComponentCatalogLoader.rejectUnknownFields(document, ...
                     ["artifactVersion", "matlabRelease", "rows"], context);
-                if document.artifactVersion ~= 1 || string(document.matlabRelease) ~= "R2024a"
+                if document.artifactVersion ~= 1 || string(document.matlabRelease) ~= release
                     yamada.catalog.ComponentCatalogLoader.fail(context, ...
-                        "Expected R2024a inspector-row artifactVersion 1.");
+                        "Expected " + release + " inspector-row artifactVersion 1.");
                 end
                 rows = yamada.catalog.ComponentCatalogLoader.objectList(document.rows, context + ".rows");
                 for rowIndex = 1:numel(rows)
@@ -1244,6 +1312,24 @@ classdef ComponentCatalogLoader
                 end
                 yamada.catalog.ComponentCatalogLoader.fail(context + "." + fieldName, ...
                     "Unknown field """ + fieldName + """.");
+            end
+        end
+
+        function release = manifestRelease(manifest, context)
+            % manifestRelease Return the MATLAB release that one catalog manifest describes.
+            arguments (Input)
+                manifest (1, 1) struct
+                context (1, 1) string
+            end
+            arguments (Output)
+                release (1, 1) string
+            end
+
+            release = yamada.catalog.ComponentCatalogLoader.scalarString( ...
+                manifest.matlabRelease, context + ".matlabRelease");
+            if ~yamada.catalog.ComponentCatalogLoader.isReleaseName(release)
+                yamada.catalog.ComponentCatalogLoader.fail(context + ".matlabRelease", ...
+                    "Expected a MATLAB release name such as R2024a.");
             end
         end
 

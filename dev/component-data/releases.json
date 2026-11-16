@@ -1,0 +1,35 @@
+{
+  "$schema": "releases.schema.json",
+  "schemaVersion": 1,
+  "surfaceRelease": "R2024a",
+  "releases": [
+    {
+      "release": "R2023a",
+      "status": "verified",
+      "verification": [
+        {
+          "kind": "nativeObservation",
+          "source": "dev/component-data/ProbeReleaseSurface.m and CompareReleaseSurfaces.m on the R2024a ledger, MATLAB 23.2.0.2485118 (R2023b) Update 6 and 9.14.0.2891782 (R2023a) Update 8",
+          "detail": "Every variant and property available in R2023a constructs with the same documented property paths, readable defaults, and finite options as in R2023b; the differences are recorded as availability and overrides."
+        }
+      ]
+    },
+    {
+      "release": "R2023b",
+      "status": "verified",
+      "verification": [
+        {
+          "kind": "nativeObservation",
+          "source": "dev/component-data/ProbeReleaseSurface.m and CompareReleaseSurfaces.m on the R2024a ledger, MATLAB 24.1.0.3050227 (R2024a) Update 8 and 23.2.0.2485118 (R2023b) Update 6",
+          "detail": "Every variant and property available in R2023b constructs with the same documented property paths, readable defaults, and finite options as in R2024a, except the class of the read-only, Preview-skipped uiaxes InteractionOptions default; the differences are recorded as availability and overrides."
+        }
+      ]
+    },
+    { "release": "R2024a", "status": "audited" },
+    { "release": "R2024b", "status": "known" },
+    { "release": "R2025a", "status": "known" },
+    { "release": "R2025b", "status": "known" },
+    { "release": "R2026a", "status": "known" },
+    { "release": "R2026b", "status": "known" }
+  ]
+}

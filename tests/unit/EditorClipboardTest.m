@@ -83,7 +83,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "ContextMenu", "HTMLEventData", request));
             testCase.verifyEqual(app.SelectedComponentId, selected);
             tree = findall(figure, "Type", "uitree");
-            copy = findall(tree.ContextMenu, "Tag", "yamada-context-copy");
+            copy = findall(findall(figure, "Tag", "yamada-hierarchy-context"), "Tag", "yamada-context-copy");
             testCase.verifyEqual(string(copy.Enable), "on");
             copy.MenuSelectedFcn(copy, []);
             testCase.select(figure, app.Document.RootComponentId);
@@ -147,7 +147,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             request = struct("componentId", panelId, "revision", overlay.Data.gridEditor.revision, "x", 30, "y", 40);
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "ContextMenu", "HTMLEventData", request));
             tree = findall(figure, "Type", "uitree");
-            item = findall(tree.ContextMenu, "Tag", "yamada-context-delete");
+            item = findall(findall(figure, "Tag", "yamada-hierarchy-context"), "Tag", "yamada-context-delete");
             testCase.verifyEqual(string(item.Enable), "on");
             item.MenuSelectedFcn(item, []);
             testCase.verifyEmpty(app.Document.getComponent(panelId));
@@ -352,13 +352,21 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
                 item = findall(figure, "Type", "uimenu", "Accelerator", upper(keys(actions == action)));
                 testCase.assertEqual(string(item.Enable), "on");
                 item.MenuSelectedFcn(item, []);
+            elseif isMATLABReleaseOlderThan("R2023b")
+                % Before R2023b the shared menu opens only from a Preview right-click.
+                overlay = findall(figure, "Tag", "yamada-interaction-overlay");
+                request = struct("componentId", id, "revision", overlay.Data.gridEditor.revision, "x", 30, "y", 40);
+                overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "ContextMenu", "HTMLEventData", request));
+                item = findall(findall(figure, "Tag", "yamada-hierarchy-context"), "Tag", "yamada-context-" + lower(action));
+                testCase.assertEqual(string(item.Enable), "on");
+                item.MenuSelectedFcn(item, []);
             else
                 tree = findall(figure, "Type", "uitree");
                 nodes = findall(tree, "Type", "uitreenode");
                 node = nodes(arrayfun(@(value) string(value.NodeData) == id, nodes));
                 expand(tree.Children(1));
                 drawnow;
-                item = findall(tree.ContextMenu, "Tag", "yamada-context-" + lower(action));
+                item = findall(findall(figure, "Tag", "yamada-hierarchy-context"), "Tag", "yamada-context-" + lower(action));
                 testCase.chooseContextMenu(node, item);
             end
             drawnow;

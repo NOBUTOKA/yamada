@@ -191,7 +191,8 @@ foreach ($file in @(Get-ChildItem -LiteralPath $componentsPath -Filter '*.json' 
 try { $parentRules = Get-Content -Raw -LiteralPath $rulesPath | ConvertFrom-Json } catch { throw "Unable to parse '$rulesPath': $($_.Exception.Message)" }
 
 $inputDigestFiles = @((Get-ChildItem -LiteralPath $componentsPath -Filter '*.json' -File | Sort-Object Name).FullName + $inputPath + $inputSchemaPath + $rulesPath | Sort-Object)
-$inputDigest = Get-Hash (($inputDigestFiles | ForEach-Object { "$($_.Substring($releasePath.Length + 1).Replace('\', '/')):$((Get-FileHash -Algorithm SHA256 -LiteralPath $_).Hash.ToLowerInvariant())" }) -join "`n")
+# Hash LF-normalized text so CRLF and LF checkouts record the same digest.
+$inputDigest = Get-Hash (($inputDigestFiles | ForEach-Object { "$($_.Substring($releasePath.Length + 1).Replace('\', '/')):$(Get-Hash ([IO.File]::ReadAllText($_).Replace("`r`n", "`n")))" }) -join "`n")
 
 # Build reusable subset groups and verify their declared source parity.
 $groupsById = @{}

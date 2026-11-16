@@ -1,5 +1,5 @@
 classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.unittest.TestCase
-    % PreviewLayoutStabilizationTest Verify request isolation and real R2024a fit-layout completion.
+    % PreviewLayoutStabilizationTest Verify request isolation and real fit-layout completion.
     properties (TestParameter)
         % Widget - Native asynchronous and nested-container geometry under test.
         Widget = {"table", "axes", "html", "tabs"}
@@ -87,7 +87,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
             immediate = label.Position;
             pause(0.2); drawnow;
             testCase.verifyEqual(label.Position, immediate, "AbsTol", 1e-8);
-            testCase.verifyNotEmpty(string(response.rootId));
+            testCase.verifyTrue(response.framed);
             testCase.verifyEqual(numel(timerfindall()), numel(before));
         end
     end

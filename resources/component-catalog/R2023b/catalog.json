@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 2,
+  "matlabRelease": "R2023b",
+  "sourceGroupingSha256": "9922bb8c911dc5f07fd5de4b9111ade78b3be3edaf67226cb572cd78b3db95e4",
+  "propertyGroupFiles": [
+    "property-groups/groups.json"
+  ],
+  "orderProfileFiles": [
+    "order-profiles.json"
+  ],
+  "inspectorRowFiles": [
+    "inspector-rows.json"
+  ],
+  "parentContextRules": [
+    {
+      "parentFactories": [
+        "uigridlayout"
+      ],
+      "kind": "grid",
+      "geometryImpacts": [
+        {
+          "path": "Layout.Row",
+          "gridGeometryImpact": "required",
+          "absoluteGeometryImpact": true
+        },
+        {
+          "path": "Layout.Column",
+          "gridGeometryImpact": "required",
+          "absoluteGeometryImpact": true
+        }
+      ]
+    },
+    {
+      "parentFactories": [
+        "uifigure",
+        "uipanel",
+        "uitab",
+        "uibuttongroup"
+      ],
+      "kind": "absoluteIntrinsic",
+      "geometryImpacts": []
+    },
+    {
+      "parentFactories": [
+        "uitabgroup",
+        "uitree",
+        "uitreenode",
+        "uimenu",
+        "uitoolbar"
+      ],
+      "kind": "structural",
+      "geometryImpacts": []
+    }
+  ],
+  "componentFiles": [
+    "components/axes.json",
+    "components/geoaxes.json",
+    "components/polaraxes.json",
+    "components/uiaxes.json",
+    "components/uibutton-push.json",
+    "components/uibutton-state.json",
+    "components/uibuttongroup.json",
+    "components/uicheckbox.json",
+    "components/uicontextmenu.json",
+    "components/uidatepicker.json",
+    "components/uidropdown.json",
+    "components/uieditfield-numeric.json",
+    "components/uieditfield-text.json",
+    "components/uifigure.json",
+    "components/uigauge-circular.json",
+    "components/uigauge-linear.json",
+    "components/uigauge-ninetydegree.json",
+    "components/uigauge-semicircular.json",
+    "components/uigridlayout.json",
+    "components/uihtml.json",
+    "components/uihyperlink.json",
+    "components/uiimage.json",
+    "components/uiknob-continuous.json",
+    "components/uiknob-discrete.json",
+    "components/uilabel.json",
+    "components/uilamp.json",
+    "components/uilistbox.json",
+    "components/uimenu.json",
+    "components/uipanel.json",
+    "components/uipushtool.json",
+    "components/uiradiobutton.json",
+    "components/uislider-range.json",
+    "components/uislider-slider.json",
+    "components/uispinner.json",
+    "components/uiswitch-rocker.json",
+    "components/uiswitch-slider.json",
+    "components/uiswitch-toggle.json",
+    "components/uitab.json",
+    "components/uitabgroup.json",
+    "components/uitable.json",
+    "components/uitextarea.json",
+    "components/uitogglebutton.json",
+    "components/uitoggletool.json",
+    "components/uitoolbar.json",
+    "components/uitree.json",
+    "components/uitree-checkbox.json",
+    "components/uitreenode.json"
+  ]
+}

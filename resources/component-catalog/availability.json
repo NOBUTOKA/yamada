@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "surfaceRelease": "R2024a",
+  "releases": [
+    {
+      "release": "R2023a",
+      "catalog": true
+    },
+    {
+      "release": "R2023b",
+      "catalog": true
+    },
+    {
+      "release": "R2024a",
+      "catalog": true
+    },
+    {
+      "release": "R2024b",
+      "catalog": false
+    },
+    {
+      "release": "R2025a",
+      "catalog": false
+    },
+    {
+      "release": "R2025b",
+      "catalog": false
+    },
+    {
+      "release": "R2026a",
+      "catalog": false
+    },
+    {
+      "release": "R2026b",
+      "catalog": false
+    }
+  ],
+  "variants": [
+    {
+      "id": "uicolorpicker",
+      "factory": "uicolorpicker",
+      "creationArguments": [],
+      "displayName": "Color Picker",
+      "releases": {
+        "since": "R2024a"
+      }
+    },
+    {
+      "id": "uislider-range",
+      "factory": "uislider",
+      "creationArguments": [
+        "range"
+      ],
+      "displayName": "Range Slider",
+      "releases": {
+        "since": "R2023b"
+      }
+    }
+  ],
+  "properties": [
+    {
+      "variantId": "geoaxes",
+      "path": "InteractionOptions",
+      "releases": {
+        "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "polaraxes",
+      "path": "InteractionOptions",
+      "releases": {
+        "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "uidropdown",
+      "path": "ValueIndex",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uieditfield-numeric",
+      "path": "AllowEmpty",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uieditfield-numeric",
+      "path": "Placeholder",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uiknob-discrete",
+      "path": "ValueIndex",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uilistbox",
+      "path": "ValueIndex",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uiradiobutton",
+      "path": "Interpreter",
+      "releases": {
+        "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "uislider-range",
+      "path": "Step",
+      "releases": {
+        "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "uislider-range",
+      "path": "StepMode",
+      "releases": {
+        "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "uispinner",
+      "path": "AllowEmpty",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uispinner",
+      "path": "Placeholder",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uiswitch-rocker",
+      "path": "ValueIndex",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uiswitch-slider",
+      "path": "ValueIndex",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uiswitch-toggle",
+      "path": "ValueIndex",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uitable",
+      "path": "DisplaySelection",
+      "releases": {
+        "since": "R2023b"
+      }
+    }
+  ],
+  "values": []
+}
