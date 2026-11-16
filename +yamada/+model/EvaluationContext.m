@@ -12,8 +12,9 @@ classdef EvaluationContext < handle
         Key struct
         Registry yamada.model.ComponentRegistry
         RegistryRevision uint64
-        Values containers.Map
-        Plans containers.Map
+        % Cached results are heterogeneous, so each entry is one cell value.
+        Values dictionary = dictionary(string([]), {})
+        Plans dictionary = dictionary(string([]), {})
         Cacheable logical = false
         ReadDepth double = 0
         TransitionToken struct = struct()
@@ -41,7 +42,7 @@ classdef EvaluationContext < handle
             for field = fields
                 if ~isequaln({before.(field)}, {after.(field)}), return, end
             end
-            names = string(keys(previous.Values));
+            names = keys(previous.Values)';
             names = names(startsWith(names, "states:"));
             if isempty(names), return, end
 
@@ -70,7 +71,7 @@ classdef EvaluationContext < handle
                         retained(group) = reuse;
                     end
                 end
-                if reuse, obj.Values(char(name)) = previous.Values(char(name)); end
+                if reuse, obj.Values(name) = previous.Values(name); end
             end
         end
 
@@ -153,8 +154,6 @@ classdef EvaluationContext < handle
                 document yamada.model.DocumentModel = yamada.model.DocumentModel.empty
                 registry yamada.model.ComponentRegistry = yamada.model.ComponentRegistry.empty
             end
-            obj.Values = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.Plans = containers.Map("KeyType", "char", "ValueType", "any");
             if isempty(document), return, end
             [obj.Key, obj.Cacheable] = yamada.model.EvaluationContext.capture(document);
             [obj.InputClock, obj.InputRevision] = document.inputStamp();
@@ -195,9 +194,9 @@ classdef EvaluationContext < handle
                 value
                 found (1, 1) logical
             end
-            found = obj.Cacheable && isKey(obj.Values, char(name));
+            found = obj.Cacheable && isKey(obj.Values, name);
             value = [];
-            if found, value = obj.Values(char(name)); end
+            if found, value = obj.Values{name}; end
         end
 
         function remember(obj, name, value)
@@ -210,7 +209,7 @@ classdef EvaluationContext < handle
             if ~obj.Cacheable, return, end
             [independent, safe] = yamada.model.EvaluationContext.freeze(value, false, obj.Registry);
             if safe
-                obj.Values(char(name)) = independent;
+                obj.Values{name} = independent;
             end
         end
 
@@ -225,10 +224,10 @@ classdef EvaluationContext < handle
                 plan (1, 1) struct
                 found (1, 1) logical
             end
-            found = obj.Cacheable && isKey(obj.Plans, char(name));
+            found = obj.Cacheable && isKey(obj.Plans, name);
             plan = struct();
             if ~found, return, end
-            saved = obj.Plans(char(name));
+            saved = obj.Plans{name};
             document = obj.configurationDocument(saved, true);
             component = document.getComponentByName(componentName);
             found = ~isempty(component);
@@ -253,9 +252,9 @@ classdef EvaluationContext < handle
             effectIds = strings(1, 0);
             owned = document.getComponent(original.Id);
             found = obj.matches(document, obj.Registry) && ~isempty(owned) && owned == original && ...
-                isKey(obj.Plans, char(name));
+                isKey(obj.Plans, name);
             if ~found, return, end
-            saved = obj.configurationDocument(obj.Plans(char(name)), false);
+            saved = obj.configurationDocument(obj.Plans{name}, false);
             component = saved.getComponentByName(original.Name);
             found = ~isempty(component);
             if ~found, return, end
@@ -287,11 +286,11 @@ classdef EvaluationContext < handle
             ownedOwner = document.getComponent(owner.Id);
             found = obj.matches(document, obj.Registry) && grid.Factory == "uigridlayout" && ...
                 ~isempty(owned) && owned == grid && ~isempty(ownedOwner) && ownedOwner == owner && ...
-                isKey(obj.Plans, char(name));
+                isKey(obj.Plans, name);
             if ~found, return, end
 
             % Keep the version-checked private source inside a synchronous value projection.
-            saved = obj.configurationDocument(obj.Plans(char(name)), false);
+            saved = obj.configurationDocument(obj.Plans{name}, false);
             found = ~isempty(saved.getComponentByName(owner.Name));
             if ~found, return, end
             result = yamada.model.GridLayoutStatePolicy.projectConfiguration(grid, document, saved, obj.Registry);
@@ -305,7 +304,7 @@ classdef EvaluationContext < handle
                 document (1, 1) yamada.model.DocumentModel
             end
             if obj.Cacheable
-                obj.Plans(char(name)) = document.structuralCandidate();
+                obj.Plans{name} = document.structuralCandidate();
             end
         end
     end
@@ -475,8 +474,8 @@ classdef EvaluationContext < handle
             if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
                     obj.RegistryRevision ~= previous.RegistryRevision, return, end
             values = previous.stateValues();
-            for name = string(keys(obj.Values))
-                if startsWith(name, "states:"), remove(obj.Values, char(name)); end
+            for name = keys(obj.Values)'
+                if startsWith(name, "states:"), obj.Values(name) = []; end
             end
             ids = string({obj.Key.Components.Id});
             for owner = values
@@ -484,7 +483,7 @@ classdef EvaluationContext < handle
                 if ~any(ids == id) || any(affected == id), continue, end
                 value = owner.Resolved;
                 value.Diagnostics = yamada.model.SourceLocationUpdate.relocateDiagnostics(value.Diagnostics, batch);
-                obj.Values(char("states:" + id)) = value;
+                obj.Values{"states:" + id} = value;
             end
         end
 
@@ -497,9 +496,10 @@ classdef EvaluationContext < handle
                 values (1, :) struct
             end
             values = struct("ComponentId", {}, "Resolved", {});
-            for name = string(keys(obj.Values))
+            % Export in key order so equal caches produce equal value lists.
+            for name = sort(keys(obj.Values))'
                 if startsWith(name, "states:")
-                    values(end + 1) = struct("ComponentId", extractAfter(name, "states:"), "Resolved", obj.Values(char(name))); %#ok<AGROW>
+                    values(end + 1) = struct("ComponentId", extractAfter(name, "states:"), "Resolved", obj.Values{name}); %#ok<AGROW>
                 end
             end
         end
@@ -521,7 +521,7 @@ classdef EvaluationContext < handle
             end
             groups = yamada.model.EvaluationContext.scopeGroups(after);
             ids = string({after.Id}); checked = false(size(groups)); reusable = checked;
-            for name = string(keys(previous.Values))
+            for name = keys(previous.Values)'
                 if ~startsWith(name, "states:"), continue, end
                 index = find(ids == extractAfter(name, "states:"), 1);
                 if isempty(index) || groups(index) == 0, continue, end
@@ -531,9 +531,9 @@ classdef EvaluationContext < handle
                     reusable(group) = ~any(ismember(ids(scope), changedIds)); checked(group) = true;
                 end
                 if ~reusable(group), continue, end
-                value = previous.Values(char(name));
+                value = previous.Values{name};
                 value.Diagnostics = yamada.model.SourceLocationUpdate.relocateDiagnostics(value.Diagnostics, batch);
-                obj.Values(char(name)) = value;
+                obj.Values{name} = value;
             end
         end
 
@@ -544,7 +544,7 @@ classdef EvaluationContext < handle
                 id (1, 1) string
                 resolved (1, 1) struct
             end
-            if obj.Cacheable, obj.Values(char("states:" + id)) = resolved; end
+            if obj.Cacheable, obj.Values{"states:" + id} = resolved; end
         end
 
         function rememberOwnedConfiguration(obj, name, document)
@@ -565,7 +565,7 @@ classdef EvaluationContext < handle
                 return
             end
             [clock, revision, tracked] = document.inputStamp();
-            obj.Plans(char(name)) = struct("Document", document, "Snapshot", snapshot, ...
+            obj.Plans{name} = struct("Document", document, "Snapshot", snapshot, ...
                 "Clock", clock, "Revision", revision, "Tracked", tracked);
         end
 
@@ -588,14 +588,14 @@ classdef EvaluationContext < handle
             for field = ["Id", "Name", "Factory", "DeclaredType", "Origin", "ParentId", "Children"]
                 if ~isequaln({before.(field)}, {after.(field)}), return, end
             end
-            for name = string(keys(previous.Values))
+            for name = keys(previous.Values)'
                 state = startsWith(name, "states:") && name ~= "states:" + componentId;
                 auxiliary = preserveDocumentStates && (startsWith(name, "grid-configuration:") || ...
                     startsWith(name, "grid-unresolved-effect:"));
                 if ~state && ~auxiliary, continue, end
-                value = previous.Values(char(name));
+                value = previous.Values{name};
                 if state, value.Diagnostics = yamada.model.SourceLocationUpdate.relocateDiagnostics(value.Diagnostics, batch); end
-                obj.Values(char(name)) = value;
+                obj.Values{name} = value;
             end
         end
 
@@ -610,9 +610,9 @@ classdef EvaluationContext < handle
                 return
             end
             % Reparent answers retain their measured-rectangle guard; no native geometry is copied.
-            for name = string(keys(previous.Values))
+            for name = keys(previous.Values)'
                 if startsWith(name, "eligibility:")
-                    obj.Values(char(name)) = previous.Values(char(name));
+                    obj.Values(name) = previous.Values(name);
                 end
             end
         end

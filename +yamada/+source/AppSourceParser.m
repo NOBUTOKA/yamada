@@ -137,7 +137,8 @@ classdef AppSourceParser
             document.Metadata.HasUnresolvedInitialization = ~isempty(unresolved);
             creationOrder = unique(initializationOrder, 'stable');
             creationOrder = [creationOrder setdiff(1:numel(statements), creationOrder, 'stable')];
-            creationSettings = containers.Map("KeyType", "char", "ValueType", "any");
+            % Each component has its own number of settings, so each entry is one cell value.
+            creationSettings = dictionary(string([]), {});
 
             % Recover reachable creations first so parent discovery follows initialization calls.
             for index = creationOrder
@@ -185,8 +186,8 @@ classdef AppSourceParser
                 % Resolve declaration metadata and parent identity before mutation.
                 declaredType = definition.DeclaredType;
                 declarationSpan = yamada.model.SourceSpan.empty;
-                if isKey(declarations, char(creation.Name))
-                    declaration = declarations(char(creation.Name));
+                if isKey(declarations, creation.Name)
+                    declaration = declarations(creation.Name);
                     declaredType = declaration.DeclaredType;
                     declarationSpan = declaration.Span;
                 else
@@ -217,7 +218,7 @@ classdef AppSourceParser
                     "parsed-" + creation.Name, creation.Name, creation.Factory, ...
                     declaredType, "parsed");
                 component.CreationArguments = creationArguments;
-                creationSettings(char(component.Id)) = settings;
+                creationSettings{component.Id} = settings;
                 component.SourceSpans = struct( ...
                     "Declaration", declarationSpan, "Creation", statement.Span);
                 try
@@ -255,7 +256,7 @@ classdef AppSourceParser
                         component.Metadata.InitializationCreationCertain = initializationCertain(visit) && ...
                             nnz(initializationOrder == index) == 1;
                         created(end + 1) = component.Id;
-                        for setting = creationSettings(char(component.Id))
+                        for setting = creationSettings{component.Id}
                             sequence = sequence + 1;
                             record = setting.toStruct();
                             record.Location.Sequence = sequence;
@@ -462,11 +463,11 @@ classdef AppSourceParser
                 statements yamada.source.SourceStatement
             end
             arguments (Output)
-                declarations containers.Map
+                declarations dictionary
             end
 
             % Track only direct property block lines, never function-local values.
-            declarations = containers.Map("KeyType", "char", "ValueType", "any");
+            declarations = dictionary(string([]), struct("DeclaredType", {}, "Span", {}));
             inProperties = false;
             pattern = '^(?<name>[A-Za-z]\w*)\s+(?<type>[A-Za-z]\w*(?:\.[A-Za-z]\w*)*)\s*$';
             for index = 1:numel(statements)
@@ -487,7 +488,7 @@ classdef AppSourceParser
                 if isempty(tokens)
                     continue
                 end
-                declarations(tokens.name) = struct( ...
+                declarations(string(tokens.name)) = struct( ...
                     "DeclaredType", string(tokens.type), "Span", statement.Span);
             end
         end

@@ -38,7 +38,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             builder = yamada.ui.GridLayoutOverlayDataBuilder();
             snapshot = builder.nativeInputs(handles, panel);
             expected = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry, snapshot);
-            preview = handles(char(grid.Id));
+            preview = handles(grid.Id);
             preview.RowHeight = {80, 90};
             drawnow;
             yamada.ui.waitForPreviewLayout(ancestor(panel, "figure"), preview);
@@ -105,10 +105,10 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             ids = cellfun(@(item) item.id, before.Controls);
             gridInput = before.Controls{find(ids == grid.Id, 1)};
             firstInput = before.Controls{find(ids == first.Id, 1)};
-            testCase.verifyEqual(gridInput.RowSpacing, handles(char(grid.Id)).RowSpacing);
-            testCase.verifyEqual(gridInput.ColumnWidth, handles(char(grid.Id)).ColumnWidth);
-            testCase.verifyEqual(firstInput.OuterPosition, double(handles(char(first.Id)).OuterPosition));
-            expected = double(getpixelposition(handles(char(first.Id)), true));
+            testCase.verifyEqual(gridInput.RowSpacing, handles(grid.Id).RowSpacing);
+            testCase.verifyEqual(gridInput.ColumnWidth, handles(grid.Id).ColumnWidth);
+            testCase.verifyEqual(firstInput.OuterPosition, double(handles(first.Id).OuterPosition));
+            expected = double(getpixelposition(handles(first.Id), true));
             reference = double(getpixelposition(panel, true));
             expected(1:2) = expected(1:2) - reference(1:2);
             testCase.verifyEqual(firstInput.pixels, expected);
@@ -124,7 +124,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
                     [17 13 0 0], "AbsTol", 1e-6);
             end
             testCase.verifyNotEqual(moved.Ancestors, before.Ancestors);
-            native = handles(char(grid.Id));
+            native = handles(grid.Id);
             native.RowSpacing = native.RowSpacing + 3;
             spaced = yamada.ui.GridLayoutOverlayDataBuilder.nativeInputs(handles, panel);
             testCase.verifyNotEqual(spaced, moved);
@@ -143,10 +143,10 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             testCase.verifyFalse(pending.geometryAvailable);
             testCase.verifyTrue(pending.geometryPending);
             testCase.verifySubstring(pending.readOnlyReason, "do not agree");
-            native = handles(char(first.Id));
+            native = handles(first.Id);
             document.setProperty(first.Id, "Layout.Row", 1);
             native.Layout.Row = 1;
-            testCase.waitForLayout(handles(char(grid.Id)));
+            testCase.waitForLayout(handles(grid.Id));
             ready = builder.build(document, handles, panel, grid.Id, first.Id, 2, registry);
             testCase.verifyTrue(ready.geometryAvailable);
             testCase.verifyFalse(ready.geometryPending);
@@ -165,16 +165,16 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             baseline = builder.build(document, handles, panel, grid.Id, first.Id, 1, registry);
             testCase.assertTrue(baseline.geometryAvailable);
             stamp = builder.nativeInputs(handles, panel);
-            native = handles(char(first.Id));
+            native = handles(first.Id);
             original = native.Text;
             native.Text = ["Line one"; "Line two"; "Line three"];
-            testCase.waitForLayout(handles(char(grid.Id)));
+            testCase.waitForLayout(handles(grid.Id));
             grown = builder.build(document, handles, panel, grid.Id, first.Id, 2, registry);
             testCase.assertTrue(grown.geometryAvailable);
             testCase.verifyGreaterThan(grown.rowTracks(1).bounds(4), baseline.rowTracks(1).bounds(4));
             testCase.verifyNotEqual(builder.nativeInputs(handles, panel), stamp);
             native.Text = original;
-            testCase.waitForLayout(handles(char(grid.Id)));
+            testCase.waitForLayout(handles(grid.Id));
             shrunk = builder.build(document, handles, panel, grid.Id, first.Id, 3, registry);
             testCase.assertTrue(shrunk.geometryAvailable);
             testCase.verifyEqual(shrunk.rowBoundaries, baseline.rowBoundaries, "AbsTol", 1);
@@ -230,14 +230,14 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
-            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(inner.Id)));
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(inner.Id));
             builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build( ...
                 document, handles, panel, inner.Id, label.Id, 15);
 
             testCase.assertTrue(data.geometryAvailable, data.readOnlyReason);
             % Compare canvas boundaries with independent realized component rectangles.
-            labelBounds = double(getpixelposition(handles(char(label.Id)), true));
+            labelBounds = double(getpixelposition(handles(label.Id), true));
             panelBounds = double(getpixelposition(panel, true));
             labelBounds(1:2) = labelBounds(1:2) - panelBounds(1:2);
             testCase.verifyEqual(data.columnTracks(1).bounds([1 3]), ...
@@ -308,7 +308,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
-            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(grid.Id));
 
             builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, child.Id, 14);
@@ -338,7 +338,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
-            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(grid.Id));
 
             builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, grid.Id, 9);
@@ -369,7 +369,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
-            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(grid.Id));
 
             builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, selected.Id, 10);
@@ -379,7 +379,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             testCase.verifyEqual(numel(data.rowTracks), 8);
             testCase.verifyEqual(string({data.rowTracks.kind}), repmat("fit", 1, 8));
             slider = document.getComponentByName("IntensitySlider");
-            sliderPreview = handles(char(slider.Id));
+            sliderPreview = handles(slider.Id);
             testCase.verifyGreaterThan(data.rowTracks(4).bounds(4), ...
                 double(sliderPreview.Position(4)) + 20);
             testCase.verifyEqual(data.rowTracks(4).bounds(4), ...
@@ -412,7 +412,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
-            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(grid.Id));
 
             builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, child.Id, 11);
@@ -446,7 +446,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
-            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(grid.Id));
 
             builder = yamada.ui.GridLayoutOverlayDataBuilder();
             data = builder.build(document, handles, panel, grid.Id, child.Id, 13);
@@ -476,7 +476,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             end
             arguments (Output)
                 document (1, 1) yamada.model.DocumentModel
-                handles containers.Map
+                handles dictionary
                 panel (1, 1) matlab.ui.container.Panel
                 grid (1, 1) yamada.model.ComponentRecord
                 first (1, 1) yamada.model.ComponentRecord
@@ -504,7 +504,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);
             testCase.verifyEmpty(diagnostics);
-            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(char(grid.Id)));
+            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(grid.Id));
         end
     end
 

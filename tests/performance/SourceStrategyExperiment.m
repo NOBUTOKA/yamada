@@ -19,7 +19,7 @@ classdef SourceStrategyExperiment < handle
     properties (Access = private)
         Registry yamada.model.ComponentRegistry
         Patches struct = struct("Key", {}, "Start", {}, "End", {}, "Text", {})
-        Definitions containers.Map
+        Definitions dictionary = dictionary(string([]), {})
         Emitted string = ""
     end
 
@@ -45,7 +45,7 @@ classdef SourceStrategyExperiment < handle
             obj.Document.Diagnostics = parsed.Diagnostics;
             obj.Document.LineEnding = parsed.LineEnding;
             obj.Document.HistoryLimit = 200;
-            obj.Definitions = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.Definitions = dictionary(string([]), {});
             % Retain every model span, not only the ranges changed by the workload.
             snapshot = yamada.model.SubtreeSnapshot(obj.Document, obj.Document.RootComponentId);
             obj.collect(snapshot.Records, "records");
@@ -57,7 +57,7 @@ classdef SourceStrategyExperiment < handle
                 parent = obj.Document.getComponent(component.ParentId);
                 factory = "";
                 if ~isempty(parent), factory = parent.Factory; end
-                obj.Definitions(char(component.Name)) = registry.getEffectiveProperties( ...
+                obj.Definitions{component.Name} = registry.getEffectiveProperties( ...
                     component.Factory, factory, component.CreationArguments);
                 offsets = component.SourceSpans.Creation.EndOffset;
                 settingIndex = 0;
@@ -101,7 +101,7 @@ classdef SourceStrategyExperiment < handle
             end
             component = obj.Document.getComponentByName(name);
             assert(~isempty(component) && component.IsEditable);
-            definitions = obj.Definitions(char(name));
+            definitions = obj.Definitions{name};
             definition = definitions(string({definitions.Path}) == path);
             assert(isscalar(definition) && definition.IsEditable);
             % Start with the same local-proof policies as the existing fast replacement path.
@@ -223,7 +223,7 @@ classdef SourceStrategyExperiment < handle
                 savedParent = saved.getComponent(other.ParentId);
                 assert(isempty(parent) == isempty(savedParent));
                 if ~isempty(parent), assert(parent.Name == savedParent.Name); end
-                definitions = obj.Definitions(char(component.Name));
+                definitions = obj.Definitions{component.Name};
                 expected = yamada.model.PropertyStateResolver.resolve(component, definitions);
                 actual = saved.getEffectivePropertyStates(obj.Registry, other.Id);
                 for state = expected

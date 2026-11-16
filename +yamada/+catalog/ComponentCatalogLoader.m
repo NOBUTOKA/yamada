@@ -229,9 +229,9 @@ classdef ComponentCatalogLoader
             % Process memory holds only successful loads; failures are never stored.
             persistent entries
             if isempty(entries)
-                entries = containers.Map("KeyType", "char", "ValueType", "any");
+                entries = dictionary(string([]), struct("Fingerprint", {}, "Registry", {}));
             end
-            key = char(catalogRoot);
+            key = catalogRoot;
             if action == "get"
                 registry = yamada.model.ComponentRegistry.empty;
                 if isKey(entries, key)
@@ -242,8 +242,8 @@ classdef ComponentCatalogLoader
             end
 
             % Bound memory when many temporary roots are loaded in one session.
-            if entries.Count >= 8 && ~isKey(entries, key)
-                entries = containers.Map("KeyType", "char", "ValueType", "any");
+            if numEntries(entries) >= 8 && ~isKey(entries, key)
+                entries = dictionary(string([]), struct("Fingerprint", {}, "Registry", {}));
             end
             entries(key) = struct("Fingerprint", fingerprint, "Registry", registry);
         end
@@ -328,10 +328,11 @@ classdef ComponentCatalogLoader
                 release (1, 1) string
             end
             arguments (Output)
-                groups containers.Map
+                groups dictionary
             end
 
-            groups = containers.Map("KeyType", "char", "ValueType", "any");
+            % Each group keeps its own decoded JSON fields.
+            groups = dictionary(string([]), struct([]));
             for fileIndex = 1:numel(files)
                 relativePath = files(fileIndex);
                 document = yamada.catalog.ComponentCatalogLoader.readDocument(root, relativePath);
@@ -352,11 +353,11 @@ classdef ComponentCatalogLoader
                     yamada.catalog.ComponentCatalogLoader.rejectUnknownFields(value, ...
                         ["id", "kind", "categoryId", "entries"], context + ".groups");
                     id = yamada.catalog.ComponentCatalogLoader.scalarString(value.id, context + ".groups.id");
-                    if isKey(groups, char(id))
+                    if isKey(groups, id)
                         yamada.catalog.ComponentCatalogLoader.fail(context + ".groups.id", ...
                             "Duplicate property group \"" + id + "\".");
                     end
-                    groups(char(id)) = value;
+                    groups(id) = value;
                 end
             end
         end
@@ -368,10 +369,11 @@ classdef ComponentCatalogLoader
                 files (1, :) string
             end
             arguments (Output)
-                profiles containers.Map
+                profiles dictionary
             end
 
-            profiles = containers.Map("KeyType", "char", "ValueType", "any");
+            % Category orders have different lengths, so each entry is one cell value.
+            profiles = dictionary(string([]), {});
             for fileIndex = 1:numel(files)
                 document = yamada.catalog.ComponentCatalogLoader.readDocument(root, files(fileIndex));
                 context = root + "/" + files(fileIndex);
@@ -381,11 +383,11 @@ classdef ComponentCatalogLoader
                 for profileIndex = 1:numel(profileList)
                     value = profileList{profileIndex};
                     id = yamada.catalog.ComponentCatalogLoader.scalarString(value.id, context + ".profiles.id");
-                    if isKey(profiles, char(id))
+                    if isKey(profiles, id)
                         yamada.catalog.ComponentCatalogLoader.fail(context + ".profiles.id", ...
                             "Duplicate order profile \"" + id + "\".");
                     end
-                    profiles(char(id)) = yamada.catalog.ComponentCatalogLoader.stringList( ...
+                    profiles{id} = yamada.catalog.ComponentCatalogLoader.stringList( ...
                         value.categoryOrder, context + ".profiles.categoryOrder");
                 end
             end
@@ -511,8 +513,8 @@ classdef ComponentCatalogLoader
             % componentDefinitionVersion2 Compose one concrete variant in category order.
             arguments (Input)
                 document (1, 1) struct
-                groups containers.Map
-                profiles containers.Map
+                groups dictionary
+                profiles dictionary
                 context (1, 1) string
             end
             arguments (Output)
@@ -525,7 +527,7 @@ classdef ComponentCatalogLoader
             yamada.catalog.ComponentCatalogLoader.rejectUnknownFields(document, required, context);
             id = yamada.catalog.ComponentCatalogLoader.scalarString(document.id, context + ".id");
             profileId = yamada.catalog.ComponentCatalogLoader.scalarString(document.profileId, context + ".profileId");
-            if ~isKey(profiles, char(profileId))
+            if ~isKey(profiles, profileId)
                 yamada.catalog.ComponentCatalogLoader.fail(context + ".profileId", "Unknown order profile.");
             end
             factory = yamada.catalog.ComponentCatalogLoader.scalarString(document.factory, context + ".factory");
@@ -537,7 +539,7 @@ classdef ComponentCatalogLoader
             properties = yamada.model.PropertyDefinition.empty(0, 1);
             categories = yamada.catalog.ComponentCatalogLoader.objectList(document.categories, context + ".categories");
             yamada.catalog.ComponentCatalogLoader.validateProfileDelta( ...
-                profiles(char(profileId)), document.profileDelta, categories, context + ".profileDelta");
+                profiles{profileId}, document.profileDelta, categories, context + ".profileDelta");
             for categoryIndex = 1:numel(categories)
                 category = categories{categoryIndex};
                 categoryContext = context + ".categories[" + string(categoryIndex) + "]";
@@ -554,12 +556,12 @@ classdef ComponentCatalogLoader
                     yamada.catalog.ComponentCatalogLoader.rejectUnknownFields(entry, ...
                         ["path", "groupId", "runtimeSetAccess", "metadata"], entryContext);
                     groupId = yamada.catalog.ComponentCatalogLoader.scalarString(entry.groupId, entryContext + ".groupId");
-                    if ~isKey(groups, char(groupId))
+                    if ~isKey(groups, groupId)
                         yamada.catalog.ComponentCatalogLoader.fail(entryContext + ".groupId", ...
                             "Unknown property group \"" + groupId + "\".");
                     end
                     yamada.catalog.ComponentCatalogLoader.validateVersion2GroupEntry( ...
-                        groups(char(groupId)), entry, entryContext);
+                        groups(groupId), entry, entryContext);
                     isEditable = string(entry.runtimeSetAccess) == "public";
                     properties(end + 1) = yamada.catalog.ComponentCatalogLoader.propertyDefinition( ...
                         struct("path", entry.path, "isEditable", isEditable, "metadata", entry.metadata), ...
@@ -665,11 +667,11 @@ classdef ComponentCatalogLoader
                 files (1, :) string
             end
             arguments (Output)
-                groups containers.Map
+                groups dictionary
             end
 
             % Use an explicit map only after all group documents have passed validation.
-            groups = containers.Map("KeyType", "char", "ValueType", "any");
+            groups = dictionary(string([]), struct("Entries", {}, "Context", {}));
             for index = 1:numel(files)
                 relativePath = files(index);
                 document = yamada.catalog.ComponentCatalogLoader.readDocument(root, relativePath);
@@ -677,14 +679,14 @@ classdef ComponentCatalogLoader
                 yamada.catalog.ComponentCatalogLoader.requireFields(document, ["name", "entries"], context);
                 yamada.catalog.ComponentCatalogLoader.rejectUnknownFields(document, ["name", "entries"], context);
                 name = yamada.catalog.ComponentCatalogLoader.scalarString(document.name, context + ".name");
-                if isKey(groups, char(name))
+                if isKey(groups, name)
                     yamada.catalog.ComponentCatalogLoader.fail(context + ".name", ...
                         "Duplicate property group """ + name + """.");
                 end
                 group = struct();
                 group.Entries = document.entries;
                 group.Context = context;
-                groups(char(name)) = group;
+                groups(name) = group;
             end
         end
 
@@ -692,7 +694,7 @@ classdef ComponentCatalogLoader
             % componentDefinition Convert one validated component document to a typed definition.
             arguments (Input)
                 document struct
-                groups containers.Map
+                groups dictionary
                 context (1, 1) string
             end
             arguments (Output)
@@ -733,7 +735,7 @@ classdef ComponentCatalogLoader
             % expandProperties Expand ordered property and group entries without cycles.
             arguments (Input)
                 entries
-                groups containers.Map
+                groups dictionary
                 stack (1, :) string
                 context (1, 1) string
             end
@@ -761,11 +763,11 @@ classdef ComponentCatalogLoader
                         yamada.catalog.ComponentCatalogLoader.fail(entryContext + ".group", ...
                             "Property group cycle: " + strjoin([stack, groupName], " -> ") + ".");
                     end
-                    if ~isKey(groups, char(groupName))
+                    if ~isKey(groups, groupName)
                         yamada.catalog.ComponentCatalogLoader.fail(entryContext + ".group", ...
                             "Unknown property group """ + groupName + """.");
                     end
-                    group = groups(char(groupName));
+                    group = groups(groupName);
                     nextStack = strings(1, numel(stack) + 1);
                     nextStack(1:numel(stack)) = stack;
                     nextStack(end) = groupName;

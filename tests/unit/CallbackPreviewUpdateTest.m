@@ -88,7 +88,7 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
             subject.setProperty("Text", "After callback");
             testCase.verifyFalse(renderer.acknowledgeCallbackChanges(document));
             testCase.verifyTrue(renderer.synchronize(document, handles, yamada.ui.RefreshRequest("properties", subject.Id, "Text")));
-            testCase.verifyEqual(string(handles(char(subject.Id)).Text), "After callback");
+            testCase.verifyEqual(string(handles(subject.Id).Text), "After callback");
             clear cleanup
         end
     end

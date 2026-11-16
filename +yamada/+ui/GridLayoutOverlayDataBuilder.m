@@ -60,7 +60,7 @@ classdef GridLayoutOverlayDataBuilder
             arguments (Input)
                 ~
                 document (1, 1) yamada.model.DocumentModel
-                previewHandles containers.Map
+                previewHandles dictionary
                 previewPanel
                 activeGridId (1, 1) string
                 selectedComponentId (1, 1) string
@@ -75,11 +75,11 @@ classdef GridLayoutOverlayDataBuilder
             data = yamada.ui.GridLayoutOverlayDataBuilder.emptyData(revision, activeGridId);
             grid = document.getComponent(activeGridId);
             if isempty(grid) || grid.Factory ~= "uigridlayout" || ...
-                    ~isKey(previewHandles, char(activeGridId))
+                    ~isKey(previewHandles, activeGridId)
                 data.readOnlyReason = "The selected Grid Layout is not available in Safe Preview.";
                 return
             end
-            preview = previewHandles(char(activeGridId));
+            preview = previewHandles(activeGridId);
             if ~isvalid(preview) || ~isa(preview, "matlab.ui.container.GridLayout")
                 data.readOnlyReason = "The selected Grid Layout preview is unavailable.";
                 return
@@ -152,7 +152,7 @@ classdef GridLayoutOverlayDataBuilder
         function stamp = nativeInputs(previewHandles, previewPanel)
             % nativeInputs Capture raw dimensions and public pixel geometry used by grid measurements.
             arguments (Input)
-                previewHandles containers.Map
+                previewHandles dictionary
                 previewPanel
             end
             arguments (Output)
@@ -168,12 +168,13 @@ classdef GridLayoutOverlayDataBuilder
             catch
                 % Incomplete native reference geometry always invalidates cached measurements.
             end
-            ids = previewHandles.keys();
+            % Sorted identities keep stamps independent of handle insertion order.
+            ids = sort(keys(previewHandles))';
             controls = cell(1, numel(ids));
             parents = {previewPanel};
             for index = 1:numel(ids)
-                preview = previewHandles(ids{index});
-                controls{index} = yamada.ui.GridLayoutOverlayDataBuilder.nativeItem(preview, string(ids{index}), origin);
+                preview = previewHandles(ids(index));
+                controls{index} = yamada.ui.GridLayoutOverlayDataBuilder.nativeItem(preview, ids(index), origin);
                 safe = safe && controls{index}.pixelValid;
                 if ~isvalid(preview), continue, end
 
@@ -653,7 +654,7 @@ classdef GridLayoutOverlayDataBuilder
             % children Publish realized bounds and literal placement of immediate grid children.
             arguments (Input)
                 document (1, 1) yamada.model.DocumentModel
-                previewHandles containers.Map
+                previewHandles dictionary
                 snapshot (1, 1) struct
                 grid (1, 1) yamada.model.ComponentRecord
                 selectedComponentId (1, 1) string
@@ -666,10 +667,10 @@ classdef GridLayoutOverlayDataBuilder
             expectedCount = 0;
             for index = 1:numel(grid.Children)
                 child = document.getComponent(grid.Children(index));
-                if isempty(child) || ~isKey(previewHandles, char(child.Id))
+                if isempty(child) || ~isKey(previewHandles, child.Id)
                     continue
                 end
-                preview = previewHandles(char(child.Id));
+                preview = previewHandles(child.Id);
                 if ~isvalid(preview)
                     continue
                 end

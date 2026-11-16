@@ -18,7 +18,7 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
                 referenceRenderer = yamada.ui.PreviewRenderer(registry);
                 [handles, diagnostics] = renderer.render(document, left);
                 testCase.assertEmpty(diagnostics);
-                original = handles(char(label.Id));
+                original = handles(label.Id);
                 TextPreviewReuseTest.settle(original);
                 initialHeight = original.Position(4);
                 values = {["First line", "Second line", "Third line"], "Short again"};
@@ -32,13 +32,13 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
                     testCase.verifyTrue(applied, layout);
                     testCase.verifyEmpty(diagnostics);
                     testCase.verifyEqual(geometry, layout ~= "absolute");
-                    original = handles(char(label.Id));
+                    original = handles(label.Id);
                     reference = referenceRenderer.render(document, right);
                     TextPreviewReuseTest.settle(original);
-                    TextPreviewReuseTest.settle(reference(char(label.Id)));
+                    TextPreviewReuseTest.settle(reference(label.Id));
                     testCase.verifyEqual(reshape(string(original.Text), [], 1), ...
                         reshape(string(values{index}), [], 1));
-                    testCase.verifyEqual(original.Position, reference(char(label.Id)).Position, "AbsTol", 1);
+                    testCase.verifyEqual(original.Position, reference(label.Id).Position, "AbsTol", 1);
                     if layout ~= "absolute" && index == 1
                         testCase.verifyGreaterThan(original.Position(4), initialHeight);
                     end

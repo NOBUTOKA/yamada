@@ -25,7 +25,7 @@ classdef (TestTags = {'ui', 'model', 'generation', 'exhaustive'}) CatalogLocalPr
                 renderer = yamada.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
                 native = [];
                 if definition.IsRoot, native = figure;
-                elseif isKey(handles, char(component.Id)), native = handles(char(component.Id)); end
+                elseif isKey(handles, component.Id), native = handles(component.Id); end
                 parentFactory = "";
                 parent = document.getComponent(component.ParentId);
                 if ~isempty(parent), parentFactory = parent.Factory; end

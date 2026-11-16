@@ -195,9 +195,9 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             [document, registry, control] = testCase.fixture( ...
                 "app.Control = uibutton(app.Left, Text='Owned', CreateFcn=" + callback + ", DeleteFcn=" + callback + ");");
             [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, figure);
-            testCase.assertTrue(isKey(handles, char(control.Id)));
-            testCase.verifyEmpty(handles(char(control.Id)).CreateFcn);
-            testCase.verifyEmpty(handles(char(control.Id)).DeleteFcn);
+            testCase.assertTrue(isKey(handles, control.Id));
+            testCase.verifyEmpty(handles(control.Id).CreateFcn);
+            testCase.verifyEmpty(handles(control.Id).DeleteFcn);
             testCase.verifyFalse(any(string({diagnostics.Code}) == "preview-render-failed"));
             testCase.verifyFalse(isappdata(groot, char(key)));
             delete(figure);
@@ -214,8 +214,8 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             [document, registry, control] = testCase.fixture( ...
                 "app.Control = uiimage(app.Left, ImageSource=" + yamada.source.LiteralEncoder.encode(imagePath) + ", Position=[10 20 130 35]);", "uiimage");
             [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, figure);
-            testCase.assertTrue(isKey(handles, char(control.Id)));
-            testCase.verifyEqual(string(handles(char(control.Id)).ImageSource), imagePath);
+            testCase.assertTrue(isKey(handles, control.Id));
+            testCase.verifyEqual(string(handles(control.Id).ImageSource), imagePath);
             testCase.verifyFalse(any(string({diagnostics.Code}) == "preview-property-failed"));
         end
 
@@ -231,11 +231,11 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             for index = 1:size(cases, 1)
                 [document, registry, control] = testCase.fixture(cases{index, 1}, cases{index, 2});
                 [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, figure);
-                testCase.verifyTrue(isKey(handles, char(control.Id)));
+                testCase.verifyTrue(isKey(handles, control.Id));
                 if isempty(cases{index, 3})
                     testCase.verifyTrue(any(string({diagnostics.Code}) == "preview-position-unknown"));
                 else
-                    testCase.verifyEqual(handles(char(control.Id)).Position, cases{index, 3});
+                    testCase.verifyEqual(handles(control.Id).Position, cases{index, 3});
                     testCase.verifyFalse(any(string({diagnostics.Code}) == "preview-position-unknown"));
                 end
             end

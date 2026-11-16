@@ -148,8 +148,8 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
             second = uipanel(figure, "Position", [450 1 440 480]);
             renderer = yamada.ui.PreviewRenderer(registry);
             handles = renderer.render(document, first);
-            waitForFitLayout(handles(char(label.Id)));
-            previous = handles(char(label.Id)).Position;
+            waitForFitLayout(handles(label.Id));
+            previous = handles(label.Id).Position;
             label.setProperty("FontSize", 32);
             [applied, diagnostics, geometry] = renderer.synchronize(document, handles, ...
                 yamada.ui.RefreshRequest("properties", label.Id, "FontSize"));
@@ -157,10 +157,10 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
             testCase.verifyTrue(geometry);
             testCase.verifyEmpty(diagnostics);
             reference = yamada.ui.PreviewRenderer(registry).render(document, second);
-            waitForFitLayout(handles(char(label.Id)));
-            waitForFitLayout(reference(char(label.Id)));
-            testCase.verifyGreaterThan(handles(char(label.Id)).Position(4), previous(4));
-            testCase.verifyEqual(handles(char(label.Id)).Position, reference(char(label.Id)).Position, "AbsTol", 1);
+            waitForFitLayout(handles(label.Id));
+            waitForFitLayout(reference(label.Id));
+            testCase.verifyGreaterThan(handles(label.Id).Position(4), previous(4));
+            testCase.verifyEqual(handles(label.Id).Position, reference(label.Id).Position, "AbsTol", 1);
         end
 
         function auditedLabelChangeRetainsPreviewAndMatchesRebuild(testCase)
@@ -184,7 +184,7 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
             testCase.verifyFalse(geometry);
             [reference, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, second);
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(handles(char(label.Id)).FontSize, reference(char(label.Id)).FontSize);
+            testCase.verifyEqual(handles(label.Id).FontSize, reference(label.Id).FontSize);
         end
 
         function unrelatedDirectChangeForcesConservativeRebuild(testCase)

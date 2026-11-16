@@ -49,7 +49,7 @@ classdef RefreshRequest
                 obj (1, 1) yamada.ui.RefreshRequest
                 document (1, 1) yamada.model.DocumentModel
                 registry (1, 1) yamada.model.ComponentRegistry
-                handles containers.Map
+                handles dictionary
             end
             arguments (Output)
                 result (1, 1) logical
@@ -102,7 +102,7 @@ classdef RefreshRequest
             % hasFitDependency Retain refresh for fit ancestors and unavailable native layout inputs.
             arguments (Input)
                 document (1, 1) yamada.model.DocumentModel
-                handles containers.Map
+                handles dictionary
                 component (1, 1) yamada.model.ComponentRecord
             end
             arguments (Output)
@@ -111,8 +111,8 @@ classdef RefreshRequest
             result = true;
             for depth = 1:numel(document.Components)
                 if component.Factory == "uigridlayout"
-                    if ~isKey(handles, char(component.Id)), return, end
-                    preview = handles(char(component.Id));
+                    if ~isKey(handles, component.Id), return, end
+                    preview = handles(component.Id);
                     if ~isvalid(preview) || ~isa(preview, "matlab.ui.container.GridLayout"), return, end
                     for path = ["RowHeight", "ColumnWidth"]
                         tracks = preview.(path);
