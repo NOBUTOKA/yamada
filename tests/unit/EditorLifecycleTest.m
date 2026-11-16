@@ -138,14 +138,17 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % reloadChangedReadAndSaveFailureRetainCurrentState Reject changing snapshots and failed saves atomically.
             [target, ~] = reloadFixture();
             fileCleanup = onCleanup(@() deleteTemporaryFile(target));
+            [reader, armReader] = changingReader(target);
             service = yamada.ui.DocumentLifecycleService(struct( ...
-                "RequestOpenPathFcn", @() deal(true, target), "ReadSourceBytesFcn", changingReader(target)));
+                "RequestOpenPathFcn", @() deal(true, target), "ReadSourceBytesFcn", reader));
             app = yamada(service);
             appCleanup = onCleanup(@() deleteIfValid(app));
             tool = findall(editorFigure(), "Tag", "yamada-refresh-source");
             testCase.verifyEqual(string(tool.Enable), "off");
             invokeEditorMenu("Open...");
             original = app.Document;
+            % Change the snapshot between the reload's first and second reads.
+            armReader();
             invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
             testCase.verifyTrue(app.Document == original);
             testCase.verifyEqual(string(tool.Enable), "on");
@@ -638,21 +641,32 @@ writer = @write;
     end
 end
 
-function reader = changingReader(target)
-% changingReader Return a reader whose third snapshot differs from the parsed file.
+function [reader, arm] = changingReader(target)
+% changingReader Return a reader whose second snapshot after arming differs from the parsed file.
+%   Window activation also reads the source to detect external changes, and
+%   the number of activations depends on the operating system, so only reads
+%   after arm() count toward the changed snapshot.
 arguments (Input)
     target (1, 1) string
 end
 arguments (Output)
     reader (1, 1) function_handle
+    arm (1, 1) function_handle
 end
 count = 0;
+armed = false;
 reader = @read;
+arm = @start;
     function bytes = read(~)
         % read Supply deterministic byte snapshots to exercise concurrent change detection.
-        count = count + 1;
+        if armed, count = count + 1; end
         bytes = unicode2native(fileread(target), "UTF-8");
-        if count == 3, bytes(end + 1) = uint8(32); end
+        if count == 2, bytes(end + 1) = uint8(32); end
+    end
+    function start()
+        % start Begin counting the reads of the operation under test.
+        armed = true;
+        count = 0;
     end
 end
 
