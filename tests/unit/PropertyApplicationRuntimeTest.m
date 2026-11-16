@@ -243,7 +243,10 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 delete(target);
                 checked = checked + 1;
             end
-            testCase.verifyEqual(checked, 49);
+
+            % Every reviewed pair is either a value mode or a stored rendering-mode flag.
+            testCase.verifyEqual(checked + PropertyApplicationRuntimeTest.countPolicies(registry, results, ...
+                ["modeFlag", "setterModeFlag"]), 71);
         end
 
         function axisStoredColorModesPreserveGetterValues(testCase)
@@ -289,7 +292,7 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 end
                 checked = checked + 1;
             end
-            testCase.verifyEqual(checked, 22);
+            testCase.verifyEqual(checked + PropertyApplicationRuntimeTest.countPolicies(registry, results, "valueMode"), 71);
         end
 
         function axisWidthFollowersAgreeWithEveryNativeStep(testCase)
@@ -430,6 +433,24 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 component.recordSetting(yamada.model.PropertySetting(writes{index, 1}, writes{index, 2}, location));
             end
             [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definition.Properties);
+        end
+
+        function count = countPolicies(registry, results, policies)
+            % countPolicies Count probed axis mode pairs whose catalog policy is listed.
+            arguments (Input)
+                registry (1, 1) yamada.model.ComponentRegistry
+                results (1, :) struct
+                policies (1, :) string
+            end
+            arguments (Output)
+                count (1, 1) double
+            end
+            count = 0;
+            for result = results
+                definition = registry.getById(result.Factory);
+                property = definition.Properties(string({definition.Properties.Path}) == result.Path);
+                count = count + any(property.Application.EffectPolicy == policies);
+            end
         end
 
         function target = apply(figure, registry, factory, creationArguments, entries, compareConstructor)

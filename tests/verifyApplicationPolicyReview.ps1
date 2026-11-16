@@ -58,7 +58,7 @@ try {
     Assert-Condition ($mode.application.defaultLiteral -ceq "'auto'") 'The documented automatic mode seed was lost.'
     $width = $axes.properties | Where-Object path -CEQ 'MinorGridLineWidth'
     $widthMode = $axes.properties | Where-Object path -CEQ 'MinorGridLineWidthMode'
-    $color = $axes.properties | Where-Object path -CEQ 'GridColor'
+    $color = $axes.properties | Where-Object path -CEQ 'GridAlpha'
     Assert-Condition ($width.application.effectPolicy -ceq 'axisWidth') 'Width follower semantics were lost.'
     Assert-Condition (($widthMode.application.applyAfter -join ',') -ceq 'GridLineWidthMode,MinorGridLineWidth') 'Final width mode ordering was lost.'
     Assert-Condition ($width.application.defaultLiteral -ceq '0.5') 'The audited width seed was lost.'
