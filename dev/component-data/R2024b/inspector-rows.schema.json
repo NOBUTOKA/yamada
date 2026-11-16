@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "yamada R2024a composite Inspector rows",
+  "title": "yamada R2024b composite Inspector rows",
   "type": "object",
   "additionalProperties": false,
   "required": ["artifactVersion", "matlabRelease", "rows"],
   "properties": {
     "artifactVersion": { "const": 1 },
-    "matlabRelease": { "const": "R2024a" },
+    "matlabRelease": { "const": "R2024b" },
     "runtimeArtifact": { "type": "string", "minLength": 1 },
     "rows": {
       "type": "array",

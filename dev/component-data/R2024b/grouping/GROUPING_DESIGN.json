@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
-  "matlabRelease": "R2024a",
-  "inputSha256": "3fbf373877d40d7a2f97a6c564835e101d2bd1e3687be1fa032e28caa8642a1d",
+  "matlabRelease": "R2024b",
+  "inputSha256": "55c7e7b6c55fd4384eb99ba52ef70c5cff6fd4ae49638b0cdaad5722d007acc0",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -15040,6 +15040,41 @@
           }
         },
         {
+          "path": "Interpreter",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "none",
+              "tex",
+              "latex",
+              "html"
+            ]
+          },
+          "affectsDisplay": true,
+          "gridGeometryImpact": "fit",
+          "absoluteGeometryImpact": false,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "effectPolicy": "none",
+            "effectStatus": "independent",
+            "affectedPaths": [],
+            "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        },
+        {
           "path": "WordWrap",
           "valueContract": {
             "kind": "onOff",
@@ -15609,6 +15644,41 @@
           "absoluteGeometryImpact": false,
           "previewPolicy": "apply",
           "requiredEditor": "multilineText",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "effectPolicy": "none",
+            "effectStatus": "independent",
+            "affectedPaths": [],
+            "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        },
+        {
+          "path": "Interpreter",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "none",
+              "tex",
+              "latex",
+              "html"
+            ]
+          },
+          "affectsDisplay": true,
+          "gridGeometryImpact": "fit",
+          "absoluteGeometryImpact": false,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
@@ -41289,6 +41359,41 @@
           }
         },
         {
+          "path": "Interpreter",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "none",
+              "tex",
+              "latex",
+              "html"
+            ]
+          },
+          "affectsDisplay": true,
+          "gridGeometryImpact": "fit",
+          "absoluteGeometryImpact": false,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "effectPolicy": "none",
+            "effectStatus": "independent",
+            "affectedPaths": [],
+            "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        },
+        {
           "path": "WordWrap",
           "valueContract": {
             "kind": "onOff",
@@ -48349,12 +48454,18 @@
       "documentedOrder": 1,
       "propertyOrder": [
         "Text",
+        "Interpreter",
         "WordWrap",
         "Icon"
       ],
       "propertyOwners": [
         {
           "path": "Text",
+          "groupId": "local.uibutton-push.button",
+          "runtimeSetAccess": "public"
+        },
+        {
+          "path": "Interpreter",
           "groupId": "local.uibutton-push.button",
           "runtimeSetAccess": "public"
         },
@@ -48608,6 +48719,7 @@
       "propertyOrder": [
         "Value",
         "Text",
+        "Interpreter",
         "WordWrap",
         "Icon"
       ],
@@ -48619,6 +48731,11 @@
         },
         {
           "path": "Text",
+          "groupId": "local.uibutton-state.button",
+          "runtimeSetAccess": "public"
+        },
+        {
+          "path": "Interpreter",
           "groupId": "local.uibutton-state.button",
           "runtimeSetAccess": "public"
         },
@@ -58160,6 +58277,7 @@
       "propertyOrder": [
         "Value",
         "Text",
+        "Interpreter",
         "WordWrap",
         "Icon"
       ],
@@ -58171,6 +58289,11 @@
         },
         {
           "path": "Text",
+          "groupId": "local.uitogglebutton.button",
+          "runtimeSetAccess": "public"
+        },
+        {
+          "path": "Interpreter",
           "groupId": "local.uitogglebutton.button",
           "runtimeSetAccess": "public"
         },

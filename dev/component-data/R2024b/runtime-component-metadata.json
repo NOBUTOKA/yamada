@@ -1,7 +1,7 @@
 {
   "$schema": "runtime-component-metadata.schema.json",
   "schemaVersion": 1,
-  "matlabRelease": "R2024a",
+  "matlabRelease": "R2024b",
   "factories": [
     {
       "factory": "axes",

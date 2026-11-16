@@ -17,7 +17,7 @@
       "const": 1
     },
     "matlabRelease": {
-      "const": "R2024a"
+      "const": "R2024b"
     },
     "factories": {
       "type": "array",

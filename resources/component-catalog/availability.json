@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "surfaceRelease": "R2024a",
+  "surfaceRelease": "R2024b",
   "releases": [
     {
       "release": "R2023a",
@@ -16,7 +16,7 @@
     },
     {
       "release": "R2024b",
-      "catalog": false
+      "catalog": true
     },
     {
       "release": "R2025a",
@@ -70,6 +70,20 @@
       "path": "InteractionOptions",
       "releases": {
         "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "uibutton-push",
+      "path": "Interpreter",
+      "releases": {
+        "since": "R2024b"
+      }
+    },
+    {
+      "variantId": "uibutton-state",
+      "path": "Interpreter",
+      "releases": {
+        "since": "R2024b"
       }
     },
     {
@@ -168,6 +182,13 @@
       "path": "DisplaySelection",
       "releases": {
         "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uitogglebutton",
+      "path": "Interpreter",
+      "releases": {
+        "since": "R2024b"
       }
     }
   ],

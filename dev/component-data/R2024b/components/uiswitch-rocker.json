@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024a",
+  "matlabRelease": "R2024b",
   "id": "uiswitch-rocker",
   "factory": "uiswitch",
   "creationArguments": [

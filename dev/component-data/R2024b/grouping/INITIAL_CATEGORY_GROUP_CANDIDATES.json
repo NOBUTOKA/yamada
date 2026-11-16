@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
-  "matlabRelease": "R2024a",
-  "inputSha256": "e2b7a1dd169c90e750ac720579c0306df6bd3f1aeb559e15ab24060a0ac77da4",
+  "matlabRelease": "R2024b",
+  "inputSha256": "b143a8bb909178058ac14685d45789910dce3ad498b89fb570ca06ae43106bab",
   "selectionRule": "Complete exact category surfaces with reuseCount >= 2. Candidate IDs are temporary until Step 9 assigns reviewed stable identifiers.",
   "candidates": [
     {

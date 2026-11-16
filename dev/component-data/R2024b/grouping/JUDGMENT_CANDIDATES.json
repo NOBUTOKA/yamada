@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
-  "matlabRelease": "R2024a",
-  "inputSha256": "e2b7a1dd169c90e750ac720579c0306df6bd3f1aeb559e15ab24060a0ac77da4",
+  "matlabRelease": "R2024b",
+  "inputSha256": "b143a8bb909178058ac14685d45789910dce3ad498b89fb570ca06ae43106bab",
   "step4CrossCuttingConflicts": [
     {
       "categoryId": "callbackexecutioncontrol",
@@ -1530,78 +1530,57 @@
       ],
       "surfaces": [
         {
-          "candidateId": "candidate.button.495ef5e26314",
+          "candidateId": "candidate.button.231280972ff2",
           "categoryId": "button",
           "categoryDisplayName": "Button",
           "sharingScope": "familyScoped",
           "scopeRationale": "Button-like control content and state.",
-          "capabilitySha256": "495ef5e26314e2679834684566d6209f31f137dfa2edf3e7b27ee6656d69f304",
-          "propertyPaths": [
-            "Text",
-            "WordWrap",
-            "Icon"
-          ],
-          "propertyCapabilitySha256": [
-            "265caf30b738dd4c91bed2ef254f55887dddd8553fb115691e4885a349a008b3",
-            "809fc6c85238709e8fe09a6f1bc3a4d49fe746d35c43efb010e01ad562557f02",
-            "6c3727e3f596c432a21e3c009e0512ae06650608a1845c66d9b4bb16f926be41"
-          ],
-          "memberVariantIds": [
-            "uibutton-push"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            1
-          ]
-        },
-        {
-          "candidateId": "candidate.button.a3afe0afcba7",
-          "categoryId": "button",
-          "categoryDisplayName": "Button",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Button-like control content and state.",
-          "capabilitySha256": "a3afe0afcba7aef86ed8b0221cfb925603381f8d3def598769c3870072a34386",
+          "capabilitySha256": "231280972ff219fd2f0462124834f4d8f54cba9ce9dbc16d066d7a49a27d5497",
           "propertyPaths": [
             "Value",
             "Text",
-            "WordWrap",
-            "Icon"
-          ],
-          "propertyCapabilitySha256": [
-            "9559644566f4cf7af26cfd28c0f4f297223563e9a39b42e7b04eb4306602b65a",
-            "265caf30b738dd4c91bed2ef254f55887dddd8553fb115691e4885a349a008b3",
-            "809fc6c85238709e8fe09a6f1bc3a4d49fe746d35c43efb010e01ad562557f02",
-            "6c3727e3f596c432a21e3c009e0512ae06650608a1845c66d9b4bb16f926be41"
-          ],
-          "memberVariantIds": [
-            "uitogglebutton"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            1
-          ]
-        },
-        {
-          "candidateId": "candidate.button.ae1f84e36059",
-          "categoryId": "button",
-          "categoryDisplayName": "Button",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Button-like control content and state.",
-          "capabilitySha256": "ae1f84e36059d900556c7b85c0f46aac549855b02460b926213b32f6ca363a82",
-          "propertyPaths": [
-            "Value",
-            "Text",
+            "Interpreter",
             "WordWrap",
             "Icon"
           ],
           "propertyCapabilitySha256": [
             "0ab8cfaf88a8d4f64f7387d2e069c2f0fd59b07d8ec9066f290a411602644777",
             "265caf30b738dd4c91bed2ef254f55887dddd8553fb115691e4885a349a008b3",
+            "f03b8ba21ed5133bf0ac3aa76aaf1124776ed2ee3df959f0730920fd86f4fafc",
             "809fc6c85238709e8fe09a6f1bc3a4d49fe746d35c43efb010e01ad562557f02",
             "6c3727e3f596c432a21e3c009e0512ae06650608a1845c66d9b4bb16f926be41"
           ],
           "memberVariantIds": [
             "uibutton-state"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            1
+          ]
+        },
+        {
+          "candidateId": "candidate.button.3cf00abd9508",
+          "categoryId": "button",
+          "categoryDisplayName": "Button",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Button-like control content and state.",
+          "capabilitySha256": "3cf00abd9508a9989e1b8391d7545dd3b33a7e2248b1fd89149e9a3683eb6712",
+          "propertyPaths": [
+            "Value",
+            "Text",
+            "Interpreter",
+            "WordWrap",
+            "Icon"
+          ],
+          "propertyCapabilitySha256": [
+            "9559644566f4cf7af26cfd28c0f4f297223563e9a39b42e7b04eb4306602b65a",
+            "265caf30b738dd4c91bed2ef254f55887dddd8553fb115691e4885a349a008b3",
+            "f03b8ba21ed5133bf0ac3aa76aaf1124776ed2ee3df959f0730920fd86f4fafc",
+            "809fc6c85238709e8fe09a6f1bc3a4d49fe746d35c43efb010e01ad562557f02",
+            "6c3727e3f596c432a21e3c009e0512ae06650608a1845c66d9b4bb16f926be41"
+          ],
+          "memberVariantIds": [
+            "uitogglebutton"
           ],
           "reuseCount": 1,
           "documentedCategoryOrders": [
@@ -1634,6 +1613,33 @@
           "documentedCategoryOrders": [
             1
           ]
+        },
+        {
+          "candidateId": "candidate.button.fb7d05afc7d4",
+          "categoryId": "button",
+          "categoryDisplayName": "Button",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Button-like control content and state.",
+          "capabilitySha256": "fb7d05afc7d456d04d89b6bff1998c8c2a40069913eddd47ffdcaf03d6092650",
+          "propertyPaths": [
+            "Text",
+            "Interpreter",
+            "WordWrap",
+            "Icon"
+          ],
+          "propertyCapabilitySha256": [
+            "265caf30b738dd4c91bed2ef254f55887dddd8553fb115691e4885a349a008b3",
+            "f03b8ba21ed5133bf0ac3aa76aaf1124776ed2ee3df959f0730920fd86f4fafc",
+            "809fc6c85238709e8fe09a6f1bc3a4d49fe746d35c43efb010e01ad562557f02",
+            "6c3727e3f596c432a21e3c009e0512ae06650608a1845c66d9b4bb16f926be41"
+          ],
+          "memberVariantIds": [
+            "uibutton-push"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            1
+          ]
         }
       ],
       "pathCoverage": [
@@ -1641,34 +1647,37 @@
           "path": "Icon",
           "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
-            "candidate.button.495ef5e26314",
-            "candidate.button.a3afe0afcba7",
-            "candidate.button.ae1f84e36059"
+            "candidate.button.231280972ff2",
+            "candidate.button.3cf00abd9508",
+            "candidate.button.fb7d05afc7d4"
           ]
         },
         {
           "path": "Interpreter",
-          "presentInSurfaceCount": 1,
+          "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
-            "candidate.button.dbe8c5fe4514"
+            "candidate.button.231280972ff2",
+            "candidate.button.3cf00abd9508",
+            "candidate.button.dbe8c5fe4514",
+            "candidate.button.fb7d05afc7d4"
           ]
         },
         {
           "path": "Text",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
-            "candidate.button.495ef5e26314",
-            "candidate.button.a3afe0afcba7",
-            "candidate.button.ae1f84e36059",
-            "candidate.button.dbe8c5fe4514"
+            "candidate.button.231280972ff2",
+            "candidate.button.3cf00abd9508",
+            "candidate.button.dbe8c5fe4514",
+            "candidate.button.fb7d05afc7d4"
           ]
         },
         {
           "path": "Value",
           "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
-            "candidate.button.a3afe0afcba7",
-            "candidate.button.ae1f84e36059",
+            "candidate.button.231280972ff2",
+            "candidate.button.3cf00abd9508",
             "candidate.button.dbe8c5fe4514"
           ]
         },
@@ -1676,10 +1685,10 @@
           "path": "WordWrap",
           "presentInSurfaceCount": 4,
           "presentInCandidateIds": [
-            "candidate.button.495ef5e26314",
-            "candidate.button.a3afe0afcba7",
-            "candidate.button.ae1f84e36059",
-            "candidate.button.dbe8c5fe4514"
+            "candidate.button.231280972ff2",
+            "candidate.button.3cf00abd9508",
+            "candidate.button.dbe8c5fe4514",
+            "candidate.button.fb7d05afc7d4"
           ]
         }
       ],
@@ -10774,14 +10783,40 @@
     {
       "categoryId": "button",
       "sharingScope": "familyScoped",
-      "baseCandidateId": "candidate.button.495ef5e26314",
+      "baseCandidateId": "candidate.button.dbe8c5fe4514",
+      "baseVariantIds": [
+        "uiradiobutton"
+      ],
+      "baseReuseCount": 1,
+      "extendedCandidateId": "candidate.button.3cf00abd9508",
+      "extendedVariantIds": [
+        "uitogglebutton"
+      ],
+      "extendedReuseCount": 1,
+      "extensionPropertyPaths": [
+        "Icon"
+      ],
+      "extensionPropertyCount": 1,
+      "extensionInsertions": [
+        {
+          "path": "Icon",
+          "insertedAfterPath": "WordWrap"
+        }
+      ],
+      "reviewPriority": "informational",
+      "requiredDecision": "Decide whether this ordered strict extension has a stable semantic meaning and is simpler than separate complete category groups."
+    },
+    {
+      "categoryId": "button",
+      "sharingScope": "familyScoped",
+      "baseCandidateId": "candidate.button.fb7d05afc7d4",
       "baseVariantIds": [
         "uibutton-push"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.button.a3afe0afcba7",
+      "extendedCandidateId": "candidate.button.231280972ff2",
       "extendedVariantIds": [
-        "uitogglebutton"
+        "uibutton-state"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [
@@ -10800,14 +10835,14 @@
     {
       "categoryId": "button",
       "sharingScope": "familyScoped",
-      "baseCandidateId": "candidate.button.495ef5e26314",
+      "baseCandidateId": "candidate.button.fb7d05afc7d4",
       "baseVariantIds": [
         "uibutton-push"
       ],
       "baseReuseCount": 1,
-      "extendedCandidateId": "candidate.button.ae1f84e36059",
+      "extendedCandidateId": "candidate.button.3cf00abd9508",
       "extendedVariantIds": [
-        "uibutton-state"
+        "uitogglebutton"
       ],
       "extendedReuseCount": 1,
       "extensionPropertyPaths": [

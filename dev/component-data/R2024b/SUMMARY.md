@@ -1,6 +1,6 @@
-# R2024a component ledger
+# R2024b component ledger
 
-For contributors maintaining the R2024a catalog, this page identifies the release inputs and commands to regenerate the runtime catalog.
+For contributors maintaining the R2024b catalog, this page identifies the release inputs and commands to regenerate the runtime catalog.
 
 | Input | Purpose |
 | --- | --- |
@@ -16,7 +16,7 @@ The ledger records documented facts and runtime observations separately. The [se
 Run these commands from the repository root after reviewing any changes to the release inputs:
 
 ```powershell
-$release = 'dev/component-data/R2024a'
+$release = 'dev/component-data/R2024b'
 & ./dev/component-data/UpdateProjectPropertyText.ps1 -ReleaseDirectory $release
 & ./dev/component-data/GenerateGroupingArtifacts.ps1 -ReleaseDirectory $release
 & ./dev/component-data/GenerateGroupingDesign.ps1 -ReleaseDirectory $release

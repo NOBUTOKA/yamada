@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
-  "matlabRelease": "R2024a",
-  "inputSha256": "3fbf373877d40d7a2f97a6c564835e101d2bd1e3687be1fa032e28caa8642a1d",
+  "matlabRelease": "R2024b",
+  "inputSha256": "55c7e7b6c55fd4384eb99ba52ef70c5cff6fd4ae49638b0cdaad5722d007acc0",
   "intrinsic": [
     {
       "componentId": "axes",
@@ -477,42 +477,42 @@
       "componentId": "uibutton-push",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 31,
-      "missingConstraintTargets": []
-    },
-    {
-      "componentId": "uibutton-push",
-      "contextId": "grid",
-      "passed": true,
       "propertyCount": 32,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uibutton-push",
-      "contextId": "structural",
-      "passed": true,
-      "propertyCount": 30,
-      "missingConstraintTargets": []
-    },
-    {
-      "componentId": "uibutton-state",
-      "contextId": "absolute",
-      "passed": true,
-      "propertyCount": 32,
-      "missingConstraintTargets": []
-    },
-    {
-      "componentId": "uibutton-state",
       "contextId": "grid",
       "passed": true,
       "propertyCount": 33,
       "missingConstraintTargets": []
     },
     {
-      "componentId": "uibutton-state",
+      "componentId": "uibutton-push",
       "contextId": "structural",
       "passed": true,
       "propertyCount": 31,
+      "missingConstraintTargets": []
+    },
+    {
+      "componentId": "uibutton-state",
+      "contextId": "absolute",
+      "passed": true,
+      "propertyCount": 33,
+      "missingConstraintTargets": []
+    },
+    {
+      "componentId": "uibutton-state",
+      "contextId": "grid",
+      "passed": true,
+      "propertyCount": 34,
+      "missingConstraintTargets": []
+    },
+    {
+      "componentId": "uibutton-state",
+      "contextId": "structural",
+      "passed": true,
+      "propertyCount": 32,
       "missingConstraintTargets": []
     },
     {
@@ -1275,21 +1275,21 @@
       "componentId": "uitogglebutton",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 30,
+      "propertyCount": 31,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uitogglebutton",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 31,
+      "propertyCount": 32,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uitogglebutton",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 29,
+      "propertyCount": 30,
       "missingConstraintTargets": []
     },
     {

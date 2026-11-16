@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "matlabRelease": "R2024a",
+  "matlabRelease": "R2024b",
   "categories": [
     { "id": "boxstyling", "scope": "familyScoped", "reason": "Axes-family visual styling." },
     { "id": "button", "scope": "familyScoped", "reason": "Button-like control content and state." },

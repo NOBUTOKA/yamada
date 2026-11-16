@@ -3706,6 +3706,12 @@
           "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
         },
         {
+          "path": "Interpreter",
+          "status": "independent",
+          "affectedPaths": [],
+          "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+        },
+        {
           "path": "WordWrap",
           "status": "independent",
           "affectedPaths": [],
@@ -3901,6 +3907,12 @@
         },
         {
           "path": "Text",
+          "status": "independent",
+          "affectedPaths": [],
+          "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+        },
+        {
+          "path": "Interpreter",
           "status": "independent",
           "affectedPaths": [],
           "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
@@ -11138,6 +11150,12 @@
         },
         {
           "path": "Text",
+          "status": "independent",
+          "affectedPaths": [],
+          "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+        },
+        {
+          "path": "Interpreter",
           "status": "independent",
           "affectedPaths": [],
           "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."

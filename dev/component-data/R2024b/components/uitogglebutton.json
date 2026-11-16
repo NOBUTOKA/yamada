@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024a",
+  "matlabRelease": "R2024b",
   "id": "uitogglebutton",
   "factory": "uitogglebutton",
   "creationArguments": [],
@@ -160,9 +160,78 @@
       ]
     },
     {
-      "path": "WordWrap",
+      "path": "Interpreter",
       "categoryId": "button",
       "order": 3,
+      "summary": "Markup rules used to interpret displayed text.",
+      "documentedDefault": "'none'",
+      "documentedAcceptedValues": [
+        "'tex'",
+        "'latex'",
+        "'html'"
+      ],
+      "valueContract": {
+        "kind": "enum",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string"
+        ],
+        "values": [
+          "none",
+          "tex",
+          "latex",
+          "html"
+        ]
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "apply",
+      "requiredEditor": "enum",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      },
+      "gridGeometryImpact": "fit",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Text metrics can resize fit tracks; a freely positioned control retains its assigned rectangle."
+        }
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2024b"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2024b.html",
+            "detail": "R2024b adds the Interpreter property to buttons and toggle buttons created with uibutton and uitogglebutton."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 24.1.0.3050227 (R2024a) Update 8",
+            "detail": "A ToggleButton has no Interpreter property."
+          }
+        ]
+      }
+    },
+    {
+      "path": "WordWrap",
+      "categoryId": "button",
+      "order": 4,
       "summary": "Whether text can continue onto another display line.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
@@ -207,7 +276,7 @@
     {
       "path": "Icon",
       "categoryId": "button",
-      "order": 4,
+      "order": 5,
       "summary": "Image displayed beside the component text.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [

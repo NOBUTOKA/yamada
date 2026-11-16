@@ -1,7 +1,7 @@
 {
   "$schema": "parent-context-rules.schema.json",
   "schemaVersion": 1,
-  "matlabRelease": "R2024a",
+  "matlabRelease": "R2024b",
   "contexts": [
     {
       "id": "absolute",
