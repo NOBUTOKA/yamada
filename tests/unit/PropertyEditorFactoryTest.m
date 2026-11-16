@@ -31,35 +31,26 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
             registry = yamada.model.ComponentRegistry.createDefault();
-            cases = {
-                "uifigure", "Pointer", ...
-                ["arrow", "ibeam", "crosshair", "watch", "topl", "custom", ...
-                "botr", "topr", "botl", "circle", "cross", "fleur", "left", ...
-                "right", "top", "bottom", "hand"];
-                "geoaxes", "Basemap", ...
-                ["streets-light", "streets-dark", "streets", "satellite", ...
-                "topographic", "landcover", "colorterrain", "grayterrain", ...
-                "bluegreen", "grayland", "darkwater", "none"];
-                "uibuttongroup", "TitlePosition", ...
-                ["lefttop", "centertop", "righttop", "leftbottom", ...
-                "centerbottom", "rightbottom"];
-                "uipanel", "TitlePosition", ...
-                ["lefttop", "centertop", "righttop", "leftbottom", ...
-                "centerbottom", "rightbottom"];
-                "uibuttongroup", "BorderType", ...
-                ["line", "none", "etchedin", "etchedout", "beveledin", "beveledout"];
-                "uipanel", "BorderType", ...
-                ["line", "none", "etchedin", "etchedout", "beveledin", "beveledout"]};
+            % The running release's catalog defines which choices each surface offers.
+            cases = [
+                "uifigure", "Pointer"
+                "geoaxes", "Basemap"
+                "uibuttongroup", "TitlePosition"
+                "uipanel", "TitlePosition"
+                "uibuttongroup", "BorderType"
+                "uipanel", "BorderType"];
             for caseIndex = 1:size(cases, 1)
-                definition = registry.getById(cases{caseIndex, 1});
-                definition = definition.Properties([definition.Properties.Path] == cases{caseIndex, 2});
+                definition = registry.getById(cases(caseIndex, 1));
+                definition = definition.Properties([definition.Properties.Path] == cases(caseIndex, 2));
+                expected = reshape(string(definition.ValueSchema.values), 1, []);
+                testCase.assertGreaterThan(numel(expected), 1);
                 control = yamada.ui.inspector.PropertyEditorFactory.create( ...
                     figure, definition, @(~) []);
                 yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
-                    control, cases{caseIndex, 3}(1), true);
+                    control, expected(1), true);
                 drawnow;
                 testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-                testCase.verifyEqual(string(control.Items), cases{caseIndex, 3});
+                testCase.verifyEqual(reshape(string(control.Items), 1, []), expected);
                 testCase.verifyEqual(string(control.Enable), "on");
                 delete(control);
             end
