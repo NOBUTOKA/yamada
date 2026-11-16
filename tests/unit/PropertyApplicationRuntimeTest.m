@@ -260,7 +260,8 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             for result = results
                 definition = registry.getById(result.Factory);
                 property = definition.Properties(string({definition.Properties.Path}) == result.Path);
-                if property.Application.EffectPolicy ~= "modeFlag", continue, end
+                policy = property.Application.EffectPolicy;
+                if ~any(policy == ["modeFlag", "setterModeFlag"]), continue, end
                 testCase.verifyEqual(result.Error, "");
                 testCase.verifyEqual(result.DefaultMode, "auto");
                 testCase.verifyEqual(result.ManualMode, "manual");
@@ -273,10 +274,19 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                     yamada.model.PropertyEntry(result.Path, result.RequestedValue)];
                 creation = {};
                 if result.Factory == "geoaxes", creation = {"Basemap", "none"}; end
-                target = testCase.apply(figure, registry, result.Factory, creation, entries);
+                target = testCase.apply(figure, registry, result.Factory, creation, entries, policy == "modeFlag");
                 testCase.verifyEqual(target.(result.Path), result.RequestedValue);
                 testCase.verifyEqual(string(target.(result.Path + "Mode")), "auto");
                 delete(target);
+
+                % A setter mode flag derives the value when constructor arguments restore auto last.
+                if policy == "setterModeFlag"
+                    constructed = feval(result.Factory, figure, creation{:}, ...
+                        result.Path, result.RequestedValue, result.Path + "Mode", "auto");
+                    testCase.verifyNotEqual(constructed.(result.Path), result.RequestedValue);
+                    testCase.verifyEqual(string(constructed.(result.Path + "Mode")), "auto");
+                    delete(constructed);
+                end
                 checked = checked + 1;
             end
             testCase.verifyEqual(checked, 22);
@@ -422,14 +432,17 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definition.Properties);
         end
 
-        function target = apply(figure, registry, factory, creationArguments, entries)
+        function target = apply(figure, registry, factory, creationArguments, entries, compareConstructor)
             % apply Run only owned literal setters in the shared planner's order.
+            %   With compareConstructor false, constructor name-value arguments
+            %   are not required to agree with the ordered setters.
             arguments (Input)
                 figure (1, 1) matlab.ui.Figure
                 registry (1, 1) yamada.model.ComponentRegistry
                 factory (1, 1) string
                 creationArguments cell
                 entries yamada.model.PropertyEntry
+                compareConstructor (1, 1) logical = true
             end
             arguments (Output)
                 target
@@ -442,6 +455,7 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             end
 
             % Independently check constructor support and its grouped setter behavior.
+            if ~compareConstructor, return, end
             pairs = cell(1, 2 * numel(entries));
             for index = 1:numel(entries)
                 pairs{2 * index - 1} = entries(index).Path;

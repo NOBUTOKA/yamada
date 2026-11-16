@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "uiimage",
   "factory": "uiimage",
   "creationArguments": [],

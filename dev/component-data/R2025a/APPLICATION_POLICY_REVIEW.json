@@ -970,7 +970,6 @@
     {
       "variants": [
         "axes",
-        "uiaxes",
         "polaraxes",
         "geoaxes"
       ],
@@ -978,6 +977,15 @@
       "effectPolicy": "modeFlag",
       "kind": "documentation",
       "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "uiaxes"
+      ],
+      "path": "GridColor",
+      "effectPolicy": "setterModeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures. From R2025a, uiaxes name-value arguments that restore auto after the value derive it from the theme, as observed in owned R2025a fixtures."
     },
     {
       "variants": [
@@ -996,7 +1004,6 @@
     {
       "variants": [
         "axes",
-        "uiaxes",
         "polaraxes",
         "geoaxes"
       ],
@@ -1004,6 +1011,15 @@
       "effectPolicy": "modeFlag",
       "kind": "documentation",
       "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "uiaxes"
+      ],
+      "path": "GridAlpha",
+      "effectPolicy": "setterModeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures. From R2025a, uiaxes name-value arguments that restore auto after the value derive it from the theme, as observed in owned R2025a fixtures."
     },
     {
       "variants": [
@@ -1021,13 +1037,21 @@
     },
     {
       "variants": [
-        "axes",
-        "uiaxes"
+        "axes"
       ],
       "path": "XColor",
       "effectPolicy": "modeFlag",
       "kind": "documentation",
       "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "uiaxes"
+      ],
+      "path": "XColor",
+      "effectPolicy": "setterModeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures. From R2025a, uiaxes name-value arguments that restore auto after the value derive it from the theme, as observed in owned R2025a fixtures."
     },
     {
       "variants": [
@@ -1043,13 +1067,21 @@
     },
     {
       "variants": [
-        "axes",
-        "uiaxes"
+        "axes"
       ],
       "path": "YColor",
       "effectPolicy": "modeFlag",
       "kind": "documentation",
       "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "uiaxes"
+      ],
+      "path": "YColor",
+      "effectPolicy": "setterModeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures. From R2025a, uiaxes name-value arguments that restore auto after the value derive it from the theme, as observed in owned R2025a fixtures."
     },
     {
       "variants": [
@@ -1065,13 +1097,21 @@
     },
     {
       "variants": [
-        "axes",
-        "uiaxes"
+        "axes"
       ],
       "path": "ZColor",
       "effectPolicy": "modeFlag",
       "kind": "documentation",
       "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "uiaxes"
+      ],
+      "path": "ZColor",
+      "effectPolicy": "setterModeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures. From R2025a, uiaxes name-value arguments that restore auto after the value derive it from the theme, as observed in owned R2025a fixtures."
     },
     {
       "variants": [
@@ -1088,13 +1128,21 @@
     {
       "variants": [
         "axes",
-        "uiaxes",
         "polaraxes"
       ],
       "path": "MinorGridColor",
       "effectPolicy": "modeFlag",
       "kind": "documentation",
       "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "uiaxes"
+      ],
+      "path": "MinorGridColor",
+      "effectPolicy": "setterModeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures. From R2025a, uiaxes name-value arguments that restore auto after the value derive it from the theme, as observed in owned R2025a fixtures."
     },
     {
       "variants": [
@@ -1112,13 +1160,21 @@
     {
       "variants": [
         "axes",
-        "uiaxes",
         "polaraxes"
       ],
       "path": "MinorGridAlpha",
       "effectPolicy": "modeFlag",
       "kind": "documentation",
       "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+    },
+    {
+      "variants": [
+        "uiaxes"
+      ],
+      "path": "MinorGridAlpha",
+      "effectPolicy": "setterModeFlag",
+      "kind": "documentation",
+      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures. From R2025a, uiaxes name-value arguments that restore auto after the value derive it from the theme, as observed in owned R2025a fixtures."
     },
     {
       "variants": [

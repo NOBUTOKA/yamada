@@ -1,0 +1,4222 @@
+{
+  "id": "polaraxes",
+  "factory": "polaraxes",
+  "declaredType": "matlab.graphics.axis.PolarAxes",
+  "allowedParentFactories": [
+    "uifigure",
+    "uipanel",
+    "uigridlayout",
+    "uitab",
+    "uibuttongroup"
+  ],
+  "isRoot": false,
+  "creationArguments": [],
+  "profileId": "axes",
+  "profileDelta": {
+    "omittedCategoryIds": [
+      "grids",
+      "view"
+    ],
+    "insertions": [
+      {
+        "categoryId": "gridlines",
+        "documentedOrder": 4,
+        "afterCategoryId": "rulers",
+        "beforeCategoryId": "labels"
+      }
+    ]
+  },
+  "categories": [
+    {
+      "id": "font",
+      "displayName": "Font",
+      "order": 1,
+      "entries": [
+        {
+          "path": "FontName",
+          "groupId": "local.polaraxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontName",
+            "description": "Typeface used to render text.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 1,
+            "groupId": "local.polaraxes.font",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "FontSize",
+          "groupId": "local.polaraxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontSize",
+            "description": "Size used to render text.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 2,
+            "groupId": "local.polaraxes.font",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "FontUnits"
+              ],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "FontSizeMode",
+          "groupId": "local.polaraxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontSizeMode",
+            "description": "Automatic or explicit control of FontSize.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 3,
+            "groupId": "local.polaraxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "FontSize"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "FontWeight",
+          "groupId": "local.polaraxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontWeight",
+            "description": "Weight used to render text.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 4,
+            "groupId": "local.polaraxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "FontAngle",
+          "groupId": "local.polaraxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontAngle",
+            "description": "Upright or italic text style.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 5,
+            "groupId": "local.polaraxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "normal",
+                "italic"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "TitleFontSizeMultiplier",
+          "groupId": "local.polaraxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TitleFontSizeMultiplier",
+            "description": "Text-size multiplier for the title relative to axes text.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 6,
+            "groupId": "local.polaraxes.font",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "TitleFontWeight",
+          "groupId": "local.polaraxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TitleFontWeight",
+            "description": "Choice controlling title font weight.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 7,
+            "groupId": "local.polaraxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "bold",
+                "normal"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "SubtitleFontWeight",
+          "groupId": "local.polaraxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SubtitleFontWeight",
+            "description": "Choice controlling subtitle font weight.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 8,
+            "groupId": "local.polaraxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "FontUnits",
+          "groupId": "local.polaraxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontUnits",
+            "description": "Measurement unit used for text size.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 9,
+            "groupId": "local.polaraxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "points",
+                "inches",
+                "centimeters",
+                "normalized",
+                "pixels"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "defaultLiteral": "'points'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "ticks",
+      "displayName": "Ticks",
+      "order": 2,
+      "entries": [
+        {
+          "path": "RTick",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RTick",
+            "description": "Tick positions along the R axis.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 1,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "RLim"
+              ],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RTickMode",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RTickMode",
+            "description": "Automatic or explicit control of RTick.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 2,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "RTick"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RTickLabel",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RTickLabel",
+            "description": "Text shown at the R-axis ticks.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 3,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "stringList",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "stringList",
+              "matlabClasses": [
+                "categorical",
+                "cell",
+                "char",
+                "string"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "RTick"
+              ],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RTickLabelMode",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RTickLabelMode",
+            "description": "Automatic or explicit control of RTickLabel.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 4,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "RTickLabel"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "ThetaTick",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaTick",
+            "description": "Tick positions along the Theta axis.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 5,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "ThetaLim"
+              ],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "ThetaTickMode",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaTickMode",
+            "description": "Automatic or explicit control of ThetaTick.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 6,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "ThetaTick"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "ThetaTickLabel",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaTickLabel",
+            "description": "Text shown at the Theta-axis ticks.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 7,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "stringList",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "stringList",
+              "matlabClasses": [
+                "categorical",
+                "cell",
+                "char",
+                "string"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "ThetaTick"
+              ],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "ThetaTickLabelMode",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaTickLabelMode",
+            "description": "Automatic or explicit control of ThetaTickLabel.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 8,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "ThetaTickLabel"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RTickLabelRotation",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RTickLabelRotation",
+            "description": "Rotation of the R-axis tick text.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 9,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RTickLabelRotationMode",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RTickLabelRotationMode",
+            "description": "Automatic or explicit control of RTickLabelRotation.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 10,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "RTickLabelRotation"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RMinorTick",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RMinorTick",
+            "description": "Whether intermediate R-axis ticks are displayed.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 11,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "ThetaMinorTick",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaMinorTick",
+            "description": "Whether intermediate Theta-axis ticks are displayed.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 12,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "ThetaZeroLocation",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaZeroLocation",
+            "description": "Choice controlling theta zero location.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 13,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "right",
+                "top",
+                "left",
+                "bottom"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "TickDir",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TickDir",
+            "description": "Choice controlling tick dir.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 14,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "in",
+                "out",
+                "both",
+                "none"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "TickDirMode",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TickDirMode",
+            "description": "Automatic or explicit control of TickDir.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 15,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "TickDir"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "TickLabelInterpreter",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TickLabelInterpreter",
+            "description": "Choice controlling tick label interpreter.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 16,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "tex",
+                "latex",
+                "none"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "TickLength",
+          "groupId": "local.polaraxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TickLength",
+            "description": "Numeric values used for tick length.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 17,
+            "groupId": "local.polaraxes.ticks",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": [],
+              "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "rulers",
+      "displayName": "Rulers",
+      "order": 3,
+      "entries": [
+        {
+          "path": "RLim",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RLim",
+            "description": "Displayed interval of the R axis.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 1,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": [],
+              "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RLimMode",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RLimMode",
+            "description": "Automatic or explicit control of RLim.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 2,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "RLim"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "ThetaLim",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaLim",
+            "description": "Displayed interval of the Theta axis.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 3,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": [],
+              "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "ThetaLimMode",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaLimMode",
+            "description": "Automatic or explicit control of ThetaLim.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 4,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "ThetaLim"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RAxis",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RAxis",
+            "description": "Ruler object representing the R axis.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 5,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "ThetaAxis",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaAxis",
+            "description": "Ruler object representing the Theta axis.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 6,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "RAxisLocation",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RAxisLocation",
+            "description": "Placement of the R axis within the plot.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 7,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RAxisLocationMode",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RAxisLocationMode",
+            "description": "Automatic or explicit control of RAxisLocation.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 8,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "RAxisLocation"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RColor",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RColor",
+            "description": "Color used to draw the R axis.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 9,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RColorMode",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RColorMode",
+            "description": "Automatic or explicit control of RColor.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 10,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "RColor"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "ThetaColor",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaColor",
+            "description": "Color used to draw the Theta axis.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 11,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "ThetaColorMode",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaColorMode",
+            "description": "Automatic or explicit control of ThetaColor.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 12,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "ThetaColor"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RDir",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RDir",
+            "description": "Direction in which R-axis values increase.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 13,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "normal",
+                "reverse"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "ThetaDir",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaDir",
+            "description": "Direction in which Theta-axis values increase.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 14,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "counterclockwise",
+                "clockwise"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "ThetaAxisUnits",
+          "groupId": "local.polaraxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaAxisUnits",
+            "description": "Choice controlling theta axis units.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 15,
+            "groupId": "local.polaraxes.rulers",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "degrees",
+                "radians"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "gridlines",
+      "displayName": "Grid Lines",
+      "order": 4,
+      "entries": [
+        {
+          "path": "RGrid",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RGrid",
+            "description": "Whether R-axis grid lines are displayed.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 1,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "ThetaGrid",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaGrid",
+            "description": "Whether Theta-axis grid lines are displayed.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 2,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "Layer",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Layer",
+            "description": "Choice controlling layer.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 3,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "bottom",
+                "top"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "GridLineStyle",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridLineStyle",
+            "description": "Choice controlling grid line style.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 4,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "-",
+                "--",
+                ":",
+                "-.",
+                "none"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "GridColor",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridColor",
+            "description": "Color used for grid color.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 5,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "GridColorMode",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridColorMode",
+            "description": "Automatic or explicit control of GridColor.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 6,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "GridColor"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "GridAlpha",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridAlpha",
+            "description": "Numeric setting for grid alpha.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 7,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "GridAlphaMode",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridAlphaMode",
+            "description": "Automatic or explicit control of GridAlpha.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 8,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "GridAlpha"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "RMinorGrid",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "RMinorGrid",
+            "description": "Whether intermediate R-axis grid lines are displayed.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 9,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "ThetaMinorGrid",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ThetaMinorGrid",
+            "description": "Whether intermediate Theta-axis grid lines are displayed.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 10,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "MinorGridLineStyle",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MinorGridLineStyle",
+            "description": "Choice controlling minor grid line style.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 11,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                ":",
+                "-",
+                "--",
+                "-.",
+                "none"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "MinorGridColor",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MinorGridColor",
+            "description": "Color used for minor grid color.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 12,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "MinorGridColorMode",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MinorGridColorMode",
+            "description": "Automatic or explicit control of MinorGridColor.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 13,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "MinorGridColor"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "MinorGridAlpha",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MinorGridAlpha",
+            "description": "Numeric setting for minor grid alpha.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 14,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "MinorGridAlphaMode",
+          "groupId": "local.polaraxes.gridlines",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MinorGridAlphaMode",
+            "description": "Automatic or explicit control of MinorGridAlpha.",
+            "categoryId": "gridlines",
+            "category": "Grid Lines",
+            "order": 15,
+            "groupId": "local.polaraxes.gridlines",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "MinorGridAlpha"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "labels",
+      "displayName": "Labels",
+      "order": 5,
+      "entries": [
+        {
+          "path": "Title",
+          "groupId": "local.polaraxes.labels",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Title",
+            "description": "Heading displayed with the component.",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 1,
+            "groupId": "local.polaraxes.labels",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "Subtitle",
+          "groupId": "local.polaraxes.labels",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Subtitle",
+            "description": "Secondary heading displayed below the title.",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 2,
+            "groupId": "local.polaraxes.labels",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "TitleHorizontalAlignment",
+          "groupId": "local.polaraxes.labels",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TitleHorizontalAlignment",
+            "description": "Choice controlling title horizontal alignment.",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 3,
+            "groupId": "local.polaraxes.labels",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "center",
+                "left",
+                "right"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Legend",
+          "groupId": "local.polaraxes.labels",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Legend",
+            "description": "Legend object associated with these axes.",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 4,
+            "groupId": "local.polaraxes.labels",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "multipleplots",
+      "displayName": "Multiple Plots",
+      "order": 6,
+      "entries": [
+        {
+          "path": "ColorOrder",
+          "groupId": "local.polaraxes.multipleplots",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ColorOrder",
+            "description": "Sequence of colors selected for successive plots.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 1,
+            "groupId": "local.polaraxes.multipleplots",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "ColorOrderIndex",
+          "groupId": "local.polaraxes.multipleplots",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ColorOrderIndex",
+            "description": "Position within the color sequence for the next plot.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 2,
+            "groupId": "local.polaraxes.multipleplots",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "LineStyleOrder",
+          "groupId": "local.polaraxes.multipleplots",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LineStyleOrder",
+            "description": "Sequence of line patterns selected for successive plots.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 3,
+            "groupId": "local.polaraxes.multipleplots",
+            "editor": "stringList",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "stringList",
+              "matlabClasses": [
+                "categorical",
+                "cell",
+                "char",
+                "string"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "LineStyleCyclingMethod",
+          "groupId": "local.polaraxes.multipleplots",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LineStyleCyclingMethod",
+            "description": "How color and line-pattern sequences advance together.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 4,
+            "groupId": "local.polaraxes.multipleplots",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "NextSeriesIndex",
+          "groupId": "local.polaraxes.multipleplots",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "NextSeriesIndex",
+            "description": "Series index assigned to the next plotted object.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 5,
+            "groupId": "local.polaraxes.multipleplots",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "NextPlot",
+          "groupId": "local.polaraxes.multipleplots",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "NextPlot",
+            "description": "How a subsequent plot affects the existing axes content.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 6,
+            "groupId": "local.polaraxes.multipleplots",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "replace",
+                "add",
+                "replacechildren",
+                "replaceall"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "SortMethod",
+          "groupId": "local.polaraxes.multipleplots",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SortMethod",
+            "description": "Choice controlling sort method.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 7,
+            "groupId": "local.polaraxes.multipleplots",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "depth",
+                "childorder"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "LineStyleOrderIndex",
+          "groupId": "local.polaraxes.multipleplots",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LineStyleOrderIndex",
+            "description": "Position within the line-pattern sequence for the next plot.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 8,
+            "groupId": "local.polaraxes.multipleplots",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "colorandtransparencymaps",
+      "displayName": "Color and Transparency Maps",
+      "order": 7,
+      "entries": [
+        {
+          "path": "Colormap",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Colormap",
+            "description": "Sequence of colors used to map indexed data.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 1,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "ColorScale",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ColorScale",
+            "description": "Choice controlling color scale.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 2,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "linear",
+                "log"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "CLim",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CLim",
+            "description": "Numeric values used for clim.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 3,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": [],
+              "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "CLimMode",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CLimMode",
+            "description": "Automatic or explicit control of CLim.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 4,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "CLim"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "Alphamap",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Alphamap",
+            "description": "Sequence of transparency values used for indexed data.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 5,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": [],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "AlphaScale",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "AlphaScale",
+            "description": "Choice controlling alpha scale.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 6,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "linear",
+                "log"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "ALim",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ALim",
+            "description": "Numeric values used for alim.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 7,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": [],
+              "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "ALimMode",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ALimMode",
+            "description": "Automatic or explicit control of ALim.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 8,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "ALim"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "boxstyling",
+      "displayName": "Box Styling",
+      "order": 8,
+      "entries": [
+        {
+          "path": "Color",
+          "groupId": "local.polaraxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Color",
+            "description": "Color used by the component.",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 1,
+            "groupId": "local.polaraxes.boxstyling",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "LineWidth",
+          "groupId": "local.polaraxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LineWidth",
+            "description": "Width used to draw lines.",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 2,
+            "groupId": "local.polaraxes.boxstyling",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Box",
+          "groupId": "local.polaraxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Box",
+            "description": "Whether box is enabled.",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 3,
+            "groupId": "local.polaraxes.boxstyling",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "Clipping",
+          "groupId": "local.polaraxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Clipping",
+            "description": "Whether graphics outside the clipping region are hidden.",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 4,
+            "groupId": "local.polaraxes.boxstyling",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "position",
+      "displayName": "Position",
+      "order": 9,
+      "entries": [
+        {
+          "path": "OuterPosition",
+          "groupId": "local.polaraxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "OuterPosition",
+            "description": "Outer rectangle [left bottom width height] in its configured units.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 1,
+            "groupId": "local.polaraxes.position",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": [],
+              "fixedLength": 4
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "InnerPosition",
+                "OuterPosition",
+                "Position"
+              ],
+              "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+            }
+          }
+        },
+        {
+          "path": "InnerPosition",
+          "groupId": "local.polaraxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "InnerPosition",
+            "description": "Inner rectangle [left bottom width height] in its configured units.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 2,
+            "groupId": "local.polaraxes.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "InnerPosition",
+                "OuterPosition",
+                "Position"
+              ],
+              "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+            }
+          }
+        },
+        {
+          "path": "Position",
+          "groupId": "local.polaraxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Position",
+            "description": "Component rectangle [left bottom width height] in its configured units.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 3,
+            "groupId": "local.polaraxes.position",
+            "editor": "position",
+            "previewPolicy": "adapt",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "Units"
+              ],
+              "effectPolicy": "layout",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "TightInset",
+          "groupId": "local.polaraxes.position",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "TightInset",
+            "description": "Margins [left bottom right top] needed around the plotted area.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 4,
+            "groupId": "local.polaraxes.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "PositionConstraint",
+          "groupId": "local.polaraxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "PositionConstraint",
+            "description": "Rectangle kept fixed while related geometry changes.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 5,
+            "groupId": "local.polaraxes.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "Units",
+          "groupId": "local.polaraxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Units",
+            "description": "Measurement unit used for component geometry.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 6,
+            "groupId": "local.polaraxes.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "defaultLiteral": "'normalized'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "Layout",
+          "groupId": "local.polaraxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Layout",
+            "description": "Placement settings supplied by the parent layout.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 7,
+            "groupId": "local.polaraxes.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "interactivity",
+      "displayName": "Interactivity",
+      "order": 10,
+      "entries": [
+        {
+          "path": "InteractionOptions",
+          "groupId": "local.polaraxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "InteractionOptions",
+            "description": "Options used by the axes interaction tools.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 1,
+            "groupId": "local.polaraxes.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Toolbar",
+          "groupId": "local.polaraxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Toolbar",
+            "description": "Toolbar associated with the window or axes.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 2,
+            "groupId": "local.polaraxes.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Interactions",
+          "groupId": "local.polaraxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Interactions",
+            "description": "Interaction tools enabled on the axes.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 3,
+            "groupId": "local.polaraxes.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Visible",
+          "groupId": "local.polaraxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Visible",
+            "description": "Whether this component is displayed.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 4,
+            "groupId": "local.polaraxes.interactivity",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "CurrentPoint",
+          "groupId": "local.polaraxes.interactivity",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "CurrentPoint",
+            "description": "Pointer location reported in the component coordinates.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 5,
+            "groupId": "local.polaraxes.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "groupId": "local.polaraxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ContextMenu",
+            "description": "Menu opened for this component by a context-menu gesture.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 6,
+            "groupId": "local.polaraxes.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "componentReference",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Selected",
+          "groupId": "local.polaraxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Selected",
+            "description": "Whether the object is selected.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 7,
+            "groupId": "local.polaraxes.interactivity",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "SelectionHighlight",
+          "groupId": "local.polaraxes.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SelectionHighlight",
+            "description": "Whether selection highlight is enabled.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 8,
+            "groupId": "local.polaraxes.interactivity",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "callbacks",
+      "displayName": "Callbacks",
+      "order": 11,
+      "entries": [
+        {
+          "path": "ButtonDownFcn",
+          "groupId": "local.polaraxes.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ButtonDownFcn",
+            "description": "Callback invoked for the button down event.",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 1,
+            "groupId": "local.polaraxes.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "ButtonDown"
+          }
+        },
+        {
+          "path": "CreateFcn",
+          "groupId": "local.polaraxes.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CreateFcn",
+            "description": "Callback invoked for the create event.",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 2,
+            "groupId": "local.polaraxes.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [],
+              "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "Create"
+          }
+        },
+        {
+          "path": "DeleteFcn",
+          "groupId": "local.polaraxes.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "DeleteFcn",
+            "description": "Callback invoked for the delete event.",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 3,
+            "groupId": "local.polaraxes.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [],
+              "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "Delete"
+          }
+        }
+      ]
+    },
+    {
+      "id": "callbackexecutioncontrol",
+      "displayName": "Callback Execution Control",
+      "order": 12,
+      "entries": [
+        {
+          "path": "Interruptible",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Interruptible",
+            "description": "Whether another callback can interrupt the running callback.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 1,
+            "groupId": "callbackExecutionCore",
+            "editor": "onOff",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "BusyAction",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BusyAction",
+            "description": "How a callback is handled while another callback is busy.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 2,
+            "groupId": "callbackExecutionCore",
+            "editor": "enum",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "PickableParts",
+          "groupId": "local.polaraxes.callbackexecutioncontrol",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "PickableParts",
+            "description": "Parts of the object eligible for pointer hit testing.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 3,
+            "groupId": "local.polaraxes.callbackexecutioncontrol",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "visible",
+                "all",
+                "none"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "HitTest",
+          "groupId": "local.polaraxes.callbackexecutioncontrol",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "HitTest",
+            "description": "Whether this object responds to pointer hit testing.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 4,
+            "groupId": "local.polaraxes.callbackexecutioncontrol",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "BeingDeleted",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "BeingDeleted",
+            "description": "Whether destruction of this object is in progress.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 5,
+            "groupId": "callbackExecutionCore",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "parentchild",
+      "displayName": "Parent/Child",
+      "order": 13,
+      "entries": [
+        {
+          "path": "Parent",
+          "groupId": "local.polaraxes.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Parent",
+            "description": "Container that owns this component.",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 1,
+            "groupId": "local.polaraxes.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "componentReference",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Children",
+          "groupId": "local.polaraxes.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Children",
+            "description": "Components owned directly by this container.",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 2,
+            "groupId": "local.polaraxes.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "HandleVisibility",
+          "groupId": "local.polaraxes.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "HandleVisibility",
+            "description": "Whether handle-search operations expose this object.",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 3,
+            "groupId": "local.polaraxes.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "identifiers",
+      "displayName": "Identifiers",
+      "order": 14,
+      "entries": [
+        {
+          "path": "Type",
+          "groupId": "local.polaraxes.identifiers",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Type",
+            "description": "MATLAB graphics type identifying the object.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 1,
+            "groupId": "local.polaraxes.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Tag",
+          "groupId": "local.polaraxes.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Tag",
+            "description": "Identifier available to application code.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 2,
+            "groupId": "local.polaraxes.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "UserData",
+          "groupId": "local.polaraxes.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "UserData",
+            "description": "Application-defined data attached to the component.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 3,
+            "groupId": "local.polaraxes.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "arbitraryData",
+              "matlabClasses": [
+                "any"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "displayName": "Polar Axes",
+    "category": "Axes",
+    "programmaticOnly": true
+  }
+}

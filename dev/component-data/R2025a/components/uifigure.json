@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "uifigure",
   "factory": "uifigure",
   "creationArguments": [],
@@ -128,11 +128,6 @@
       "categoryId": "windowappearance",
       "order": 2,
       "summary": "Choice controlling window style.",
-      "documentedDefault": "'normal'",
-      "documentedAcceptedValues": [
-        "'modal'",
-        "'alwaysontop'"
-      ],
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -145,7 +140,28 @@
         "values": [
           "normal",
           "modal",
+          "docked",
           "alwaysontop"
+        ],
+        "valueAvailability": [
+          {
+            "value": "docked",
+            "releases": {
+              "since": "R2025a"
+            },
+            "evidence": [
+              {
+                "kind": "mathworksDocumentation",
+                "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.figure.html",
+                "detail": "The R2025a Figure page, which covers UI figures, documents the 'docked' window style."
+              },
+              {
+                "kind": "mathworksDocumentation",
+                "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.figureappd-properties.html",
+                "detail": "The R2024a UI figure page documents 'normal', 'modal', and 'alwaysontop' only."
+              }
+            ]
+          }
         ]
       },
       "affectsDisplay": true,
@@ -170,6 +186,46 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "documentedAcceptedValues": [
+        "'docked'",
+        "'modal'",
+        "'alwaysontop'"
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedAcceptedValues": [
+              "'modal'",
+              "'alwaysontop'"
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.figure.html",
+              "detail": "The R2025a Figure page documents WindowStyle as 'docked', 'normal', 'modal', or 'alwaysontop'."
+            }
+          ]
+        },
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "'normal'"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.figure.html",
+              "detail": "The R2025a page states no default for WindowStyle; the R2024a page states 'normal'."
+            }
+          ]
         }
       ]
     },
@@ -224,6 +280,150 @@
           "detail": "Unproven geometry or interaction effect: retain full refresh."
         }
       ]
+    },
+    {
+      "path": "Theme",
+      "categoryId": "windowappearance",
+      "order": 4,
+      "summary": "Configuration of theme.",
+      "documentedAcceptedValues": [
+        "\"light\"",
+        "\"dark\"",
+        "GraphicsTheme object"
+      ],
+      "documentedReadOnly": false,
+      "runtimeSetAccess": "public",
+      "runtimeObservations": [
+        "MATLAB 25.1.0.2973910 (R2025a) Update 1 owned uifigure (probe_new_properties.m): the getter returns a matlab.graphics.theme.GraphicsTheme object; assigning \"light\" or \"dark\" succeeds, and assigning '' fails with MATLAB:graphics:themes:InvalidThemeSpec."
+      ],
+      "valueContract": {
+        "kind": "opaque",
+        "shape": "any",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string",
+          "handle"
+        ]
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "sourceOnly"
+        ]
+      },
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2025a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+            "detail": "R2025a lets apps and figures use a light or dark theme through the figure Theme property and respond to theme changes through ThemeChangedFcn."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.figure.html",
+            "detail": "The R2025a Figure page documents Theme, light, dark, or a GraphicsTheme object, under Window Appearance."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 24.2.0.3361896 (R2024b) Update 10",
+            "detail": "A UI figure has no Theme property."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ThemeMode",
+      "categoryId": "windowappearance",
+      "order": 5,
+      "summary": "Automatic or explicit control of Theme.",
+      "documentedDefault": "\"auto\"",
+      "documentedAcceptedValues": [
+        "\"manual\""
+      ],
+      "runtimeSetAccess": "public",
+      "valueContract": {
+        "kind": "enum",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string"
+        ],
+        "values": [
+          "auto",
+          "manual"
+        ]
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "skip",
+      "requiredEditor": "enum",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2025a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+            "detail": "R2025a lets apps and figures use a light or dark theme through the figure Theme property and respond to theme changes through ThemeChangedFcn."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.figure.html",
+            "detail": "The R2025a Figure page documents ThemeMode, auto (default) or manual, after Theme."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 24.2.0.3361896 (R2024b) Update 10",
+            "detail": "A UI figure has no ThemeMode property."
+          }
+        ]
+      }
     },
     {
       "path": "Position",
@@ -1115,9 +1315,95 @@
       ]
     },
     {
-      "path": "ButtonDownFcn",
+      "path": "ThemeChangedFcn",
       "categoryId": "commoncallbacks",
       "order": 1,
+      "summary": "Callback invoked for the theme changed event.",
+      "documentedDefault": "''",
+      "documentedAcceptedValues": [
+        "function handle",
+        "cell array",
+        "character vector"
+      ],
+      "valueContract": {
+        "kind": "callback",
+        "shape": "any",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "function_handle",
+          "cell",
+          "char"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "callbackManaged",
+          "callbackExecutable"
+        ]
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.graphics.eventdata.ThemeChangedData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "nativeObservation",
+            "source": "MATLAB 25.1.0.2973910 (R2025a) Update 1 owned uifigure (probe_new_properties.m)",
+            "detail": "ThemeChangedFcn: switching Theme from light to dark invokes the callback with a matlab.graphics.eventdata.ThemeChangedData event object."
+          }
+        ]
+      },
+      "handlerSuffix": "ThemeChanged",
+      "availability": {
+        "releases": {
+          "since": "R2025a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+            "detail": "R2025a lets apps and figures use a light or dark theme through the figure Theme property and respond to theme changes through ThemeChangedFcn."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.figure.html",
+            "detail": "The R2025a Figure page documents ThemeChangedFcn, default empty, first under Common Callbacks."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 24.2.0.3361896 (R2024b) Update 10",
+            "detail": "A UI figure has no ThemeChangedFcn property."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ButtonDownFcn",
+      "categoryId": "commoncallbacks",
+      "order": 2,
       "summary": "Callback invoked for the button down event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
@@ -1181,7 +1467,7 @@
     {
       "path": "CreateFcn",
       "categoryId": "commoncallbacks",
-      "order": 2,
+      "order": 3,
       "summary": "Callback invoked for the create event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
@@ -1253,7 +1539,7 @@
     {
       "path": "DeleteFcn",
       "categoryId": "commoncallbacks",
-      "order": 3,
+      "order": 4,
       "summary": "Callback invoked for the delete event.",
       "documentedDefault": "''",
       "documentedAcceptedValues": [
@@ -2192,7 +2478,6 @@
       "categoryId": "parentchildren",
       "order": 3,
       "summary": "Whether handle-search operations expose this object.",
-      "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "'callback'",
         "'on'"
@@ -2232,6 +2517,23 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "'off'"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.figure.html",
+              "detail": "The R2025a page states no default for HandleVisibility; the R2024a page states 'off'."
+            }
+          ]
+        }
       ]
     },
     {
@@ -2239,7 +2541,6 @@
       "categoryId": "identifiers",
       "order": 1,
       "summary": "Name displayed for the window.",
-      "documentedDefault": "''",
       "documentedAcceptedValues": [
         "character vector",
         "string scalar"
@@ -2276,6 +2577,23 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "''"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.figure.html",
+              "detail": "The R2025a page states no default for Name; the R2024a page states ''."
+            }
+          ]
         }
       ]
     },
@@ -2377,7 +2695,6 @@
       "categoryId": "identifiers",
       "order": 4,
       "summary": "Whether number title is enabled.",
-      "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -2415,6 +2732,23 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
         }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "'off'"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.figure.html",
+              "detail": "The R2025a page states no default for NumberTitle; the R2024a page states 'off'."
+            }
+          ]
+        }
       ]
     },
     {
@@ -2422,7 +2756,6 @@
       "categoryId": "identifiers",
       "order": 5,
       "summary": "Whether integer handle is enabled.",
-      "documentedDefault": "'off'",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -2459,6 +2792,23 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "'off'"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.figure.html",
+              "detail": "The R2025a page states no default for IntegerHandle; the R2024a page states 'off'."
+            }
+          ]
         }
       ]
     },

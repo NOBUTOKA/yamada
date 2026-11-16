@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "axes",
   "factory": "axes",
   "creationArguments": [],
@@ -655,7 +655,24 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
         }
-      ]
+      ],
+      "availability": {
+        "releases": {
+          "before": "R2025a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+            "detail": "R2025a: the GraphicsSmoothing and FontSmoothing properties have no effect."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+            "detail": "The R2025a page no longer documents FontSmoothing."
+          }
+        ]
+      }
     },
     {
       "path": "XTick",
@@ -2964,7 +2981,6 @@
       "categoryId": "rulers",
       "order": 17,
       "summary": "Color used to draw the Z axis.",
-      "documentedDefault": "[0.15 0.15 0.15]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -3017,6 +3033,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.15 0.15 0.15]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+              "detail": "The R2025a page states no fixed default for ZColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default ZColor differs from [0.15 0.15 0.15]."
+            }
+          ]
         }
       ]
     },
@@ -3876,7 +3919,6 @@
       "categoryId": "grids",
       "order": 8,
       "summary": "Color used for grid color.",
-      "documentedDefault": "[0.15 0.15 0.15]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -3929,6 +3971,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.15 0.15 0.15]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+              "detail": "The R2025a page states no fixed default for GridColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default GridColor differs from [0.15 0.15 0.15]."
+            }
+          ]
         }
       ]
     },
@@ -4005,7 +4074,6 @@
       "categoryId": "grids",
       "order": 10,
       "summary": "Numeric setting for grid alpha.",
-      "documentedDefault": "0.15",
       "documentedAcceptedValues": [
         "0 <= value <= 1"
       ],
@@ -4054,6 +4122,23 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "0.15"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+              "detail": "The R2025a page states no default for GridAlpha; the R2024a page states 0.15."
+            }
+          ]
         }
       ]
     },
@@ -4442,7 +4527,6 @@
       "categoryId": "grids",
       "order": 18,
       "summary": "Color used for minor grid color.",
-      "documentedDefault": "[0.1 0.1 0.1]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -4495,6 +4579,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.1 0.1 0.1]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+              "detail": "The R2025a page states no fixed default for MinorGridColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default MinorGridColor differs from [0.1 0.1 0.1]."
+            }
+          ]
         }
       ]
     },
@@ -4571,7 +4682,6 @@
       "categoryId": "grids",
       "order": 20,
       "summary": "Numeric setting for minor grid alpha.",
-      "documentedDefault": "0.25",
       "documentedAcceptedValues": [
         "0 <= value <= 1"
       ],
@@ -4620,6 +4730,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "0.25"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+              "detail": "The R2025a page states no fixed default for MinorGridAlpha."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default MinorGridAlpha differs from 0.25."
+            }
+          ]
         }
       ]
     },
@@ -5003,7 +5140,6 @@
       "categoryId": "multipleplots",
       "order": 1,
       "summary": "Sequence of colors selected for successive plots.",
-      "documentedDefault": "MATLAB default seven-color sequence",
       "documentedAcceptedValues": [
         "three-column matrix of RGB triplets"
       ],
@@ -5040,6 +5176,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "MATLAB default seven-color sequence"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+              "detail": "The R2025a page states no fixed default for ColorOrder."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default ColorOrder differs from MATLAB default seven-color sequence."
+            }
+          ]
         }
       ]
     },
@@ -5811,7 +5974,6 @@
       "categoryId": "boxstyling",
       "order": 1,
       "summary": "Color used by the component.",
-      "documentedDefault": "[1 1 1]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -5852,6 +6014,23 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[1 1 1]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+              "detail": "The R2025a page states no default for Color; the R2024a page states [1 1 1]."
+            }
+          ]
         }
       ]
     },
@@ -7444,9 +7623,70 @@
       ]
     },
     {
-      "path": "Toolbar",
+      "path": "InteractionOptions",
       "categoryId": "interactivity",
       "order": 1,
+      "summary": "Options used by the axes interaction tools.",
+      "documentedAcceptedValues": [
+        "CartesianAxesInteractionOptions object"
+      ],
+      "valueContract": {
+        "kind": "opaque",
+        "shape": "any",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "unknown"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "readOnly",
+        "reasonCodes": [
+          "lowDesignTimeValue"
+        ]
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2025a"
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.axes-properties.html",
+            "detail": "The R2025a Axes page documents InteractionOptions first under Interactivity."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024b/matlab/ref/matlab.graphics.axis.axes-properties.html",
+            "detail": "The R2024b and earlier Axes pages do not document InteractionOptions, although the property exists natively."
+          }
+        ]
+      }
+    },
+    {
+      "path": "Toolbar",
+      "categoryId": "interactivity",
+      "order": 2,
       "summary": "Toolbar associated with the window or axes.",
       "documentedDefault": "AxesToolbar object",
       "valueContract": {
@@ -7488,7 +7728,7 @@
     {
       "path": "Interactions",
       "categoryId": "interactivity",
-      "order": 2,
+      "order": 3,
       "summary": "Interaction tools enabled on the axes.",
       "documentedAcceptedValues": [
         "array of interaction objects",
@@ -7531,7 +7771,7 @@
     {
       "path": "Visible",
       "categoryId": "interactivity",
-      "order": 3,
+      "order": 4,
       "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
@@ -7576,7 +7816,7 @@
     {
       "path": "CurrentPoint",
       "categoryId": "interactivity",
-      "order": 4,
+      "order": 5,
       "summary": "Pointer location reported in the component coordinates.",
       "documentedAcceptedValues": [
         "2-by-3 array"
@@ -7621,7 +7861,7 @@
     {
       "path": "ContextMenu",
       "categoryId": "interactivity",
-      "order": 5,
+      "order": 6,
       "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
@@ -7666,7 +7906,7 @@
     {
       "path": "Selected",
       "categoryId": "interactivity",
-      "order": 6,
+      "order": 7,
       "summary": "Whether the object is selected.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
@@ -7711,7 +7951,7 @@
     {
       "path": "SelectionHighlight",
       "categoryId": "interactivity",
-      "order": 7,
+      "order": 8,
       "summary": "Whether selection highlight is enabled.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [

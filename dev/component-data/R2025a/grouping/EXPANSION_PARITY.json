@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
-  "matlabRelease": "R2024b",
-  "inputSha256": "55c7e7b6c55fd4384eb99ba52ef70c5cff6fd4ae49638b0cdaad5722d007acc0",
+  "matlabRelease": "R2025a",
+  "inputSha256": "505e3fe17f8a396154a10870e0a010451f7da89194952420ec58c6c2ca873157",
   "intrinsic": [
     {
       "componentId": "axes",
@@ -435,42 +435,42 @@
       "componentId": "polaraxes",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 110,
+      "propertyCount": 109,
       "missingConstraintTargets": []
     },
     {
       "componentId": "polaraxes",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 111,
+      "propertyCount": 110,
       "missingConstraintTargets": []
     },
     {
       "componentId": "polaraxes",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 109,
+      "propertyCount": 108,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uiaxes",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 157,
+      "propertyCount": 156,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uiaxes",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 158,
+      "propertyCount": 157,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uiaxes",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 156,
+      "propertyCount": 155,
       "missingConstraintTargets": []
     },
     {
@@ -519,21 +519,21 @@
       "componentId": "uibuttongroup",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 41,
+      "propertyCount": 40,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uibuttongroup",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 42,
+      "propertyCount": 41,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uibuttongroup",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 40,
+      "propertyCount": 39,
       "missingConstraintTargets": []
     },
     {
@@ -687,21 +687,21 @@
       "componentId": "uifigure",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 48,
+      "propertyCount": 51,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uifigure",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 49,
+      "propertyCount": 52,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uifigure",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 47,
+      "propertyCount": 50,
       "missingConstraintTargets": []
     },
     {
@@ -1002,21 +1002,21 @@
       "componentId": "uipanel",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 38,
+      "propertyCount": 37,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uipanel",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 39,
+      "propertyCount": 38,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uipanel",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 37,
+      "propertyCount": 36,
       "missingConstraintTargets": []
     },
     {
@@ -1086,21 +1086,21 @@
       "componentId": "uislider-slider",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 34,
+      "propertyCount": 36,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uislider-slider",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 35,
+      "propertyCount": 37,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uislider-slider",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 33,
+      "propertyCount": 35,
       "missingConstraintTargets": []
     },
     {
@@ -1233,21 +1233,21 @@
       "componentId": "uitable",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 53,
+      "propertyCount": 52,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uitable",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 54,
+      "propertyCount": 53,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uitable",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 52,
+      "propertyCount": 51,
       "missingConstraintTargets": []
     },
     {

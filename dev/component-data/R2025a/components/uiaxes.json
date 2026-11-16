@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "uiaxes",
   "factory": "uiaxes",
   "creationArguments": [],
@@ -654,7 +654,24 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "availability": {
+        "releases": {
+          "before": "R2025a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+            "detail": "R2025a: the GraphicsSmoothing and FontSmoothing properties have no effect."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+            "detail": "The R2025a page no longer documents FontSmoothing."
+          }
+        ]
+      }
     },
     {
       "path": "XTick",
@@ -2887,11 +2904,16 @@
           "kind": "runtime",
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        },
+        {
+          "kind": "runtime",
+          "source": "MATLAB 25.1.0.2973910 (R2025a) Update 1 owned uiaxes (.local-notes probes of ProbeAxisModeInteractions cases)",
+          "detail": "In R2025a, assignments that set the value and then restore auto keep the stored value, but uiaxes name-value arguments that set the value and then restore auto replace it with the theme value. Setting the mode before the value selects manual mode in both forms."
         }
       ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "modeFlag",
+        "effectPolicy": "setterModeFlag",
         "effectStatus": "modeled",
         "affectedPaths": [],
         "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
@@ -2903,6 +2925,25 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "application": {
+              "effectPolicy": "modeFlag"
+            }
+          },
+          "evidence": [
+            {
+              "kind": "nativeObservation",
+              "source": "MATLAB 24.2.0.3361896 (R2024b) Update 10 owned uiaxes",
+              "detail": "Both constructor orders and assignments keep the stored XColor when auto is restored after the value."
+            }
+          ]
         }
       ]
     },
@@ -2940,11 +2981,16 @@
           "kind": "runtime",
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        },
+        {
+          "kind": "runtime",
+          "source": "MATLAB 25.1.0.2973910 (R2025a) Update 1 owned uiaxes (.local-notes probes of ProbeAxisModeInteractions cases)",
+          "detail": "In R2025a, assignments that set the value and then restore auto keep the stored value, but uiaxes name-value arguments that set the value and then restore auto replace it with the theme value. Setting the mode before the value selects manual mode in both forms."
         }
       ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "modeFlag",
+        "effectPolicy": "setterModeFlag",
         "effectStatus": "modeled",
         "affectedPaths": [],
         "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
@@ -2957,6 +3003,25 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
         }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "application": {
+              "effectPolicy": "modeFlag"
+            }
+          },
+          "evidence": [
+            {
+              "kind": "nativeObservation",
+              "source": "MATLAB 24.2.0.3361896 (R2024b) Update 10 owned uiaxes",
+              "detail": "Both constructor orders and assignments keep the stored YColor when auto is restored after the value."
+            }
+          ]
+        }
       ]
     },
     {
@@ -2964,7 +3029,6 @@
       "categoryId": "rulers",
       "order": 17,
       "summary": "Color used to draw the Z axis.",
-      "documentedDefault": "[0.15 0.15 0.15]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -3001,11 +3065,16 @@
           "kind": "runtime",
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        },
+        {
+          "kind": "runtime",
+          "source": "MATLAB 25.1.0.2973910 (R2025a) Update 1 owned uiaxes (.local-notes probes of ProbeAxisModeInteractions cases)",
+          "detail": "In R2025a, assignments that set the value and then restore auto keep the stored value, but uiaxes name-value arguments that set the value and then restore auto replace it with the theme value. Setting the mode before the value selects manual mode in both forms."
         }
       ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "modeFlag",
+        "effectPolicy": "setterModeFlag",
         "effectStatus": "modeled",
         "affectedPaths": [],
         "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
@@ -3017,6 +3086,50 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.15 0.15 0.15]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+              "detail": "The R2025a page states no fixed default for ZColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default ZColor differs from [0.15 0.15 0.15]."
+            }
+          ]
+        },
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "application": {
+              "effectPolicy": "modeFlag"
+            }
+          },
+          "evidence": [
+            {
+              "kind": "nativeObservation",
+              "source": "MATLAB 24.2.0.3361896 (R2024b) Update 10 owned uiaxes",
+              "detail": "Both constructor orders and assignments keep the stored ZColor when auto is restored after the value."
+            }
+          ]
         }
       ]
     },
@@ -3876,7 +3989,6 @@
       "categoryId": "grids",
       "order": 8,
       "summary": "Color used for grid color.",
-      "documentedDefault": "[0.15 0.15 0.15]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -3913,11 +4025,16 @@
           "kind": "runtime",
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        },
+        {
+          "kind": "runtime",
+          "source": "MATLAB 25.1.0.2973910 (R2025a) Update 1 owned uiaxes (.local-notes probes of ProbeAxisModeInteractions cases)",
+          "detail": "In R2025a, assignments that set the value and then restore auto keep the stored value, but uiaxes name-value arguments that set the value and then restore auto replace it with the theme value. Setting the mode before the value selects manual mode in both forms."
         }
       ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "modeFlag",
+        "effectPolicy": "setterModeFlag",
         "effectStatus": "modeled",
         "affectedPaths": [],
         "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
@@ -3929,6 +4046,50 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.15 0.15 0.15]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+              "detail": "The R2025a page states no fixed default for GridColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default GridColor differs from [0.15 0.15 0.15]."
+            }
+          ]
+        },
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "application": {
+              "effectPolicy": "modeFlag"
+            }
+          },
+          "evidence": [
+            {
+              "kind": "nativeObservation",
+              "source": "MATLAB 24.2.0.3361896 (R2024b) Update 10 owned uiaxes",
+              "detail": "Both constructor orders and assignments keep the stored GridColor when auto is restored after the value."
+            }
+          ]
         }
       ]
     },
@@ -4005,7 +4166,6 @@
       "categoryId": "grids",
       "order": 10,
       "summary": "Numeric setting for grid alpha.",
-      "documentedDefault": "0.15",
       "documentedAcceptedValues": [
         "0 <= value <= 1"
       ],
@@ -4038,11 +4198,16 @@
           "kind": "runtime",
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        },
+        {
+          "kind": "runtime",
+          "source": "MATLAB 25.1.0.2973910 (R2025a) Update 1 owned uiaxes (.local-notes probes of ProbeAxisModeInteractions cases)",
+          "detail": "In R2025a, assignments that set the value and then restore auto keep the stored value, but uiaxes name-value arguments that set the value and then restore auto replace it with the theme value. Setting the mode before the value selects manual mode in both forms."
         }
       ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "modeFlag",
+        "effectPolicy": "setterModeFlag",
         "effectStatus": "modeled",
         "affectedPaths": [],
         "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
@@ -4054,6 +4219,40 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "0.15"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+              "detail": "The R2025a page states no default for GridAlpha; the R2024a page states 0.15."
+            }
+          ]
+        },
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "application": {
+              "effectPolicy": "modeFlag"
+            }
+          },
+          "evidence": [
+            {
+              "kind": "nativeObservation",
+              "source": "MATLAB 24.2.0.3361896 (R2024b) Update 10 owned uiaxes",
+              "detail": "Both constructor orders and assignments keep the stored GridAlpha when auto is restored after the value."
+            }
+          ]
         }
       ]
     },
@@ -4442,7 +4641,6 @@
       "categoryId": "grids",
       "order": 18,
       "summary": "Color used for minor grid color.",
-      "documentedDefault": "[0.1 0.1 0.1]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -4479,11 +4677,16 @@
           "kind": "runtime",
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        },
+        {
+          "kind": "runtime",
+          "source": "MATLAB 25.1.0.2973910 (R2025a) Update 1 owned uiaxes (.local-notes probes of ProbeAxisModeInteractions cases)",
+          "detail": "In R2025a, assignments that set the value and then restore auto keep the stored value, but uiaxes name-value arguments that set the value and then restore auto replace it with the theme value. Setting the mode before the value selects manual mode in both forms."
         }
       ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "modeFlag",
+        "effectPolicy": "setterModeFlag",
         "effectStatus": "modeled",
         "affectedPaths": [],
         "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
@@ -4495,6 +4698,50 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.1 0.1 0.1]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+              "detail": "The R2025a page states no fixed default for MinorGridColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default MinorGridColor differs from [0.1 0.1 0.1]."
+            }
+          ]
+        },
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "application": {
+              "effectPolicy": "modeFlag"
+            }
+          },
+          "evidence": [
+            {
+              "kind": "nativeObservation",
+              "source": "MATLAB 24.2.0.3361896 (R2024b) Update 10 owned uiaxes",
+              "detail": "Both constructor orders and assignments keep the stored MinorGridColor when auto is restored after the value."
+            }
+          ]
         }
       ]
     },
@@ -4571,7 +4818,6 @@
       "categoryId": "grids",
       "order": 20,
       "summary": "Numeric setting for minor grid alpha.",
-      "documentedDefault": "0.25",
       "documentedAcceptedValues": [
         "0 <= value <= 1"
       ],
@@ -4604,11 +4850,16 @@
           "kind": "runtime",
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        },
+        {
+          "kind": "runtime",
+          "source": "MATLAB 25.1.0.2973910 (R2025a) Update 1 owned uiaxes (.local-notes probes of ProbeAxisModeInteractions cases)",
+          "detail": "In R2025a, assignments that set the value and then restore auto keep the stored value, but uiaxes name-value arguments that set the value and then restore auto replace it with the theme value. Setting the mode before the value selects manual mode in both forms."
         }
       ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "modeFlag",
+        "effectPolicy": "setterModeFlag",
         "effectStatus": "modeled",
         "affectedPaths": [],
         "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
@@ -4620,6 +4871,50 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "0.25"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+              "detail": "The R2025a page states no fixed default for MinorGridAlpha."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default MinorGridAlpha differs from 0.25."
+            }
+          ]
+        },
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "application": {
+              "effectPolicy": "modeFlag"
+            }
+          },
+          "evidence": [
+            {
+              "kind": "nativeObservation",
+              "source": "MATLAB 24.2.0.3361896 (R2024b) Update 10 owned uiaxes",
+              "detail": "Both constructor orders and assignments keep the stored MinorGridAlpha when auto is restored after the value."
+            }
+          ]
         }
       ]
     },
@@ -5003,7 +5298,6 @@
       "categoryId": "multipleplots",
       "order": 1,
       "summary": "Sequence of colors selected for successive plots.",
-      "documentedDefault": "MATLAB default seven-color sequence",
       "documentedAcceptedValues": [
         "three-column matrix of RGB triplets"
       ],
@@ -5040,6 +5334,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "MATLAB default seven-color sequence"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+              "detail": "The R2025a page states no fixed default for ColorOrder."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default ColorOrder differs from MATLAB default seven-color sequence."
+            }
+          ]
         }
       ]
     },
@@ -5811,7 +6132,6 @@
       "categoryId": "boxstyling",
       "order": 1,
       "summary": "Color used by the component.",
-      "documentedDefault": "[1 1 1]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -5852,6 +6172,23 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[1 1 1]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+              "detail": "The R2025a page states no default for Color; the R2024a page states [1 1 1]."
+            }
+          ]
         }
       ]
     },

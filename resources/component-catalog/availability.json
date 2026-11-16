@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "surfaceRelease": "R2024b",
+  "surfaceRelease": "R2025a",
   "releases": [
     {
       "release": "R2023a",
@@ -20,7 +20,7 @@
     },
     {
       "release": "R2025a",
-      "catalog": false
+      "catalog": true
     },
     {
       "release": "R2025b",
@@ -59,6 +59,20 @@
   ],
   "properties": [
     {
+      "variantId": "axes",
+      "path": "FontSmoothing",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "axes",
+      "path": "InteractionOptions",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
       "variantId": "geoaxes",
       "path": "InteractionOptions",
       "releases": {
@@ -67,9 +81,23 @@
     },
     {
       "variantId": "polaraxes",
+      "path": "FontSmoothing",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "polaraxes",
       "path": "InteractionOptions",
       "releases": {
         "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "uiaxes",
+      "path": "FontSmoothing",
+      "releases": {
+        "before": "R2025a"
       }
     },
     {
@@ -84,6 +112,13 @@
       "path": "Interpreter",
       "releases": {
         "since": "R2024b"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "ShadowColor",
+      "releases": {
+        "before": "R2025a"
       }
     },
     {
@@ -108,6 +143,27 @@
       }
     },
     {
+      "variantId": "uifigure",
+      "path": "Theme",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
+      "variantId": "uifigure",
+      "path": "ThemeMode",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
+      "variantId": "uifigure",
+      "path": "ThemeChangedFcn",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
       "variantId": "uiknob-discrete",
       "path": "ValueIndex",
       "releases": {
@@ -119,6 +175,13 @@
       "path": "ValueIndex",
       "releases": {
         "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "ShadowColor",
+      "releases": {
+        "before": "R2025a"
       }
     },
     {
@@ -140,6 +203,20 @@
       "path": "StepMode",
       "releases": {
         "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "uislider-slider",
+      "path": "Step",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
+      "variantId": "uislider-slider",
+      "path": "StepMode",
+      "releases": {
+        "since": "R2025a"
       }
     },
     {
@@ -185,6 +262,13 @@
       }
     },
     {
+      "variantId": "uitable",
+      "path": "Extent",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
       "variantId": "uitogglebutton",
       "path": "Interpreter",
       "releases": {
@@ -192,5 +276,126 @@
       }
     }
   ],
-  "values": []
+  "values": [
+    {
+      "variantId": "uibuttongroup",
+      "path": "TitlePosition",
+      "value": "leftbottom",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "TitlePosition",
+      "value": "centerbottom",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "TitlePosition",
+      "value": "rightbottom",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "BorderType",
+      "value": "etchedin",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "BorderType",
+      "value": "etchedout",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "BorderType",
+      "value": "beveledin",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "BorderType",
+      "value": "beveledout",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uifigure",
+      "path": "WindowStyle",
+      "value": "docked",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "TitlePosition",
+      "value": "leftbottom",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "TitlePosition",
+      "value": "centerbottom",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "TitlePosition",
+      "value": "rightbottom",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "BorderType",
+      "value": "etchedin",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "BorderType",
+      "value": "etchedout",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "BorderType",
+      "value": "beveledin",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "BorderType",
+      "value": "beveledout",
+      "releases": {
+        "before": "R2025a"
+      }
+    }
+  ]
 }

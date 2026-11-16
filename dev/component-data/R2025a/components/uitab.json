@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "uitab",
   "factory": "uitab",
   "creationArguments": [],
@@ -111,7 +111,6 @@
       "categoryId": "titleandcolor",
       "order": 2,
       "summary": "Color used in front of the component background.",
-      "documentedDefault": "[0 0 0]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -153,6 +152,33 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
         }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0 0 0]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.container.tab.html",
+              "detail": "The R2025a page states no fixed default for ForegroundColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default ForegroundColor differs from [0 0 0]."
+            }
+          ]
+        }
       ]
     },
     {
@@ -160,7 +186,6 @@
       "categoryId": "titleandcolor",
       "order": 3,
       "summary": "Color behind the component content.",
-      "documentedDefault": "[0.94 0.94 0.94]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -201,6 +226,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.94 0.94 0.94]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.container.tab.html",
+              "detail": "The R2025a page states no fixed default for BackgroundColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default BackgroundColor differs from [0.94 0.94 0.94]."
+            }
+          ]
         }
       ]
     },
@@ -1180,7 +1232,6 @@
       "categoryId": "uifigurebasedappsonly",
       "order": 1,
       "summary": "Whether the container resizes its children automatically.",
-      "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -1217,6 +1268,23 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "'on'"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.container.tab.html",
+              "detail": "The R2025a page states no default for AutoResizeChildren; the R2024a page states 'on'."
+            }
+          ]
         }
       ]
     },

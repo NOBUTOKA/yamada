@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
-  "matlabRelease": "R2024b",
-  "inputSha256": "b143a8bb909178058ac14685d45789910dce3ad498b89fb570ca06ae43106bab",
+  "matlabRelease": "R2025a",
+  "inputSha256": "6506cd79106532180acbe734cb11eccef9e71abb4b27498a3da7829061c6fc89",
   "selectionRule": "Complete exact category surfaces with reuseCount >= 2. Candidate IDs are temporary until Step 9 assigns reviewed stable identifiers.",
   "candidates": [
     {
@@ -401,12 +401,12 @@
       ]
     },
     {
-      "candidateId": "candidate.colorandstyling.5870d83b7546",
+      "candidateId": "candidate.colorandstyling.89b6f48889dc",
       "categoryId": "colorandstyling",
       "categoryDisplayName": "Color and Styling",
       "sharingScope": "familyScoped",
       "scopeRationale": "Container-family styling.",
-      "capabilitySha256": "5870d83b75460ea22c628f3ffec9f62ec8bb175d6cff486024d8402b7d349e68",
+      "capabilitySha256": "89b6f48889dcd6ff5ff3f3d3e523732cb234cc008d364d220b950442b533c491",
       "propertyPaths": [
         "ForegroundColor",
         "BackgroundColor",
@@ -417,7 +417,7 @@
       "propertyCapabilitySha256": [
         "1f20a73685d8b7c51fdbcb7bcde9542d1721e5b74075e316c9af354d1c5c67eb",
         "e8b734da30592a79a518aa9a5c4ec7d60aff3724db7da860038d49c23b819905",
-        "9bdea621da73a8822718b45f290b71dc561aca440ccb26f6b89b4a06a4a33075",
+        "2d524c231eba714a85319f2acec224c83379a08d2c12a46df62b227ef7d02fe6",
         "c7fece741226739ab00a5932bc31a042edd40480e9eed1612076ff1f8ba6cbeb",
         "1adc3b1613da07cb1f0d7cb20e24a60d0155f35042ddfd29518e90e6c226005a"
       ],
@@ -467,28 +467,6 @@
       "documentedCategoryOrders": [
         7,
         8
-      ]
-    },
-    {
-      "candidateId": "candidate.figurebasedappsonly.645fce4ab8b4",
-      "categoryId": "figurebasedappsonly",
-      "categoryDisplayName": "figure -Based Apps Only",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Figure-app container surface, not a generic control capability.",
-      "capabilitySha256": "645fce4ab8b410306630d70b521d47095489c448cb5a09d2b97a96373de85cfd",
-      "propertyPaths": [
-        "ShadowColor"
-      ],
-      "propertyCapabilitySha256": [
-        "645fce4ab8b410306630d70b521d47095489c448cb5a09d2b97a96373de85cfd"
-      ],
-      "memberVariantIds": [
-        "uibuttongroup",
-        "uipanel"
-      ],
-      "reuseCount": 2,
-      "documentedCategoryOrders": [
-        11
       ]
     },
     {
@@ -639,68 +617,6 @@
       ]
     },
     {
-      "candidateId": "candidate.grids.2802b4ea8fdf",
-      "categoryId": "grids",
-      "categoryDisplayName": "Grids",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Axes-family grid settings.",
-      "capabilitySha256": "2802b4ea8fdf3946a79aa1c46779fea507de6046f176e3a042b3aa72e98eba15",
-      "propertyPaths": [
-        "XGrid",
-        "YGrid",
-        "ZGrid",
-        "Layer",
-        "GridLineStyle",
-        "GridLineWidth",
-        "GridLineWidthMode",
-        "GridColor",
-        "GridColorMode",
-        "GridAlpha",
-        "GridAlphaMode",
-        "XMinorGrid",
-        "YMinorGrid",
-        "ZMinorGrid",
-        "MinorGridLineStyle",
-        "MinorGridLineWidth",
-        "MinorGridLineWidthMode",
-        "MinorGridColor",
-        "MinorGridColorMode",
-        "MinorGridAlpha",
-        "MinorGridAlphaMode"
-      ],
-      "propertyCapabilitySha256": [
-        "1c542efa515c2fa96fe3c45e56f64ab3d36a6fac2964d549e73783efef08da99",
-        "4f9bd6c9cb7575db3f278c6415d59626175d69e5341958b4de720edf654e8360",
-        "ad6685d5e7f04777c04841965197e71efb2bab8ff2309ed97b59e32503af67d1",
-        "138d9a8ee3dbdd05df7b209c618df642ef004c0545fdf9c5e7070d76a94d5e02",
-        "7b69604d0fc71a59d8f3e43b393a45415751b87675f3a30537232f1e3dc81579",
-        "7efa59efda40fc37c6881a25b41e5fbdb29cc0acf60f79b1188961820d923e25",
-        "066fc56dc9885806634b174744db6b2374885952536b0751126b77dbc0dbe398",
-        "1f4b17991ee7c471caee6e84ffebd368e0c6263c82e420553b96f5b4c270dbe5",
-        "991f0084ca4eb6980c71e69dbb2982fa6a3eea25036edc1dd86578bb093a8894",
-        "235d06394eb53273a00b35e24ddc652bb34d621b2fbc2e91a12e2d3a370ea766",
-        "e464fbcf5dfb4ac40426d1868f31efeded29a51d3a8c8732624fea4dd441e362",
-        "4c59da1b5f08e3455a25ffaebff35c0a846cdf2eadd5a39c7b53eaa1e3c2577a",
-        "d8a29d9e0ef9462e73e079665a47f5d3ec67688070edb25be1c5e8c23fffffde",
-        "049cfd81f490c7cd37bc496b95e35597903903234823dcf8617f390aba0fd071",
-        "3e0ccaa510c663f0333d5a228ba121cf891192f0e30b171d55b140bbd4c44f81",
-        "f75ca32deded47d5ab652f7a8bd7a9526d48922dd478af2b3601f8319c4baf2f",
-        "3af402d2e2e8831ba83d63cf0ba68570d30c7d1afed52791723944447dc14ce7",
-        "b1568f97c7757dee9962f79dbf54fd94d8b7bb83d41be2f9ef07598a77f1aa01",
-        "01c5dd4d9f68f2d9ace24e6e12ab2667f99d1aaee8a8875ab6158031679e8b5f",
-        "c0eca4787ffeac0577dcc1c4ffd243cf394adcca72f81394abddd7b9ac30e1de",
-        "65b3a09c94cb0d05961dd8e3c82803a2c1c222ac18d87209e0564b8a752bea55"
-      ],
-      "memberVariantIds": [
-        "axes",
-        "uiaxes"
-      ],
-      "reuseCount": 2,
-      "documentedCategoryOrders": [
-        4
-      ]
-    },
-    {
       "candidateId": "candidate.identifiers.81d64e6e89a3",
       "categoryId": "identifiers",
       "categoryDisplayName": "Identifiers",
@@ -800,6 +716,42 @@
         9,
         14,
         15
+      ]
+    },
+    {
+      "candidateId": "candidate.interactivity.072eb36a6df5",
+      "categoryId": "interactivity",
+      "categoryDisplayName": "Interactivity",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+      "capabilitySha256": "072eb36a6df5dc85796efdaff5f0913fc57bae05a6dd0897297e0e2d4c718853",
+      "propertyPaths": [
+        "InteractionOptions",
+        "Toolbar",
+        "Interactions",
+        "Visible",
+        "CurrentPoint",
+        "ContextMenu",
+        "Selected",
+        "SelectionHighlight"
+      ],
+      "propertyCapabilitySha256": [
+        "37a8cc1204a48d7ed639c0d0937a965c6c6c06e20cd644933c3f5fe6276ecb8d",
+        "23d8c6c8bafeb9691266e5c885e930959023b07ec495e8f55526c5fd99835f24",
+        "e7179a314ff35deb0b2c4643bc2ed7b65b0d86afecffd943d2a63a4bd73e3529",
+        "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
+        "affcdcec0873db0f0c091498fc38ac8131f20b3664c182c4729c47b99b351faf",
+        "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b",
+        "8257201720e8a9827a10d1e45a4696d5ec3f081add77624da01d7ead2dc4ce83",
+        "16a5407a71c54944479f9c242122203118b677fa105c2d52b36bc12c4a3a9fcd"
+      ],
+      "memberVariantIds": [
+        "axes",
+        "geoaxes"
+      ],
+      "reuseCount": 2,
+      "documentedCategoryOrders": [
+        11
       ]
     },
     {
@@ -1370,78 +1322,6 @@
       ]
     },
     {
-      "candidateId": "candidate.rulers.f972bd40e6e1",
-      "categoryId": "rulers",
-      "categoryDisplayName": "Rulers",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Axes-family ruler settings.",
-      "capabilitySha256": "f972bd40e6e1ed7fc5a6360415f43bdae20ca0b9cd5d966eac81898dcb121c83",
-      "propertyPaths": [
-        "XLim",
-        "YLim",
-        "ZLim",
-        "XLimMode",
-        "YLimMode",
-        "ZLimMode",
-        "XLimitMethod",
-        "YLimitMethod",
-        "ZLimitMethod",
-        "XAxis",
-        "YAxis",
-        "ZAxis",
-        "XAxisLocation",
-        "YAxisLocation",
-        "XColor",
-        "YColor",
-        "ZColor",
-        "XColorMode",
-        "YColorMode",
-        "ZColorMode",
-        "XDir",
-        "YDir",
-        "ZDir",
-        "XScale",
-        "YScale",
-        "ZScale"
-      ],
-      "propertyCapabilitySha256": [
-        "a810a3c4d47443c4c2938e693f5e06ef5d9788e672f3f8c2e116d0cc6c907eba",
-        "2cf95aefa26abe0cc3c58ad9c4d52cf6e41d569c2cb7c81a83e727e0274968e0",
-        "c5e3c1db5f88f65477ba4deb1cee914838b86a8fce237322fbc7ebdbadf51762",
-        "48cae320f38a25016b123610ae16c54fedfa323023ff15765c64aa59d174cbb4",
-        "5441d17dc482b320329a3bca4567d49c9665a6781c3c8e3c52436ac290c25727",
-        "7a9493ceb4f5bda24fcd7a4a4ece52f71b5ad296f6a627471a4c9631a15683ae",
-        "9ddc6ee842940eefc18d1c68eb8a6e726d7073665c4bc012f9344b1ae5a91520",
-        "dfc1353ff4713fbae8416896d245ba5f853dcdee3f085fcf7aa0d942d5f2bb65",
-        "d7c9d5dccbab22451e45b1196c7b1ed140f5150c639c9378c5f909f18c6cff72",
-        "bef092aa973bd142d24ea874e82a4ff7508684665583ccfa8896208175c01864",
-        "52dc20414bed9668edbc44314efaacdf139084068cd9f242dc0c760c6ca82175",
-        "503b93cf2d4160c220721439241ce194b4e27e1d26d05087fce614f8745dbb67",
-        "7fdc5cb0a23e095148cb430ed53a892f13572ecb6d411e190c1abaae0f670ebf",
-        "2e25de000e92503214b96c706951465d257dd37cf1c66de6d31bd77e32f6ed4b",
-        "9d6539efcf856c2852cd237ee874e243b0481bc6eddee64864c71f844dd9bbbe",
-        "aeaf5af7a44ea2f35081686d98965e0f28b4fceba7336336dccfc37c65dce1ca",
-        "d096315e7dff1da7b2497bc0b385b899e933f9f4aacab2b1f6dfc55eecdb1806",
-        "7748250b106c931c015f945740ff270985416969aeedd029d1f471918c34f3e6",
-        "ff1d942530ac4c1c513341a70326d485b8d5d137b5d9a63c0b24937b1e9cae6c",
-        "b3b2460049a8a2bbc139bcb97dbe67eabe27b303fccf95fbde8bda7ce2a805d2",
-        "5bfb22f578b313dcf3ecb865d045bf8ec056e9603a3d5e7511cf8eaa909bcdc9",
-        "d0ed3fc613266c2f1ceeea9e1cdab861434aa4b1c2c2ba29f71919c822306928",
-        "ff5976c97a11523421ef88c5d0e0919b2f3367240831ac1b207f34d172e0422d",
-        "f9c87d4384e42826c6d557dba7047c0d71c263938cb9a2d4b0ca772f39e03697",
-        "2a4968655c9952699ce4490ea149abac8aa2e9ae881be20cede5a22fdf868194",
-        "310abd49eb362d6d7af7270dafbc6cd881849f6c11128e085304b76041100202"
-      ],
-      "memberVariantIds": [
-        "axes",
-        "uiaxes"
-      ],
-      "reuseCount": 2,
-      "documentedCategoryOrders": [
-        3
-      ]
-    },
-    {
       "candidateId": "candidate.switch.34b43cc5d8d8",
       "categoryId": "switch",
       "categoryDisplayName": "Switch",
@@ -1579,19 +1459,19 @@
       ]
     },
     {
-      "candidateId": "candidate.title.c1fe56e33eeb",
+      "candidateId": "candidate.title.9f32d60ae736",
       "categoryId": "title",
       "categoryDisplayName": "Title",
       "sharingScope": "familyScoped",
       "scopeRationale": "Container-family title settings.",
-      "capabilitySha256": "c1fe56e33eebb2b71efc7b1ec6743975386769a1a2613fa5c30773ed7a189bfe",
+      "capabilitySha256": "9f32d60ae7361bc977173cb99ec25183a04765fe0ea5e8477b854e65c70383b5",
       "propertyPaths": [
         "Title",
         "TitlePosition"
       ],
       "propertyCapabilitySha256": [
         "f563f33c89239ccb2145f9e6c6077065c59c8ab0fbc11a9c00b749c4f377b142",
-        "43dee7179309b2c1de2de1546de208393eea9b6469c03ef570d235e56a605f93"
+        "683600bce8d000bd268cc505b60c2f1b64c3796f75e8147ab373c2f4d8cba38f"
       ],
       "memberVariantIds": [
         "uibuttongroup",

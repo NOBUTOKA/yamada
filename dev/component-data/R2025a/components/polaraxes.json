@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "polaraxes",
   "factory": "polaraxes",
   "creationArguments": [],
@@ -605,7 +605,24 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
         }
-      ]
+      ],
+      "availability": {
+        "releases": {
+          "before": "R2025a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+            "detail": "R2025a: the GraphicsSmoothing and FontSmoothing properties have no effect."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+            "detail": "The R2025a page no longer documents FontSmoothing."
+          }
+        ]
+      }
     },
     {
       "path": "RTick",
@@ -1336,11 +1353,6 @@
       "order": 13,
       "summary": "Choice controlling theta zero location.",
       "documentedDefault": "'right'",
-      "documentedAcceptedValues": [
-        "'top'",
-        "'left'",
-        "'bottom'"
-      ],
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -1379,6 +1391,38 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "documentedAcceptedValues": [
+        "'top'",
+        "'left'",
+        "'bottom'",
+        "angle value"
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedAcceptedValues": [
+              "'top'",
+              "'left'",
+              "'bottom'"
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+              "detail": "The R2025a page adds an angle value, marked since R2025a, to the accepted ThetaZeroLocation values."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a lets ThetaZeroLocation of polar axes accept an angle."
+            }
+          ]
         }
       ]
     },
@@ -2068,7 +2112,6 @@
       "categoryId": "rulers",
       "order": 9,
       "summary": "Color used to draw the R axis.",
-      "documentedDefault": "[0.15 0.15 0.15]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -2121,6 +2164,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.15 0.15 0.15]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+              "detail": "The R2025a page states no fixed default for RColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default RColor differs from [0.15 0.15 0.15]."
+            }
+          ]
         }
       ]
     },
@@ -2197,7 +2267,6 @@
       "categoryId": "rulers",
       "order": 11,
       "summary": "Color used to draw the Theta axis.",
-      "documentedDefault": "[0.15 0.15 0.15]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -2250,6 +2319,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.15 0.15 0.15]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+              "detail": "The R2025a page states no fixed default for ThetaColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default ThetaColor differs from [0.15 0.15 0.15]."
+            }
+          ]
         }
       ]
     },
@@ -2662,7 +2758,6 @@
       "categoryId": "gridlines",
       "order": 5,
       "summary": "Color used for grid color.",
-      "documentedDefault": "[0.15 0.15 0.15]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -2715,6 +2810,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.15 0.15 0.15]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+              "detail": "The R2025a page states no fixed default for GridColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default GridColor differs from [0.15 0.15 0.15]."
+            }
+          ]
         }
       ]
     },
@@ -2791,7 +2913,6 @@
       "categoryId": "gridlines",
       "order": 7,
       "summary": "Numeric setting for grid alpha.",
-      "documentedDefault": "0.15",
       "documentedAcceptedValues": [
         "0 <= value <= 1"
       ],
@@ -2840,6 +2961,23 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "0.15"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+              "detail": "The R2025a page states no default for GridAlpha; the R2024a page states 0.15."
+            }
+          ]
         }
       ]
     },
@@ -3060,7 +3198,6 @@
       "categoryId": "gridlines",
       "order": 12,
       "summary": "Color used for minor grid color.",
-      "documentedDefault": "[0.1 0.1 0.1]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -3113,6 +3250,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.1 0.1 0.1]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+              "detail": "The R2025a page states no fixed default for MinorGridColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default MinorGridColor differs from [0.1 0.1 0.1]."
+            }
+          ]
         }
       ]
     },
@@ -3189,7 +3353,6 @@
       "categoryId": "gridlines",
       "order": 14,
       "summary": "Numeric setting for minor grid alpha.",
-      "documentedDefault": "0.25",
       "documentedAcceptedValues": [
         "0 <= value <= 1"
       ],
@@ -3238,6 +3401,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "0.25"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+              "detail": "The R2025a page states no fixed default for MinorGridAlpha."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default MinorGridAlpha differs from 0.25."
+            }
+          ]
         }
       ]
     },
@@ -3496,7 +3686,6 @@
       "categoryId": "multipleplots",
       "order": 1,
       "summary": "Sequence of colors selected for successive plots.",
-      "documentedDefault": "MATLAB default seven-color sequence",
       "documentedAcceptedValues": [
         "three-column matrix of RGB triplets"
       ],
@@ -3533,6 +3722,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "MATLAB default seven-color sequence"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+              "detail": "The R2025a page states no fixed default for ColorOrder."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default ColorOrder differs from MATLAB default seven-color sequence."
+            }
+          ]
         }
       ]
     },
@@ -4304,7 +4520,6 @@
       "categoryId": "boxstyling",
       "order": 1,
       "summary": "Color used by the component.",
-      "documentedDefault": "[1 1 1]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -4345,6 +4560,23 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[1 1 1]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.polaraxes-properties.html",
+              "detail": "The R2025a page states no default for Color; the R2024a page states [1 1 1]."
+            }
+          ]
         }
       ]
     },

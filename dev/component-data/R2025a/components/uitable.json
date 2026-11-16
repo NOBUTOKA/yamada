@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "uitable",
   "factory": "uitable",
   "creationArguments": [],
@@ -885,7 +885,6 @@
       "categoryId": "colorandstyling",
       "order": 1,
       "summary": "Color used in front of the component background.",
-      "documentedDefault": "[0 0 0]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -926,6 +925,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0 0 0]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.table.html",
+              "detail": "The R2025a page states no fixed default for ForegroundColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default ForegroundColor differs from [0 0 0]."
+            }
+          ]
         }
       ]
     },
@@ -2886,7 +2912,24 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
         }
-      ]
+      ],
+      "availability": {
+        "releases": {
+          "before": "R2025a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+            "detail": "R2025a: the table Extent property always returns [0 0 300 300] in pixels, is not recommended, and no longer appears in get output."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+            "detail": "Extent exists only as a hidden property, so the catalog does not offer it from R2025a."
+          }
+        ]
+      }
     }
   ]
 }

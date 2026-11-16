@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "uitoolbar",
   "factory": "uitoolbar",
   "creationArguments": [],
@@ -730,7 +730,6 @@
       "categoryId": "uifigurebasedappsonly",
       "order": 1,
       "summary": "Color behind the component content.",
-      "documentedDefault": "[0.9569 0.9569 0.9569]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -771,6 +770,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.9569 0.9569 0.9569]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.container.toolbar.html",
+              "detail": "The R2025a page states no fixed default for BackgroundColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default BackgroundColor differs from [0.9569 0.9569 0.9569]."
+            }
+          ]
         }
       ]
     }

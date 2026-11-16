@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "uipanel",
   "factory": "uipanel",
   "creationArguments": [],
@@ -127,13 +127,6 @@
       "order": 2,
       "summary": "Choice controlling title position.",
       "documentedDefault": "'lefttop'",
-      "documentedAcceptedValues": [
-        "'centertop'",
-        "'righttop'",
-        "'leftbottom'",
-        "'centerbottom'",
-        "'rightbottom'"
-      ],
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -150,6 +143,47 @@
           "leftbottom",
           "centerbottom",
           "rightbottom"
+        ],
+        "valueAvailability": [
+          {
+            "value": "leftbottom",
+            "releases": {
+              "before": "R2025a"
+            },
+            "evidence": [
+              {
+                "kind": "releaseNotes",
+                "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+                "detail": "R2025a displays a leftbottom title at the top; the documented positions are lefttop, centertop, and righttop."
+              }
+            ]
+          },
+          {
+            "value": "centerbottom",
+            "releases": {
+              "before": "R2025a"
+            },
+            "evidence": [
+              {
+                "kind": "releaseNotes",
+                "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+                "detail": "R2025a displays a centerbottom title at the top; the documented positions are lefttop, centertop, and righttop."
+              }
+            ]
+          },
+          {
+            "value": "rightbottom",
+            "releases": {
+              "before": "R2025a"
+            },
+            "evidence": [
+              {
+                "kind": "releaseNotes",
+                "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+                "detail": "R2025a displays a rightbottom title at the top; the documented positions are lefttop, centertop, and righttop."
+              }
+            ]
+          }
         ]
       },
       "affectsDisplay": true,
@@ -175,6 +209,33 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
         }
+      ],
+      "documentedAcceptedValues": [
+        "'centertop'",
+        "'righttop'"
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedAcceptedValues": [
+              "'centertop'",
+              "'righttop'",
+              "'leftbottom'",
+              "'centerbottom'",
+              "'rightbottom'"
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.container.panel.html",
+              "detail": "The R2025a page documents TitlePosition as lefttop (default), centertop, or righttop."
+            }
+          ]
+        }
       ]
     },
     {
@@ -182,7 +243,6 @@
       "categoryId": "colorandstyling",
       "order": 1,
       "summary": "Color used in front of the component background.",
-      "documentedDefault": "[0 0 0]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -223,6 +283,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0 0 0]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.container.panel.html",
+              "detail": "The R2025a page states no fixed default for ForegroundColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default ForegroundColor differs from [0 0 0]."
+            }
+          ]
         }
       ]
     },
@@ -231,7 +318,6 @@
       "categoryId": "colorandstyling",
       "order": 2,
       "summary": "Color behind the component content.",
-      "documentedDefault": "[0.94 0.94 0.94]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -273,6 +359,33 @@
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
         }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.94 0.94 0.94]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.container.panel.html",
+              "detail": "The R2025a page states no fixed default for BackgroundColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default BackgroundColor differs from [0.94 0.94 0.94]."
+            }
+          ]
+        }
       ]
     },
     {
@@ -280,14 +393,6 @@
       "categoryId": "colorandstyling",
       "order": 3,
       "summary": "Choice controlling border type.",
-      "documentedAcceptedValues": [
-        "'line'",
-        "'none'",
-        "'etchedin'",
-        "'etchedout'",
-        "'beveledin'",
-        "'beveledout'"
-      ],
       "valueContract": {
         "kind": "enum",
         "shape": "scalar",
@@ -304,6 +409,80 @@
           "etchedout",
           "beveledin",
           "beveledout"
+        ],
+        "valueAvailability": [
+          {
+            "value": "etchedin",
+            "releases": {
+              "before": "R2025a"
+            },
+            "evidence": [
+              {
+                "kind": "releaseNotes",
+                "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+                "detail": "R2025a replaces the etchedin border with a line border and warns when it is set."
+              },
+              {
+                "kind": "nativeObservation",
+                "source": "set(target, 'BorderType'), MATLAB 25.1.0.2973910 (R2025a) Update 1",
+                "detail": "The finite options of BorderType are none and line."
+              }
+            ]
+          },
+          {
+            "value": "etchedout",
+            "releases": {
+              "before": "R2025a"
+            },
+            "evidence": [
+              {
+                "kind": "releaseNotes",
+                "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+                "detail": "R2025a replaces the etchedout border with a line border and warns when it is set."
+              },
+              {
+                "kind": "nativeObservation",
+                "source": "set(target, 'BorderType'), MATLAB 25.1.0.2973910 (R2025a) Update 1",
+                "detail": "The finite options of BorderType are none and line."
+              }
+            ]
+          },
+          {
+            "value": "beveledin",
+            "releases": {
+              "before": "R2025a"
+            },
+            "evidence": [
+              {
+                "kind": "releaseNotes",
+                "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+                "detail": "R2025a replaces the beveledin border with a line border and warns when it is set."
+              },
+              {
+                "kind": "nativeObservation",
+                "source": "set(target, 'BorderType'), MATLAB 25.1.0.2973910 (R2025a) Update 1",
+                "detail": "The finite options of BorderType are none and line."
+              }
+            ]
+          },
+          {
+            "value": "beveledout",
+            "releases": {
+              "before": "R2025a"
+            },
+            "evidence": [
+              {
+                "kind": "releaseNotes",
+                "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+                "detail": "R2025a replaces the beveledout border with a line border and warns when it is set."
+              },
+              {
+                "kind": "nativeObservation",
+                "source": "set(target, 'BorderType'), MATLAB 25.1.0.2973910 (R2025a) Update 1",
+                "detail": "The finite options of BorderType are none and line."
+              }
+            ]
+          }
         ]
       },
       "affectsDisplay": true,
@@ -328,6 +507,40 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "documentedDefault": "'line'",
+      "documentedAcceptedValues": [
+        "'none'"
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": null,
+            "documentedAcceptedValues": [
+              "'line'",
+              "'none'",
+              "'etchedin'",
+              "'etchedout'",
+              "'beveledin'",
+              "'beveledout'"
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.container.panel.html",
+              "detail": "The R2025a page documents BorderType as line (default) or none."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a renders etchedin, etchedout, beveledin, and beveledout borders as a line border with a warning, and BorderType defaults to line."
+            }
+          ]
         }
       ]
     },
@@ -1851,7 +2064,6 @@
       "categoryId": "uifigurebasedappsonly",
       "order": 4,
       "summary": "Whether the container resizes its children automatically.",
-      "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -1888,6 +2100,23 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "'on'"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.container.panel.html",
+              "detail": "The R2025a page states no default for AutoResizeChildren; the R2024a page states 'on'."
+            }
+          ]
         }
       ]
     },
@@ -1986,7 +2215,29 @@
       ],
       "runtimeObservations": [
         "R2024a UIFigure-based Safe Preview rejects the ShadowColor setter; the source setting remains preserved without native preview assignment."
-      ]
+      ],
+      "availability": {
+        "releases": {
+          "before": "R2025a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+            "detail": "R2025a: ShadowColor of panels and button groups has no effect, warns when set, and no longer appears in get output; use BorderColor."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.container.panel.html",
+            "detail": "The R2025a page no longer documents ShadowColor."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+            "detail": "ShadowColor exists only as a hidden property, so the catalog does not offer it from R2025a."
+          }
+        ]
+      }
     }
   ]
 }

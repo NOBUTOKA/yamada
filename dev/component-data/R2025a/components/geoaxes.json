@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "geoaxes",
   "factory": "geoaxes",
   "creationArguments": [],
@@ -100,7 +100,6 @@
       "categoryId": "maps",
       "order": 1,
       "summary": "Map background selected for geographic display.",
-      "documentedDefault": "'streets-light'",
       "documentedAcceptedValues": [
         "'streets-dark'",
         "'streets'",
@@ -160,6 +159,23 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "'streets-light'"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+              "detail": "The R2025a page states no default for Basemap; the R2024a page states 'streets-light'."
+            }
+          ]
         }
       ]
     },
@@ -1349,7 +1365,6 @@
       "categoryId": "rulers",
       "order": 3,
       "summary": "Color used for axis color.",
-      "documentedDefault": "[0.1500 0.1500 0.1500]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -1389,6 +1404,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.1500 0.1500 0.1500]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+              "detail": "The R2025a page states no fixed default for AxisColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default AxisColor differs from [0.1500 0.1500 0.1500]."
+            }
+          ]
         }
       ]
     },
@@ -1496,7 +1538,6 @@
       "categoryId": "grids",
       "order": 3,
       "summary": "Color used for grid color.",
-      "documentedDefault": "[0.15 0.15 0.15]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -1549,6 +1590,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0.15 0.15 0.15]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+              "detail": "The R2025a page states no fixed default for GridColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default GridColor differs from [0.15 0.15 0.15]."
+            }
+          ]
         }
       ]
     },
@@ -2018,7 +2086,6 @@
       "categoryId": "multipleplots",
       "order": 1,
       "summary": "Sequence of colors selected for successive plots.",
-      "documentedDefault": "MATLAB default seven-color sequence",
       "documentedAcceptedValues": [
         "three-column matrix of RGB triplets"
       ],
@@ -2055,6 +2122,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "MATLAB default seven-color sequence"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+              "detail": "The R2025a page states no fixed default for ColorOrder."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default ColorOrder differs from MATLAB default seven-color sequence."
+            }
+          ]
         }
       ]
     },
@@ -2826,7 +2920,6 @@
       "categoryId": "boxstyling",
       "order": 1,
       "summary": "Color used by the component.",
-      "documentedDefault": "[1 1 1]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -2867,6 +2960,23 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[1 1 1]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+              "detail": "The R2025a page states no default for Color; the R2024a page states [1 1 1]."
+            }
+          ]
         }
       ]
     },

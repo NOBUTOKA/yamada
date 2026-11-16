@@ -62,7 +62,7 @@ try {
     Assert-Condition ($width.application.effectPolicy -ceq 'axisWidth') 'Width follower semantics were lost.'
     Assert-Condition (($widthMode.application.applyAfter -join ',') -ceq 'GridLineWidthMode,MinorGridLineWidth') 'Final width mode ordering was lost.'
     Assert-Condition ($width.application.defaultLiteral -ceq '0.5') 'The audited width seed was lost.'
-    Assert-Condition ($color.application.effectPolicy -ceq 'modeFlag') 'Stored color semantics were confused with computed auto values.'
+    Assert-Condition ($color.application.effectPolicy -cin @('modeFlag', 'setterModeFlag')) 'Stored color semantics were confused with computed auto values.'
     $geographic = Get-Content -LiteralPath (Join-Path $releaseRoot 'components/geoaxes.json') -Raw | ConvertFrom-Json
     $direction = $geographic.properties | Where-Object path -CEQ 'TickDir'
     Assert-Condition ($null -eq $direction.PSObject.Properties['application'] -or

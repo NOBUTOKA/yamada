@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://yamada.dev/schemas/component-data/R2024b/component.schema.json",
-  "title": "yamada R2024b component development ledger",
+  "$id": "https://yamada.dev/schemas/component-data/R2025a/component.schema.json",
+  "title": "yamada R2025a component development ledger",
   "description": "Development-only record of public MATLAB API facts and project audit decisions. Schema version 3 represents one concrete component variant per file. It is not the runtime component catalog and does not authorize editing or Safe Preview application.",
   "type": "object",
   "additionalProperties": false,
@@ -21,7 +21,7 @@
       "const": 3
     },
     "matlabRelease": {
-      "const": "R2024b"
+      "const": "R2025a"
     },
     "id": {
       "description": "Stable identifier for this concrete component variant, independent of its MATLAB factory name.",
@@ -573,6 +573,7 @@
             "tickMode",
             "valueMode",
             "modeFlag",
+            "setterModeFlag",
             "axisWidth",
             "positionAlias",
             "squarePositionAlias",

@@ -1126,6 +1126,12 @@
           "reason": "Setter interactions have not been reviewed; no independent effective state is asserted."
         },
         {
+          "path": "InteractionOptions",
+          "status": "unknown",
+          "affectedPaths": [],
+          "reason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+        },
+        {
           "path": "Visible",
           "status": "independent",
           "affectedPaths": [],
@@ -5620,6 +5626,24 @@
           "reason": "Setter interactions have not been reviewed; no independent effective state is asserted."
         },
         {
+          "path": "Theme",
+          "status": "unknown",
+          "affectedPaths": [],
+          "reason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+        },
+        {
+          "path": "ThemeMode",
+          "status": "unknown",
+          "affectedPaths": [],
+          "reason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+        },
+        {
+          "path": "ThemeChangedFcn",
+          "status": "independent",
+          "affectedPaths": [],
+          "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+        },
+        {
           "path": "Position",
           "status": "modeled",
           "affectedPaths": [],
@@ -9281,6 +9305,18 @@
           "status": "independent",
           "affectedPaths": [],
           "reason": "The stored orientation is a documented enum. A later orientation write invalidates prior slider geometry."
+        },
+        {
+          "path": "Step",
+          "status": "independent",
+          "affectedPaths": [],
+          "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+        },
+        {
+          "path": "StepMode",
+          "status": "independent",
+          "affectedPaths": [],
+          "reason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
         },
         {
           "path": "MajorTicks",

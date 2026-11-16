@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "uitabgroup",
   "factory": "uitabgroup",
   "creationArguments": [],
@@ -1241,7 +1241,6 @@
       "categoryId": "uifigurebasedappsonly",
       "order": 2,
       "summary": "Whether the container resizes its children automatically.",
-      "documentedDefault": "'on'",
       "documentedAcceptedValues": [
         "on/off logical value"
       ],
@@ -1278,6 +1277,23 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "'on'"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.container.tabgroup.html",
+              "detail": "The R2025a page states no default for AutoResizeChildren; the R2024a page states 'on'."
+            }
+          ]
         }
       ]
     },

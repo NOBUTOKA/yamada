@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
-  "matlabRelease": "R2024b",
-  "inputSha256": "b143a8bb909178058ac14685d45789910dce3ad498b89fb570ca06ae43106bab",
+  "matlabRelease": "R2025a",
+  "inputSha256": "6506cd79106532180acbe734cb11eccef9e71abb4b27498a3da7829061c6fc89",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.5d70f413af73",
@@ -1051,12 +1051,12 @@
       ]
     },
     {
-      "candidateId": "candidate.colorandstyling.5870d83b7546",
+      "candidateId": "candidate.colorandstyling.89b6f48889dc",
       "categoryId": "colorandstyling",
       "categoryDisplayName": "Color and Styling",
       "sharingScope": "familyScoped",
       "scopeRationale": "Container-family styling.",
-      "capabilitySha256": "5870d83b75460ea22c628f3ffec9f62ec8bb175d6cff486024d8402b7d349e68",
+      "capabilitySha256": "89b6f48889dcd6ff5ff3f3d3e523732cb234cc008d364d220b950442b533c491",
       "propertyPaths": [
         "ForegroundColor",
         "BackgroundColor",
@@ -1067,7 +1067,7 @@
       "propertyCapabilitySha256": [
         "1f20a73685d8b7c51fdbcb7bcde9542d1721e5b74075e316c9af354d1c5c67eb",
         "e8b734da30592a79a518aa9a5c4ec7d60aff3724db7da860038d49c23b819905",
-        "9bdea621da73a8822718b45f290b71dc561aca440ccb26f6b89b4a06a4a33075",
+        "2d524c231eba714a85319f2acec224c83379a08d2c12a46df62b227ef7d02fe6",
         "c7fece741226739ab00a5932bc31a042edd40480e9eed1612076ff1f8ba6cbeb",
         "1adc3b1613da07cb1f0d7cb20e24a60d0155f35042ddfd29518e90e6c226005a"
       ],
@@ -1187,18 +1187,20 @@
       ]
     },
     {
-      "candidateId": "candidate.commoncallbacks.419c5d38a0ae",
+      "candidateId": "candidate.commoncallbacks.52c134756569",
       "categoryId": "commoncallbacks",
       "categoryDisplayName": "Common Callbacks",
       "sharingScope": "variantLocal",
       "scopeRationale": "uifigure-specific callback surface.",
-      "capabilitySha256": "419c5d38a0ae0fd49b96f21f4cb9d4b9e142f7b9b49098468c495746eaf96d58",
+      "capabilitySha256": "52c1347565697493848b06f6ed33637914aeea100df7568fa487bae300837458",
       "propertyPaths": [
+        "ThemeChangedFcn",
         "ButtonDownFcn",
         "CreateFcn",
         "DeleteFcn"
       ],
       "propertyCapabilitySha256": [
+        "260f4ca3b35d9d5f6ada2834f3210466e634fd8d1843a2bace61d13d54ae3875",
         "6f75ddefe4b401994dbc53caed6f5603c38cc0e979fbeb3ba2bb6a94615808ba",
         "85ba7dbc3e55e72229f042c9a2bca4a63e28d99905967cda4e88b9f78847dec4",
         "43a5866d07f52475e19f0b53d46ee20ee532052cf58b807684ea2ef8c3dbc15f"
@@ -1269,49 +1271,6 @@
       "reuseCount": 1,
       "documentedCategoryOrders": [
         1
-      ]
-    },
-    {
-      "candidateId": "candidate.figurebasedappsonly.645fce4ab8b4",
-      "categoryId": "figurebasedappsonly",
-      "categoryDisplayName": "figure -Based Apps Only",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Figure-app container surface, not a generic control capability.",
-      "capabilitySha256": "645fce4ab8b410306630d70b521d47095489c448cb5a09d2b97a96373de85cfd",
-      "propertyPaths": [
-        "ShadowColor"
-      ],
-      "propertyCapabilitySha256": [
-        "645fce4ab8b410306630d70b521d47095489c448cb5a09d2b97a96373de85cfd"
-      ],
-      "memberVariantIds": [
-        "uibuttongroup",
-        "uipanel"
-      ],
-      "reuseCount": 2,
-      "documentedCategoryOrders": [
-        11
-      ]
-    },
-    {
-      "candidateId": "candidate.figurebasedappsonly.c0102fd28ff1",
-      "categoryId": "figurebasedappsonly",
-      "categoryDisplayName": "figure -Based Apps Only",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Figure-app container surface, not a generic control capability.",
-      "capabilitySha256": "c0102fd28ff12ddb6a0970ccef414edc59e43444020172446e1084de19353886",
-      "propertyPaths": [
-        "Extent"
-      ],
-      "propertyCapabilitySha256": [
-        "c0102fd28ff12ddb6a0970ccef414edc59e43444020172446e1084de19353886"
-      ],
-      "memberVariantIds": [
-        "uitable"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        11
       ]
     },
     {
@@ -1457,45 +1416,6 @@
       ]
     },
     {
-      "candidateId": "candidate.font.2787583dcef7",
-      "categoryId": "font",
-      "categoryDisplayName": "Font",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "2787583dcef7bb1de45c6442ffcaa4f866b0626bfde4362ed5ee688d0758f8c4",
-      "propertyPaths": [
-        "FontName",
-        "FontSize",
-        "FontSizeMode",
-        "FontWeight",
-        "FontAngle",
-        "TitleFontSizeMultiplier",
-        "TitleFontWeight",
-        "SubtitleFontWeight",
-        "FontUnits",
-        "FontSmoothing"
-      ],
-      "propertyCapabilitySha256": [
-        "db27a98ecd7f4b36bb32b39bb70162c4d8107746e281397f28ce447733012d70",
-        "4a0fa0ca0129d07206e64f3d5e84045a45cf16d389e39b23fdfd668043fa442a",
-        "c5dc829802b8d70355ab831bbcb08466414b9fd6cba2a4da0e0cb8f8b819a8a5",
-        "7ce92e79a0f0b5ee20be608010ba6548645dc8df56ae9d9be553f2a3a66ef0e7",
-        "a49975f64b8485e7325f1121afb218acc213fb1e234e044182e5642fc10e1093",
-        "758241ad684d5e4bd63bd2a3faebb2e206d98f692eb07130ca51c6a14816c82a",
-        "81e58a09d4b96de98e0898917d27d59ecfa269f5897ca81c9d7de7b16a183f15",
-        "d8d154c6dcac14d1c808932965f18eb5522ac50700bddfd9d1ab4e976e4b944d",
-        "3f60327298c8739a964575f944af47d784f0ea5fe1c9dedd34ff3ed7dc221616",
-        "c59428f867b46701b5b5c3dc44fbd03b9661d677e2c6d0e180edf546199799cd"
-      ],
-      "memberVariantIds": [
-        "polaraxes"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        1
-      ]
-    },
-    {
       "candidateId": "candidate.font.2b0481720736",
       "categoryId": "font",
       "categoryDisplayName": "Font",
@@ -1525,12 +1445,12 @@
       ]
     },
     {
-      "candidateId": "candidate.font.3711015504c2",
+      "candidateId": "candidate.font.3ce7b224dc4c",
       "categoryId": "font",
       "categoryDisplayName": "Font",
       "sharingScope": "familyScoped",
       "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "3711015504c219ce643fd7c3d43dad4900361d7546a8b2694442df139322678a",
+      "capabilitySha256": "3ce7b224dc4cfe5865494db5cf897535fa07941461b2fcd07f6954ec5b6dfc34",
       "propertyPaths": [
         "FontName",
         "FontWeight",
@@ -1541,8 +1461,7 @@
         "TitleFontSizeMultiplier",
         "TitleFontWeight",
         "SubtitleFontWeight",
-        "FontUnits",
-        "FontSmoothing"
+        "FontUnits"
       ],
       "propertyCapabilitySha256": [
         "db27a98ecd7f4b36bb32b39bb70162c4d8107746e281397f28ce447733012d70",
@@ -1554,8 +1473,7 @@
         "758241ad684d5e4bd63bd2a3faebb2e206d98f692eb07130ca51c6a14816c82a",
         "81e58a09d4b96de98e0898917d27d59ecfa269f5897ca81c9d7de7b16a183f15",
         "d8d154c6dcac14d1c808932965f18eb5522ac50700bddfd9d1ab4e976e4b944d",
-        "3f60327298c8739a964575f944af47d784f0ea5fe1c9dedd34ff3ed7dc221616",
-        "c59428f867b46701b5b5c3dc44fbd03b9661d677e2c6d0e180edf546199799cd"
+        "3f60327298c8739a964575f944af47d784f0ea5fe1c9dedd34ff3ed7dc221616"
       ],
       "memberVariantIds": [
         "axes"
@@ -1566,12 +1484,12 @@
       ]
     },
     {
-      "candidateId": "candidate.font.49d6b24b20b8",
+      "candidateId": "candidate.font.4f19f5a459d3",
       "categoryId": "font",
       "categoryDisplayName": "Font",
       "sharingScope": "familyScoped",
       "scopeRationale": "Font capabilities vary substantially by component family.",
-      "capabilitySha256": "49d6b24b20b8bfb55d809d25ed3cbb9244f493cc40f97153f50d84a8dbf4446d",
+      "capabilitySha256": "4f19f5a459d32ba7f375785422fbcbac08669875e0c54a38ca92a58943d4f444",
       "propertyPaths": [
         "FontName",
         "FontSize",
@@ -1582,8 +1500,7 @@
         "TitleFontSizeMultiplier",
         "TitleFontWeight",
         "SubtitleFontWeight",
-        "FontUnits",
-        "FontSmoothing"
+        "FontUnits"
       ],
       "propertyCapabilitySha256": [
         "db27a98ecd7f4b36bb32b39bb70162c4d8107746e281397f28ce447733012d70",
@@ -1595,8 +1512,7 @@
         "758241ad684d5e4bd63bd2a3faebb2e206d98f692eb07130ca51c6a14816c82a",
         "81e58a09d4b96de98e0898917d27d59ecfa269f5897ca81c9d7de7b16a183f15",
         "d8d154c6dcac14d1c808932965f18eb5522ac50700bddfd9d1ab4e976e4b944d",
-        "d043ea590b99e595061342226975293534fa25292ea1ee8a8aadaa847d810565",
-        "6a99e8c326c499c7e6579ad1378b54dc718a6b0406ac07c1608c464a82918e76"
+        "d043ea590b99e595061342226975293534fa25292ea1ee8a8aadaa847d810565"
       ],
       "memberVariantIds": [
         "uiaxes"
@@ -1643,6 +1559,43 @@
       "reuseCount": 1,
       "documentedCategoryOrders": [
         2
+      ]
+    },
+    {
+      "candidateId": "candidate.font.be98e17983a8",
+      "categoryId": "font",
+      "categoryDisplayName": "Font",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Font capabilities vary substantially by component family.",
+      "capabilitySha256": "be98e17983a8018a7f84f60271a964944d2d3ec44066e62c7eb9a5aa9131ba65",
+      "propertyPaths": [
+        "FontName",
+        "FontSize",
+        "FontSizeMode",
+        "FontWeight",
+        "FontAngle",
+        "TitleFontSizeMultiplier",
+        "TitleFontWeight",
+        "SubtitleFontWeight",
+        "FontUnits"
+      ],
+      "propertyCapabilitySha256": [
+        "db27a98ecd7f4b36bb32b39bb70162c4d8107746e281397f28ce447733012d70",
+        "4a0fa0ca0129d07206e64f3d5e84045a45cf16d389e39b23fdfd668043fa442a",
+        "c5dc829802b8d70355ab831bbcb08466414b9fd6cba2a4da0e0cb8f8b819a8a5",
+        "7ce92e79a0f0b5ee20be608010ba6548645dc8df56ae9d9be553f2a3a66ef0e7",
+        "a49975f64b8485e7325f1121afb218acc213fb1e234e044182e5642fc10e1093",
+        "758241ad684d5e4bd63bd2a3faebb2e206d98f692eb07130ca51c6a14816c82a",
+        "81e58a09d4b96de98e0898917d27d59ecfa269f5897ca81c9d7de7b16a183f15",
+        "d8d154c6dcac14d1c808932965f18eb5522ac50700bddfd9d1ab4e976e4b944d",
+        "3f60327298c8739a964575f944af47d784f0ea5fe1c9dedd34ff3ed7dc221616"
+      ],
+      "memberVariantIds": [
+        "polaraxes"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        1
       ]
     },
     {
@@ -1964,10 +1917,9 @@
         "65b3a09c94cb0d05961dd8e3c82803a2c1c222ac18d87209e0564b8a752bea55"
       ],
       "memberVariantIds": [
-        "axes",
-        "uiaxes"
+        "axes"
       ],
-      "reuseCount": 2,
+      "reuseCount": 1,
       "documentedCategoryOrders": [
         4
       ]
@@ -2001,6 +1953,67 @@
       "reuseCount": 1,
       "documentedCategoryOrders": [
         5
+      ]
+    },
+    {
+      "candidateId": "candidate.grids.e22f5833c088",
+      "categoryId": "grids",
+      "categoryDisplayName": "Grids",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Axes-family grid settings.",
+      "capabilitySha256": "e22f5833c0880c58176dcd3366d62f5e03f7807c9f45cccebeaf754cf8a3146b",
+      "propertyPaths": [
+        "XGrid",
+        "YGrid",
+        "ZGrid",
+        "Layer",
+        "GridLineStyle",
+        "GridLineWidth",
+        "GridLineWidthMode",
+        "GridColor",
+        "GridColorMode",
+        "GridAlpha",
+        "GridAlphaMode",
+        "XMinorGrid",
+        "YMinorGrid",
+        "ZMinorGrid",
+        "MinorGridLineStyle",
+        "MinorGridLineWidth",
+        "MinorGridLineWidthMode",
+        "MinorGridColor",
+        "MinorGridColorMode",
+        "MinorGridAlpha",
+        "MinorGridAlphaMode"
+      ],
+      "propertyCapabilitySha256": [
+        "1c542efa515c2fa96fe3c45e56f64ab3d36a6fac2964d549e73783efef08da99",
+        "4f9bd6c9cb7575db3f278c6415d59626175d69e5341958b4de720edf654e8360",
+        "ad6685d5e7f04777c04841965197e71efb2bab8ff2309ed97b59e32503af67d1",
+        "138d9a8ee3dbdd05df7b209c618df642ef004c0545fdf9c5e7070d76a94d5e02",
+        "7b69604d0fc71a59d8f3e43b393a45415751b87675f3a30537232f1e3dc81579",
+        "7efa59efda40fc37c6881a25b41e5fbdb29cc0acf60f79b1188961820d923e25",
+        "066fc56dc9885806634b174744db6b2374885952536b0751126b77dbc0dbe398",
+        "1f5cf692805e0e741cc5d92aac89b24b3721a7304401f8c558cf654712e78ce8",
+        "991f0084ca4eb6980c71e69dbb2982fa6a3eea25036edc1dd86578bb093a8894",
+        "6929bf99183a59b0474aa81c99c96c7be7359c9dd0d08aa6562cfbfeae02931f",
+        "e464fbcf5dfb4ac40426d1868f31efeded29a51d3a8c8732624fea4dd441e362",
+        "4c59da1b5f08e3455a25ffaebff35c0a846cdf2eadd5a39c7b53eaa1e3c2577a",
+        "d8a29d9e0ef9462e73e079665a47f5d3ec67688070edb25be1c5e8c23fffffde",
+        "049cfd81f490c7cd37bc496b95e35597903903234823dcf8617f390aba0fd071",
+        "3e0ccaa510c663f0333d5a228ba121cf891192f0e30b171d55b140bbd4c44f81",
+        "f75ca32deded47d5ab652f7a8bd7a9526d48922dd478af2b3601f8319c4baf2f",
+        "3af402d2e2e8831ba83d63cf0ba68570d30c7d1afed52791723944447dc14ce7",
+        "5e8466db2022f3850fcdd8c9e19b10f6d8d4b9c5f8bc04a595b67b6f22a48646",
+        "01c5dd4d9f68f2d9ace24e6e12ab2667f99d1aaee8a8875ab6158031679e8b5f",
+        "94551f0c72e3c1922d47e3f97eb6ccfb08a213625009d357f30f65f42280b876",
+        "65b3a09c94cb0d05961dd8e3c82803a2c1c222ac18d87209e0564b8a752bea55"
+      ],
+      "memberVariantIds": [
+        "uiaxes"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        4
       ]
     },
     {
@@ -2245,9 +2258,10 @@
         "16a5407a71c54944479f9c242122203118b677fa105c2d52b36bc12c4a3a9fcd"
       ],
       "memberVariantIds": [
+        "axes",
         "geoaxes"
       ],
-      "reuseCount": 1,
+      "reuseCount": 2,
       "documentedCategoryOrders": [
         11
       ]
@@ -2302,39 +2316,6 @@
       "reuseCount": 1,
       "documentedCategoryOrders": [
         3
-      ]
-    },
-    {
-      "candidateId": "candidate.interactivity.1d3f5363964a",
-      "categoryId": "interactivity",
-      "categoryDisplayName": "Interactivity",
-      "sharingScope": "crossCutting",
-      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "1d3f5363964a72433bd94d749eff25ba46ae240f498894bca0b0f01901121fa4",
-      "propertyPaths": [
-        "Toolbar",
-        "Interactions",
-        "Visible",
-        "CurrentPoint",
-        "ContextMenu",
-        "Selected",
-        "SelectionHighlight"
-      ],
-      "propertyCapabilitySha256": [
-        "23d8c6c8bafeb9691266e5c885e930959023b07ec495e8f55526c5fd99835f24",
-        "e7179a314ff35deb0b2c4643bc2ed7b65b0d86afecffd943d2a63a4bd73e3529",
-        "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
-        "affcdcec0873db0f0c091498fc38ac8131f20b3664c182c4729c47b99b351faf",
-        "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b",
-        "8257201720e8a9827a10d1e45a4696d5ec3f081add77624da01d7ead2dc4ce83",
-        "16a5407a71c54944479f9c242122203118b677fa105c2d52b36bc12c4a3a9fcd"
-      ],
-      "memberVariantIds": [
-        "axes"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        11
       ]
     },
     {
@@ -4342,6 +4323,77 @@
       ]
     },
     {
+      "candidateId": "candidate.rulers.df2549e11297",
+      "categoryId": "rulers",
+      "categoryDisplayName": "Rulers",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Axes-family ruler settings.",
+      "capabilitySha256": "df2549e11297fbab58f7a8e2bee06acc3f4f47e608464c0ff6f9f5ae372bc7a0",
+      "propertyPaths": [
+        "XLim",
+        "YLim",
+        "ZLim",
+        "XLimMode",
+        "YLimMode",
+        "ZLimMode",
+        "XLimitMethod",
+        "YLimitMethod",
+        "ZLimitMethod",
+        "XAxis",
+        "YAxis",
+        "ZAxis",
+        "XAxisLocation",
+        "YAxisLocation",
+        "XColor",
+        "YColor",
+        "ZColor",
+        "XColorMode",
+        "YColorMode",
+        "ZColorMode",
+        "XDir",
+        "YDir",
+        "ZDir",
+        "XScale",
+        "YScale",
+        "ZScale"
+      ],
+      "propertyCapabilitySha256": [
+        "a810a3c4d47443c4c2938e693f5e06ef5d9788e672f3f8c2e116d0cc6c907eba",
+        "2cf95aefa26abe0cc3c58ad9c4d52cf6e41d569c2cb7c81a83e727e0274968e0",
+        "c5e3c1db5f88f65477ba4deb1cee914838b86a8fce237322fbc7ebdbadf51762",
+        "48cae320f38a25016b123610ae16c54fedfa323023ff15765c64aa59d174cbb4",
+        "5441d17dc482b320329a3bca4567d49c9665a6781c3c8e3c52436ac290c25727",
+        "7a9493ceb4f5bda24fcd7a4a4ece52f71b5ad296f6a627471a4c9631a15683ae",
+        "9ddc6ee842940eefc18d1c68eb8a6e726d7073665c4bc012f9344b1ae5a91520",
+        "dfc1353ff4713fbae8416896d245ba5f853dcdee3f085fcf7aa0d942d5f2bb65",
+        "d7c9d5dccbab22451e45b1196c7b1ed140f5150c639c9378c5f909f18c6cff72",
+        "bef092aa973bd142d24ea874e82a4ff7508684665583ccfa8896208175c01864",
+        "52dc20414bed9668edbc44314efaacdf139084068cd9f242dc0c760c6ca82175",
+        "503b93cf2d4160c220721439241ce194b4e27e1d26d05087fce614f8745dbb67",
+        "7fdc5cb0a23e095148cb430ed53a892f13572ecb6d411e190c1abaae0f670ebf",
+        "2e25de000e92503214b96c706951465d257dd37cf1c66de6d31bd77e32f6ed4b",
+        "a8dc1ac8aeacbe099fd60e1a9c367d23b5d8e4c079a2158dfe08be261c0a5ce7",
+        "93cd5b599c407c64e6795f307b0e00c02c013d6d44786516609c86c5b562415a",
+        "45805f04effd51e7998e0408c527fded473cf2fbc36e58e737afc9fb517f550d",
+        "7748250b106c931c015f945740ff270985416969aeedd029d1f471918c34f3e6",
+        "ff1d942530ac4c1c513341a70326d485b8d5d137b5d9a63c0b24937b1e9cae6c",
+        "b3b2460049a8a2bbc139bcb97dbe67eabe27b303fccf95fbde8bda7ce2a805d2",
+        "5bfb22f578b313dcf3ecb865d045bf8ec056e9603a3d5e7511cf8eaa909bcdc9",
+        "d0ed3fc613266c2f1ceeea9e1cdab861434aa4b1c2c2ba29f71919c822306928",
+        "ff5976c97a11523421ef88c5d0e0919b2f3367240831ac1b207f34d172e0422d",
+        "f9c87d4384e42826c6d557dba7047c0d71c263938cb9a2d4b0ca772f39e03697",
+        "2a4968655c9952699ce4490ea149abac8aa2e9ae881be20cede5a22fdf868194",
+        "310abd49eb362d6d7af7270dafbc6cd881849f6c11128e085304b76041100202"
+      ],
+      "memberVariantIds": [
+        "uiaxes"
+      ],
+      "reuseCount": 1,
+      "documentedCategoryOrders": [
+        3
+      ]
+    },
+    {
       "candidateId": "candidate.rulers.e6f3d7cc9459",
       "categoryId": "rulers",
       "categoryDisplayName": "Rulers",
@@ -4454,30 +4506,33 @@
         "310abd49eb362d6d7af7270dafbc6cd881849f6c11128e085304b76041100202"
       ],
       "memberVariantIds": [
-        "axes",
-        "uiaxes"
+        "axes"
       ],
-      "reuseCount": 2,
+      "reuseCount": 1,
       "documentedCategoryOrders": [
         3
       ]
     },
     {
-      "candidateId": "candidate.slider.d2e72a121399",
+      "candidateId": "candidate.slider.4fa051864cad",
       "categoryId": "slider",
       "categoryDisplayName": "Slider",
       "sharingScope": "familyScoped",
       "scopeRationale": "Slider-style and range settings.",
-      "capabilitySha256": "d2e72a121399b6c79f36c710f5a0cc89929d1d5a39f83518fba65d79b8da0d71",
+      "capabilitySha256": "4fa051864cade1e2aa19d306eca14cf2af77d5135736e289e466f2e6a8c70ba2",
       "propertyPaths": [
         "Value",
         "Limits",
-        "Orientation"
+        "Orientation",
+        "Step",
+        "StepMode"
       ],
       "propertyCapabilitySha256": [
         "bff4fcee9f15bce8465dd3522bff57de0236e588dae83d0c629895030e23339c",
         "2185437bdc12f0fc1ee99f57493cb0349bd74fb9c1c278c78a0407909936ee89",
-        "033ddc17ba7405fa542a952e6413ed3111dd1c0b8028d0a07ec7525ee774b1f4"
+        "033ddc17ba7405fa542a952e6413ed3111dd1c0b8028d0a07ec7525ee774b1f4",
+        "5eeb362c8f5aaeb079c2b3e0d58c4f0029bee2b7140776f6951ffcea06a6b84d",
+        "6b7fbcb9561ef2e6958e107639df360b7b4efa2001e82b6061a2ebbba98e2cb4"
       ],
       "memberVariantIds": [
         "uislider-slider"
@@ -4929,19 +4984,19 @@
       ]
     },
     {
-      "candidateId": "candidate.title.c1fe56e33eeb",
+      "candidateId": "candidate.title.9f32d60ae736",
       "categoryId": "title",
       "categoryDisplayName": "Title",
       "sharingScope": "familyScoped",
       "scopeRationale": "Container-family title settings.",
-      "capabilitySha256": "c1fe56e33eebb2b71efc7b1ec6743975386769a1a2613fa5c30773ed7a189bfe",
+      "capabilitySha256": "9f32d60ae7361bc977173cb99ec25183a04765fe0ea5e8477b854e65c70383b5",
       "propertyPaths": [
         "Title",
         "TitlePosition"
       ],
       "propertyCapabilitySha256": [
         "f563f33c89239ccb2145f9e6c6077065c59c8ab0fbc11a9c00b749c4f377b142",
-        "43dee7179309b2c1de2de1546de208393eea9b6469c03ef570d235e56a605f93"
+        "683600bce8d000bd268cc505b60c2f1b64c3796f75e8147ab373c2f4d8cba38f"
       ],
       "memberVariantIds": [
         "uibuttongroup",
@@ -5289,21 +5344,25 @@
       ]
     },
     {
-      "candidateId": "candidate.windowappearance.99abfee61a10",
+      "candidateId": "candidate.windowappearance.b9c0e33249c0",
       "categoryId": "windowappearance",
       "categoryDisplayName": "Window Appearance",
       "sharingScope": "variantLocal",
       "scopeRationale": "uifigure-specific window appearance.",
-      "capabilitySha256": "99abfee61a10fb8f5380fad636536164504b0e7f8f2d02028d67124a99d46c80",
+      "capabilitySha256": "b9c0e33249c08f700883062e822c578366d60e0dd31be97feb13db5ebb22e18b",
       "propertyPaths": [
         "Color",
         "WindowStyle",
-        "WindowState"
+        "WindowState",
+        "Theme",
+        "ThemeMode"
       ],
       "propertyCapabilitySha256": [
         "50f7266b18553230b5d1dc14cd7a1c617b053d3e1416817da9b26dea9163138f",
-        "a0f6de2a55d679e12e7193d15eac3d761922e4d77e5c863a0889f4b68acae19e",
-        "4e494e611d0406544344fdfd5f7f9e887a51541eb5659a56978c3de267159633"
+        "908e78349b4afbe190a19dbad881c80a03dd1c92ae0ec52f801365cb4e97360c",
+        "4e494e611d0406544344fdfd5f7f9e887a51541eb5659a56978c3de267159633",
+        "56b2014f4b60169b6bd4fad66be0488c0e8ede554d63a971501fb7781b62edcf",
+        "6f01e756e992a6116268e62b7c9c04eb5670558de22dd33721ab2d1a6a2df961"
       ],
       "memberVariantIds": [
         "uifigure"

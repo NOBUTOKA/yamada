@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "uicheckbox",
   "factory": "uicheckbox",
   "creationArguments": [],
@@ -386,7 +386,6 @@
       "categoryId": "fontandcolor",
       "order": 5,
       "summary": "Color used to render text.",
-      "documentedDefault": "[0 0 0]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -427,6 +426,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0 0 0]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.checkbox.html",
+              "detail": "The R2025a page states no fixed default for FontColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default FontColor differs from [0 0 0]."
+            }
+          ]
         }
       ]
     },

@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2024b",
-  "inputSha256": "55c7e7b6c55fd4384eb99ba52ef70c5cff6fd4ae49638b0cdaad5722d007acc0",
+  "inputSha256": "84a1a4ea1ce80dca61e1e737811e769673a66c64529b9f11c2ff48a2e159f584",
   "groups": [
     {
       "id": "buttonAlignment",

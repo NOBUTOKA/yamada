@@ -1,7 +1,7 @@
 {
   "$schema": "releases.schema.json",
   "schemaVersion": 1,
-  "surfaceRelease": "R2024b",
+  "surfaceRelease": "R2025a",
   "releases": [
     {
       "release": "R2023a",
@@ -36,8 +36,18 @@
         }
       ]
     },
-    { "release": "R2024b", "status": "audited" },
-    { "release": "R2025a", "status": "known" },
+    {
+      "release": "R2024b",
+      "status": "verified",
+      "verification": [
+        {
+          "kind": "nativeObservation",
+          "source": "dev/component-data/ProbeReleaseSurface.m and CompareReleaseSurfaces.m on the R2025a ledger, MATLAB 25.1.0.2973910 (R2025a) Update 1 and 24.2.0.3361896 (R2024b) Update 10",
+          "detail": "Every variant and property available in R2024b constructs with the same documented property paths and finite options as in R2025a, except the properties, values, and documented defaults that the R2025a documentation adds, removes, or no longer states, which are recorded as availability and overrides; theme-dependent native defaults and layout-derived geometry carry no documented default."
+        }
+      ]
+    },
+    { "release": "R2025a", "status": "audited" },
     { "release": "R2025b", "status": "known" },
     { "release": "R2026a", "status": "known" },
     { "release": "R2026b", "status": "known" }

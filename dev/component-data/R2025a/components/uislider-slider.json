@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2024b",
+  "matlabRelease": "R2025a",
   "id": "uislider-slider",
   "factory": "uislider",
   "creationArguments": [],
@@ -255,6 +255,143 @@
           "detail": "Unproven geometry or interaction effect: retain full refresh."
         }
       ]
+    },
+    {
+      "path": "Step",
+      "categoryId": "slider",
+      "order": 4,
+      "summary": "Amount added or subtracted for one control step.",
+      "documentedDefault": "0.1",
+      "documentedAcceptedValues": [
+        "positive number"
+      ],
+      "valueContract": {
+        "kind": "number",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "double"
+        ],
+        "minimum": 0,
+        "exclusiveMinimum": true
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "apply",
+      "requiredEditor": "number",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      },
+      "gridGeometryImpact": "required",
+      "absoluteGeometryImpact": true,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2025a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+            "detail": "R2025a lets uislider specify the step size of a slider."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.slider.html",
+            "detail": "The R2025a Slider page documents Step, default 0.1 and a positive number, and StepMode, 'auto' (default) or 'manual', after Orientation."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 24.2.0.3361896 (R2024b) Update 10",
+            "detail": "A Slider has no Step property."
+          }
+        ]
+      }
+    },
+    {
+      "path": "StepMode",
+      "categoryId": "slider",
+      "order": 5,
+      "summary": "Automatic or explicit control of Step.",
+      "documentedDefault": "'auto'",
+      "documentedAcceptedValues": [
+        "'manual'"
+      ],
+      "valueContract": {
+        "kind": "enum",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string"
+        ],
+        "values": [
+          "auto",
+          "manual"
+        ]
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "apply",
+      "requiredEditor": "enum",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      },
+      "gridGeometryImpact": "required",
+      "absoluteGeometryImpact": true,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2025a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+            "detail": "R2025a lets uislider specify the step size of a slider."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.slider.html",
+            "detail": "The R2025a Slider page documents Step, default 0.1 and a positive number, and StepMode, 'auto' (default) or 'manual', after Orientation."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 24.2.0.3361896 (R2024b) Update 10",
+            "detail": "A Slider has no StepMode property."
+          }
+        ]
+      }
     },
     {
       "path": "MajorTicks",
@@ -828,7 +965,6 @@
       "categoryId": "font",
       "order": 5,
       "summary": "Color used to render text.",
-      "documentedDefault": "[0 0 0]",
       "documentedAcceptedValues": [
         "RGB triplet",
         "hexadecimal color code",
@@ -869,6 +1005,33 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Paint, alignment within an assigned rectangle, or hover text does not change the assigned rectangle."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2025a"
+          },
+          "patch": {
+            "documentedDefault": "[0 0 0]"
+          },
+          "evidence": [
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2025a/matlab/ref/matlab.ui.control.slider.html",
+              "detail": "The R2025a page states no fixed default for FontColor."
+            },
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2025a.html",
+              "detail": "R2025a changes default colors of UI components and plots slightly, and light and dark themes determine them."
+            },
+            {
+              "kind": "nativeObservation",
+              "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
+              "detail": "The default FontColor differs from [0 0 0]."
+            }
+          ]
         }
       ]
     },
