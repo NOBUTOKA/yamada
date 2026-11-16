@@ -27,7 +27,9 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                     testCase.verifyEqual(original.Value, value);
                 end
                 reference = yamada.ui.PreviewRenderer(registry).render(document, right);
-                drawnow; pause(0.15); drawnow;
+                % A fixed pause can end before the Grid Layout resize throttle relayouts the reference.
+                drawnow;
+                yamada.ui.waitForPreviewLayout(figure, right);
                 testCase.verifyEqual(original.Value, reference(char(first.Id)).Value);
                 testCase.verifyEqual(original.Limits, reference(char(first.Id)).Limits);
                 if layout ~= "absolute"
