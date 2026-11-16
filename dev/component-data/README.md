@@ -18,7 +18,7 @@ Every annotation carries `evidence` naming release notes, MathWorks documentatio
 
 Run `RegenerateReleaseCatalogs.ps1` with PowerShell 7 after changing the ledger or the release list. With Git on `PATH`, the grouping baseline records the last commit that changed the ledger inputs; without it, the commit is recorded as unavailable. It refreshes presentation text, projects, groups, and promotes every release with a catalog, writes the projection reports and the surface release's grouping review artifacts, and writes `resources/component-catalog/availability.json`, which records the release range of every annotated variant, property, and value so that another release can explain what it lacks.
 
-To move the surface to a newer release, audit the new release, express the differences of older releases as annotations, update `releases.json`, and regenerate. The catalogs of verified releases must not change unless the audit corrects them.
+To move the surface to a newer release, audit the new release, express the differences of older releases as annotations, update `releases.json`, and regenerate. The catalogs of verified releases must not change unless the audit corrects them. Document sources and the reviews that cite them keep the documentation release where the ledger was audited property by property, which the schema URL pattern names; a later surface records its differences through annotations with their own evidence, and projections accept that documentation release and the target release.
 
 ## Inputs and output
 
