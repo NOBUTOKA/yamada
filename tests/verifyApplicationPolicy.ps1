@@ -16,6 +16,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $toolRoot = Join-Path $projectRoot 'dev/component-data'
+$surface = [string]([IO.File]::ReadAllText((Join-Path $toolRoot 'releases.json')) | ConvertFrom-Json).surfaceRelease
 . (Join-Path $toolRoot 'ApplicationPolicy.ps1')
 
 function Assert-Condition {
@@ -72,8 +73,8 @@ Assert-PolicyFailure { Test-ApplicationPolicies @(
 $temporaryRoot = Join-Path ([IO.Path]::GetTempPath()) ('yamada-application-' + [guid]::NewGuid())
 New-Item -ItemType Directory -Path $temporaryRoot | Out-Null
 try {
-    $releaseRoot = Join-Path $temporaryRoot 'R2024a'
-    Copy-Item -LiteralPath (Join-Path $toolRoot 'R2024a') -Destination $releaseRoot -Recurse
+    $releaseRoot = Join-Path $temporaryRoot $surface
+    Copy-Item -LiteralPath (Join-Path $toolRoot $surface) -Destination $releaseRoot -Recurse
     $ledgerPath = Join-Path $releaseRoot 'components/uidropdown.json'
     $ledger = Get-Content -Raw -LiteralPath $ledgerPath | ConvertFrom-Json
     $value = $ledger.properties | Where-Object { $_.path -ceq 'Value' }

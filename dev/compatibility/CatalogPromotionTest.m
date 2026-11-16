@@ -12,12 +12,19 @@ classdef (TestTags = {'compatibility', 'catalog'}) CatalogPromotionTest < matlab
             groups = jsondecode(fileread(fullfile(root, "property-groups", "groups.json")));
             profiles = jsondecode(fileread(fullfile(root, "order-profiles.json")));
             testCase.verifyEqual(manifest.schemaVersion, 2);
-            testCase.verifyEqual(string(manifest.matlabRelease), "R2024a");
+            testCase.verifyEqual(string(manifest.matlabRelease), ...
+                yamada.catalog.ComponentCatalogLoader.defaultRelease());
             testCase.verifyEqual(string(manifest.sourceGroupingSha256), string(groups.inputSha256));
+
+            % Only the surface release keeps its grouping design in the ledger.
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
-            design = jsondecode(fileread(fullfile(projectRoot, "dev", "component-data", ...
-                "R2024a", "grouping", "GROUPING_DESIGN.json")));
-            testCase.verifyEqual(numel(groups.groups), numel(design.groups));
+            tools = fullfile(projectRoot, "dev", "component-data");
+            releases = jsondecode(fileread(fullfile(tools, "releases.json")));
+            if string(manifest.matlabRelease) == string(releases.surfaceRelease)
+                design = jsondecode(fileread(fullfile(tools, string(releases.surfaceRelease), ...
+                    "grouping", "GROUPING_DESIGN.json")));
+                testCase.verifyEqual(numel(groups.groups), numel(design.groups));
+            end
             testCase.verifyEqual(sort(string(manifest.orderProfileFiles)), "order-profiles.json");
             testCase.verifyEqual(sort(string({profiles.profiles.id})), ...
                 ["axes", "contextMenu", "menuToolbar", "standardControl", "uifigure"]);
