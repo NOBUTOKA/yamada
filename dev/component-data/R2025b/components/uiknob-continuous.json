@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2025a",
+  "matlabRelease": "R2025b",
   "id": "uiknob-continuous",
   "factory": "uiknob",
   "creationArguments": [],

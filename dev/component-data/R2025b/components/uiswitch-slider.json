@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2025a",
+  "matlabRelease": "R2025b",
   "id": "uiswitch-slider",
   "factory": "uiswitch",
   "creationArguments": [],

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2025a",
+  "matlabRelease": "R2025b",
   "id": "uilistbox",
   "factory": "uilistbox",
   "creationArguments": [],
@@ -1010,7 +1010,7 @@
       "categoryId": "position",
       "order": 2,
       "summary": "Inner rectangle [left bottom width height] in its configured units.",
-      "documentedDefault": "[100 100 77 78]",
+      "documentedDefault": "[100 100 100 74]",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],
@@ -1059,7 +1059,7 @@
       "categoryId": "position",
       "order": 3,
       "summary": "Outer rectangle [left bottom width height] in its configured units.",
-      "documentedDefault": "[100 100 77 78]]",
+      "documentedDefault": "[100 100 100 74]",
       "documentedAcceptedValues": [
         "[left bottom width height]"
       ],

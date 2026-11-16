@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
-  "matlabRelease": "R2025a",
-  "inputSha256": "6506cd79106532180acbe734cb11eccef9e71abb4b27498a3da7829061c6fc89",
+  "matlabRelease": "R2025b",
+  "inputSha256": "60f1825e1b7406575c69b98c027f621b8d4802ce2b77fa7308fcf1a2dc1a1f3a",
   "step4CrossCuttingConflicts": [
     {
       "categoryId": "callbackexecutioncontrol",

@@ -1,7 +1,7 @@
 {
   "$schema": "releases.schema.json",
   "schemaVersion": 1,
-  "surfaceRelease": "R2025a",
+  "surfaceRelease": "R2025b",
   "releases": [
     {
       "release": "R2023a",
@@ -47,8 +47,18 @@
         }
       ]
     },
-    { "release": "R2025a", "status": "audited" },
-    { "release": "R2025b", "status": "known" },
+    {
+      "release": "R2025a",
+      "status": "verified",
+      "verification": [
+        {
+          "kind": "nativeObservation",
+          "source": "dev/component-data/ProbeReleaseSurface.m and CompareReleaseSurfaces.m on the R2025b ledger, MATLAB 25.2.0.3360999 (R2025b) Update 7 and 25.1.0.2973910 (R2025a) Update 1",
+          "detail": "Every variant and property available in R2025a constructs with the same documented property paths, readable defaults, and finite options as in R2025b, and the axis color and alpha mode interactions agree; the R2025b documentation changes only corrected list box position defaults."
+        }
+      ]
+    },
+    { "release": "R2025b", "status": "audited" },
     { "release": "R2026a", "status": "known" },
     { "release": "R2026b", "status": "known" }
   ]

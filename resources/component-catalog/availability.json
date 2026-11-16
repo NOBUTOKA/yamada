@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "surfaceRelease": "R2025a",
+  "surfaceRelease": "R2025b",
   "releases": [
     {
       "release": "R2023a",
@@ -24,7 +24,7 @@
     },
     {
       "release": "R2025b",
-      "catalog": false
+      "catalog": true
     },
     {
       "release": "R2026a",
