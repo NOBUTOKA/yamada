@@ -49,7 +49,7 @@ $seedPolicy = ConvertTo-ApplicationPolicy ([pscustomobject]@{ defaultLiteral = '
 Assert-Condition ($seedPolicy.defaultLiteral -ceq '[-Inf Inf]') 'A default literal was lost in normalization.'
 $modePolicy = ConvertTo-ApplicationPolicy ([pscustomobject]@{ effectPolicy = 'valueMode' })
 Assert-Condition ($modePolicy.effectPolicy -ceq 'valueMode') 'An audited value/mode adapter was lost.'
-foreach ($identifier in @('modeFlag','axisWidth','positionAlias','squarePositionAlias')) {
+foreach ($identifier in @('modeFlag','setterModeFlag','axisWidth','positionAlias','squarePositionAlias')) {
     $reviewed = ConvertTo-ApplicationPolicy ([pscustomobject]@{ effectPolicy = $identifier })
     Assert-Condition ($reviewed.effectPolicy -ceq $identifier) 'A reviewed rendering policy was lost.'
 }

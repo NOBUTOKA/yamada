@@ -269,6 +269,33 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             end
         end
 
+        function setterModeFlagsDeriveConstructorAutoValues(testCase)
+            % setterModeFlagsDeriveConstructorAutoValues Distinguish assignments from constructors that restore auto last.
+            definition = testCase.Registry.getById("uiaxes");
+            color = definition.Properties([definition.Properties.Path] == "GridColor");
+            testCase.assumeEqual(color.Application.EffectPolicy, "setterModeFlag", ...
+                "The loaded catalog keeps uiaxes GridColor as a plain mode flag.");
+            writes = {"GridColor", [0.3 0.5 0.7]; "GridColorMode", "auto"};
+
+            % Assignments keep the stored color after auto is restored.
+            [component, definitions] = testCase.fixture("uiaxes", writes);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyEqual(testCase.state(states, "GridColor").EffectiveValue, [0.3 0.5 0.7]);
+
+            % Constructor arguments that restore auto last leave the color to the runtime theme.
+            [component, definitions] = testCase.fixture("uiaxes", writes, "nameValue");
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyFalse(testCase.state(states, "GridColor").IsKnown);
+            testCase.verifyEqual(testCase.state(states, "GridColor").ReasonCode, "automatic");
+            testCase.verifyEqual(testCase.state(states, "GridColorMode").EffectiveValue, "auto");
+
+            % A constructor value after the mode selects manual mode and keeps the color.
+            [component, definitions] = testCase.fixture("uiaxes", flipud(writes), "nameValue");
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyEqual(testCase.state(states, "GridColor").EffectiveValue, [0.3 0.5 0.7]);
+            testCase.verifyEqual(testCase.state(states, "GridColorMode").EffectiveValue, "manual");
+        end
+
         function invalidWidthIsAnInitializationError(testCase)
             % invalidWidthIsAnInitializationError Reject a nonpositive scalar before claiming an effective width.
             [component, definitions] = testCase.fixture("uiaxes", {"GridLineWidth", 0});
