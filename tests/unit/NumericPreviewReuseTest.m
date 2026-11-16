@@ -14,7 +14,7 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                 renderer = yamada.ui.PreviewRenderer(registry);
                 [handles, diagnostics] = renderer.render(document, left);
                 testCase.assertEmpty(diagnostics);
-                original = handles(char(first.Id));
+                original = handles(first.Id);
                 for value = [3 7 -2 1e6]
                     document.setProperty(first.Id, "Value", value, registry);
                     document.validatePropertyCommit(registry);
@@ -23,15 +23,15 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                     testCase.verifyTrue(applied, layout);
                     testCase.verifyEmpty(diagnostics);
                     testCase.verifyFalse(geometry);
-                    original = handles(char(first.Id));
+                    original = handles(first.Id);
                     testCase.verifyEqual(original.Value, value);
                 end
                 reference = yamada.ui.PreviewRenderer(registry).render(document, right);
                 drawnow; pause(0.15); drawnow;
-                testCase.verifyEqual(original.Value, reference(char(first.Id)).Value);
-                testCase.verifyEqual(original.Limits, reference(char(first.Id)).Limits);
+                testCase.verifyEqual(original.Value, reference(first.Id).Value);
+                testCase.verifyEqual(original.Limits, reference(first.Id).Limits);
                 if layout ~= "absolute"
-                    testCase.verifyEqual(original.Position, reference(char(first.Id)).Position, "AbsTol", 1);
+                    testCase.verifyEqual(original.Position, reference(first.Id).Position, "AbsTol", 1);
                 end
                 clear cleanup
             end
@@ -81,7 +81,7 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                     document.setProperty(first.Id, "Value", [], registry);
                 else
                     document.setProperty(first.Id, "Value", 4, registry);
-                    delete(handles(char(first.Id)));
+                    delete(handles(first.Id));
                 end
                 applied = renderer.synchronize(document, handles, yamada.ui.RefreshRequest("properties", first.Id, "Value"));
                 testCase.verifyEqual(applied, kind == "empty", kind);

@@ -80,11 +80,19 @@ classdef DefaultValueProvider < handle
     methods (Access = private)
         function key = surfaceKey(obj, component, parentFactory)
             % surfaceKey Identify one release-specific default fixture surface.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.DefaultValueProvider
+                component (1, 1) yamada.model.ComponentRecord
+                parentFactory (1, 1) string
+            end
+            arguments (Output)
+                key (1, 1) string
+            end
             definition = obj.Registry.get(component.Factory, component.CreationArguments);
             style = definition.styleFor(component.CreationArguments);
             argumentsText = string(jsonencode(component.CreationArguments));
-            key = char(strjoin([string(version("-release")), component.Factory, parentFactory, ...
-                style, argumentsText], "|"));
+            key = strjoin([string(version("-release")), component.Factory, parentFactory, ...
+                style, argumentsText], "|");
         end
 
         function results = resolveSurface(obj, component, parentFactory, properties)

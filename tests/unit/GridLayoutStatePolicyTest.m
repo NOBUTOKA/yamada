@@ -498,8 +498,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, figure);
             drawnow;
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(handles(char(first.Id)).Layout.Row, 2);
-            testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(handles(char(grid.Id)).RowHeight, {50, 60}));
+            testCase.verifyEqual(handles(first.Id).Layout.Row, 2);
+            testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(handles(grid.Id).RowHeight, {50, 60}));
             overlay = yamada.ui.GridLayoutOverlayDataBuilder().build(document, handles, figure, grid.Id, first.Id, 1, registry);
             testCase.verifyNumElements(overlay.rowTracks, 2);
             testCase.verifyEqual([overlay.rowTracks.value], [50 60]);
@@ -552,9 +552,9 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             [handles, diagnostics] = renderer.render(document, figure);
             drawnow;
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(handles(char(second.Id)).Layout.Row, 3);
-            testCase.verifyEqual(handles(char(second.Id)).Layout.Column, 1);
-            testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(handles(char(grid.Id)).RowHeight, {100, 200, "1x"}));
+            testCase.verifyEqual(handles(second.Id).Layout.Row, 3);
+            testCase.verifyEqual(handles(second.Id).Layout.Column, 1);
+            testCase.verifyTrue(yamada.model.GridLayoutStatePolicy.equivalent(handles(grid.Id).RowHeight, {100, 200, "1x"}));
             overlay = yamada.ui.GridLayoutOverlayDataBuilder().build(document, handles, figure, grid.Id, second.Id, 1, registry);
             testCase.verifyNumElements(overlay.rowTracks, 3);
             testCase.verifyEqual(string({overlay.rowTracks.kind}), ["fixed", "fixed", "flexible"]);

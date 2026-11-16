@@ -175,7 +175,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
 
             testCase.verifyEmpty(diagnostics);
             for id = [rockerComponent.Id, toggleComponent.Id]
-                position = double(handles(char(id)).Position);
+                position = double(handles(id).Position);
                 testCase.verifyEqual(position(3) / position(4), 20 / 45, "AbsTol", 1e-10);
                 testCase.verifyLessThan(position(4), 60);
             end
@@ -206,8 +206,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             [handles, diagnostics] = renderer.render(document, panel);
 
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(handles(char(dropDown.Id)).Value, 20);
-            testCase.verifyEqual(handles(char(listBox.Id)).Value, [10 30]);
+            testCase.verifyEqual(handles(dropDown.Id).Value, 20);
+            testCase.verifyEqual(handles(listBox.Id).Value, [10 30]);
             clear cleanup
         end
 
@@ -231,7 +231,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             [handles, diagnostics] = renderer.render(document, panel);
 
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(string(handles(char(imageComponent.Id)).ImageSource), imagePath);
+            testCase.verifyEqual(string(handles(imageComponent.Id).ImageSource), imagePath);
             clear figureCleanup imageCleanup
         end
     end
@@ -268,9 +268,9 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 if component.Id == document.RootComponentId
                     continue
                 end
-                testCase.assertTrue(isKey(handles, char(component.Id)), ...
+                testCase.assertTrue(isKey(handles, component.Id), ...
                     fixturePath + ": preview is missing " + component.Name);
-                preview = handles(char(component.Id));
+                preview = handles(component.Id);
                 actualComponent = actual.(char(component.Name));
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);

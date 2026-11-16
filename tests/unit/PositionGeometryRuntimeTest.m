@@ -26,7 +26,7 @@ classdef (TestTags = {'model', 'catalog', 'preview', 'ui'}) PositionGeometryRunt
                     document.setProperty(component.Id, "Position", requested, registry);
                     [handles, diagnostics] = renderer.render(document, figure);
                     testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
-                    testCase.verifyEqual(handles(char(component.Id)).Position, requested);
+                    testCase.verifyEqual(handles(component.Id).Position, requested);
                 end
             end
         end

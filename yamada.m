@@ -2798,7 +2798,7 @@ classdef yamada < handle
             if strlength(app.ResizeTargetId) == 0 || app.previewHandleCount() == 0
                 return
             end
-            key = char(app.ResizeTargetId);
+            key = app.ResizeTargetId;
             if ~isKey(app.PreviewHandles, key)
                 return
             end
@@ -3057,7 +3057,7 @@ classdef yamada < handle
             if strlength(app.DragComponentId) == 0 || app.previewHandleCount() == 0
                 return
             end
-            key = char(app.DragComponentId);
+            key = app.DragComponentId;
             if ~isKey(app.PreviewHandles, key)
                 return
             end

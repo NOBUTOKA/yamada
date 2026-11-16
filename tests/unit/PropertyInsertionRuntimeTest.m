@@ -88,9 +88,9 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
                 [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, uipanel(figure));
                 testCase.assertEmpty(diagnostics, style + ": " + strjoin(string({diagnostics.Message}), " | "));
                 testCase.verifyEqual(app.Control.Value, 20);
-                testCase.verifyEqual(handles(char(component.Id)).Value, app.Control.Value);
+                testCase.verifyEqual(handles(component.Id).Value, app.Control.Value);
                 testCase.verifyEqual(app.Control.Parent, app.(target.Name));
-                testCase.verifyEqual(handles(char(component.Id)).Parent, handles(char(target.Id)));
+                testCase.verifyEqual(handles(component.Id).Parent, handles(target.Id));
                 if style == "grid"
                     testCase.verifyEqual(app.Control.Layout.Row, 1);
                     testCase.verifyEqual(app.Control.Layout.Column, 1);
@@ -153,11 +153,11 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
                     testCase.assertEmpty(diagnostics, scenario + ": " + strjoin(string({diagnostics.Message}), " | "));
                     copied = app.(pasted.Name);
                     testCase.verifyEqual(copied.Value, app.Control.Value, scenario);
-                    testCase.verifyEqual(handles(char(pasted.Id)).Value, copied.Value, scenario);
+                    testCase.verifyEqual(handles(pasted.Id).Value, copied.Value, scenario);
                     if scenario == "automatic"
                         testCase.verifyEqual(string(copied.MajorTicksMode), "auto");
                         testCase.verifyEqual(copied.MajorTicks, app.Control.MajorTicks);
-                        testCase.verifyEqual(handles(char(pasted.Id)).MajorTicks, copied.MajorTicks);
+                        testCase.verifyEqual(handles(pasted.Id).MajorTicks, copied.MajorTicks);
                         drawnow;
                         testCase.verifyEqual(copied.MajorTicks, app.Control.MajorTicks);
                     end
@@ -194,7 +194,7 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
             panel = uipanel(figure);
             [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, panel);
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(handles(char(component.Id)).Value, app.Control.Value);
+            testCase.verifyEqual(handles(component.Id).Value, app.Control.Value);
             testCase.verifyEqual(app.Control.Value, 20);
             clear figureCleanup appCleanup cleanup
         end
