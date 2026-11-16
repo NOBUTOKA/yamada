@@ -51,7 +51,7 @@ These conventions apply to project-owned source code.
 ## Verification
 
 - Before each commit, run the test files or `area` profiles of `tests/runYamadaTests.m` that cover the changed code.
-- Run the `full` profile on both R2023a and R2024a before submitting a pull request and before a release, starting the runner from each release's executable. If R2023a is unavailable, ask the maintainer in the pull request description to run the R2023a `full` profile. Documentation-only changes use the checks in `CONTRIBUTING.md`, which also lists commands and additional checks.
+- Before submitting a pull request, run the `full` profiles required by the Testing section of `CONTRIBUTING.md`, which also covers documentation-only changes, commands, and additional checks. Before a release, follow `doc/RELEASING.md`.
 - Report completed test results and identify checks that could not be run.
 
 ### Long-Running Tests

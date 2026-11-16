@@ -466,11 +466,14 @@ foreach ($name in $inputFiles) {
     elseif (Test-HasProperty $value 'matlabRelease') { $value.matlabRelease = $Release }
 }
 $inputs['inspector-rows.json'].runtimeArtifact = ([string]$inputs['inspector-rows.json'].runtimeArtifact).Replace("/$surface/", "/$Release/")
-if ($Release -cne $surface) {
-    # Copied records keep the surface documentation where their evidence was read.
-    $url = $inputs['schema.json'].'$defs'.source.properties.url
-    $url.pattern = '^https://www\.mathworks\.com/help/releases/(' + $surface.ToLowerInvariant() + '|' + $Release.ToLowerInvariant() + ')/'
-    $url.description = "Must be a release-fixed MathWorks documentation URL of $surface, where the surface ledger was audited, or of $Release."
+# Copied records keep the documentation release where the ledger was audited, which can precede the surface.
+$url = $inputs['schema.json'].'$defs'.source.properties.url
+$documented = [regex]::Match([string]$url.pattern, 'releases/(r[0-9]{4}[ab])/').Groups[1].Value
+if (-not $documented) { throw 'The ledger schema does not name a release-fixed documentation URL pattern.' }
+$documentedRelease = 'R' + $documented.Substring(1)
+if ($Release -cne $documentedRelease) {
+    $url.pattern = '^https://www\.mathworks\.com/help/releases/(' + $documented + '|' + $Release.ToLowerInvariant() + ')/'
+    $url.description = "Must be a release-fixed MathWorks documentation URL of $documentedRelease, where the surface ledger was audited, or of $Release."
 }
 
 # Write the projection; unchanged files keep their source bytes so the surface projection reproduces the ledger exactly.

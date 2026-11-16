@@ -12,6 +12,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $root = Split-Path -Parent $PSScriptRoot
 $tools = Join-Path $root 'dev/component-data'
+$surface = [string]([IO.File]::ReadAllText((Join-Path $tools 'releases.json')) | ConvertFrom-Json).surfaceRelease
 $temporaryRoot = Join-Path ([IO.Path]::GetTempPath()) ('yamada-constructor-review-' + [guid]::NewGuid())
 New-Item -ItemType Directory -Path $temporaryRoot | Out-Null
 
@@ -22,8 +23,8 @@ function Get-LedgerHash {
 }
 
 try {
-    $release = Join-Path $temporaryRoot 'R2024a'
-    Copy-Item -LiteralPath (Join-Path $tools 'R2024a') -Destination $release -Recurse
+    $release = Join-Path $temporaryRoot $surface
+    Copy-Item -LiteralPath (Join-Path $tools $surface) -Destination $release -Recurse
     $path = Join-Path $release 'CONSTRUCTOR_SYNTAX_REVIEW.json'
     $original = Get-Content -LiteralPath $path -Raw
     $review = $original | ConvertFrom-Json

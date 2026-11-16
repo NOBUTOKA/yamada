@@ -148,9 +148,13 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
                     testCase.verifyGreaterThanOrEqual(numel(property.ValueSchema.values), 2);
                 end
             end
+
+            % FontSmoothing stays omitted in the releases whose catalogs still offer it.
             definition = registry.getById("uiaxes");
             smoothing = definition.Properties([definition.Properties.Path] == "FontSmoothing");
-            testCase.verifyEqual(smoothing.AuditDisposition, "omitted");
+            if ~isempty(smoothing)
+                testCase.verifyEqual(smoothing.AuditDisposition, "omitted");
+            end
         end
 
         function checkboxTreeGeometryRetainsNativeAndProductAccessBoundaries(testCase)
@@ -244,13 +248,61 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
 
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
-            directory = fullfile(projectRoot, "dev", "component-data", ...
-                yamada.catalog.ComponentCatalogLoader.defaultRelease(), "components");
+            tools = fullfile(projectRoot, "dev", "component-data");
+            release = yamada.catalog.ComponentCatalogLoader.defaultRelease();
+            directory = fullfile(tools, release, "components");
+            listed = jsondecode(fileread(fullfile(tools, "releases.json")));
+            order = string(cellfun(@(entry) entry.release, ...
+                ComponentRegistryBaselineTest.objectList(listed.releases), "UniformOutput", false));
             files = dir(fullfile(directory, "*.json"));
-            documents = cell(1, numel(files));
+            documents = cell(1, 0);
             for index = 1:numel(files)
-                documents{index} = jsondecode(fileread(fullfile(directory, files(index).name)));
+                document = jsondecode(fileread(fullfile(directory, files(index).name)));
+
+                % Keep only the records and enum values that the release offers.
+                if ~ComponentRegistryBaselineTest.availableIn(document, release, order), continue, end
+                properties = ComponentRegistryBaselineTest.objectList(document.properties);
+                kept = cellfun(@(property) ComponentRegistryBaselineTest.availableIn( ...
+                    property, release, order), properties);
+                properties = properties(kept);
+                for propertyIndex = 1:numel(properties)
+                    contract = properties{propertyIndex}.valueContract;
+                    if ~isfield(contract, "valueAvailability"), continue, end
+                    ranges = ComponentRegistryBaselineTest.objectList(contract.valueAvailability);
+                    absent = string(cellfun(@(range) char(range.value), ranges(~cellfun(@(range) ...
+                        ComponentRegistryBaselineTest.availableIn(range, release, order), ranges)), ...
+                        "UniformOutput", false));
+                    values = string(contract.values);
+                    contract.values = cellstr(reshape(values(~ismember(values, absent)), [], 1));
+                    properties{propertyIndex}.valueContract = rmfield(contract, "valueAvailability");
+                end
+                document.properties = properties;
+                documents{end + 1} = document; %#ok<AGROW>
             end
+        end
+
+        function available = availableIn(record, release, order)
+            % availableIn Test whether a ledger record or value range includes a release.
+            arguments (Input)
+                record (1, 1) struct
+                release (1, 1) string
+                order (1, :) string
+            end
+            arguments (Output)
+                available (1, 1) logical
+            end
+
+            available = true;
+            if isfield(record, "availability")
+                range = record.availability.releases;
+            elseif isfield(record, "releases") && isfield(record, "value")
+                range = record.releases;
+            else
+                return
+            end
+            position = find(order == release, 1);
+            if isfield(range, "since"), available = position >= find(order == string(range.since), 1); end
+            if available && isfield(range, "before"), available = position < find(order == string(range.before), 1); end
         end
 
         function result = cellArguments(value)

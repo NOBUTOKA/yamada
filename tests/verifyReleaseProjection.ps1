@@ -150,7 +150,10 @@ try {
         @{ name = 'unknownRelease'; expected = 'does not list'; id = 'uilamp'; change = { param($d) Add-Availability ($d.properties | Where-Object path -CEQ 'Color') (New-Range -Since 'R1999a') } },
         @{ name = 'propertyOutsideVariant'; expected = 'outside the releases of its variant'; id = 'uicolorpicker'; change = { param($d) Add-Availability ($d.properties | Select-Object -First 1) (New-Range -Since $oldest) } },
         @{ name = 'constraintOnUnavailable'; expected = 'constrains on unavailable'; id = 'uislider-slider'; change = { param($d) Add-Availability ($d.properties | Where-Object path -CEQ 'Limits') (New-Range -Since $surface) } },
-        @{ name = 'defaultVariantRemoved'; expected = 'default variant'; id = 'uislider-slider'; change = { param($d) Add-Availability $d (New-Range -Since $surface) } }
+        @{ name = 'defaultVariantRemoved'; expected = 'default variant'; id = 'uislider-slider'; change = { param($d)
+            # Property ranges may start before this synthetic variant range; only the default-variant rule is under test.
+            foreach ($property in @($d.properties)) { if ($null -ne $property.PSObject.Properties['availability']) { $property.PSObject.Properties.Remove('availability') } }
+            Add-Availability $d (New-Range -Since $surface) } }
     )
     foreach ($case in $cases) {
         & $restore

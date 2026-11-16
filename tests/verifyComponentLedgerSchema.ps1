@@ -15,6 +15,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $toolRoot = Join-Path $projectRoot 'dev/component-data'
+$surface = [string]([IO.File]::ReadAllText((Join-Path $toolRoot 'releases.json')) | ConvertFrom-Json).surfaceRelease
 . (Join-Path $toolRoot 'ComponentLedger.ps1')
 . (Join-Path $toolRoot 'ProjectPropertyText.ps1')
 
@@ -40,9 +41,9 @@ function Invoke-PipelineEntry {
 $temporaryRoot = Join-Path ([IO.Path]::GetTempPath()) ('yamada-ledger-schema-' + [guid]::NewGuid())
 New-Item -ItemType Directory -Path $temporaryRoot | Out-Null
 try {
-    $releaseRoot = Join-Path $temporaryRoot 'R2024a'
+    $releaseRoot = Join-Path $temporaryRoot $surface
     $catalogRoot = Join-Path $temporaryRoot 'catalog'
-    Copy-Item -LiteralPath (Join-Path $toolRoot 'R2024a') -Destination $releaseRoot -Recurse
+    Copy-Item -LiteralPath (Join-Path $toolRoot $surface) -Destination $releaseRoot -Recurse
     Assert-ComponentLedgerSchema -ReleaseDirectory $releaseRoot
     $documents = @(Get-ChildItem -LiteralPath (Join-Path $releaseRoot 'components') -Filter '*.json' -File)
     $entries = @('UpdateProjectPropertyText', 'ApplyGeometryImpactReview', 'ApplyApplicationPolicyReview', 'GenerateGroupingArtifacts', 'GenerateGroupingDesign', 'PromoteGroupingToRuntimeCatalog')

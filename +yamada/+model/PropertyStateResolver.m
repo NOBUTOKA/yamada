@@ -227,7 +227,7 @@ classdef PropertyStateResolver
             applications = [definitions.Application];
             policies = [applications.EffectPolicy]; statuses = [applications.EffectStatus];
             localPolicies = ["itemSelection", "boundedValue", "numericValue", "textValue", ...
-                "tickMode", "valueMode", "modeFlag", "axisWidth"];
+                "tickMode", "valueMode", "modeFlag", "setterModeFlag", "axisWidth"];
             local = (statuses == "independent" & policies == "none") | ...
                 (statuses == "modeled" & ismember(policies, localPolicies));
             companions = statuses == "modeled" & policies == "none";
@@ -550,8 +550,11 @@ classdef PropertyStateResolver
             end
 
             % Audited value setters force manual mode; auto values remain runtime-derived.
+            % A setter mode flag keeps the stored value only when assignments restore auto;
+            % a constructor that restores auto after the value derives it at runtime.
             modePolicies = ["tickMode", "valueMode"];
-            if any(definitions(index).Application.EffectPolicy == [modePolicies, "modeFlag"])
+            if constructor, modePolicies(end + 1) = "setterModeFlag"; end
+            if any(definitions(index).Application.EffectPolicy == [modePolicies, "modeFlag", "setterModeFlag"])
                 target = find(paths == path + "Mode", 1);
                 if ~isempty(target)
                     reason = "";

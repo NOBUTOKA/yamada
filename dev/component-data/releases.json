@@ -1,7 +1,7 @@
 {
   "$schema": "releases.schema.json",
   "schemaVersion": 1,
-  "surfaceRelease": "R2024a",
+  "surfaceRelease": "R2026b",
   "releases": [
     {
       "release": "R2023a",
@@ -25,11 +25,61 @@
         }
       ]
     },
-    { "release": "R2024a", "status": "audited" },
-    { "release": "R2024b", "status": "known" },
-    { "release": "R2025a", "status": "known" },
-    { "release": "R2025b", "status": "known" },
-    { "release": "R2026a", "status": "known" },
-    { "release": "R2026b", "status": "known" }
+    {
+      "release": "R2024a",
+      "status": "verified",
+      "verification": [
+        {
+          "kind": "nativeObservation",
+          "source": "dev/component-data/ProbeReleaseSurface.m and CompareReleaseSurfaces.m on the R2024b ledger, MATLAB 24.2.0.3361896 (R2024b) Update 10 and 24.1.0.3050227 (R2024a) Update 8",
+          "detail": "Every variant and property available in R2024a constructs with the same documented property paths, readable defaults, and finite options as in R2024b, except layout-derived axes geometry and the contents of the Preview-skipped InteractionOptions object, which carry no documented default; the differences are recorded as availability."
+        }
+      ]
+    },
+    {
+      "release": "R2024b",
+      "status": "verified",
+      "verification": [
+        {
+          "kind": "nativeObservation",
+          "source": "dev/component-data/ProbeReleaseSurface.m and CompareReleaseSurfaces.m on the R2025a ledger, MATLAB 25.1.0.2973910 (R2025a) Update 1 and 24.2.0.3361896 (R2024b) Update 10",
+          "detail": "Every variant and property available in R2024b constructs with the same documented property paths and finite options as in R2025a, except the properties, values, and documented defaults that the R2025a documentation adds, removes, or no longer states, which are recorded as availability and overrides; theme-dependent native defaults and layout-derived geometry carry no documented default."
+        }
+      ]
+    },
+    {
+      "release": "R2025a",
+      "status": "verified",
+      "verification": [
+        {
+          "kind": "nativeObservation",
+          "source": "dev/component-data/ProbeReleaseSurface.m and CompareReleaseSurfaces.m on the R2025b ledger, MATLAB 25.2.0.3360999 (R2025b) Update 7 and 25.1.0.2973910 (R2025a) Update 1",
+          "detail": "Every variant and property available in R2025a constructs with the same documented property paths, readable defaults, and finite options as in R2025b, and the axis color and alpha mode interactions agree; the R2025b documentation changes only corrected list box position defaults."
+        }
+      ]
+    },
+    {
+      "release": "R2025b",
+      "status": "verified",
+      "verification": [
+        {
+          "kind": "nativeObservation",
+          "source": "dev/component-data/ProbeReleaseSurface.m and CompareReleaseSurfaces.m on the R2026a ledger, MATLAB 26.1.0.3346908 (R2026a) Update 5 and 25.2.0.3360999 (R2025b) Update 7",
+          "detail": "Every variant and property available in R2025b constructs with the same documented property paths and finite options as in R2026a, except the Label, ToolbarLocation, and ToolbarLocationMode properties and the PickableParts default that R2026a adds or changes; axis colors keep a stored value when assignments restore auto only before R2026a. Size-dependent automatic ticks carry no documented default."
+        }
+      ]
+    },
+    {
+      "release": "R2026a",
+      "status": "verified",
+      "verification": [
+        {
+          "kind": "nativeObservation",
+          "source": "dev/component-data/ProbeReleaseSurface.m and CompareReleaseSurfaces.m on the R2026b ledger, MATLAB 26.2.0.3433840 (R2026b) Update 1 and 26.1.0.3346908 (R2026a) Update 5",
+          "detail": "Every variant and property available in R2026a constructs with the same documented property paths and finite options as in R2026b, except the Label and MapLayout properties and the radio and toggle button default positions that R2026b adds or changes; the contents of the Preview-skipped InteractionOptions object carry no documented default. Radio and toggle buttons outside button groups and selection groups are not yet represented."
+        }
+      ]
+    },
+    { "release": "R2026b", "status": "audited" }
   ]
 }

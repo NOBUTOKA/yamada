@@ -1,0 +1,648 @@
+{
+  "schemaVersion": 3,
+  "matlabRelease": "R2026b",
+  "id": "uicontextmenu",
+  "factory": "uicontextmenu",
+  "creationArguments": [],
+  "declaredType": "matlab.ui.container.ContextMenu",
+  "sources": [
+    {
+      "type": "mathworksDocumentation",
+      "url": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/uicontextmenu.html",
+      "scope": "Factory syntax and parent types."
+    },
+    {
+      "type": "mathworksDocumentation",
+      "url": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.container.contextmenu-properties.html",
+      "scope": "Public properties."
+    }
+  ],
+  "documentationCategories": [
+    {
+      "id": "callbacks",
+      "displayName": "Callbacks",
+      "order": 1
+    },
+    {
+      "id": "callbackexecutioncontrol",
+      "displayName": "Callback Execution Control",
+      "order": 2
+    },
+    {
+      "id": "parentchild",
+      "displayName": "Parent/Child",
+      "order": 3
+    },
+    {
+      "id": "identifiers",
+      "displayName": "Identifiers",
+      "order": 4
+    }
+  ],
+  "properties": [
+    {
+      "path": "ContextMenuOpeningFcn",
+      "categoryId": "callbacks",
+      "order": 1,
+      "summary": "Callback invoked for the context menu opening event.",
+      "documentedDefault": "''",
+      "documentedAcceptedValues": [
+        "function handle",
+        "cell array",
+        "character vector"
+      ],
+      "valueContract": {
+        "kind": "callback",
+        "shape": "any",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "function_handle",
+          "cell",
+          "char"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "notRendered",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "callbackManaged",
+          "callbackExecutable"
+        ]
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "matlab.ui.eventdata.ContextMenuOpeningData",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.container.contextmenu-properties.html",
+            "detail": "ContextMenuOpeningFcn: The callback documents the ContextMenuOpeningData event object. The qualified class is present in initialized MATLAB R2024a."
+          }
+        ]
+      },
+      "handlerSuffix": "ContextMenuOpening"
+    },
+    {
+      "path": "CreateFcn",
+      "categoryId": "callbacks",
+      "order": 2,
+      "summary": "Callback invoked for the create event.",
+      "documentedDefault": "''",
+      "documentedAcceptedValues": [
+        "function handle",
+        "cell array",
+        "character vector"
+      ],
+      "valueContract": {
+        "kind": "callback",
+        "shape": "any",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "function_handle",
+          "cell",
+          "char"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "notRendered",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "callbackManaged",
+          "callbackExecutable"
+        ]
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "unsupported",
+        "affectedPaths": [],
+        "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.container.contextmenu-properties.html",
+            "detail": "CreateFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      },
+      "handlerSuffix": "Create"
+    },
+    {
+      "path": "DeleteFcn",
+      "categoryId": "callbacks",
+      "order": 3,
+      "summary": "Callback invoked for the delete event.",
+      "documentedDefault": "''",
+      "documentedAcceptedValues": [
+        "function handle",
+        "cell array",
+        "character vector"
+      ],
+      "valueContract": {
+        "kind": "callback",
+        "shape": "any",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "function_handle",
+          "cell",
+          "char"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "notRendered",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "callbackManaged",
+          "callbackExecutable"
+        ]
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "unsupported",
+        "affectedPaths": [],
+        "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ],
+      "callbackSignature": {
+        "eventArgument": {
+          "className": "",
+          "shape": []
+        },
+        "evidence": [
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2024a/matlab/ref/matlab.ui.container.contextmenu-properties.html",
+            "detail": "DeleteFcn: No safe concrete event type is established by this reviewed contract; preserve an untyped event argument."
+          }
+        ]
+      },
+      "handlerSuffix": "Delete"
+    },
+    {
+      "path": "Interruptible",
+      "categoryId": "callbackexecutioncontrol",
+      "order": 1,
+      "summary": "Whether another callback can interrupt the running callback.",
+      "documentedDefault": "'on'",
+      "documentedAcceptedValues": [
+        "on/off logical value"
+      ],
+      "valueContract": {
+        "kind": "onOff",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string",
+          "logical"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "notRendered",
+      "requiredEditor": "onOff",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
+    },
+    {
+      "path": "BusyAction",
+      "categoryId": "callbackexecutioncontrol",
+      "order": 2,
+      "summary": "How a callback is handled while another callback is busy.",
+      "documentedDefault": "'queue'",
+      "documentedAcceptedValues": [
+        "'cancel'"
+      ],
+      "valueContract": {
+        "kind": "enum",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string"
+        ],
+        "values": [
+          "queue",
+          "cancel"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "notRendered",
+      "requiredEditor": "enum",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
+    },
+    {
+      "path": "BeingDeleted",
+      "categoryId": "callbackexecutioncontrol",
+      "order": 3,
+      "summary": "Whether destruction of this object is in progress.",
+      "documentedAcceptedValues": [
+        "on/off logical value"
+      ],
+      "documentedReadOnly": true,
+      "valueContract": {
+        "kind": "opaque",
+        "shape": "any",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "unknown"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "notRendered",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "documentedReadOnly"
+        ]
+      },
+      "runtimeSetAccess": "restricted",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
+    },
+    {
+      "path": "Parent",
+      "categoryId": "parentchild",
+      "order": 1,
+      "summary": "Container that owns this component.",
+      "documentedAcceptedValues": [
+        "Figure object"
+      ],
+      "valueContract": {
+        "kind": "componentReference",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "handle"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "notRendered",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "readOnly",
+        "reasonCodes": [
+          "deferredComponentReference"
+        ]
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
+    },
+    {
+      "path": "Children",
+      "categoryId": "parentchild",
+      "order": 2,
+      "summary": "Components owned directly by this container.",
+      "documentedDefault": "empty GraphicsPlaceholder array",
+      "documentedAcceptedValues": [
+        "vector of Menu objects"
+      ],
+      "valueContract": {
+        "kind": "graphicsObject",
+        "shape": "any",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "handle"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "notRendered",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "handleReference"
+        ]
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
+    },
+    {
+      "path": "HandleVisibility",
+      "categoryId": "parentchild",
+      "order": 3,
+      "summary": "Whether handle-search operations expose this object.",
+      "documentedDefault": "'on'",
+      "documentedAcceptedValues": [
+        "'callback'",
+        "'off'"
+      ],
+      "valueContract": {
+        "kind": "enum",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "notRendered",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "lowDesignTimeValue"
+        ]
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
+    },
+    {
+      "path": "Type",
+      "categoryId": "identifiers",
+      "order": 1,
+      "summary": "MATLAB graphics type identifying the object.",
+      "documentedAcceptedValues": [
+        "'uicontextmenu'"
+      ],
+      "documentedReadOnly": true,
+      "valueContract": {
+        "kind": "opaque",
+        "shape": "any",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "unknown"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "notRendered",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "documentedReadOnly"
+        ]
+      },
+      "runtimeSetAccess": "restricted",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
+    },
+    {
+      "path": "Tag",
+      "categoryId": "identifiers",
+      "order": 2,
+      "summary": "Identifier available to application code.",
+      "documentedDefault": "''",
+      "documentedAcceptedValues": [
+        "character vector",
+        "string scalar"
+      ],
+      "valueContract": {
+        "kind": "text",
+        "shape": "scalar",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "lowDesignTimeValue"
+        ]
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
+    },
+    {
+      "path": "UserData",
+      "categoryId": "identifiers",
+      "order": 3,
+      "summary": "Application-defined data attached to the component.",
+      "documentedDefault": "[]",
+      "documentedAcceptedValues": [
+        "array"
+      ],
+      "valueContract": {
+        "kind": "arbitraryData",
+        "shape": "any",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "any"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "notRendered",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "omitted",
+        "reasonCodes": [
+          "arbitraryData",
+          "sourceOnly"
+        ]
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "independent",
+        "affectedPaths": [],
+        "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ]
+    }
+  ]
+}
