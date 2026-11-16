@@ -25,20 +25,23 @@ classdef PreviewRenderer < handle
     end
 
     methods
-        function [applied, diagnostics, geometryChanged] = synchronize(obj, document, handles, request)
+        function [applied, diagnostics, geometryChanged, handles] = synchronize(obj, document, handles, request)
             % synchronize Apply resolved property changes across every catalog component capability.
             %   Uncertain local transitions rebuild their owning subtree; unrelated
             %   source, structure, or registry changes retain full reconstruction.
+            %   The returned handles replace the caller's handles because a
+            %   subtree rebuild retires and recreates native components.
             arguments (Input)
                 obj (1, 1) yamada.ui.PreviewRenderer
                 document (1, 1) yamada.model.DocumentModel
-                handles containers.Map
+                handles dictionary
                 request (1, 1) yamada.ui.RefreshRequest
             end
             arguments (Output)
                 applied (1, 1) logical
                 diagnostics yamada.model.Diagnostic
                 geometryChanged (1, 1) logical
+                handles dictionary
             end
             applied = false;
             diagnostics = yamada.model.Diagnostic.empty;
@@ -101,11 +104,11 @@ classdef PreviewRenderer < handle
                 if ~all(found), return, end
                 visible = arrayfun(@(state) ~any(state.Definition.PreviewPolicy == ["skip", "notRendered"]), states);
                 if ~any(visible(requested)), continue, end
-                if ~isKey(handles, char(id)) || ~isvalid(handles(char(id)))
+                if ~isKey(handles, id) || ~isvalid(handles(id))
                     obj.FallbackReason = "stale-handle";
                     return
                 end
-                preview = handles(char(id));
+                preview = handles(id);
                 reason = "";
                 for index = requested(visible(requested))
                     state = states(index);
@@ -139,7 +142,7 @@ classdef PreviewRenderer < handle
                 catch exception
                     % A failed native transition is repaired from the accepted model, never left half-applied.
                     obj.FallbackReason = "local-reconstruction:" + string(exception.identifier);
-                    [repaired, localDiagnostics] = obj.rebuildScope(document, component, handles);
+                    [repaired, localDiagnostics, handles] = obj.rebuildScope(document, component, handles);
                     diagnostics = [diagnostics localDiagnostics]; %#ok<AGROW>
                     if ~repaired, return, end
                     geometryChanged = true;
@@ -240,7 +243,7 @@ classdef PreviewRenderer < handle
                 parent
             end
             arguments (Output)
-                handles containers.Map
+                handles dictionary
                 diagnostics yamada.model.Diagnostic
                 surface
             end
@@ -251,7 +254,7 @@ classdef PreviewRenderer < handle
             obj.RenderedToken = struct();
             obj.RenderedVisualInputs = struct();
             delete(parent.Children);
-            handles = containers.Map("KeyType", "char", "ValueType", "any");
+            handles = yamada.ui.PreviewRenderer.emptyHandles();
             diagnostics = yamada.model.Diagnostic.empty;
             surface = [];
             obj.Diagnostics = yamada.model.Diagnostic.empty;
@@ -281,7 +284,7 @@ classdef PreviewRenderer < handle
             obj.createPreviewSurface(root, parent);
             surface = obj.PreviewSurface;
             for index = 1:numel(root.Children)
-                obj.renderComponent(document, root.Children(index), obj.PreviewSurface, handles);
+                handles = obj.renderComponent(document, root.Children(index), obj.PreviewSurface, handles);
             end
             diagnostics = obj.Diagnostics;
             obj.Diagnostics = yamada.model.Diagnostic.empty;
@@ -291,6 +294,16 @@ classdef PreviewRenderer < handle
                 obj.RenderedToken = document.evaluationContext(obj.Registry).revisionToken();
             end
             obj.RenderedRegistryRevision = obj.Registry.Revision;
+        end
+    end
+
+    methods (Static)
+        function handles = emptyHandles()
+            % emptyHandles Return an empty map from component identity to native preview handle.
+            arguments (Output)
+                handles (1, 1) dictionary
+            end
+            handles = dictionary(string([]), gobjects(0));
         end
     end
 
@@ -466,20 +479,20 @@ classdef PreviewRenderer < handle
                 obj (1, 1) yamada.ui.PreviewRenderer
                 document (1, 1) yamada.model.DocumentModel
                 component (1, 1) yamada.model.ComponentRecord
-                handles containers.Map
+                handles dictionary
                 changed (1, :) struct
             end
             policies = string(arrayfun(@(state) state.Definition.Application.EffectPolicy, changed));
             if any(policies == "buttonSelection")
                 group = document.getComponent(component.ParentId);
-                if isempty(group) || ~isKey(handles, char(group.Id)), return, end
-                nativeGroup = handles(char(group.Id));
+                if isempty(group) || ~isKey(handles, group.Id), return, end
+                nativeGroup = handles(group.Id);
                 for id = group.Children
                     states = document.getEffectivePropertyStates(obj.Registry, id);
                     for state = states
                         if state.Definition.Application.EffectPolicy == "buttonSelection" && state.Resolution.IsKnown && ...
-                                logical(state.Resolution.EffectiveValue) && isKey(handles, char(id))
-                            nativeGroup.SelectedObject = handles(char(id));
+                                logical(state.Resolution.EffectiveValue) && isKey(handles, id)
+                            nativeGroup.SelectedObject = handles(id);
                             break
                         end
                     end
@@ -487,13 +500,13 @@ classdef PreviewRenderer < handle
             end
             if any(policies == "gridTracks")
                 for id = component.Children
-                    if ~isKey(handles, char(id)), continue, end
+                    if ~isKey(handles, id), continue, end
                     states = document.getEffectivePropertyStates(obj.Registry, id);
                     child = document.getComponent(id);
                     for state = states
                         if state.Definition.Application.EffectPolicy == "layout" && ...
                                 state.Resolution.IsKnown && state.Resolution.IsEditable
-                            obj.setProperty(handles(char(id)), state.Definition.Path, state.Resolution.EffectiveValue, child);
+                            obj.setProperty(handles(id), state.Definition.Path, state.Resolution.EffectiveValue, child);
                         end
                     end
                 end
@@ -506,7 +519,7 @@ classdef PreviewRenderer < handle
                 obj (1, 1) yamada.ui.PreviewRenderer
                 document (1, 1) yamada.model.DocumentModel
                 component (1, 1) yamada.model.ComponentRecord
-                handles containers.Map
+                handles dictionary
             end
             % Restore only the descendants owned by this layout change.
             pending = component.Children;
@@ -514,7 +527,7 @@ classdef PreviewRenderer < handle
                 id = pending(1); pending(1) = [];
                 child = document.getComponent(id);
                 pending = [pending child.Children]; %#ok<AGROW>
-                if ~isKey(handles, char(id)), continue, end
+                if ~isKey(handles, id), continue, end
                 states = document.getEffectivePropertyStates(obj.Registry, id);
                 paths = string(arrayfun(@(state) state.Definition.Path, states));
                 index = find(paths == "Position", 1);
@@ -522,34 +535,37 @@ classdef PreviewRenderer < handle
                 if ~states(index).Resolution.IsKnown
                     error("yamada:PreviewRenderer:UnknownChildGeometry", "Child geometry needs local reconstruction.");
                 end
-                obj.setProperty(handles(char(id)), "Position", states(index).Resolution.EffectiveValue, child);
+                obj.setProperty(handles(id), "Position", states(index).Resolution.EffectiveValue, child);
             end
         end
 
-        function [repaired, diagnostics] = rebuildScope(obj, document, component, handles)
+        function [repaired, diagnostics, handles] = rebuildScope(obj, document, component, handles)
             % rebuildScope Reconstruct only the local ownership scope after an uncertain or failed transition.
+            %   The returned handles omit retired descendants and add their
+            %   replacements, including after a failed partial rebuild.
             arguments (Input)
                 obj (1, 1) yamada.ui.PreviewRenderer
                 document (1, 1) yamada.model.DocumentModel
                 component (1, 1) yamada.model.ComponentRecord
-                handles containers.Map
+                handles dictionary
             end
             arguments (Output)
                 repaired (1, 1) logical
                 diagnostics yamada.model.Diagnostic
+                handles dictionary
             end
             repaired = false;
             diagnostics = yamada.model.Diagnostic.empty;
             scope = component;
             parent = document.getComponent(component.ParentId);
-            if ~isempty(parent) && isKey(handles, char(parent.Id))
-                nativeParent = handles(char(parent.Id));
+            if ~isempty(parent) && isKey(handles, parent.Id)
+                nativeParent = handles(parent.Id);
                 if isprop(nativeParent, "RowHeight") || isprop(nativeParent, "SelectedObject")
                     scope = parent;
                 end
             end
-            if scope.Id == document.RootComponentId || ~isKey(handles, char(scope.Id)), return, end
-            target = handles(char(scope.Id));
+            if scope.Id == document.RootComponentId || ~isKey(handles, scope.Id), return, end
+            target = handles(scope.Id);
             if ~isvalid(target), return, end
             nativeParent = target.Parent;
             % Freeze stacking and transient tab selection before native disposal.
@@ -573,32 +589,30 @@ classdef PreviewRenderer < handle
                     pending = [pending record.Children]; %#ok<AGROW>
                 end
                 delete(target);
-                for id = ids
-                    if isKey(handles, char(id)), remove(handles, char(id)); end
-                end
-                obj.renderComponent(document, scope.Id, nativeParent, handles);
-                if isKey(handles, char(scope.Id)) && ~isempty(slot)
+                handles(ids(isKey(handles, ids))) = [];
+                handles = obj.renderComponent(document, scope.Id, nativeParent, handles);
+                if isKey(handles, scope.Id) && ~isempty(slot)
                     % Preserve native tab order and stacking among unchanged siblings.
-                    siblingOrder(slot) = handles(char(scope.Id));
+                    siblingOrder(slot) = handles(scope.Id);
                     try
                         nativeParent.Children = siblingOrder;
                     catch orderException
                         enclosing = document.getComponent(scope.ParentId);
                         if ~isempty(enclosing) && enclosing.Id ~= document.RootComponentId
-                            [repaired, diagnostics] = obj.rebuildScope(document, enclosing, handles);
+                            [repaired, diagnostics, handles] = obj.rebuildScope(document, enclosing, handles);
                             return
                         end
                         rethrow(orderException);
                     end
                 end
                 if replacesSelectedTab
-                    nativeParent.SelectedTab = handles(char(scope.Id));
+                    nativeParent.SelectedTab = handles(scope.Id);
                 elseif ~isempty(selectedTab) && isvalid(selectedTab)
                     nativeParent.SelectedTab = selectedTab;
                 end
                 diagnostics = obj.Diagnostics;
                 obj.Diagnostics = yamada.model.Diagnostic.empty;
-                repaired = isKey(handles, char(scope.Id)) && isvalid(handles(char(scope.Id)));
+                repaired = isKey(handles, scope.Id) && isvalid(handles(scope.Id));
                 if repaired, obj.SubtreeRebuildCount = obj.SubtreeRebuildCount + 1; end
             catch
                 % The caller retains complete reconstruction as the final repair boundary.
@@ -649,14 +663,18 @@ classdef PreviewRenderer < handle
             end
         end
 
-        function renderComponent(obj, document, componentId, parent, handles)
+        function handles = renderComponent(obj, document, componentId, parent, handles)
             % renderComponent Construct one safe component and all of its children.
+            %   The returned handles add every native component created here.
             arguments (Input)
                 obj (1, 1) yamada.ui.PreviewRenderer
                 document (1, 1) yamada.model.DocumentModel
                 componentId string
                 parent
-                handles containers.Map
+                handles dictionary
+            end
+            arguments (Output)
+                handles dictionary
             end
 
             % Create only factories declared in the registry and model hierarchy.
@@ -681,10 +699,10 @@ classdef PreviewRenderer < handle
                     configurationDocument.FilePath = document.FilePath;
                 end
                 preview = obj.createPreviewComponent(configured, parent);
-                handles(char(component.Id)) = preview;
+                handles(component.Id) = preview;
                 obj.applyProperties(preview, configured, configurationDocument);
                 for index = 1:numel(component.Children)
-                    obj.renderComponent(document, component.Children(index), preview, handles);
+                    handles = obj.renderComponent(document, component.Children(index), preview, handles);
                 end
                 if component.Factory == "uibuttongroup"
                     for childId = component.Children
@@ -692,8 +710,8 @@ classdef PreviewRenderer < handle
                         if isempty(child) || ~any(child.Factory == ["uiradiobutton", "uitogglebutton"]), continue, end
                         states = configurationDocument.getEffectivePropertyStates(obj.Registry, child.Id);
                         value = states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution;
-                        if value.IsKnown && logical(value.EffectiveValue) && isKey(handles, char(childId))
-                            selected = handles(char(childId));
+                        if value.IsKnown && logical(value.EffectiveValue) && isKey(handles, childId)
+                            selected = handles(childId);
                             preview.SelectedObject = selected;
                         end
                     end

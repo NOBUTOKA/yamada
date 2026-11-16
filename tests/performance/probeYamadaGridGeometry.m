@@ -22,7 +22,7 @@ panel = uipanel(figure, "Position", [1 1 1060 760], "AutoResizeChildren", "off")
 renderer = yamada.ui.PreviewRenderer(registry);
 [handles, diagnostics, canvas] = renderer.render(document, panel);
 assert(isempty(diagnostics), "The geometry probe requires a fully rendered fixture.");
-preview = handles(char(grid.Id));
+preview = handles(grid.Id);
 builder = yamada.ui.GridLayoutOverlayDataBuilder();
 snapshots = struct("seconds", {}, "grid", {}, "native", {}, "fitMinimumHeight", {}, "remainingForFlexible", {});
 clock = tic;
@@ -33,7 +33,7 @@ for requested = [0 1 3 6]
     data = builder.build(document, handles, canvas, grid.Id, grid.Id, numel(snapshots) + 1, registry);
     children = struct("id", {}, "row", {}, "column", {}, "position", {}, "outer", {});
     for id = grid.Children
-        child = handles(char(id));
+        child = handles(id);
         outer = double(child.Position);
         if isprop(child, "OuterPosition"), outer = double(child.OuterPosition); end
         children(end + 1) = struct("id", id, "row", double(child.Layout.Row), ...

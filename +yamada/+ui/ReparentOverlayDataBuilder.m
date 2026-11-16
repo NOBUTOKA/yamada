@@ -9,7 +9,7 @@ classdef ReparentOverlayDataBuilder
             arguments (Input)
                 document (1, 1) yamada.model.DocumentModel
                 registry (1, 1) yamada.model.ComponentRegistry
-                handles containers.Map
+                handles dictionary
                 canvas (1, 1) matlab.ui.container.Panel
                 id (1, 1) string
                 revision (1, 1) double
@@ -27,8 +27,8 @@ classdef ReparentOverlayDataBuilder
             targets = struct("id", {}, "name", {}, "bounds", {}, "origin", {}, "depth", {}, ...
                 "enabled", {}, "reason", {}, "grid", {});
             component = document.getComponent(id);
-            if isempty(component) || id == document.RootComponentId || ~isKey(handles, char(id)), return, end
-            preview = handles(char(id));
+            if isempty(component) || id == document.RootComponentId || ~isKey(handles, id), return, end
+            preview = handles(id);
             if ~isvalid(preview) || ~isprop(preview, "Position"), return, end
             if isempty(boundsFcn)
                 bounds = yamada.ui.ReparentOverlayDataBuilder.bounds(preview, canvas);
@@ -68,8 +68,8 @@ classdef ReparentOverlayDataBuilder
                     rectangle = [0 0 size];
                     origin = [0 0];
                 else
-                    if ~isKey(handles, char(parent.Id)), continue, end
-                    parentPreview = handles(char(parent.Id));
+                    if ~isKey(handles, parent.Id), continue, end
+                    parentPreview = handles(parent.Id);
                     if ~isvalid(parentPreview) || ~isprop(parentPreview, "InnerPosition"), continue, end
                     if isempty(boundsFcn)
                         rectangle = yamada.ui.ReparentOverlayDataBuilder.bounds(parentPreview, canvas);

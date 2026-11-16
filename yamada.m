@@ -78,9 +78,10 @@ classdef yamada < handle
         InspectorRows yamada.ui.inspector.InspectorPropertyRow = yamada.ui.inspector.InspectorPropertyRow.empty
         InspectorComponentId string = ""
         InspectorSurfaceKey string = ""
-        InspectorViewState containers.Map
+        InspectorViewState dictionary = dictionary(string([]), {})
+        % Empty until the first render, then a dictionary from component ID to native handle.
         PreviewHandles
-        PreviewTabSelections containers.Map
+        PreviewTabSelections dictionary = dictionary(string([]), [])
         TabLayoutTimer timer = timer.empty
         TabLayoutGeneration uint64 = uint64(0)
         TabLayoutSignature struct = struct()
@@ -125,8 +126,6 @@ classdef yamada < handle
             end
 
             % Keep capability definitions shared by New, Open, preview, and validation.
-            app.InspectorViewState = containers.Map("KeyType", "char", "ValueType", "any");
-            app.PreviewTabSelections = containers.Map("KeyType", "char", "ValueType", "double");
             app.Lifecycle = lifecycle;
             app.Registry = yamada.model.ComponentRegistry.createDefault();
             app.Clipboard = yamada.model.ComponentClipboard();
@@ -561,7 +560,7 @@ classdef yamada < handle
                 app (1, 1) yamada
                 request (1, 1) yamada.ui.RefreshRequest
             end
-            if request.Kind ~= "properties" || isempty(app.PreviewHandles)
+            if request.Kind ~= "properties" || app.previewHandleCount() == 0
                 app.refreshShell();
                 return
             end
@@ -572,7 +571,7 @@ classdef yamada < handle
             app.InteractionComponentId = "";
             app.InteractionKind = "";
             if ~isempty(app.RootResizeGuide) && isvalid(app.RootResizeGuide), delete(app.RootResizeGuide); end
-            [applied, diagnostics, geometryChanged] = app.PreviewRenderer.synchronize( ...
+            [applied, diagnostics, geometryChanged, app.PreviewHandles] = app.PreviewRenderer.synchronize( ...
                 app.Document, app.PreviewHandles, request);
             if ~applied
                 app.refreshPreview();
@@ -754,8 +753,8 @@ classdef yamada < handle
                 position double
             end
             position = [];
-            if isempty(app.PreviewHandles) || ~isKey(app.PreviewHandles, char(id)), return, end
-            preview = app.PreviewHandles(char(id));
+            if app.previewHandleCount() == 0 || ~isKey(app.PreviewHandles, id), return, end
+            preview = app.PreviewHandles(id);
             if ~isempty(preview) && isvalid(preview) && isprop(preview, "Position")
                 value = double(preview.Position);
                 if numel(value) == 4 && all(isfinite(value)) && all(value(3:4) > 0), position = value; end
@@ -1446,21 +1445,21 @@ classdef yamada < handle
             maximum = double(app.PreviewCanvas.Position(3:4));
             activeGridId = yamada.model.ActiveGridResolver.resolve( ...
                 app.Document, app.SelectedComponentId);
-            if isa(app.PreviewHandles, "containers.Map")
-                keys = app.PreviewHandles.keys();
-                for index = 1:numel(keys)
-                    preview = app.PreviewHandles(keys{index});
+            if isa(app.PreviewHandles, "dictionary")
+                ids = sort(keys(app.PreviewHandles))';
+                for index = 1:numel(ids)
+                    preview = app.PreviewHandles(ids(index));
                     if ~isvalid(preview) || ~isprop(preview, "Position") || ...
-                            ~app.isVisibleInSelectedTab(string(keys{index}))
+                            ~app.isVisibleInSelectedTab(ids(index))
                         continue
                     end
-                    rectangle = app.previewBounds(string(keys{index}));
+                    rectangle = app.previewBounds(ids(index));
                     if any(~isfinite(rectangle)) || any(rectangle(3:4) <= 0)
                         continue
                     end
                     % Keep active-grid settings buttons outside the figure's resize handles.
                     margin = 6;
-                    if string(keys{index}) == activeGridId
+                    if ids(index) == activeGridId
                         margin = 14;
                     end
                     minimum = min(minimum, floor(rectangle(1:2)) - margin);
@@ -1541,7 +1540,7 @@ classdef yamada < handle
             if reuseGeometry && app.reuseInteractionGeometry(false), return, end
 
             if isempty(app.InteractionOverlay) || ~isvalid(app.InteractionOverlay) || ...
-                    ~isa(app.PreviewHandles, "containers.Map")
+                    ~isa(app.PreviewHandles, "dictionary")
                 return
             end
             % Reserve one version before native layout can reenter publication.
@@ -1557,9 +1556,9 @@ classdef yamada < handle
                 "resizeConstraint", {});
             gridSelectionTargets = struct("id", {}, "gridId", {}, "x", {}, ...
                 "y", {}, "width", {}, "height", {}, "depth", {});
-            keys = app.PreviewHandles.keys();
-            for index = 1:numel(keys)
-                componentId = string(keys{index});
+            ids = sort(keys(app.PreviewHandles))';
+            for index = 1:numel(ids)
+                componentId = ids(index);
                 component = app.Document.getComponent(componentId);
                 if isempty(component) || component.Id == app.Document.RootComponentId || ...
                         strlength(component.ParentId) == 0 || component.Factory == "uitab" || ...
@@ -1603,7 +1602,7 @@ classdef yamada < handle
                             tabTitles(end + 1) = ""; %#ok<AGROW>
                         end
                     end
-                    preview = app.PreviewHandles(keys{index});
+                    preview = app.PreviewHandles(componentId);
                     if ~isempty(preview.SelectedTab)
                         selected = find(preview.Children == preview.SelectedTab, 1);
                         if ~isempty(selected)
@@ -1742,12 +1741,13 @@ classdef yamada < handle
             if isempty(fieldnames(stamp))
                 stamp = yamada.ui.GridLayoutOverlayDataBuilder.nativeInputs(app.PreviewHandles, app.PreviewCanvas);
             end
+            % Rectangles are 1-by-4 values, so each bounds entry is one cell value.
             geometry = struct("Stamp", {stamp}, ...
-                "Bounds", containers.Map("KeyType", "char", "ValueType", "any"), ...
-                "Grids", containers.Map("KeyType", "char", "ValueType", "any"));
+                "Bounds", dictionary(string([]), {}), ...
+                "Grids", dictionary(string([]), struct("Inputs", {}, "Data", {}, "Token", {})));
             for index = 1:numel(stamp.Controls)
                 item = stamp.Controls{index};
-                if item.pixelValid, geometry.Bounds(char(item.id)) = item.pixels; end
+                if item.pixelValid, geometry.Bounds{item.id} = item.pixels; end
             end
             app.PreviewGeometry = geometry;
             app.NativeGeometryRevision = app.NativeGeometryRevision + 1;
@@ -1763,8 +1763,8 @@ classdef yamada < handle
                 rectangle (1, 4) double
             end
             rectangle = NaN(1, 4);
-            if isfield(app.PreviewGeometry, "Bounds") && isKey(app.PreviewGeometry.Bounds, char(id))
-                rectangle = app.PreviewGeometry.Bounds(char(id));
+            if isfield(app.PreviewGeometry, "Bounds") && isKey(app.PreviewGeometry.Bounds, id)
+                rectangle = app.PreviewGeometry.Bounds{id};
             end
         end
 
@@ -1783,9 +1783,9 @@ classdef yamada < handle
                     app.PreviewCanvas, id, app.SelectedComponentId, revision, app.Registry, app.PreviewGeometry.Stamp);
                 return
             end
-            present = isfield(app.PreviewGeometry, "Grids") && isKey(app.PreviewGeometry.Grids, char(id));
+            present = isfield(app.PreviewGeometry, "Grids") && isKey(app.PreviewGeometry.Grids, id);
             saved = struct();
-            if present, saved = app.PreviewGeometry.Grids(char(id)); end
+            if present, saved = app.PreviewGeometry.Grids(id); end
             [token, tracked] = app.Document.evaluationContext(app.Registry).revisionToken();
             cached = present && isfield(saved, "Data") && tracked && isequaln(saved.Token, token);
             if cached
@@ -1805,10 +1805,10 @@ classdef yamada < handle
             % Each native snapshot owns one result per grid, including pending or read-only geometry.
             if isfield(app.PreviewGeometry, "Grids")
                 if safe
-                    app.PreviewGeometry.Grids(char(id)) = struct("Inputs", inputs, "Data", data, ...
+                    app.PreviewGeometry.Grids(id) = struct("Inputs", inputs, "Data", data, ...
                         "Token", token);
                 elseif present
-                    remove(app.PreviewGeometry.Grids, char(id));
+                    app.PreviewGeometry.Grids(id) = [];
                 end
             end
             data.revision = revision;
@@ -2033,7 +2033,7 @@ classdef yamada < handle
             try
                 grid = app.Document.getComponent(gridId);
                 if isempty(grid) || grid.Factory ~= "uigridlayout" || ...
-                        isempty(app.PreviewHandles) || ~isKey(app.PreviewHandles, char(gridId))
+                        app.previewHandleCount() == 0 || ~isKey(app.PreviewHandles, gridId)
                     return
                 end
                 entry = grid.getProperty(path);
@@ -2080,7 +2080,7 @@ classdef yamada < handle
             end
             childId = string(data.childId);
             if ~isscalar(childId) || strlength(childId) == 0 || ...
-                    isempty(app.PreviewHandles) || ~isKey(app.PreviewHandles, char(childId))
+                    app.previewHandleCount() == 0 || ~isKey(app.PreviewHandles, childId)
                 return
             end
             grid = app.Document.getComponent(gridId);
@@ -2089,7 +2089,7 @@ classdef yamada < handle
                     child.ParentId ~= gridId || ~app.isVisibleInSelectedTab(childId)
                 return
             end
-            preview = app.PreviewHandles(char(childId));
+            preview = app.PreviewHandles(childId);
             if ~isvalid(preview)
                 return
             end
@@ -2215,10 +2215,10 @@ classdef yamada < handle
                 tabIndex (1, 1) double
             end
 
-            if isempty(app.PreviewHandles) || ~isKey(app.PreviewHandles, char(componentId))
+            if app.previewHandleCount() == 0 || ~isKey(app.PreviewHandles, componentId)
                 return
             end
-            group = app.PreviewHandles(char(componentId));
+            group = app.PreviewHandles(componentId);
             if ~isa(group, "matlab.ui.container.TabGroup") || isempty(group.Children)
                 return
             end
@@ -2229,7 +2229,7 @@ classdef yamada < handle
             tabIndex = round(tabIndex);
             try
                 group.SelectedTab = group.Children(tabIndex);
-                app.PreviewTabSelections(char(componentId)) = tabIndex;
+                app.PreviewTabSelections(componentId) = tabIndex;
                 % Wait once before publishing the newly active tab geometry.
                 app.completePreviewUpdate(true);
             catch exception
@@ -2253,10 +2253,10 @@ classdef yamada < handle
                 if component.Factory == "uitab"
                     group = app.Document.getComponent(component.ParentId);
                     if ~isempty(group) && group.Factory == "uitabgroup" && ...
-                            isKey(app.PreviewHandles, char(group.Id)) && ...
-                            isKey(app.PreviewHandles, char(component.Id))
-                        groupPreview = app.PreviewHandles(char(group.Id));
-                        tabPreview = app.PreviewHandles(char(component.Id));
+                            isKey(app.PreviewHandles, group.Id) && ...
+                            isKey(app.PreviewHandles, component.Id)
+                        groupPreview = app.PreviewHandles(group.Id);
+                        tabPreview = app.PreviewHandles(component.Id);
                         visible = isequal(groupPreview.SelectedTab, tabPreview);
                         if ~visible
                             return
@@ -2525,18 +2525,30 @@ classdef yamada < handle
             signature = yamada.ui.GridLayoutOverlayDataBuilder.nativeInputs(app.PreviewHandles, app.PreviewCanvas);
         end
 
+        function count = previewHandleCount(app)
+            % previewHandleCount Return the number of rendered native preview handles.
+            arguments (Input)
+                app (1, 1) yamada
+            end
+            arguments (Output)
+                count (1, 1) double
+            end
+
+            % A dictionary is never empty as an object, so count its entries instead.
+            count = 0;
+            if isa(app.PreviewHandles, "dictionary"), count = numEntries(app.PreviewHandles); end
+        end
+
         function restorePreviewTabSelections(app)
             % restorePreviewTabSelections Restore transient preview tab selections after rendering.
             arguments (Input)
                 app (1, 1) yamada
             end
 
-            if isempty(app.PreviewTabSelections) || isempty(app.PreviewHandles)
+            if numEntries(app.PreviewTabSelections) == 0 || app.previewHandleCount() == 0
                 return
             end
-            keys = app.PreviewTabSelections.keys();
-            for index = 1:numel(keys)
-                componentId = keys{index};
+            for componentId = keys(app.PreviewTabSelections)'
                 if ~isKey(app.PreviewHandles, componentId)
                     continue
                 end
@@ -2619,7 +2631,7 @@ classdef yamada < handle
             end
 
             component = app.Document.getComponent(componentId);
-            preview = app.PreviewHandles(char(componentId));
+            preview = app.PreviewHandles(componentId);
             parent = preview.Parent;
             if isprop(parent, "InnerPosition")
                 bounds = double(parent.InnerPosition(3:4));
@@ -2679,13 +2691,11 @@ classdef yamada < handle
                 app (1, 1) yamada
             end
 
-            if isempty(app.PreviewHandles)
+            if app.previewHandleCount() == 0
                 return
             end
-            keys = app.PreviewHandles.keys();
-            for index = 1:numel(keys)
-                componentId = string(keys{index});
-                preview = app.PreviewHandles(keys{index});
+            for componentId = keys(app.PreviewHandles)'
+                preview = app.PreviewHandles(componentId);
                 if isprop(preview, "ButtonDownFcn")
                     preview.ButtonDownFcn = @(~, ~) ...
                         app.previewComponentButtonDown(componentId);
@@ -2706,8 +2716,8 @@ classdef yamada < handle
             app.ResizeHandles = matlab.ui.container.Panel.empty;
             component = app.selectedComponent();
             if isempty(component) || component.Id == app.Document.RootComponentId || ...
-                    strlength(component.ParentId) == 0 || isempty(app.PreviewHandles) || ...
-                    ~isKey(app.PreviewHandles, char(component.Id))
+                    strlength(component.ParentId) == 0 || app.previewHandleCount() == 0 || ...
+                    ~isKey(app.PreviewHandles, component.Id)
                 return
             end
             parent = app.Document.getComponent(component.ParentId);
@@ -2785,10 +2795,10 @@ classdef yamada < handle
                 app (1, 1) yamada
             end
 
-            if strlength(app.ResizeTargetId) == 0 || isempty(app.PreviewHandles)
+            if strlength(app.ResizeTargetId) == 0 || app.previewHandleCount() == 0
                 return
             end
-            key = char(app.ResizeTargetId);
+            key = app.ResizeTargetId;
             if ~isKey(app.PreviewHandles, key)
                 return
             end
@@ -2809,11 +2819,11 @@ classdef yamada < handle
                 app (1, 1) yamada
             end
 
-            if strlength(app.ResizeTargetId) == 0 || isempty(app.PreviewHandles)
+            if strlength(app.ResizeTargetId) == 0 || app.previewHandleCount() == 0
                 return
             end
             componentId = app.ResizeTargetId;
-            preview = app.PreviewHandles(char(componentId));
+            preview = app.PreviewHandles(componentId);
             position = round(double(preview.Position));
             app.UIFigure.WindowButtonMotionFcn = [];
             app.UIFigure.WindowButtonUpFcn = [];
@@ -2909,9 +2919,9 @@ classdef yamada < handle
             definition = app.Registry.get(component.Factory, component.CreationArguments);
             property = definition.getProperty("Position");
             if ~isempty(property) && yamada.model.PositionGeometry.applies(property.Application.EffectPolicy) && ...
-                    component.Id ~= app.Document.RootComponentId && ~isempty(app.PreviewHandles) && ...
-                    isKey(app.PreviewHandles, char(component.Id))
-                position = double(app.PreviewHandles(char(component.Id)).Position);
+                    component.Id ~= app.Document.RootComponentId && app.previewHandleCount() > 0 && ...
+                    isKey(app.PreviewHandles, component.Id)
+                position = double(app.PreviewHandles(component.Id).Position);
             end
         end
 
@@ -2929,8 +2939,8 @@ classdef yamada < handle
             property = definition.getProperty("Position");
             if isempty(property) || ~yamada.model.PositionGeometry.applies(property.Application.EffectPolicy), return, end
             orientation = "";
-            if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles, char(component.Id))
-                target = app.PreviewHandles(char(component.Id));
+            if app.previewHandleCount() > 0 && isKey(app.PreviewHandles, component.Id)
+                target = app.PreviewHandles(component.Id);
                 if isprop(target, "Orientation"), orientation = string(target.Orientation); end
             end
             spec = yamada.model.PositionGeometry.constraint(property.Application.EffectPolicy, orientation, strlength(orientation) > 0);
@@ -2962,8 +2972,8 @@ classdef yamada < handle
             property = definition.getProperty("Position");
             if ~isempty(property) && yamada.model.PositionGeometry.applies(property.Application.EffectPolicy)
                 orientation = "";
-                if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles, char(component.Id))
-                    target = app.PreviewHandles(char(component.Id));
+                if app.previewHandleCount() > 0 && isKey(app.PreviewHandles, component.Id)
+                    target = app.PreviewHandles(component.Id);
                     if isprop(target, "Orientation"), orientation = string(target.Orientation); end
                 end
                 spec = yamada.model.PositionGeometry.constraint(property.Application.EffectPolicy, ...
@@ -2981,7 +2991,7 @@ classdef yamada < handle
                 return
             end
             ratio = startPosition(3) / max(startPosition(4), 1);
-            if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles, char(component.Id))
+            if app.previewHandleCount() > 0 && isKey(app.PreviewHandles, component.Id)
                 runtimePosition = app.previewBounds(component.Id);
                 ratio = runtimePosition(3) / max(runtimePosition(4), eps);
             end
@@ -3044,10 +3054,10 @@ classdef yamada < handle
                 app (1, 1) yamada
             end
 
-            if strlength(app.DragComponentId) == 0 || isempty(app.PreviewHandles)
+            if strlength(app.DragComponentId) == 0 || app.previewHandleCount() == 0
                 return
             end
-            key = char(app.DragComponentId);
+            key = app.DragComponentId;
             if ~isKey(app.PreviewHandles, key)
                 return
             end
@@ -3072,11 +3082,11 @@ classdef yamada < handle
                 app (1, 1) yamada
             end
 
-            if strlength(app.DragComponentId) == 0 || isempty(app.PreviewHandles)
+            if strlength(app.DragComponentId) == 0 || app.previewHandleCount() == 0
                 return
             end
             componentId = app.DragComponentId;
-            preview = app.PreviewHandles(char(componentId));
+            preview = app.PreviewHandles(componentId);
             sourcePosition = double(preview.Position);
             sourcePosition = round(sourcePosition);
             app.UIFigure.WindowButtonMotionFcn = [];
@@ -3370,7 +3380,7 @@ classdef yamada < handle
             app.InspectorRows = yamada.ui.inspector.InspectorPropertyRow.empty;
             app.InspectorComponentId = "";
             app.InspectorSurfaceKey = "";
-            app.InspectorViewState = containers.Map("KeyType", "char", "ValueType", "any");
+            app.InspectorViewState = dictionary(string([]), {});
             app.InspectorView.clear();
         end
 
@@ -3384,7 +3394,7 @@ classdef yamada < handle
                 return
             end
             states = arrayfun(@(row) row.snapshotTransientState(), app.InspectorRows);
-            app.InspectorViewState(char(app.InspectorComponentId)) = states;
+            app.InspectorViewState{app.InspectorComponentId} = states;
         end
 
         function restoreInspectorViewState(app, componentId)
@@ -3394,11 +3404,10 @@ classdef yamada < handle
                 componentId (1, 1) string
             end
 
-            key = char(componentId);
-            if ~isKey(app.InspectorViewState, key)
+            if ~isKey(app.InspectorViewState, componentId)
                 return
             end
-            states = app.InspectorViewState(key);
+            states = app.InspectorViewState{componentId};
             for stateIndex = 1:numel(states)
                 for rowIndex = 1:numel(app.InspectorRows)
                     app.InspectorRows(rowIndex).restoreTransientState(states(stateIndex));
