@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://yamada.dev/schemas/component-data/R2025b/grouping-design-input.schema.json",
-  "title": "yamada R2025b grouping design input",
+  "$id": "https://yamada.dev/schemas/component-data/R2026a/grouping-design-input.schema.json",
+  "title": "yamada R2026a grouping design input",
   "description": "Human-reviewed design input for Steps 7 through 11. Generated grouping artifacts are not input to this schema.",
   "type": "object",
   "additionalProperties": false,
@@ -9,7 +9,7 @@
   "properties": {
     "$schema": { "const": "grouping-design-input.schema.json" },
     "schemaVersion": { "const": 1 },
-    "matlabRelease": { "const": "R2025b" },
+    "matlabRelease": { "const": "R2026a" },
     "profileDefinitions": {
       "type": "array",
       "minItems": 1,

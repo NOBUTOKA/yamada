@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2025b",
+  "matlabRelease": "R2026a",
   "id": "uiimage",
   "factory": "uiimage",
   "creationArguments": [],
@@ -542,9 +542,76 @@
       ]
     },
     {
-      "path": "ContextMenu",
+      "path": "Label",
       "categoryId": "interactivity",
       "order": 6,
+      "summary": "Component associated with the label setting.",
+      "documentedDefault": "empty GraphicsPlaceholder array",
+      "documentedAcceptedValues": [
+        "Label object"
+      ],
+      "valueContract": {
+        "kind": "componentReference",
+        "shape": "scalar",
+        "allowsEmpty": true,
+        "constraints": [],
+        "matlabClasses": [
+          "handle"
+        ]
+      },
+      "affectsDisplay": false,
+      "previewPolicy": "skip",
+      "requiredEditor": "none",
+      "disposition": {
+        "kind": "readOnly",
+        "reasonCodes": [
+          "deferredComponentReference"
+        ]
+      },
+      "runtimeSetAccess": "public",
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "none",
+        "effectStatus": "unknown",
+        "affectedPaths": [],
+        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2026a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2026a.html",
+            "detail": "R2026a lets UI components name an associated Label through the Label property, which screen readers use to describe the component."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2026a/matlab/ref/matlab.ui.control.image.html",
+            "detail": "The R2026a page documents Label, an empty GraphicsPlaceholder array by default or a Label object, under Interactivity before ContextMenu."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.2.0.3360999 (R2025b) Update 7",
+            "detail": "The component has no Label property."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ContextMenu",
+      "categoryId": "interactivity",
+      "order": 7,
       "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [

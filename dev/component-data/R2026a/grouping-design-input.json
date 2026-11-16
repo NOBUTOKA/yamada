@@ -1,7 +1,7 @@
 {
   "$schema": "grouping-design-input.schema.json",
   "schemaVersion": 1,
-  "matlabRelease": "R2025b",
+  "matlabRelease": "R2026a",
   "profileDefinitions": [
     {
       "id": "axes",

@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
-  "matlabRelease": "R2025b",
-  "inputSha256": "d86ef918efdf07b92bad1a679d3d62b6985638e67b0612c40d8dc2abd00b1a1d",
+  "matlabRelease": "R2026a",
+  "inputSha256": "3f45374a60481e97f63ca4ab8c456f26099a2739acb0255a3e6f132bad2201be",
   "intrinsic": [
     {
       "componentId": "axes",
@@ -393,126 +393,126 @@
       "componentId": "axes",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 155,
+      "propertyCount": 157,
       "missingConstraintTargets": []
     },
     {
       "componentId": "axes",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 156,
+      "propertyCount": 158,
       "missingConstraintTargets": []
     },
     {
       "componentId": "axes",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 154,
+      "propertyCount": 156,
       "missingConstraintTargets": []
     },
     {
       "componentId": "geoaxes",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 85,
+      "propertyCount": 87,
       "missingConstraintTargets": []
     },
     {
       "componentId": "geoaxes",
       "contextId": "grid",
+      "passed": true,
+      "propertyCount": 88,
+      "missingConstraintTargets": []
+    },
+    {
+      "componentId": "geoaxes",
+      "contextId": "structural",
       "passed": true,
       "propertyCount": 86,
       "missingConstraintTargets": []
     },
     {
-      "componentId": "geoaxes",
-      "contextId": "structural",
-      "passed": true,
-      "propertyCount": 84,
-      "missingConstraintTargets": []
-    },
-    {
       "componentId": "polaraxes",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 109,
+      "propertyCount": 111,
       "missingConstraintTargets": []
     },
     {
       "componentId": "polaraxes",
       "contextId": "grid",
+      "passed": true,
+      "propertyCount": 112,
+      "missingConstraintTargets": []
+    },
+    {
+      "componentId": "polaraxes",
+      "contextId": "structural",
       "passed": true,
       "propertyCount": 110,
       "missingConstraintTargets": []
     },
     {
-      "componentId": "polaraxes",
-      "contextId": "structural",
-      "passed": true,
-      "propertyCount": 108,
-      "missingConstraintTargets": []
-    },
-    {
       "componentId": "uiaxes",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 156,
+      "propertyCount": 158,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uiaxes",
       "contextId": "grid",
+      "passed": true,
+      "propertyCount": 159,
+      "missingConstraintTargets": []
+    },
+    {
+      "componentId": "uiaxes",
+      "contextId": "structural",
       "passed": true,
       "propertyCount": 157,
       "missingConstraintTargets": []
     },
     {
-      "componentId": "uiaxes",
-      "contextId": "structural",
-      "passed": true,
-      "propertyCount": 155,
-      "missingConstraintTargets": []
-    },
-    {
       "componentId": "uibutton-push",
       "contextId": "absolute",
-      "passed": true,
-      "propertyCount": 32,
-      "missingConstraintTargets": []
-    },
-    {
-      "componentId": "uibutton-push",
-      "contextId": "grid",
       "passed": true,
       "propertyCount": 33,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uibutton-push",
-      "contextId": "structural",
-      "passed": true,
-      "propertyCount": 31,
-      "missingConstraintTargets": []
-    },
-    {
-      "componentId": "uibutton-state",
-      "contextId": "absolute",
-      "passed": true,
-      "propertyCount": 33,
-      "missingConstraintTargets": []
-    },
-    {
-      "componentId": "uibutton-state",
       "contextId": "grid",
       "passed": true,
       "propertyCount": 34,
       "missingConstraintTargets": []
     },
     {
-      "componentId": "uibutton-state",
+      "componentId": "uibutton-push",
       "contextId": "structural",
       "passed": true,
       "propertyCount": 32,
+      "missingConstraintTargets": []
+    },
+    {
+      "componentId": "uibutton-state",
+      "contextId": "absolute",
+      "passed": true,
+      "propertyCount": 34,
+      "missingConstraintTargets": []
+    },
+    {
+      "componentId": "uibutton-state",
+      "contextId": "grid",
+      "passed": true,
+      "propertyCount": 35,
+      "missingConstraintTargets": []
+    },
+    {
+      "componentId": "uibutton-state",
+      "contextId": "structural",
+      "passed": true,
+      "propertyCount": 33,
       "missingConstraintTargets": []
     },
     {
@@ -540,42 +540,42 @@
       "componentId": "uicheckbox",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 27,
+      "propertyCount": 28,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uicheckbox",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 28,
+      "propertyCount": 29,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uicheckbox",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 26,
+      "propertyCount": 27,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uicolorpicker",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 22,
+      "propertyCount": 23,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uicolorpicker",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 23,
+      "propertyCount": 24,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uicolorpicker",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 21,
+      "propertyCount": 22,
       "missingConstraintTargets": []
     },
     {
@@ -603,21 +603,21 @@
       "componentId": "uidatepicker",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 32,
+      "propertyCount": 33,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uidatepicker",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 33,
+      "propertyCount": 34,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uidatepicker",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 31,
+      "propertyCount": 32,
       "missingConstraintTargets": []
     },
     {
@@ -644,43 +644,43 @@
     {
       "componentId": "uieditfield-numeric",
       "contextId": "absolute",
-      "passed": true,
-      "propertyCount": 35,
-      "missingConstraintTargets": []
-    },
-    {
-      "componentId": "uieditfield-numeric",
-      "contextId": "grid",
       "passed": true,
       "propertyCount": 36,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uieditfield-numeric",
+      "contextId": "grid",
+      "passed": true,
+      "propertyCount": 37,
+      "missingConstraintTargets": []
+    },
+    {
+      "componentId": "uieditfield-numeric",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 34,
+      "propertyCount": 35,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uieditfield-text",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 32,
+      "propertyCount": 33,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uieditfield-text",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 33,
+      "propertyCount": 34,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uieditfield-text",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 31,
+      "propertyCount": 32,
       "missingConstraintTargets": []
     },
     {
@@ -834,42 +834,42 @@
       "componentId": "uihyperlink",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 31,
+      "propertyCount": 32,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uihyperlink",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 32,
+      "propertyCount": 33,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uihyperlink",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 30,
+      "propertyCount": 31,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uiimage",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 26,
+      "propertyCount": 27,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uiimage",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 27,
+      "propertyCount": 28,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uiimage",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 25,
+      "propertyCount": 26,
       "missingConstraintTargets": []
     },
     {
@@ -1044,21 +1044,21 @@
       "componentId": "uiradiobutton",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 26,
-      "missingConstraintTargets": []
-    },
-    {
-      "componentId": "uiradiobutton",
-      "contextId": "grid",
-      "passed": true,
       "propertyCount": 27,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uiradiobutton",
+      "contextId": "grid",
+      "passed": true,
+      "propertyCount": 28,
+      "missingConstraintTargets": []
+    },
+    {
+      "componentId": "uiradiobutton",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 25,
+      "propertyCount": 26,
       "missingConstraintTargets": []
     },
     {
@@ -1106,22 +1106,22 @@
     {
       "componentId": "uispinner",
       "contextId": "absolute",
-      "passed": true,
-      "propertyCount": 37,
-      "missingConstraintTargets": []
-    },
-    {
-      "componentId": "uispinner",
-      "contextId": "grid",
       "passed": true,
       "propertyCount": 38,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uispinner",
+      "contextId": "grid",
+      "passed": true,
+      "propertyCount": 39,
+      "missingConstraintTargets": []
+    },
+    {
+      "componentId": "uispinner",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 36,
+      "propertyCount": 37,
       "missingConstraintTargets": []
     },
     {
@@ -1254,42 +1254,42 @@
       "componentId": "uitextarea",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 31,
+      "propertyCount": 32,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uitextarea",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 32,
+      "propertyCount": 33,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uitextarea",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 30,
+      "propertyCount": 31,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uitogglebutton",
       "contextId": "absolute",
       "passed": true,
-      "propertyCount": 31,
+      "propertyCount": 32,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uitogglebutton",
       "contextId": "grid",
       "passed": true,
-      "propertyCount": 32,
+      "propertyCount": 33,
       "missingConstraintTargets": []
     },
     {
       "componentId": "uitogglebutton",
       "contextId": "structural",
       "passed": true,
-      "propertyCount": 30,
+      "propertyCount": 31,
       "missingConstraintTargets": []
     },
     {

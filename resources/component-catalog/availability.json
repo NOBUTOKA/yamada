@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "surfaceRelease": "R2025b",
+  "surfaceRelease": "R2026a",
   "releases": [
     {
       "release": "R2023a",
@@ -28,7 +28,7 @@
     },
     {
       "release": "R2026a",
-      "catalog": false
+      "catalog": true
     },
     {
       "release": "R2026b",
@@ -73,10 +73,38 @@
       }
     },
     {
+      "variantId": "axes",
+      "path": "ToolbarLocation",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "axes",
+      "path": "ToolbarLocationMode",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
       "variantId": "geoaxes",
       "path": "InteractionOptions",
       "releases": {
         "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "geoaxes",
+      "path": "ToolbarLocation",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "geoaxes",
+      "path": "ToolbarLocationMode",
+      "releases": {
+        "since": "R2026a"
       }
     },
     {
@@ -91,6 +119,20 @@
       "path": "InteractionOptions",
       "releases": {
         "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "polaraxes",
+      "path": "ToolbarLocation",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "polaraxes",
+      "path": "ToolbarLocationMode",
+      "releases": {
+        "since": "R2026a"
       }
     },
     {
@@ -101,10 +143,31 @@
       }
     },
     {
+      "variantId": "uiaxes",
+      "path": "ToolbarLocation",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uiaxes",
+      "path": "ToolbarLocationMode",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
       "variantId": "uibutton-push",
       "path": "Interpreter",
       "releases": {
         "since": "R2024b"
+      }
+    },
+    {
+      "variantId": "uibutton-push",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
       }
     },
     {
@@ -115,10 +178,38 @@
       }
     },
     {
+      "variantId": "uibutton-state",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
       "variantId": "uibuttongroup",
       "path": "ShadowColor",
       "releases": {
         "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uicheckbox",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uicolorpicker",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uidatepicker",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
       }
     },
     {
@@ -143,6 +234,20 @@
       }
     },
     {
+      "variantId": "uieditfield-numeric",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uieditfield-text",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
       "variantId": "uifigure",
       "path": "Theme",
       "releases": {
@@ -161,6 +266,20 @@
       "path": "ThemeChangedFcn",
       "releases": {
         "since": "R2025a"
+      }
+    },
+    {
+      "variantId": "uihyperlink",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uiimage",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
       }
     },
     {
@@ -192,6 +311,13 @@
       }
     },
     {
+      "variantId": "uiradiobutton",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
       "variantId": "uislider-range",
       "path": "Step",
       "releases": {
@@ -231,6 +357,13 @@
       "path": "Placeholder",
       "releases": {
         "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uispinner",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
       }
     },
     {
@@ -269,10 +402,24 @@
       }
     },
     {
+      "variantId": "uitextarea",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
       "variantId": "uitogglebutton",
       "path": "Interpreter",
       "releases": {
         "since": "R2024b"
+      }
+    },
+    {
+      "variantId": "uitogglebutton",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
       }
     }
   ],

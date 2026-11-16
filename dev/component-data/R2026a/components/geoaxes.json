@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "matlabRelease": "R2025b",
+  "matlabRelease": "R2026a",
   "id": "geoaxes",
   "factory": "geoaxes",
   "creationArguments": [],
@@ -1574,11 +1574,16 @@
           "kind": "runtime",
           "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisStoredColorModesPreserveGetterValues",
           "detail": "Owned R2024a fixtures verify stored getter preservation before and after rendering, manual selection by an explicit value, both constructor orders, and canonical final auto modes for the listed color/alpha pairs."
+        },
+        {
+          "kind": "runtime",
+          "source": "MATLAB 26.1.0.3346908 (R2026a) Update 5 owned axes (.local-notes probe_alpha.m with ProbeAxisModeInteractions cases)",
+          "detail": "In R2026a, restoring auto after an explicit color, by assignment or in name-value arguments, replaces the stored color with the automatic theme color; setting the mode before the value keeps the value with manual mode."
         }
       ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "modeFlag",
+        "effectPolicy": "valueMode",
         "effectStatus": "modeled",
         "affectedPaths": [],
         "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
@@ -1615,6 +1620,23 @@
               "kind": "nativeObservation",
               "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.1.0.2973910 (R2025a) Update 1",
               "detail": "The default GridColor differs from [0.15 0.15 0.15]."
+            }
+          ]
+        },
+        {
+          "releases": {
+            "before": "R2026a"
+          },
+          "patch": {
+            "application": {
+              "effectPolicy": "modeFlag"
+            }
+          },
+          "evidence": [
+            {
+              "kind": "nativeObservation",
+              "source": "MATLAB 25.2.0.3360999 (R2025b) Update 7 owned axes (.local-notes probe_alpha.m)",
+              "detail": "Assignments that restore auto after an explicit GridColor keep the stored color."
             }
           ]
         }
@@ -3526,9 +3548,168 @@
       ]
     },
     {
-      "path": "Interactions",
+      "path": "ToolbarLocation",
       "categoryId": "interactivity",
       "order": 3,
+      "summary": "Choice controlling toolbar location.",
+      "documentedAcceptedValues": [
+        "'outside'",
+        "'inside'",
+        "'container'"
+      ],
+      "valueContract": {
+        "kind": "enum",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string"
+        ],
+        "values": [
+          "outside",
+          "inside",
+          "container"
+        ]
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "skip",
+      "requiredEditor": "enum",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "runtime",
+          "source": "MATLAB 26.1.0.3346908 (R2026a) Update 5 owned uiaxes (.local-notes probe_r2026a.m)",
+          "detail": "Setting ToolbarLocation selects manual mode; restoring auto, by assignment or after the value in name-value arguments, recomputes the location; a value after an automatic mode keeps it with manual mode."
+        }
+      ],
+      "application": {
+        "applyAfter": [],
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2026a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2026a.html",
+            "detail": "R2026a lets the ToolbarLocation property of axes place the axes toolbar, and by default MATLAB selects the location automatically."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2026a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+            "detail": "The R2026a page documents ToolbarLocation, outside, inside, or container, after Toolbar; the default location depends on the view."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.2.0.3360999 (R2025b) Update 7",
+            "detail": "The axes have no ToolbarLocation property."
+          }
+        ]
+      }
+    },
+    {
+      "path": "ToolbarLocationMode",
+      "categoryId": "interactivity",
+      "order": 4,
+      "summary": "Automatic or explicit control of ToolbarLocation.",
+      "documentedDefault": "'auto'",
+      "documentedAcceptedValues": [
+        "'manual'"
+      ],
+      "valueContract": {
+        "kind": "enum",
+        "shape": "scalar",
+        "allowsEmpty": false,
+        "constraints": [],
+        "matlabClasses": [
+          "char",
+          "string"
+        ],
+        "values": [
+          "auto",
+          "manual"
+        ]
+      },
+      "affectsDisplay": true,
+      "previewPolicy": "skip",
+      "requiredEditor": "enum",
+      "disposition": {
+        "kind": "editable",
+        "reasonCodes": []
+      },
+      "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/R2026a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        }
+      ],
+      "application": {
+        "applyAfter": [
+          "ToolbarLocation"
+        ],
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+      },
+      "gridGeometryImpact": "none",
+      "absoluteGeometryImpact": false,
+      "geometryEvidence": [
+        {
+          "kind": "inference",
+          "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
+          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+        }
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2026a"
+        },
+        "evidence": [
+          {
+            "kind": "releaseNotes",
+            "source": "https://www.mathworks.com/help/matlab/release-notes-R2026a.html",
+            "detail": "R2026a lets the ToolbarLocation property of axes place the axes toolbar, and by default MATLAB selects the location automatically."
+          },
+          {
+            "kind": "mathworksDocumentation",
+            "source": "https://www.mathworks.com/help/releases/R2026a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+            "detail": "The R2026a page documents ToolbarLocationMode, auto (default) or manual, after ToolbarLocation."
+          },
+          {
+            "kind": "nativeObservation",
+            "source": "dev/component-data/ProbeReleaseSurface.m, MATLAB 25.2.0.3360999 (R2025b) Update 7",
+            "detail": "The axes have no ToolbarLocationMode property."
+          }
+        ]
+      }
+    },
+    {
+      "path": "Interactions",
+      "categoryId": "interactivity",
+      "order": 5,
       "summary": "Interaction tools enabled on the axes.",
       "documentedAcceptedValues": [
         "array of interaction objects",
@@ -3571,7 +3752,7 @@
     {
       "path": "Visible",
       "categoryId": "interactivity",
-      "order": 4,
+      "order": 6,
       "summary": "Whether this component is displayed.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
@@ -3616,7 +3797,7 @@
     {
       "path": "CurrentPoint",
       "categoryId": "interactivity",
-      "order": 5,
+      "order": 7,
       "summary": "Pointer location reported in the component coordinates.",
       "documentedAcceptedValues": [
         "2-by-3 array"
@@ -3661,7 +3842,7 @@
     {
       "path": "ContextMenu",
       "categoryId": "interactivity",
-      "order": 6,
+      "order": 8,
       "summary": "Menu opened for this component by a context-menu gesture.",
       "documentedDefault": "empty GraphicsPlaceholder array",
       "documentedAcceptedValues": [
@@ -3706,7 +3887,7 @@
     {
       "path": "Selected",
       "categoryId": "interactivity",
-      "order": 7,
+      "order": 9,
       "summary": "Whether the object is selected.",
       "documentedDefault": "'off'",
       "documentedAcceptedValues": [
@@ -3751,7 +3932,7 @@
     {
       "path": "SelectionHighlight",
       "categoryId": "interactivity",
-      "order": 8,
+      "order": 10,
       "summary": "Whether selection highlight is enabled.",
       "documentedDefault": "'on'",
       "documentedAcceptedValues": [
@@ -4083,9 +4264,9 @@
       "categoryId": "callbackexecutioncontrol",
       "order": 3,
       "summary": "Parts of the object eligible for pointer hit testing.",
-      "documentedDefault": "'visible'",
+      "documentedDefault": "'all'",
       "documentedAcceptedValues": [
-        "'all'",
+        "'visible'",
         "'none'"
       ],
       "valueContract": {
@@ -4125,6 +4306,32 @@
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
           "detail": "Unproven geometry or interaction effect: retain full refresh."
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2026a"
+          },
+          "patch": {
+            "documentedDefault": "'visible'",
+            "documentedAcceptedValues": [
+              "'all'",
+              "'none'"
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "releaseNotes",
+              "source": "https://www.mathworks.com/help/matlab/release-notes-R2026a.html",
+              "detail": "R2026a makes all the default PickableParts of Axes, UIAxes, PolarAxes, and GeographicAxes objects; it was visible."
+            },
+            {
+              "kind": "mathworksDocumentation",
+              "source": "https://www.mathworks.com/help/releases/R2026a/matlab/ref/matlab.graphics.axis.geographicaxes-properties.html",
+              "detail": "The R2026a page documents PickableParts as 'all' (default), 'visible', or 'none'."
+            }
+          ]
         }
       ]
     },

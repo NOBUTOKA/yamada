@@ -1,7 +1,7 @@
 {
   "$schema": "releases.schema.json",
   "schemaVersion": 1,
-  "surfaceRelease": "R2025b",
+  "surfaceRelease": "R2026a",
   "releases": [
     {
       "release": "R2023a",
@@ -58,8 +58,18 @@
         }
       ]
     },
-    { "release": "R2025b", "status": "audited" },
-    { "release": "R2026a", "status": "known" },
+    {
+      "release": "R2025b",
+      "status": "verified",
+      "verification": [
+        {
+          "kind": "nativeObservation",
+          "source": "dev/component-data/ProbeReleaseSurface.m and CompareReleaseSurfaces.m on the R2026a ledger, MATLAB 26.1.0.3346908 (R2026a) Update 5 and 25.2.0.3360999 (R2025b) Update 7",
+          "detail": "Every variant and property available in R2025b constructs with the same documented property paths and finite options as in R2026a, except the Label, ToolbarLocation, and ToolbarLocationMode properties and the PickableParts default that R2026a adds or changes; axis colors keep a stored value when assignments restore auto only before R2026a. Size-dependent automatic ticks carry no documented default."
+        }
+      ]
+    },
+    { "release": "R2026a", "status": "audited" },
     { "release": "R2026b", "status": "known" }
   ]
 }

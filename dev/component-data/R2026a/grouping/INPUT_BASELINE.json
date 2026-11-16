@@ -1,8 +1,8 @@
 {
   "artifactVersion": 1,
-  "matlabRelease": "R2025b",
+  "matlabRelease": "R2026a",
   "ledgerBaselineGitCommit": "unavailable",
-  "inputSha256": "60f1825e1b7406575c69b98c027f621b8d4802ce2b77fa7308fcf1a2dc1a1f3a",
+  "inputSha256": "8abfbb96b3c53b63cf61a0d2164a166bfea388814b9d32618cfeab9d0a6c8927",
   "componentDocumentCount": 48,
   "componentVariantIds": [
     "axes",
@@ -54,7 +54,7 @@
     "uitree-checkbox",
     "uitreenode"
   ],
-  "propertyEntryCount": 1828.0,
+  "propertyEntryCount": 1849.0,
   "categoryOccurrenceCount": 412,
   "categoryScopeCounts": [
     {
@@ -73,207 +73,207 @@
   "inputFiles": [
     {
       "path": "category-scope-classification.json",
-      "sha256": "5d6e6d5b0526ed08ddbe0c00257f55fe9d78a3eb06f03aa90d8161a12765fe37"
+      "sha256": "a54f1d61fb18a491d38d9bdb005145efa57c682f94b1f29863073b7f12d7a6e1"
     },
     {
       "path": "components/axes.json",
-      "sha256": "39427d01c36db1c9e035df5939ea6460cd3bf86f29921fb8a65db1e54f6e9f07"
+      "sha256": "4c80a7d66717c6992137177de084961f07122356a6814f3342b29c13a9921a35"
     },
     {
       "path": "components/geoaxes.json",
-      "sha256": "78d9f574f0f9c57bff599358863cc06533e0a5a6dc7f8c9e88048473fd4f279a"
+      "sha256": "2870915e44f96dc9af4f7d1e6e25593fb24f8fb6cb797d07566592a5414933ac"
     },
     {
       "path": "components/polaraxes.json",
-      "sha256": "8fb952ebfb94be5bfb9922ca03052f20446f2c45ccb3654ec933e90377e924f4"
+      "sha256": "3e1551db1ef96280e876c3a123fa311dd4b9e6edf148b37af96c3d8a8cec4a22"
     },
     {
       "path": "components/uiaxes.json",
-      "sha256": "1bb3c70cdf3f2c051b147de4f42fd970ded4dc21523a97e77fb808ebeab99c97"
+      "sha256": "b8b212ed5a585c62c198007f73bd1d6c9eec7c9d85777f94d1698c4a29e38272"
     },
     {
       "path": "components/uibutton-push.json",
-      "sha256": "a6e5be0d3a043ddb6c1fb4be30efdb935aa3c7b14b5214ed2314afb20140386f"
+      "sha256": "7049b3087b2cdbca465c7ded65b5def51d2fd273bff8ee847b48b7fc07391fda"
     },
     {
       "path": "components/uibutton-state.json",
-      "sha256": "34e4ea40ed5a80ba470cf705cea1a9948c11fef0a64a0177786b1858ee0aed4b"
+      "sha256": "2c38185ab5be6c168a6de2b4c97d444f4f5f49137b069e1fd7e65c5f15442754"
     },
     {
       "path": "components/uibuttongroup.json",
-      "sha256": "17842a691ef97b9484140d29c83c2812aef09766f7dfa248b8d4492742d02211"
+      "sha256": "dc1d1c0c83e5951c5f63e7faa908135300757648d0221b552bf335836823a64c"
     },
     {
       "path": "components/uicheckbox.json",
-      "sha256": "ab94e5f2ec5023e0739e1dc99f57acc0f725dc3734ad9ac5b8b3d2bb8cd7be7a"
+      "sha256": "4a972e1bd63af6eafc6fa078dd22805bf5e107a63bd2dbe171273642df9c7d28"
     },
     {
       "path": "components/uicolorpicker.json",
-      "sha256": "adfd4e5717df101886b6464725a27553a0341fefc674ec345d9228bd85491acd"
+      "sha256": "834e2d5ef3273242f7a4d3453f47f633056d0316d5a450570d5b906f46cb6987"
     },
     {
       "path": "components/uicontextmenu.json",
-      "sha256": "8580768fc6eeb45e79e538d4517db75d0524a8555bd7e4c846ce8da5c0031b23"
+      "sha256": "72f6b1d8da6899c1397c7cfc66d6a0d0e7014321f88b4ceab7ad5c2ec82cacce"
     },
     {
       "path": "components/uidatepicker.json",
-      "sha256": "3206d3baafac7833193c64c70193e3465d3e78f644d0cd7fba3a27185c6364c4"
+      "sha256": "fb72c4b25eb1d202775f6d1b6f429dcc157c848ded697baa5c15b23be15b3e73"
     },
     {
       "path": "components/uidropdown.json",
-      "sha256": "33972ec99831782f51c2d9a178c2eb1d99adbc1979c6ab0d9f33a0c57f595fc8"
+      "sha256": "44ae926b1ee473c99e404e65479a83155f2e5fa31fae30d8cfcea9b4fe748d11"
     },
     {
       "path": "components/uieditfield-numeric.json",
-      "sha256": "bc8a67a6397b5b189c5208607da29e2f0691f0d8f97a511bdf295d676bc22f77"
+      "sha256": "cb2600a1313903c45b1e6c019701113b807b9b396280eae502309b0bce7d4a8b"
     },
     {
       "path": "components/uieditfield-text.json",
-      "sha256": "1099bdbf559e180f79ac9f1c775dd9e9e659b68db1d6de9a181769e9127313e8"
+      "sha256": "2b89d5a08096629ee46087565b3abd1484a6976da63b79636c8d5eecb69a7cdc"
     },
     {
       "path": "components/uifigure.json",
-      "sha256": "6d42705f1c499d8653a369c3ccc4f783e4a59199a27bd5da096c43858670ae55"
+      "sha256": "b16f6c739b75c5d23bdb47b9c2651a8e8031d26c4e7baa19cbd27233cf0a46cc"
     },
     {
       "path": "components/uigauge-circular.json",
-      "sha256": "ffd3a55eb6159f46278ef506cc5b44cbb551448e3c14a4f5c1ecb69a2351679d"
+      "sha256": "f7c7fefea5bd4aab553bbabe931edf206ffa1018d5d4558aaa597958a040394b"
     },
     {
       "path": "components/uigauge-linear.json",
-      "sha256": "0aa0805575688beb1a2b3ff43a154867dc383fe7ef0e138ae841051c2b564b08"
+      "sha256": "9c2e9cbcab91f07055fa092ca82b0c487b186dbf9407940e5e1c1ab0f1f69a64"
     },
     {
       "path": "components/uigauge-ninetydegree.json",
-      "sha256": "a456f4e78ff639b2a4af95b33908cb4f2981f10d6cb5d0e2776e43580fe0a1f5"
+      "sha256": "3fe038e72542e72baaf704663c6a1f4b96c2718d0f28d4dd649db9bafb248994"
     },
     {
       "path": "components/uigauge-semicircular.json",
-      "sha256": "cf4088ab9df90e36f1ed8da933f42e5a78b489e9387dd865fe4db1a9c1a66435"
+      "sha256": "1840765535ebbd88b3f53e2da73bf6653b3f3c8f47e62b895964c334826423f7"
     },
     {
       "path": "components/uigridlayout.json",
-      "sha256": "1e3512f5fc954d51ea4bfb5a09f198d47b228b6c62f545cb6df79082bcb6e4d6"
+      "sha256": "446a363493e39c6624e00b71b102ddef663bb94f35bca28fa2a6c3309614b8e5"
     },
     {
       "path": "components/uihtml.json",
-      "sha256": "079a386554945d358c91f0cf19b0d3cd156762a1b5d780898dec16a59986688e"
+      "sha256": "0ce602b67b93723682d1263885dedc8e02c3ccf641989e15ee151ff7aa87a804"
     },
     {
       "path": "components/uihyperlink.json",
-      "sha256": "433e584772b4a9e299a14a115a98587eb47172d03537ee46d8a2f1d3a615c743"
+      "sha256": "c69a3e685a48bb2784ca082ce986bce5e04c707d9bbadaec2af36df0bcd14d46"
     },
     {
       "path": "components/uiimage.json",
-      "sha256": "2e765ea9782bb62f34f349f49ed24378cb2c3271a55e16bbb8532e01873f80cc"
+      "sha256": "484dd55e343307b3a297471f29670696270573b47fa34eddd3d4ebcf0719f4e4"
     },
     {
       "path": "components/uiknob-continuous.json",
-      "sha256": "c36f126ecdfcb4ea4044286e96c075460083636672bd9afa2c48aa528cedb6b6"
+      "sha256": "e0997ffc3c50916ef77bf40d38d68288c600ef019ca1d2b185672d4825dbef50"
     },
     {
       "path": "components/uiknob-discrete.json",
-      "sha256": "a54b8e888af7700fe466fe1f590f7f681b70070f2e77ceb7fd2d4af21c3326ca"
+      "sha256": "bd22fe57944971f799cc8d4091d2c978fe8864ec69422b430dc6737070ccb86e"
     },
     {
       "path": "components/uilabel.json",
-      "sha256": "d2b1b4d2949da2146a9e89ccd9d9bb7a22f44642feb716cf6bc8b23ec9239e67"
+      "sha256": "d0751d63a50c58076bdf7f9f52686504619a005d06e24131e6051acfcd339750"
     },
     {
       "path": "components/uilamp.json",
-      "sha256": "58a384136b89d1e2fca689e3f10c93940d168c81abf16e488b7beeeb98296718"
+      "sha256": "ad850f99f2d2fee92b307ed32a45623a11aa4a38301d5e8bb804a340eae0a4a6"
     },
     {
       "path": "components/uilistbox.json",
-      "sha256": "f5a90b9f94706187d88f708fc04e52caff9cf99057aa848b6dc6207e19a376d1"
+      "sha256": "3f094554bc7ffaeed42dc026dd6c3d15d0a2ee10643e51e8754154f551426347"
     },
     {
       "path": "components/uimenu.json",
-      "sha256": "6cad6566feba13135c3745862ebeffdaff59d577559e0ca46229111b5616370c"
+      "sha256": "62220f7383b1c4a251d3f86cc62d3872a08db368d6460af44c5472e443e3dc47"
     },
     {
       "path": "components/uipanel.json",
-      "sha256": "1dac68c3b659db08300e772562e4bda3bfb604ace909f35755edeacb0ab433fb"
+      "sha256": "2a1ef3fce938e5a83b9f74385a89537a55e42707bc22811714488b5f9aca4cd7"
     },
     {
       "path": "components/uipushtool.json",
-      "sha256": "cb104b1763f72465dc2821bc4d49d754c4556eb097c2373b3ffaf4a7afeb6dfe"
+      "sha256": "fd451acf4349b7a88d53b3c9f8f4f373edb5162d1a01fe5d2faf0bc7951b3287"
     },
     {
       "path": "components/uiradiobutton.json",
-      "sha256": "0f15f711e267023d81bcc2877b5198cdd973c059f19b2274e9fa200a49e6181c"
+      "sha256": "283f76a989e0fe7977aca32a5d51dd264ad895793179dde85b30717993656c86"
     },
     {
       "path": "components/uislider-range.json",
-      "sha256": "764a1866d75f7cb682261f52fa291bcb711963464ea012ceb5e002f3303dd55d"
+      "sha256": "5c6b3e4180a9db1f3eab1376113b0181bb5223247040967f66358decb44106ac"
     },
     {
       "path": "components/uislider-slider.json",
-      "sha256": "b8ba115d012e55599cdfacd6470b02cccf381933c12c91ad9072e19c9e040bba"
+      "sha256": "d46083c36efff30e9716add9b073a217ad336c45f532e3ef1517e291e895a369"
     },
     {
       "path": "components/uispinner.json",
-      "sha256": "d89379c61c1914e5840fc7ee30426acc9af6ac571c38aaa1024ee31ffbf83202"
+      "sha256": "39ce725b4564bfce9c06b8c8d7e49b2fc883122b68d6bf5dd6508fb5dc2ba5d8"
     },
     {
       "path": "components/uiswitch-rocker.json",
-      "sha256": "cc54a6e84ccba5f3fbb894f80e78ecd5e1b864c2b8c6b8e5c49c2f73f54cc4f9"
+      "sha256": "1fe4a76c907d27c897f3ccb03e2c7d15a7f70ffd0e462841c90dfa0c4f35eb22"
     },
     {
       "path": "components/uiswitch-slider.json",
-      "sha256": "21dac49308bfb20ed5854d9c95cfc2c6917aa0e1cf2a9e2b23f32f8c294c9d0e"
+      "sha256": "ffc80540519e6f9cc95f309a3394e5a3b2883cda57887d17e9833b52503da580"
     },
     {
       "path": "components/uiswitch-toggle.json",
-      "sha256": "ddc68c3717153606c045ddaacb6cfdefd736a81249c91e18425853fa53bc441a"
+      "sha256": "50d10dee9e34d24a6a99499faa92cbc349e3b632daf29032b061b00257066e4f"
     },
     {
       "path": "components/uitab.json",
-      "sha256": "5fb035909f9623303a1200bb1b0ca289c710f08eafc2958d2e2a3644ad0f2a59"
+      "sha256": "34795e8321cd37234a3bed83dd651e884ba60d1ca6fe25c8704a38f6afb58226"
     },
     {
       "path": "components/uitabgroup.json",
-      "sha256": "1a2b3876ccd287be2ab4d38c4bcb370bed21aa55debb34bd7587e38a3675e44c"
+      "sha256": "84f7b7c9a84353b5d228d57388cc876fa66d1489aa665648683ceffa08beabf4"
     },
     {
       "path": "components/uitable.json",
-      "sha256": "ee2202d00168470c3a752244eade195709c02543caa9103e5474a10e77ea2771"
+      "sha256": "bd988495f66fb4536e44e225886fa3b86bd2b5eea7039de7c29526a862ec1d9b"
     },
     {
       "path": "components/uitextarea.json",
-      "sha256": "c6459ffcaf199101bed81c1e5bfcf378fad7a530207c840e8a11d206d68c98b2"
+      "sha256": "c5ec3d6a7822e2944fb8655f04422b9037b87440ce47bf3b6019c17478671d9f"
     },
     {
       "path": "components/uitogglebutton.json",
-      "sha256": "a9fc4ab974c4bbb4e4bb46e629bba8b15a5098d10e62fa60d05efee211eb40cd"
+      "sha256": "c56cec42234441e7571362261d602b14660c3127e6e11182380a12a51c8faef5"
     },
     {
       "path": "components/uitoggletool.json",
-      "sha256": "9e4b332a98fa7b79ea8621d83f803f12ba7945bb8f1ee8abf605faaf6225a3ed"
+      "sha256": "5103572df430c8cde88432b0ec8dba4289779666305fd75e9da048e975f433d2"
     },
     {
       "path": "components/uitoolbar.json",
-      "sha256": "109666a17e343ef23346a1ee6afb0cb7ada3eeede982837dfb197753b0ec0f25"
+      "sha256": "91a2bf3634c91eac9fa221dcc7ea16fdc8e4147e3e2c781dfb13b8a21c389652"
     },
     {
       "path": "components/uitree-checkbox.json",
-      "sha256": "143c7fe0ebe0c13d15e6e6ce2141f9a8779195d4e774e2c6f3ac24685d90d364"
+      "sha256": "f7532fc0d5c88becb5b855c5cbba2cfaf2e9084d4276fd545f11a92753d42c35"
     },
     {
       "path": "components/uitree.json",
-      "sha256": "dac8d7f096a09590e834cf53e6636c8ccdc0ec45f133676bb9f1b33976ecaef2"
+      "sha256": "45b41da303f77b89c4e9ac38268a1aa8a63c9b9b8607dfb001257af829af750c"
     },
     {
       "path": "components/uitreenode.json",
-      "sha256": "440e9dfd59d6dd797e57d1c55e3ac4dc7f2a1cdf854d0133b4ed54cf625d7263"
+      "sha256": "0c970bc6d65b6ae9a1a39e3fd6e2913f9c46cac5df2cfbbc7cbea9a605a55b6b"
     },
     {
       "path": "parent-context-rules.json",
-      "sha256": "9f2a9c1813df77079d40a5f7d05cc2782ced66987190e074a9645a429a592c3d"
+      "sha256": "252255f2a5ca5731596782d2c6e6f6b8183a387e3ed2d1319ccafdc4dd091497"
     },
     {
       "path": "schema.json",
-      "sha256": "71c24273ea06cba4de27e20f0175d8955b7285165993295a3b1269f2bd0521e4"
+      "sha256": "a03e12d7a9a5100dec8e454ddd5c1a85b73d570798ffdb04d38c307690c00a18"
     }
   ],
   "validation": {

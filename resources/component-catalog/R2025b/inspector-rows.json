@@ -7,41 +7,83 @@
       "displayName": "Data & Names",
       "editor": "tableData",
       "members": [
-        { "path": "Data", "role": "data" },
-        { "path": "ColumnName", "role": "columnNames" },
-        { "path": "RowName", "role": "rowNames" }
+        {
+          "path": "Data",
+          "role": "data"
+        },
+        {
+          "path": "ColumnName",
+          "role": "columnNames"
+        },
+        {
+          "path": "RowName",
+          "role": "rowNames"
+        }
       ],
       "categoryId": "table",
       "orderAnchor": "Data",
-      "match": { "componentIds": ["uitable"], "parentContextIds": [] }
+      "match": {
+        "componentIds": [
+          "uitable"
+        ],
+        "parentContextIds": []
+      }
     },
     {
       "id": "tableColumns",
       "displayName": "Columns",
       "editor": "columnSettings",
       "members": [
-        { "path": "ColumnWidth", "role": "width" },
-        { "path": "ColumnEditable", "role": "editable" },
-        { "path": "ColumnRearrangeable", "role": "rearrangeable" },
-        { "path": "ColumnSortable", "role": "sortable" },
-        { "path": "ColumnFormat", "role": "format" }
+        {
+          "path": "ColumnWidth",
+          "role": "width"
+        },
+        {
+          "path": "ColumnEditable",
+          "role": "editable"
+        },
+        {
+          "path": "ColumnRearrangeable",
+          "role": "rearrangeable"
+        },
+        {
+          "path": "ColumnSortable",
+          "role": "sortable"
+        },
+        {
+          "path": "ColumnFormat",
+          "role": "format"
+        }
       ],
       "categoryId": "table",
       "orderAnchor": "ColumnWidth",
-      "match": { "componentIds": ["uitable"], "parentContextIds": [] }
+      "match": {
+        "componentIds": [
+          "uitable"
+        ],
+        "parentContextIds": []
+      }
     },
     {
       "id": "itemsAndData",
       "displayName": "Items",
       "editor": "items",
       "members": [
-        { "path": "Items", "role": "items" },
-        { "path": "ItemsData", "role": "itemsData" }
+        {
+          "path": "Items",
+          "role": "items"
+        },
+        {
+          "path": "ItemsData",
+          "role": "itemsData"
+        }
       ],
       "orderAnchor": "Items",
       "match": {
         "componentIds": [
-          "uidropdown", "uilistbox", "uiknob-discrete"
+          "uidropdown",
+          "uilistbox",
+          "uiknob-discrete"
         ],
         "parentContextIds": []
       }
@@ -51,11 +93,20 @@
       "displayName": "Font Style",
       "editor": "fontStyle",
       "members": [
-        { "path": "FontWeight", "role": "weight" },
-        { "path": "FontAngle", "role": "angle" }
+        {
+          "path": "FontWeight",
+          "role": "weight"
+        },
+        {
+          "path": "FontAngle",
+          "role": "angle"
+        }
       ],
       "orderAnchor": "FontWeight",
-      "match": { "componentIds": [], "parentContextIds": [] }
+      "match": {
+        "componentIds": [],
+        "parentContextIds": []
+      }
     }
   ]
 }

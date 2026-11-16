@@ -974,18 +974,18 @@
         "geoaxes"
       ],
       "path": "GridColor",
-      "effectPolicy": "modeFlag",
+      "effectPolicy": "valueMode",
       "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+      "detail": "From R2026a, restoring auto after an explicit color, by assignment or name-value argument, replaces the stored color with the automatic theme color, as observed in owned R2026a fixtures. An explicit color still selects manual mode."
     },
     {
       "variants": [
         "uiaxes"
       ],
       "path": "GridColor",
-      "effectPolicy": "setterModeFlag",
+      "effectPolicy": "valueMode",
       "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures. From R2025a, uiaxes name-value arguments that restore auto after the value derive it from the theme, as observed in owned R2025a fixtures."
+      "detail": "From R2026a, restoring auto after an explicit color, by assignment or name-value argument, replaces the stored color with the automatic theme color, as observed in owned R2026a fixtures. An explicit color still selects manual mode."
     },
     {
       "variants": [
@@ -1040,18 +1040,18 @@
         "axes"
       ],
       "path": "XColor",
-      "effectPolicy": "modeFlag",
+      "effectPolicy": "valueMode",
       "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+      "detail": "From R2026a, restoring auto after an explicit color, by assignment or name-value argument, replaces the stored color with the automatic theme color, as observed in owned R2026a fixtures. An explicit color still selects manual mode."
     },
     {
       "variants": [
         "uiaxes"
       ],
       "path": "XColor",
-      "effectPolicy": "setterModeFlag",
+      "effectPolicy": "valueMode",
       "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures. From R2025a, uiaxes name-value arguments that restore auto after the value derive it from the theme, as observed in owned R2025a fixtures."
+      "detail": "From R2026a, restoring auto after an explicit color, by assignment or name-value argument, replaces the stored color with the automatic theme color, as observed in owned R2026a fixtures. An explicit color still selects manual mode."
     },
     {
       "variants": [
@@ -1070,18 +1070,18 @@
         "axes"
       ],
       "path": "YColor",
-      "effectPolicy": "modeFlag",
+      "effectPolicy": "valueMode",
       "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+      "detail": "From R2026a, restoring auto after an explicit color, by assignment or name-value argument, replaces the stored color with the automatic theme color, as observed in owned R2026a fixtures. An explicit color still selects manual mode."
     },
     {
       "variants": [
         "uiaxes"
       ],
       "path": "YColor",
-      "effectPolicy": "setterModeFlag",
+      "effectPolicy": "valueMode",
       "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures. From R2025a, uiaxes name-value arguments that restore auto after the value derive it from the theme, as observed in owned R2025a fixtures."
+      "detail": "From R2026a, restoring auto after an explicit color, by assignment or name-value argument, replaces the stored color with the automatic theme color, as observed in owned R2026a fixtures. An explicit color still selects manual mode."
     },
     {
       "variants": [
@@ -1100,18 +1100,18 @@
         "axes"
       ],
       "path": "ZColor",
-      "effectPolicy": "modeFlag",
+      "effectPolicy": "valueMode",
       "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+      "detail": "From R2026a, restoring auto after an explicit color, by assignment or name-value argument, replaces the stored color with the automatic theme color, as observed in owned R2026a fixtures. An explicit color still selects manual mode."
     },
     {
       "variants": [
         "uiaxes"
       ],
       "path": "ZColor",
-      "effectPolicy": "setterModeFlag",
+      "effectPolicy": "valueMode",
       "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures. From R2025a, uiaxes name-value arguments that restore auto after the value derive it from the theme, as observed in owned R2025a fixtures."
+      "detail": "From R2026a, restoring auto after an explicit color, by assignment or name-value argument, replaces the stored color with the automatic theme color, as observed in owned R2026a fixtures. An explicit color still selects manual mode."
     },
     {
       "variants": [
@@ -1131,18 +1131,18 @@
         "polaraxes"
       ],
       "path": "MinorGridColor",
-      "effectPolicy": "modeFlag",
+      "effectPolicy": "valueMode",
       "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+      "detail": "From R2026a, restoring auto after an explicit color, by assignment or name-value argument, replaces the stored color with the automatic theme color, as observed in owned R2026a fixtures. An explicit color still selects manual mode."
     },
     {
       "variants": [
         "uiaxes"
       ],
       "path": "MinorGridColor",
-      "effectPolicy": "setterModeFlag",
+      "effectPolicy": "valueMode",
       "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures. From R2025a, uiaxes name-value arguments that restore auto after the value derive it from the theme, as observed in owned R2025a fixtures."
+      "detail": "From R2026a, restoring auto after an explicit color, by assignment or name-value argument, replaces the stored color with the automatic theme color, as observed in owned R2026a fixtures. An explicit color still selects manual mode."
     },
     {
       "variants": [
@@ -1194,9 +1194,9 @@
         "polaraxes"
       ],
       "path": "RColor",
-      "effectPolicy": "modeFlag",
+      "effectPolicy": "valueMode",
       "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+      "detail": "From R2026a, restoring auto after an explicit color, by assignment or name-value argument, replaces the stored color with the automatic theme color, as observed in owned R2026a fixtures. An explicit color still selects manual mode."
     },
     {
       "variants": [
@@ -1214,9 +1214,9 @@
         "polaraxes"
       ],
       "path": "ThetaColor",
-      "effectPolicy": "modeFlag",
+      "effectPolicy": "valueMode",
       "kind": "documentation",
-      "detail": "An explicit color or alpha setter selects manual mode. These reviewed modes control rendered appearance; restoring auto does not universally replace the stored getter value. Keep the stored input separate from the rendering decision, as confirmed by owned R2024a fixtures."
+      "detail": "From R2026a, restoring auto after an explicit color, by assignment or name-value argument, replaces the stored color with the automatic theme color, as observed in owned R2026a fixtures. An explicit color still selects manual mode."
     },
     {
       "variants": [

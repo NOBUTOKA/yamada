@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
-  "matlabRelease": "R2025b",
-  "inputSha256": "60f1825e1b7406575c69b98c027f621b8d4802ce2b77fa7308fcf1a2dc1a1f3a",
+  "matlabRelease": "R2026a",
+  "inputSha256": "8abfbb96b3c53b63cf61a0d2164a166bfea388814b9d32618cfeab9d0a6c8927",
   "selectionRule": "Complete exact category surfaces with reuseCount >= 2. Candidate IDs are temporary until Step 9 assigns reviewed stable identifiers.",
   "candidates": [
     {
@@ -719,15 +719,17 @@
       ]
     },
     {
-      "candidateId": "candidate.interactivity.072eb36a6df5",
+      "candidateId": "candidate.interactivity.32add3945f36",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "072eb36a6df5dc85796efdaff5f0913fc57bae05a6dd0897297e0e2d4c718853",
+      "capabilitySha256": "32add3945f3662ac78734f8507f9ed727237d931f241ad8d097a970c0d9ad143",
       "propertyPaths": [
         "InteractionOptions",
         "Toolbar",
+        "ToolbarLocation",
+        "ToolbarLocationMode",
         "Interactions",
         "Visible",
         "CurrentPoint",
@@ -738,6 +740,8 @@
       "propertyCapabilitySha256": [
         "37a8cc1204a48d7ed639c0d0937a965c6c6c06e20cd644933c3f5fe6276ecb8d",
         "23d8c6c8bafeb9691266e5c885e930959023b07ec495e8f55526c5fd99835f24",
+        "5d7f5cd6ff1a4609f09ba3df48e529306a1486e95e06edf058652e60d3a97a3b",
+        "47728ebe01c8998bd6dbd28e87e35e9413368b423044a9e9bac5fa6ee03df6f9",
         "e7179a314ff35deb0b2c4643bc2ed7b65b0d86afecffd943d2a63a4bd73e3529",
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "affcdcec0873db0f0c091498fc38ac8131f20b3664c182c4729c47b99b351faf",
@@ -755,35 +759,34 @@
       ]
     },
     {
-      "candidateId": "candidate.interactivity.5f9328eb287b",
+      "candidateId": "candidate.interactivity.6a3b4ba66443",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
       "sharingScope": "crossCutting",
       "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
-      "capabilitySha256": "5f9328eb287b19ff6da821e60ada643275a6ea82e2c514245f2492af04258bfd",
+      "capabilitySha256": "6a3b4ba66443eb4e61c0d5e10cf618bfb73aee0c0daadbfe5727a836da2cc33e",
       "propertyPaths": [
         "Visible",
-        "Editable",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
-        "59edba4bad5787097e0232e0f3bd9afc0c4268eb52486aaa4ecd771d1d4552e3",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
       "memberVariantIds": [
-        "uidatepicker",
-        "uieditfield-numeric",
-        "uieditfield-text",
-        "uispinner",
-        "uitextarea",
-        "uitree-checkbox"
+        "uibutton-state",
+        "uicheckbox",
+        "uicolorpicker",
+        "uiradiobutton",
+        "uitogglebutton"
       ],
-      "reuseCount": 6,
+      "reuseCount": 5,
       "documentedCategoryOrders": [
         3
       ]
@@ -844,6 +847,41 @@
       ]
     },
     {
+      "candidateId": "candidate.interactivity.d1eecbef0b84",
+      "categoryId": "interactivity",
+      "categoryDisplayName": "Interactivity",
+      "sharingScope": "crossCutting",
+      "scopeRationale": "Visibility, enablement, tooltip, and context-menu capabilities recur across unrelated UI families.",
+      "capabilitySha256": "d1eecbef0b84b265d8090d172628719c03b7230245042767c0286e946addcbc7",
+      "propertyPaths": [
+        "Visible",
+        "Editable",
+        "Enable",
+        "Tooltip",
+        "Label",
+        "ContextMenu"
+      ],
+      "propertyCapabilitySha256": [
+        "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
+        "59edba4bad5787097e0232e0f3bd9afc0c4268eb52486aaa4ecd771d1d4552e3",
+        "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
+        "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
+        "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
+      ],
+      "memberVariantIds": [
+        "uidatepicker",
+        "uieditfield-numeric",
+        "uieditfield-text",
+        "uispinner",
+        "uitextarea"
+      ],
+      "reuseCount": 5,
+      "documentedCategoryOrders": [
+        3
+      ]
+    },
+    {
       "candidateId": "candidate.interactivity.ed15f36148f6",
       "categoryId": "interactivity",
       "categoryDisplayName": "Interactivity",
@@ -863,9 +901,6 @@
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
       "memberVariantIds": [
-        "uibutton-state",
-        "uicheckbox",
-        "uicolorpicker",
         "uigauge-circular",
         "uigauge-linear",
         "uigauge-ninetydegree",
@@ -873,15 +908,13 @@
         "uiknob-continuous",
         "uiknob-discrete",
         "uilabel",
-        "uiradiobutton",
         "uislider-range",
         "uislider-slider",
         "uiswitch-rocker",
         "uiswitch-slider",
-        "uiswitch-toggle",
-        "uitogglebutton"
+        "uiswitch-toggle"
       ],
-      "reuseCount": 17,
+      "reuseCount": 12,
       "documentedCategoryOrders": [
         3,
         4
@@ -1319,6 +1352,78 @@
       "reuseCount": 2,
       "documentedCategoryOrders": [
         5
+      ]
+    },
+    {
+      "candidateId": "candidate.rulers.cb4ea02a63b1",
+      "categoryId": "rulers",
+      "categoryDisplayName": "Rulers",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Axes-family ruler settings.",
+      "capabilitySha256": "cb4ea02a63b1574149029ffaea0ec50a5a8e9d324ff18b469f91fce22d1d2c62",
+      "propertyPaths": [
+        "XLim",
+        "YLim",
+        "ZLim",
+        "XLimMode",
+        "YLimMode",
+        "ZLimMode",
+        "XLimitMethod",
+        "YLimitMethod",
+        "ZLimitMethod",
+        "XAxis",
+        "YAxis",
+        "ZAxis",
+        "XAxisLocation",
+        "YAxisLocation",
+        "XColor",
+        "YColor",
+        "ZColor",
+        "XColorMode",
+        "YColorMode",
+        "ZColorMode",
+        "XDir",
+        "YDir",
+        "ZDir",
+        "XScale",
+        "YScale",
+        "ZScale"
+      ],
+      "propertyCapabilitySha256": [
+        "a810a3c4d47443c4c2938e693f5e06ef5d9788e672f3f8c2e116d0cc6c907eba",
+        "2cf95aefa26abe0cc3c58ad9c4d52cf6e41d569c2cb7c81a83e727e0274968e0",
+        "c5e3c1db5f88f65477ba4deb1cee914838b86a8fce237322fbc7ebdbadf51762",
+        "48cae320f38a25016b123610ae16c54fedfa323023ff15765c64aa59d174cbb4",
+        "5441d17dc482b320329a3bca4567d49c9665a6781c3c8e3c52436ac290c25727",
+        "7a9493ceb4f5bda24fcd7a4a4ece52f71b5ad296f6a627471a4c9631a15683ae",
+        "9ddc6ee842940eefc18d1c68eb8a6e726d7073665c4bc012f9344b1ae5a91520",
+        "dfc1353ff4713fbae8416896d245ba5f853dcdee3f085fcf7aa0d942d5f2bb65",
+        "d7c9d5dccbab22451e45b1196c7b1ed140f5150c639c9378c5f909f18c6cff72",
+        "bef092aa973bd142d24ea874e82a4ff7508684665583ccfa8896208175c01864",
+        "52dc20414bed9668edbc44314efaacdf139084068cd9f242dc0c760c6ca82175",
+        "503b93cf2d4160c220721439241ce194b4e27e1d26d05087fce614f8745dbb67",
+        "7fdc5cb0a23e095148cb430ed53a892f13572ecb6d411e190c1abaae0f670ebf",
+        "2e25de000e92503214b96c706951465d257dd37cf1c66de6d31bd77e32f6ed4b",
+        "b920a8435ea19dfcf9e08b0431336883ce507e5b1245dba538ecbadca8eb01d3",
+        "552628d22b1288fbc1e565580d5a8f5a6c9a526d6e90dc38fc856c7e4387c19c",
+        "4e84bb0e81af16530e4f9042f277b0f9bf31e5056d8a7c8b0faccc57bec1934d",
+        "7748250b106c931c015f945740ff270985416969aeedd029d1f471918c34f3e6",
+        "ff1d942530ac4c1c513341a70326d485b8d5d137b5d9a63c0b24937b1e9cae6c",
+        "b3b2460049a8a2bbc139bcb97dbe67eabe27b303fccf95fbde8bda7ce2a805d2",
+        "5bfb22f578b313dcf3ecb865d045bf8ec056e9603a3d5e7511cf8eaa909bcdc9",
+        "d0ed3fc613266c2f1ceeea9e1cdab861434aa4b1c2c2ba29f71919c822306928",
+        "ff5976c97a11523421ef88c5d0e0919b2f3367240831ac1b207f34d172e0422d",
+        "f9c87d4384e42826c6d557dba7047c0d71c263938cb9a2d4b0ca772f39e03697",
+        "2a4968655c9952699ce4490ea149abac8aa2e9ae881be20cede5a22fdf868194",
+        "310abd49eb362d6d7af7270dafbc6cd881849f6c11128e085304b76041100202"
+      ],
+      "memberVariantIds": [
+        "axes",
+        "uiaxes"
+      ],
+      "reuseCount": 2,
+      "documentedCategoryOrders": [
+        3
       ]
     },
     {

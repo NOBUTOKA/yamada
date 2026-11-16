@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
-  "matlabRelease": "R2025b",
-  "inputSha256": "60f1825e1b7406575c69b98c027f621b8d4802ce2b77fa7308fcf1a2dc1a1f3a",
+  "matlabRelease": "R2026a",
+  "inputSha256": "8abfbb96b3c53b63cf61a0d2164a166bfea388814b9d32618cfeab9d0a6c8927",
   "occurrences": [
     {
       "componentId": "axes",
@@ -149,9 +149,9 @@
         "503b93cf2d4160c220721439241ce194b4e27e1d26d05087fce614f8745dbb67",
         "7fdc5cb0a23e095148cb430ed53a892f13572ecb6d411e190c1abaae0f670ebf",
         "2e25de000e92503214b96c706951465d257dd37cf1c66de6d31bd77e32f6ed4b",
-        "9d6539efcf856c2852cd237ee874e243b0481bc6eddee64864c71f844dd9bbbe",
-        "aeaf5af7a44ea2f35081686d98965e0f28b4fceba7336336dccfc37c65dce1ca",
-        "d096315e7dff1da7b2497bc0b385b899e933f9f4aacab2b1f6dfc55eecdb1806",
+        "b920a8435ea19dfcf9e08b0431336883ce507e5b1245dba538ecbadca8eb01d3",
+        "552628d22b1288fbc1e565580d5a8f5a6c9a526d6e90dc38fc856c7e4387c19c",
+        "4e84bb0e81af16530e4f9042f277b0f9bf31e5056d8a7c8b0faccc57bec1934d",
         "7748250b106c931c015f945740ff270985416969aeedd029d1f471918c34f3e6",
         "ff1d942530ac4c1c513341a70326d485b8d5d137b5d9a63c0b24937b1e9cae6c",
         "b3b2460049a8a2bbc139bcb97dbe67eabe27b303fccf95fbde8bda7ce2a805d2",
@@ -162,7 +162,7 @@
         "2a4968655c9952699ce4490ea149abac8aa2e9ae881be20cede5a22fdf868194",
         "310abd49eb362d6d7af7270dafbc6cd881849f6c11128e085304b76041100202"
       ],
-      "capabilitySha256": "f972bd40e6e1ed7fc5a6360415f43bdae20ca0b9cd5d966eac81898dcb121c83"
+      "capabilitySha256": "cb4ea02a63b1574149029ffaea0ec50a5a8e9d324ff18b469f91fce22d1d2c62"
     },
     {
       "componentId": "axes",
@@ -202,7 +202,7 @@
         "7b69604d0fc71a59d8f3e43b393a45415751b87675f3a30537232f1e3dc81579",
         "7efa59efda40fc37c6881a25b41e5fbdb29cc0acf60f79b1188961820d923e25",
         "066fc56dc9885806634b174744db6b2374885952536b0751126b77dbc0dbe398",
-        "1f4b17991ee7c471caee6e84ffebd368e0c6263c82e420553b96f5b4c270dbe5",
+        "769baf70f32328140d911997c2d915a2bc72bedf55a226a6e32c3c2fd24c8f82",
         "991f0084ca4eb6980c71e69dbb2982fa6a3eea25036edc1dd86578bb093a8894",
         "235d06394eb53273a00b35e24ddc652bb34d621b2fbc2e91a12e2d3a370ea766",
         "e464fbcf5dfb4ac40426d1868f31efeded29a51d3a8c8732624fea4dd441e362",
@@ -212,12 +212,12 @@
         "3e0ccaa510c663f0333d5a228ba121cf891192f0e30b171d55b140bbd4c44f81",
         "f75ca32deded47d5ab652f7a8bd7a9526d48922dd478af2b3601f8319c4baf2f",
         "3af402d2e2e8831ba83d63cf0ba68570d30c7d1afed52791723944447dc14ce7",
-        "b1568f97c7757dee9962f79dbf54fd94d8b7bb83d41be2f9ef07598a77f1aa01",
+        "d5ac4acb591045fc2f0c8da778abe4e5971c8ac80efeeee49fc1bee0b63d6fcc",
         "01c5dd4d9f68f2d9ace24e6e12ab2667f99d1aaee8a8875ab6158031679e8b5f",
         "c0eca4787ffeac0577dcc1c4ffd243cf394adcca72f81394abddd7b9ac30e1de",
         "65b3a09c94cb0d05961dd8e3c82803a2c1c222ac18d87209e0564b8a752bea55"
       ],
-      "capabilitySha256": "2802b4ea8fdf3946a79aa1c46779fea507de6046f176e3a042b3aa72e98eba15"
+      "capabilitySha256": "2a1b0cb3a4c73f1c7bbf2147036d574c8427b50eea6fd79ed3af2cdecf27db5d"
     },
     {
       "componentId": "axes",
@@ -409,6 +409,8 @@
       "propertyPaths": [
         "InteractionOptions",
         "Toolbar",
+        "ToolbarLocation",
+        "ToolbarLocationMode",
         "Interactions",
         "Visible",
         "CurrentPoint",
@@ -419,6 +421,8 @@
       "propertyCapabilitySha256": [
         "37a8cc1204a48d7ed639c0d0937a965c6c6c06e20cd644933c3f5fe6276ecb8d",
         "23d8c6c8bafeb9691266e5c885e930959023b07ec495e8f55526c5fd99835f24",
+        "5d7f5cd6ff1a4609f09ba3df48e529306a1486e95e06edf058652e60d3a97a3b",
+        "47728ebe01c8998bd6dbd28e87e35e9413368b423044a9e9bac5fa6ee03df6f9",
         "e7179a314ff35deb0b2c4643bc2ed7b65b0d86afecffd943d2a63a4bd73e3529",
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "affcdcec0873db0f0c091498fc38ac8131f20b3664c182c4729c47b99b351faf",
@@ -426,7 +430,7 @@
         "8257201720e8a9827a10d1e45a4696d5ec3f081add77624da01d7ead2dc4ce83",
         "16a5407a71c54944479f9c242122203118b677fa105c2d52b36bc12c4a3a9fcd"
       ],
-      "capabilitySha256": "072eb36a6df5dc85796efdaff5f0913fc57bae05a6dd0897297e0e2d4c718853"
+      "capabilitySha256": "32add3945f3662ac78734f8507f9ed727237d931f241ad8d097a970c0d9ad143"
     },
     {
       "componentId": "axes",
@@ -628,12 +632,12 @@
       "propertyCapabilitySha256": [
         "48ca2323cfd2d1e88908700aa94fd740c9590420decd845c2d3fa9d57c0a7511",
         "7b69604d0fc71a59d8f3e43b393a45415751b87675f3a30537232f1e3dc81579",
-        "1f4b17991ee7c471caee6e84ffebd368e0c6263c82e420553b96f5b4c270dbe5",
+        "769baf70f32328140d911997c2d915a2bc72bedf55a226a6e32c3c2fd24c8f82",
         "991f0084ca4eb6980c71e69dbb2982fa6a3eea25036edc1dd86578bb093a8894",
         "235d06394eb53273a00b35e24ddc652bb34d621b2fbc2e91a12e2d3a370ea766",
         "e464fbcf5dfb4ac40426d1868f31efeded29a51d3a8c8732624fea4dd441e362"
       ],
-      "capabilitySha256": "4f643129e3935bd34f006dcddfe3ebe2f610352aac18fc83bd4dd2fc45e2fe34"
+      "capabilitySha256": "8a544e931fb6ca1224660b39ee06a94488fb1020066fe8e992d31308e9fef75c"
     },
     {
       "componentId": "geoaxes",
@@ -774,6 +778,8 @@
       "propertyPaths": [
         "InteractionOptions",
         "Toolbar",
+        "ToolbarLocation",
+        "ToolbarLocationMode",
         "Interactions",
         "Visible",
         "CurrentPoint",
@@ -784,6 +790,8 @@
       "propertyCapabilitySha256": [
         "37a8cc1204a48d7ed639c0d0937a965c6c6c06e20cd644933c3f5fe6276ecb8d",
         "23d8c6c8bafeb9691266e5c885e930959023b07ec495e8f55526c5fd99835f24",
+        "5d7f5cd6ff1a4609f09ba3df48e529306a1486e95e06edf058652e60d3a97a3b",
+        "47728ebe01c8998bd6dbd28e87e35e9413368b423044a9e9bac5fa6ee03df6f9",
         "e7179a314ff35deb0b2c4643bc2ed7b65b0d86afecffd943d2a63a4bd73e3529",
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "affcdcec0873db0f0c091498fc38ac8131f20b3664c182c4729c47b99b351faf",
@@ -791,7 +799,7 @@
         "8257201720e8a9827a10d1e45a4696d5ec3f081add77624da01d7ead2dc4ce83",
         "16a5407a71c54944479f9c242122203118b677fa105c2d52b36bc12c4a3a9fcd"
       ],
-      "capabilitySha256": "072eb36a6df5dc85796efdaff5f0913fc57bae05a6dd0897297e0e2d4c718853"
+      "capabilitySha256": "32add3945f3662ac78734f8507f9ed727237d931f241ad8d097a970c0d9ad143"
     },
     {
       "componentId": "geoaxes",
@@ -984,15 +992,15 @@
         "f5bbf7845a75d3e9c86e954ef00cbe146a74577d3f6d8b147b01dcbd332a39ac",
         "6bfd35d1028410476d16ea3249dc27d6f77a8221bf2ca9e71b144252b95a454a",
         "bc61b2b34c49284db35d4d771d84c447fd0a37997c08eceb79407f7c5e721184",
-        "afaf4e0839b26d13cfcb7f596a13bd529dcdaeffec92e579be6ee1f5d90634a8",
+        "8b2c81b1cfa7cb19a13558a1dc1ffc6bfd6fcad581d74986d4356444034790ae",
         "ad346b2ee518d590541a41d51a72d0bbbf9af4d67dd477221b809368077bd3ab",
-        "18deee8a191b7020ab840c501807d77e5fec29674b4092150fd305e830ef73de",
+        "9f9d09505461eab61065c5bb46377d3dd725fa5f3b88ffbbc3c6747db38e7075",
         "0246da8d3c62b5d3f29da531e71fb77797cc37dcdcce16888e693cfa25787c22",
         "e9bc74f946a8f2422ba198371f2b090e15e8278d9f39651a8364cfa3a113d426",
         "453b0bfa8a0fe2b0e2e791870605d8268edfdabd838041fa640d8bdf5347474f",
         "575eeefee9eaed0bb84641e2ca7f1d3b57b5d946a134ae1409218ff14bf53292"
       ],
-      "capabilitySha256": "e6f3d7cc94599e80b678b5e68f69c92fbfcc29c8feffd8f76c41555285d3cbbd"
+      "capabilitySha256": "417295a5ee2e603a40286bc08d65f88d1bb5d43ec83fce61854203fe76302d47"
     },
     {
       "componentId": "polaraxes",
@@ -1023,19 +1031,19 @@
         "9c291297386bb1687eb9ec0ca07b133be401d60909ac2efe39f21f50d98de14f",
         "138d9a8ee3dbdd05df7b209c618df642ef004c0545fdf9c5e7070d76a94d5e02",
         "7b69604d0fc71a59d8f3e43b393a45415751b87675f3a30537232f1e3dc81579",
-        "1f4b17991ee7c471caee6e84ffebd368e0c6263c82e420553b96f5b4c270dbe5",
+        "769baf70f32328140d911997c2d915a2bc72bedf55a226a6e32c3c2fd24c8f82",
         "991f0084ca4eb6980c71e69dbb2982fa6a3eea25036edc1dd86578bb093a8894",
         "235d06394eb53273a00b35e24ddc652bb34d621b2fbc2e91a12e2d3a370ea766",
         "e464fbcf5dfb4ac40426d1868f31efeded29a51d3a8c8732624fea4dd441e362",
         "6fd655a9ad9f0f5b2b0e4b720c818703130252955e08dfa1b40169b658363e85",
         "38ddb8c07637cb12ebc35f2b05c654b5f236e3e191e94ffc1299022760d545dd",
         "3e0ccaa510c663f0333d5a228ba121cf891192f0e30b171d55b140bbd4c44f81",
-        "b1568f97c7757dee9962f79dbf54fd94d8b7bb83d41be2f9ef07598a77f1aa01",
+        "d5ac4acb591045fc2f0c8da778abe4e5971c8ac80efeeee49fc1bee0b63d6fcc",
         "01c5dd4d9f68f2d9ace24e6e12ab2667f99d1aaee8a8875ab6158031679e8b5f",
         "c0eca4787ffeac0577dcc1c4ffd243cf394adcca72f81394abddd7b9ac30e1de",
         "65b3a09c94cb0d05961dd8e3c82803a2c1c222ac18d87209e0564b8a752bea55"
       ],
-      "capabilitySha256": "75b151f17f75c5dbf509c05293e1e43d293046020158ae940aef693daeccab43"
+      "capabilitySha256": "3cf5ea50f212a973ca957ffc8e1ee1453ce101db43c529c0e5e020253bcbdf60"
     },
     {
       "componentId": "polaraxes",
@@ -1174,6 +1182,8 @@
       "propertyPaths": [
         "InteractionOptions",
         "Toolbar",
+        "ToolbarLocation",
+        "ToolbarLocationMode",
         "Interactions",
         "Visible",
         "CurrentPoint",
@@ -1184,6 +1194,8 @@
       "propertyCapabilitySha256": [
         "37a8cc1204a48d7ed639c0d0937a965c6c6c06e20cd644933c3f5fe6276ecb8d",
         "23d8c6c8bafeb9691266e5c885e930959023b07ec495e8f55526c5fd99835f24",
+        "5d7f5cd6ff1a4609f09ba3df48e529306a1486e95e06edf058652e60d3a97a3b",
+        "47728ebe01c8998bd6dbd28e87e35e9413368b423044a9e9bac5fa6ee03df6f9",
         "c7075f4f263af7608c315aeb2894102f36d234b55034d641f00baa3252c849db",
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "affcdcec0873db0f0c091498fc38ac8131f20b3664c182c4729c47b99b351faf",
@@ -1191,7 +1203,7 @@
         "8257201720e8a9827a10d1e45a4696d5ec3f081add77624da01d7ead2dc4ce83",
         "16a5407a71c54944479f9c242122203118b677fa105c2d52b36bc12c4a3a9fcd"
       ],
-      "capabilitySha256": "98776e2ca13ecd2452551bb6b9f861a63a190985b52ea00cc87c4a40437d2f74"
+      "capabilitySha256": "29ce7f2008e8439e508ac92edbc0eb148873b08169405bd0cfcd792a4954d3ca"
     },
     {
       "componentId": "polaraxes",
@@ -1419,9 +1431,9 @@
         "503b93cf2d4160c220721439241ce194b4e27e1d26d05087fce614f8745dbb67",
         "7fdc5cb0a23e095148cb430ed53a892f13572ecb6d411e190c1abaae0f670ebf",
         "2e25de000e92503214b96c706951465d257dd37cf1c66de6d31bd77e32f6ed4b",
-        "a8dc1ac8aeacbe099fd60e1a9c367d23b5d8e4c079a2158dfe08be261c0a5ce7",
-        "93cd5b599c407c64e6795f307b0e00c02c013d6d44786516609c86c5b562415a",
-        "45805f04effd51e7998e0408c527fded473cf2fbc36e58e737afc9fb517f550d",
+        "b920a8435ea19dfcf9e08b0431336883ce507e5b1245dba538ecbadca8eb01d3",
+        "552628d22b1288fbc1e565580d5a8f5a6c9a526d6e90dc38fc856c7e4387c19c",
+        "4e84bb0e81af16530e4f9042f277b0f9bf31e5056d8a7c8b0faccc57bec1934d",
         "7748250b106c931c015f945740ff270985416969aeedd029d1f471918c34f3e6",
         "ff1d942530ac4c1c513341a70326d485b8d5d137b5d9a63c0b24937b1e9cae6c",
         "b3b2460049a8a2bbc139bcb97dbe67eabe27b303fccf95fbde8bda7ce2a805d2",
@@ -1432,7 +1444,7 @@
         "2a4968655c9952699ce4490ea149abac8aa2e9ae881be20cede5a22fdf868194",
         "310abd49eb362d6d7af7270dafbc6cd881849f6c11128e085304b76041100202"
       ],
-      "capabilitySha256": "df2549e11297fbab58f7a8e2bee06acc3f4f47e608464c0ff6f9f5ae372bc7a0"
+      "capabilitySha256": "cb4ea02a63b1574149029ffaea0ec50a5a8e9d324ff18b469f91fce22d1d2c62"
     },
     {
       "componentId": "uiaxes",
@@ -1472,7 +1484,7 @@
         "7b69604d0fc71a59d8f3e43b393a45415751b87675f3a30537232f1e3dc81579",
         "7efa59efda40fc37c6881a25b41e5fbdb29cc0acf60f79b1188961820d923e25",
         "066fc56dc9885806634b174744db6b2374885952536b0751126b77dbc0dbe398",
-        "1f5cf692805e0e741cc5d92aac89b24b3721a7304401f8c558cf654712e78ce8",
+        "769baf70f32328140d911997c2d915a2bc72bedf55a226a6e32c3c2fd24c8f82",
         "991f0084ca4eb6980c71e69dbb2982fa6a3eea25036edc1dd86578bb093a8894",
         "6929bf99183a59b0474aa81c99c96c7be7359c9dd0d08aa6562cfbfeae02931f",
         "e464fbcf5dfb4ac40426d1868f31efeded29a51d3a8c8732624fea4dd441e362",
@@ -1482,12 +1494,12 @@
         "3e0ccaa510c663f0333d5a228ba121cf891192f0e30b171d55b140bbd4c44f81",
         "f75ca32deded47d5ab652f7a8bd7a9526d48922dd478af2b3601f8319c4baf2f",
         "3af402d2e2e8831ba83d63cf0ba68570d30c7d1afed52791723944447dc14ce7",
-        "5e8466db2022f3850fcdd8c9e19b10f6d8d4b9c5f8bc04a595b67b6f22a48646",
+        "d5ac4acb591045fc2f0c8da778abe4e5971c8ac80efeeee49fc1bee0b63d6fcc",
         "01c5dd4d9f68f2d9ace24e6e12ab2667f99d1aaee8a8875ab6158031679e8b5f",
         "94551f0c72e3c1922d47e3f97eb6ccfb08a213625009d357f30f65f42280b876",
         "65b3a09c94cb0d05961dd8e3c82803a2c1c222ac18d87209e0564b8a752bea55"
       ],
-      "capabilitySha256": "e22f5833c0880c58176dcd3366d62f5e03f7807c9f45cccebeaf754cf8a3146b"
+      "capabilitySha256": "89286bd22c24b3be38aca090c19af8a78c85bcb09bd8f51dff1a146c62188988"
     },
     {
       "componentId": "uiaxes",
@@ -1681,6 +1693,8 @@
       "propertyPaths": [
         "InteractionOptions",
         "Toolbar",
+        "ToolbarLocation",
+        "ToolbarLocationMode",
         "Interactions",
         "Visible",
         "CurrentPoint",
@@ -1691,6 +1705,8 @@
       "propertyCapabilitySha256": [
         "37a8cc1204a48d7ed639c0d0937a965c6c6c06e20cd644933c3f5fe6276ecb8d",
         "23d8c6c8bafeb9691266e5c885e930959023b07ec495e8f55526c5fd99835f24",
+        "5d7f5cd6ff1a4609f09ba3df48e529306a1486e95e06edf058652e60d3a97a3b",
+        "47728ebe01c8998bd6dbd28e87e35e9413368b423044a9e9bac5fa6ee03df6f9",
         "e7179a314ff35deb0b2c4643bc2ed7b65b0d86afecffd943d2a63a4bd73e3529",
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "f41ad17396e0a46adffe0bae7fdd2719e657fff87fd3a198e8d10635f0dce548",
@@ -1698,7 +1714,7 @@
         "8257201720e8a9827a10d1e45a4696d5ec3f081add77624da01d7ead2dc4ce83",
         "16a5407a71c54944479f9c242122203118b677fa105c2d52b36bc12c4a3a9fcd"
       ],
-      "capabilitySha256": "3ff1838b5c8171d550c6402b2a49ff8a0253e551415bd15f8334c61465ce94ae"
+      "capabilitySha256": "41b07c657f758e1717bbc741eb6976d551859ea460eab1d6c6e84774e188096c"
     },
     {
       "componentId": "uiaxes",
@@ -1837,15 +1853,17 @@
         "Visible",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "1dafd88aca0f1e26c3d05f905e018ede9f6fad85d0e4f7bb9cecda4cbd223de7",
         "a81107e958549fed8aa35c5d0c22b75c79f138e29e45e640a75f52a91c8761b9"
       ],
-      "capabilitySha256": "bfac7b667ba9d6e757c1791df314b4eff6f31a0b40f8fa98810ad152a06f09f0"
+      "capabilitySha256": "d86c004e9b329e1cb5efc59a78c58ad83dfac1544de2103d1d1afb4e594f25d3"
     },
     {
       "componentId": "uibutton-push",
@@ -2007,15 +2025,17 @@
         "Visible",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
-      "capabilitySha256": "ed15f36148f65fb0aec80bf1912386b34641ae4b4e6c0feecf17b3ce61f63921"
+      "capabilitySha256": "6a3b4ba66443eb4e61c0d5e10cf618bfb73aee0c0daadbfe5727a836da2cc33e"
     },
     {
       "componentId": "uibutton-state",
@@ -2381,15 +2401,17 @@
         "Visible",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
-      "capabilitySha256": "ed15f36148f65fb0aec80bf1912386b34641ae4b4e6c0feecf17b3ce61f63921"
+      "capabilitySha256": "6a3b4ba66443eb4e61c0d5e10cf618bfb73aee0c0daadbfe5727a836da2cc33e"
     },
     {
       "componentId": "uicheckbox",
@@ -2529,15 +2551,17 @@
         "Visible",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
-      "capabilitySha256": "ed15f36148f65fb0aec80bf1912386b34641ae4b4e6c0feecf17b3ce61f63921"
+      "capabilitySha256": "6a3b4ba66443eb4e61c0d5e10cf618bfb73aee0c0daadbfe5727a836da2cc33e"
     },
     {
       "componentId": "uicolorpicker",
@@ -2772,6 +2796,7 @@
         "Editable",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
@@ -2779,9 +2804,10 @@
         "59edba4bad5787097e0232e0f3bd9afc0c4268eb52486aaa4ecd771d1d4552e3",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
-      "capabilitySha256": "5f9328eb287b19ff6da821e60ada643275a6ea82e2c514245f2492af04258bfd"
+      "capabilitySha256": "d1eecbef0b84b265d8090d172628719c03b7230245042767c0286e946addcbc7"
     },
     {
       "componentId": "uidatepicker",
@@ -3118,6 +3144,7 @@
         "Editable",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
@@ -3125,9 +3152,10 @@
         "59edba4bad5787097e0232e0f3bd9afc0c4268eb52486aaa4ecd771d1d4552e3",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
-      "capabilitySha256": "5f9328eb287b19ff6da821e60ada643275a6ea82e2c514245f2492af04258bfd"
+      "capabilitySha256": "d1eecbef0b84b265d8090d172628719c03b7230245042767c0286e946addcbc7"
     },
     {
       "componentId": "uieditfield-numeric",
@@ -3284,6 +3312,7 @@
         "Editable",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
@@ -3291,9 +3320,10 @@
         "59edba4bad5787097e0232e0f3bd9afc0c4268eb52486aaa4ecd771d1d4552e3",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
-      "capabilitySha256": "5f9328eb287b19ff6da821e60ada643275a6ea82e2c514245f2492af04258bfd"
+      "capabilitySha256": "d1eecbef0b84b265d8090d172628719c03b7230245042767c0286e946addcbc7"
     },
     {
       "componentId": "uieditfield-text",
@@ -4734,6 +4764,7 @@
         "Visible",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
@@ -4741,9 +4772,10 @@
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
-      "capabilitySha256": "66d7e9164ce24c1c10af04bc19597aa41caf88906c6a2421251df3d8349c5fde"
+      "capabilitySha256": "11d035ff640b2a15ee1ea77b6816e163960eb74379c30fe30af7690f240d3445"
     },
     {
       "componentId": "uihyperlink",
@@ -4889,6 +4921,7 @@
         "Visible",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
@@ -4897,9 +4930,10 @@
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
-      "capabilitySha256": "76e588d7d05088a9f28b78801c4297be1db55984c2dc8189ac1bc80edfe9cd52"
+      "capabilitySha256": "7fe9a2349de35493ddab9053d8d9f011e7defbe6a330978230d3d2776be65e75"
     },
     {
       "componentId": "uiimage",
@@ -6310,15 +6344,17 @@
         "Visible",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
-      "capabilitySha256": "ed15f36148f65fb0aec80bf1912386b34641ae4b4e6c0feecf17b3ce61f63921"
+      "capabilitySha256": "6a3b4ba66443eb4e61c0d5e10cf618bfb73aee0c0daadbfe5727a836da2cc33e"
     },
     {
       "componentId": "uiradiobutton",
@@ -6859,6 +6895,7 @@
         "Editable",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
@@ -6866,9 +6903,10 @@
         "59edba4bad5787097e0232e0f3bd9afc0c4268eb52486aaa4ecd771d1d4552e3",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
-      "capabilitySha256": "5f9328eb287b19ff6da821e60ada643275a6ea82e2c514245f2492af04258bfd"
+      "capabilitySha256": "d1eecbef0b84b265d8090d172628719c03b7230245042767c0286e946addcbc7"
     },
     {
       "componentId": "uispinner",
@@ -8051,6 +8089,7 @@
         "Editable",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
@@ -8058,9 +8097,10 @@
         "59edba4bad5787097e0232e0f3bd9afc0c4268eb52486aaa4ecd771d1d4552e3",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
-      "capabilitySha256": "5f9328eb287b19ff6da821e60ada643275a6ea82e2c514245f2492af04258bfd"
+      "capabilitySha256": "d1eecbef0b84b265d8090d172628719c03b7230245042767c0286e946addcbc7"
     },
     {
       "componentId": "uitextarea",
@@ -8218,15 +8258,17 @@
         "Visible",
         "Enable",
         "Tooltip",
+        "Label",
         "ContextMenu"
       ],
       "propertyCapabilitySha256": [
         "386175e589df892448ea6d6126d64d6746f2131008255436f036062c831ac55f",
         "27968b57dbdc471cc24ff7edb12631a5768aaa0015b04763f4299bb629649c5c",
         "784bddd134ec4ece35a723c425c979af6e621b3ad78684c1463c501bbd680597",
+        "334d85501dc5d6eb5e538c10eae742b76cb624d23fc99b259816973258d2dc5e",
         "96a00bea14d0461b14a91488be50619e460bfb46b4fa897b03f8805d177dca7b"
       ],
-      "capabilitySha256": "ed15f36148f65fb0aec80bf1912386b34641ae4b4e6c0feecf17b3ce61f63921"
+      "capabilitySha256": "6a3b4ba66443eb4e61c0d5e10cf618bfb73aee0c0daadbfe5727a836da2cc33e"
     },
     {
       "componentId": "uitogglebutton",
