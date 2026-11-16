@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "surfaceRelease": "R2026a",
+  "surfaceRelease": "R2026b",
   "releases": [
     {
       "release": "R2023a",
@@ -32,7 +32,7 @@
     },
     {
       "release": "R2026b",
-      "catalog": false
+      "catalog": true
     }
   ],
   "variants": [
@@ -84,6 +84,13 @@
       "path": "ToolbarLocationMode",
       "releases": {
         "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "geoaxes",
+      "path": "MapLayout",
+      "releases": {
+        "since": "R2026b"
       }
     },
     {
@@ -220,6 +227,13 @@
       }
     },
     {
+      "variantId": "uidropdown",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
       "variantId": "uieditfield-numeric",
       "path": "AllowEmpty",
       "releases": {
@@ -283,6 +297,13 @@
       }
     },
     {
+      "variantId": "uiknob-continuous",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
       "variantId": "uiknob-discrete",
       "path": "ValueIndex",
       "releases": {
@@ -290,10 +311,24 @@
       }
     },
     {
+      "variantId": "uiknob-discrete",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
       "variantId": "uilistbox",
       "path": "ValueIndex",
       "releases": {
         "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uilistbox",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
       }
     },
     {
@@ -374,6 +409,13 @@
       }
     },
     {
+      "variantId": "uiswitch-rocker",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
       "variantId": "uiswitch-slider",
       "path": "ValueIndex",
       "releases": {
@@ -381,10 +423,24 @@
       }
     },
     {
+      "variantId": "uiswitch-slider",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
       "variantId": "uiswitch-toggle",
       "path": "ValueIndex",
       "releases": {
         "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uiswitch-toggle",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
       }
     },
     {

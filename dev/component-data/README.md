@@ -1,6 +1,6 @@
 # Component catalog generation
 
-For contributors updating a component catalog, this guide describes the generation inputs, output contracts, and verification commands. See the [R2024b ledger](R2024b/SUMMARY.md) for the inputs of the current surface release.
+For contributors updating a component catalog, this guide describes the generation inputs, output contracts, and verification commands. See the [R2026b ledger](R2026b/SUMMARY.md) for the inputs of the current surface release.
 
 ## Releases and projection
 

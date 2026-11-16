@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "runtime-component-metadata.schema.json",
+  "title": "yamada runtime component metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "matlabRelease",
+    "factories"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "matlabRelease": {
+      "const": "R2026b"
+    },
+    "factories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "factory",
+          "allowedParentFactories",
+          "isRoot",
+          "capabilities"
+        ],
+        "properties": {
+          "factory": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allowedParentFactories": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "isRoot": {
+            "type": "boolean"
+          },
+          "capabilities": {
+            "type": "object"
+          },
+          "overrides": {
+            "description": "Merge patches of this factory entry for release ranges whose surface differs from the surface release. Styles of unavailable variants are removed automatically.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "releases",
+                "patch",
+                "evidence"
+              ],
+              "properties": {
+                "releases": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "minProperties": 1,
+                  "properties": {
+                    "since": { "type": "string", "pattern": "^R[0-9]{4}[ab]$" },
+                    "before": { "type": "string", "pattern": "^R[0-9]{4}[ab]$" }
+                  }
+                },
+                "patch": {
+                  "type": "object",
+                  "minProperties": 1
+                },
+                "evidence": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "kind",
+                      "source",
+                      "detail"
+                    ],
+                    "properties": {
+                      "kind": { "enum": ["releaseNotes", "mathworksDocumentation", "nativeObservation", "projectDecision"] },
+                      "source": { "type": "string", "minLength": 1 },
+                      "detail": { "type": "string", "minLength": 1 }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

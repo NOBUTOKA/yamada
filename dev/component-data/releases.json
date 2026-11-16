@@ -1,7 +1,7 @@
 {
   "$schema": "releases.schema.json",
   "schemaVersion": 1,
-  "surfaceRelease": "R2026a",
+  "surfaceRelease": "R2026b",
   "releases": [
     {
       "release": "R2023a",
@@ -69,7 +69,17 @@
         }
       ]
     },
-    { "release": "R2026a", "status": "audited" },
-    { "release": "R2026b", "status": "known" }
+    {
+      "release": "R2026a",
+      "status": "verified",
+      "verification": [
+        {
+          "kind": "nativeObservation",
+          "source": "dev/component-data/ProbeReleaseSurface.m and CompareReleaseSurfaces.m on the R2026b ledger, MATLAB 26.2.0.3433840 (R2026b) Update 1 and 26.1.0.3346908 (R2026a) Update 5",
+          "detail": "Every variant and property available in R2026a constructs with the same documented property paths and finite options as in R2026b, except the Label and MapLayout properties and the radio and toggle button default positions that R2026b adds or changes; the contents of the Preview-skipped InteractionOptions object carry no documented default. Radio and toggle buttons outside button groups and selection groups are not yet represented."
+        }
+      ]
+    },
+    { "release": "R2026b", "status": "audited" }
   ]
 }
