@@ -97,7 +97,7 @@ Follow the formatting of existing code, and do not include unrelated formatting 
 - Project-owned MATLAB source outside the component catalog must run on MATLAB R2023a and every later release. R2023a is a source-compatibility floor, not a support statement: the supported release targets are those listed in the README and the specification, because each target also needs a verified catalog.
 - Absorb release differences in the release-specific component catalogs under `resources/component-catalog/<release>`, which are generated from availability annotations in the surface ledger under `dev/component-data`. Components, creation variants, properties, defaults, value sets, and parent-context effects that differ between releases are catalog data. Do not branch MATLAB source on the running release to reproduce catalog facts, and do not reference a UI component property in MATLAB source when the catalog can supply it.
 - When a release difference cannot be expressed as catalog data, such as an undocumented integration point like the Preview layout adapter or a behavior change in a MATLAB function that the editor calls, isolate it behind one adapter with a bounded fallback and record the verified releases in the [architecture reference](doc/ARCHITECTURE.md). Gate on the release with `isMATLABReleaseOlderThan`, not by parsing `version` output or calling `ver` or `verLessThan`; those two are not recommended from R2023b, and from R2023b `version` reports numbers such as 23.2 and 24.1 instead of the earlier 9.x scheme.
-- Verify MATLAB source changes on the minimum release R2023a as well as on the current release target R2024a. See [Testing](#testing) for the required profiles.
+- Verify MATLAB source changes on the minimum release R2023a as well as on the surface release of the component ledger. See [Testing](#testing) for the required profiles.
 - Keep tests shared across releases. When a test exercises a component or property that only some releases' catalogs contain, gate it with `assumeCatalogSupports`, which checks the loaded catalog rather than the release name, so the test is incomplete instead of failing where the catalog lacks it. Put a fixture variant for an older release in `tests/fixtures/<release>/` and load fixtures through `yamadaFixturePath`; see the [fixture notes](tests/fixtures/README.md#release-specific-variants).
 
 ### Features Unavailable in R2023a
@@ -160,7 +160,7 @@ When adding or changing a standard component or property, start with the [catalo
 
 Before submitting a pull request, run the tests relevant to your changes and include the results. If you could not run a test, name it and explain why in the pull request.
 
-Before submitting a pull request, run the full suite on both the minimum source release R2023a and the current release target R2024a, except for documentation-only changes that do not affect executable examples or behavior. Use quick and area profiles while iterating. Start the runner from the executable of the release under test; parallel workers start from the same `matlabroot`. If you cannot set up an R2023a environment, run the full suite on R2024a and ask the maintainer in the pull request description to run the R2023a full suite.
+Before submitting a pull request, run the full suite on both the minimum source release R2023a and the surface release of the component ledger, which `surfaceRelease` in `dev/component-data/releases.json` names and is currently R2026b, except for documentation-only changes that do not affect executable examples or behavior. Use quick and area profiles while iterating. Start the runner from the executable of the release under test; parallel workers start from the same `matlabroot`. If you cannot set up an R2023a environment, run the full suite on the surface release and ask the maintainer in the pull request description to run the R2023a full suite. Before a release, also follow the release checks in [the release procedure](doc/RELEASING.md).
 
 The quick profile contains every non-UI test except catalog-wide sweeps, plus a bounded UI smoke set. Catalog-wide sweeps, which repeat a check for every catalog variant through rendering, generation, or ledger comparison, carry the `exhaustive` tag instead of `fast`; they run in the full suite and in area profiles that select them. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, `lifecycle`, and `exhaustive`. Run the `exhaustive` area while iterating on catalog changes.
 
@@ -222,7 +222,7 @@ Before submitting:
 - [ ] The product specification or README is updated when necessary
 - [ ] MATLAB file encoding, line endings, docstrings, and GPL notices are correct
 - [ ] Changed MATLAB source avoids features unavailable in R2023a
-- [ ] The full suite passes on R2023a and R2024a, or the pull request asks the maintainer to run it on R2023a
+- [ ] The full suite passes on R2023a and the surface release, or the pull request asks the maintainer to run it on R2023a
 - [ ] Relevant tests pass and `git diff --check` reports no problems
 - [ ] Unsupported source remains preserved and the input application is never executed
 
