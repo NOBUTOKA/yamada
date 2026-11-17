@@ -10,6 +10,8 @@ classdef LayoutStabilizeReply < handle
         Token string
         % Data - Matching JavaScript response or explicit timeout layouts.
         Data struct = struct()
+        % TimedOut - Whether the watchdog, not a matching response, completed this request.
+        TimedOut logical = false
     end
     methods
         function obj = LayoutStabilizeReply(token)
@@ -39,6 +41,7 @@ classdef LayoutStabilizeReply < handle
             end
             if obj.Done, return, end
             obj.Data = struct("token", obj.Token, "error", "Layout acknowledgement timed out.");
+            obj.TimedOut = true;
             obj.Done = true;
         end
     end

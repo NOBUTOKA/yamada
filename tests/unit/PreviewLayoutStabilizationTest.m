@@ -14,6 +14,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
             reply.accept(struct("token", "current", "value", 2));
             reply.expire();
             testCase.verifyTrue(reply.Done);
+            testCase.verifyFalse(reply.TimedOut);
             testCase.verifyEqual(reply.Data.value, 1);
         end
 
@@ -24,6 +25,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
             expected = reply.Data;
             reply.accept(struct("token", "expired", "value", 1));
             testCase.verifyTrue(reply.Done);
+            testCase.verifyTrue(reply.TimedOut);
             testCase.verifyEqual(reply.Data, expected);
             testCase.verifyTrue(isfield(expected, "error"));
         end

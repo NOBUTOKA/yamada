@@ -5,6 +5,9 @@ function data = waitForPreviewLayout(figure, target)
 %   and ViewModel stabilization, and replies after the next animation frame.
 %   The reply travels on the figure ViewModel channel behind the client's
 %   position notifications, so MATLAB-side positions are final when it returns.
+%   The reply also reports route, "cef" for a figure with its own window or
+%   "desktop" for a desktop DivFigure, and installed, which is true when this
+%   wait installed the session's desktop receiver.
 arguments (Input)
     figure (1, 1) matlab.ui.Figure
     target (1, 1) matlab.graphics.Graphics %#ok<INUSA>
@@ -33,6 +36,19 @@ host = controllerData.PlatformHost;
 hostData = struct(host);
 viewModel = controllerData.ViewModel;
 clear warningCleanup
+resources = fullfile(fileparts(fileparts(fileparts(mfilename("fullpath")))), "resources");
+template = string(fileread(fullfile(resources, "layout-settle-request.js")));
+% Choose the page route. Desktop DivFigures from R2025a have no CEF window; their
+% receiver is installed once per MATLAB session before the first request.
+installed = false;
+if isfield(hostData, "CEF")
+    route = "cef";
+elseif ~isMATLABReleaseOlderThan("R2025a") && endsWith(string(class(host)), ".DivFigurePlatformHost")
+    route = "desktop";
+    installed = ensureDesktopReceiver(resources, template);
+else
+    error("yamada:PreviewLayout:NoFigureWindow", "The figure host does not support layout requests.");
+end
 % Listen before dispatch so an immediately resolved promise cannot be missed. Failures
 % before the figure ViewModel is found arrive on the message service channel instead.
 token = string(java.util.UUID.randomUUID());
@@ -51,24 +67,102 @@ configuration = struct("channel", channel, "token", token, "limit", waitLimitMil
     "quiet", quietMilliseconds, "quietLimit", quietLimitMilliseconds, "event", eventName, ...
     "figure", string(viewModel.getId()), ...
     "figureChannel", string(matlab.ui.internal.FigureServices.getUniqueChannelId(figure)));
-resources = fullfile(fileparts(fileparts(fileparts(mfilename("fullpath")))), "resources");
-configJSON = string(jsonencode(configuration));
-script = replace(string(fileread(fullfile(resources, "layout-settle-request.js"))), "CFG", configJSON);
-if isfield(hostData, "CEF")
-    hostData.CEF.executeJS(script, 10);
-elseif ~isMATLABReleaseOlderThan("R2025a") && endsWith(string(class(host)), ".DivFigurePlatformHost")
-    bootstrap = replace(string(fileread(fullfile(resources, "layout-settle-desktop.js"))), "CFG", configJSON);
-    dispatchCleanup = dispatchDesktopScript(replace(bootstrap, "SCRIPT", string(jsonencode(script))));
+if route == "cef"
+    hostData.CEF.executeJS(replace(template, "CFG", string(jsonencode(configuration))), 10);
 else
-    error("yamada:PreviewLayout:NoFigureWindow", "The figure host does not support layout requests.");
+    message.publish(char(desktopRequestChannel()), configuration);
 end
 waitfor(reply, "Done", true);
+% A receiver lost with its page cannot answer; reinstall it on the next request.
+if route == "desktop" && reply.TimedOut, desktopReceiver("reset"); end
 % Validate the matching reply and release the request resources.
 data = reply.Data;
 data.matlabSeconds = toc(clock);
+data.route = route;
+data.installed = installed;
 assert(isfield(data, "token") && string(data.token) == token);
-clear dispatchCleanup watchdogCleanup listenerCleanup subscriptionCleanup
+clear watchdogCleanup listenerCleanup subscriptionCleanup
 if isfield(data, "error"), error("yamada:PreviewLayout:SettleReply", "%s", string(data.error)); end
+end
+
+function installed = ensureDesktopReceiver(resources, template)
+% ensureDesktopReceiver Install the desktop-page request receiver unless this session has it.
+%   The temporary panel is the only point that relies on the desktop running
+%   script from panel content. When that stops, the route is disabled for the
+%   session and every later wait reports DesktopInjectionBlocked at once.
+arguments (Input)
+    resources (1, 1) string
+    template (1, 1) string
+end
+arguments (Output)
+    installed (1, 1) logical
+end
+state = desktopReceiver("get");
+if state.Blocked ~= ""
+    error("yamada:PreviewLayout:DesktopInjectionBlocked", "%s", state.Blocked);
+end
+bootstrap = string(fileread(fullfile(resources, "layout-settle-desktop.js")));
+% Compare the installed sources so an updated yamada replaces the stale receiver.
+source = bootstrap + template;
+installed = state.Source ~= source;
+if ~installed, return, end
+% Wait for the bootstrap's acknowledgement on a token-matched install channel.
+token = string(java.util.UUID.randomUUID());
+channel = "/yamada-layout/install/" + token;
+install = struct("channel", channel, "token", token, "requests", desktopRequestChannel());
+script = replace(bootstrap, "INSTALL", string(jsonencode(install)));
+script = replace(script, "SCRIPT", string(jsonencode(template)));
+reply = yamada.ui.LayoutStabilizeReply(token);
+subscription = message.subscribe(char(channel), @(data) reply.accept(data));
+subscriptionCleanup = onCleanup(@() message.unsubscribe(subscription));
+watchdog = timer("ExecutionMode", "singleShot", "StartDelay", 5, "TimerFcn", @(~, ~) reply.expire());
+watchdogCleanup = onCleanup(@() deleteWatchdog(watchdog));
+start(watchdog);
+panelCleanup = dispatchDesktopScript(script);
+waitfor(reply, "Done", true);
+clear panelCleanup watchdogCleanup subscriptionCleanup
+% Record the outcome; a silent desktop means the injection point no longer runs script.
+if reply.TimedOut
+    reason = "The MATLAB desktop did not run the layout receiver from RootApp panel content " + ...
+        "within 5 s; desktop layout requests are disabled for this MATLAB session. " + ...
+        "Check dev/compatibility/NativeBehaviorTest on this release.";
+    desktopReceiver("block", reason);
+    error("yamada:PreviewLayout:DesktopInjectionBlocked", "%s", reason);
+end
+if isfield(reply.Data, "error")
+    error("yamada:PreviewLayout:DesktopReceiver", "%s", string(reply.Data.error));
+end
+desktopReceiver("install", source);
+end
+
+function state = desktopReceiver(command, value)
+% desktopReceiver Hold the installed desktop receiver source and blocked reason for this session.
+arguments (Input)
+    command (1, 1) string {mustBeMember(command, ["get", "install", "block", "reset"])}
+    value (1, 1) string = ""
+end
+arguments (Output)
+    state (1, 1) struct
+end
+persistent current
+if isempty(current), current = struct("Source", "", "Blocked", ""); end
+switch command
+    case "install"
+        current.Source = value;
+    case "block"
+        current = struct("Source", "", "Blocked", value);
+    case "reset"
+        current.Source = "";
+end
+state = current;
+end
+
+function channel = desktopRequestChannel()
+% desktopRequestChannel Return the message channel the desktop receiver subscribes to.
+arguments (Output)
+    channel (1, 1) string
+end
+channel = "/yamada-layout/desktop-request";
 end
 
 function cleanup = dispatchDesktopScript(script)
