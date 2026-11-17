@@ -8,6 +8,7 @@ For users deciding whether to update, this log describes changes and compatibili
 - On R2026b, radio and toggle buttons outside a button group, their `Group` property, and `uiselectiongroup` are not supported yet.
 - R2026b installs no Java runtime; install the MATLAB Support for OpenJDK add-on or another OpenJDK distribution before using yamada on it.
 - Editing an app created for a newer MATLAB release on an older release is not supported.
+- In desktop MATLAB R2025a and later, the Preview waits for the native layout to settle again instead of falling back to the slower legacy geometry recovery with a `Layout synchronization failed` warning.
 
 ## 1.0.0
 

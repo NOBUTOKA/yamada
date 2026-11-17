@@ -29,7 +29,8 @@ clock = tic;
 previous = warning("off", "all");
 warningCleanup = onCleanup(@() warning(previous));
 figureData = struct(figure); controllerData = struct(figureData.Controller);
-hostData = struct(controllerData.PlatformHost); window = hostData.CEF;
+host = controllerData.PlatformHost;
+hostData = struct(host);
 viewModel = controllerData.ViewModel;
 clear warningCleanup
 % Listen before dispatch so an immediately resolved promise cannot be missed. Failures
@@ -50,16 +51,46 @@ configuration = struct("channel", channel, "token", token, "limit", waitLimitMil
     "quiet", quietMilliseconds, "quietLimit", quietLimitMilliseconds, "event", eventName, ...
     "figure", string(viewModel.getId()), ...
     "figureChannel", string(matlab.ui.internal.FigureServices.getUniqueChannelId(figure)));
-script = string(fileread(fullfile(fileparts(fileparts(fileparts(mfilename("fullpath")))), "resources", "layout-settle-request.js")));
-script = replace(script, "CFG", string(jsonencode(configuration)));
-window.executeJS(script, 10);
+resources = fullfile(fileparts(fileparts(fileparts(mfilename("fullpath")))), "resources");
+configJSON = string(jsonencode(configuration));
+script = replace(string(fileread(fullfile(resources, "layout-settle-request.js"))), "CFG", configJSON);
+if isfield(hostData, "CEF")
+    hostData.CEF.executeJS(script, 10);
+elseif ~isMATLABReleaseOlderThan("R2025a") && endsWith(string(class(host)), ".DivFigurePlatformHost")
+    bootstrap = replace(string(fileread(fullfile(resources, "layout-settle-desktop.js"))), "CFG", configJSON);
+    dispatchCleanup = dispatchDesktopScript(replace(bootstrap, "SCRIPT", string(jsonencode(script))));
+else
+    error("yamada:PreviewLayout:NoFigureWindow", "The figure host does not support layout requests.");
+end
 waitfor(reply, "Done", true);
 % Validate the matching reply and release the request resources.
 data = reply.Data;
 data.matlabSeconds = toc(clock);
 assert(isfield(data, "token") && string(data.token) == token);
-clear watchdogCleanup listenerCleanup subscriptionCleanup
+clear dispatchCleanup watchdogCleanup listenerCleanup subscriptionCleanup
 if isfield(data, "error"), error("yamada:PreviewLayout:SettleReply", "%s", string(data.error)); end
+end
+
+function cleanup = dispatchDesktopScript(script)
+% dispatchDesktopScript Send a project-owned script through a temporary desktop panel.
+arguments (Input)
+    script (1, 1) string
+end
+arguments (Output)
+    cleanup (1, 1) onCleanup
+end
+% The internal panel renders its content in the desktop page. Escape the
+% event attribute so the script is passed to it verbatim.
+app = matlab.ui.container.internal.RootApp.getInstance();
+tag = "yamadaLayout_" + string(java.util.UUID.randomUUID());
+panel = matlab.ui.container.internal.appcontainer.Panel( ...
+    "Tag", tag, "Title", "Yamada", "Region", "bottom");
+script = replace("this.onerror=null;" + script, "&", "&amp;");
+script = replace(script, [char(34), "<", ">"], ["&quot;", "&lt;", "&gt;"]);
+panel.Content = "<img src='yamada-layout-request' onerror=" + char(34) + script + char(34) + ">";
+panel.Opened = false;
+app.add(panel);
+cleanup = onCleanup(@() app.removePanel(tag));
 end
 
 function acceptEvent(reply, event)

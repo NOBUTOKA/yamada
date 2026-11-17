@@ -15,9 +15,16 @@
     const fail = error => require(['mw-messageservice/MessageService'], bus => bus.publish(cfg.channel, {
         token: cfg.token, error: String(error)
     }));
-    require(['viewmodel/impl/ViewModelManagerFactory', 'MW/componentframework/ControllerService'], function (factory, service) {
+    const factoryModule = 'viewmodel/impl/ViewModelManagerFactory';
+    const findManagers = factory =>
+        Object.values(factory._viewModelManagerCache || {}).filter(manager => manager.hasById(cfg.figure));
+    require([factoryModule, 'MW/componentframework/ControllerService'], function (factory, service) {
         try {
-            const managers = Object.values(factory._viewModelManagerCache || {}).filter(manager => manager.hasById(cfg.figure));
+            let managers = findManagers(factory);
+            // An undocked DivFigure renders here, while its ViewModel lives in the desktop.
+            if (managers.length === 0 && window.opener && window.opener.require) {
+                managers = findManagers(window.opener.require(factoryModule));
+            }
             if (managers.length !== 1) { throw new Error('Expected exactly one ViewModel manager for the figure.'); }
             const manager = managers[0];
             const figureViewModel = manager.getById(cfg.figure);
@@ -26,10 +33,12 @@
             const send = data => figureViewModel.dispatchEvent(cfg.event, figureViewModel, Object.assign({token: cfg.token}, data));
             (async () => {
                 // Record when any container last told its children that their client area changed.
-                const resize = window.__yamadaLayoutResize || (window.__yamadaLayoutResize = {last: performance.now()});
+                const instance = service.getInstance(cfg.figureChannel);
+                const resize = instance.__yamadaLayoutResize ||
+                    (instance.__yamadaLayoutResize = {last: performance.now()});
                 // The channel-wide controller cache exists in R2023a through R2026b; the figure
                 // controller's _controllerMap is absent in R2023a and R2026b.
-                const cache = service.getInstance(cfg.figureChannel)._controllerCache || {};
+                const cache = instance._controllerCache || {};
                 const controllers = cache instanceof Map ? Array.from(cache.values()) : Object.values(cache);
                 let hooked = 0;
                 let watched = 0;
