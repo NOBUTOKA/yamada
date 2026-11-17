@@ -278,7 +278,10 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
         end
 
         function parsesEditorOwnHandleSource(testCase)
-            % parsesEditorOwnHandleSource Verify the editor source remains openable.
+            % parsesEditorOwnHandleSource Verify the large editor source parses without execution.
+            %   yamada does not edit its own source: the editor creates its figure
+            %   through yamada.ui.createEditorFigure, which is not a component
+            %   factory, so the only error is the missing registered root.
 
             % Use the production source as a regression fixture without executing it.
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
@@ -286,10 +289,11 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             registry = yamada.model.ComponentRegistry.createDefault();
             [document, diagnostics] = yamada.source.AppSourceParser.parseFile(sourcePath, registry);
 
-            % Recover an editable root despite source-only callback properties.
+            % Recover the class and report only the root diagnostic as an error.
             testCase.verifyEqual(document.ClassName, "yamada");
-            testCase.verifyNotEmpty(document.getComponentByName("UIFigure"));
-            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyEmpty(document.getComponentByName("UIFigure"));
+            errors = diagnostics(arrayfun(@(diagnostic) string(diagnostic.Severity), diagnostics) == "error");
+            testCase.verifyEqual(unique(arrayfun(@(diagnostic) string(diagnostic.Code), errors)), "invalid-root-count");
         end
 
         function parserNeverExecutesInputSource(testCase)

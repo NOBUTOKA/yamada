@@ -10,7 +10,7 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
                 [document, label] = TextPreviewReuseTest.fixture(registry, layout);
                 document.setProperty(label.Id, "Text", "Baseline", registry);
                 document.validatePropertyCommit(registry);
-                figure = uifigure(Visible="on", Position=[100 100 900 700]);
+                figure = yamada.ui.createEditorFigure(Visible="on", Position=[100 100 900 700]);
                 cleanup = onCleanup(@() delete(figure));
                 left = uipanel(figure, Position=[1 1 440 680]);
                 right = uipanel(figure, Position=[451 1 440 680]);

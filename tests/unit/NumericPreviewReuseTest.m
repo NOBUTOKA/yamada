@@ -7,7 +7,7 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
             % valueUpdatesMatchFullRenderingAcrossFitLayouts Reuse each owned native field while republishing geometry.
             for layout = ["absolute", "flat", "nested"]
                 [document, registry, first] = numericPreviewFixture(layout);
-                figure = uifigure(Visible="off", Position=[100 100 1100 650]);
+                figure = yamada.ui.createEditorFigure(Visible="off", Position=[100 100 1100 650]);
                 cleanup = onCleanup(@() delete(figure));
                 left = uipanel(figure, Position=[1 1 520 600]);
                 right = uipanel(figure, Position=[550 1 520 600]);
