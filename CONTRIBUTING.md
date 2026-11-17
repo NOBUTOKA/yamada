@@ -160,7 +160,7 @@ When adding or changing a standard component or property, start with the [catalo
 
 Before submitting a pull request, run the tests relevant to your changes and include the results. If you could not run a test, name it and explain why in the pull request.
 
-Before submitting a pull request, run the full suite on both the minimum source release R2023a and the surface release of the component ledger, which `surfaceRelease` in `dev/component-data/releases.json` names and is currently R2026b, except for documentation-only changes that do not affect executable examples or behavior. Use quick and area profiles while iterating. Start the runner from the executable of the release under test; parallel workers start from the same `matlabroot`. If you cannot set up an R2023a environment, run the full suite on the surface release and ask the maintainer in the pull request description to run the R2023a full suite. Before a release, also follow the release checks in [the release procedure](doc/RELEASING.md).
+Before submitting a pull request, run the full suite on both the minimum source release R2023a and the surface release of the component ledger, which `surfaceRelease` in `dev/component-data/releases.json` names and is currently R2026b, except for documentation-only changes that do not affect executable examples or behavior. Use quick and area profiles while iterating. Start the runner from the executable of the release under test; parallel workers start from the same `matlabroot`. If you cannot set up an R2023a environment, run the full suite on the surface release and ask the maintainer in the pull request description to run the R2023a full suite. For changes to `+yamada/+ui/waitForPreviewLayout.m`, `resources/layout-settle-request.js`, or `resources/layout-settle-desktop.js`, also run the `desktop` profile from a desktop session of the surface release; if you cannot, say so and ask the maintainer to run it. Before a release, also follow the release checks in [the release procedure](doc/RELEASING.md).
 
 The quick profile contains every non-UI test except catalog-wide sweeps, plus a bounded UI smoke set. Catalog-wide sweeps, which repeat a check for every catalog variant through rendering, generation, or ledger comparison, carry the `exhaustive` tag instead of `fast`; they run in the full suite and in area profiles that select them. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, `lifecycle`, and `exhaustive`. Run the `exhaustive` area while iterating on catalog changes.
 
@@ -178,7 +178,13 @@ quickResults = runYamadaTests("quick");
 areaResults = runYamadaTests("area", ["inspector", "dialog"]);
 ```
 
-Any profile can run in parallel by adding `Workers`. The runner starts that many batch MATLAB processes, splits the suite by test class, and returns the combined results in suite order. Each worker needs its own MATLAB session and memory, so choose a count that fits the host; four workers suit an eight-core machine. With the default of one worker, tests run in the current session.
+The full suite runs under `matlab -batch` in the documented checks, and batch sessions host every uifigure in its own CEF window. From R2025a, a desktop session instead renders uifigures in the desktop page, where the Preview layout wait takes a separate route. Tests tagged `desktop` check that route; they also run in the full suite, where those that need the desktop route are skipped as incomplete. The `desktop` profile runs only those tests in the current session. Start it from a desktop MATLAB session, for example `matlab -r`, not from `matlab -batch`, and with one worker:
+
+```matlab
+desktopResults = runYamadaTests("desktop");
+```
+
+Any other profile can run in parallel by adding `Workers`. The runner starts that many batch MATLAB processes, splits the suite by test class, and returns the combined results in suite order. Each worker needs its own MATLAB session and memory, so choose a count that fits the host; four workers suit an eight-core machine. With the default of one worker, tests run in the current session.
 
 ```matlab
 results = runYamadaTests("full", Workers=4);
@@ -197,6 +203,8 @@ Optional native MATLAB observations and catalog-promotion provenance checks live
 addpath(fullfile(pwd, "dev", "compatibility"));
 compatibilityResults = runCompatibilityChecks();
 ```
+
+`NativeBehaviorTest/desktopPanelContentRunsInjectedScripts` observes the desktop script entry points that the Preview layout wait relies on from R2025a. It needs a desktop session and is skipped under `matlab -batch`. Run it from a desktop session when reviewing a new MATLAB release.
 
 For catalog text or promotion changes, also run the PowerShell checks `tests/verifyCatalogProvenance.ps1`, `tests/verifyComponentLedgerSchema.ps1`, and `tests/verifyReleaseProjection.ps1`. They verify reproducible regeneration, independence from reference wording, semantic preservation, rejection of malformed ledger input before mutation, and that every committed release catalog is the current projection of the surface ledger. The checks require PowerShell 7.
 

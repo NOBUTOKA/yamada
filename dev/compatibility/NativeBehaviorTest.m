@@ -147,6 +147,50 @@ classdef (TestTags = {'compatibility', 'ui'}) NativeBehaviorTest < matlab.unitte
             testCase.verifyEqual(control.Data, data);
             clear cleanup
         end
+
+        function desktopPanelContentRunsInjectedScripts(testCase)
+            % desktopPanelContentRunsInjectedScripts Observe the script injection points of the desktop layout route.
+            %   From R2025a yamada.ui.waitForPreviewLayout installs its desktop
+            %   receiver from an HTML error handler in RootApp panel content,
+            %   and runs its settle script in an undocked figure page through
+            %   a script element. A failure means MATLAB closed one of these
+            %   points, and the editor then reports DesktopInjectionBlocked.
+            testCase.assumeFalse(batchStartupOptionUsed, "matlab -batch has no desktop page.");
+            testCase.assumeFalse(isMATLABReleaseOlderThan("R2025a"), "The desktop hosts uifigures in CEF windows before R2025a.");
+            figure = uifigure("Visible", "on", "Position", [100 100 300 200]);
+            cleanup = onCleanup(@() delete(figure));
+            drawnow;
+            % Report the panel handler and the child-page script results on a private channel.
+            channel = "/yamada-canary/" + string(java.util.UUID.randomUUID());
+            subscription = message.subscribe(char(channel), @(data) setappdata(figure, "Canary", data));
+            subscriptionCleanup = onCleanup(@() message.unsubscribe(subscription));
+            script = "this.onerror=null;" + ...
+                "var pages=Object.values(window.ChildWindowManager&&window.ChildWindowManager._childInfo||{})" + ...
+                ".map(function(entry){return entry.window;}).filter(Boolean);" + ...
+                "var injected=pages.filter(function(page){try{var tag=page.document.createElement('script');" + ...
+                "tag.textContent='window.__yamadaCanary=true;';page.document.head.appendChild(tag);tag.remove();" + ...
+                "return page.__yamadaCanary===true;}catch(error){return false;}}).length;" + ...
+                "require(['mw-messageservice/MessageService'],function(bus){bus.publish('" + channel + ...
+                "',{ran:true,pages:pages.length,injected:injected});});";
+            script = replace(script, "&", "&amp;");
+            script = replace(script, [char(34), "<", ">"], ["&quot;", "&lt;", "&gt;"]);
+            app = matlab.ui.container.internal.RootApp.getInstance();
+            tag = "yamadaCanary_" + string(java.util.UUID.randomUUID());
+            panel = matlab.ui.container.internal.appcontainer.Panel("Tag", tag, "Title", "Yamada canary", "Region", "bottom");
+            panel.Content = "<img src='yamada-canary' onerror=" + char(34) + script + char(34) + ">";
+            panel.Opened = false;
+            app.add(panel);
+            panelCleanup = onCleanup(@() app.removePanel(tag));
+            % This opt-in observation waits a bounded time for the asynchronous report.
+            started = tic;
+            while ~isappdata(figure, "Canary") && toc(started) < 5
+                pause(0.05);
+            end
+            testCase.assertTrue(isappdata(figure, "Canary"), "RootApp panel content no longer runs its error handler.");
+            report = getappdata(figure, "Canary");
+            testCase.verifyGreaterThanOrEqual(report.pages, 1, "No ChildWindowManager page holds the undocked figure.");
+            testCase.verifyEqual(report.injected, report.pages, "A child page no longer runs injected script elements.");
+        end
     end
 end
 

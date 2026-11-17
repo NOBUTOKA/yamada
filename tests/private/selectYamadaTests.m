@@ -3,9 +3,10 @@ function suite = selectYamadaTests(profile, areas)
 %   SUITE = selectYamadaTests(PROFILE) returns the quick or full unit-test
 %   suite. SUITE = selectYamadaTests("area", AREAS) returns the quick suite
 %   plus tests tagged for each requested functional area.
+%   SUITE = selectYamadaTests("desktop") returns only tests tagged desktop.
 
 arguments (Input)
-    profile (1, 1) string {mustBeMember(profile, ["quick", "area", "full"])}
+    profile (1, 1) string {mustBeMember(profile, ["quick", "area", "full", "desktop"])}
     areas (1, :) string = string.empty(1, 0)
 end
 arguments (Output)
@@ -29,6 +30,9 @@ switch profile
     case "full"
         validateNoAreas(profile, areas);
         suite = testsuite(testRoot);
+    case "desktop"
+        validateNoAreas(profile, areas);
+        suite = testsuite(testRoot, "Tag", "desktop");
 end
 
 if isempty(suite)

@@ -3,6 +3,10 @@ function results = runYamadaTests(profile, areas, options)
 %   RESULTS = runYamadaTests(PROFILE) runs the quick or full profile.
 %   RESULTS = runYamadaTests("area", AREAS) runs quick coverage together
 %   with tests for the requested functional areas.
+%   RESULTS = runYamadaTests("desktop") runs only the tests tagged desktop.
+%   Start it from a desktop MATLAB session, where uifigures use the
+%   desktop host from R2025a; it rejects matlab -batch and Workers > 1,
+%   whose batch processes always use CEF windows.
 %   RESULTS = runYamadaTests(..., Workers=N) splits the selected suite by
 %   test class across N separate batch MATLAB processes and returns the
 %   combined results in suite order. The default of 1 runs in this session.
@@ -10,7 +14,7 @@ function results = runYamadaTests(profile, areas, options)
 %   tests folder to the MATLAB path before calling it.
 
 arguments (Input)
-    profile (1, 1) string {mustBeMember(profile, ["quick", "area", "full"])}
+    profile (1, 1) string {mustBeMember(profile, ["quick", "area", "full", "desktop"])}
     areas (1, :) string = string.empty(1, 0)
     options.Workers (1, 1) double {mustBeInteger, mustBePositive} = 1
 end
@@ -20,6 +24,11 @@ end
 
 % Build the suite before any test executes so invalid requests fail clearly.
 suite = selectYamadaTests(profile, areas);
+% Desktop-host tests are meaningful only in this desktop session.
+if profile == "desktop" && (options.Workers > 1 || batchStartupOptionUsed)
+    error("yamada:TestSelection:DesktopSessionRequired", ...
+        "Run the desktop profile from a desktop MATLAB session with one worker.");
+end
 if isempty(areas)
     areaText = "";
 else

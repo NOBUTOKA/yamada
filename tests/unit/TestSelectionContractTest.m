@@ -76,6 +76,15 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
                 "yamada:TestSelection:UnexpectedAreas");
             testCase.verifyError(@() runYamadaTests("quick", Workers=0), ...
                 "MATLAB:validators:mustBePositive");
+            testCase.verifyError(@() runYamadaTests("desktop", "preview"), ...
+                "yamada:TestSelection:UnexpectedAreas");
+            testCase.verifyError(@() runYamadaTests("desktop", Workers=2), ...
+                "yamada:TestSelection:DesktopSessionRequired");
+            % Batch processes never host the desktop route that the profile checks.
+            if batchStartupOptionUsed
+                testCase.verifyError(@() runYamadaTests("desktop"), ...
+                    "yamada:TestSelection:DesktopSessionRequired");
+            end
         end
 
         function workerRunsEachClaimedClassOnce(testCase)
