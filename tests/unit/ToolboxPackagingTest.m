@@ -7,6 +7,9 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
 
     properties (Constant, Access = private)
         SourceCommit = string(repmat('0', 1, 40))
+        % PackagerEntries Archive payload files that the packager generates itself.
+        %   R2026b adds the MATLAB package metadata files to every Toolbox.
+        PackagerEntries = ["resources/extensions.json", "resources/mpackage.json"]
     end
 
     properties (Access = private)
@@ -24,7 +27,7 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
             testCase.applyFixture(matlab.unittest.fixtures.PathFixture(fullfile(testCase.ProjectRoot, "dev", "release")));
             folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
             [testCase.Files, testCase.Metadata] = yamadaToolboxFiles(testCase.ProjectRoot);
-            % Packages are built only on the release target; other releases cannot check them.
+            % Packages are built only on the maximum release target; other releases cannot check them.
             try
                 testCase.Artifacts = packageYamadaToolbox(fullfile(string(folder.Folder), "candidate"), ...
                     @() testCase.fixedSource());
@@ -46,7 +49,9 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
             actual = replace(string(fullfile({entries.folder}, {entries.name})), "\", "/");
             actual = extractAfter(actual, strlength(payloadRoot) + 1);
             relative = replace(extractAfter(testCase.Files, strlength(testCase.ProjectRoot) + 1), "\", "/");
-            testCase.verifyEqual(sort(actual(:)), sort([relative; "DesktopToolset.xml"]));
+            testCase.verifyFalse(any(ismember(testCase.PackagerEntries, relative)));
+            generated = intersect(actual(:), testCase.PackagerEntries(:));
+            testCase.verifyEqual(sort(actual(:)), sort([relative; "DesktopToolset.xml"; generated]));
             for filePath = testCase.Files'
                 name = extractAfter(filePath, strlength(testCase.ProjectRoot) + 1);
                 shipped = fullfile(payloadRoot, name);
