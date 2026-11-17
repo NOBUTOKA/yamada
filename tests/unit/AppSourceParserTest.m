@@ -5,6 +5,57 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
     %   and source-span retention.
 
     methods (Test)
+        function warnsAtBothBoundsOfExplicitPropertyUsage(testCase)
+            % warnsAtBothBoundsOfExplicitPropertyUsage Honor constructor and assignment availability.
+
+            % Combine one introduced property and one removed property on a known factory.
+            source = join(["classdef ReleaseExample < handle", ...
+                "methods", "function app = ReleaseExample", ...
+                "app.Figure = uifigure();", ...
+                "app.Table = uitable(app.Figure, DisplaySelection=false);", ...
+                "app.Table.Extent = app.Table.Extent;", ...
+                "end", "end", "end"], newline);
+            for release = ["R2023a", "R2023b", "R2024b", "R2025a"]
+                registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                    fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), release));
+                [~, diagnostics] = yamada.source.AppSourceParser.parseText( ...
+                    source, registry, "", strings(1, 0), release);
+
+                % Both endpoints in the inferred range are compatible.
+                if any(release == ["R2023b", "R2024b"])
+                    testCase.verifyFalse(any(string({diagnostics.Code}) == "source-release-range"));
+                else
+                    testCase.assertNotEmpty(diagnostics);
+                    testCase.verifyEqual(diagnostics(1).Code, "source-release-range");
+                    testCase.verifyEqual(diagnostics(1).Severity, "warning");
+                    testCase.verifySubstring(diagnostics(1).Message, "R2023b through R2024b");
+                end
+            end
+        end
+
+        function detectsUnavailableFactoryAndStyle(testCase)
+            % detectsUnavailableFactoryAndStyle Diagnose recognized variants outside the runtime catalog.
+
+            % Compare preserved fixture variants without automatic release selection.
+            registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2023a"));
+            fixtureRoot = fileparts(AppSourceParserTest.fixturePath("SimpleCalculatorApp.m"));
+            folders = [fullfile(fixtureRoot, "R2023a"), fullfile(fixtureRoot, "R2023b"), fixtureRoot];
+            minimums = ["", "R2023b", "R2024a"];
+            for index = 1:numel(folders)
+                source = string(fileread(fullfile(folders(index), "ControlGalleryApp.m")));
+                [~, diagnostics] = yamada.source.AppSourceParser.parseText( ...
+                    source, registry, "", strings(1, 0), "R2023a");
+                if minimums(index) == ""
+                    testCase.verifyFalse(any(string({diagnostics.Code}) == "source-release-range"));
+                else
+                    testCase.assertNotEmpty(diagnostics);
+                    testCase.verifyEqual(diagnostics(1).Code, "source-release-range");
+                    testCase.verifySubstring(diagnostics(1).Message, minimums(index));
+                end
+            end
+        end
+
         function parsesSimpleCalculatorFixtureIntoSharedModel(testCase)
             % parsesSimpleCalculatorFixtureIntoSharedModel Parse supported fixture.
 

@@ -51,7 +51,7 @@ classdef AppSourceParser
 
             % Parse decoded text and append file-format diagnostics afterwards.
             [document, diagnostics] = yamada.source.AppSourceParser.parseText( ...
-                source, registry, filePath);
+                source, registry, filePath, strings(1, 0), string(matlabRelease().Release));
             if ~isempty(readDiagnostic)
                 diagnostics(end + 1) = readDiagnostic;
             end
@@ -64,16 +64,18 @@ classdef AppSourceParser
             document.Diagnostics = diagnostics;
         end
 
-        function [document, diagnostics] = parseText(source, registry, filePath, propertyNames)
+        function [document, diagnostics] = parseText(source, registry, filePath, propertyNames, runningRelease)
             % parseText Parse handle-based source text into the shared document model.
             %   Whole-source parsing is expensive. Avoid calls outside file loading and
             %   saving; editor changes should use maintained indexes and local updates.
             %   Property names may bound semantic validation of an internally proven candidate.
+            %   A running release enables source availability diagnostics on file load.
             arguments (Input)
                 source string
                 registry (1, 1) yamada.model.ComponentRegistry
                 filePath string = ""
                 propertyNames (1, :) string = strings(1, 0)
+                runningRelease (1, 1) string = ""
             end
             arguments (Output)
                 document (1, 1) yamada.model.DocumentModel
@@ -117,11 +119,28 @@ classdef AppSourceParser
 
             % Collect declared component types before constructing model records.
             declarations = yamada.source.AppSourceParser.propertyDeclarations(statements);
+            availability = [];
+            sourceRegistry = registry;
+            if strlength(runningRelease) > 0
+                catalogFolder = fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot());
+                indexPath = fullfile(catalogFolder, "availability.json");
+                if isfile(indexPath)
+                    availability = jsondecode(fileread(indexPath));
+                    if string(availability.surfaceRelease) ~= runningRelease
+                        sourceRegistry = yamada.catalog.ComponentCatalogLoader.load( ...
+                            fullfile(catalogFolder, string(availability.surfaceRelease)));
+                    end
+                end
+            end
             creationOffsets = [];
+            sourceOnlyOffsets = [];
             for index = 1:numel(statements)
                 creation = yamada.source.AppSourceParser.creationMatch(statements(index).Text);
-                if ~isempty(creation) && registry.contains(creation.Factory)
+                if isempty(creation), continue, end
+                if registry.contains(creation.Factory)
                     creationOffsets(end + 1) = statements(index).Span.StartOffset;
+                elseif ~isempty(availability) && sourceRegistry.contains(creation.Factory)
+                    sourceOnlyOffsets(end + 1) = statements(index).Span.StartOffset;
                 end
             end
             [initializationOrder, initializationDiagnostics, initializationCertain, initializationLayout, initializationReturns] = ...
@@ -356,6 +375,16 @@ classdef AppSourceParser
             validationDiagnostics = yamada.validation.ModelValidator.validate( ...
                 document, registry, propertyNames);
             diagnostics = [diagnostics(:)' validationDiagnostics(:)'];
+            if ~isempty(availability)
+                releaseOrder = initializationOrder;
+                if ~isempty(sourceOnlyOffsets)
+                    releaseOrder = yamada.source.CallbackSourceAnalyzer.initializationStatements( ...
+                        statements, [creationOffsets sourceOnlyOffsets]);
+                end
+                releaseDiagnostic = yamada.source.AppSourceParser.releaseDiagnostic( ...
+                    statements, releaseOrder, sourceRegistry, registry, availability, runningRelease);
+                diagnostics = [releaseDiagnostic diagnostics];
+            end
             document.Diagnostics = diagnostics;
             document.markSaved();
             document.finishParsedSource(registry, validationDiagnostics, isempty(propertyNames));
@@ -363,6 +392,108 @@ classdef AppSourceParser
     end
 
     methods (Static, Access = private)
+        function diagnostic = releaseDiagnostic(statements, order, sourceRegistry, registry, availability, runningRelease)
+            % releaseDiagnostic Intersect catalog availability of recognizable initialization syntax.
+            arguments (Input)
+                statements yamada.source.SourceStatement
+                order double
+                sourceRegistry (1, 1) yamada.model.ComponentRegistry
+                registry (1, 1) yamada.model.ComponentRegistry
+                availability (1, 1) struct
+                runningRelease (1, 1) string
+            end
+            arguments (Output)
+                diagnostic yamada.model.Diagnostic
+            end
+
+            % Recover source variant identities and explicit paths even if the runtime cannot use them.
+            variants = dictionary(string([]), string([]));
+            usedVariants = strings(1, 0);
+            usedProperties = strings(1, 0);
+            for index = reshape(unique(order, "stable"), 1, [])
+                statement = statements(index);
+                creation = yamada.source.AppSourceParser.creationMatch(statement.Text);
+                if ~isempty(creation)
+                    catalog = sourceRegistry;
+                    if ~catalog.contains(creation.Factory), catalog = registry; end
+                    if ~catalog.contains(creation.Factory), continue, end
+                    definition = catalog.get(creation.Factory);
+                    [~, args, settings, ~, supported] = ...
+                        yamada.source.PropertySettingSyntax.factory(statement, definition, "");
+                    if supported
+                        definition = catalog.get(creation.Factory, args);
+                    elseif ~isempty(definition.SupportedStyles)
+                        continue
+                    end
+                    variants(creation.Name) = definition.Id;
+                    usedVariants(end + 1) = definition.Id;
+                    usedProperties = [usedProperties definition.Id + "." + string({settings.Path})];
+                    continue
+                end
+                assignment = yamada.source.AppSourceParser.assignmentMatch(statement.Text);
+                if ~isempty(assignment) && isKey(variants, assignment.ComponentName)
+                    usedProperties(end + 1) = variants(assignment.ComponentName) + "." + assignment.Path;
+                end
+            end
+
+            % Derive inclusive lower and exclusive upper bounds from matched entries.
+            minimum = "";
+            before = "";
+            for entry = reshape(availability.variants, 1, [])
+                if any(usedVariants == string(entry.id))
+                    [minimum, before] = yamada.source.AppSourceParser.intersectReleases(minimum, before, entry.releases);
+                end
+            end
+            for entry = reshape(availability.properties, 1, [])
+                if any(usedProperties == string(entry.variantId) + "." + string(entry.path))
+                    [minimum, before] = yamada.source.AppSourceParser.intersectReleases(minimum, before, entry.releases);
+                end
+            end
+
+            % Keep compatible and unbounded releases quiet. Conflicting evidence gets its own warning.
+            diagnostic = yamada.model.Diagnostic.empty(1, 0);
+            if minimum ~= "" && before ~= "" && minimum >= before
+                message = "The component and property usage has no common MATLAB release in the catalog.";
+            elseif (minimum ~= "" && runningRelease < minimum) || (before ~= "" && runningRelease >= before)
+                lower = "no known minimum";
+                upper = "no known maximum";
+                if minimum ~= "", lower = minimum; end
+                if before ~= ""
+                    releases = sort(string({availability.releases.release}));
+                    earlier = releases(releases < before);
+                    upper = "earlier than " + before;
+                    if ~isempty(earlier), upper = earlier(end); end
+                end
+                message = "Running MATLAB " + runningRelease + ...
+                    " is outside the range indicated by this app's components and properties (" + lower + ...
+                    " through " + upper + ").";
+            else
+                return
+            end
+            diagnostic = yamada.source.AppSourceParser.diagnostic("source-release-range", "warning", ...
+                message, "", yamada.model.SourceSpan.empty);
+        end
+
+        function [minimum, before] = intersectReleases(minimum, before, bounds)
+            % intersectReleases Narrow accumulated bounds using one availability record.
+            arguments (Input)
+                minimum (1, 1) string
+                before (1, 1) string
+                bounds (1, 1) struct
+            end
+            arguments (Output)
+                minimum (1, 1) string
+                before (1, 1) string
+            end
+
+            if isfield(bounds, "since") && string(bounds.since) > minimum
+                minimum = string(bounds.since);
+            end
+            if isfield(bounds, "before") && (before == "" || string(bounds.before) < before)
+                before = string(bounds.before);
+            end
+        end
+
         function setting = scopedSetting(setting, layout, index)
             % scopedSetting Attach a proven original initializer method to one occurrence.
             arguments (Input)

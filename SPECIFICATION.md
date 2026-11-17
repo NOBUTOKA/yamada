@@ -11,7 +11,7 @@ Users can create a new handle class from an empty canvas or open an existing han
 ## Supported Environment
 
 - Release targets: MATLAB R2023a through R2026b on 64-bit Windows, with a graphical session, JVM enabled (R2026b installs no Java runtime, so install the MATLAB Support for OpenJDK add-on or another OpenJDK distribution first), and MATLAB .NET support
-- Cross-release editing: an app created for an older supported release can be edited on a newer one. Editing an app created for a newer release on an older release is not supported; components and properties that the running release lacks are reported as unsupported.
+- Cross-release editing: an app created for an older supported release can be edited on a newer one. Editing an app created for a newer release on an older release is not supported; components and properties that the running release lacks are reported as unsupported. On opening a source file, yamada intersects the catalog availability of recognized creation variants and explicit initialization properties. If the running MATLAB release falls outside the inferred bounds or the bounds conflict, a warning appears first in the diagnostics. Missing bounds stay open, and the range describes observed feature usage.
 - Required MathWorks product: MATLAB, without additional toolboxes
 - Launch command: `yamada`, without parentheses or an output assignment
 - Planned distribution: MATLAB Toolbox (`.mltbx`) with an Apps gallery entry
