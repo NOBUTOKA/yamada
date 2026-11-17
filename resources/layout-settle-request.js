@@ -27,11 +27,16 @@
             (async () => {
                 // Record when any container last told its children that their client area changed.
                 const resize = window.__yamadaLayoutResize || (window.__yamadaLayoutResize = {last: performance.now()});
-                const controllers = service.getInstance(cfg.figureChannel).getControllerById(cfg.figure)._controllerMap || {};
+                // The channel-wide controller cache exists in R2023a through R2026b; the figure
+                // controller's _controllerMap is absent in R2023a and R2026b.
+                const cache = service.getInstance(cfg.figureChannel)._controllerCache || {};
+                const controllers = cache instanceof Map ? Array.from(cache.values()) : Object.values(cache);
                 let hooked = 0;
-                for (const id of Object.keys(controllers)) {
-                    const controller = controllers[id];
-                    if (!controller || controller.__yamadaResizeHook || typeof controller.emitContainerResizeControllerEvent !== 'function') { continue; }
+                let watched = 0;
+                for (const controller of controllers) {
+                    if (!controller || typeof controller.emitContainerResizeControllerEvent !== 'function') { continue; }
+                    watched++;
+                    if (controller.__yamadaResizeHook) { continue; }
                     const original = controller.emitContainerResizeControllerEvent;
                     controller.emitContainerResizeControllerEvent = function (...args) {
                         resize.last = performance.now();
@@ -66,7 +71,7 @@
                 // One animation frame runs after the callbacks that relayout grid children.
                 document.body.getBoundingClientRect();
                 const framed = await bounded(new Promise(resolve => window.requestAnimationFrame(resolve)), cfg.limit);
-                send({hooked: hooked, imagesWaited: pending.length, imagesLoaded: imagesLoaded, quieted: quieted,
+                send({hooked: hooked, watched: watched, imagesWaited: pending.length, imagesLoaded: imagesLoaded, quieted: quieted,
                     stabilized: stabilized, framed: framed});
             })().catch(error => send({error: String(error)}));
         } catch (error) {
