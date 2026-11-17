@@ -39,7 +39,7 @@ Before attaching source, make sure it does not contain secrets, personal informa
 
 ## Development Environment
 
-The supported release targets are currently MATLAB R2023a through R2024a, and project-owned MATLAB source must run on R2023a and later; see [MATLAB Release Compatibility](#matlab-release-compatibility). After cloning the repository, add its root to the MATLAB path.
+The supported release targets are currently MATLAB R2023a through R2026b, and project-owned MATLAB source must run on R2023a and later; see [MATLAB Release Compatibility](#matlab-release-compatibility). After cloning the repository, add its root to the MATLAB path.
 
 ```matlab
 projectRoot = "/path/to/yamada";

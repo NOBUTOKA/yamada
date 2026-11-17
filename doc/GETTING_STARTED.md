@@ -6,7 +6,7 @@ For users new to yamada, this guide covers installation, a first edit, updates, 
 
 ## Install and launch
 
-To install, download the `.mltbx` file from the [latest GitHub Release](https://github.com/NOBUTOKA/yamada/releases/latest). Open the downloaded file in MATLAB and follow the installation dialog. MATLAB R2023a, R2023b, or R2024a on 64-bit Windows is required, with a graphical session, JVM, and .NET support.
+To install, download the `.mltbx` file from the [latest GitHub Release](https://github.com/NOBUTOKA/yamada/releases/latest). Open the downloaded file in MATLAB and follow the installation dialog. MATLAB R2023a through R2026b on 64-bit Windows is required, with a graphical session, JVM, and .NET support. R2026b installs no Java runtime, so install the MATLAB Support for OpenJDK add-on or another OpenJDK distribution first.
 
 In the Command Window, enter:
 
@@ -54,6 +54,6 @@ To remove yamada, open **Home > Add-Ons > Manage Add-Ons**, find **yamada**, and
 
 ## Scope and help
 
-Only MATLAB R2023a through R2024a on Windows are supported release targets. Editing an app created for a newer MATLAB release on an older release is not supported. Apps must directly inherit from `handle`, own one `uifigure`, and use supported source syntax. `.mlapp` and AppBase inputs are outside the supported format. Some properties are read-only, and the preview may differ from a running application. See the [specification](../SPECIFICATION.md) and [README](../README.md) for details.
+Only MATLAB R2023a through R2026b on Windows are supported release targets. On R2026b, radio and toggle buttons outside a button group and `uiselectiongroup` are not supported yet. Editing an app created for a newer MATLAB release on an older release is not supported. Apps must directly inherit from `handle`, own one `uifigure`, and use supported source syntax. `.mlapp` and AppBase inputs are outside the supported format. Some properties are read-only, and the preview may differ from a running application. See the [specification](../SPECIFICATION.md) and [README](../README.md) for details.
 
 Keep your application under version control or make backups. Saving does not guarantee recovery from power loss or storage failure. Use [GitHub Issues](https://github.com/NOBUTOKA/yamada/issues) for bug reports; include MATLAB version, Windows version, and reproducible steps. Public contact: nobutoka@gmail.com.
