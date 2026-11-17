@@ -10,7 +10,7 @@ Users can create a new handle class from an empty canvas or open an existing han
 
 ## Supported Environment
 
-- Release targets: MATLAB R2023a, R2023b, and R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
+- Release targets: MATLAB R2023a through R2026b on 64-bit Windows, with a graphical session, JVM enabled (R2026b installs no Java runtime, so install the MATLAB Support for OpenJDK add-on or another OpenJDK distribution first), and MATLAB .NET support
 - Cross-release editing: an app created for an older supported release can be edited on a newer one. Editing an app created for a newer release on an older release is not supported; components and properties that the running release lacks are reported as unsupported.
 - Required MathWorks product: MATLAB, without additional toolboxes
 - Launch command: `yamada`, without parentheses or an output assignment
@@ -75,7 +75,7 @@ Use **Edit > Reload Source**, the toolbar refresh button, or **F5** after saving
 
 ## Standard Component Catalog
 
-The catalog includes the following persistent MATLAB R2024a UI components and creation variants. On an older release, the catalog of that release omits what the release lacks: `uicolorpicker` requires R2024a and the range-slider variant of `uislider` requires R2023b, and some properties of other components are likewise limited to the releases that provide them.
+The catalog includes the following persistent MATLAB UI components and creation variants. The catalog of each release offers only what that release provides: `uicolorpicker` requires R2024a and the range-slider variant of `uislider` requires R2023b, and some properties of other components are likewise limited to the releases that provide them.
 
 - Basic controls: `uilabel`, `uibutton`, `uicheckbox`, `uicolorpicker`, `uidatepicker`, `uidropdown`, `uieditfield`, `uihyperlink`, `uiimage`, `uilistbox`, `uiradiobutton`, `uislider`, `uispinner`, `uitable`, `uitextarea`, and `uitogglebutton`
 - Containers and layout: `uifigure`, `uipanel`, `uigridlayout`, `uitabgroup`, `uitab`, and `uibuttongroup`
@@ -83,6 +83,8 @@ The catalog includes the following persistent MATLAB R2024a UI components and cr
 - Axes: `uiaxes`, `axes`, `geoaxes`, and `polaraxes`
 - Instrumentation: `uigauge`, `uiknob`, `uilamp`, and `uiswitch`
 - Extended display and figure tools: `uihtml`, `uicontextmenu`, `uimenu`, `uitoolbar`, `uipushtool`, and `uitoggletool`
+
+R2026b changes that the catalog does not support yet: R2026b lets radio and toggle buttons be placed directly in containers other than a button group, adds their read-only `Group` property, and introduces `uiselectiongroup`, while `uibuttongroup` becomes not recommended. In every release, yamada accepts `uiradiobutton` and `uitogglebutton` only as children of `uibuttongroup`. A button placed elsewhere is reported as an invalid parent, `uiselectiongroup` is retained as unsupported source and is not previewed, and editing apps that use these R2026b features is outside the supported contract. R2026b also places new radio and toggle buttons at a different default position; the R2026b catalog records that default.
 
 Catalog inclusion does not mean that every creation variant supports insertion, Preview, layout, and property editing to the same extent. The parent component, creation variant, or property value may limit available operations. A Tab Group accepts only Tabs as direct children. To place controls within the group, add them to a Tab. Unsupported state remains read-only where possible and is reported through diagnostics.
 

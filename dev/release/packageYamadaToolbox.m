@@ -16,9 +16,12 @@ end
 
 % Resolve the selected inputs and refuse to replace any existing output.
 projectRoot = string(fileparts(fileparts(fileparts(mfilename("fullpath")))));
-assert(ispc && version("-release") == "2024a", ...
-    "yamada:Release:UnsupportedBuildHost", "Build with MATLAB R2024a on Windows.");
 [files, metadata] = yamadaToolboxFiles(projectRoot);
+
+% Build on the declared maximum release, because the packager rejects a newer maximum.
+assert(ispc && "R" + string(version("-release")) == string(metadata.maximumMatlabRelease), ...
+    "yamada:Release:UnsupportedBuildHost", "Build with MATLAB %s on Windows.", ...
+    metadata.maximumMatlabRelease);
 if outputFolder == ""
     outputFolder = fullfile(projectRoot, "build", metadata.version);
 end

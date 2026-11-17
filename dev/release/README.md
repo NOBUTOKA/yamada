@@ -2,7 +2,7 @@
 
 For maintainers building and signing a Toolbox candidate, this guide describes the build inputs, output files, and signing command.
 
-Add `dev/release` to the MATLAB path and run `buildYamadaToolbox`. The build requires MATLAB R2024a on Windows. Its default output is the ignored `build/1.0.0` directory; pass a new output folder to keep multiple candidates. Existing output files are never replaced.
+Add `dev/release` to the MATLAB path and run `buildYamadaToolbox`. The build requires MATLAB R2026b, the declared maximum release, on Windows, because the packager rejects a maximum release newer than the running one. Its default output is the ignored `build/1.0.0` directory; pass a new output folder to keep multiple candidates. Existing output files are never replaced.
 
 ```matlab
 addpath(fullfile(pwd, "dev", "release"));

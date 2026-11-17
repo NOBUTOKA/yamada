@@ -1,5 +1,5 @@
 function [options, metadata] = yamadaToolboxOptions(projectRoot, toolboxRoot)
-% yamadaToolboxOptions Define explicit packaging inputs, built on R2024a, and public metadata.
+% yamadaToolboxOptions Define explicit packaging inputs and public metadata.
 %   Only the distribution root is added to MATLAB's path. Development inputs,
 %   fixtures, and measurement artifacts are never selected by directory-wide packaging.
 arguments (Input)
@@ -28,8 +28,13 @@ options.Summary = metadata.summary;
 options.Description = metadata.description;
 options.MinimumMatlabRelease = metadata.minimumMatlabRelease;
 options.MaximumMatlabRelease = metadata.maximumMatlabRelease;
-options.SupportedPlatforms = struct("Win64", true, "Glnxa64", false, ...
-    "Maci64", false, "MatlabOnline", false);
+
+% Clear the packager's own platform fields, whose names differ between releases.
+platforms = options.SupportedPlatforms;
+for field = string(fieldnames(platforms))'
+    platforms.(field) = field == "Win64";
+end
+options.SupportedPlatforms = platforms;
 options.ToolboxFiles = files;
 options.ToolboxMatlabPath = toolboxRoot;
 options.AppGalleryFiles = fullfile(toolboxRoot, "yamada.m");

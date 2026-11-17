@@ -22,7 +22,7 @@ https://github.com/user-attachments/assets/ef965c59-a430-4c2f-9f11-2f8f3395d9e0
 
 ## Important
 
-`yamada` is under active development. Development and verification currently target MATLAB R2023a through R2024a. Review the generated diff before saving, and keep the target file under version control or make a backup.
+`yamada` is under active development. Development and verification currently target MATLAB R2023a through R2026b. Review the generated diff before saving, and keep the target file under version control or make a backup.
 
 ## Features
 
@@ -35,9 +35,9 @@ https://github.com/user-attachments/assets/ef965c59-a430-4c2f-9f11-2f8f3395d9e0
 
 ## Supported Environment
 
-- MATLAB R2023a, R2023b, or R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
+- MATLAB R2023a through R2026b on 64-bit Windows, with a graphical session, JVM enabled (R2026b installs no Java runtime, so install the MATLAB Support for OpenJDK add-on or another OpenJDK distribution first), and MATLAB .NET support
 
-Release targets are R2023a through R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. Each release offers the components and properties that it provides. Editing an app created for a newer MATLAB release in yamada on an older release is not supported: components and properties that the older release lacks are reported as unsupported and cannot be previewed. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
+Release targets are R2023a through R2026b on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. Each release offers the components and properties that it provides. Editing an app created for a newer MATLAB release in yamada on an older release is not supported: components and properties that the older release lacks are reported as unsupported and cannot be previewed. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
 
 ## Getting Started
 
@@ -131,7 +131,7 @@ Reload reads the saved file, so unsaved changes in MATLAB's editor are not inclu
 
 Supported apps directly inherit from `handle` and own one `uifigure`. All their UI components must be descendants of that figure. Use an ordinary `.m` class with component creation and settings that yamada can read from source. `.mlapp` files and AppBase apps are outside the supported format.
 
-The preview uses supported initialization settings. Some components and properties have limited editing or preview support, especially when their values depend on expressions or runtime code. The editor shows diagnostics when it cannot safely apply a change. See the [product specification](SPECIFICATION.md) for supported syntax, operations, and source-preservation limits.
+The preview uses supported initialization settings. Some components and properties have limited editing or preview support, especially when their values depend on expressions or runtime code. The editor shows diagnostics when it cannot safely apply a change. On R2026b, radio and toggle buttons are supported only inside a `uibuttongroup`. R2026b also lets them be placed directly in other containers, adds their read-only `Group` property, and introduces `uiselectiongroup`; yamada does not support these yet. A button placed outside a button group is reported as an invalid parent, `uiselectiongroup` is kept in the source as an unsupported component and is not previewed, and editing apps that use them is not supported. See the [product specification](SPECIFICATION.md) for supported syntax, operations, and source-preservation limits.
 
 ## Documentation
 

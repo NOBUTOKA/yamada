@@ -4,7 +4,9 @@ For users deciding whether to update, this log describes changes and compatibili
 
 ## Unreleased
 
-- Support MATLAB R2023a and R2023b in addition to R2024a. Each release offers the components and properties it provides; the color picker requires R2024a and the range slider requires R2023b.
+- Support MATLAB R2023a through R2026b. Each release offers the components and properties it provides; for example, the color picker requires R2024a and the range slider requires R2023b.
+- On R2026b, radio and toggle buttons outside a button group, their `Group` property, and `uiselectiongroup` are not supported yet.
+- R2026b installs no Java runtime; install the MATLAB Support for OpenJDK add-on or another OpenJDK distribution before using yamada on it.
 - Editing an app created for a newer MATLAB release on an older release is not supported.
 
 ## 1.0.0
