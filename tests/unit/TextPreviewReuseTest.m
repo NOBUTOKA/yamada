@@ -85,25 +85,13 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
         end
 
         function settle(target)
-            % settle Wait for several stable native geometry observations with a bounded deadline.
+            % settle Wait until the Preview layout of the target's figure has settled.
             arguments (Input)
                 target (1, 1) matlab.ui.control.Label
             end
-            started = tic;
-            previous = double(target.Position);
-            stable = 0;
-            while toc(started) < 5
-                drawnow; pause(0.04); drawnow;
-                current = double(target.Position);
-                if all(abs(current - previous) < 0.1)
-                    stable = stable + 1;
-                else
-                    stable = 0;
-                end
-                if stable >= 4, return, end
-                previous = current;
-            end
-            error("yamada:TextPreviewReuseTest:UnsettledGeometry", "Text layout did not settle.");
+            % Repeated stable reads can end before the Grid Layout resize throttle relayouts the label.
+            drawnow;
+            yamada.ui.waitForPreviewLayout(ancestor(target, "figure"), target);
         end
     end
 end
