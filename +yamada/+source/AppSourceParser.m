@@ -290,6 +290,7 @@ classdef AppSourceParser
                             unavailableRelease + " or later).", component.Id, statement.Span);
                     end
                     for propertyIndex = 1:numel(skippedProperties)
+                        if registry.isUnavailableSourceProperty(definition.Id, skippedProperties(propertyIndex)), continue, end
                         diagnostics(end + 1) = yamada.source.AppSourceParser.diagnostic( ...
                             "source-creation-property", "warning", ...
                             "Creation property was retained as source and omitted from Safe Preview.", ...
@@ -395,7 +396,7 @@ classdef AppSourceParser
                     record = setting.toStruct();
                     record.Location.IsEditable = false;
                     component.recordSetting(yamada.model.PropertySetting(record.Path, record.Value, record.Location));
-                    if ~yamada.source.AppSourceParser.isNotRenderedFigureTool(component.Factory)
+                    if ~setting.IsReleaseUnavailable && ~yamada.source.AppSourceParser.isNotRenderedFigureTool(component.Factory)
                         diagnostics(end + 1) = yamada.source.AppSourceParser.diagnostic( ...
                             "context-inapplicable-property", "warning", ...
                             "Property assignment is preserved read-only outside its direct-parent context.", ...
@@ -436,15 +437,16 @@ classdef AppSourceParser
 
             yamada.model.SourceEffectSummary.refresh(document, registry);
 
-            % Combine parser findings with shared model validation diagnostics.
-            validationDiagnostics = yamada.validation.ModelValidator.validate( ...
-                document, registry, propertyNames);
-            diagnostics = [diagnostics(:)' validationDiagnostics(:)'];
+            % Keep the Open-time range warning available to later model validation.
             if ~isempty(availability) && strlength(runningRelease) > 0
                 releaseDiagnostic = yamada.source.AppSourceParser.releaseDiagnostic( ...
                     statements, initializationOrder, sourceRegistry, registry, availability, runningRelease);
-                diagnostics = [releaseDiagnostic diagnostics];
+                if ~isempty(releaseDiagnostic), document.Metadata.SourceReleaseDiagnostic = releaseDiagnostic; end
             end
+            validationDiagnostics = yamada.validation.ModelValidator.validate( ...
+                document, registry, propertyNames);
+            range = string({validationDiagnostics.Code}) == "source-release-range";
+            diagnostics = [validationDiagnostics(range) diagnostics(:)' validationDiagnostics(~range)];
             document.Diagnostics = diagnostics;
             document.markSaved();
             document.finishParsedSource(registry, validationDiagnostics, isempty(propertyNames));

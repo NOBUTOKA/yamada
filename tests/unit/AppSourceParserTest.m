@@ -5,6 +5,37 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
     %   and source-span retention.
 
     methods (Test)
+        function retainsReleaseWarningWhenEditingRangeSlider(testCase)
+            % retainsReleaseWarningWhenEditingRangeSlider Keep newer Step settings out of runtime diagnostics.
+
+            % Load a recognized range slider with settings unavailable until R2024a.
+            registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2023b"));
+            source = join(["classdef ReleaseExample < handle", "properties", "Figure", "Slider", "end", ...
+                "methods", "function app = ReleaseExample", "app.Figure = uifigure();", ...
+                "app.Slider = uislider(app.Figure, ""range"");", ...
+                "app.Slider.Limits = [0 100];", "app.Slider.Step = 5;", ...
+                "app.Slider.StepMode = ""manual"";", "end", "end", "end"], newline);
+            [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry, "", strings(1, 0), "R2023b");
+            testCase.assertNotEmpty(diagnostics);
+            testCase.verifyEqual(diagnostics(1).Code, "source-release-range");
+            testCase.verifyFalse(any(ismember(string({diagnostics.Code}), ["unsupported-property", "context-inapplicable-property"])));
+
+            % Revalidate the editing transaction and regenerate without touching the newer settings.
+            slider = document.getComponentByName("Slider");
+            document.setProperty(slider.Id, "Limits", [0 120], registry);
+            diagnostics = document.validatePropertyCommit(registry);
+            testCase.assertNotEmpty(diagnostics);
+            testCase.verifyEqual(diagnostics(1).Code, "source-release-range");
+            testCase.verifyFalse(any(string({diagnostics.Code}) == "unsupported-property"));
+            [generated, diagnostics] = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifyEqual(generated, replace(source, "[0 100]", "[0 120]"));
+            testCase.assertNotEmpty(diagnostics);
+            testCase.verifyEqual(diagnostics(1).Code, "source-release-range");
+            entries = yamada.model.PropertyApplicationPlanner.forPreview(slider, document, registry);
+            testCase.verifyFalse(any(ismember(string({entries.Path}), ["Step", "StepMode"])));
+        end
+
         function preservesUnavailableEnumWithoutReplayingIt(testCase)
             % preservesUnavailableEnumWithoutReplayingIt Keep unsupported enum literals in both source forms.
 

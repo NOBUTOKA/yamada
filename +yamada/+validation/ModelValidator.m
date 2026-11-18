@@ -21,6 +21,9 @@ classdef ModelValidator
             % Validate the class identity before traversing component records.
             evaluationScope = document.evaluationContext(registry).readScope(); %#ok<NASGU>
             diagnostics = yamada.model.Diagnostic.empty;
+            if isfield(document.Metadata, "SourceReleaseDiagnostic")
+                diagnostics = document.Metadata.SourceReleaseDiagnostic;
+            end
             if ~isvarname(document.ClassName) || iskeyword(document.ClassName)
                 diagnostics(end + 1) = yamada.model.Diagnostic( ...
                     "invalid-class-name", "error", ...
@@ -348,7 +351,9 @@ classdef ModelValidator
             for propertyIndex = 1:numel(component.Properties)
                 entry = component.Properties(propertyIndex);
                 if ~any(supportedPaths == entry.Path)
-                    if yamada.validation.ModelValidator.isNotRenderedFigureTool(component.Factory)
+                    settings = component.getSettings(entry.Path);
+                    if any([settings.IsReleaseUnavailable]) || ...
+                            yamada.validation.ModelValidator.isNotRenderedFigureTool(component.Factory)
                         continue
                     end
                     diagnostics(end + 1) = yamada.model.Diagnostic( ...

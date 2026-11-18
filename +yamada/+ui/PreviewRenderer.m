@@ -793,7 +793,8 @@ classdef PreviewRenderer < handle
             end
             for index = 1:numel(entries)
                 entry = entries(index);
-                if entry.ValueKind ~= "literal" || ~entry.IsEditable
+                if entry.ValueKind ~= "literal" || ~entry.IsEditable || ...
+                        obj.Registry.isUnavailableSourceProperty(definition.Id, entry.Path)
                     continue
                 end
                 property = definition.getProperty(entry.Path);

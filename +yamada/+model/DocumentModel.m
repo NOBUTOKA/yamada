@@ -2772,6 +2772,11 @@ classdef DocumentModel < handle
             if yamada.validation.ModelValidator.hasErrors(diagnostics)
                 error("yamada:DocumentModel:UnsafeSourceCommit", "%s", strjoin(string({diagnostics.Message}), newline));
             end
+            % Internal reparses do not run the Open-time release inference.
+            if isfield(obj.Metadata, "SourceReleaseDiagnostic") && ~isfield(parsed.Metadata, "SourceReleaseDiagnostic")
+                parsed.Metadata.SourceReleaseDiagnostic = obj.Metadata.SourceReleaseDiagnostic;
+                parsed.validatePropertyCommit(registry);
+            end
             assert(numel(parsed.Components) == numel(obj.Components), ...
                 "yamada:DocumentModel:SourceComponentMismatch", "Current source must retain the committed component set.");
             % Validate the complete join before changing any live record.
