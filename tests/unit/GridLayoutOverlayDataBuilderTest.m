@@ -498,7 +498,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             document.setProperty(second.Id, "Layout.Row", 2);
             document.setProperty(second.Id, "Layout.Column", 2);
 
-            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 760 560]);
             renderer = yamada.ui.PreviewRenderer(registry);

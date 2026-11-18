@@ -5,6 +5,8 @@ function data = waitForPreviewLayout(figure, target)
 %   and ViewModel stabilization, and replies after the next animation frame.
 %   The reply travels on the figure ViewModel channel behind the client's
 %   position notifications, so MATLAB-side positions are final when it returns.
+%   The figure needs its own browser window; create editor figures with
+%   yamada.ui.createEditorFigure so that desktop MATLAB provides one.
 arguments (Input)
     figure (1, 1) matlab.ui.Figure
     target (1, 1) matlab.graphics.Graphics %#ok<INUSA>
@@ -29,9 +31,15 @@ clock = tic;
 previous = warning("off", "all");
 warningCleanup = onCleanup(@() warning(previous));
 figureData = struct(figure); controllerData = struct(figureData.Controller);
-hostData = struct(controllerData.PlatformHost); window = hostData.CEF;
+host = controllerData.PlatformHost; hostData = struct(host);
 viewModel = controllerData.ViewModel;
 clear warningCleanup
+% Desktop-hosted figures from R2025a have no window to run scripts in; see createEditorFigure.
+if ~isfield(hostData, "CEF") || isempty(hostData.CEF)
+    error("yamada:PreviewLayout:NoFigureWindow", ...
+        "The figure host %s has no browser window for the layout wait.", class(host));
+end
+window = hostData.CEF;
 % Listen before dispatch so an immediately resolved promise cannot be missed. Failures
 % before the figure ViewModel is found arrive on the message service channel instead.
 token = string(java.util.UUID.randomUUID());
