@@ -65,6 +65,11 @@ classdef SubtreePlacementPlanner
                 error("yamada:SubtreePlacementPlanner:RootOperation", "The document root cannot be moved or pasted.");
             end
             for record = snapshot.Records
+                % Relocating the enclosing subtree leaves a source-only child's parent intact.
+                if record.Id ~= root.Id && any(excludedIds == record.Id) && ...
+                        isfield(record.Metadata, "UnavailableRelease")
+                    continue
+                end
                 if ~record.IsEditable
                     error("yamada:SubtreePlacementPlanner:ReadOnly", "The subtree contains a read-only component.");
                 end

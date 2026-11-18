@@ -129,7 +129,10 @@ classdef DocumentEditAvailability
             reason = "";
             snapshot = yamada.model.SubtreeSnapshot.empty;
             try
-                snapshot = yamada.model.DocumentEditAvailability.inspect(document, id);
+                snapshot = yamada.model.DocumentEditAvailability.inspect(document, id, true);
+                if source.isReleaseUnavailable()
+                    error("yamada:DocumentEditAvailability:ReadOnly", "The component is unavailable in the loaded MATLAB release.");
+                end
                 yamada.model.DocumentEditAvailability.ownership(document, snapshot, true);
                 if yamada.model.PropertyStateResolver.hasUnresolvedExecution(document)
                     error("yamada:DocumentEditAvailability:UnknownHierarchy", "Unresolved initialization effects prevent proving subtree relocation safety.");

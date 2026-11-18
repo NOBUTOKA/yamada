@@ -8,6 +8,41 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
     end
 
     methods (Test)
+        function movesParentWithUnavailableChild(testCase)
+            % movesParentWithUnavailableChild Preserve a newer child while relocating its panel.
+
+            % Keep both the move and the child settings in one owned initializer.
+            registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2023a"));
+            source = join(["classdef ReleaseExample < handle", "properties", ...
+                "Figure matlab.ui.Figure", "Origin matlab.ui.container.Panel", ...
+                "Destination matlab.ui.container.Panel", "Moved matlab.ui.container.Panel", ...
+                "Picker matlab.ui.control.ColorPicker", "end", "methods", ...
+                "function createComponents(app)", "app.Figure = uifigure();", ...
+                "app.Origin = uipanel(app.Figure);", "app.Destination = uipanel(app.Figure);", ...
+                "app.Moved = uipanel(app.Origin);", "app.Moved.Position = [10 10 80 40];", ...
+                "app.Picker = uicolorpicker(app.Moved);", "app.Picker.Value = [0.1 0.2 0.3];", ...
+                "end", "function app = ReleaseExample", "createComponents(app);", "end", "end", "end"], newline);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
+            moved = document.getComponentByName("Moved");
+            destination = document.getComponentByName("Destination");
+            states = yamada.model.DocumentEditAvailability.reparenting(document, moved.Id, registry);
+            state = states(string({states.Id}) == destination.Id);
+            testCase.verifyTrue(state.Enabled, state.Reason);
+            document.reparentSubtree(moved.Id, destination.Id, registry);
+            testCase.verifyEqual(moved.ParentId, destination.Id);
+            picker = document.getComponentByName("Picker");
+            testCase.verifyTrue(picker.isReleaseUnavailable());
+            testCase.verifyEqual(picker.ParentId, moved.Id);
+            testCase.verifySubstring(document.CurrentText, "app.Picker = uicolorpicker(app.Moved);");
+            testCase.verifySubstring(document.CurrentText, "app.Picker.Value = [0.1 0.2 0.3];");
+            relocated = document.CurrentText;
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, source);
+            document.redo();
+            testCase.verifyEqual(document.CurrentText, relocated);
+        end
+
         function editorCommandsRetainBindingsAcrossSaveAndHistory(testCase, Operation)
             % editorCommandsRetainBindingsAcrossSaveAndHistory Compare every structural command with independent source loading.
             [document, registry] = fixture();
