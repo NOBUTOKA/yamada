@@ -3584,7 +3584,10 @@ classdef yamada < handle
                     value = yamada.ui.InspectorValueFormatter.format(entry);
                     editable = editable && entry.IsEditable;
                 end
-                if resolved.IsKnown
+                if resolved.IsReleaseUnavailable
+                    rawValue = resolved.ExplicitValue;
+                    editable = false;
+                elseif resolved.IsKnown
                     rawValue = resolved.EffectiveValue;
                     isKnown = true;
                 elseif isempty(entry) && strlength(resolved.EffectKey) == 0 && defaults.Found(index) && ...
@@ -3599,7 +3602,9 @@ classdef yamada < handle
                     if states(index).Definition.Category ~= "Source", value = "<unresolved>"; end
                     editable = false;
                 end
-                if ~isKnown
+                if resolved.IsReleaseUnavailable
+                    members(index).Reason = resolved.ReadOnlyReason;
+                elseif ~isKnown
                     members(index).Reason = resolved.Reason;
                 elseif ~editable
                     members(index).Reason = resolved.ReadOnlyReason;
@@ -3648,6 +3653,12 @@ classdef yamada < handle
                 if ~any(paths == entry.Path)
                     sourcePathCount = sourcePathCount + 1;
                     sourcePaths(sourcePathCount) = entry.Path;
+                elseif ~entry.IsEditable
+                    settings = component.getSettings(entry.Path);
+                    if ~isempty(settings) && settings(end).IsReleaseUnavailable
+                        sourcePathCount = sourcePathCount + 1;
+                        sourcePaths(sourcePathCount) = "unavailable:" + entry.Path;
+                    end
                 end
             end
             sourcePaths = sourcePaths(1:sourcePathCount);

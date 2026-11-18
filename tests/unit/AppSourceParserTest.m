@@ -22,6 +22,10 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 figure = document.getComponentByName("Figure");
                 testCase.verifyTrue(figure.getSettings("WindowStyle").IsReleaseUnavailable);
                 testCase.verifyFalse(figure.getProperty("WindowStyle").IsEditable);
+                states = document.getEffectivePropertyStates(registry, figure.Id);
+                style = states(arrayfun(@(state) state.Definition.Path == "WindowStyle", states)).Resolution;
+                testCase.verifyTrue(style.IsReleaseUnavailable);
+                testCase.verifyEqual(string(style.ExplicitValue), "docked");
                 testCase.verifyEmpty(yamada.model.PropertyApplicationPlanner.forPreviewArguments(figure, registry));
                 entries = yamada.model.PropertyApplicationPlanner.forPreview(figure, document, registry);
                 testCase.verifyFalse(any(string({entries.Path}) == "WindowStyle"));

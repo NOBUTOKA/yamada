@@ -4,6 +4,49 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
     %   only native dialogs and filesystem decisions through the lifecycle service.
 
     methods (Test)
+        function inspectorShowsProtectedEnumFromSource(testCase)
+            % inspectorShowsProtectedEnumFromSource Show an unavailable literal in a disabled enum row.
+
+            % Use a removed enum value to exercise the same source-backed row on the current release.
+            testCase.assumeFalse(isMATLABReleaseOlderThan("R2025a"));
+            folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
+            target = fullfile(string(folder.Folder), "EnumExample.m");
+            source = join(["classdef EnumExample < handle", "properties", "Figure", "First", "Second", ...
+                "end", "methods", "function app = EnumExample", "app.Figure = uifigure();", ...
+                "app.First = uibuttongroup(app.Figure);", "app.First.TitlePosition = 'leftbottom';", ...
+                "app.Second = uibuttongroup(app.Figure);", "app.Second.TitlePosition = 'lefttop';", ...
+                "end", "end", "end"], newline);
+            yamada.source.SourceWriter.write(target, source, "CRLF");
+            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            cleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+
+            % Selecting the supported sibling must restore the runtime's enum choices.
+            window = editorFigure();
+            tree = findall(window, "Type", "uitree");
+            nodes = findall(tree, "Type", "uitreenode");
+            paths = string({nodes.NodeData});
+            for name = ["First", "Second"]
+                node = nodes(paths == app.Document.getComponentByName(name).Id);
+                tree.SelectedNodes = node;
+                tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
+                labels = findall(window, "Tag", "yamada-inspector-property-label");
+                label = labels(erase(string({labels.Text}), " ") == "TitlePosition");
+                testCase.assertNumElements(label, 1);
+                dropdown = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
+                testCase.assertNumElements(dropdown, 1);
+                if name == "First"
+                    testCase.verifyEqual(string(dropdown.Value), "leftbottom");
+                    testCase.verifyEqual(string(dropdown.Enable), "off");
+                else
+                    testCase.verifyEqual(string(dropdown.Value), "lefttop");
+                    testCase.verifyFalse(any(string(dropdown.Items) == "leftbottom"));
+                    testCase.verifyEqual(string(dropdown.Enable), "on");
+                end
+            end
+            clear cleanup
+        end
+
         function savesAndReloadsNewerGalleryOnOlderMatlab(testCase)
             % savesAndReloadsNewerGalleryOnOlderMatlab Exercise source-owned placeholders through the editor.
 

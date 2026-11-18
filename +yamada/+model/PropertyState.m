@@ -15,6 +15,8 @@ classdef PropertyState
         LastSettingId double = 0
         % ExplicitKind - absent, pending, literal, or expression source form.
         ExplicitKind string = "absent"
+        % IsReleaseUnavailable - Whether the explicit setting is excluded by the runtime catalog.
+        IsReleaseUnavailable logical = false
         % ExplicitValue - Original literal retained by the last setting record.
         ExplicitValue = []
         % SourceExpression - Unevaluated original expression, when present.
@@ -80,6 +82,7 @@ classdef PropertyState
             obj.HasRequestedValue = entry.ValueKind == "literal";
             if obj.HasRequestedValue, obj.RequestedValue = entry.LiteralValue; end
             if ~isempty(setting)
+                obj.IsReleaseUnavailable = setting.IsReleaseUnavailable;
                 if setting.IsReleaseUnavailable
                     obj.ReadOnlyReason = "This source setting is unavailable in the loaded MATLAB catalog.";
                 end
