@@ -2774,8 +2774,10 @@ classdef DocumentModel < handle
             end
             % Internal reparses do not run the Open-time release inference.
             if isfield(obj.Metadata, "SourceReleaseDiagnostic") && ~isfield(parsed.Metadata, "SourceReleaseDiagnostic")
-                parsed.Metadata.SourceReleaseDiagnostic = obj.Metadata.SourceReleaseDiagnostic;
-                parsed.validatePropertyCommit(registry);
+                releaseDiagnostic = obj.Metadata.SourceReleaseDiagnostic;
+                parsed.Metadata.SourceReleaseDiagnostic = releaseDiagnostic;
+                parsed.Diagnostics = [releaseDiagnostic parsed.Diagnostics];
+                parsed.finishParsedSource(registry, [releaseDiagnostic diagnostics], true);
             end
             assert(numel(parsed.Components) == numel(obj.Components), ...
                 "yamada:DocumentModel:SourceComponentMismatch", "Current source must retain the committed component set.");

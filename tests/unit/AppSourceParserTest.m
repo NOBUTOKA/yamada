@@ -169,6 +169,15 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                     testCase.verifyEqual(document.CurrentText, source);
                     testCase.verifyEqual(document.HistoryIndex, 0);
                     document.setProperty(button.Id, "Text", "Save preferences", registry);
+                    diagnostics = document.validatePropertyCommit(registry);
+                    codes = string({diagnostics.Code});
+                    testCase.verifyEqual(codes(1), "source-release-range");
+                    testCase.verifyEqual(nnz(codes == "source-release-component"), 2);
+                    testCase.verifyFalse(any(codes == "unsupported-factory"));
+                    testCase.verifyTrue(document.getComponentByName("IntensitySlider").isReleaseUnavailable());
+                    testCase.verifyTrue(document.getComponentByName("AccentColorPicker").isReleaseUnavailable());
+                    scoped = yamada.validation.ModelValidator.validateOwners(document, registry, slider.Id);
+                    testCase.verifyEqual(string({scoped.Code}), "source-release-component");
                     edited = yamada.source.RoundTripGenerator(registry).generate(document);
                     testCase.verifyEqual(edited, replace(source, "Save settings", "Save preferences"));
                     document.undo();
