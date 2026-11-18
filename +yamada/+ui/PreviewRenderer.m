@@ -696,7 +696,7 @@ classdef PreviewRenderer < handle
             end
             try
                 if component.isReleaseUnavailable()
-                    handles(component.Id) = obj.createUnavailableLabel(component, parent);
+                    handles(component.Id) = obj.createUnavailableLabel(component, document, parent);
                     return
                 end
                 configured = component;
@@ -736,11 +736,12 @@ classdef PreviewRenderer < handle
             end
         end
 
-        function label = createUnavailableLabel(~, component, parent)
+        function label = createUnavailableLabel(obj, component, document, parent)
             % createUnavailableLabel Display an editor-owned stand-in at owned literal coordinates.
             arguments (Input)
-                ~
+                obj (1, 1) yamada.ui.PreviewRenderer
                 component (1, 1) yamada.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
                 parent
             end
             arguments (Output)
@@ -752,21 +753,18 @@ classdef PreviewRenderer < handle
                 component.Metadata.UnavailableRelease + " or later)";
             label = uilabel(parent, "Text", text, "Tooltip", text, "WordWrap", "on");
             grid = isa(parent, "matlab.ui.container.GridLayout");
-            paths = "Position";
-            if grid, paths = ["Layout.Row", "Layout.Column"]; end
-            for path = paths
-                settings = component.getSettings(path);
-                if isempty(settings), continue, end
+            if grid
+                coordinates = yamada.model.GridLayoutStatePolicy.previewChildCoordinates( ...
+                    component, document, obj.Registry);
+                if ~isempty(coordinates{1}), label.Layout.Row = coordinates{1}; end
+                if ~isempty(coordinates{2}), label.Layout.Column = coordinates{2}; end
+            else
+                settings = component.getSettings("Position");
+                if isempty(settings), return, end
                 setting = settings(end);
                 value = setting.LiteralValue;
-                if ~setting.IsCertain || setting.ValueKind ~= "literal" || ~isnumeric(value) || ...
-                        ~isreal(value) || any(~isfinite(value), "all")
-                    continue
-                end
-                if grid && isvector(value) && numel(value) <= 2 && ...
-                        all(value >= 1 & value == floor(value)) && issorted(value)
-                    label.Layout.(extractAfter(path, ".")) = value;
-                elseif ~grid && numel(value) == 4 && all(value(3:4) >= 0)
+                if setting.IsCertain && setting.ValueKind == "literal" && isnumeric(value) && ...
+                        isreal(value) && all(isfinite(value), "all") && numel(value) == 4 && all(value(3:4) >= 0)
                     label.Position = reshape(value, 1, 4);
                 end
             end

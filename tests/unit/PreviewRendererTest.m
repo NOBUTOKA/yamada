@@ -62,6 +62,20 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             document = yamada.source.AppSourceParser.parseText(source, registry);
             handles = renderer.render(document, panel);
             testCase.verifyEqual(handles("parsed-Picker").Position, [20 30 140 25]);
+
+            % Replay implicit allocation before a sibling's later explicit move.
+            source = join(["classdef ReleaseExample < handle", "methods", ...
+                "function app = ReleaseExample", "app.Figure = uifigure();", ...
+                "app.Grid = uigridlayout(app.Figure, [2 2]);", ...
+                "app.First = uilabel(app.Grid);", "app.Picker = uicolorpicker(app.Grid);", ...
+                "app.First.Layout.Row = 2;", "app.First.Layout.Column = 2;", ...
+                "app.Last = uilabel(app.Grid);", "end", "end", "end"], newline);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
+            handles = renderer.render(document, panel);
+            testCase.verifyEqual(handles("parsed-Picker").Layout.Row, 1);
+            testCase.verifyEqual(handles("parsed-Picker").Layout.Column, 2);
+            testCase.verifyEqual(handles("parsed-Last").Layout.Row, 3);
+            testCase.verifyEqual(handles("parsed-Last").Layout.Column, 1);
             clear cleanup
         end
 

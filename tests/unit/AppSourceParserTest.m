@@ -120,6 +120,11 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
                 if index == 3
                     button = document.getComponentByName("SaveButton");
+                    grid = document.getComponentByName("FormGrid");
+                    testCase.verifyError(@() document.removeSubtree(grid.Id, registry), ...
+                        "yamada:DocumentModel:UnsafeSubtreeEdit");
+                    testCase.verifyEqual(document.CurrentText, source);
+                    testCase.verifyEqual(document.HistoryIndex, 0);
                     document.setProperty(button.Id, "Text", "Save preferences", registry);
                     edited = yamada.source.RoundTripGenerator(registry).generate(document);
                     testCase.verifyEqual(edited, replace(source, "Save settings", "Save preferences"));

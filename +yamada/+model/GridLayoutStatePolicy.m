@@ -145,6 +145,31 @@ classdef GridLayoutStatePolicy
                 end
             end
         end
+
+        function coordinates = previewChildCoordinates(component, document, registry)
+            % previewChildCoordinates Return the proven final cell of a source-only grid child.
+            arguments (Input)
+                component (1, 1) yamada.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                coordinates (1, 2) cell
+            end
+
+            % Reuse the same initialization replay used for editable grid children.
+            coordinates = cell(1, 2);
+            grid = document.getComponent(component.ParentId);
+            if isempty(grid) || grid.Factory ~= "uigridlayout" || ...
+                    strlength(yamada.model.GridLayoutStatePolicy.unresolvedGridEffect(grid, document, registry)) > 0
+                return
+            end
+            result = yamada.model.GridLayoutStatePolicy.configuration(grid, document, registry);
+            child = find(result.ChildIds == component.Id, 1);
+            if isempty(child) || ~result.Certain(child), return, end
+            known = result.CoordinateKnown(child, :);
+            coordinates(known) = result.Coordinates(child, known);
+        end
     end
 
     methods (Static, Access = ?yamada.model.EvaluationContext)
