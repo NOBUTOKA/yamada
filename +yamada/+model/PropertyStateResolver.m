@@ -273,6 +273,7 @@ classdef PropertyStateResolver
             end
             id = "";
             for member = reshape(members, 1, [])
+                if member.isReleaseUnavailable(), continue, end
                 definition = registry.get(member.Factory, member.CreationArguments);
                 names = yamada.model.PropertyStateResolver.namedPaths(member, registry);
                 for property = reshape(definition.Properties, 1, [])

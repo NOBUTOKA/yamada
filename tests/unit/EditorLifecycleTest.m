@@ -4,6 +4,59 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
     %   only native dialogs and filesystem decisions through the lifecycle service.
 
     methods (Test)
+        function savesAndReloadsNewerGalleryOnOlderMatlab(testCase)
+            % savesAndReloadsNewerGalleryOnOlderMatlab Exercise source-owned placeholders through the editor.
+
+            % Use the shared newer fixture explicitly and keep the original class filename.
+            runtime = yamada.model.ComponentRegistry.createDefault();
+            testCase.assumeFalse(runtime.contains("uicolorpicker"));
+            folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
+            fixture = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "ControlGalleryApp.m");
+            target = fullfile(string(folder.Folder), "ControlGalleryApp.m");
+            copyfile(fixture, target);
+            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            cleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            original = app.Document.OriginalText;
+            picker = app.Document.getComponentByName("AccentColorPicker");
+            testCase.assertTrue(picker.isReleaseUnavailable());
+            window = editorFigure();
+            labels = findall(window, "Type", "uilabel");
+            testCase.verifyTrue(any(contains(string({labels.Text}), "Color Picker (MATLAB R2024a")));
+            tree = findall(window, "Type", "uitree");
+            nodes = findall(tree, "Type", "uitreenode");
+            paths = string({nodes.NodeData});
+            node = nodes(paths == picker.Id);
+            tree.SelectedNodes = node;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
+            node = nodes(paths == app.Document.getComponentByName("SaveButton").Id);
+            tree.SelectedNodes = node;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
+
+            % Commit through the Inspector and use the real Save and Reload commands.
+            labels = findall(window, "Tag", "yamada-inspector-property-label");
+            textLabel = labels(string({labels.Text}) == "Text");
+            testCase.assertNumElements(textLabel, 1);
+            editor = findall(textLabel.Parent, "Tag", "yamada-inspector-property-editor");
+            testCase.assertNumElements(editor, 1);
+            editor.Value = "Save preferences";
+            editor.ValueChangedFcn(editor, struct());
+            edited = replace(original, "Save settings", "Save preferences");
+            testCase.verifyEqual(app.Document.CurrentText, edited);
+            invokeEditorMenu("Save");
+            invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
+            testCase.verifyEqual(app.Document.OriginalText, edited);
+            testCase.verifyTrue(app.Document.getComponentByName("AccentColorPicker").isReleaseUnavailable());
+
+            % The saved source restores the native component identity in the newer catalog.
+            newer = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2026b"));
+            reloaded = yamada.source.AppSourceParser.parseFile(target, newer);
+            testCase.verifyFalse(reloaded.getComponentByName("AccentColorPicker").isReleaseUnavailable());
+            testCase.verifyEqual(reloaded.getComponentByName("SaveButton").getProperty("Text").LiteralValue, "Save preferences");
+            clear cleanup
+        end
+
         function diffPreviewReceivesOriginalAndCommittedSource(testCase)
             % diffPreviewReceivesOriginalAndCommittedSource Open the comparison from the Tools menu.
             [target, ~] = reloadFixture();

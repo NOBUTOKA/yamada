@@ -19,6 +19,52 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
     end
 
     methods (Test)
+        function preservesNewerControlsAsLabelsInOlderPreview(testCase)
+            % preservesNewerControlsAsLabelsInOlderPreview Check source-owned grid and absolute placement.
+
+            % Render all three fixture surfaces against the oldest runtime catalog.
+            registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2023a"));
+            fixtureFolder = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures");
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            panel = uipanel(figure, "AutoResizeChildren", "off");
+            renderer = yamada.ui.PreviewRenderer(registry);
+            folders = [fullfile(fixtureFolder, "R2023a"), fullfile(fixtureFolder, "R2023b"), fixtureFolder];
+            for index = 1:numel(folders)
+                path = fullfile(folders(index), "ControlGalleryApp.m");
+                document = yamada.source.AppSourceParser.parseFile(path, registry);
+                [handles, diagnostics] = renderer.render(document, panel);
+                testCase.verifyFalse(any(string({diagnostics.Code}) == "preview-render-failed"));
+                slider = handles("parsed-IntensitySlider");
+                if index == 1
+                    testCase.verifyClass(slider, "matlab.ui.control.Slider");
+                else
+                    testCase.verifyClass(slider, "matlab.ui.control.Label");
+                    testCase.verifySubstring(string(slider.Text), "R2023b");
+                end
+                testCase.verifyEqual(slider.Layout.Row, 4);
+                testCase.verifyEqual(slider.Layout.Column, [1 2]);
+                if index == 3
+                    picker = handles("parsed-AccentColorPicker");
+                    testCase.verifyClass(picker, "matlab.ui.control.Label");
+                    testCase.verifySubstring(string(picker.Text), "R2024a");
+                    testCase.verifyEqual(picker.Layout.Row, 2);
+                    testCase.verifyEqual(picker.Layout.Column, 1);
+                end
+            end
+
+            % Parse an absolute child through the same model and preview entry points.
+            source = join(["classdef ReleaseExample < handle", "methods", ...
+                "function app = ReleaseExample", "app.Figure = uifigure();", ...
+                "app.Picker = uicolorpicker(app.Figure, Position=[20 30 140 25]);", ...
+                "end", "end", "end"], newline);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
+            handles = renderer.render(document, panel);
+            testCase.verifyEqual(handles("parsed-Picker").Position, [20 30 140 25]);
+            clear cleanup
+        end
+
         function actualSizeFixturesKeepCanvasAndEdgeControlsUnscaled(testCase)
             % actualSizeFixturesKeepCanvasAndEdgeControlsUnscaled Cover fit and overflow.
             registry = yamada.model.ComponentRegistry.createDefault();

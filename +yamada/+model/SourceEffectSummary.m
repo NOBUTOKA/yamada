@@ -14,7 +14,8 @@ classdef SourceEffectSummary
             document.Metadata.HasUnresolvedExecutableEffects = false;
             document.Metadata.HasUnrecognizedSetter = false;
             for member = document.Components
-                concrete = registry.get(member.Factory, member.CreationArguments);
+                sourceOnly = member.isReleaseUnavailable();
+                if ~sourceOnly, concrete = registry.get(member.Factory, member.CreationArguments); end
                 for setting = member.Settings
                     if setting.ValueKind == "expression"
                         expression = strtrim(string(yamada.source.ComponentNameRewriter.codeMask(setting.SourceExpression)));
@@ -36,7 +37,7 @@ classdef SourceEffectSummary
                         document.Metadata.HasUnresolvedLifecycleEffects = true;
                     end
                     % A cataloged setting excluded by the runtime release remains source-owned.
-                    if ~any(string({concrete.Properties.Path}) == setting.Path) && ...
+                    if ~sourceOnly && ~any(string({concrete.Properties.Path}) == setting.Path) && ...
                             ~any(setting.Path == ["Layout.Row", "Layout.Column"]) && ...
                             ~registry.isUnavailableSourceProperty(concrete.Id, setting.Path)
                         document.Metadata.HasUnrecognizedSetter = true;

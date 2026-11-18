@@ -119,7 +119,7 @@ classdef HierarchyContextMenu < handle
             document = obj.DocumentFcn();
             if isempty(document), return, end
             component = document.getComponent(id);
-            if isempty(component), return, end
+            if isempty(component) || component.isReleaseUnavailable(), return, end
             parentFactory = "";
             if strlength(component.ParentId) > 0
                 parentComponent = document.getComponent(component.ParentId);

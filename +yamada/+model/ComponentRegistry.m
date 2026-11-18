@@ -11,6 +11,8 @@ classdef ComponentRegistry < handle
     properties (SetAccess = private)
         % Revision - Monotonic version of capability and presentation definitions.
         Revision uint64 = uint64(0)
+        % CatalogRoot - Directory of the loaded release projection, if any.
+        CatalogRoot string = ""
     end
 
     properties (Access = private)
@@ -55,14 +57,16 @@ classdef ComponentRegistry < handle
     end
 
     methods (Access = ?yamada.catalog.ComponentCatalogLoader)
-        function setSourceAvailability(obj, paths, values)
+        function setSourceAvailability(obj, root, paths, values)
             % setSourceAvailability Retain release annotations for source-only settings.
             arguments (Input)
                 obj (1, 1) yamada.model.ComponentRegistry
+                root (1, 1) string
                 paths (1, :) string
                 values (1, :) string
             end
 
+            obj.CatalogRoot = root;
             obj.UnavailableSourceProperties = paths;
             obj.UnavailableSourceValues = values;
         end
@@ -85,6 +89,7 @@ classdef ComponentRegistry < handle
             copy.InspectorRowDefinitions = obj.InspectorRowDefinitions;
             copy.UnavailableSourceProperties = obj.UnavailableSourceProperties;
             copy.UnavailableSourceValues = obj.UnavailableSourceValues;
+            copy.CatalogRoot = obj.CatalogRoot;
             copy.Revision = obj.Revision;
         end
     end

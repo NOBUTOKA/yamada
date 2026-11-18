@@ -70,7 +70,7 @@ classdef CallbackSourceAnalyzer
             % Resolve the effective catalog surface independently of active UI selection.
             states = yamada.model.CallbackState.empty;
             component = document.getComponent(componentId);
-            if isempty(component), return, end
+            if isempty(component) || component.isReleaseUnavailable(), return, end
             parentFactory = "";
             if strlength(component.ParentId) > 0
                 parent = document.getComponent(component.ParentId);

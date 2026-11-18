@@ -391,6 +391,7 @@ classdef GridLayoutStatePolicy
                     events(end + 1) = struct("Sequence", setting.Sequence, "Member", index, "Path", setting.Path, ...
                         "Value", {value}, "Known", setting.IsCertain && setting.ValueKind == "literal", "Id", setting.Id); %#ok<AGROW>
                 end
+                if member.isReleaseUnavailable(), continue, end
                 entries = member.Properties;
                 if yamada.model.SourceOwnership.hasSource(member), entries = entries(arrayfun(@(entry) isempty(entry.SourceSpan), entries)); end
                 definition = registry.getEffectiveProperties(member.Factory, "uigridlayout", member.CreationArguments);

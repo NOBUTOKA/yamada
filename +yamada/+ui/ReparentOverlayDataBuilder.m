@@ -28,6 +28,7 @@ classdef ReparentOverlayDataBuilder
                 "enabled", {}, "reason", {}, "grid", {});
             component = document.getComponent(id);
             if isempty(component) || id == document.RootComponentId || ~isKey(handles, id), return, end
+            if component.isReleaseUnavailable(), return, end
             preview = handles(id);
             if ~isvalid(preview) || ~isprop(preview, "Position"), return, end
             if isempty(boundsFcn)

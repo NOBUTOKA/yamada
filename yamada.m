@@ -1587,6 +1587,7 @@ classdef yamada < handle
                 if componentId == app.InteractionComponentId
                     rectangle = app.interactionDisplayPosition(componentId, rectangle);
                 end
+                if component.isReleaseUnavailable(), continue, end
                 definition = app.Registry.get(component.Factory, component.CreationArguments);
                 tabTitles = strings(1, 0);
                 tabSelected = 0;
@@ -3452,9 +3453,14 @@ classdef yamada < handle
                 parent = app.Document.getComponent(component.ParentId);
                 parentFactory = parent.Factory;
             end
-            definition = app.Registry.get(component.Factory, component.CreationArguments);
-            rows = yamada.ui.inspector.InspectorSurfaceBuilder.build( ...
-                definition.Id, parentFactory, states, app.Registry.inspectorRows());
+            if component.isReleaseUnavailable()
+                rows = yamada.ui.inspector.InspectorSurfaceBuilder.build("", parentFactory, states, ...
+                    yamada.model.InspectorRowDefinition.empty);
+            else
+                definition = app.Registry.get(component.Factory, component.CreationArguments);
+                rows = yamada.ui.inspector.InspectorSurfaceBuilder.build( ...
+                    definition.Id, parentFactory, states, app.Registry.inspectorRows());
+            end
         end
 
         function states = inspectorStates(app, component)
@@ -3466,13 +3472,15 @@ classdef yamada < handle
 
             % Preserve unsupported source assignments without making them editable.
             states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
-            definition = app.Registry.get(component.Factory, component.CreationArguments);
-            style = definition.styleFor(component.CreationArguments);
-            applicable = arrayfun(@(state) isempty(state.Definition.ApplicableStyles) || ...
-                any(state.Definition.ApplicableStyles == style), states) & ...
-                arrayfun(@(state) state.Definition.AuditDisposition ~= "omitted", states);
-            states = states(applicable);
-            effectivePaths = arrayfun(@(state) state.Definition.Path, states);
+            if ~component.isReleaseUnavailable()
+                definition = app.Registry.get(component.Factory, component.CreationArguments);
+                style = definition.styleFor(component.CreationArguments);
+                applicable = arrayfun(@(state) isempty(state.Definition.ApplicableStyles) || ...
+                    any(state.Definition.ApplicableStyles == style), states) & ...
+                    arrayfun(@(state) state.Definition.AuditDisposition ~= "omitted", states);
+                states = states(applicable);
+            end
+            effectivePaths = string(arrayfun(@(state) state.Definition.Path, states));
             for index = 1:numel(component.Properties)
                 entry = component.Properties(index);
                 if any(effectivePaths == entry.Path)
@@ -3619,6 +3627,10 @@ classdef yamada < handle
             end
 
             % Include catalog version, parent context, style, and all definition-owned rows.
+            if component.isReleaseUnavailable()
+                key = strjoin(["source-only", component.Metadata.SourceVariantId, string({component.Properties.Path})], "|");
+                return
+            end
             parentFactory = "";
             if strlength(component.ParentId) > 0
                 parent = app.Document.getComponent(component.ParentId);

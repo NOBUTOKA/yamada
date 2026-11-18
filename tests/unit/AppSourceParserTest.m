@@ -103,8 +103,31 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             minimums = ["", "R2023b", "R2024a"];
             for index = 1:numel(folders)
                 source = string(fileread(fullfile(folders(index), "ControlGalleryApp.m")));
-                [~, diagnostics] = yamada.source.AppSourceParser.parseText( ...
+                [document, diagnostics] = yamada.source.AppSourceParser.parseText( ...
                     source, registry, "", strings(1, 0), "R2023a");
+                testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+                unavailable = document.Components(arrayfun(@(part) part.isReleaseUnavailable(), document.Components));
+                testCase.verifyNumElements(unavailable, index - 1);
+                slider = document.getComponentByName("IntensitySlider");
+                testCase.verifyEqual(slider.isReleaseUnavailable(), index > 1);
+                if index > 1
+                    testCase.verifyEqual(slider.Metadata.SourceVariantId, "uislider-range");
+                    testCase.verifyEqual(slider.ParentId, document.getComponentByName("FormGrid").Id);
+                    testCase.verifyFalse(slider.getProperty("Value").IsEditable);
+                    testCase.verifyError(@() document.setProperty(slider.Id, "Value", [10 20]), ...
+                        "yamada:DocumentModel:ReadOnlyProperty");
+                end
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
+                if index == 3
+                    button = document.getComponentByName("SaveButton");
+                    document.setProperty(button.Id, "Text", "Save preferences", registry);
+                    edited = yamada.source.RoundTripGenerator(registry).generate(document);
+                    testCase.verifyEqual(edited, replace(source, "Save settings", "Save preferences"));
+                    document.undo();
+                    testCase.verifyEqual(document.CurrentText, source);
+                    document.redo();
+                    testCase.verifyEqual(document.CurrentText, edited);
+                end
                 if minimums(index) == ""
                     testCase.verifyFalse(any(string({diagnostics.Code}) == "source-release-range"));
                 else

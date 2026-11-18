@@ -56,6 +56,7 @@ classdef ModelValidator
                         component.Id); %#ok<AGROW>
                 end
                 names(end + 1) = component.Name; %#ok<AGROW>
+                if component.isReleaseUnavailable(), continue, end
 
                 % Native groups accept one mutually exclusive child family at a time.
                 if component.Factory == "uibuttongroup"
@@ -125,6 +126,7 @@ classdef ModelValidator
             scope = document.evaluationContext(registry).readScope(); %#ok<NASGU>
             diagnostics = yamada.model.Diagnostic.empty;
             for component = document.Components(ismember(string({document.Components.Id}), ids))
+                if component.isReleaseUnavailable(), continue, end
                 if ~registry.contains(component.Factory)
                     diagnostics(end + 1) = yamada.validation.ModelValidator.error("unsupported-factory", ...
                         "The edited component factory is not registered.", component.Id); %#ok<AGROW>

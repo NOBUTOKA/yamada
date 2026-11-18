@@ -110,7 +110,7 @@ classdef ComponentCatalogLoader
                     values(end + 1) = string(entry.variantId) + "." + string(entry.path) + "=" + string(entry.value); %#ok<AGROW>
                 end
             end
-            registry.setSourceAvailability(paths, values);
+            registry.setSourceAvailability(root, paths, values);
         end
 
         function result = excludesRelease(bounds, release)

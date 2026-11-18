@@ -1027,6 +1027,9 @@ classdef DocumentModel < handle
                 error("yamada:DocumentModel:UnknownComponent", ...
                     "Component ID ""%s"" does not exist.", componentId);
             end
+            if component.isReleaseUnavailable()
+                error("yamada:DocumentModel:ReadOnlyProperty", "This component is unavailable in the loaded MATLAB release.");
+            end
             oldEntry = component.getProperty(path);
             oldValue = [];
             hadOldValue = ~isempty(oldEntry);
@@ -1078,6 +1081,9 @@ classdef DocumentModel < handle
             if isempty(component)
                 error("yamada:DocumentModel:UnknownComponent", ...
                     "Component ID ""%s"" does not exist.", componentId);
+            end
+            if component.isReleaseUnavailable()
+                error("yamada:DocumentModel:ReadOnlyProperty", "This component is unavailable in the loaded MATLAB release.");
             end
             if isempty(changes) || ~isfield(changes, "Path") || ~isfield(changes, "Value")
                 error("yamada:DocumentModel:InvalidPropertyBatch", ...
@@ -1311,9 +1317,15 @@ classdef DocumentModel < handle
                 parent = obj.getComponent(component.ParentId);
                 parentFactory = parent.Factory;
             end
-            definitions = registry.getEffectiveProperties(component.Factory, parentFactory, ...
-                component.CreationArguments);
-            [resolved, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions, obj, registry);
+            if component.isReleaseUnavailable()
+                definitions = yamada.model.PropertyDefinition.empty;
+                resolved = yamada.model.PropertyState.empty;
+                diagnostics = yamada.model.Diagnostic.empty;
+            else
+                definitions = registry.getEffectiveProperties(component.Factory, parentFactory, ...
+                    component.CreationArguments);
+                [resolved, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions, obj, registry);
+            end
             states = repmat(struct("Definition", yamada.model.PropertyDefinition(), ...
                 "Entry", yamada.model.PropertyEntry.empty, "IsExplicit", false, ...
                 "Resolution", yamada.model.PropertyState()), ...
@@ -2390,7 +2402,7 @@ classdef DocumentModel < handle
                 registry (1, 1) yamada.model.ComponentRegistry
             end
             for component = obj.Components
-                if ~registry.contains(component.Factory), continue, end
+                if component.isReleaseUnavailable() || ~registry.contains(component.Factory), continue, end
                 for entry = component.Properties
                     if entry.Origin ~= "generated" || ~isempty(entry.SourceSpan), continue, end
                     settings = component.getSettings(entry.Path);
