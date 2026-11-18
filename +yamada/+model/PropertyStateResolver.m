@@ -158,6 +158,7 @@ classdef PropertyStateResolver
                     group = [group(string({group.Path}) ~= "Value"), group(string({group.Path}) == "Value")];
                 end
                 for setting = group
+                    if setting.IsReleaseUnavailable, continue, end
                     entry = component.getProperty(setting.Path);
                     if isempty(entry), continue, end
                     value = setting.LiteralValue;
@@ -272,6 +273,7 @@ classdef PropertyStateResolver
             end
             id = "";
             for member = reshape(members, 1, [])
+                if member.isReleaseUnavailable(), continue, end
                 definition = registry.get(member.Factory, member.CreationArguments);
                 names = yamada.model.PropertyStateResolver.namedPaths(member, registry);
                 for property = reshape(definition.Properties, 1, [])

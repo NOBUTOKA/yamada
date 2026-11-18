@@ -44,6 +44,12 @@ classdef DefaultValueProvider < handle
             arguments (Output)
                 results (1, 1) struct
             end
+            % Source-only nodes cannot supply native defaults in this release.
+            if component.isReleaseUnavailable()
+                results = struct("Paths", string({properties.Path}), ...
+                    "Found", false(1, numel(properties)), "Values", {cell(1, numel(properties))});
+                return
+            end
             key = obj.surfaceKey(component, parentFactory);
             if isKey(obj.Cache, key)
                 cached = obj.Cache(key);

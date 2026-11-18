@@ -391,7 +391,10 @@ classdef PreviewRenderer < handle
             parentFactory = "";
             parent = components(string({components.Id}) == component.ParentId);
             if ~isempty(parent), parentFactory = parent.Factory; end
-            callbacks = obj.Registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+            callbacks = yamada.model.PropertyDefinition.empty;
+            if ~isfield(component.Metadata, "UnavailableRelease")
+                callbacks = obj.Registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+            end
             callbackPaths = string({callbacks.Path});
             properties = component.Properties;
             if ~isempty(properties)
@@ -417,9 +420,11 @@ classdef PreviewRenderer < handle
             end
             if isempty(properties), properties = struct([]); end
             if isempty(settings), settings = struct([]); end
-            definition = obj.Registry.get(component.Factory, component.CreationArguments);
-            first = yamada.model.PropertyApplicationPlanner.nameValueStart(definition, component.CreationArguments);
-            component.CreationArguments = component.CreationArguments(1:first - 1);
+            if ~isfield(component.Metadata, "UnavailableRelease")
+                definition = obj.Registry.get(component.Factory, component.CreationArguments);
+                first = yamada.model.PropertyApplicationPlanner.nameValueStart(definition, component.CreationArguments);
+                component.CreationArguments = component.CreationArguments(1:first - 1);
+            end
             component.Properties = properties;
             component.Settings = settings;
             component.Metadata = struct();
@@ -679,7 +684,10 @@ classdef PreviewRenderer < handle
 
             % Create only factories declared in the registry and model hierarchy.
             component = document.getComponent(componentId);
-            if isempty(component) || ~obj.Registry.contains(component.Factory)
+            if isempty(component)
+                return
+            end
+            if ~component.isReleaseUnavailable() && ~obj.Registry.contains(component.Factory)
                 return
             end
             if any(component.Factory == ["uicontextmenu", "uimenu", "uitoolbar", ...
@@ -687,6 +695,10 @@ classdef PreviewRenderer < handle
                 return
             end
             try
+                if component.isReleaseUnavailable()
+                    handles(component.Id) = obj.createUnavailableLabel(component, document, parent);
+                    return
+                end
                 configured = component;
                 configurationDocument = document;
                 if obj.UsesCombinedConfiguration && ~isempty(obj.CombinedConfiguration)
@@ -724,6 +736,40 @@ classdef PreviewRenderer < handle
             end
         end
 
+        function label = createUnavailableLabel(obj, component, document, parent)
+            % createUnavailableLabel Display an editor-owned stand-in at owned literal coordinates.
+            arguments (Input)
+                obj (1, 1) yamada.ui.PreviewRenderer
+                component (1, 1) yamada.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                parent
+            end
+            arguments (Output)
+                label (1, 1) matlab.ui.control.Label
+            end
+
+            % Preserve native creation order for the grid's implicit placement.
+            text = component.Metadata.SourceDisplayName + " (MATLAB " + ...
+                component.Metadata.UnavailableRelease + " or later)";
+            label = uilabel(parent, "Text", text, "Tooltip", text, "WordWrap", "on");
+            grid = isa(parent, "matlab.ui.container.GridLayout");
+            if grid
+                coordinates = yamada.model.GridLayoutStatePolicy.previewChildCoordinates( ...
+                    component, document, obj.Registry);
+                if ~isempty(coordinates{1}), label.Layout.Row = coordinates{1}; end
+                if ~isempty(coordinates{2}), label.Layout.Column = coordinates{2}; end
+            else
+                settings = component.getSettings("Position");
+                if isempty(settings), return, end
+                setting = settings(end);
+                value = setting.LiteralValue;
+                if setting.IsCertain && setting.ValueKind == "literal" && isnumeric(value) && ...
+                        isreal(value) && all(isfinite(value), "all") && numel(value) == 4 && all(value(3:4) >= 0)
+                    label.Position = reshape(value, 1, 4);
+                end
+            end
+        end
+
         function applyProperties(obj, preview, component, document)
             % applyProperties Assign editable literal properties without source evaluation.
             arguments (Input)
@@ -747,7 +793,8 @@ classdef PreviewRenderer < handle
             end
             for index = 1:numel(entries)
                 entry = entries(index);
-                if entry.ValueKind ~= "literal" || ~entry.IsEditable
+                if entry.ValueKind ~= "literal" || ~entry.IsEditable || ...
+                        obj.Registry.isUnavailableSourceProperty(definition.Id, entry.Path)
                     continue
                 end
                 property = definition.getProperty(entry.Path);

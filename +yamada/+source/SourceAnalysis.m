@@ -321,7 +321,7 @@ classdef SourceAnalysis < handle
                     count = 1;
                     if kind == "creation"
                         component = document.getComponentByName(owner);
-                        definition = registry.get(component.Factory, component.CreationArguments);
+                        definition = registry.sourceDefinition(component);
                         [~, ~, settings, ~, supported] = yamada.source.PropertySettingSyntax.factory(statement, definition, "candidate");
                         assert(supported); count = count + numel(settings);
                     end

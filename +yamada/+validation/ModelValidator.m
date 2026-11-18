@@ -21,6 +21,9 @@ classdef ModelValidator
             % Validate the class identity before traversing component records.
             evaluationScope = document.evaluationContext(registry).readScope(); %#ok<NASGU>
             diagnostics = yamada.model.Diagnostic.empty;
+            if isfield(document.Metadata, "SourceReleaseDiagnostic")
+                diagnostics = document.Metadata.SourceReleaseDiagnostic;
+            end
             if ~isvarname(document.ClassName) || iskeyword(document.ClassName)
                 diagnostics(end + 1) = yamada.model.Diagnostic( ...
                     "invalid-class-name", "error", ...
@@ -56,6 +59,10 @@ classdef ModelValidator
                         component.Id); %#ok<AGROW>
                 end
                 names(end + 1) = component.Name; %#ok<AGROW>
+                if component.isReleaseUnavailable()
+                    diagnostics(end + 1) = yamada.validation.ModelValidator.unavailableComponent(component); %#ok<AGROW>
+                    continue
+                end
 
                 % Native groups accept one mutually exclusive child family at a time.
                 if component.Factory == "uibuttongroup"
@@ -125,6 +132,10 @@ classdef ModelValidator
             scope = document.evaluationContext(registry).readScope(); %#ok<NASGU>
             diagnostics = yamada.model.Diagnostic.empty;
             for component = document.Components(ismember(string({document.Components.Id}), ids))
+                if component.isReleaseUnavailable()
+                    diagnostics(end + 1) = yamada.validation.ModelValidator.unavailableComponent(component); %#ok<AGROW>
+                    continue
+                end
                 if ~registry.contains(component.Factory)
                     diagnostics(end + 1) = yamada.validation.ModelValidator.error("unsupported-factory", ...
                         "The edited component factory is not registered.", component.Id); %#ok<AGROW>
@@ -346,7 +357,9 @@ classdef ModelValidator
             for propertyIndex = 1:numel(component.Properties)
                 entry = component.Properties(propertyIndex);
                 if ~any(supportedPaths == entry.Path)
-                    if yamada.validation.ModelValidator.isNotRenderedFigureTool(component.Factory)
+                    settings = component.getSettings(entry.Path);
+                    if any([settings.IsReleaseUnavailable]) || ...
+                            yamada.validation.ModelValidator.isNotRenderedFigureTool(component.Factory)
                         continue
                     end
                     diagnostics(end + 1) = yamada.model.Diagnostic( ...
@@ -421,6 +434,20 @@ classdef ModelValidator
                         "invalid-grid-track-list", message, componentId);
                 end
             end
+        end
+
+        function diagnostic = unavailableComponent(component)
+            % unavailableComponent Report source-only components on every relevant validation.
+            arguments (Input)
+                component (1, 1) yamada.model.ComponentRecord
+            end
+            arguments (Output)
+                diagnostic (1, 1) yamada.model.Diagnostic
+            end
+
+            diagnostic = yamada.model.Diagnostic("source-release-component", "warning", ...
+                component.Metadata.SourceDisplayName + " is unavailable in this runtime Preview context (MATLAB " + ...
+                component.Metadata.UnavailableRelease + " or later).", component.Id, component.SourceSpans.Creation);
         end
 
         function diagnostic = error(code, message, componentId)

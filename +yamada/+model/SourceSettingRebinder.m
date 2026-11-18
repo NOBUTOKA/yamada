@@ -40,13 +40,15 @@ classdef SourceSettingRebinder
             sequences = yamada.model.SourceSettingRebinder.executionSequences(document, state, batch, registry);
             sequences.ProjectedInitialization = projectedTrace;
             creationSequence = sequences.Creation(visits);
-            definition = registry.get(component.Factory, component.CreationArguments);
+            definition = registry.sourceDefinition(component);
             [~, factoryArguments, factory, ~, supported] = yamada.source.PropertySettingSyntax.factory( ...
                 analysis.Statements(index), definition, state.StateId);
             assert(supported, "yamada:SourceSettingRebinder:NeedsModelParse", "Factory syntax requires a wider proof.");
             settings = yamada.model.PropertySetting.empty;
             for originalSetting = factory
+                originalSetting = registry.protectSourceSetting(definition.Id, originalSetting);
                 record = originalSetting.toStruct();
+                record.Location.IsEditable = record.Location.IsEditable && ~component.isReleaseUnavailable();
                 record.Location.Sequence = creationSequence + numel(settings) + 1;
                 setting = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
                 setting = yamada.model.SourceSettingRebinder.scoped(setting, analysis.Layout, index);
@@ -60,6 +62,12 @@ classdef SourceSettingRebinder
                 statement = analysis.Statements(index);
                 if isempty(regexp(statement.Text, pattern, "once")), continue, end
                 setting = yamada.source.PropertySettingSyntax.assignment(statement, state.StateId, sequences.Assignment(visit), trace.Certain(visit));
+                setting = registry.protectSourceSetting(definition.Id, setting);
+                if component.isReleaseUnavailable()
+                    record = setting.toStruct();
+                    record.Location.IsEditable = false;
+                    setting = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
+                end
                 setting = yamada.model.SourceSettingRebinder.scoped(setting, analysis.Layout, index);
                 settings(end + 1) = yamada.model.SourceSettingRebinder.identity(setting, component.Settings, batch); %#ok<AGROW>
             end
@@ -102,7 +110,7 @@ classdef SourceSettingRebinder
                 changed = any(arrayfun(@(edit) edit.Start <= component.SourceSpans.Creation.EndOffset && ...
                     edit.End >= component.SourceSpans.Creation.StartOffset, batch.Edits));
                 if changed
-                    definition = registry.get(component.Factory, component.CreationArguments);
+                    definition = registry.sourceDefinition(component);
                     [~, ~, settings, ~, supported] = yamada.source.PropertySettingSyntax.factory( ...
                         analysis.Statements(owners(index)), definition, state.StateId);
                     assert(supported);

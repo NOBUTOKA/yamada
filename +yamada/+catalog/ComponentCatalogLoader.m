@@ -7,7 +7,8 @@ classdef ComponentCatalogLoader
     %
     %   Successful loads are remembered in process memory per catalog root. A
     %   later load reuses that validated state only when every file under the
-    %   root is byte-identical, and always returns an independent registry.
+    %   root and its release index are byte-identical, and always returns an
+    %   independent registry.
 
     methods (Static)
         function registry = load(catalogRoot)
@@ -32,6 +33,7 @@ classdef ComponentCatalogLoader
 
             % Validate from source, then retain a private copy that callers cannot mutate.
             registry = yamada.catalog.ComponentCatalogLoader.loadUncached(catalogRoot);
+            yamada.catalog.ComponentCatalogLoader.loadSourceAvailability(registry, catalogRoot);
             if strlength(fingerprint) > 0
                 yamada.catalog.ComponentCatalogLoader.validatedCache( ...
                     "set", catalogRoot, fingerprint, registry.duplicate());
@@ -82,6 +84,49 @@ classdef ComponentCatalogLoader
     end
 
     methods (Static, Access = private)
+        function loadSourceAvailability(registry, root)
+            % loadSourceAvailability Read the sibling release index for parsed settings.
+            arguments (Input)
+                registry (1, 1) yamada.model.ComponentRegistry
+                root (1, 1) string
+            end
+
+            % Custom catalogs without a release index have no release-based exclusions.
+            [folder, release] = fileparts(root);
+            indexPath = fullfile(folder, "availability.json");
+            if ~yamada.catalog.ComponentCatalogLoader.isReleaseName(release) || ~isfile(indexPath)
+                return
+            end
+            availability = jsondecode(fileread(indexPath));
+            paths = strings(1, 0);
+            values = strings(1, 0);
+            for property = reshape(availability.properties, 1, [])
+                if yamada.catalog.ComponentCatalogLoader.excludesRelease(property.releases, release)
+                    paths(end + 1) = string(property.variantId) + "." + string(property.path); %#ok<AGROW>
+                end
+            end
+            for entry = reshape(availability.values, 1, [])
+                if yamada.catalog.ComponentCatalogLoader.excludesRelease(entry.releases, release)
+                    values(end + 1) = string(entry.variantId) + "." + string(entry.path) + "=" + string(entry.value); %#ok<AGROW>
+                end
+            end
+            registry.setSourceAvailability(root, paths, values);
+        end
+
+        function result = excludesRelease(bounds, release)
+            % excludesRelease Test inclusive since and exclusive before annotations.
+            arguments (Input)
+                bounds (1, 1) struct
+                release (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = (isfield(bounds, "since") && release < string(bounds.since)) || ...
+                (isfield(bounds, "before") && release >= string(bounds.before));
+        end
+
         function folder = catalogsFolder()
             % catalogsFolder Return the packaged folder that holds one catalog per release.
             arguments (Output)
@@ -179,7 +224,7 @@ classdef ComponentCatalogLoader
         end
 
         function digest = fingerprint(catalogRoot)
-            % fingerprint Hash every file path and byte under one catalog root.
+            % fingerprint Hash the catalog files and any sibling release index.
             arguments (Input)
                 catalogRoot (1, 1) string
             end
@@ -193,7 +238,13 @@ classdef ComponentCatalogLoader
             try
                 entries = dir(fullfile(catalogRoot, "**", "*"));
                 entries = entries(~[entries.isdir]);
-                paths = sort(string(fullfile({entries.folder}, {entries.name})));
+                paths = string(fullfile({entries.folder}, {entries.name}));
+                [folder, release] = fileparts(catalogRoot);
+                indexPath = fullfile(folder, "availability.json");
+                if yamada.catalog.ComponentCatalogLoader.isReleaseName(release) && isfile(indexPath)
+                    paths(end + 1) = indexPath;
+                end
+                paths = sort(paths);
                 hasher = java.security.MessageDigest.getInstance("SHA-256");
                 for index = 1:numel(paths)
                     fileId = fopen(paths(index), "r");

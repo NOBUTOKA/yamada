@@ -125,7 +125,10 @@ classdef HierarchyContextMenu < handle
                 parentComponent = document.getComponent(component.ParentId);
                 if ~isempty(parentComponent), parentFactory = parentComponent.Factory; end
             end
-            callbacks = obj.Registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+            callbacks = yamada.model.PropertyDefinition.empty;
+            if ~component.isReleaseUnavailable()
+                callbacks = obj.Registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+            end
             obj.TargetId = component.Id;
             obj.TargetDocument = document;
             if ~isempty(callbacks), obj.CallbackItem.Enable = "on"; end

@@ -11,6 +11,8 @@ classdef ComponentRegistry < handle
     properties (SetAccess = private)
         % Revision - Monotonic version of capability and presentation definitions.
         Revision uint64 = uint64(0)
+        % CatalogRoot - Directory of the loaded release projection, if any.
+        CatalogRoot string = ""
     end
 
     properties (Access = private)
@@ -19,6 +21,9 @@ classdef ComponentRegistry < handle
         FactoryVariantIds dictionary = dictionary(string([]), {})
         EffectiveProperties dictionary = dictionary(string([]), {})
         IndependentDefinitions dictionary = dictionary(string([]), {})
+        UnavailableSourceProperties string = strings(1, 0)
+        UnavailableSourceValues string = strings(1, 0)
+        StructuralCatalogs dictionary = dictionary(string([]), {})
         ParentContextRules yamada.model.ParentContextRule = yamada.model.ParentContextRule.empty
         InspectorRowDefinitions yamada.model.InspectorRowDefinition = ...
             yamada.model.InspectorRowDefinition.empty
@@ -53,6 +58,20 @@ classdef ComponentRegistry < handle
     end
 
     methods (Access = ?yamada.catalog.ComponentCatalogLoader)
+        function setSourceAvailability(obj, root, paths, values)
+            % setSourceAvailability Retain release annotations for source-only settings.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                root (1, 1) string
+                paths (1, :) string
+                values (1, :) string
+            end
+
+            obj.CatalogRoot = root;
+            obj.UnavailableSourceProperties = paths;
+            obj.UnavailableSourceValues = values;
+        end
+
         function copy = duplicate(obj)
             % duplicate Return an independent registry with the same validated catalog state.
             arguments (Input)
@@ -69,11 +88,99 @@ classdef ComponentRegistry < handle
             copy.EffectiveProperties = obj.EffectiveProperties;
             copy.ParentContextRules = obj.ParentContextRules;
             copy.InspectorRowDefinitions = obj.InspectorRowDefinitions;
+            copy.UnavailableSourceProperties = obj.UnavailableSourceProperties;
+            copy.UnavailableSourceValues = obj.UnavailableSourceValues;
+            copy.CatalogRoot = obj.CatalogRoot;
             copy.Revision = obj.Revision;
         end
     end
 
+    methods (Access = ?yamada.model.SubtreeCopyPlanner)
+        function catalog = structuralCatalog(obj, release)
+            % structuralCatalog Reuse the bundled source surface across clipboard and placement checks.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                release (1, 1) string
+            end
+            arguments (Output)
+                catalog (1, 1) yamada.model.ComponentRegistry
+            end
+
+            % One editor registry retains a validated snapshot of each supplemental surface.
+            if ~isKey(obj.StructuralCatalogs, release)
+                obj.StructuralCatalogs{release} = yamada.catalog.ComponentCatalogLoader.load( ...
+                    fullfile(fileparts(obj.CatalogRoot), release));
+            end
+            catalog = obj.StructuralCatalogs{release};
+        end
+    end
+
     methods
+        function [definition, catalog] = sourceDefinition(obj, component)
+            % sourceDefinition Resolve a component's concrete source variant for structural analysis.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                component (1, 1) yamada.model.ComponentRecord
+            end
+            arguments (Output)
+                definition (1, 1) yamada.model.ComponentDefinition
+                catalog (1, 1) yamada.model.ComponentRegistry
+            end
+
+            % A protected descendant can still have a definition in the runtime projection.
+            catalog = obj;
+            if ~component.isReleaseUnavailable()
+                definition = obj.get(component.Factory, component.CreationArguments);
+                return
+            end
+            variantId = component.Metadata.SourceVariantId;
+            if isKey(obj.Definitions, variantId)
+                definition = obj.getById(variantId);
+                return
+            end
+            catalog = obj.structuralCatalog(component.Metadata.SourceCatalogRelease);
+            definition = catalog.getById(variantId);
+        end
+
+        function setting = protectSourceSetting(obj, variantId, setting)
+            % protectSourceSetting Keep unsupported explicit settings outside runtime replay.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                variantId (1, 1) string
+                setting (1, 1) yamada.model.PropertySetting
+            end
+            arguments (Output)
+                setting (1, 1) yamada.model.PropertySetting
+            end
+
+            % Only annotated literal values qualify. Expressions retain their existing checks.
+            unavailable = obj.isUnavailableSourceProperty(variantId, setting.Path);
+            value = setting.LiteralValue;
+            if ~unavailable && setting.ValueKind == "literal" && ...
+                    ((isstring(value) && isscalar(value)) || (ischar(value) && isrow(value)))
+                unavailable = any(obj.UnavailableSourceValues == variantId + "." + setting.Path + "=" + string(value));
+            end
+            if unavailable
+                record = setting.toStruct();
+                record.Location.IsReleaseUnavailable = true;
+                setting = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
+            end
+        end
+
+        function result = isUnavailableSourceProperty(obj, variantId, path)
+            % isUnavailableSourceProperty Identify a property excluded by the loaded release.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                variantId (1, 1) string
+                path (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = any(obj.UnavailableSourceProperties == variantId + "." + path);
+        end
+
         function obj = ComponentRegistry()
             % ComponentRegistry Create an empty data-driven component registry.
             arguments (Output)

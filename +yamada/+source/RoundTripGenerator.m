@@ -119,7 +119,7 @@ classdef RoundTripGenerator
             % Rewrite only parsed assignment statements whose literal value changed.
             for index = 1:numel(document.Components)
                 component = document.Components(index);
-                if any(movedIds == component.Id), continue, end
+                if component.isReleaseUnavailable() || any(movedIds == component.Id), continue, end
                 if yamada.source.PropertyInsertionPlanner.needsPlan(document, component)
                     try
                         if isempty(obj.PreparedInsertions)

@@ -1103,7 +1103,7 @@ classdef yamada < handle
             end
             app.StatusLabel.Tooltip = strjoin(descriptions, newline);
             canDelete = ~isempty(component) && component.Id ~= app.Document.RootComponentId && ...
-                component.IsEditable;
+                (component.IsEditable || component.isReleaseUnavailable());
             if canDelete
                 deletion = yamada.model.DocumentEditAvailability.deletion(app.Document, component.Id, app.Registry);
                 canDelete = deletion.Enabled;
@@ -1555,7 +1555,7 @@ classdef yamada < handle
                 "tabTitles", {}, "tabSelected", {}, "depth", {}, "inGrid", {}, ...
                 "resizeConstraint", {});
             gridSelectionTargets = struct("id", {}, "gridId", {}, "x", {}, ...
-                "y", {}, "width", {}, "height", {}, "depth", {});
+                "y", {}, "width", {}, "height", {}, "depth", {}, "sourceOnly", {});
             ids = sort(keys(app.PreviewHandles))';
             for index = 1:numel(ids)
                 componentId = ids(index);
@@ -1574,23 +1574,32 @@ classdef yamada < handle
                             "id", char(component.Id), "gridId", char(parent.Id), ...
                             "x", rectangle(1), "y", rectangle(2), ...
                             "width", rectangle(3), "height", rectangle(4), ...
-                            "depth", app.componentNestingDepth(component.Id)); %#ok<AGROW>
+                            "depth", app.componentNestingDepth(component.Id), ...
+                            "sourceOnly", component.isReleaseUnavailable()); %#ok<AGROW>
                     end
                     continue
                 end
-                if isempty(parent) || ...
+                sourceOnly = component.isReleaseUnavailable();
+                if isempty(parent) || (~sourceOnly && ( ...
                         isempty(position) || position.ValueKind ~= "literal" || ...
-                        ~isnumeric(position.LiteralValue) || numel(position.LiteralValue) ~= 4
+                        ~isnumeric(position.LiteralValue) || numel(position.LiteralValue) ~= 4))
                     continue
                 end
                 rectangle = app.previewBounds(componentId);
                 if componentId == app.InteractionComponentId
                     rectangle = app.interactionDisplayPosition(componentId, rectangle);
                 end
-                definition = app.Registry.get(component.Factory, component.CreationArguments);
+                shape = "rectangle";
+                constraint = "none";
+                if ~sourceOnly
+                    definition = app.Registry.get(component.Factory, component.CreationArguments);
+                    shape = definition.overlayShapeFor(component.CreationArguments);
+                    constraint = app.previewResizeConstraint(component, definition);
+                end
                 tabTitles = strings(1, 0);
                 tabSelected = 0;
-                if component.Factory == "uitabgroup"
+                tabGroup = ~sourceOnly && component.Factory == "uitabgroup";
+                if tabGroup
                     children = component.Children;
                     for childIndex = 1:numel(children)
                         child = app.Document.getComponent(children(childIndex));
@@ -1613,13 +1622,13 @@ classdef yamada < handle
                 components(end + 1) = struct( ...
                     "id", char(component.Id), "x", rectangle(1), "y", rectangle(2), ...
                     "width", rectangle(3), "height", rectangle(4), ...
-                    "shape", char(definition.overlayShapeFor(component.CreationArguments)), ...
+                    "shape", char(shape), ...
                     "selected", component.Id == app.SelectedComponentId, ...
-                    "tabGroup", component.Factory == "uitabgroup", ...
+                    "tabGroup", tabGroup, ...
                     "tabTitles", tabTitles, "tabSelected", tabSelected, ...
                     "depth", app.componentNestingDepth(component.Id), ...
                     "inGrid", app.hasGridAncestor(component.Id), ...
-                    "resizeConstraint", char(app.previewResizeConstraint(component, definition))); %#ok<AGROW>
+                    "resizeConstraint", char(constraint)); %#ok<AGROW>
             end
             % Paint ancestor silhouettes first so nested controls receive pointer events.
             if ~isempty(components)
@@ -2174,6 +2183,13 @@ classdef yamada < handle
 
             component = app.Document.getComponent(componentId);
             if isempty(component)
+                return
+            end
+            if component.isReleaseUnavailable()
+                app.SelectedComponentId = componentId;
+                app.synchronizeHierarchySelection();
+                app.refreshInspector();
+                app.updateInteractionOverlay();
                 return
             end
             position = component.getProperty("Position");
@@ -3452,9 +3468,14 @@ classdef yamada < handle
                 parent = app.Document.getComponent(component.ParentId);
                 parentFactory = parent.Factory;
             end
-            definition = app.Registry.get(component.Factory, component.CreationArguments);
-            rows = yamada.ui.inspector.InspectorSurfaceBuilder.build( ...
-                definition.Id, parentFactory, states, app.Registry.inspectorRows());
+            if component.isReleaseUnavailable()
+                rows = yamada.ui.inspector.InspectorSurfaceBuilder.build("", parentFactory, states, ...
+                    yamada.model.InspectorRowDefinition.empty);
+            else
+                definition = app.Registry.get(component.Factory, component.CreationArguments);
+                rows = yamada.ui.inspector.InspectorSurfaceBuilder.build( ...
+                    definition.Id, parentFactory, states, app.Registry.inspectorRows());
+            end
         end
 
         function states = inspectorStates(app, component)
@@ -3466,13 +3487,15 @@ classdef yamada < handle
 
             % Preserve unsupported source assignments without making them editable.
             states = app.Document.getEffectivePropertyStates(app.Registry, component.Id);
-            definition = app.Registry.get(component.Factory, component.CreationArguments);
-            style = definition.styleFor(component.CreationArguments);
-            applicable = arrayfun(@(state) isempty(state.Definition.ApplicableStyles) || ...
-                any(state.Definition.ApplicableStyles == style), states) & ...
-                arrayfun(@(state) state.Definition.AuditDisposition ~= "omitted", states);
-            states = states(applicable);
-            effectivePaths = arrayfun(@(state) state.Definition.Path, states);
+            if ~component.isReleaseUnavailable()
+                definition = app.Registry.get(component.Factory, component.CreationArguments);
+                style = definition.styleFor(component.CreationArguments);
+                applicable = arrayfun(@(state) isempty(state.Definition.ApplicableStyles) || ...
+                    any(state.Definition.ApplicableStyles == style), states) & ...
+                    arrayfun(@(state) state.Definition.AuditDisposition ~= "omitted", states);
+                states = states(applicable);
+            end
+            effectivePaths = string(arrayfun(@(state) state.Definition.Path, states));
             for index = 1:numel(component.Properties)
                 entry = component.Properties(index);
                 if any(effectivePaths == entry.Path)
@@ -3576,7 +3599,10 @@ classdef yamada < handle
                     value = yamada.ui.InspectorValueFormatter.format(entry);
                     editable = editable && entry.IsEditable;
                 end
-                if resolved.IsKnown
+                if resolved.IsReleaseUnavailable
+                    rawValue = resolved.ExplicitValue;
+                    editable = false;
+                elseif resolved.IsKnown
                     rawValue = resolved.EffectiveValue;
                     isKnown = true;
                 elseif isempty(entry) && strlength(resolved.EffectKey) == 0 && defaults.Found(index) && ...
@@ -3591,7 +3617,9 @@ classdef yamada < handle
                     if states(index).Definition.Category ~= "Source", value = "<unresolved>"; end
                     editable = false;
                 end
-                if ~isKnown
+                if resolved.IsReleaseUnavailable
+                    members(index).Reason = resolved.ReadOnlyReason;
+                elseif ~isKnown
                     members(index).Reason = resolved.Reason;
                 elseif ~editable
                     members(index).Reason = resolved.ReadOnlyReason;
@@ -3619,6 +3647,10 @@ classdef yamada < handle
             end
 
             % Include catalog version, parent context, style, and all definition-owned rows.
+            if component.isReleaseUnavailable()
+                key = strjoin(["source-only", component.Metadata.SourceVariantId, string({component.Properties.Path})], "|");
+                return
+            end
             parentFactory = "";
             if strlength(component.ParentId) > 0
                 parent = app.Document.getComponent(component.ParentId);
@@ -3636,6 +3668,12 @@ classdef yamada < handle
                 if ~any(paths == entry.Path)
                     sourcePathCount = sourcePathCount + 1;
                     sourcePaths(sourcePathCount) = entry.Path;
+                elseif ~entry.IsEditable
+                    settings = component.getSettings(entry.Path);
+                    if ~isempty(settings) && settings(end).IsReleaseUnavailable
+                        sourcePathCount = sourcePathCount + 1;
+                        sourcePaths(sourcePathCount) = "unavailable:" + entry.Path;
+                    end
                 end
             end
             sourcePaths = sourcePaths(1:sourcePathCount);

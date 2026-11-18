@@ -54,6 +54,8 @@ To remove yamada, open **Home > Add-Ons > Manage Add-Ons**, find **yamada**, and
 
 ## Scope and help
 
-Only MATLAB R2023a through R2026b on Windows are supported release targets. On R2026b, radio and toggle buttons outside a button group and `uiselectiongroup` are not supported yet. Editing an app created for a newer MATLAB release on an older release is not supported. Apps must directly inherit from `handle`, own one `uifigure`, and use supported source syntax. `.mlapp` and AppBase inputs are outside the supported format. Some properties are read-only, and the preview may differ from a running application. See the [specification](../SPECIFICATION.md) and [README](../README.md) for details.
+Only MATLAB R2023a through R2026b on Windows are supported release targets. On R2026b, radio and toggle buttons outside a button group and `uiselectiongroup` are not supported yet. Apps must directly inherit from `handle`, own one `uifigure`, and use supported source syntax. `.mlapp` and AppBase inputs are outside the supported format. See the [specification](../SPECIFICATION.md) and [README](../README.md) for details.
+
+Open a newer app with **File > Open** as usual. When the bundled catalogs identify a release mismatch, check the diagnostic at the top of the list. Unavailable components appear as read-only entries in the hierarchy and as labels in Safe Preview. You can edit supported settings and save while retaining unavailable features in the source. To run the saved app, use a MATLAB release that supports its features.
 
 Keep your application under version control or make backups. Saving does not guarantee recovery from power loss or storage failure. Use [GitHub Issues](https://github.com/NOBUTOKA/yamada/issues) for bug reports; include MATLAB version, Windows version, and reproducible steps. Public contact: nobutoka@gmail.com.
