@@ -55,7 +55,7 @@ context.component = {sendEventToMATLAB(name, data) { sent.push({name, data}); }}
 context.svg.getBoundingClientRect = () => ({left: 0, top: 0, height: 240});
 context.svg.setPointerCapture = () => {};
 context.sendPointerEvent({type: 'pointerdown', pointerId: 1, clientX: 313,
-  clientY: 7, target: {dataset: {componentId: 'root', handle: 'root-ne'}}});
+  clientY: 7, target: {dataset: {componentId: 'root', handle: 'root-ne'}}, preventDefault() {}});
 assert.equal(sent[0].name, 'Pointer');
 assert.equal(sent[0].data.componentId, 'root');
 assert.equal(sent[0].data.handle, 'root-ne');
@@ -63,7 +63,7 @@ assert.equal(sent[0].data.handle, 'root-ne');
 context.currentData.surfaceBounds = [-12, -8, 1200, 900];
 context.svg.getBoundingClientRect = () => ({left: 100, top: 50, height: 900});
 context.sendPointerEvent({type: 'pointerdown', pointerId: 2, clientX: 1186,
-  clientY: 926, target: {dataset: {componentId: 'stranded', handle: ''}}});
+  clientY: 926, target: {dataset: {componentId: 'stranded', handle: ''}}, preventDefault() {}});
 assert.equal(sent[1].data.x, 1074);
 assert.equal(sent[1].data.y, 16);
 context.document.getElementById = () => context.svg;

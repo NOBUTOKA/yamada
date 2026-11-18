@@ -91,7 +91,7 @@ context.gridGesture = null;
 context.svg = {getBoundingClientRect(){return {left:0,top:0,height:200};},
   setPointerCapture(){},hasPointerCapture(){return true;},releasePointerCapture(){}};
 const clickTarget = {dataset:{componentId:'selected'},classList:{contains(){return false;}}};
-context.sendPointerEvent({type:'pointerdown',target:clickTarget,pointerId:1,clientX:20,clientY:40});
+context.sendPointerEvent({type:'pointerdown',target:clickTarget,pointerId:1,clientX:20,clientY:40,preventDefault(){}});
 context.sendPointerEvent({type:'pointerup',target:clickTarget,pointerId:1,clientX:20,clientY:40});
 assert.equal(context.absoluteGesture,null);
 assert.equal(sent.at(-1).data.phase,'pointerup');
@@ -108,7 +108,7 @@ console.log('A completed click releases Delete and iframe file keys use native a
 // A real drag releases keyboard ownership both immediately and after delayed geometry arrives.
 context.currentData.dragSource = {id:'selected',parentId:'root'};
 context.currentData.reparentRevision = 1;
-context.sendPointerEvent({type:'pointerdown',target:clickTarget,pointerId:2,clientX:20,clientY:40});
+context.sendPointerEvent({type:'pointerdown',target:clickTarget,pointerId:2,clientX:20,clientY:40,preventDefault(){}});
 context.sendPointerEvent({type:'pointerup',target:clickTarget,pointerId:2,clientX:70,clientY:80});
 assert.equal(context.absoluteGesture,null);
 context.deleteSelectionKey(key({key:'Delete',ctrlKey:false}));
@@ -120,7 +120,7 @@ const htmlBridge = {Data:{width:300,height:200,rootId:'root',selectedComponentId
   sendEventToMATLAB(name,data){sent.push({name,data});}};
 context.setup(htmlBridge);
 context.svg = savedSvg;
-context.sendPointerEvent({type:'pointerdown',target:clickTarget,pointerId:3,clientX:20,clientY:40});
+context.sendPointerEvent({type:'pointerdown',target:clickTarget,pointerId:3,clientX:20,clientY:40,preventDefault(){}});
 context.sendPointerEvent({type:'pointerup',target:clickTarget,pointerId:3,clientX:70,clientY:80});
 assert.ok(context.absoluteGesture.pendingPoint);
 htmlBridge.Data = {...htmlBridge.Data,dragSource:{id:'selected',parentId:'root'},gridEditor:{revision:7}};

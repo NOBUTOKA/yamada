@@ -74,7 +74,9 @@ sent.length = 0;
 context.sendReparent('child', candidate, 2);
 assert.equal(sent.pop().data.modelRevision, 2);
 right.grid = {};
-const event = (type, x, y, dataset = {}) => ({type, clientX: x, clientY: 300 - y, pointerId: 1, target: {dataset}});
+const event = (type, x, y, dataset = {}) => ({
+  type, clientX: x, clientY: 300 - y, pointerId: 1, target: {dataset}, preventDefault() {}
+});
 context.sendPointerEvent(event('pointerdown', 15, 15, {componentId: 'child'}));
 context.sendPointerEvent(event('pointermove', 250, 50));
 context.sendPointerEvent(event('pointercancel', 250, 50));
