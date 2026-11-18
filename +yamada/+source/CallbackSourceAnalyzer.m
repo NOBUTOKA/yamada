@@ -55,13 +55,14 @@ classdef CallbackSourceAnalyzer
             [order, diagnostics, certain, returns] = yamada.source.InitializationSourceAnalyzer.analyze(statements, layout, creationOffsets);
         end
 
-        function states = analyze(document, componentId, registry, bindingOnly)
+        function states = analyze(document, componentId, registry, bindingOnly, includeUnavailable)
             % analyze Discover current callbacks, optionally proving assignment-only editability.
             arguments (Input)
                 document (1, 1) yamada.model.DocumentModel
                 componentId (1, 1) string
                 registry (1, 1) yamada.model.ComponentRegistry
                 bindingOnly (1, 1) logical = false
+                includeUnavailable (1, 1) logical = false
             end
             arguments (Output)
                 states yamada.model.CallbackState
@@ -70,26 +71,31 @@ classdef CallbackSourceAnalyzer
             % Resolve the effective catalog surface independently of active UI selection.
             states = yamada.model.CallbackState.empty;
             component = document.getComponent(componentId);
-            if isempty(component) || component.isReleaseUnavailable(), return, end
+            if isempty(component), return, end
             parentFactory = "";
             if strlength(component.ParentId) > 0
                 parent = document.getComponent(component.ParentId);
                 if ~isempty(parent), parentFactory = parent.Factory; end
             end
-            definitions = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+            if component.isReleaseUnavailable()
+                if ~includeUnavailable, return, end
+                names = component.Metadata.SourceCallbackPaths;
+            else
+                definitions = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+                names = string({definitions.Path});
+            end
             source = document.CurrentText;
             analysis = document.sourceAnalysis();
             statements = analysis.Statements;
             layout = analysis.Layout;
 
             % Generated binding anchors are identical for every catalog callback on this component.
-            generatedInsertion = ~isempty(definitions) && strlength(source) > 0 && ...
+            generatedInsertion = ~isempty(names) && strlength(source) > 0 && ...
                 ~yamada.model.SourceOwnership.hasSource(component) && ...
                 yamada.source.CallbackSourceAnalyzer.canInsertGenerated(document, analysis);
 
             % Classify each binding using source occurrences rather than the last parsed value.
-            for index = 1:numel(definitions)
-                name = definitions(index).Path;
+            for name = names
                 state = "absent";
                 reason = "";
                 handler = "";

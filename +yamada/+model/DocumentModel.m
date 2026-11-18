@@ -1927,10 +1927,10 @@ classdef DocumentModel < handle
             ids = string({snapshot.Records.Id});
             removed = obj.Components(ismember(string({obj.Components.Id}), ids));
             for component = removed
-                if ~component.IsEditable
+                if ~component.IsEditable && ~component.isReleaseUnavailable()
                     error("yamada:DocumentModel:UnsafeSubtreeEdit", "The subtree contains a read-only component.");
                 end
-                callbacks = yamada.source.CallbackSourceAnalyzer.analyze(obj, component.Id, registry);
+                callbacks = yamada.source.CallbackSourceAnalyzer.analyze(obj, component.Id, registry, false, true);
                 if any(string({callbacks.State}) ~= "absent")
                     error("yamada:DocumentModel:UnsafeSubtreeEdit", "Callback ownership prevents complete subtree deletion.");
                 end
@@ -2979,6 +2979,7 @@ classdef DocumentModel < handle
                 settings = yamada.model.PropertySetting.empty;
                 declaration = yamada.model.SourceSpan.empty; creation = declaration;
                 arguments = component.CreationArguments;
+                definition = registry.sourceDefinition(component);
                 for statement = statements
                     code = statement.Text;
                     if startsWith(code, name + " "), declaration = statement.Span; continue, end
@@ -2987,7 +2988,6 @@ classdef DocumentModel < handle
                     assert(isscalar(visit), "yamada:DocumentModel:UnsafeSubtreeEdit", "An emitted statement requires one initialization visit.");
                     if ~isempty(regexp(code, '^app\.' + regexptranslate('escape',name) + '\s*=', 'once'))
                         creation = statement.Span;
-                        definition = registry.get(component.Factory, component.CreationArguments);
                         [parentName, arguments, factorySettings, ~, supported] = yamada.source.PropertySettingSyntax.factory(statement, definition, state.StateId);
                         parent = obj.getComponent(component.ParentId);
                         root = component.Id == obj.RootComponentId && component.Factory == "uifigure" && isempty(parent) && parentName == "";
@@ -2998,7 +2998,9 @@ classdef DocumentModel < handle
                         owner = analysis.Layout.Owner(index); scopes = analysis.Layout.Methods;
                         scope = scopes(string({scopes.Name}) == owner); assert(isscalar(scope));
                         for factoryIndex = 1:numel(factorySettings)
-                            record = factorySettings(factoryIndex).toStruct();
+                            setting = registry.protectSourceSetting(definition.Id, factorySettings(factoryIndex));
+                            record = setting.toStruct();
+                            record.Location.IsEditable = record.Location.IsEditable && ~component.isReleaseUnavailable();
                             record.Location.Sequence = execution.Creation(visit) + factoryIndex;
                             captured = yamada.model.PropertySetting(record.Path, record.Value, record.Location).withScope(owner, scope.Span);
                             old = previous(string({previous.Path}) == captured.Path & string({previous.Method}) == "nameValue");
@@ -3009,6 +3011,12 @@ classdef DocumentModel < handle
                     end
                     setting = yamada.source.PropertySettingSyntax.assignment(statement, state.StateId, ...
                         execution.Assignment(visit), execution.Trace.Certain(visit));
+                    setting = registry.protectSourceSetting(definition.Id, setting);
+                    if component.isReleaseUnavailable()
+                        record = setting.toStruct();
+                        record.Location.IsEditable = false;
+                        setting = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
+                    end
                     owner = analysis.Layout.Owner(index); methods = analysis.Layout.Methods;
                     scope = methods(string({methods.Name}) == owner);
                     assert(isscalar(scope)); setting = setting.withScope(owner, scope.Span);

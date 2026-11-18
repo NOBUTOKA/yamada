@@ -21,9 +21,9 @@ classdef DocumentEditAvailability
             if found, return, end
             state = struct("Enabled", false, "Reason", "");
             try
-                snapshot = yamada.model.DocumentEditAvailability.inspect(document, id);
+                snapshot = yamada.model.DocumentEditAvailability.inspect(document, id, true);
                 for record = snapshot.Records
-                    callbacks = yamada.source.CallbackSourceAnalyzer.analyze(document, record.Id, registry);
+                    callbacks = yamada.source.CallbackSourceAnalyzer.analyze(document, record.Id, registry, false, true);
                     if any(string({callbacks.State}) ~= "absent")
                         error("yamada:DocumentEditAvailability:Callbacks", "Callback ownership prevents complete subtree deletion.");
                     end
@@ -273,11 +273,12 @@ classdef DocumentEditAvailability
     end
 
     methods (Static, Access = private)
-        function snapshot = inspect(document, id)
+        function snapshot = inspect(document, id, allowUnavailable)
             % inspect Validate complete subtree identities and editable records once per query.
             arguments (Input)
                 document (1, 1) yamada.model.DocumentModel
                 id (1, 1) string
+                allowUnavailable (1, 1) logical = false
             end
             arguments (Output)
                 snapshot (1, 1) yamada.model.SubtreeSnapshot
@@ -286,7 +287,11 @@ classdef DocumentEditAvailability
                 error("yamada:DocumentEditAvailability:Root", "The document root cannot be moved or deleted.");
             end
             snapshot = yamada.model.SubtreeSnapshot(document, id);
-            if any(~[snapshot.Records.IsEditable])
+            readOnly = ~[snapshot.Records.IsEditable];
+            if allowUnavailable
+                readOnly = readOnly & ~arrayfun(@(record) isfield(record.Metadata, "UnavailableRelease"), snapshot.Records);
+            end
+            if any(readOnly)
                 error("yamada:DocumentEditAvailability:ReadOnly", "The subtree contains a read-only component.");
             end
         end

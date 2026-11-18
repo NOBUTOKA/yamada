@@ -125,8 +125,16 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 if index == 3
                     button = document.getComponentByName("SaveButton");
                     grid = document.getComponentByName("FormGrid");
-                    testCase.verifyError(@() document.removeSubtree(grid.Id, registry), ...
-                        "yamada:DocumentModel:UnsafeSubtreeEdit");
+                    testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, slider.Id, registry).Enabled);
+                    document.removeSubtree(slider.Id, registry);
+                    testCase.verifyEmpty(document.getComponentByName("IntensitySlider"));
+                    testCase.verifyFalse(contains(document.CurrentText, "app.IntensitySlider"));
+                    document.undo();
+                    testCase.verifyEqual(document.CurrentText, source);
+                    testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, grid.Id, registry).Enabled);
+                    document.removeSubtree(grid.Id, registry);
+                    testCase.verifyEmpty(document.getComponentByName("AccentColorPicker"));
+                    document.undo();
                     testCase.verifyEqual(document.CurrentText, source);
                     testCase.verifyEqual(document.HistoryIndex, 0);
                     document.setProperty(button.Id, "Text", "Save preferences", registry);
@@ -136,6 +144,18 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                     testCase.verifyEqual(document.CurrentText, source);
                     document.redo();
                     testCase.verifyEqual(document.CurrentText, edited);
+
+                    % A newer callback still protects its owner's subtree.
+                    callbackSource = replace(source, ...
+                        "app.AccentColorPicker = uicolorpicker(app.FormGrid);", ...
+                        "app.AccentColorPicker = uicolorpicker(app.FormGrid, ValueChangedFcn=@(~,~) disp(1));");
+                    testCase.assertNotEqual(callbackSource, source);
+                    protected = yamada.source.AppSourceParser.parseText(callbackSource, registry);
+                    picker = protected.getComponentByName("AccentColorPicker");
+                    testCase.verifyFalse(yamada.model.DocumentEditAvailability.deletion(protected, picker.Id, registry).Enabled);
+                    testCase.verifyError(@() protected.removeSubtree(picker.Id, registry), ...
+                        "yamada:DocumentModel:UnsafeSubtreeEdit");
+                    testCase.verifyEqual(protected.CurrentText, callbackSource);
                 end
                 if minimums(index) == ""
                     testCase.verifyFalse(any(string({diagnostics.Code}) == "source-release-range"));

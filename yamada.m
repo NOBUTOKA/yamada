@@ -1103,7 +1103,7 @@ classdef yamada < handle
             end
             app.StatusLabel.Tooltip = strjoin(descriptions, newline);
             canDelete = ~isempty(component) && component.Id ~= app.Document.RootComponentId && ...
-                component.IsEditable;
+                (component.IsEditable || component.isReleaseUnavailable());
             if canDelete
                 deletion = yamada.model.DocumentEditAvailability.deletion(app.Document, component.Id, app.Registry);
                 canDelete = deletion.Enabled;
