@@ -120,7 +120,8 @@ classdef ComponentClipboard < handle
             parentId = "";
             if ~obj.hasContents(document), return, end
             root = obj.Snapshot.Records(1);
-            definition = registry.get(root.Factory, root.CreationArguments);
+            catalog = yamada.model.SubtreeCopyPlanner.sourceCatalog(obj.Snapshot, registry);
+            definition = catalog.get(root.Factory, root.CreationArguments);
             candidate = document.getComponent(targetId);
             visited = strings(1, 0);
             while ~isempty(candidate)
@@ -128,7 +129,7 @@ classdef ComponentClipboard < handle
                     error("yamada:ComponentClipboard:InvalidDestination", "Destination ancestry contains a cycle.");
                 end
                 visited(end + 1) = candidate.Id; %#ok<AGROW>
-                if any(definition.AllowedParentFactories == candidate.Factory)
+                if ~candidate.isReleaseUnavailable() && any(definition.AllowedParentFactories == candidate.Factory)
                     parentId = candidate.Id;
                     return
                 end

@@ -23,6 +23,7 @@ classdef ComponentRegistry < handle
         IndependentDefinitions dictionary = dictionary(string([]), {})
         UnavailableSourceProperties string = strings(1, 0)
         UnavailableSourceValues string = strings(1, 0)
+        StructuralCatalogs dictionary = dictionary(string([]), {})
         ParentContextRules yamada.model.ParentContextRule = yamada.model.ParentContextRule.empty
         InspectorRowDefinitions yamada.model.InspectorRowDefinition = ...
             yamada.model.InspectorRowDefinition.empty
@@ -94,6 +95,26 @@ classdef ComponentRegistry < handle
         end
     end
 
+    methods (Access = ?yamada.model.SubtreeCopyPlanner)
+        function catalog = structuralCatalog(obj, release)
+            % structuralCatalog Reuse the bundled source surface across clipboard and placement checks.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                release (1, 1) string
+            end
+            arguments (Output)
+                catalog (1, 1) yamada.model.ComponentRegistry
+            end
+
+            % One editor registry retains a validated snapshot of each supplemental surface.
+            if ~isKey(obj.StructuralCatalogs, release)
+                obj.StructuralCatalogs{release} = yamada.catalog.ComponentCatalogLoader.load( ...
+                    fullfile(fileparts(obj.CatalogRoot), release));
+            end
+            catalog = obj.StructuralCatalogs{release};
+        end
+    end
+
     methods
         function [definition, catalog] = sourceDefinition(obj, component)
             % sourceDefinition Resolve a component's concrete source variant for structural analysis.
@@ -117,8 +138,7 @@ classdef ComponentRegistry < handle
                 definition = obj.getById(variantId);
                 return
             end
-            catalog = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
-                fileparts(obj.CatalogRoot), component.Metadata.SourceCatalogRelease));
+            catalog = obj.structuralCatalog(component.Metadata.SourceCatalogRelease);
             definition = catalog.getById(variantId);
         end
 

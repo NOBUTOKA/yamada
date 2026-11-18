@@ -8,8 +8,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
     end
 
     methods (Test)
-        function movesParentWithUnavailableChild(testCase)
-            % movesParentWithUnavailableChild Preserve a newer child while relocating its panel.
+        function editsSubtreeWithUnavailableChild(testCase)
+            % editsSubtreeWithUnavailableChild Keep a newer child through structural and clipboard edits.
 
             % Keep both the move and the child settings in one owned initializer.
             registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
@@ -23,7 +23,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
                 "app.Origin = uipanel(app.Figure);", "app.Destination = uipanel(app.Figure);", ...
                 "app.Grid = uigridlayout(app.Destination, [2 2]);", ...
                 "app.Moved = uipanel(app.Origin);", "app.Moved.Position = [10 10 80 40];", ...
-                "app.Picker = uicolorpicker(app.Moved);", "app.Picker.Value = [0.1 0.2 0.3];", ...
+                "app.Picker = uicolorpicker(app.Moved);", "app.Picker.Position = [5 10 45 25];", ...
+                "app.Picker.Value = [0.1 0.2 0.3];", ...
                 "end", "function app = ReleaseExample", "createComponents(app);", "end", "end", "end"], newline);
             document = yamada.source.AppSourceParser.parseText(source, registry);
             moved = document.getComponentByName("Moved");
@@ -70,6 +71,47 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             document.reparentSubtree(picker.Id, grid.Id, registry, [], [2 1]);
             testCase.verifyEqual(picker.getSettings("Layout.Row").LiteralValue, 2);
             testCase.verifyEqual(picker.getSettings("Layout.Column").LiteralValue, 1);
+
+            % Copy a complete parent and cut/paste the restored newer child.
+            document = yamada.source.AppSourceParser.parseText(source, registry);
+            moved = document.getComponentByName("Moved");
+            destination = document.getComponentByName("Destination");
+            clipboard = yamada.model.ComponentClipboard();
+            testCase.verifyTrue(clipboard.availability("Copy", document, moved.Id, registry).Enabled);
+            clipboard.copy(document, moved.Id, registry);
+            copied = clipboard.paste(document, destination.Id, registry);
+            picker = document.getComponentByName("PickerCopy");
+            testCase.verifyEqual(picker.ParentId, copied.Id);
+            testCase.verifyTrue(picker.isReleaseUnavailable());
+            testCase.verifyEqual(picker.getSettings("Value").LiteralValue, [0.1 0.2 0.3]);
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, source);
+            document.redo();
+            testCase.verifyTrue(document.getComponentByName("PickerCopy").isReleaseUnavailable());
+
+            % The copied child can be cut and pasted independently without renaming.
+            picker = document.getComponentByName("PickerCopy");
+            clipboard.cut(document, picker.Id, registry);
+            testCase.verifyEmpty(document.getComponentByName("PickerCopy"));
+            pasted = clipboard.paste(document, destination.Id, registry, [15 20 45 25]);
+            testCase.verifyEqual(pasted.Name, "PickerCopy");
+            testCase.verifyEqual(pasted.ParentId, destination.Id);
+            testCase.verifyEqual(pasted.getSettings("Value").LiteralValue, [0.1 0.2 0.3]);
+
+            % Callback bindings stay on the original, and a rejected Cut retains the clipboard.
+            callback = "app.Picker.ValueChangedFcn = @(~,~) disp(1);";
+            source = replace(source, "app.Picker.Value = [0.1 0.2 0.3];", ...
+                "app.Picker.Value = [0.1 0.2 0.3];" + newline + callback);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
+            picker = document.getComponentByName("Picker");
+            destination = document.getComponentByName("Destination");
+            clipboard.copy(document, picker.Id, registry);
+            testCase.verifyError(@() clipboard.cut(document, picker.Id, registry), ...
+                "yamada:DocumentModel:UnsafeSubtreeEdit");
+            testCase.verifyEqual(document.CurrentText, source);
+            pasted = clipboard.paste(document, destination.Id, registry);
+            testCase.verifyEmpty(pasted.getSettings("ValueChangedFcn"));
+            testCase.verifySubstring(document.CurrentText, callback);
         end
 
         function editorCommandsRetainBindingsAcrossSaveAndHistory(testCase, Operation)

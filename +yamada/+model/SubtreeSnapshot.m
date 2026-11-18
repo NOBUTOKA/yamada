@@ -144,6 +144,18 @@ classdef SubtreeSnapshot
             arguments (Output)
                 properties struct
             end
+            component = document.getComponent(id);
+            if ~isempty(component) && component.isReleaseUnavailable()
+                properties = struct("Path", {}, "LiteralValue", {}, "ValueKind", {}, "IsEditable", {});
+                coordinates = yamada.model.GridLayoutStatePolicy.previewChildCoordinates(component, document, registry);
+                paths = ["Layout.Row", "Layout.Column"];
+                for index = 1:2
+                    if isempty(coordinates{index}), continue, end
+                    properties(end + 1) = struct("Path", paths(index), "LiteralValue", coordinates{index}, ...
+                        "ValueKind", "literal", "IsEditable", true); %#ok<AGROW>
+                end
+                return
+            end
             context = document.evaluationContext(registry);
             scope = context.readScope(); %#ok<NASGU>
             [~, safe] = context.inputs();

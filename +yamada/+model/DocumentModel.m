@@ -2091,6 +2091,14 @@ classdef DocumentModel < handle
                 error("yamada:DocumentModel:UnsafeSubtreeCopy", "The document root cannot be copied.");
             end
             snapshot = yamada.model.SubtreeSnapshot(obj, id);
+            if any(arrayfun(@(record) isfield(record.Metadata, "UnavailableRelease"), snapshot.Records))
+                if ~obj.currentModelIsBound()
+                    error("yamada:DocumentModel:UnsafeSubtreeCopy", "The subtree requires a bound source snapshot.");
+                end
+                catalog = yamada.model.SubtreeCopyPlanner.sourceCatalog(snapshot, registry);
+                snapshot = yamada.model.SubtreeCopyPlanner.prepareUnavailable(obj, snapshot, catalog);
+                return
+            end
             analysis = obj.sourceAnalysis();
             direct = false(1, 0);
             if any(arrayfun(@yamada.model.SourceOwnership.hasSource, snapshot.Records)), [direct, ~] = analysis.directInitializationScope(); end
@@ -2167,6 +2175,7 @@ classdef DocumentModel < handle
                 configuration = yamada.model.SubtreeCopyPlanner.prepare(obj, snapshot, registry);
             end
             snapshot = snapshot.withCopyConfiguration(configuration);
+            catalog = yamada.model.SubtreeCopyPlanner.sourceCatalog(snapshot, registry);
             plan = yamada.model.SubtreePlacementPlanner.prepare(base, snapshot, parentId, registry, ...
                 strings(1, 0), measuredPosition, offset);
             candidate = base.structuralCandidate();
@@ -2216,6 +2225,7 @@ classdef DocumentModel < handle
                 fresh = yamada.model.ComponentRecord(newIds(index), newNames(index), record.Factory, record.DeclaredType, "generated");
                 fresh.CreationArguments = configuration(index).CreationArguments;
                 fresh.Metadata = record.Metadata;
+                fresh.IsEditable = record.IsEditable;
                 for property = configuration(index).Properties
                     if property.ValueKind == "expression" && isfield(property.Metadata, "SubtreeReferenceId")
                         targetId = string(property.Metadata.SubtreeReferenceId);
@@ -2234,7 +2244,7 @@ classdef DocumentModel < handle
                         continue
                     end
                     if property.ValueKind ~= "literal" || ...
-                            registry.isReadOnlyProperty(record.Factory, property.Path, record.CreationArguments)
+                            catalog.isReadOnlyProperty(record.Factory, property.Path, record.CreationArguments)
                         error("yamada:DocumentModel:UnsafeSubtreeCopy", "Paste requires a validated literal snapshot.");
                     end
                     fresh.setProperty(property.Path, property.LiteralValue);
@@ -2250,10 +2260,18 @@ classdef DocumentModel < handle
             end
             % Emit and recognize only the newly inserted component block.
             obj.ensureCurrentSource(registry);
-            edits = yamada.source.RoundTripGenerator(registry).componentInsertionEdits(candidate, inserted);
+            edits = yamada.source.RoundTripGenerator(catalog).componentInsertionEdits(candidate, inserted);
             batch = yamada.source.SourcePatchBatch(base.CurrentText, edits);
             [candidate, state] = base.prepareComponentPublication(candidate, batch, newNames, registry, "", obj);
-            yamada.model.SubtreeCopyPlanner.verify(candidate, configuration, inserted, plan.Changes, registry);
+            if catalog ~= registry
+                [verification, diagnostics] = yamada.source.AppSourceParser.parseText(state.Text, catalog, obj.FilePath);
+                if yamada.validation.ModelValidator.hasErrors(diagnostics)
+                    error("yamada:DocumentModel:UnsafeSubtreeEdit", "The pasted source could not be verified with its catalog.");
+                end
+            else
+                verification = candidate;
+            end
+            yamada.model.SubtreeCopyPlanner.verify(verification, configuration, inserted, plan.Changes, catalog);
             frozen = yamada.model.SubtreeSnapshot(candidate, component.Id);
             inserted = frozen.materialize(); component = inserted(1);
             parent = obj.getComponent(parentId); beforeChildren = parent.Children;

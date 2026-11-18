@@ -7,6 +7,45 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
     end
 
     methods (Test)
+        function clipboardMenusAcceptUnavailableComponents(testCase)
+            % clipboardMenusAcceptUnavailableComponents Exercise newer source components through Edit menus.
+
+            % Open the common fixture in a runtime where its Color Picker has a Preview stand-in.
+            registry = yamada.model.ComponentRegistry.createDefault();
+            testCase.assumeFalse(registry.contains("uicolorpicker"));
+            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "ControlGalleryApp.m");
+            lifecycle = yamada.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, path)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() delete(app));
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
+            menus = findall(figure, "Type", "uimenu");
+            open = menus(erase(string({menus.Text}), "&") == "Open...");
+            open.MenuSelectedFcn(open, []);
+            picker = app.Document.getComponentByName("AccentColorPicker");
+            testCase.select(figure, picker.Id);
+            copy = findall(figure, "Tag", "yamada-edit-copy");
+            testCase.verifyEqual(string(copy.Enable), "on");
+            copy.MenuSelectedFcn(copy, []);
+
+            % After the paste, a cut and paste preserves the copied name and settings.
+            testCase.select(figure, app.Document.RootComponentId);
+            paste = findall(figure, "Tag", "yamada-edit-paste");
+            testCase.verifyEqual(string(paste.Enable), "on");
+            paste.MenuSelectedFcn(paste, []);
+            copied = app.Document.getComponentByName("AccentColorPickerCopy");
+            testCase.assertTrue(copied.isReleaseUnavailable());
+            testCase.select(figure, copied.Id);
+            cut = findall(figure, "Tag", "yamada-edit-cut");
+            testCase.verifyEqual(string(cut.Enable), "on");
+            cut.MenuSelectedFcn(cut, []);
+            testCase.verifyEmpty(app.Document.getComponentByName("AccentColorPickerCopy"));
+            paste.MenuSelectedFcn(paste, []);
+            restored = app.Document.getComponentByName("AccentColorPickerCopy");
+            testCase.verifyTrue(restored.isReleaseUnavailable());
+            testCase.verifyEqual(restored.getSettings("Value").LiteralValue, picker.getSettings("Value").LiteralValue);
+            clear cleanup
+        end
+
         function editMenuUsesAtomicSubtreeCommands(testCase)
             % editMenuUsesAtomicSubtreeCommands Exercise Copy, Paste and Cut through Edit menus.
             testCase.exerciseRoute("menu");
