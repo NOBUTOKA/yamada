@@ -35,8 +35,10 @@ classdef SourceEffectSummary
                             ~(setting.ValueKind == "literal" && isempty(setting.LiteralValue))
                         document.Metadata.HasUnresolvedLifecycleEffects = true;
                     end
+                    % A cataloged setting excluded by the runtime release remains source-owned.
                     if ~any(string({concrete.Properties.Path}) == setting.Path) && ...
-                            ~any(setting.Path == ["Layout.Row", "Layout.Column"])
+                            ~any(setting.Path == ["Layout.Row", "Layout.Column"]) && ...
+                            ~registry.isUnavailableSourceProperty(concrete.Id, setting.Path)
                         document.Metadata.HasUnrecognizedSetter = true;
                     end
                 end

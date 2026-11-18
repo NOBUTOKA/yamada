@@ -60,6 +60,11 @@ classdef SourceSettingRebinder
                 statement = analysis.Statements(index);
                 if isempty(regexp(statement.Text, pattern, "once")), continue, end
                 setting = yamada.source.PropertySettingSyntax.assignment(statement, state.StateId, sequences.Assignment(visit), trace.Certain(visit));
+                if registry.isUnavailableSourceProperty(definition.Id, setting.Path)
+                    record = setting.toStruct();
+                    record.Location.IsEditable = false;
+                    setting = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
+                end
                 setting = yamada.model.SourceSettingRebinder.scoped(setting, analysis.Layout, index);
                 settings(end + 1) = yamada.model.SourceSettingRebinder.identity(setting, component.Settings, batch); %#ok<AGROW>
             end

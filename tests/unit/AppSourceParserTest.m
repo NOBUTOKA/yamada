@@ -5,6 +5,37 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
     %   and source-span retention.
 
     methods (Test)
+        function editsSupportedSettingAlongsideUnavailableProperty(testCase)
+            % editsSupportedSettingAlongsideUnavailableProperty Preserve explicit newer settings during local edits.
+
+            % Exercise both source locations with the older runtime capability surface.
+            registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2023a"));
+            constructors = ["app.Table = uitable(app.Figure, DisplaySelection=false);", ...
+                "app.Table = uitable(app.Figure);" + newline + "app.Table.DisplaySelection = false;"];
+            for constructor = constructors
+                source = join(["classdef ReleaseExample < handle", ...
+                    "properties", "Figure", "Table", "end", ...
+                    "methods", "function app = ReleaseExample", ...
+                    "app.Figure = uifigure();", constructor, ...
+                    "app.Table.RowStriping = 'on';", "end", "end", "end"], newline);
+                [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
+                testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+                table = document.getComponentByName("Table");
+                testCase.verifyFalse(table.getProperty("DisplaySelection").IsEditable);
+                testCase.verifyError(@() document.setProperty(table.Id, "DisplaySelection", true), ...
+                    "yamada:DocumentModel:ReadOnlyProperty");
+
+                % Prove the edit changes only the supported occurrence and remains reversible.
+                document.setProperty(table.Id, "RowStriping", "off");
+                actual = yamada.source.RoundTripGenerator(registry).generate(document);
+                testCase.verifyEqual(actual, replace(source, "'on'", ...
+                    yamada.source.LiteralEncoder.encode("off")));
+                document.undo();
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
+            end
+        end
+
         function warnsAtBothBoundsOfExplicitPropertyUsage(testCase)
             % warnsAtBothBoundsOfExplicitPropertyUsage Honor constructor and assignment availability.
 

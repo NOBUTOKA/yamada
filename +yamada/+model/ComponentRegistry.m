@@ -19,6 +19,7 @@ classdef ComponentRegistry < handle
         FactoryVariantIds dictionary = dictionary(string([]), {})
         EffectiveProperties dictionary = dictionary(string([]), {})
         IndependentDefinitions dictionary = dictionary(string([]), {})
+        UnavailableSourceProperties string = strings(1, 0)
         ParentContextRules yamada.model.ParentContextRule = yamada.model.ParentContextRule.empty
         InspectorRowDefinitions yamada.model.InspectorRowDefinition = ...
             yamada.model.InspectorRowDefinition.empty
@@ -53,6 +54,16 @@ classdef ComponentRegistry < handle
     end
 
     methods (Access = ?yamada.catalog.ComponentCatalogLoader)
+        function setUnavailableSourceProperties(obj, paths)
+            % setUnavailableSourceProperties Retain release annotations for source-only settings.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                paths (1, :) string
+            end
+
+            obj.UnavailableSourceProperties = paths;
+        end
+
         function copy = duplicate(obj)
             % duplicate Return an independent registry with the same validated catalog state.
             arguments (Input)
@@ -69,11 +80,26 @@ classdef ComponentRegistry < handle
             copy.EffectiveProperties = obj.EffectiveProperties;
             copy.ParentContextRules = obj.ParentContextRules;
             copy.InspectorRowDefinitions = obj.InspectorRowDefinitions;
+            copy.UnavailableSourceProperties = obj.UnavailableSourceProperties;
             copy.Revision = obj.Revision;
         end
     end
 
     methods
+        function result = isUnavailableSourceProperty(obj, variantId, path)
+            % isUnavailableSourceProperty Identify a property excluded by the loaded release.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                variantId (1, 1) string
+                path (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = any(obj.UnavailableSourceProperties == variantId + "." + path);
+        end
+
         function obj = ComponentRegistry()
             % ComponentRegistry Create an empty data-driven component registry.
             arguments (Output)
