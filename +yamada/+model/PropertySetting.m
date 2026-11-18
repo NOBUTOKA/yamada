@@ -48,6 +48,8 @@ classdef PropertySetting
         IsCertain logical = true
         % IsEditable - Whether its value is a literal with certain ownership.
         IsEditable logical = true
+        % IsReleaseUnavailable - Whether the loaded release excludes this source setting.
+        IsReleaseUnavailable logical = false
     end
 
     methods
@@ -66,7 +68,7 @@ classdef PropertySetting
             allowed = ["Id", "Method", "Syntax", "SourceSpan", "ValueSpan", "NameSpan", ...
                 "PairSpan", "SourceSnapshotId", "StatementId", "Sequence", "IsCertain", ...
                 "SourceExpression", "IsEditable", "FactoryArgumentIndex", ...
-                "OwnerMethod", "ScopeSpan", "InitializationScopeId"];
+                "OwnerMethod", "ScopeSpan", "InitializationScopeId", "IsReleaseUnavailable"];
             unknown = setdiff(string(fieldnames(location)), allowed);
             if ~isempty(unknown)
                 error("yamada:PropertySetting:InvalidLocation", "Unknown setting field %s.", unknown(1));
@@ -89,7 +91,7 @@ classdef PropertySetting
                 obj.LiteralValue = [];
                 obj.IsEditable = false;
             end
-            obj.IsEditable = obj.IsEditable && obj.IsCertain;
+            obj.IsEditable = obj.IsEditable && obj.IsCertain && ~obj.IsReleaseUnavailable;
 
             % An occurrence identity remains independent of future requested values.
             start = 0;
@@ -125,7 +127,8 @@ classdef PropertySetting
                 "SourceSnapshotId", obj.SourceSnapshotId, "StatementId", obj.StatementId, ...
                 "Sequence", obj.Sequence, "IsCertain", obj.IsCertain, "IsEditable", obj.IsEditable, ...
                 "FactoryArgumentIndex", obj.FactoryArgumentIndex, "OwnerMethod", obj.OwnerMethod, ...
-                "ScopeSpan", obj.ScopeSpan, "InitializationScopeId", obj.InitializationScopeId);
+                "ScopeSpan", obj.ScopeSpan, "InitializationScopeId", obj.InitializationScopeId, ...
+                "IsReleaseUnavailable", obj.IsReleaseUnavailable);
             if obj.ValueKind == "expression", location.SourceExpression = obj.SourceExpression; end
             record = struct("Path", obj.Path, "Value", {obj.LiteralValue}, "Location", location);
         end

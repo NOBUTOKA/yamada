@@ -5,6 +5,34 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
     %   and source-span retention.
 
     methods (Test)
+        function preservesUnavailableEnumWithoutReplayingIt(testCase)
+            % preservesUnavailableEnumWithoutReplayingIt Keep unsupported enum literals in both source forms.
+
+            % An older UIFigure must keep the docked spelling and preview without it.
+            registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2023a"));
+            constructors = ["app.Figure = uifigure(WindowStyle='docked');", ...
+                "app.Figure = uifigure();" + newline + "app.Figure.WindowStyle = 'docked';"];
+            for constructor = constructors
+                source = join(["classdef ReleaseExample < handle", "properties", "Figure", "end", ...
+                    "methods", "function app = ReleaseExample", constructor, ...
+                    "app.Figure.Name = 'Before';", "end", "end", "end"], newline);
+                [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
+                testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+                figure = document.getComponentByName("Figure");
+                testCase.verifyTrue(figure.getSettings("WindowStyle").IsReleaseUnavailable);
+                testCase.verifyFalse(figure.getProperty("WindowStyle").IsEditable);
+                testCase.verifyEmpty(yamada.model.PropertyApplicationPlanner.forPreviewArguments(figure, registry));
+                entries = yamada.model.PropertyApplicationPlanner.forPreview(figure, document, registry);
+                testCase.verifyFalse(any(string({entries.Path}) == "WindowStyle"));
+
+                % The adjacent supported edit only changes its own source token.
+                document.setProperty(figure.Id, "Name", "After");
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), ...
+                    replace(source, "'Before'", yamada.source.LiteralEncoder.encode("After")));
+            end
+        end
+
         function editsSupportedSettingAlongsideUnavailableProperty(testCase)
             % editsSupportedSettingAlongsideUnavailableProperty Preserve explicit newer settings during local edits.
 

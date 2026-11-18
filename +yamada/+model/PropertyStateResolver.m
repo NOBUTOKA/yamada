@@ -158,6 +158,7 @@ classdef PropertyStateResolver
                     group = [group(string({group.Path}) ~= "Value"), group(string({group.Path}) == "Value")];
                 end
                 for setting = group
+                    if setting.IsReleaseUnavailable, continue, end
                     entry = component.getProperty(setting.Path);
                     if isempty(entry), continue, end
                     value = setting.LiteralValue;

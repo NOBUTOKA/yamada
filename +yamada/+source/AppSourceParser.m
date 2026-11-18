@@ -201,6 +201,12 @@ classdef AppSourceParser
                     continue
                 end
                 definition = registry.get(creation.Factory, creationArguments);
+                for settingIndex = 1:numel(settings)
+                    settings(settingIndex) = registry.protectSourceSetting(definition.Id, settings(settingIndex));
+                    if settings(settingIndex).IsReleaseUnavailable && ~any(skippedProperties == settings(settingIndex).Path)
+                        skippedProperties(end + 1) = settings(settingIndex).Path;
+                    end
+                end
 
                 % Resolve declaration metadata and parent identity before mutation.
                 declaredType = definition.DeclaredType;
@@ -325,7 +331,15 @@ classdef AppSourceParser
                 sequence = sequence + 1;
                 setting = yamada.source.PropertySettingSyntax.assignment(statement, ...
                     document.Metadata.SourceSnapshotId, sequence, initializationCertain(visit));
+                variant = registry.get(component.Factory, component.CreationArguments);
+                setting = registry.protectSourceSetting(variant.Id, setting);
                 setting = yamada.source.AppSourceParser.scopedSetting(setting, initializationLayout, index);
+                if setting.IsReleaseUnavailable && any(string({effectiveProperties.Path}) == assignment.Path)
+                    diagnostics(end + 1) = yamada.source.AppSourceParser.diagnostic( ...
+                        "source-release-value", "warning", ...
+                        "This property's value is unavailable in the loaded MATLAB catalog and was retained as source.", ...
+                        component.Id, statement.Span);
+                end
                 if ~any(string({effectiveProperties.Path}) == assignment.Path)
                     record = setting.toStruct();
                     record.Location.IsEditable = false;

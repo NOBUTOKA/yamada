@@ -99,14 +99,32 @@ classdef ComponentCatalogLoader
             end
             availability = jsondecode(fileread(indexPath));
             paths = strings(1, 0);
+            values = strings(1, 0);
             for property = reshape(availability.properties, 1, [])
-                bounds = property.releases;
-                if (isfield(bounds, "since") && release < string(bounds.since)) || ...
-                        (isfield(bounds, "before") && release >= string(bounds.before))
+                if yamada.catalog.ComponentCatalogLoader.excludesRelease(property.releases, release)
                     paths(end + 1) = string(property.variantId) + "." + string(property.path); %#ok<AGROW>
                 end
             end
-            registry.setUnavailableSourceProperties(paths);
+            for entry = reshape(availability.values, 1, [])
+                if yamada.catalog.ComponentCatalogLoader.excludesRelease(entry.releases, release)
+                    values(end + 1) = string(entry.variantId) + "." + string(entry.path) + "=" + string(entry.value); %#ok<AGROW>
+                end
+            end
+            registry.setSourceAvailability(paths, values);
+        end
+
+        function result = excludesRelease(bounds, release)
+            % excludesRelease Test inclusive since and exclusive before annotations.
+            arguments (Input)
+                bounds (1, 1) struct
+                release (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = (isfield(bounds, "since") && release < string(bounds.since)) || ...
+                (isfield(bounds, "before") && release >= string(bounds.before));
         end
 
         function folder = catalogsFolder()

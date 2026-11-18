@@ -57,7 +57,7 @@ classdef PropertyApplicationPlanner
                 index = setting.FactoryArgumentIndex;
                 if index < 2 || index > numel(values), continue, end
                 property = definition.getProperty(setting.Path);
-                allowed = ~isempty(property) && property.IsEditable && ...
+                allowed = ~setting.IsReleaseUnavailable && ~isempty(property) && property.IsEditable && ...
                     ~any(property.PreviewPolicy == ["skip", "notRendered"]);
                 % Assets and reviewed aliases are adapted once after construction.
                 if ~allowed || setting.Path == "ImageSource" || ...
@@ -93,7 +93,7 @@ classdef PropertyApplicationPlanner
             settings = component.Settings;
             [~, order] = sort([settings.Sequence]);
             for setting = settings(order)
-                if setting.Method ~= "assignment", continue, end
+                if setting.Method ~= "assignment" || setting.IsReleaseUnavailable, continue, end
                 current = component.getProperty(setting.Path);
                 if isempty(current) || current.ValueKind ~= "literal" || ~current.IsEditable
                     continue

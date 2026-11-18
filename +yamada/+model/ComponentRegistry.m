@@ -20,6 +20,7 @@ classdef ComponentRegistry < handle
         EffectiveProperties dictionary = dictionary(string([]), {})
         IndependentDefinitions dictionary = dictionary(string([]), {})
         UnavailableSourceProperties string = strings(1, 0)
+        UnavailableSourceValues string = strings(1, 0)
         ParentContextRules yamada.model.ParentContextRule = yamada.model.ParentContextRule.empty
         InspectorRowDefinitions yamada.model.InspectorRowDefinition = ...
             yamada.model.InspectorRowDefinition.empty
@@ -54,14 +55,16 @@ classdef ComponentRegistry < handle
     end
 
     methods (Access = ?yamada.catalog.ComponentCatalogLoader)
-        function setUnavailableSourceProperties(obj, paths)
-            % setUnavailableSourceProperties Retain release annotations for source-only settings.
+        function setSourceAvailability(obj, paths, values)
+            % setSourceAvailability Retain release annotations for source-only settings.
             arguments (Input)
                 obj (1, 1) yamada.model.ComponentRegistry
                 paths (1, :) string
+                values (1, :) string
             end
 
             obj.UnavailableSourceProperties = paths;
+            obj.UnavailableSourceValues = values;
         end
 
         function copy = duplicate(obj)
@@ -81,11 +84,37 @@ classdef ComponentRegistry < handle
             copy.ParentContextRules = obj.ParentContextRules;
             copy.InspectorRowDefinitions = obj.InspectorRowDefinitions;
             copy.UnavailableSourceProperties = obj.UnavailableSourceProperties;
+            copy.UnavailableSourceValues = obj.UnavailableSourceValues;
             copy.Revision = obj.Revision;
         end
     end
 
     methods
+        function setting = protectSourceSetting(obj, variantId, setting)
+            % protectSourceSetting Keep unsupported explicit settings outside runtime replay.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                variantId (1, 1) string
+                setting (1, 1) yamada.model.PropertySetting
+            end
+            arguments (Output)
+                setting (1, 1) yamada.model.PropertySetting
+            end
+
+            % Only annotated literal values qualify. Expressions retain their existing checks.
+            unavailable = obj.isUnavailableSourceProperty(variantId, setting.Path);
+            value = setting.LiteralValue;
+            if ~unavailable && setting.ValueKind == "literal" && ...
+                    ((isstring(value) && isscalar(value)) || (ischar(value) && isrow(value)))
+                unavailable = any(obj.UnavailableSourceValues == variantId + "." + setting.Path + "=" + string(value));
+            end
+            if unavailable
+                record = setting.toStruct();
+                record.Location.IsReleaseUnavailable = true;
+                setting = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
+            end
+        end
+
         function result = isUnavailableSourceProperty(obj, variantId, path)
             % isUnavailableSourceProperty Identify a property excluded by the loaded release.
             arguments (Input)

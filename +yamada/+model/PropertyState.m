@@ -80,6 +80,9 @@ classdef PropertyState
             obj.HasRequestedValue = entry.ValueKind == "literal";
             if obj.HasRequestedValue, obj.RequestedValue = entry.LiteralValue; end
             if ~isempty(setting)
+                if setting.IsReleaseUnavailable
+                    obj.ReadOnlyReason = "This source setting is unavailable in the loaded MATLAB catalog.";
+                end
                 obj.LastSettingId = setting.Id;
                 obj.ExplicitKind = setting.ValueKind;
                 obj.ExplicitValue = setting.LiteralValue;
