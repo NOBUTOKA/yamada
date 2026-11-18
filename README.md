@@ -37,7 +37,7 @@ https://github.com/user-attachments/assets/ef965c59-a430-4c2f-9f11-2f8f3395d9e0
 
 - MATLAB R2023a through R2026b on 64-bit Windows, with a graphical session, JVM enabled (R2026b installs no Java runtime, so install the MATLAB Support for OpenJDK add-on or another OpenJDK distribution first), and MATLAB .NET support
 
-Release targets are R2023a through R2026b on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. Each release offers the components and properties that it provides. Editing an app created for a newer MATLAB release in yamada on an older release is not supported: components and properties that the older release lacks are reported as unsupported and cannot be previewed. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
+Release targets are R2023a through R2026b on Windows only. On an older supported release, yamada can open apps that use newer features recognized by its bundled catalogs. Safe Preview shows labels for unavailable components, and you can edit supported settings while retaining unavailable components and explicit settings in the saved source. Running the saved app still requires MATLAB with support for the features it uses. The editor requires MATLAB without additional toolboxes.
 
 ## Getting Started
 

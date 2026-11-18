@@ -373,7 +373,7 @@ Preview invalidation distinguishes current source-coordinate changes from visual
 
 Runtime code resolves resources relative to the project root:
 
-- one release folder under `resources/component-catalog`, the newest that is not newer than the running release, is loaded by the registry; `availability.json` beside the folders records which releases contain each annotated variant, property, and value and is not needed to load a catalog;
+- the registry loads the newest catalog projection that is available to the running release. The sibling `availability.json` supplies release bounds for annotated variants, properties, and values. Source parsing also loads the bundled surface projection when it encounters a factory with a variant absent from the runtime catalog;
 - `resources/EditorInteractionOverlay.html`, `resources/RootResizeGuide.html`, and `resources/SourceDiffPreview.html` are loaded by `yamada`;
 - `resources/layout-settle-request.js` is loaded by `waitForPreviewLayout` and executed only in the editor-owned figure window; and
 - development ledgers and generation scripts under `dev/component-data` are not runtime dependencies.
