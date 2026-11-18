@@ -17,9 +17,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             source = join(["classdef ReleaseExample < handle", "properties", ...
                 "Figure matlab.ui.Figure", "Origin matlab.ui.container.Panel", ...
                 "Destination matlab.ui.container.Panel", "Moved matlab.ui.container.Panel", ...
+                "Grid matlab.ui.container.GridLayout", ...
                 "Picker matlab.ui.control.ColorPicker", "end", "methods", ...
                 "function createComponents(app)", "app.Figure = uifigure();", ...
                 "app.Origin = uipanel(app.Figure);", "app.Destination = uipanel(app.Figure);", ...
+                "app.Grid = uigridlayout(app.Destination, [2 2]);", ...
                 "app.Moved = uipanel(app.Origin);", "app.Moved.Position = [10 10 80 40];", ...
                 "app.Picker = uicolorpicker(app.Moved);", "app.Picker.Value = [0.1 0.2 0.3];", ...
                 "end", "function app = ReleaseExample", "createComponents(app);", "end", "end", "end"], newline);
@@ -41,6 +43,33 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             testCase.verifyEqual(document.CurrentText, source);
             document.redo();
             testCase.verifyEqual(document.CurrentText, relocated);
+
+            % The newer component itself can move while its other settings stay protected.
+            document.reparentSubtree(picker.Id, destination.Id, registry, [], [], [5 10 45 25]);
+            picker = document.getComponentByName("Picker");
+            testCase.verifyEqual(picker.ParentId, destination.Id);
+            testCase.verifySubstring(document.CurrentText, "app.Picker = uicolorpicker(app.Destination);");
+            testCase.verifySubstring(document.CurrentText, "app.Picker.Value = [0.1 0.2 0.3];");
+            testCase.verifyEqual(picker.getSettings("Position").LiteralValue, [5 10 45 25]);
+            testCase.verifyFalse(picker.getProperty("Position").IsEditable);
+            reparented = document.CurrentText;
+            document.reparentSubtree(picker.Id, destination.Id, registry, [], [], [15 20 45 25]);
+            testCase.verifyEqual(document.CurrentText, replace(reparented, "[5 10 45 25]", "[15 20 45 25]"));
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, reparented);
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, relocated);
+
+            % Grid relocation writes only the destination coordinates and keeps the variant.
+            grid = document.getComponentByName("Grid");
+            document.reparentSubtree(picker.Id, grid.Id, registry, [], [1 2]);
+            picker = document.getComponentByName("Picker");
+            testCase.verifyEqual(picker.ParentId, grid.Id);
+            testCase.verifyEqual(picker.getSettings("Layout.Column").LiteralValue, 2);
+            testCase.verifySubstring(document.CurrentText, "app.Picker.Value = [0.1 0.2 0.3];");
+            document.reparentSubtree(picker.Id, grid.Id, registry, [], [2 1]);
+            testCase.verifyEqual(picker.getSettings("Layout.Row").LiteralValue, 2);
+            testCase.verifyEqual(picker.getSettings("Layout.Column").LiteralValue, 1);
         end
 
         function editorCommandsRetainBindingsAcrossSaveAndHistory(testCase, Operation)

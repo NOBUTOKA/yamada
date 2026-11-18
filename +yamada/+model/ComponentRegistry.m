@@ -95,7 +95,7 @@ classdef ComponentRegistry < handle
     end
 
     methods
-        function definition = sourceDefinition(obj, component)
+        function [definition, catalog] = sourceDefinition(obj, component)
             % sourceDefinition Resolve a component's concrete source variant for structural analysis.
             arguments (Input)
                 obj (1, 1) yamada.model.ComponentRegistry
@@ -103,15 +103,17 @@ classdef ComponentRegistry < handle
             end
             arguments (Output)
                 definition (1, 1) yamada.model.ComponentDefinition
+                catalog (1, 1) yamada.model.ComponentRegistry
             end
 
             % A protected descendant can still have a definition in the runtime projection.
+            catalog = obj;
             if ~component.isReleaseUnavailable()
                 definition = obj.get(component.Factory, component.CreationArguments);
                 return
             end
             variantId = component.Metadata.SourceVariantId;
-            if any(obj.listVariantIds() == variantId)
+            if isKey(obj.Definitions, variantId)
                 definition = obj.getById(variantId);
                 return
             end

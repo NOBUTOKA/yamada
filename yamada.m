@@ -1555,7 +1555,7 @@ classdef yamada < handle
                 "tabTitles", {}, "tabSelected", {}, "depth", {}, "inGrid", {}, ...
                 "resizeConstraint", {});
             gridSelectionTargets = struct("id", {}, "gridId", {}, "x", {}, ...
-                "y", {}, "width", {}, "height", {}, "depth", {});
+                "y", {}, "width", {}, "height", {}, "depth", {}, "sourceOnly", {});
             ids = sort(keys(app.PreviewHandles))';
             for index = 1:numel(ids)
                 componentId = ids(index);
@@ -1574,24 +1574,32 @@ classdef yamada < handle
                             "id", char(component.Id), "gridId", char(parent.Id), ...
                             "x", rectangle(1), "y", rectangle(2), ...
                             "width", rectangle(3), "height", rectangle(4), ...
-                            "depth", app.componentNestingDepth(component.Id)); %#ok<AGROW>
+                            "depth", app.componentNestingDepth(component.Id), ...
+                            "sourceOnly", component.isReleaseUnavailable()); %#ok<AGROW>
                     end
                     continue
                 end
-                if isempty(parent) || ...
+                sourceOnly = component.isReleaseUnavailable();
+                if isempty(parent) || (~sourceOnly && ( ...
                         isempty(position) || position.ValueKind ~= "literal" || ...
-                        ~isnumeric(position.LiteralValue) || numel(position.LiteralValue) ~= 4
+                        ~isnumeric(position.LiteralValue) || numel(position.LiteralValue) ~= 4))
                     continue
                 end
                 rectangle = app.previewBounds(componentId);
                 if componentId == app.InteractionComponentId
                     rectangle = app.interactionDisplayPosition(componentId, rectangle);
                 end
-                if component.isReleaseUnavailable(), continue, end
-                definition = app.Registry.get(component.Factory, component.CreationArguments);
+                shape = "rectangle";
+                constraint = "none";
+                if ~sourceOnly
+                    definition = app.Registry.get(component.Factory, component.CreationArguments);
+                    shape = definition.overlayShapeFor(component.CreationArguments);
+                    constraint = app.previewResizeConstraint(component, definition);
+                end
                 tabTitles = strings(1, 0);
                 tabSelected = 0;
-                if component.Factory == "uitabgroup"
+                tabGroup = ~sourceOnly && component.Factory == "uitabgroup";
+                if tabGroup
                     children = component.Children;
                     for childIndex = 1:numel(children)
                         child = app.Document.getComponent(children(childIndex));
@@ -1614,13 +1622,13 @@ classdef yamada < handle
                 components(end + 1) = struct( ...
                     "id", char(component.Id), "x", rectangle(1), "y", rectangle(2), ...
                     "width", rectangle(3), "height", rectangle(4), ...
-                    "shape", char(definition.overlayShapeFor(component.CreationArguments)), ...
+                    "shape", char(shape), ...
                     "selected", component.Id == app.SelectedComponentId, ...
-                    "tabGroup", component.Factory == "uitabgroup", ...
+                    "tabGroup", tabGroup, ...
                     "tabTitles", tabTitles, "tabSelected", tabSelected, ...
                     "depth", app.componentNestingDepth(component.Id), ...
                     "inGrid", app.hasGridAncestor(component.Id), ...
-                    "resizeConstraint", char(app.previewResizeConstraint(component, definition))); %#ok<AGROW>
+                    "resizeConstraint", char(constraint)); %#ok<AGROW>
             end
             % Paint ancestor silhouettes first so nested controls receive pointer events.
             if ~isempty(components)
@@ -2175,6 +2183,13 @@ classdef yamada < handle
 
             component = app.Document.getComponent(componentId);
             if isempty(component)
+                return
+            end
+            if component.isReleaseUnavailable()
+                app.SelectedComponentId = componentId;
+                app.synchronizeHierarchySelection();
+                app.refreshInspector();
+                app.updateInteractionOverlay();
                 return
             end
             position = component.getProperty("Position");

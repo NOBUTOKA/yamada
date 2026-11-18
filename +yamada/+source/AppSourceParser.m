@@ -272,6 +272,7 @@ classdef AppSourceParser
                     component.Metadata.SourceDisplayName = definition.DisplayName;
                     component.Metadata.SourceVariantId = definition.Id;
                     component.Metadata.SourceCatalogRelease = string(availability.surfaceRelease);
+                    component.Metadata.SourceAllowedParents = definition.AllowedParentFactories;
                     callbacks = arrayfun(@(property) isfield(property.ValueSchema, "kind") && ...
                         string(property.ValueSchema.kind) == "callback", definition.Properties);
                     component.Metadata.SourceCallbackPaths = string({definition.Properties(callbacks).Path});

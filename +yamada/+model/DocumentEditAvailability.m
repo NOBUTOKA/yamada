@@ -130,9 +130,6 @@ classdef DocumentEditAvailability
             snapshot = yamada.model.SubtreeSnapshot.empty;
             try
                 snapshot = yamada.model.DocumentEditAvailability.inspect(document, id, true);
-                if source.isReleaseUnavailable()
-                    error("yamada:DocumentEditAvailability:ReadOnly", "The component is unavailable in the loaded MATLAB release.");
-                end
                 yamada.model.DocumentEditAvailability.ownership(document, snapshot, true);
                 if yamada.model.PropertyStateResolver.hasUnresolvedExecution(document)
                     error("yamada:DocumentEditAvailability:UnknownHierarchy", "Unresolved initialization effects prevent proving subtree relocation safety.");
@@ -143,7 +140,7 @@ classdef DocumentEditAvailability
             % Collect the finite incoming reference constraints once for all destinations.
             requiredParents = strings(1, 0);
             if strlength(reason) == 0
-                definition = registry.get(source.Factory, source.CreationArguments);
+                definition = registry.sourceDefinition(source);
                 for owner = document.Components
                     entry = owner.getProperty("SelectedTab");
                     if ~isempty(entry) && isfield(entry.Metadata, "SubtreeReferenceId") && ...

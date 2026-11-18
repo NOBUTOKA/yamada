@@ -23,12 +23,11 @@ classdef ReparentOverlayDataBuilder
                 targets struct
             end
             source = struct("id", "", "parentId", "", "bounds", zeros(1, 4), ...
-                "rowSpan", 1, "columnSpan", 1, "fillsParent", false);
+                "rowSpan", 1, "columnSpan", 1, "fillsParent", false, "sourceOnly", false);
             targets = struct("id", {}, "name", {}, "bounds", {}, "origin", {}, "depth", {}, ...
                 "enabled", {}, "reason", {}, "grid", {});
             component = document.getComponent(id);
             if isempty(component) || id == document.RootComponentId || ~isKey(handles, id), return, end
-            if component.isReleaseUnavailable(), return, end
             preview = handles(id);
             if ~isvalid(preview) || ~isprop(preview, "Position"), return, end
             if isempty(boundsFcn)
@@ -39,11 +38,17 @@ classdef ReparentOverlayDataBuilder
             if any(~isfinite(bounds)) || any(bounds(3:4) <= 0), return, end
             source.id = char(id);
             source.parentId = char(component.ParentId);
+            source.sourceOnly = component.isReleaseUnavailable();
             source.bounds = bounds;
             source.fillsParent = component.Factory == "uigridlayout";
             source.rowSpan = yamada.ui.ReparentOverlayDataBuilder.spanSize(component, "Layout.Row");
             source.columnSpan = yamada.ui.ReparentOverlayDataBuilder.spanSize(component, "Layout.Column");
-            definition = registry.get(component.Factory, component.CreationArguments);
+            if source.sourceOnly
+                allowedParents = component.Metadata.SourceAllowedParents;
+            else
+                definition = registry.get(component.Factory, component.CreationArguments);
+                allowedParents = definition.AllowedParentFactories;
+            end
             builder = yamada.ui.GridLayoutOverlayDataBuilder();
 
             % Parent-local origins use the same public InnerPosition transform as grid geometry.
@@ -94,7 +99,7 @@ classdef ReparentOverlayDataBuilder
                 if any(~isfinite(rectangle)) || any(rectangle(3:4) <= 0), continue, end
                 grid = struct();
                 % Check catalog compatibility here and defer full placement checks to drop.
-                enabled = any(definition.AllowedParentFactories == parent.Factory);
+                enabled = any(allowedParents == parent.Factory);
                 reason = "";
                 if ~enabled
                     reason = "This component type cannot use that parent.";
@@ -142,6 +147,17 @@ classdef ReparentOverlayDataBuilder
             end
             count = 1;
             entry = component.getProperty(path);
+            if component.isReleaseUnavailable()
+                settings = component.getSettings(path);
+                if ~isempty(settings) && settings(end).IsCertain && settings(end).ValueKind == "literal"
+                    value = settings(end).LiteralValue;
+                    if isnumeric(value) && isreal(value) && isvector(value) && ...
+                            ~isempty(value) && numel(value) <= 2 && all(isfinite(value))
+                        count = max(1, double(value(end) - value(1) + 1));
+                    end
+                end
+                return
+            end
             if ~isempty(entry) && entry.ValueKind == "literal" && isnumeric(entry.LiteralValue) && ...
                     ~isempty(entry.LiteralValue) && numel(entry.LiteralValue) <= 2
                 value = entry.LiteralValue;

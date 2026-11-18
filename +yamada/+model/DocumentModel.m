@@ -1986,7 +1986,8 @@ classdef DocumentModel < handle
             end
             obj.ensureCurrentSource(registry);
             root = obj.getComponent(id);
-            if root.ParentId == parentId, return, end
+            sameParent = root.ParentId == parentId;
+            if sameParent && (~root.isReleaseUnavailable() || (isempty(targetCell) && isempty(targetPosition))), return, end
             oldParent = obj.getComponent(root.ParentId);
             newParent = obj.getComponent(parentId);
             beforeParents = struct("Id", {oldParent.Id, newParent.Id}, ...
@@ -1997,13 +1998,22 @@ classdef DocumentModel < handle
             candidateRoot = candidate.getComponent(id);
             candidateOldParent = candidate.getComponent(root.ParentId);
             candidateNewParent = candidate.getComponent(parentId);
-            candidateOldParent.removeChild(id);
-            candidateNewParent.addChild(id);
+            if ~sameParent
+                candidateOldParent.removeChild(id);
+                candidateNewParent.addChild(id);
+            end
             candidateRoot.ParentId = parentId;
             for change = plan.Changes
                 if change.Remove
                     candidateRoot.removeProperty(change.Path);
                 else
+                    existing = candidateRoot.getProperty(change.Path);
+                    if candidateRoot.isReleaseUnavailable() && ~isempty(existing)
+                        settings = candidateRoot.getSettings(change.Path);
+                        record = settings(end).toStruct();
+                        record.Location.IsEditable = true;
+                        existing.applySourceSetting(yamada.model.PropertySetting(record.Path, record.Value, record.Location));
+                    end
                     candidateRoot.setProperty(change.Path, change.Value);
                 end
             end
@@ -2014,12 +2024,27 @@ classdef DocumentModel < handle
             currentIds = string({candidate.Components.Id});
             [~, indices] = ismember(orderedIds, currentIds);
             candidate.Components = candidate.Components(indices);
-            candidate.PendingEdits{end + 1} = struct("Kind", "reparent-subtree", ...
-                "OriginalRecords", snapshot.Records);
             try
-                if obj.currentModelIsBound() && all(arrayfun(@yamada.model.SourceOwnership.hasSource, snapshot.Records))
+                if sameParent
+                    % A move within one parent patches placement literals in place.
+                    sourcePatches = struct("Start", {}, "End", {}, "Text", {});
+                    for change = plan.Changes
+                        settings = root.getSettings(change.Path);
+                        if change.Remove || isempty(settings) || isempty(settings(end).ValueSpan)
+                            error("yamada:DocumentModel:UnsafeSubtreeEdit", "This move requires explicit owned placement literals.");
+                        end
+                        span = settings(end).ValueSpan;
+                        sourcePatches(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, ...
+                            "Text", yamada.source.LiteralEncoder.encode(change.Value)); %#ok<AGROW>
+                    end
+                    batch = yamada.source.SourcePatchBatch(obj.CurrentText, sourcePatches);
+                    if batch.AfterText == obj.CurrentText, return, end
+                    [placedDocument, ~] = candidate.editedSourceCandidate(batch.AfterText, sourcePatches, registry);
+                elseif obj.currentModelIsBound() && all(arrayfun(@yamada.model.SourceOwnership.hasSource, snapshot.Records))
+                    candidate.PendingEdits{end + 1} = struct("Kind", "reparent-subtree", "OriginalRecords", snapshot.Records);
                     [sourcePatches, ~, placedDocument] = yamada.source.SubtreeReparentSourceEdits.build(candidate, registry);
                 else
+                    candidate.PendingEdits{end + 1} = struct("Kind", "reparent-subtree", "OriginalRecords", snapshot.Records);
                     [text, diagnostics, sourcePatches] = yamada.source.RoundTripGenerator(registry).generate(candidate);
                     if yamada.validation.ModelValidator.hasErrors(diagnostics)
                         error("yamada:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
