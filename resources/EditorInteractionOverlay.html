@@ -315,6 +315,8 @@ function sendPointerEvent(event) {
   if (target.classList && target.classList.contains("locked")) return;
   var point = surfacePoint(event, rect);
   if (event.type === "pointerdown") {
+    // Keep the browser from selecting or dragging content during an editor gesture.
+    event.preventDefault();
     svg.setPointerCapture(event.pointerId);
     if (target.dataset.componentId && !target.dataset.handle && target.dataset.componentId !== currentData.rootId)
       absoluteGesture = {id: target.dataset.componentId, startPoint: point, modelRevision: currentData.reparentRevision};
