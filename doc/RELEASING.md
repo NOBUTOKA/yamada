@@ -12,7 +12,7 @@ Preserve cohesive commits. An `AGENTS.md` commit must contain only that file and
 
 Use `major.minor.patch`: `1.0.0` for the first stable release, `1.0.1` for compatible fixes, `1.1.0` for compatible feature additions, and `2.0.0` for breaking changes. Compatibility includes supported input source, preservation and generation behavior, and documented user workflows, not just callable MATLAB APIs. Describe intentional compatibility changes in release notes. MATLAB release compatibility such as R2024a is a separate setting.
 
-For the 1.0.1 maintenance release, use `1.0.1` in Toolbox metadata, `v1.0.1` as the Git tag, `yamada 1.0.1` as the Release title, and `yamada-1.0.1.mltbx` as the asset name. Set the Toolbox version in the release metadata and verify that the tag, release title, and asset name agree. Keep the Toolbox UUID stable across versions.
+For the 1.0.2 maintenance release, use `1.0.2` in Toolbox metadata, `v1.0.2` as the Git tag, `yamada 1.0.2` as the Release title, and `yamada-1.0.2.mltbx` as the asset name. Set the Toolbox version in the release metadata and verify that the tag, release title, and asset name agree. Keep the Toolbox UUID stable across versions.
 
 The version, permanent UUID, author, public contact, description, and compatibility are defined in [`dev/release/toolbox.json`](../dev/release/toolbox.json). Use [`buildYamadaToolbox`](../dev/release/buildYamadaToolbox.m) to create a candidate, input manifest, and `SHA256SUMS`; see the [build procedure](../dev/release/README.md). The default output is ignored under `build/`. Existing candidates are not overwritten.
 

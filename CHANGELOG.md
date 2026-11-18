@@ -2,6 +2,10 @@
 
 For users deciding whether to update, this log describes changes and compatibility limits by version.
 
+## 1.0.2
+
+- Fix repeated drag moves and resizes of components inside a Panel in a Grid Layout.
+
 ## 1.0.1
 
 - Restrict Tab Group children to tabs and prevent invalid drops into a Tab Group.

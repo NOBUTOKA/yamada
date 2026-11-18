@@ -20,6 +20,7 @@ assert(all(isfile(files)), "yamada:Release:MissingPayload", "The prepared payloa
 % Use the documented Toolbox Apps registration rather than a custom installer.
 options = matlab.addons.toolbox.ToolboxOptions(toolboxRoot, metadata.identifier, ToolboxFiles=files);
 options.ToolboxName = metadata.name;
+options.ToolboxImageFile = fullfile(toolboxRoot, "doc", "images", "toolbox-cover.png");
 options.ToolboxVersion = metadata.version;
 options.AuthorName = metadata.author;
 options.AuthorEmail = metadata.email;
