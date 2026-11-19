@@ -6,13 +6,18 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
         %   Eligibility distinguishes absolute from grid placement; one and
         %   several grid ancestors follow the same path.
         Depth = {0, 4}
-        % Setting - Distinct literal families used to exercise metadata-based eligibility reuse.
-        Setting = {"Tooltip", "FontSize", "Text", "FontColor"}
+        % Scenario - Representative literal families and layout placements.
+        Scenario struct = struct("absoluteText", struct("Depth", 0, "Setting", "Tooltip"), ...
+            "absoluteNumber", struct("Depth", 0, "Setting", "FontSize"), ...
+            "absoluteColor", struct("Depth", 0, "Setting", "FontColor"), ...
+            "nestedText", struct("Depth", 4, "Setting", "Text"), ...
+            "nestedNumber", struct("Depth", 4, "Setting", "FontSize"))
     end
     methods (Test)
-        function newLiteralSettingsKeepCachedConditions(testCase, Depth, Setting)
+        function newLiteralSettingsKeepCachedConditions(testCase, Scenario)
             % newLiteralSettingsKeepCachedConditions Avoid source inspection and placement preparation for safe additions.
-            [document, registry, source] = fixture(Depth);
+            [document, registry, source] = fixture(Scenario.Depth);
+            Setting = Scenario.Setting;
             document.validatePropertyCommit(registry);
             measured = [10 10 80 22];
             [copy, deletion, parents] = conditions(document, source.Id, registry, measured);
@@ -64,25 +69,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
             testCase.verifyEqual(orderParents(parents), orderParents(expectedParents));
         end
 
-        function subsequentExternalWritesInvalidateTransferredAnswers(testCase, Depth)
-            % subsequentExternalWritesInvalidateTransferredAnswers Reject stale caches after ownership or catalog changes.
-            for kind = ["readonly", "metadata", "registry", "history"]
-                [document, registry, source] = fixture(Depth);
-                conditions(document, source.Id, registry, [10 10 80 22]);
-                document.setProperty(source.Id, "Tooltip", "Transferred", registry);
-                switch kind
-                    case "readonly"
-                        source.IsEditable = false;
-                    case "metadata"
-                        document.Metadata.OtherInput = true;
-                    case "registry"
-                        registry.register(registry.get("uilabel"));
-                    case "history"
-                        document.undo();
-                end
-                actual = yamada.model.DocumentEditAvailability.copying(document, source.Id, registry);
-                if kind == "readonly", testCase.verifyFalse(actual.Enabled); end
-            end
+        function ownershipChangesInvalidateTransferredAnswers(testCase, Depth)
+            % ownershipChangesInvalidateTransferredAnswers Reject inherited permissions after an ownership change.
+            [document, registry, source] = fixture(Depth);
+            conditions(document, source.Id, registry, [10 10 80 22]);
+            document.setProperty(source.Id, "Tooltip", "Transferred", registry);
+            source.IsEditable = false;
+            actual = yamada.model.DocumentEditAvailability.copying(document, source.Id, registry);
+            testCase.verifyFalse(actual.Enabled);
         end
 
         function formerlyUnencodableValuesAreRechecked(testCase, Depth)

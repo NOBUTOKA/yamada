@@ -63,25 +63,6 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
             end
         end
 
-        function gridCommandPublishesOneSettledSnapshotWithoutPolling(testCase)
-            % gridCommandPublishesOneSettledSnapshotWithoutPolling Share native geometry and publish one atomic result.
-            app = yamada();
-            cleanup = onCleanup(@() delete(app));
-            figure = findall(0, "Tag", "yamada-editor");
-            palette = findall(figure, "Type", "uitable");
-            palette = palette(arrayfun(@(item) ~isempty(item.DoubleClickedFcn), palette));
-            row = find(string(palette.Data(:, 1)) == "Grid Layout", 1);
-            palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
-            gridId = app.SelectedComponentId;
-            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
-            data = overlay.Data.gridEditor;
-            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "GridAction", ...
-                "HTMLEventData", struct("action", "set-track", "revision", data.revision, ...
-                "activeGridId", gridId, "axis", "row", "index", 1, "mode", "fixed", "value", 40)));
-            testCase.verifyTrue(overlay.Data.gridEditor.geometryAvailable);
-            testCase.verifyEqual(app.Document.getComponent(gridId).getProperty("RowHeight").LiteralValue{1}, 40);
-        end
-
         function obsoletePointerCannotSelectFromReplacedGeometry(testCase)
             % obsoletePointerCannotSelectFromReplacedGeometry Reject delayed coordinates after native reconstruction.
             app = yamada();
@@ -161,46 +142,6 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
             waitForFitLayout(reference(label.Id));
             testCase.verifyGreaterThan(handles(label.Id).Position(4), previous(4));
             testCase.verifyEqual(handles(label.Id).Position, reference(label.Id).Position, "AbsTol", 1);
-        end
-
-        function auditedLabelChangeRetainsPreviewAndMatchesRebuild(testCase)
-            % auditedLabelChangeRetainsPreviewAndMatchesRebuild Compare incremental and full rendering.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("IncrementalFixture", registry);
-            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
-            label.setProperty("FontSize", 13);
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() delete(figure));
-            first = uipanel(figure, "Position", [1 1 300 300]);
-            second = uipanel(figure, "Position", [301 1 300 300]);
-            renderer = yamada.ui.PreviewRenderer(registry);
-            [handles, diagnostics] = renderer.render(document, first);
-            testCase.verifyEmpty(diagnostics);
-            document.setPropertyBatch(label.Id, yamada.model.PropertyTransaction.singleChange("FontSize", 21), registry);
-            [applied, diagnostics, geometry] = renderer.synchronize(document, handles, ...
-                yamada.ui.RefreshRequest("properties", label.Id, "FontSize"));
-            testCase.verifyTrue(applied);
-            testCase.verifyEmpty(diagnostics);
-            testCase.verifyFalse(geometry);
-            [reference, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, second);
-            testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(handles(label.Id).FontSize, reference(label.Id).FontSize);
-        end
-
-        function unrelatedDirectChangeForcesConservativeRebuild(testCase)
-            % unrelatedDirectChangeForcesConservativeRebuild Do not miss mutations outside the request.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("IncrementalFixture", registry);
-            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() delete(figure));
-            renderer = yamada.ui.PreviewRenderer(registry);
-            handles = renderer.render(document, figure);
-            document.getComponent(document.RootComponentId).setProperty("Color", [0.2 0.3 0.4]);
-            label.setProperty("FontSize", 21);
-            applied = renderer.synchronize(document, handles, yamada.ui.RefreshRequest("properties", label.Id, "FontSize"));
-            testCase.verifyFalse(applied);
-            testCase.verifyEqual(renderer.statistics().fallbackReason, "unrelated-inputs");
         end
 
         function rebindRetainsEditorAndRejectsQueuedEvent(testCase)

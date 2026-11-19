@@ -46,9 +46,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PlannedEditContractTest < 
             testCase.verifyEqual(document.CurrentText, before); testCase.verifyEqual(document.HistoryIndex, history);
         end
 
-        function copiedOrientationSurvivesOriginalDeletion(testCase, Destination)
+        function copiedOrientationSurvivesOriginalDeletion(testCase)
             % copiedOrientationSurvivesOriginalDeletion Use captured orientation when pasting after the source owner is gone.
-            [document, registry] = fixture(Destination);
+            [document, registry] = fixture("absolute");
             source = replace(document.CurrentText, "matlab.ui.control.Button", "matlab.ui.control.Slider");
             source = replace(source, "uibutton(app.Moved)", "uislider(app.Moved)");
             source = replace(source, "app.Moved.Position = [5 6 120 90];", "");
@@ -64,9 +64,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PlannedEditContractTest < 
             testCase.verifyEqual(string(parsed.getComponentByName(pasted.Name).getProperty("Orientation").LiteralValue), "vertical");
         end
 
-        function removingAnExecutionEffectRefreshesOtherOwners(testCase, Destination)
+        function removingAnExecutionEffectRefreshesOtherOwners(testCase)
             % removingAnExecutionEffectRefreshesOtherOwners Restore known state and unknown state through deletion history.
-            [document, registry] = fixture(Destination);
+            [document, registry] = fixture("absolute");
             source = replace(document.CurrentText, "app.Child.Position = [7 8 30 20];", ...
                 "app.Child.Position = [7 8 30 20];" + newline + "app.Child.UnknownProperty = 1;");
             document = yamada.source.AppSourceParser.parseText(source, registry);

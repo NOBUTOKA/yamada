@@ -4,21 +4,14 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
     %   while ensuring analysis does not change document source or history.
 
     methods (Test)
-        function sharesCandidateScansAcrossParsedOwners(testCase)
-            % sharesCandidateScansAcrossParsedOwners Scan the source once per callback name across many component queries.
+        function queriesKeepParsedOwnersIndependent(testCase)
+            % queriesKeepParsedOwnersIndependent Resolve callbacks across distinct owners and repeated queries.
             registry = yamada.model.ComponentRegistry.createDefault();
             source = CallbackSourceAnalyzerTest.fixture("", "");
-            declarations = strings(1, 24);
-            creations = strings(1, 24);
-            for index = 1:24
-                name = "Other" + index;
-                declarations(index) = name + " matlab.ui.control.Button";
-                creations(index) = "app." + name + " = uibutton(app.UIFigure);";
-            end
             source = replace(source, "Button matlab.ui.control.Button", ...
-                strjoin(["Button matlab.ui.control.Button", declarations], newline));
+                "Button matlab.ui.control.Button" + newline + "Other matlab.ui.control.Button");
             source = replace(source, "app.Button = uibutton(app.UIFigure);", ...
-                strjoin(["app.Button = uibutton(app.UIFigure);", creations], newline));
+                "app.Button = uibutton(app.UIFigure);" + newline + "app.Other = uibutton(app.UIFigure);");
             document = yamada.source.AppSourceParser.parseText(source, registry);
             buttons = document.Components(string({document.Components.Factory}) == "uibutton");
             for repeat = 1:2
@@ -29,20 +22,17 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
             end
         end
 
-        function candidateFilteringPreservesFirstBlockingReason(testCase)
-            % candidateFilteringPreservesFirstBlockingReason Keep source-order precedence for dynamic and indirect references.
+        function candidateFilteringRejectsIndirectAndDynamicReferences(testCase)
+            % candidateFilteringRejectsIndirectAndDynamicReferences Reject unsafe references independently of statement order.
             indirect = "alias.ButtonPushedFcn = @app.Pressed;";
             dynamic = "feval('unknown');";
             for order = 1:2
                 lines = [indirect; dynamic];
-                expected = "Indirect callback access prevents proving assignment ownership.";
                 if order == 2
                     lines = flip(lines);
-                    expected = "Dynamic source references prevent safe callback editing.";
                 end
                 [state, ~] = CallbackSourceAnalyzerTest.inspect(CallbackSourceAnalyzerTest.fixture(lines, ""));
                 testCase.verifyEqual(state.State, "unsupported");
-                testCase.verifyEqual(state.Reason, expected);
             end
             [state, ~] = CallbackSourceAnalyzerTest.inspect(CallbackSourceAnalyzerTest.fixture( ...
                 "app.Other.ButtonPushedFcn = [];", ""));

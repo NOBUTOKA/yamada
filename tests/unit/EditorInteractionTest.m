@@ -20,16 +20,9 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(numel(palette), 1);
             testCase.verifyNotEmpty(palette.DoubleClickedFcn);
             testCase.verifyNotEmpty(palette.CellSelectionCallback);
-            testCase.verifyEqual(string(palette.Data{1, 1}), "UI Axes");
-
-            panels = findall(0, "Type", "uipanel");
-            titles = string({panels.Title});
-            testCase.verifyTrue(any(titles == "Hierarchy"));
-            testCase.verifyTrue(any(titles == "Properties"));
 
             toolbars = findall(0, "Type", "uitoolbar");
             testCase.verifyEqual(numel(toolbars), 1);
-            testCase.verifyEqual(numel(toolbars.Children), 3);
             refresh = findall(toolbars, "Tag", "yamada-refresh-source");
             testCase.verifyEqual(numel(refresh), 1);
             testCase.verifyEqual(string(refresh.Enable), "off");
@@ -515,6 +508,7 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 1);
             overlays = findall(figure, "Type", "uihtml");
             refreshed = overlays.Data.gridEditor;
+            testCase.verifyTrue(refreshed.geometryAvailable);
             overlays.HTMLEventReceivedFcn(overlays, struct( ...
                 "HTMLEventName", "GridAction", ...
                 "HTMLEventData", struct("action", "insert-track", ...

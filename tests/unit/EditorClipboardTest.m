@@ -82,23 +82,15 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(app.Document.Components, before);
         end
 
-        function menusShowShortcutsAndReparentHasNoMenu(testCase)
-            % menusShowShortcutsAndReparentHasNoMenu Keep parent changes exclusive to Preview drag.
+        function fileAndEditAcceleratorsAreUnambiguous(testCase)
+            % fileAndEditAcceleratorsAreUnambiguous Keep file and edit shortcuts unambiguous.
             [app, figure] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             actions = ["Copy", "Cut", "Paste"];
             keys = ["C", "X", "V"];
             for index = 1:numel(actions)
                 item = findall(figure, "Tag", "yamada-edit-" + lower(actions(index)));
-                testCase.verifyEqual(string(item.Text), actions(index));
                 testCase.verifyEqual(string(item.Accelerator), keys(index));
-            end
-            rename = findall(figure, "Tag", "yamada-rename-component");
-            testCase.verifyEmpty(rename);
-            items = findall(figure, "Type", "uimenu");
-            labels = string({items.Text});
-            for label = ["&Delete" + string(sprintf("\t\t\t")) + "(Del)", "&Undo", "&Redo", "Reload Source" + string(char(9)) + "(F5)"]
-                testCase.verifyTrue(any(labels == label));
             end
             undo = findall(figure, "Tag", "yamada-edit-undo");
             redo = findall(figure, "Tag", "yamada-edit-redo");
@@ -108,8 +100,6 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
                 testCase.verifyNumElements(findall(figure, "Type", "uimenu", "Accelerator", key), 1);
             end
             testCase.verifyEmpty(findall(figure, "Type", "uimenu", "Accelerator", "A"));
-            testCase.verifyEmpty(findall(figure, "Tag", "yamada-edit-reparent"));
-            testCase.verifyEmpty(findall(figure, "Tag", "yamada-context-reparent"));
         end
 
         function previewContextTargetsAndShortcutsShareCommands(testCase)

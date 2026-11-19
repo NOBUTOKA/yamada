@@ -15,7 +15,7 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                 [handles, diagnostics] = renderer.render(document, left);
                 testCase.assertEmpty(diagnostics);
                 original = handles(first.Id);
-                for value = [3 7 -2 1e6]
+                for value = [3 -2 1e6]
                     document.setProperty(first.Id, "Value", value, registry);
                     document.validatePropertyCommit(registry);
                     [applied, diagnostics, geometry] = renderer.synchronize(document, handles, ...

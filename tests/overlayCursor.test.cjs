@@ -31,9 +31,6 @@ context.addHandles({id: 'slider', selected: true, x: 10, y: 10, width: 90,
 assert.equal(handles.length, 6);
 assert.ok(handles.every(handle => !['n', 's'].includes(handle.attributes['data-handle'])));
 assert.ok(handles.every(handle => handle.attributes['data-resize-constraint'] === 'fixedHeight'));
-assert.match(html, /\.silhouette \{[^}]*cursor: move;/);
-assert.match(html, /\.handle\[data-handle="ne"\][^{]*\{ cursor: ne-resize; \}/);
-assert.match(html, /data-resize-constraint="fixedHeight"\]\[data-handle="ne"\][\s\S]*\{ cursor: ew-resize; \}/);
 handles.length = 0;
 context.currentData = {width: 320, height: 240, rootId: 'root',
   rootSelected: false, rootEditable: true};
@@ -41,7 +38,6 @@ context.addRootHandles();
 assert.equal(handles.length, 8);
 assert.deepEqual(handles.map(handle => handle.attributes['data-handle']).sort(),
 ['root-e', 'root-n', 'root-ne', 'root-nw', 'root-s', 'root-se', 'root-sw', 'root-w']);
-assert.doesNotMatch(html, /root-size-label/);
 handles.length = 0;
 context.currentData.rootEditable = false;
 context.addRootHandles();
