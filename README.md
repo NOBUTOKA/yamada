@@ -16,7 +16,7 @@ yamada does not replace App Designer's `.mlapp` workflow and cannot open `.mlapp
 
 ## Example
 
-This video edits a small example app, [SignalExplorer](examples/SignalExplorer.m), in yamada.
+This video shows yamada editing [SignalExplorer](https://github.com/NOBUTOKA/yamada/blob/main/examples/SignalExplorer.m), a demo in the GitHub repository. For an example included in the installed Toolbox, see [WelcomeApp](doc/GETTING_STARTED.md#edit-the-included-example).
 
 https://github.com/user-attachments/assets/ef965c59-a430-4c2f-9f11-2f8f3395d9e0
 
@@ -47,7 +47,7 @@ To install, download the `.mltbx` file from the [latest GitHub Release](https://
 yamada
 ```
 
-You can also launch the installed app from MATLAB's **Apps** tab. See [Getting Started](doc/GETTING_STARTED.md) for a walkthrough, the included example, and update/removal instructions. The normal launch command requires neither parentheses nor an output assignment.
+You can also launch the installed app from MATLAB's **Apps** tab. See [Getting Started](doc/GETTING_STARTED.md) for a walkthrough, the included example, and update/removal instructions.
 
 To run a development checkout, clone the repository or extract **Code > Download ZIP**, add only its root to the MATLAB path, and enter `yamada`. See the [contributing guide](https://github.com/NOBUTOKA/yamada/blob/main/CONTRIBUTING.md) for development setup.
 
@@ -92,7 +92,7 @@ This changes the component's name in the MATLAB code, such as `app.Button`, and 
 
 ### Copy, cut, and paste components
 
-Select a component in **Hierarchy** or on the canvas, then use **Edit > Copy / Cut / Paste**, or **Ctrl+C / Ctrl+X / Ctrl+V**. These commands are also available by right-clicking a component in **Hierarchy**.
+Select a component in **Hierarchy** or on the canvas, then use **Edit > Copy / Cut / Paste**, or **Ctrl+C / Ctrl+X / Ctrl+V**. You can also right-click a component in **Preview**. On R2023b and later, the same menu is available by right-clicking a component in **Hierarchy**.
 
 - Copying or cutting a container includes the components inside it. **Cut** removes them immediately; **Undo** restores them.
 - Select the destination container before pasting. If it cannot contain the copied component, yamada looks for a suitable enclosing container. Hover over the status line to check the destination or read why an action is unavailable.
@@ -111,7 +111,7 @@ For a Grid Layout destination, the component snaps to cells. A move into occupie
 
 Callbacks let you run MATLAB code when a user interacts with your app, such as clicking a button.
 
-1. Right-click the component in **Hierarchy** and select **Manage Callbacks...**.
+1. Right-click the component in **Preview** and select **Manage Callbacks...**. On R2023b and later, you can also open this menu from **Hierarchy**.
 2. Use the dropdown beside a callback to select an existing method, or choose `<New...>` and enter a name to create one.
 3. Choose `<Disconnect>` to stop that callback from calling its method. **The method and its code stay in the file**, so you can reconnect it later. This dialog does not delete methods.
 

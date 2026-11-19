@@ -2,14 +2,14 @@
 
 For maintainers building and signing a Toolbox candidate, this guide describes the build inputs, output files, and signing command.
 
-Add `dev/release` to the MATLAB path and run `buildYamadaToolbox`. The build requires MATLAB R2026b, the declared maximum release, on Windows, because the packager rejects a maximum release newer than the running one. Its default output is the ignored `build/1.0.0` directory; pass a new output folder to keep multiple candidates. Existing output files are never replaced.
+Add `dev/release` to the MATLAB path and run `buildYamadaToolbox`. The build requires MATLAB R2026b, the declared maximum release, on Windows, because the packager rejects a maximum release newer than the running one. Its default output is the ignored `build/1.1.0` directory; pass a new output folder to keep multiple candidates. Existing output files are never replaced.
 
 ```matlab
 addpath(fullfile(pwd, "dev", "release"));
 artifacts = buildYamadaToolbox;
 ```
 
-`toolbox.json` is the authoritative source for version, permanent UUID, author, public email, summary, description, and release compatibility. The packager explicitly selects runtime code, resources, user documents, screenshots, and the project-owned example. Only the installed distribution root is added to the MATLAB path. The Apps gallery launches `yamada.m` directly.
+`toolbox.json` is the authoritative source for version, permanent UUID, author, public email, summary, description, package README path, and release compatibility. The packager explicitly selects runtime code, resources, user documents, screenshots, and the project-owned example. Only the installed distribution root is added to the MATLAB path. The Apps gallery launches `yamada.m` directly.
 
 The build produces the `.mltbx`, `SHA256SUMS`, and a local `build-manifest.json` containing the source commit, dirty-state flag, MATLAB version, selected input hashes, and artifact SHA-256. `buildYamadaToolbox` reads the commit and dirty state from Git before and after packaging, so it requires Git. The packaging itself is `packageYamadaToolbox`, which takes the source identity from its caller; tests use it with a fixed identity so that they do not need Git. Release candidates must always be built with `buildYamadaToolbox`. A build from a dirty tree is a development candidate, not a publishable release. File timestamps and packager-generated metadata can vary between runs; reproducibility means repeatable source selection and configuration, not byte-identical archives.
 
@@ -20,11 +20,11 @@ GPG-sign the final release commit on a work branch. Integrate it through a PR wh
 Build from that signed commit in a clean checkout, complete candidate validation, and prepare its detached signature using PowerShell:
 
 ```powershell
-./dev/release/Complete-YamadaRelease.ps1 -Artifact ./build/1.0.0/yamada-1.0.0.mltbx -SigningKey <signing-key>
+./dev/release/Complete-YamadaRelease.ps1 -Artifact ./build/1.1.0/yamada-1.1.0.mltbx -SigningKey <signing-key>
 ```
 
 The script checks candidate identity, SHA-256, clean-build provenance, integration into `main`, and the release commit's GPG signature before invoking GnuPG. GnuPG may request a passphrase, PIN, or hardware-key confirmation. A signing error is a publication blocker. Keep the detached signature outside the Toolbox.
 
-Publish the accepted `.mltbx`, its `.mltbx.asc`, and `SHA256SUMS` as Release assets. Keep the build manifest as local verification evidence. Sign `v1.0.0` and make it point to the same release source commit.
+Publish the accepted `.mltbx`, its `.mltbx.asc`, and `SHA256SUMS` as Release assets. Keep the build manifest as local verification evidence. Sign `v1.1.0` and make it point to the same release source commit.
 
 See the [release procedure](../../doc/RELEASING.md) for candidate acceptance and publication.
