@@ -1150,7 +1150,10 @@ classdef EditorInteractionTest < matlab.unittest.TestCase
                 testCase.assertEqual(numel(editor), 1);
                 editor.Value = value;
                 editor.ValueChangedFcn(editor, struct());
-                drawnow; pause(0.25); drawnow;
+                drawnow;
+                canvas = findall(figure, "Tag", "yamada-preview-canvas");
+                yamada.ui.waitForPreviewLayout(figure, canvas);
+                drawnow;
             end
 
             % The retained payload must equal an independent measurement of the current native controls.

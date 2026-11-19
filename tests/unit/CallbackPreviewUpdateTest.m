@@ -24,8 +24,9 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
                 tree.SelectedNodes = node;
                 tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
                 % Finish unrelated initial layout before a callback source operation.
-                drawnow; pause(0.5); drawnow;
+                drawnow;
                 canvas = findall(figure, "Tag", "yamada-preview-canvas");
+                yamada.ui.waitForPreviewLayout(figure, canvas);
                 native = findall(canvas, "Type", "uibutton");
                 rectangle = native.Position;
                 context = findall(figure, "Tag", "yamada-hierarchy-context");
@@ -44,6 +45,7 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
                     canvas = findall(figure, "Tag", "yamada-preview-canvas");
                     native = findall(canvas, "Type", "uibutton");
                     testCase.assertNumElements(native, 1);
+                    yamada.ui.waitForPreviewLayout(figure, native);
                     testCase.verifyEqual(native.Position, rectangle);
                     testCase.verifyEmpty(native.ButtonPushedFcn);
                     if selection == "SubjectPushed"
@@ -61,6 +63,7 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
                     canvas = findall(figure, "Tag", "yamada-preview-canvas");
                     native = findall(canvas, "Type", "uibutton");
                     testCase.assertNumElements(native, 1);
+                    yamada.ui.waitForPreviewLayout(figure, native);
                     testCase.verifyEqual(native.Position, rectangle);
                     testCase.verifyEmpty(native.ButtonPushedFcn);
                     if action == "Undo"

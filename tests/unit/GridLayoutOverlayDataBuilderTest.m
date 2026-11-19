@@ -224,7 +224,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             document.setProperty(button.Id, "Layout.Row", 2);
             document.setProperty(button.Id, "Layout.Column", 2);
 
-            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [21 31 760 560]);
             renderer = yamada.ui.PreviewRenderer(registry);
@@ -302,7 +302,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             document.setProperty(child.Id, "Layout.Row", [1 2]);
             document.setProperty(child.Id, "Layout.Column", [1 2]);
 
-            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 760 560]);
             renderer = yamada.ui.PreviewRenderer(registry);
@@ -332,7 +332,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             document = yamada.source.AppSourceParser.parseFile(fullfile(projectRoot, ...
                 "tests", "fixtures", "SimpleCalculatorApp.m"), registry);
             grid = document.getComponentByName("GridLayout");
-            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 760 560]);
             renderer = yamada.ui.PreviewRenderer(registry);
@@ -363,7 +363,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             document = yamada.source.AppSourceParser.parseFile(yamadaFixturePath("ControlGalleryApp.m"), registry);
             grid = document.getComponentByName("FormGrid");
             selected = document.getComponentByName("DueDatePicker");
-            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 760 560]);
             renderer = yamada.ui.PreviewRenderer(registry);
@@ -406,7 +406,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             document.setProperty(child.Id, "Layout.Row", 2);
             document.setProperty(child.Id, "Layout.Column", 1);
 
-            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 760 560]);
             renderer = yamada.ui.PreviewRenderer(registry);
@@ -440,7 +440,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             document.setProperty(child.Id, "Layout.Row", 3);
             document.setProperty(child.Id, "Layout.Column", 3);
 
-            figure = uifigure("Visible", "on", "Position", [100 100 800 600]);
+            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 800 600]);
             cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
             panel = uipanel(figure, "Position", [1 1 760 560]);
             renderer = yamada.ui.PreviewRenderer(registry);
@@ -510,7 +510,10 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
 
     methods (Static, Access = private)
         function waitForLayout(grid)
-            % waitForLayout Wait for public GridLayout geometry to stabilize in the test figure.
+            % waitForLayout Wait for native grid bounds and browser-delivered child positions.
+            arguments (Input)
+                grid (1, 1) matlab.ui.container.GridLayout
+            end
 
             prior = zeros(1, 4);
             stableCount = 0;
@@ -524,6 +527,8 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
                     stableCount = 0;
                 end
                 if stableCount >= 2
+                    % The outer bounds can settle before the throttled child updates.
+                    yamada.ui.waitForPreviewLayout(ancestor(grid, "figure"), grid);
                     return
                 end
                 prior = current;

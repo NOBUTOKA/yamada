@@ -123,7 +123,7 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
             label.setProperty("Text", "Fit growth");
             label.setProperty("Layout.Row", 1);
             label.setProperty("Layout.Column", 1);
-            figure = uifigure("Visible", "on", "Position", [100 100 900 500]);
+            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 900 500]);
             cleanup = onCleanup(@() delete(figure));
             first = uipanel(figure, "Position", [1 1 440 480]);
             second = uipanel(figure, "Position", [450 1 440 480]);
@@ -167,7 +167,7 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
 end
 
 function waitForFitLayout(label)
-% waitForFitLayout Wait for realized public geometry instead of the initial factory rectangle.
+% waitForFitLayout Wait for the public fit width and browser-delivered text geometry.
 arguments (Input)
     label (1, 1) matlab.ui.control.Label
 end
@@ -182,7 +182,11 @@ for index = 1:60
     else
         stable = 0;
     end
-    if stable >= 4, return, end
+    if stable >= 4
+        % The width can stabilize while a font-driven fit height update is pending.
+        yamada.ui.waitForPreviewLayout(ancestor(label, "figure"), label);
+        return
+    end
     previous = current;
 end
 error("yamada:PerformanceViewTest:UnstableLayout", "Fit geometry did not settle.");

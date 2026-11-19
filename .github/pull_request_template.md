@@ -13,6 +13,7 @@ Describe effects on source preservation, Safe Preview, and the supported input/o
 - Checks run and results:
 - Checks not run and why:
 - MATLAB release and platform, when applicable:
+- Local R2023a UI subset (commit, MATLAB update, passed/failed/incomplete, or reason not run):
 
 ## Checklist
 

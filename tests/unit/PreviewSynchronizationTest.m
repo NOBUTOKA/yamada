@@ -245,13 +245,16 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             panel.setProperty("Position", [10 10 300 200]); panel.setProperty("AutoResizeChildren", "on");
             label = fixtureComponent(document, registry.get("uilabel"), panel.Id, "Subject");
             label.setProperty("Position", [10 20 100 22]);
-            figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
+            figure = yamada.ui.createEditorFigure(Visible="on");
+            cleanup = onCleanup(@() delete(figure));
             renderer = yamada.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             panel.setProperty("Position", [20 20 500 300]);
             [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", panel.Id, "Position"));
             testCase.verifyEmpty(diagnostics);
             original = handles(label.Id);
-            drawnow; pause(0.15); drawnow;
+            % Wait for native child geometry after the parent resize.
+            drawnow;
+            yamada.ui.waitForPreviewLayout(figure, original);
             testCase.verifyEqual(original.Position, [10 20 100 22]);
             clear cleanup
         end
