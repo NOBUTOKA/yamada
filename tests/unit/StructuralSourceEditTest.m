@@ -42,8 +42,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             relocated = document.CurrentText;
             document.undo();
             testCase.verifyEqual(document.CurrentText, source);
+            warning = document.Diagnostics(string({document.Diagnostics.Code}) == "source-release-component");
+            testCase.assertNumElements(warning, 1);
+            testCase.verifyEqual(warning.SourceSpan, document.getComponentByName("Picker").SourceSpans.Creation);
             document.redo();
             testCase.verifyEqual(document.CurrentText, relocated);
+            warning = document.Diagnostics(string({document.Diagnostics.Code}) == "source-release-component");
+            testCase.assertNumElements(warning, 1);
+            testCase.verifyEqual(warning.SourceSpan, document.getComponentByName("Picker").SourceSpans.Creation);
 
             % The newer component itself can move while its other settings stay protected.
             document.reparentSubtree(picker.Id, destination.Id, registry, [], [], [5 10 45 25]);

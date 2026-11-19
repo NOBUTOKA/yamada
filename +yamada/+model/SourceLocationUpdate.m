@@ -270,6 +270,8 @@ classdef SourceLocationUpdate
             diagnostics = yamada.model.Diagnostic.empty;
             for previous = previousDiagnostics
                 [span, valid] = batch.mapSpan(previous.SourceSpan);
+                % Component availability warnings are rebuilt by scoped model validation.
+                if ~valid && previous.Code == "source-release-component", continue, end
                 if ~valid && any(arrayfun(@(edit) strlength(edit.Text) == 0 && edit.Start <= previous.SourceSpan.StartOffset && ...
                         edit.End >= previous.SourceSpan.EndOffset, batch.Edits)), continue, end
                 assert(valid, "yamada:SourceLiteralTransaction:WiderProof", "Diagnostic ownership changed.");
