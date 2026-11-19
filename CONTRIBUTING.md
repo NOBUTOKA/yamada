@@ -162,7 +162,22 @@ Prefer small tests of behavior and meaningful state transitions; avoid assertion
 
 Before submitting a pull request, run the tests relevant to your changes and include the results. If you could not run a test, name it and explain why in the pull request.
 
-Before submitting a pull request, run the full suite on both the minimum source release R2023a and the surface release of the component ledger, which `surfaceRelease` in `dev/component-data/releases.json` names and is currently R2026b, except for documentation-only changes that do not affect executable examples or behavior. Use quick and area profiles while iterating. Start the runner from the executable of the release under test; parallel workers start from the same `matlabroot`. If you cannot set up an R2023a environment, run the full suite on the surface release and ask the maintainer in the pull request description to run the R2023a full suite. Before a release, also follow the release checks in [the release procedure](doc/RELEASING.md).
+### Pull Request Validation
+
+GitHub Actions starts **MATLAB tests** when a pull request to `main` or a maintenance branch is opened or reopened as ready for review, marked ready for review, or updated while ready. It runs the R2026b full suite in 20 jobs and then the R2023a full suite without the `ui` tag in 20 jobs. Each job runs one MATLAB session on its own Windows runner.
+
+For changes that affect behavior or executable examples, also run the R2023a tests tagged `ui` locally in a graphical MATLAB session from the pull request revision. Record the tested commit, MATLAB update, and the pass, failure, and incomplete counts in the pull request. If you do not have a graphical R2023a session, ask the maintainer to run this subset before merging. A successful CI run covers the hosted jobs. Review the separately recorded R2023a UI result before merging.
+
+From the repository root in R2023a, run the UI portion of the full suite with:
+
+```matlab
+addpath(pwd, fullfile(pwd, "tests"));
+results = runYamadaFullTestPartition("ui");
+```
+
+Use quick and area profiles while iterating. Start the runner from the executable of the release under test. Parallel local workers start from the same `matlabroot`. Before a release, follow the [release validation procedure](doc/RELEASING.md).
+
+### Local Test Profiles
 
 The quick profile contains every non-UI test except catalog-wide sweeps, plus a bounded UI smoke set. Catalog-wide sweeps, which repeat a check for every catalog variant through rendering, generation, or ledger comparison, carry the `exhaustive` tag instead of `fast`; they run in the full suite and in area profiles that select them. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, `lifecycle`, and `exhaustive`. Run the `exhaustive` area while iterating on catalog changes.
 
@@ -214,7 +229,7 @@ Include the following in a pull request:
 - The related issue, if any
 - Effects on source preservation, Safe Preview, and the supported scope
 - Tests run, the MATLAB release of each run, and their results
-- Checks not run and the reason, including a request for the maintainer to run the R2023a full suite if you could not run it
+- Checks not run and the reason, including a request for the maintainer to run the R2023a UI tests if you could not run them
 - Before-and-after images or reproduction steps when useful for a UI change
 
 Before submitting:
