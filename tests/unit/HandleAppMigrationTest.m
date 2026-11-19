@@ -29,18 +29,19 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
                 [~, diagnostics] = yamada.source.AppSourceParser.parseText(text, registry);
                 testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
             end
-            for count = [0 2]
+            for count = 0:2
                 lines = ["classdef RootApp < handle"; "properties"; ...
                     "UIFigure matlab.ui.Figure"; "OtherFigure matlab.ui.Figure"; ...
                     "end"; "methods"; "function app = RootApp"];
                 if count > 0
-                    lines = [lines; "app.UIFigure = uifigure();"; "app.OtherFigure = uifigure();"]; %#ok<AGROW>
+                    lines(end + 1) = "app.UIFigure = uifigure();"; %#ok<AGROW>
+                    if count == 2, lines(end + 1) = "app.OtherFigure = uifigure();"; end %#ok<AGROW>
                 end
                 [document, diagnostics] = yamada.source.AppSourceParser.parseText( ...
                     strjoin([lines; "end"; "end"; "end"], newline), registry);
                 testCase.verifyEqual(nnz(string({document.Components.Factory}) == "uifigure"), count);
-                testCase.verifyTrue(any(string({diagnostics.Code}) == "invalid-root-count"));
-                testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
+                testCase.verifyEqual(any(string({diagnostics.Code}) == "invalid-root-count"), count ~= 1);
+                testCase.verifyEqual(yamada.validation.ModelValidator.hasErrors(diagnostics), count ~= 1);
             end
         end
 

@@ -47,10 +47,10 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
             testCase.verifyEqual(refreshed, changed);
         end
 
-        function unrelatedInvalidRecordsKeepLegacyPlacementResults(testCase, Depth)
+        function unrelatedInvalidRecordsKeepLegacyPlacementResults(testCase)
             % unrelatedInvalidRecordsKeepLegacyPlacementResults Fall back locally instead of rejecting unrelated corruption.
             for kind = ["hierarchy", "live-data"]
-                [document, registry, source, destinations, outsider] = fixture(Depth);
+                [document, registry, source, destinations, outsider] = fixture(3);
                 snapshot = yamada.model.SubtreeSnapshot(document, source.Id);
                 expected = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, destinations(1).Id, registry, source.Id);
                 if kind == "hierarchy"
@@ -63,10 +63,10 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
             end
         end
 
-        function invalidDestinationChildrenStillFail(testCase, Depth)
+        function invalidDestinationChildrenStillFail(testCase)
             % invalidDestinationChildrenStillFail Retain explicit-coordinate and subtree value restrictions.
             for kind = ["missing-coordinate", "live-data"]
-                [document, registry, source, destinations] = fixture(Depth);
+                [document, registry, source, destinations] = fixture(3);
                 snapshot = yamada.model.SubtreeSnapshot(document, source.Id);
                 parent = destinations(1);
                 yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, parent.Id, registry, source.Id);

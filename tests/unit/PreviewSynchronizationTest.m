@@ -32,6 +32,28 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             applied = renderer.synchronize(document, handles, ...
                 yamada.ui.RefreshRequest("properties", owner.Id, "Text"));
             testCase.verifyFalse(applied);
+
+            % Compare a generated owner with a fresh renderer before testing an unrelated root write.
+            delete(figure.Children);
+            document = yamada.model.NewAppFactory.createEmpty("IncrementalFixture", registry);
+            owner = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            owner.setProperty("FontSize", 13);
+            left = uipanel(figure, "Position", [1 1 300 300]);
+            right = uipanel(figure, "Position", [301 1 300 300]);
+            renderer = yamada.ui.PreviewRenderer(registry);
+            handles = renderer.render(document, left);
+            document.setPropertyBatch(owner.Id, yamada.model.PropertyTransaction.singleChange("FontSize", 21), registry);
+            [applied, diagnostics, geometry] = renderer.synchronize(document, handles, ...
+                yamada.ui.RefreshRequest("properties", owner.Id, "FontSize"));
+            testCase.verifyTrue(applied);
+            testCase.verifyEmpty(diagnostics);
+            testCase.verifyFalse(geometry);
+            reference = yamada.ui.PreviewRenderer(registry).render(document, right);
+            testCase.verifyEqual(handles(owner.Id).FontSize, reference(owner.Id).FontSize);
+            document.getComponent(document.RootComponentId).setProperty("Color", [0.2 0.3 0.4]);
+            owner.setProperty("FontSize", 23);
+            testCase.verifyFalse(renderer.synchronize(document, handles, ...
+                yamada.ui.RefreshRequest("properties", owner.Id, "FontSize")));
         end
     end
 

@@ -158,6 +158,8 @@ When adding or changing a standard component or property, start with the [catalo
 
 ## Testing
 
+Prefer small tests of behavior and meaningful state transitions; avoid assertions that merely repeat fixed presentation settings or constrain replaceable implementation details.
+
 Before submitting a pull request, run the tests relevant to your changes and include the results. If you could not run a test, name it and explain why in the pull request.
 
 Before submitting a pull request, run the full suite on both the minimum source release R2023a and the surface release of the component ledger, which `surfaceRelease` in `dev/component-data/releases.json` names and is currently R2026b, except for documentation-only changes that do not affect executable examples or behavior. Use quick and area profiles while iterating. Start the runner from the executable of the release under test; parallel workers start from the same `matlabroot`. If you cannot set up an R2023a environment, run the full suite on the surface release and ask the maintainer in the pull request description to run the R2023a full suite. Before a release, also follow the release checks in [the release procedure](doc/RELEASING.md).

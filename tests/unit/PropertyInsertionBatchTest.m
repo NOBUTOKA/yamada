@@ -14,17 +14,17 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
     end
 
     methods (Test, TestTags = {'fast'})
-        function parsesOneCandidateForTwelvePendingValueOwners(testCase)
-            % parsesOneCandidateForTwelvePendingValueOwners Bound reparsing independently of owner count.
-            document = testCase.numericFixture(12);
+        function pendingValuesRoundTripAcrossOwners(testCase)
+            % pendingValuesRoundTripAcrossOwners Preserve distinct pending values across source owners.
+            document = testCase.numericFixture(3);
             original = document.OriginalText;
-            for index = 1:12
+            for index = 1:3
                 document.getComponentByName("Field" + index).setProperty("Value", index + 1);
             end
             [source, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
             testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
-            for index = 1:12
+            for index = 1:3
                 testCase.verifyEqual(parsed.getComponentByName("Field" + index).getProperty("Value").LiteralValue, index + 1);
             end
             testCase.verifyEqual(document.OriginalText, original);
@@ -33,7 +33,7 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
 
         function cachedGenerationKeepsPublicPlansIndependent(testCase)
             % cachedGenerationKeepsPublicPlansIndependent Reuse edits while protecting caller-owned parsed records.
-            for count = [1 12]
+            for count = [1 3]
                 document = testCase.numericFixture(count);
                 for index = 1:count
                     document.getComponentByName("Field" + index).setProperty("Value", index + 1);

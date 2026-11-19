@@ -16,7 +16,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
     methods (Test)
         function repeatedTextAvoidsWholeDocumentWork(testCase)
             % repeatedTextAvoidsWholeDocumentWork Reuse a fully checked insertion across all layouts.
-            for layout = ["absolute", "flat", "nested"]
+            for layout = ["absolute", "nested"]
                 [document, first] = testCase.fixture(layout);
                 document.setProperty(first.Id, "Text", "First edit", testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);

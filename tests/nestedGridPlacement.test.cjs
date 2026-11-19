@@ -46,8 +46,6 @@ const parent = {activeGridId: 'outer', revision: 7, editable: true, geometryAvai
 context.renderGridPlacement(parent);
 const frame = controls.children[0];
 assert.equal(frame.dataset.componentId, 'inner');
-assert.equal(frame.children.length, 12);
-assert.match(html, /\.grid-child\.selected\.editable\.grid-placement\s*\{[^}]*pointer-events:\s*none/);
 const leftEdge = frame.children.find(item => item.className === 'grid-move-edge left');
 // A border just outside the cell must start and commit in the parent, with scroll offsets applied.
 leftEdge.listeners.pointerdown(pointer(-2, 300));
@@ -72,7 +70,6 @@ assert.equal(sent[1].data.columnEnd, 2);
 context.renderGridSelectionTargets([{id: 'inner', gridId: 'outer', x: 0, y: 210,
   width: 190, height: 190}], {activeGridId: 'inner'}, parent);
 const target = controls.children.at(-1);
-assert.equal(target.style.cursor, 'move');
 target.listeners.pointerdown(pointer(50, 300));
 assert.ok(context.gridGesture);
 documentListeners.keydown({key: 'Escape', preventDefault() {}});

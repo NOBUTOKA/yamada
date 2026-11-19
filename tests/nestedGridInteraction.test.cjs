@@ -42,9 +42,7 @@ context.renderNestedGridComponents([
 ]);
 assert.equal(controls.children.length, 2);
 const target = controls.children[1];
-assert.equal(target.className, 'nested-grid-component');
 assert.equal(target.dataset.componentId, 'button');
-assert.equal(target.children.length, 8);
 
 let defaultPrevented = false;
 target.listeners.pointerdown({

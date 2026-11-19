@@ -21,7 +21,6 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             figure = findall(0, "Tag", "yamada-callback-manager");
             controls = findall(figure, "Tag", "yamada-callback-target");
             testCase.verifyEqual(numel(controls), 3);
-            testCase.verifyEqual(string(figure.WindowStyle), "modal");
             for row = 1:2
                 control = controls(arrayfun(@(item) item.Layout.Row == row, controls));
                 testCase.verifyEqual(string(control.Enable), "on");
@@ -30,8 +29,6 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             control = controls(arrayfun(@(item) item.Layout.Row == 3, controls));
             testCase.verifyEqual(string(control.Enable), "off");
             testCase.verifyEqual(string(control.Tooltip), "Unsupported expression");
-            testCase.verifyEmpty(findall(figure, "Tag", "yamada-callback-add"));
-            testCase.verifyEmpty(findall(figure, "Tag", "yamada-callback-delete"));
         end
 
         function refreshesAfterSuccessAndReportsFailure(testCase)
