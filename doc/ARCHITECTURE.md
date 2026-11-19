@@ -1070,7 +1070,7 @@ Diff Preview passes the original and committed source snapshots to an HTML viewe
 
 - The application enables in-place Save only after Open or Save As establishes a confirmed path and validation has no errors.
 - Generated text is written as UTF-8 without a BOM. New documents use the host line-ending convention; opened source preserves detected CRLF or LF text.
-- There is no truncate-in-place or copy/delete fallback. A failed replacement restores a displaced original with a non-overwriting move when the destination is absent; otherwise it retains the recovery file and reports its path. Temporary cleanup cannot turn a committed replacement into a reported save failure.
+- After replacement, the writer compares the published discretionary ACL with the original read before replacement and restores it if Windows added explicit rules. The writer retains the backup and reports a recovery error if it cannot restore and verify the original ACL, including its inheritance settings. Windows may update its auto-inheritance bookkeeping flag. There is no truncate-in-place or copy/delete fallback. A failed replacement restores a displaced original with a non-overwriting move when the destination is absent; otherwise it retains the recovery file and reports its path. Temporary cleanup cannot turn a committed replacement into a reported save failure.
 - Filesystem permissions must allow sibling creation and native replacement, and filesystem or power-loss durability remains outside this contract.
 
 **Explanation**

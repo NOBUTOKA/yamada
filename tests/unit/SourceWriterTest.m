@@ -17,16 +17,43 @@ classdef (TestTags = {'fast', 'generation', 'lifecycle'}) SourceWriterTest < mat
 
         function replacementPreservesCreationTimeAndPermissions(testCase)
             % replacementPreservesCreationTimeAndPermissions Retain native destination metadata.
-            target = string(tempname) + ".m";
-            cleanup = onCleanup(@() System.IO.File.Delete(target));
+            % Give the parent a distinguishable rule that new files inherit.
+            folder = string(tempname);
+            mkdir(folder);
+            cleanup = onCleanup(@() rmdir(folder, "s"));
+            target = fullfile(folder, "Example.m");
+            section = System.Security.AccessControl.AccessControlSections.Access;
+            parent = System.IO.Directory.GetAccessControl(folder, section);
+            guests = System.Security.Principal.SecurityIdentifier("S-1-5-32-546");
+            rule = System.Security.AccessControl.FileSystemAccessRule(guests, ...
+                System.Security.AccessControl.FileSystemRights.ReadData, ...
+                System.Security.AccessControl.InheritanceFlags.ObjectInherit, ...
+                System.Security.AccessControl.PropagationFlags.InheritOnly, ...
+                System.Security.AccessControl.AccessControlType.Allow);
+            parent.AddAccessRule(rule);
+            System.IO.Directory.SetAccessControl(folder, parent);
+
+            % Verify that replacement preserves creation time and DACL entries.
             yamada.source.SourceWriter.write(target, "original");
             System.IO.File.SetCreationTimeUtc(target, System.DateTime(2001, 1, 1));
             creation = System.IO.File.GetCreationTimeUtc(target).ToFileTimeUtc();
-            section = System.Security.AccessControl.AccessControlSections.Access;
             permissions = string(System.IO.File.GetAccessControl(target).GetSecurityDescriptorSddlForm(section));
             yamada.source.SourceWriter.write(target, "replacement");
             testCase.verifyEqual(System.IO.File.GetCreationTimeUtc(target).ToFileTimeUtc(), creation);
-            testCase.verifyEqual(string(System.IO.File.GetAccessControl(target).GetSecurityDescriptorSddlForm(section)), permissions);
+            % Windows may record auto-inheritance during replacement. Preserve the rules
+            % themselves, including which were inherited and whether inheritance is protected.
+            actual = string(System.IO.File.GetAccessControl(target).GetSecurityDescriptorSddlForm(section));
+            pattern = "^D:(P?(?:AR)?)AI";
+            testCase.verifyEqual(regexprep(actual, pattern, "D:$1"), regexprep(permissions, pattern, "D:$1"));
+
+            % Remove the rule from the parent and compare with a newly inherited ACL.
+            parent.RemoveAccessRuleSpecific(rule);
+            System.IO.Directory.SetAccessControl(folder, parent);
+            reference = fullfile(folder, "Reference.m");
+            yamada.source.SourceWriter.write(reference, "reference");
+            inherited = string(System.IO.File.GetAccessControl(reference).GetSecurityDescriptorSddlForm(section));
+            actual = string(System.IO.File.GetAccessControl(target).GetSecurityDescriptorSddlForm(section));
+            testCase.verifyEqual(regexprep(actual, pattern, "D:$1"), regexprep(inherited, pattern, "D:$1"));
         end
 
         function writesExactUtf8AndReplacesExistingFile(testCase)

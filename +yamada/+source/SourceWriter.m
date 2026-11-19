@@ -74,7 +74,10 @@ classdef SourceWriter
             % Preserve destination metadata and keep a native recovery copy.
             try
                 if System.IO.File.Exists(target)
+                    section = System.Security.AccessControl.AccessControlSections.Access;
+                    original = System.IO.File.GetAccessControl(target, section);
                     System.IO.File.Replace(staged, target, backup, false);
+                    yamada.source.SourceWriter.restoreAccessRules(original, target);
                 else
                     % This move refuses to overwrite a concurrently created file.
                     System.IO.File.Move(staged, target);
@@ -101,6 +104,46 @@ classdef SourceWriter
             % Cleanup refusal must not turn a committed save into a reported failure.
             yamada.source.SourceWriter.removeTemporary(backup);
             clear stagedCleanup
+        end
+
+        function restoreAccessRules(original, target)
+            % restoreAccessRules Preserve the original DACL and its inheritance settings.
+            arguments (Input)
+                original System.Security.AccessControl.FileSecurity
+                target (1, 1) string
+            end
+
+            % Native replacement can promote inherited entries to explicit entries.
+            section = System.Security.AccessControl.AccessControlSections.Access;
+            published = System.IO.File.GetAccessControl(target, section);
+            rules = string(original.GetSecurityDescriptorSddlForm(section));
+            if yamada.source.SourceWriter.sameAccessRules(rules, string(published.GetSecurityDescriptorSddlForm(section)))
+                return
+            end
+
+            % Write only the DACL and verify it before releasing the original file.
+            published.SetSecurityDescriptorSddlForm(rules, section);
+            System.IO.File.SetAccessControl(target, published);
+            published = System.IO.File.GetAccessControl(target, section);
+            if ~yamada.source.SourceWriter.sameAccessRules(rules, string(published.GetSecurityDescriptorSddlForm(section)))
+                error("yamada:SourceWriter:AccessRulesChanged", ...
+                    "The saved file did not retain the original Windows access rules.");
+            end
+        end
+
+        function same = sameAccessRules(first, second)
+            % sameAccessRules Compare the DACL while allowing Windows to record auto-inheritance.
+            arguments (Input)
+                first (1, 1) string
+                second (1, 1) string
+            end
+            arguments (Output)
+                same (1, 1) logical
+            end
+
+            % AI records that auto-inheritance was applied. Keep protection and all ACEs.
+            pattern = "^D:(P?(?:AR)?)AI";
+            same = regexprep(first, pattern, "D:$1") == regexprep(second, pattern, "D:$1");
         end
 
         function closeAndRemove(stream, filePath)
