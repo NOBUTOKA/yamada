@@ -451,6 +451,17 @@ classdef GridLayoutOverlayDataBuilder
                 end
                 return
             end
+            gaps = repmat(spacing, 1, count - 1);
+            collapsed = false(1, count);
+            if spacing > 0 && numel(children) == expectedChildren
+                collapsed = yamada.ui.GridLayoutOverlayDataBuilder.collapsedSpanTracks(children, count, rows);
+                gaps(collapsed(1:end-1)) = 0;
+                if collapsed(end)
+                    lastGap = find(gaps > 0, 1, "last");
+                    gaps(lastGap) = 0;
+                end
+            end
+            gapPrefix = [0, cumsum(gaps)];
             equations = zeros(0, count);
             values = zeros(0, 1);
 
@@ -483,11 +494,14 @@ classdef GridLayoutOverlayDataBuilder
             fit = kinds == "fit";
             emptyFit = ~occupied & ~implicit;
             for index = 1:count
-                if tracks(index).kind ~= "fit"
-                    continue
-                end
+                if ~fit(index) && ~collapsed(index), continue, end
                 equation = zeros(1, count);
                 equation(index) = 1;
+                if collapsed(index)
+                    equations(end + 1, :) = equation; %#ok<AGROW>
+                    values(end + 1, 1) = 0; %#ok<AGROW>
+                end
+                if ~fit(index), continue, end
                 if observed(index)
                     equations(end + 1, :) = equation; %#ok<AGROW>
                     values(end + 1, 1) = extents(index); %#ok<AGROW>
@@ -500,10 +514,10 @@ classdef GridLayoutOverlayDataBuilder
 
             % Fit tracks may overflow the interior, leaving no space for flexible tracks.
             if ~isempty(flexible)
-                interior = available - spacing * max(count - 1, 0);
+                interior = available - gapPrefix(end);
                 minimum = sum([tracks(kinds == "fixed").value]) + sum(extents(fit & observed));
                 equation = ones(1, count);
-                if all(observed(fit) | emptyFit(fit)) && minimum > interior
+                if all(observed(fit) | emptyFit(fit) | collapsed(fit)) && minimum > interior
                     equation = zeros(1, count);
                     equation(flexible) = 1;
                     interior = 0;
@@ -525,7 +539,7 @@ classdef GridLayoutOverlayDataBuilder
                 equation = zeros(1, count);
                 equation(start:finish) = 1;
                 equations(end + 1, :) = equation; %#ok<AGROW>
-                values(end + 1, 1) = extent - spacing * (finish - start);
+                values(end + 1, 1) = extent - (gapPrefix(finish) - gapPrefix(start));
                 if rows
                     leading = innerBounds(2) + innerBounds(4) - (child.bounds(2) + extent);
                 else
@@ -534,8 +548,7 @@ classdef GridLayoutOverlayDataBuilder
                 equation = zeros(1, count);
                 equation(1:start-1) = 1;
                 endpoints(end + 1, :) = equation; %#ok<AGROW>
-                offsets(end + 1, 1) = leading - spacing * (start - 1); %#ok<AGROW>
- %#ok<AGROW>
+                offsets(end + 1, 1) = leading - gapPrefix(start); %#ok<AGROW>
             end
 
             if rank(equations) < count && numel(children) == expectedChildren
@@ -571,7 +584,45 @@ classdef GridLayoutOverlayDataBuilder
             sizes = max(sizes, 0).';
 
             bounds = yamada.ui.GridLayoutOverlayDataBuilder.trackRectangles( ...
-                sizes, innerBounds, spacing, rows);
+                sizes, innerBounds, [gaps 0], rows);
+        end
+
+        function collapsed = collapsedSpanTracks(children, count, rows)
+            % collapsedSpanTracks Infer zero extent between coincident measured span edges.
+            arguments (Input)
+                children struct
+                count (1, 1) double
+                rows (1, 1) logical
+            end
+            arguments (Output)
+                collapsed (1, :) logical
+            end
+            % Index each edge by its boundary in the cumulative sequence of tracks.
+            % A tied pair of distinct leading or trailing edges bounds a zero-length run.
+            edges = NaN(count + 1, 2);
+            axis = 1 + double(rows);
+            for child = children
+                [first, last, extent] = yamada.ui.GridLayoutOverlayDataBuilder.axisSpan(child, rows);
+                if first < 1 || last <= first || last > count || ~isfinite(extent), continue, end
+                leading = child.bounds(axis);
+                trailing = leading + extent;
+                if rows
+                    [leading, trailing] = deal(trailing, leading);
+                end
+                edges(first, 1) = leading;
+                edges(last+1, 2) = trailing;
+            end
+            collapsed = false(1, count);
+            for side = 1:2
+                known = find(isfinite(edges(:, side)));
+                for index = 2:numel(known)
+                    first = known(index-1);
+                    last = known(index);
+                    if abs(edges(first, side) - edges(last, side)) <= 1e-6
+                        collapsed(first:last-1) = true;
+                    end
+                end
+            end
         end
 
         function [sizes, resolved, timedOut] = distributeTracks(equations, values, tolerance, budget)
@@ -745,18 +796,19 @@ classdef GridLayoutOverlayDataBuilder
         function bounds = trackRectangles(sizes, innerBounds, spacing, rows)
             % trackRectangles Convert ordered track sizes into preview-panel rectangles.
             bounds = zeros(numel(sizes), 4);
+            if isscalar(spacing), spacing = repmat(spacing, size(sizes)); end
             if rows
                 top = innerBounds(2) + innerBounds(4);
                 for index = 1:numel(sizes)
                     top = top - sizes(index);
                     bounds(index, :) = [innerBounds(1), top, innerBounds(3), sizes(index)];
-                    top = top - spacing;
+                    top = top - spacing(index);
                 end
             else
                 left = innerBounds(1);
                 for index = 1:numel(sizes)
                     bounds(index, :) = [left, innerBounds(2), sizes(index), innerBounds(4)];
-                    left = left + sizes(index) + spacing;
+                    left = left + sizes(index) + spacing(index);
                 end
             end
         end
