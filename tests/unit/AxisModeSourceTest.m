@@ -54,6 +54,23 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             end
         end
 
+        function editsNumericRulerTickFormats(testCase)
+            % editsNumericRulerTickFormats Preserve function syntax and emit direct new assignments.
+            [document, registry, component] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "xtickformat(app.Control, '%.1f'); % keep"]);
+            testCase.verifyEqual(string(component.getSettings("XAxis.TickLabelFormat").LiteralValue),"%.1f");
+            document.editAxesInspector(component.Id,"XAxis.TickLabelFormat","%.2f","set",registry);
+            document.editAxesInspector(component.Id,"YAxis.TickLabelFormat","%.3f","set",registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifySubstring(source,"xtickformat(app.Control, '%.2f'); % keep");
+            testCase.verifySubstring(source,'app.Control.YAxis.TickLabelFormat = "%.3f";');
+            reloaded = yamada.source.AppSourceParser.parseText(source,registry);
+            owner = reloaded.getComponentByName("Control");
+            testCase.verifyEqual(string(owner.getSettings("YAxis.TickLabelFormat").LiteralValue),"%.3f");
+            document.undo();
+            testCase.verifyEmpty(component.getSettings("YAxis.TickLabelFormat"));
+        end
+
         function readsPolarCallsAndWarnsWhenTargetIsLost(testCase)
             % readsPolarCallsAndWarnsWhenTargetIsLost Stop inference after opaque code and accept explicit targets.
             [document, registry, control] = testCase.fixture([ ...

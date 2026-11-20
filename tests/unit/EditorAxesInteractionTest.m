@@ -2,6 +2,26 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
     % EditorAxesInteractionTest Verify axes settings through the Inspector and native controls.
 
     methods (Test, TestTags = {'inspector', 'editorShell', 'ui'})
+        function editsNumericRulerTickFormatThroughInspector(testCase)
+            % editsNumericRulerTickFormatThroughInspector Apply a format without executing app source.
+            app = yamada(Visible="off");
+            cleanup = onCleanup(@() deleteIfValid(app));
+            [figure,palette] = editorPalette();
+            row = find(string(palette.Data(:,1)) == "UI Axes", 1);
+            palette.DoubleClickedFcn(palette,struct("InteractionInformation",struct("Row",row)));
+            component = app.Document.getComponent(app.SelectedComponentId);
+            labels = findall(figure,"Tag","yamada-inspector-property-label");
+            label = labels(string({labels.Text}) == "X Tick Label Format");
+            testCase.assertNumElements(label,1);
+            editor = findall(label.Parent,"Tag","yamada-inspector-property-editor");
+            editor.Value = "%.2f";
+            editor.ValueChangedFcn(editor,struct());
+            testCase.verifyEqual(string(component.getSettings("XAxis.TickLabelFormat").LiteralValue),"%.2f");
+            native = findall(figure,"-isa","matlab.ui.control.UIAxes");
+            testCase.assertNumElements(native,1);
+            testCase.verifyEqual(string(native.XAxis.TickLabelFormat),"%.2f");
+        end
+
         function editsColorbarAndAxesColormap(testCase)
             % editsColorbarAndAxesColormap Add and edit a ColorBar through its normal Inspector routes.
             app = yamada();

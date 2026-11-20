@@ -208,6 +208,8 @@ classdef AxesSettingFunctionCatalog
             switch string(spec.type)
                 case "textLiteral"
                     result = scalarText || textList || (ischar(value) && ismatrix(value));
+                case "textScalar"
+                    result = scalarText && strlength(string(value)) > 0;
                 case "textList"
                     result = scalarText || textList;
                     % The separate Mode form owns these special tokens.

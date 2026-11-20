@@ -143,7 +143,14 @@ classdef AxesInspectorEdits
                         all(value(:) >= 0 & value(:) <= 1), ...
                         "yamada:AxesInspectorEdits:Colormap","Choose a colormap with RGB values between zero and one.");
                 case "TickLabelFormat"
-                    value = string(validatestring(value,yamada.model.AxesInspectorProperties.formats()));
+                    if path == "TickLabelFormat"
+                        value = string(validatestring(value,yamada.model.AxesInspectorProperties.formats()));
+                    else
+                        value = string(value);
+                        assert(isscalar(value) && ~ismissing(value) && strlength(value)>0, ...
+                            "yamada:AxesInspectorEdits:RulerFormat", "Enter one tick label format.");
+                        if ~isempty(original) && ischar(original.LiteralValue), value = char(value); end
+                    end
             end
             result = value;
         end
