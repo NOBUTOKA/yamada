@@ -19,16 +19,22 @@ assert(~isempty(regexp(metadata.identifier, "^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a
 relativeFiles = ["yamada.m"; "README.md"; "LICENSE"; "SPECIFICATION.md"; ...
     "CHANGELOG.md"; "doc/GETTING_STARTED.md"; ...
     "examples/WelcomeApp.m"];
+% Include the vendored runtime and license with the script beside its caller.
+layoutWaitFolder = fullfile("+yamada", "+ui", "+layoutwait");
+relativeFiles = [relativeFiles; fullfile(layoutWaitFolder, ...
+    ["waitForFigureLayout.m"; "FigureLayoutWaitReply.m"; "waitForFigureLayout.js"; "LICENSE"])];
 for folder = ["+yamada", "resources", "doc/images"]
     entries = dir(fullfile(projectRoot, folder, "**", "*"));
     entries = entries(~[entries.isdir]);
     for entry = entries'
         path = string(fullfile(entry.folder, entry.name));
+        relativePath = extractAfter(path, strlength(projectRoot) + 1);
+        if startsWith(relativePath, layoutWaitFolder + string(filesep)), continue, end
         [~, ~, extension] = fileparts(path);
         if (folder == "+yamada" && extension == ".m") || ...
                 (folder == "resources" && ismember(extension, [".json", ".html", ".js"])) || ...
                 (folder == "doc/images" && extension == ".png")
-            relativeFiles(end + 1, 1) = extractAfter(path, strlength(projectRoot) + 1);
+            relativeFiles(end + 1, 1) = relativePath;
         end
     end
 end

@@ -7,7 +7,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
     methods (Test)
         function matchingReplyCompletesOnlyOnce(testCase)
             % matchingReplyCompletesOnlyOnce Reject stale tokens and retain the first matching response.
-            reply = yamada.ui.LayoutStabilizeReply("current");
+            reply = yamada.ui.layoutwait.FigureLayoutWaitReply("current");
             reply.accept(struct("token", "obsolete"));
             testCase.verifyFalse(reply.Done);
             reply.accept(struct("token", "current", "value", 1));
@@ -19,7 +19,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
 
         function expiredReplyCannotBeReplaced(testCase)
             % expiredReplyCannotBeReplaced Ignore a native response that arrives after request expiry.
-            reply = yamada.ui.LayoutStabilizeReply("expired");
+            reply = yamada.ui.layoutwait.FigureLayoutWaitReply("expired");
             reply.expire();
             expected = reply.Data;
             reply.accept(struct("token", "expired", "value", 1));
