@@ -97,6 +97,7 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
             expected = lower(string(reshape(dec2hex(hash, 2)', 1, [])));
             testCase.verifyEqual(string(manifest.toolboxSha256), expected);
             testCase.verifyEqual(numel(manifest.files), numel(testCase.Files));
+            testCase.verifyEqual(testCase.Artifacts.checksums, testCase.Artifacts.toolbox + ".sha256");
             checksums = strip(string(fileread(testCase.Artifacts.checksums)));
             testCase.verifyEqual(checksums, expected + "  yamada-" + testCase.Metadata.version + ".mltbx");
             testCase.verifyError(@() packageYamadaToolbox(fileparts(testCase.Artifacts.toolbox), ...
