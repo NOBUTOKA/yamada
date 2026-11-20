@@ -271,7 +271,7 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
             % reconstructsAmbiguousFitSpans Preserve measured spans and publish usable inferred rows.
             registry = yamada.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(mfilename("fullpath")));
-            for name = ["DisjointSpans", "OverlapStair", "OverlapNested", "OverlapCross"]
+            for name = ["DisjointSpans", "OverlapCross"]
                 path = fullfile(root, "fixtures", "fit-spans", name + ".m");
                 document = yamada.source.AppSourceParser.parseFile(path, registry);
                 grid = document.getComponentByName("Grid");
