@@ -218,6 +218,11 @@ classdef AxesSettingFunctionCatalog
                     result = scalarText && any(string(value) == string(spec.values));
                 case "finiteNumber"
                     result = numeric && isscalar(value);
+                case "latitudeLimits"
+                    result = numeric && isvector(value) && numel(value) == 2 && ...
+                        value(1) <= value(2) && all(abs(value) <= 90);
+                case "longitudeLimits"
+                    result = numeric && isvector(value) && numel(value) == 2;
                 case "increasingFinitePair"
                     result = numeric && isrow(value) && numel(value) == 2 && value(1) < value(2);
                 case "increasingFiniteVector"

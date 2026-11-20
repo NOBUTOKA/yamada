@@ -57,7 +57,7 @@ classdef IndexedSettingEdit
                 original = component.Settings;
                 remove = ismember([original.Id], removedIds);
                 for setting = original(remove & ismember(string({original.Method}), ["assignment","functionCall"]))
-                    removedStatements(end + 1) = analysis.statementIndices(setting.SourceSpan); %#ok<AGROW>
+                    removedStatements = union(removedStatements,analysis.statementIndices(setting.SourceSpan),"stable"); %#ok<AGROW>
                 end
                 settings = original(~remove);
                 creationIndex = analysis.statementIndices(component.SourceSpans.Creation);
@@ -91,12 +91,12 @@ classdef IndexedSettingEdit
                 for placement = placements
                     if isfield(placement, "Statement")
                         % Axes commands carry the exact inserted statement and its typed occurrence.
-                        settings(end + 1) = document.canonicalizeSettings(placement.Setting); %#ok<AGROW>
+                        settings = [settings document.canonicalizeSettings(placement.Setting)]; %#ok<AGROW>
                         additions(end + 1) = placement.Statement; %#ok<AGROW>
                         addedOwners(end + 1) = sourceName; %#ok<AGROW>
                         [anchor, ~] = analysis.statementNeighbors(placement.Offset);
                         assert(isscalar(anchor) && anchor > 0 && ...
-                            analysis.Layout.Owner(anchor) == placement.Setting.OwnerMethod, ...
+                            analysis.Layout.Owner(anchor) == placement.Setting(1).OwnerMethod, ...
                             "yamada:SourceLiteralTransaction:WiderProof", "Insertion has no retained initializer anchor.");
                         anchors(end + 1) = anchor; %#ok<AGROW>
                         continue

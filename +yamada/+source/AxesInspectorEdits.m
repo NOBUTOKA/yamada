@@ -20,6 +20,11 @@ classdef AxesInspectorEdits
                 paths (1,:) string
             end
 
+            if path == "GeographicLimits" && component.Factory == "geoaxes" && action == "set"
+                [batch, requested, forward, inverse, paths] = ...
+                    yamada.source.AxesInspectorEdits.geographicLimits(document,component,value);
+                return
+            end
             assert(any(yamada.model.AxesInspectorProperties.paths(component.Factory) == path), ...
                 "yamada:AxesInspectorEdits:Path", "This setting is unavailable for the selected axes.");
             settings = component.getSettings(path);
@@ -85,6 +90,57 @@ classdef AxesInspectorEdits
     end
 
     methods (Static, Access = private)
+        function [batch, requested, forward, inverse, paths] = geographicLimits(document,component,value)
+            % geographicLimits Replace two arguments from one owned call as a single transaction.
+            arguments (Input)
+                document (1,1) yamada.model.DocumentModel
+                component (1,1) yamada.model.ComponentRecord
+                value (2,2) double {mustBeReal,mustBeFinite}
+            end
+            arguments (Output)
+                batch (1,1) yamada.source.SourcePatchBatch
+                requested (2,2) double
+                forward (1,1) struct
+                inverse (1,1) struct
+                paths (1,:) string
+            end
+
+            % Keep longitude in its supplied order to support antimeridian crossings.
+            assert(all(abs(value(1,:)) <= 90) && value(1,1) <= value(1,2), ...
+                "yamada:AxesInspectorEdits:LatitudeLimits","Latitude limits must be ordered and between -90 and 90.");
+            paths = ["RequestedLatitudeLimits","RequestedLongitudeLimits"];
+            forward = struct("Changes",struct("SettingId",{},"Value",{}), ...
+                "Placements",struct("Statement",{},"Setting",{},"Offset",{}),"RemovedIds",zeros(1,0));
+            inverse = forward;
+            requested = value;
+            latitude = component.getSettings(paths(1));
+            longitude = component.getSettings(paths(2));
+            encoded = [yamada.source.LiteralEncoder.encode(value(1,:)), ...
+                yamada.source.LiteralEncoder.encode(value(2,:))];
+            if isempty(latitude) && isempty(longitude)
+                [edits, forward.Placements] = yamada.source.AxesInspectorEdits.insert( ...
+                    document,component,"GeographicLimits",strjoin(encoded,", "),value,yamada.model.PropertySetting.empty);
+            else
+                assert(~isempty(latitude) && ~isempty(longitude) && ...
+                    isequal(latitude(end).SourceSpan,longitude(end).SourceSpan), ...
+                    "yamada:AxesInspectorEdits:Ownership","The geographic limits do not share an owned source call.");
+                settings = [latitude(end),longitude(end)];
+                assert(all([settings.IsCertain]) && all(string({settings.Method}) == "functionCall"), ...
+                    "yamada:AxesInspectorEdits:Ownership","The geographic limits cannot be replaced safely.");
+                edits = struct("Start",{},"End",{},"Text",{});
+                for index = 1:2
+                    span = settings(index).ValueSpan;
+                    assert(~isempty(span) && ~contains(extractBetween(document.CurrentText, ...
+                        span.StartOffset,span.EndOffset),[string(newline),string(char(13))]), ...
+                        "yamada:AxesInspectorEdits:MultilineSource","A geographic limit spans multiple physical lines.");
+                    edits(index) = struct("Start",span.StartOffset,"End",span.EndOffset,"Text",encoded(index));
+                    forward.Changes(index) = struct("SettingId",settings(index).Id,"Value",{value(index,:)});
+                    inverse.Changes(index) = struct("SettingId",settings(index).Id,"Value",{settings(index).LiteralValue});
+                end
+            end
+            batch = yamada.source.SourcePatchBatch(document.CurrentText,edits);
+        end
+
         function result = checkedValue(path,value,original)
             % checkedValue Validate Inspector inputs and preserve text representation where possible.
             arguments (Input)
@@ -201,7 +257,7 @@ classdef AxesInspectorEdits
             receiver = "app." + component.Name;
             suffix = "";
             syntax = "assignment";
-            if isempty(original) && any(path == ["Title.String","Subtitle.String","XLabel.String","YLabel.String","ZLabel.String","TickLabelFormat"])
+            if isempty(original) && any(path == ["Title.String","Subtitle.String","XLabel.String","YLabel.String","ZLabel.String","TickLabelFormat","GeographicLimits"])
                 switch path
                     case "Title.String"
                         name = "title";
@@ -215,6 +271,8 @@ classdef AxesInspectorEdits
                         name = "zlabel";
                     case "TickLabelFormat"
                         name = "geotickformat";
+                    case "GeographicLimits"
+                        name = "geolimits";
                 end
                 assert(~any(string({analysis.Layout.Methods.Name}) == name), ...
                     "yamada:AxesInspectorEdits:ShadowedFunction", "A local method shadows this axes function.");
@@ -252,6 +310,20 @@ classdef AxesInspectorEdits
             if isfield(document.Metadata,"SourceSnapshotId"), snapshot = document.Metadata.SourceSnapshotId; end
             if syntax == "assignment"
                 setting = yamada.source.PropertySettingSyntax.assignment(indexed,snapshot,0);
+            elseif path == "GeographicLimits"
+                % Bind each argument span to the same inserted call.
+                latitudeLength = strlength(yamada.source.LiteralEncoder.encode(value(1,:)));
+                latitudeStart = first + strlength(prefix);
+                longitudeStart = latitudeStart + latitudeLength + 2;
+                spans = [yamada.model.SourceSpan(latitudeStart,latitudeStart+latitudeLength-1), ...
+                    yamada.model.SourceSpan(longitudeStart,first+strlength(raw)-2)];
+                paths = ["RequestedLatitudeLimits","RequestedLongitudeLimits"];
+                setting = yamada.model.PropertySetting.empty;
+                for index = 1:2
+                    location = struct("Method","functionCall","Syntax","call","SourceSpan",sourceSpan, ...
+                        "ValueSpan",spans(index),"SourceSnapshotId",snapshot,"IsEditable",false);
+                    setting(index) = yamada.model.PropertySetting(paths(index),value(index,:),location);
+                end
             else
                 valueFirst = first + strlength(prefix);
                 location = struct("Method","functionCall","Syntax","call","SourceSpan",sourceSpan, ...
@@ -262,7 +334,10 @@ classdef AxesInspectorEdits
             batch = yamada.source.SourcePatchBatch(source,edit);
             [scope, valid] = batch.mapSpan(method.Span);
             assert(valid);
-            placement = struct("Statement",indexed,"Setting",setting.withScope(owner,scope),"Offset",offset);
+            for index = 1:numel(setting)
+                setting(index) = setting(index).withScope(owner,scope);
+            end
+            placement = struct("Statement",indexed,"Setting",setting,"Offset",offset);
         end
     end
 end

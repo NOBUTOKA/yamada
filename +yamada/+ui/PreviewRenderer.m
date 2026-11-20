@@ -98,6 +98,16 @@ classdef PreviewRenderer < handle
                     geometryChanged = geometryChanged || componentRequest.affectsGeometry(document, obj.Registry, handles);
                     continue
                 end
+                if component.Factory == "geoaxes" && any(ismember(localPaths, ...
+                        ["RequestedLatitudeLimits","RequestedLongitudeLimits"]))
+                    % Reapply ordered geographic effects within the affected axes scope.
+                    [repaired, localDiagnostics, handles] = obj.rebuildScope(document,component,handles);
+                    diagnostics = [diagnostics localDiagnostics]; %#ok<AGROW>
+                    if ~repaired, return, end
+                    geometryChanged = true;
+                    reconstructed = true;
+                    continue
+                end
                 states = document.getEffectivePropertyStates(obj.Registry, id);
                 paths = string(arrayfun(@(state) state.Definition.Path, states));
                 [found, requested] = ismember(localPaths, paths);
@@ -971,6 +981,15 @@ classdef PreviewRenderer < handle
                     target.Position = value;
                     return
                 end
+            end
+            % Geographic limits are an allowlisted operation on an editor-owned axes.
+            if path == "GeographicLimits" && isa(target,"matlab.graphics.axis.GeographicAxes")
+                if iscell(value)
+                    geolimits(target,value{1},value{2});
+                else
+                    geolimits(target,value);
+                end
+                return
             end
             parts = split(path, ".");
             if isscalar(parts)

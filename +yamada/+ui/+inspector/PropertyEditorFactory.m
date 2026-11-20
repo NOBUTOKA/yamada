@@ -94,6 +94,8 @@ classdef PropertyEditorFactory
             end
 
             switch definition.Editor
+                case "geographicLimits"
+                    control = uibutton(parent,"Text","Edit...","Tag","yamada-edit-geographic-limits");
                 case {"colormap","colormapPreview"}
                     control = yamada.ui.inspector.ColormapEditor.create(parent,definition.Editor == "colormap",commitFcn);
                 case "position"
@@ -250,7 +252,7 @@ classdef PropertyEditorFactory
             result = any(definition.Editor == ["literal", "text", "logical", ...
                 "onOff", "enum", "number", "numericVector", "position", "color", "stringList", ...
                 "multilineText", "url", "asset", "structuredData", "dateTime", "tableData", ...
-                "itemSelection", "colormap"]);
+                "itemSelection", "colormap", "geographicLimits"]);
             if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
                 result = false;
             end
@@ -331,6 +333,10 @@ classdef PropertyEditorFactory
                 relatedValues struct = struct()
             end
 
+            if isprop(control,"Tag") && control.Tag == "yamada-edit-geographic-limits"
+                control.Enable = yamada.ui.inspector.PropertyEditorFactory.onOff(isEditable);
+                return
+            end
             if isprop(control,"Tag") && control.Tag == "yamada-colormap-editor"
                 yamada.ui.inspector.ColormapEditor.synchronize(control,rawValue,isEditable);
                 return

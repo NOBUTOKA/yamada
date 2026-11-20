@@ -2,6 +2,49 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
     % EditorAxesInteractionTest Verify axes settings through the Inspector and native controls.
 
     methods (Test, TestTags = {'inspector', 'editorShell', 'ui'})
+        function editsGeographicLimitsTogetherThroughInspector(testCase)
+            % editsGeographicLimitsTogetherThroughInspector Save one paired edit and refresh the map preview.
+            path = string(tempname()) + ".m";
+            testCase.addTeardown(@() delete(path));
+            [~,name] = fileparts(path);
+            source = strjoin(["classdef " + name + " < handle", "properties", ...
+                "UIFigure matlab.ui.Figure", "Map matlab.graphics.axis.GeographicAxes", ...
+                "end", "methods", "function app = " + name, ...
+                "app.UIFigure = uifigure(Visible='off');", ...
+                "app.Map = geoaxes(app.UIFigure, Basemap='none', Position=[20 20 400 300]);", ...
+                "end", "end", "end"],newline);
+            yamada.source.SourceWriter.write(path,source);
+            lifecycle = yamada.ui.DocumentLifecycleService(struct("RequestOpenPathFcn",@() deal(true,path)));
+            app = yamada(lifecycle,Visible="off");
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0,"Type","figure","Tag","yamada-editor");
+            menus = findall(figure,"Type","uimenu");
+            command = menus(erase(string({menus.Text}),"&") == "Open...");
+            command.MenuSelectedFcn(command,struct());
+            component = app.Document.getComponentByName("Map");
+            tree = findall(figure,"Type","uitree");
+            node = tree.Children(1).Children(string({tree.Children(1).Children.NodeData}) == component.Id);
+            tree.SelectedNodes = node;
+            tree.SelectionChangedFcn(tree,struct("SelectedNodes",node));
+            button = findall(figure,"Tag","yamada-edit-geographic-limits");
+            testCase.assertNumElements(button,1);
+            testCase.verifyEqual(string(button.Enable),"on");
+            button.ButtonPushedFcn(button,struct());
+            dialog = findall(0,"Tag","yamada-geographic-limits-dialog");
+            testCase.addTeardown(@() deleteIfValid(dialog));
+            latitude = findall(dialog,"Tag","yamada-geographic-latitude");
+            longitude = findall(dialog,"Tag","yamada-geographic-longitude");
+            latitude.Value = "[-15 15]";
+            longitude.Value = "[170 190]";
+            apply = findall(dialog,"Tag","yamada-geographic-limits-apply");
+            apply.ButtonPushedFcn(apply,struct());
+            testCase.verifyFalse(isvalid(dialog));
+            testCase.verifySubstring(app.Document.CurrentText,"geolimits(app.Map, [-15 15], [170 190]);");
+            [~,shown] = geolimits(findall(figure,"-isa","matlab.graphics.axis.GeographicAxes"));
+            testCase.verifyLessThanOrEqual(shown(1),170.001);
+            testCase.verifyGreaterThanOrEqual(shown(2),189.999);
+        end
+
         function editsNumericRulerTickFormatThroughInspector(testCase)
             % editsNumericRulerTickFormatThroughInspector Apply a format without executing app source.
             app = yamada(Visible="off");

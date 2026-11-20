@@ -83,7 +83,8 @@ classdef PropertyApplicationPlanner
 
             % Native preview construction already consumes projected name-value arguments.
             canonical = yamada.model.PropertyApplicationPlanner.forComponent(component, document, registry);
-            if ~yamada.model.SourceOwnership.hasSource(component) || isempty(canonical)
+            if ~yamada.model.SourceOwnership.hasSource(component) || ...
+                    (isempty(canonical) && component.Factory ~= "geoaxes")
                 entries = canonical;
                 [entries, positionReason] = yamada.model.PositionAliasPolicy.forPreview(entries, component, document, registry);
                 [entries, gridReason] = yamada.model.GridLayoutStatePolicy.forPreview(entries, component, document, registry);
@@ -93,8 +94,28 @@ classdef PropertyApplicationPlanner
             settings = component.Settings;
             [~, order] = sort([settings.Sequence]);
             axesPaths = yamada.model.AxesInspectorProperties.paths(component.Factory);
-            for setting = settings(order)
+            ordered = settings(order);
+            for index = 1:numel(ordered)
+                setting = ordered(index);
                 if setting.IsReleaseUnavailable, continue, end
+                if component.Factory == "geoaxes" && setting.Method == "functionCall" && ...
+                        setting.IsCertain && setting.ValueKind == "literal"
+                    % Keep both requested intervals in one native operation.
+                    if setting.Path == "GeographicLimitsMode"
+                        entries(end+1) = yamada.model.PropertyEntry("GeographicLimits",setting.LiteralValue,"parsed"); %#ok<AGROW>
+                        continue
+                    end
+                    if setting.Path == "RequestedLatitudeLimits" && index < numel(ordered)
+                        longitude = ordered(index+1);
+                        if longitude.Path == "RequestedLongitudeLimits" && longitude.IsCertain && ...
+                                longitude.Method == "functionCall" && longitude.ValueKind == "literal" && ...
+                                longitude.SourceSpan.StartOffset == setting.SourceSpan.StartOffset
+                            pairs = {setting.LiteralValue,longitude.LiteralValue};
+                            entries(end+1) = yamada.model.PropertyEntry("GeographicLimits",pairs,"parsed"); %#ok<AGROW>
+                        end
+                        continue
+                    end
+                end
                 if any(axesPaths == setting.Path) && setting.IsCertain && setting.ValueKind == "literal" && ...
                         any(setting.Method == ["functionCall","assignment"])
                     % Replay reviewed axes effects as native values without executing their source.
