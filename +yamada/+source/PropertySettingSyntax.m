@@ -109,10 +109,11 @@ classdef PropertySettingSyntax
             end
         end
 
-        function [name, target, tokens, spans, forms] = axesCall(statement)
+        function [name, target, tokens, spans, forms] = axesCall(statement, catalogRoot)
             % axesCall Tokenize an exact catalogued axes call or an axes selection.
             arguments (Input)
                 statement (1, 1) yamada.source.SourceStatement
+                catalogRoot (1, 1) string
             end
             arguments (Output)
                 name (1, 1) string
@@ -127,7 +128,7 @@ classdef PropertySettingSyntax
             text = char(statement.Text);
             [prefix, match] = regexp(text,'^(?<name>[A-Za-z]\w*)\s*\(','end','names','once');
             if isempty(prefix) || text(end) ~= ')', return, end
-            forms = yamada.catalog.AxesSettingFunctionCatalog.forName(string(match.name));
+            forms = yamada.catalog.AxesSettingFunctionCatalog.forName(string(match.name), catalogRoot);
             if isempty(forms) && ~strcmp(match.name,'axes'), return, end
 
             % Keep each argument and its original value range independently.

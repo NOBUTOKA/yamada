@@ -17,6 +17,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $root = Split-Path -Parent $PSScriptRoot
 $tools = Join-Path $root 'dev/component-data'
+$surface = [string]([IO.File]::ReadAllText((Join-Path $tools 'releases.json')) | ConvertFrom-Json).surfaceRelease
 . (Join-Path $tools 'ProjectPropertyText.ps1')
 
 function Assert-Contract {
@@ -46,9 +47,9 @@ function Get-Capabilities {
 $temporary = Join-Path ([IO.Path]::GetTempPath()) ('yamada-provenance-' + [guid]::NewGuid())
 New-Item -ItemType Directory -Path $temporary | Out-Null
 try {
-    $ledger = Join-Path $temporary 'R2024a'
+    $ledger = Join-Path $temporary $surface
     $catalog = Join-Path $temporary 'catalog'
-    Copy-Item -LiteralPath (Join-Path $tools 'R2024a') -Destination $ledger -Recurse
+    Copy-Item -LiteralPath (Join-Path $tools $surface) -Destination $ledger -Recurse
     $before = Get-Capabilities $ledger
     $labelPath = Join-Path $ledger 'components/uilabel.json'
     $label = Get-Content $labelPath -Raw | ConvertFrom-Json

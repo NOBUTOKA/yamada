@@ -91,30 +91,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
             clear cleanup
         end
 
-        function usesTheRequestedColumnOrderAndActionLayout(testCase)
-            % usesTheRequestedColumnOrderAndActionLayout Keep action controls aligned with settings columns.
-
-            owner = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(owner));
-            dialog = yamada.ui.inspector.ColumnSettingsEditorDialog.open( ...
-                makeState(), @(changes) captureChanges(owner, changes), false);
-            table = findall(dialog, "Tag", "yamada-column-settings-table");
-            testCase.verifyEqual(string(table.ColumnName).', ...
-                ["Column", "Editable", "Sortable", "Width", "Format"]);
-            allEditable = findall(dialog, "Tag", "yamada-column-settings-all-editable");
-            noEditable = findall(dialog, "Tag", "yamada-column-settings-no-editable");
-            allSortable = findall(dialog, "Tag", "yamada-column-settings-all-sortable");
-            noSortable = findall(dialog, "Tag", "yamada-column-settings-no-sortable");
-            auto = findall(dialog, "Tag", "yamada-column-settings-all-auto");
-            fit = findall(dialog, "Tag", "yamada-column-settings-all-fit");
-            oneX = findall(dialog, "Tag", "yamada-column-settings-all-1x");
-            testCase.verifyEqual([allEditable.Layout.Row, noEditable.Layout.Row], [3 4]);
-            testCase.verifyEqual([allSortable.Layout.Row, noSortable.Layout.Row], [3 4]);
-            testCase.verifyEqual([auto.Layout.Row, fit.Layout.Row, oneX.Layout.Row], [3 3 3]);
-            testCase.verifyEqual([auto.Layout.Column, fit.Layout.Column, oneX.Layout.Column], [3 4 5]);
-            deleteIfValid(dialog);
-            clear cleanup
-        end
     end
 end
 

@@ -1,14 +1,8 @@
 <!DOCTYPE html>
 <!--
-yamada - Safe Preview interaction overlay.
-Copyright (C) 2026 yamada contributors
-
-This file is part of yamada.
-
-yamada is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+Copyright (C) 2026 Nobuto Kaitoh
+SPDX-License-Identifier: GPL-3.0-or-later
+This file is part of yamada. See LICENSE for the license text.
 -->
 <html>
 <head>
@@ -256,7 +250,7 @@ function dropCandidate(gesture, point) {
   var target = targets[0];
   if (!target) return source.parentId === currentData.rootId ? null :
     {enabled: false, reason: "No destination at this point.", bounds: source.bounds, parentId: "", targetCell: [], targetPosition: []};
-  if (target.id === source.parentId) return null;
+  if (target.id === source.parentId && !source.sourceOnly) return null;
   var result = {enabled: Boolean(target.enabled), reason: target.reason || "", parentId: target.id,
     bounds: target.bounds, targetCell: [], targetPosition: []};
   if (target.grid && target.grid.geometryAvailable) {
@@ -321,6 +315,8 @@ function sendPointerEvent(event) {
   if (target.classList && target.classList.contains("locked")) return;
   var point = surfacePoint(event, rect);
   if (event.type === "pointerdown") {
+    // Keep the browser from selecting or dragging content during an editor gesture.
+    event.preventDefault();
     svg.setPointerCapture(event.pointerId);
     if (target.dataset.componentId && !target.dataset.handle && target.dataset.componentId !== currentData.rootId)
       absoluteGesture = {id: target.dataset.componentId, startPoint: point, modelRevision: currentData.reparentRevision};
@@ -388,7 +384,7 @@ function renderGridSelectionTargets(targets, gridData, placementData) {
     return Number(first.depth || 0) - Number(second.depth || 0);
   }).forEach(function(target) {
     if (!target || !target.id || !target.gridId ||
-        (gridData && String(gridData.activeGridId || "") === String(target.gridId))) return;
+        (!target.sourceOnly && gridData && String(gridData.activeGridId || "") === String(target.gridId))) return;
     if (!Number.isFinite(Number(target.x)) || !Number.isFinite(Number(target.y)) ||
         Number(target.width) <= 0 || Number(target.height) <= 0) return;
     var hitTarget = document.createElement("div");
@@ -406,6 +402,12 @@ function renderGridSelectionTargets(targets, gridData, placementData) {
     hitTarget.title = placementChild ? "Move selected grid" : "Select grid child";
     if (placementChild) hitTarget.style.cursor = "move";
     hitTarget.addEventListener("pointerdown", function(event) {
+      if (target.sourceOnly && event.button === 0) {
+        event.preventDefault();
+        event.stopPropagation();
+        sendPointerEvent(event);
+        return;
+      }
       if (placementChild) {
         beginGridChildGesture(event, placementData, placementChild, "move");
         return;
@@ -437,7 +439,7 @@ function renderNestedGridComponents(components) {
     target.style.width = width + "px";
     target.style.height = height + "px";
     target.addEventListener("pointerdown", sendPointerEvent);
-    if (item.selected) {
+    if (item.selected && item.resizeConstraint !== "none") {
       var positions = { sw: [0, height], s: [width / 2, height], se: [width, height],
         w: [0, height / 2], e: [width, height / 2], nw: [0, 0],
         n: [width / 2, 0], ne: [width, 0] };
@@ -1127,7 +1129,7 @@ function outline(componentData) {
 }
 
 function addHandles(componentData, parent) {
-  if (!componentData.selected) return;
+  if (!componentData.selected || componentData.resizeConstraint === "none") return;
   var x = componentData.x;
   var y = currentData.height - componentData.y - componentData.height;
   var w = componentData.width;

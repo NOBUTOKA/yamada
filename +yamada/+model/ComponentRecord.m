@@ -186,6 +186,18 @@ classdef ComponentRecord < handle
     end
 
     methods
+        function result = isReleaseUnavailable(obj)
+            % isReleaseUnavailable Identify a source-only node outside the runtime catalog or hierarchy.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRecord
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = isfield(obj.Metadata, "UnavailableRelease");
+        end
+
         function set.Id(obj, value)
             % set.Id Track assignments that affect semantic evaluation inputs.
             arguments (Input)

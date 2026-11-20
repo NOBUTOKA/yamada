@@ -3,7 +3,7 @@ classdef DefaultValueProvider < handle
 
     properties (Access = private)
         Registry yamada.model.ComponentRegistry
-        Cache containers.Map
+        Cache dictionary = dictionary(string([]), struct([]))
         ProbeCount double = 0
     end
 
@@ -14,7 +14,6 @@ classdef DefaultValueProvider < handle
                 registry (1, 1) yamada.model.ComponentRegistry
             end
             obj.Registry = registry;
-            obj.Cache = containers.Map("KeyType", "char", "ValueType", "any");
         end
 
         function [found, value] = resolve(obj, component, parentFactory, property)
@@ -45,6 +44,12 @@ classdef DefaultValueProvider < handle
             arguments (Output)
                 results (1, 1) struct
             end
+            % Source-only nodes cannot supply native defaults in this release.
+            if component.isReleaseUnavailable()
+                results = struct("Paths", string({properties.Path}), ...
+                    "Found", false(1, numel(properties)), "Values", {cell(1, numel(properties))});
+                return
+            end
             key = obj.surfaceKey(component, parentFactory);
             if isKey(obj.Cache, key)
                 cached = obj.Cache(key);
@@ -63,7 +68,7 @@ classdef DefaultValueProvider < handle
             arguments (Output)
                 count (1, 1) double
             end
-            count = obj.Cache.Count;
+            count = numEntries(obj.Cache);
         end
 
         function count = fixtureProbeCount(obj)
@@ -81,11 +86,19 @@ classdef DefaultValueProvider < handle
     methods (Access = private)
         function key = surfaceKey(obj, component, parentFactory)
             % surfaceKey Identify one release-specific default fixture surface.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.DefaultValueProvider
+                component (1, 1) yamada.model.ComponentRecord
+                parentFactory (1, 1) string
+            end
+            arguments (Output)
+                key (1, 1) string
+            end
             definition = obj.Registry.get(component.Factory, component.CreationArguments);
             style = definition.styleFor(component.CreationArguments);
             argumentsText = string(jsonencode(component.CreationArguments));
-            key = char(strjoin([string(version("-release")), component.Factory, parentFactory, ...
-                style, argumentsText], "|"));
+            key = strjoin([string(version("-release")), component.Factory, parentFactory, ...
+                style, argumentsText], "|");
         end
 
         function results = resolveSurface(obj, component, parentFactory, properties)

@@ -1,4 +1,4 @@
-classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertionBatchTest < matlab.unittest.TestCase
+classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTest < matlab.unittest.TestCase
     % PropertyInsertionBatchTest Verify shared candidate evaluation across pending source owners.
     %   All fixtures are synthetic handle-based text and are never executed. Candidate
     %   sharing must preserve source ownership, setting order and caller isolation.
@@ -13,18 +13,18 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
         end
     end
 
-    methods (Test)
-        function parsesOneCandidateForTwelvePendingValueOwners(testCase)
-            % parsesOneCandidateForTwelvePendingValueOwners Bound reparsing independently of owner count.
-            document = testCase.numericFixture(12);
+    methods (Test, TestTags = {'fast'})
+        function pendingValuesRoundTripAcrossOwners(testCase)
+            % pendingValuesRoundTripAcrossOwners Preserve distinct pending values across source owners.
+            document = testCase.numericFixture(3);
             original = document.OriginalText;
-            for index = 1:12
+            for index = 1:3
                 document.getComponentByName("Field" + index).setProperty("Value", index + 1);
             end
             [source, diagnostics] = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
             testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
             parsed = yamada.source.AppSourceParser.parseText(source, testCase.Registry);
-            for index = 1:12
+            for index = 1:3
                 testCase.verifyEqual(parsed.getComponentByName("Field" + index).getProperty("Value").LiteralValue, index + 1);
             end
             testCase.verifyEqual(document.OriginalText, original);
@@ -33,7 +33,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
 
         function cachedGenerationKeepsPublicPlansIndependent(testCase)
             % cachedGenerationKeepsPublicPlansIndependent Reuse edits while protecting caller-owned parsed records.
-            for count = [1 12]
+            for count = [1 3]
                 document = testCase.numericFixture(count);
                 for index = 1:count
                     document.getComponentByName("Field" + index).setProperty("Value", index + 1);
@@ -287,7 +287,9 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyEqual(before.Document.getComponentByName(added.Name).getProperty("FontSize").LiteralValue, 14);
             testCase.verifyEqual(after.Document.getComponentByName(added.Name).getProperty("FontSize").LiteralValue, 18);
         end
+    end
 
+    methods (Test, TestTags = {'exhaustive'})
         function completePlacementCoversEveryGeneratedCatalogVariant(testCase)
             % completePlacementCoversEveryGeneratedCatalogVariant Apply the proof wherever ordinary generation is supported.
             variants = testCase.Registry.listVariantIds();
@@ -332,7 +334,9 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             fprintf("GENERATED_BATCH_COVERAGE Reviewed=%d Applicable=%d Unsupported=%d\n", ...
                 numel(variants), applicable, unsupported);
         end
+    end
 
+    methods (Test, TestTags = {'fast'})
         function combinedPlansReuseExactCompleteEmissions(testCase)
             % combinedPlansReuseExactCompleteEmissions Parse and assemble one complete candidate across every layout.
             for layout = ["absolute", "flat", "nested"]

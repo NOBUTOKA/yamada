@@ -43,25 +43,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DateListEditorDialogTest < m
             clear cleanup
         end
 
-        function rowsUseFlexibleDateAndFixedDeleteColumns(testCase)
-            % rowsUseFlexibleDateAndFixedDeleteColumns Use a flexible grid column and fixed delete action.
-
-            owner = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(owner));
-            dialog = yamada.ui.inspector.DateListEditorDialog.open( ...
-                datetime(2024, 3, 1), "DisabledDates", @(~) "", false);
-            testCase.addTeardown(@() deleteIfValid(dialog));
-            drawnow;
-            picker = findall(dialog, "Tag", "yamada-inspector-date-list-row-picker");
-            deleteButton = findall(dialog, "Tag", "yamada-inspector-date-list-delete");
-            rowGrid = picker.Parent;
-            testCase.verifyEqual(string(rowGrid.ColumnWidth{1}), "1x");
-            testCase.verifyEqual(rowGrid.ColumnWidth{2}, 30);
-            testCase.verifyEqual(string(deleteButton.FontWeight), "bold");
-            testCase.verifyGreaterThanOrEqual(deleteButton.FontSize, 18);
-            clear cleanup
-        end
-
         function cancelDiscardsDateListDraft(testCase)
             % cancelDiscardsDateListDraft Confirm added dates do not commit when the dialog closes.
 

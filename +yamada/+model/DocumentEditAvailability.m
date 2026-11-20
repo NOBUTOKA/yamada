@@ -21,9 +21,9 @@ classdef DocumentEditAvailability
             if found, return, end
             state = struct("Enabled", false, "Reason", "");
             try
-                snapshot = yamada.model.DocumentEditAvailability.inspect(document, id);
+                snapshot = yamada.model.DocumentEditAvailability.inspect(document, id, true);
                 for record = snapshot.Records
-                    callbacks = yamada.source.CallbackSourceAnalyzer.analyze(document, record.Id, registry);
+                    callbacks = yamada.source.CallbackSourceAnalyzer.analyze(document, record.Id, registry, false, true);
                     if any(string({callbacks.State}) ~= "absent")
                         error("yamada:DocumentEditAvailability:Callbacks", "Callback ownership prevents complete subtree deletion.");
                     end
@@ -68,35 +68,46 @@ classdef DocumentEditAvailability
                 if id == document.RootComponentId
                     error("yamada:DocumentEditAvailability:Root", "The document root cannot be copied.");
                 end
-                snapshot = yamada.model.DocumentEditAvailability.inspect(document, id);
+                snapshot = yamada.model.DocumentEditAvailability.inspect(document, id, true);
                 yamada.model.DocumentEditAvailability.ownership(document, snapshot);
+                catalog = yamada.model.SubtreeCopyPlanner.sourceCatalog(snapshot, registry);
                 for record = snapshot.Records
-                    definition = registry.get(record.Factory, record.CreationArguments);
+                    definition = catalog.get(record.Factory, record.CreationArguments);
                     if definition.IsProgrammaticOnly || definition.Category == "FigureTools"
                         error("yamada:DocumentEditAvailability:Factory", "This construction family is not supported for copying.");
                     end
-                    callbackPaths = yamada.model.SubtreeCopyPlanner.callbackPaths(document, record.Id, registry);
+                    callbackPaths = yamada.model.SubtreeCopyPlanner.callbackPaths(document, record.Id, catalog);
+                    owner = document.getComponent(record.Id);
                     for entry = record.Properties
                         if any(callbackPaths == entry.Path), continue, end
+                        if owner.isReleaseUnavailable()
+                            settings = owner.getSettings(entry.Path);
+                            if ~isempty(settings) && settings(end).IsCertain && settings(end).ValueKind == "literal"
+                                if catalog.isReadOnlyProperty(record.Factory, entry.Path, record.CreationArguments)
+                                    error("yamada:DocumentEditAvailability:Value", "A property cannot be copied without losing source behavior.");
+                                end
+                                yamada.source.LiteralEncoder.encode(settings(end).LiteralValue);
+                                continue
+                            end
+                        end
                         if entry.ValueKind == "expression"
-                            owner = document.getComponent(record.Id);
                             if isfield(entry.Metadata, "SubtreeReferenceId")
                                 target = document.getComponent(string(entry.Metadata.SubtreeReferenceId));
                                 if isempty(target)
                                     error("yamada:DocumentEditAvailability:Reference", "Reference target is missing.");
                                 end
-                                yamada.model.SubtreeReferencePolicy.validate(document, owner, entry.Path, target, registry);
+                                yamada.model.SubtreeReferencePolicy.validate(document, owner, entry.Path, target, catalog);
                             else
-                                yamada.model.SubtreeReferencePolicy.resolve(document, owner, entry.Path, entry.SourceExpression, registry);
+                                yamada.model.SubtreeReferencePolicy.resolve(document, owner, entry.Path, entry.SourceExpression, catalog);
                             end
-                        elseif entry.ValueKind ~= "literal" || registry.isReadOnlyProperty(record.Factory, entry.Path, record.CreationArguments)
+                        elseif entry.ValueKind ~= "literal" || catalog.isReadOnlyProperty(record.Factory, entry.Path, record.CreationArguments)
                             error("yamada:DocumentEditAvailability:Value", "A property cannot be copied without losing source behavior.");
                         else
                             yamada.source.LiteralEncoder.encode(entry.LiteralValue);
                         end
                     end
                     % Constructor ownership comes from source tokens, not replaceable display diagnostics.
-                    yamada.model.SubtreeCopyPlanner.validateConstructor(document, record, registry, callbackPaths);
+                    yamada.model.SubtreeCopyPlanner.validateConstructor(document, record, catalog, callbackPaths);
                 end
                 state.Enabled = true;
             catch exception
@@ -129,7 +140,7 @@ classdef DocumentEditAvailability
             reason = "";
             snapshot = yamada.model.SubtreeSnapshot.empty;
             try
-                snapshot = yamada.model.DocumentEditAvailability.inspect(document, id);
+                snapshot = yamada.model.DocumentEditAvailability.inspect(document, id, true);
                 yamada.model.DocumentEditAvailability.ownership(document, snapshot, true);
                 if yamada.model.PropertyStateResolver.hasUnresolvedExecution(document)
                     error("yamada:DocumentEditAvailability:UnknownHierarchy", "Unresolved initialization effects prevent proving subtree relocation safety.");
@@ -140,7 +151,7 @@ classdef DocumentEditAvailability
             % Collect the finite incoming reference constraints once for all destinations.
             requiredParents = strings(1, 0);
             if strlength(reason) == 0
-                definition = registry.get(source.Factory, source.CreationArguments);
+                definition = registry.sourceDefinition(source);
                 for owner = document.Components
                     entry = owner.getProperty("SelectedTab");
                     if ~isempty(entry) && isfield(entry.Metadata, "SubtreeReferenceId") && ...
@@ -273,11 +284,12 @@ classdef DocumentEditAvailability
     end
 
     methods (Static, Access = private)
-        function snapshot = inspect(document, id)
+        function snapshot = inspect(document, id, allowUnavailable)
             % inspect Validate complete subtree identities and editable records once per query.
             arguments (Input)
                 document (1, 1) yamada.model.DocumentModel
                 id (1, 1) string
+                allowUnavailable (1, 1) logical = false
             end
             arguments (Output)
                 snapshot (1, 1) yamada.model.SubtreeSnapshot
@@ -286,7 +298,11 @@ classdef DocumentEditAvailability
                 error("yamada:DocumentEditAvailability:Root", "The document root cannot be moved or deleted.");
             end
             snapshot = yamada.model.SubtreeSnapshot(document, id);
-            if any(~[snapshot.Records.IsEditable])
+            readOnly = ~[snapshot.Records.IsEditable];
+            if allowUnavailable
+                readOnly = readOnly & ~arrayfun(@(record) isfield(record.Metadata, "UnavailableRelease"), snapshot.Records);
+            end
+            if any(readOnly)
                 error("yamada:DocumentEditAvailability:ReadOnly", "The subtree contains a read-only component.");
             end
         end

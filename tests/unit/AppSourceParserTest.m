@@ -5,6 +5,208 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
     %   and source-span retention.
 
     methods (Test)
+        function retainsReleaseWarningWhenEditingRangeSlider(testCase)
+            % retainsReleaseWarningWhenEditingRangeSlider Keep newer Step settings out of runtime diagnostics.
+
+            % Load a recognized range slider with settings unavailable until R2024a.
+            registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2023b"));
+            source = join(["classdef ReleaseExample < handle", "properties", "Figure", "Slider", "end", ...
+                "methods", "function app = ReleaseExample", "app.Figure = uifigure();", ...
+                "app.Slider = uislider(app.Figure, ""range"");", ...
+                "app.Slider.Limits = [0 100];", "app.Slider.Step = 5;", ...
+                "app.Slider.StepMode = ""manual"";", "end", "end", "end"], newline);
+            [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry, "", strings(1, 0), "R2023b");
+            testCase.assertNotEmpty(diagnostics);
+            testCase.verifyEqual(diagnostics(1).Code, "source-release-range");
+            testCase.verifyFalse(any(ismember(string({diagnostics.Code}), ["unsupported-property", "context-inapplicable-property"])));
+
+            % Revalidate the editing transaction and regenerate without touching the newer settings.
+            slider = document.getComponentByName("Slider");
+            document.setProperty(slider.Id, "Limits", [0 120], registry);
+            diagnostics = document.validatePropertyCommit(registry);
+            testCase.assertNotEmpty(diagnostics);
+            testCase.verifyEqual(diagnostics(1).Code, "source-release-range");
+            testCase.verifyFalse(any(string({diagnostics.Code}) == "unsupported-property"));
+            [generated, diagnostics] = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifyEqual(generated, replace(source, "[0 100]", "[0 120]"));
+            testCase.assertNotEmpty(diagnostics);
+            testCase.verifyEqual(diagnostics(1).Code, "source-release-range");
+            entries = yamada.model.PropertyApplicationPlanner.forPreview(slider, document, registry);
+            testCase.verifyFalse(any(ismember(string({entries.Path}), ["Step", "StepMode"])));
+        end
+
+        function preservesUnavailableEnumWithoutReplayingIt(testCase)
+            % preservesUnavailableEnumWithoutReplayingIt Keep unsupported enum literals in both source forms.
+
+            % An older UIFigure must keep the docked spelling and preview without it.
+            registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2023a"));
+            constructors = ["app.Figure = uifigure(WindowStyle='docked');", ...
+                "app.Figure = uifigure();" + newline + "app.Figure.WindowStyle = 'docked';"];
+            for constructor = constructors
+                source = join(["classdef ReleaseExample < handle", "properties", "Figure", "end", ...
+                    "methods", "function app = ReleaseExample", constructor, ...
+                    "app.Figure.Name = 'Before';", "end", "end", "end"], newline);
+                [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
+                testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+                figure = document.getComponentByName("Figure");
+                testCase.verifyTrue(figure.getSettings("WindowStyle").IsReleaseUnavailable);
+                testCase.verifyFalse(figure.getProperty("WindowStyle").IsEditable);
+                states = document.getEffectivePropertyStates(registry, figure.Id);
+                style = states(arrayfun(@(state) state.Definition.Path == "WindowStyle", states)).Resolution;
+                testCase.verifyTrue(style.IsReleaseUnavailable);
+                testCase.verifyEqual(string(style.ExplicitValue), "docked");
+                testCase.verifyEmpty(yamada.model.PropertyApplicationPlanner.forPreviewArguments(figure, registry));
+                entries = yamada.model.PropertyApplicationPlanner.forPreview(figure, document, registry);
+                testCase.verifyFalse(any(string({entries.Path}) == "WindowStyle"));
+
+                % The adjacent supported edit only changes its own source token.
+                document.setProperty(figure.Id, "Name", "After");
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), ...
+                    replace(source, "'Before'", yamada.source.LiteralEncoder.encode("After")));
+            end
+        end
+
+        function editsSupportedSettingAlongsideUnavailableProperty(testCase)
+            % editsSupportedSettingAlongsideUnavailableProperty Preserve explicit newer settings during local edits.
+
+            % Exercise both source locations with the older runtime capability surface.
+            registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2023a"));
+            constructors = ["app.Table = uitable(app.Figure, DisplaySelection=false);", ...
+                "app.Table = uitable(app.Figure);" + newline + "app.Table.DisplaySelection = false;"];
+            for constructor = constructors
+                source = join(["classdef ReleaseExample < handle", ...
+                    "properties", "Figure", "Table", "end", ...
+                    "methods", "function app = ReleaseExample", ...
+                    "app.Figure = uifigure();", constructor, ...
+                    "app.Table.RowStriping = 'on';", "end", "end", "end"], newline);
+                [document, diagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
+                testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+                table = document.getComponentByName("Table");
+                testCase.verifyFalse(table.getProperty("DisplaySelection").IsEditable);
+                testCase.verifyError(@() document.setProperty(table.Id, "DisplaySelection", true), ...
+                    "yamada:DocumentModel:ReadOnlyProperty");
+
+                % Prove the edit changes only the supported occurrence and remains reversible.
+                document.setProperty(table.Id, "RowStriping", "off");
+                actual = yamada.source.RoundTripGenerator(registry).generate(document);
+                testCase.verifyEqual(actual, replace(source, "'on'", ...
+                    yamada.source.LiteralEncoder.encode("off")));
+                document.undo();
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
+            end
+        end
+
+        function warnsAtBothBoundsOfExplicitPropertyUsage(testCase)
+            % warnsAtBothBoundsOfExplicitPropertyUsage Honor constructor and assignment availability.
+
+            % Combine one introduced property and one removed property on a known factory.
+            source = join(["classdef ReleaseExample < handle", ...
+                "methods", "function app = ReleaseExample", ...
+                "app.Figure = uifigure();", ...
+                "app.Table = uitable(app.Figure, DisplaySelection=false);", ...
+                "app.Table.Extent = app.Table.Extent;", ...
+                "end", "end", "end"], newline);
+            for release = ["R2023a", "R2023b", "R2024b", "R2025a"]
+                registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                    fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), release));
+                [~, diagnostics] = yamada.source.AppSourceParser.parseText( ...
+                    source, registry, "", strings(1, 0), release);
+
+                % Both endpoints in the inferred range are compatible.
+                if any(release == ["R2023b", "R2024b"])
+                    testCase.verifyFalse(any(string({diagnostics.Code}) == "source-release-range"));
+                else
+                    testCase.assertNotEmpty(diagnostics);
+                    testCase.verifyEqual(diagnostics(1).Code, "source-release-range");
+                    testCase.verifyEqual(diagnostics(1).Severity, "warning");
+                    testCase.verifySubstring(diagnostics(1).Message, "R2023b through R2024b");
+                end
+            end
+        end
+
+        function detectsUnavailableFactoryAndStyle(testCase)
+            % detectsUnavailableFactoryAndStyle Diagnose recognized variants outside the runtime catalog.
+
+            % Compare preserved fixture variants without automatic release selection.
+            registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2023a"));
+            fixtureRoot = fileparts(AppSourceParserTest.fixturePath("SimpleCalculatorApp.m"));
+            folders = [fullfile(fixtureRoot, "R2023a"), fullfile(fixtureRoot, "R2023b"), fixtureRoot];
+            minimums = ["", "R2023b", "R2024a"];
+            for index = 1:numel(folders)
+                source = string(fileread(fullfile(folders(index), "ControlGalleryApp.m")));
+                [document, diagnostics] = yamada.source.AppSourceParser.parseText( ...
+                    source, registry, "", strings(1, 0), "R2023a");
+                testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+                unavailable = document.Components(arrayfun(@(part) part.isReleaseUnavailable(), document.Components));
+                testCase.verifyNumElements(unavailable, index - 1);
+                slider = document.getComponentByName("IntensitySlider");
+                testCase.verifyEqual(slider.isReleaseUnavailable(), index > 1);
+                if index > 1
+                    testCase.verifyEqual(slider.Metadata.SourceVariantId, "uislider-range");
+                    testCase.verifyEqual(slider.ParentId, document.getComponentByName("FormGrid").Id);
+                    testCase.verifyFalse(slider.getProperty("Value").IsEditable);
+                    testCase.verifyError(@() document.setProperty(slider.Id, "Value", [10 20]), ...
+                        "yamada:DocumentModel:ReadOnlyProperty");
+                end
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
+                if index == 3
+                    button = document.getComponentByName("SaveButton");
+                    grid = document.getComponentByName("FormGrid");
+                    testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, slider.Id, registry).Enabled);
+                    document.removeSubtree(slider.Id, registry);
+                    testCase.verifyEmpty(document.getComponentByName("IntensitySlider"));
+                    testCase.verifyFalse(contains(document.CurrentText, "app.IntensitySlider"));
+                    document.undo();
+                    testCase.verifyEqual(document.CurrentText, source);
+                    testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, grid.Id, registry).Enabled);
+                    document.removeSubtree(grid.Id, registry);
+                    testCase.verifyEmpty(document.getComponentByName("AccentColorPicker"));
+                    document.undo();
+                    testCase.verifyEqual(document.CurrentText, source);
+                    testCase.verifyEqual(document.HistoryIndex, 0);
+                    document.setProperty(button.Id, "Text", "Save preferences", registry);
+                    diagnostics = document.validatePropertyCommit(registry);
+                    codes = string({diagnostics.Code});
+                    testCase.verifyEqual(codes(1), "source-release-range");
+                    testCase.verifyEqual(nnz(codes == "source-release-component"), 2);
+                    testCase.verifyFalse(any(codes == "unsupported-factory"));
+                    testCase.verifyTrue(document.getComponentByName("IntensitySlider").isReleaseUnavailable());
+                    testCase.verifyTrue(document.getComponentByName("AccentColorPicker").isReleaseUnavailable());
+                    scoped = yamada.validation.ModelValidator.validateOwners(document, registry, slider.Id);
+                    testCase.verifyEqual(string({scoped.Code}), "source-release-component");
+                    edited = yamada.source.RoundTripGenerator(registry).generate(document);
+                    testCase.verifyEqual(edited, replace(source, "Save settings", "Save preferences"));
+                    document.undo();
+                    testCase.verifyEqual(document.CurrentText, source);
+                    document.redo();
+                    testCase.verifyEqual(document.CurrentText, edited);
+
+                    % A newer callback still protects its owner's subtree.
+                    callbackSource = replace(source, ...
+                        "app.AccentColorPicker = uicolorpicker(app.FormGrid);", ...
+                        "app.AccentColorPicker = uicolorpicker(app.FormGrid, ValueChangedFcn=@(~,~) disp(1));");
+                    testCase.assertNotEqual(callbackSource, source);
+                    protected = yamada.source.AppSourceParser.parseText(callbackSource, registry);
+                    picker = protected.getComponentByName("AccentColorPicker");
+                    testCase.verifyFalse(yamada.model.DocumentEditAvailability.deletion(protected, picker.Id, registry).Enabled);
+                    testCase.verifyError(@() protected.removeSubtree(picker.Id, registry), ...
+                        "yamada:DocumentModel:UnsafeSubtreeEdit");
+                    testCase.verifyEqual(protected.CurrentText, callbackSource);
+                end
+                if minimums(index) == ""
+                    testCase.verifyFalse(any(string({diagnostics.Code}) == "source-release-range"));
+                else
+                    testCase.assertNotEmpty(diagnostics);
+                    testCase.verifyEqual(diagnostics(1).Code, "source-release-range");
+                    testCase.verifySubstring(diagnostics(1).Message, minimums(index));
+                end
+            end
+        end
+
         function parsesSimpleCalculatorFixtureIntoSharedModel(testCase)
             % parsesSimpleCalculatorFixtureIntoSharedModel Parse supported fixture.
 
@@ -278,7 +480,10 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
         end
 
         function parsesEditorOwnHandleSource(testCase)
-            % parsesEditorOwnHandleSource Verify the editor source remains openable.
+            % parsesEditorOwnHandleSource Verify the large editor source parses without execution.
+            %   yamada does not edit its own source: the editor creates its figure
+            %   through yamada.ui.createEditorFigure, which is not a component
+            %   factory, so the only error is the missing registered root.
 
             % Use the production source as a regression fixture without executing it.
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
@@ -286,10 +491,11 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             registry = yamada.model.ComponentRegistry.createDefault();
             [document, diagnostics] = yamada.source.AppSourceParser.parseFile(sourcePath, registry);
 
-            % Recover an editable root despite source-only callback properties.
+            % Recover the class and report only the root diagnostic as an error.
             testCase.verifyEqual(document.ClassName, "yamada");
-            testCase.verifyNotEmpty(document.getComponentByName("UIFigure"));
-            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+            testCase.verifyEmpty(document.getComponentByName("UIFigure"));
+            errors = diagnostics(arrayfun(@(diagnostic) string(diagnostic.Severity), diagnostics) == "error");
+            testCase.verifyEqual(unique(arrayfun(@(diagnostic) string(diagnostic.Code), errors)), "invalid-root-count");
         end
 
         function parserNeverExecutesInputSource(testCase)
@@ -413,6 +619,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             testPath = mfilename("fullpath");
             testRoot = fileparts(fileparts(testPath));
             result = string(fullfile(testRoot, "fixtures", name));
+            % Shared fixtures may have variants for older release catalogs.
+            if isfile(result), result = yamadaFixturePath(name); end
         end
 
         function filePath = writeTemporaryBytes(bytes)

@@ -3,7 +3,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
     %   Synthetic source is parsed without constructing its application or running callbacks.
     properties (TestParameter)
         % Layout - Parent arrangement used to test unrelated state reuse.
-        Layout = {"absolute", "flat", "nested"}
+        %   The nested chain includes a direct grid parent, so a single-grid
+        %   variant exercises no additional scope path.
+        Layout = {"absolute", "nested"}
     end
     methods (Test)
         function freshSettingsDoNotRevalidateUnrelatedFields(testCase, Layout)
@@ -33,11 +35,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
             end
         end
 
-        function pendingScopesRejectChangedInputs(testCase, Layout)
+        function pendingScopesRejectChangedInputs(testCase)
             % pendingScopesRejectChangedInputs Never reuse a pending scope after another document or catalog write.
             for kind = ["entry", "metadata", "registry", "history"]
                 registry = yamada.model.ComponentRegistry.createDefault();
-                [document, names] = makeFixture(registry, string(Layout));
+                [document, names] = makeFixture(registry, "nested");
                 document.validatePropertyCommit(registry);
                 target = document.getComponentByName(names(1));
                 document.setProperty(target.Id, "Tooltip", "Pending", registry);
@@ -56,10 +58,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
             end
         end
 
-        function preparedCommitsCanChainFullProofs(testCase, Layout)
+        function preparedCommitsCanChainFullProofs(testCase)
             % preparedCommitsCanChainFullProofs Reuse complete pre-commit proofs across distinct edits without a post-check.
             registry = yamada.model.ComponentRegistry.createDefault();
-            [document, names] = makeFixture(registry, string(Layout));
+            [document, names] = makeFixture(registry, "nested");
             document.validatePropertyCommit(registry);
             document.setProperty(document.getComponentByName(names(1)).Id, "Tooltip", "First", registry);
             document.setProperty(document.getComponentByName(names(2)).Id, "Tooltip", "Second", registry);

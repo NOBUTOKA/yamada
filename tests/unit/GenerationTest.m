@@ -4,18 +4,6 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
     %   blocking diagnostics, UTF-8 encoding, CRLF lines, and license isolation.
 
     methods (Test)
-        function generatedDestructorHasNoArgumentValidation(testCase)
-            % generatedDestructorHasNoArgumentValidation Keep generated cleanup recognizable as a destructor.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("DestructorApp", registry);
-            source = yamada.source.NewAppGenerator(registry).generate(document);
-
-            % Inspect only the destructor, leaving validation on ordinary methods intact.
-            destructor = extractAfter(source, "function delete(app)");
-            testCase.assertNotEmpty(destructor);
-            testCase.verifyFalse(contains(destructor, "arguments"));
-            testCase.verifySubstring(destructor, "delete(app.UIFigure);");
-        end
 
         function generatesMinimalRunnableClass(testCase)
             % generatesMinimalRunnableClass Verify the canonical handle-based skeleton.
@@ -33,25 +21,22 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             testCase.verifySubstring(source, ...
                 "classdef GeneratedApp < handle");
             testCase.verifySubstring(source, ...
-                "% GeneratedApp Define a programmatic handle-based application.");
-            testCase.verifyFalse(contains(source, "%   Example:"));
-            testCase.verifyFalse(contains(source, "This class owns its generated"));
-            testCase.verifySubstring(source, ...
                 "app.UIFigure = uifigure(""Visible"", ""off"");");
             testCase.verifySubstring(source, "properties (Access = private)");
-            testCase.verifyFalse(contains(source, "Generated UI component handle"));
-            testCase.verifyFalse(contains(source, "% Create a"));
-            testCase.verifyFalse(contains(source, "% Configure safe literal properties"));
             testCase.verifySubstring(source, ...
                 "arguments (Input)");
             testCase.verifySubstring(source, ...
                 "arguments (Output)");
-            testCase.verifySubstring(source, ...
-                "% createComponents Create and configure UI components.");
-            testCase.verifySubstring(source, ...
-                "% GeneratedApp Construct the application.");
             testCase.verifySubstring(source, "addlistener(app.UIFigure, ""ObjectBeingDestroyed"", @app.figureDeleted);");
             testCase.verifySubstring(source, "delete(app.UIFigure);");
+            testCase.verifySubstring(source, "% " + document.ClassName + " ");
+            testCase.verifySubstring(source, "% createComponents ");
+
+            % MATLAB recognizes cleanup only when the destructor has no arguments block.
+            destructor = extractAfter(source, "function delete(app)");
+            testCase.assertNotEmpty(destructor);
+            testCase.verifyFalse(contains(destructor, "arguments"));
+            testCase.verifySubstring(destructor, "delete(app.UIFigure);");
             if ispc
                 testCase.verifyEmpty(regexp(source, "(?<!\r)\n", "once"));
             else

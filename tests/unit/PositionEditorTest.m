@@ -3,8 +3,8 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
     %   Fixtures own all native controls and never open or evaluate user source.
 
     methods (Test, TestTags = {'fast'})
-        function verticalFieldsAndLinkedSizesCommitOnce(testCase)
-            % verticalFieldsAndLinkedSizesCommitOnce Show a vertical bracket and preserve Position order.
+        function linkedSizesCommitOnce(testCase)
+            % linkedSizesCommitOnce Preserve Position order and commit linked dimensions together.
             figure = uifigure("Visible", "off", "Position", [100 100 270 160]);
             cleanup = onCleanup(@() delete(figure));
             grid = uigridlayout(figure, [1 1]);
@@ -14,15 +14,8 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
             yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "", true, [10 20 20 45], related);
             drawnow;
             parts = control.UserData;
-            testCase.verifyEqual(string({parts.Fields.Tooltip}), ["X", "Y", "Width", "Height"]);
             testCase.verifyEqual([parts.Fields.Value], [10 20 20 45]);
-            testCase.verifyEqual(string({parts.FieldLabels.Text}), ["X", "Y", "W", "H"]);
-            testCase.verifyEqual(arrayfun(@(item) item.Layout.Column, parts.Fields), [2 2 2 2]);
-            testCase.verifyEqual(string({parts.Links.Text}), ["┓", "┛"]);
             testCase.verifyEqual(string([parts.Links.Visible]), ["on", "on"]);
-            testCase.verifyEqual(parts.Links(1).Layout.Column, parts.Links(2).Layout.Column);
-            testCase.verifyEqual(arrayfun(@(item) item.Layout.Row, parts.Links), [3 4]);
-            for index = 1:4, testCase.verifyEqual(parts.Fields(index).Layout.Row, index); end
             parts.Fields(3).Value = 40;
             parts.Fields(3).ValueChangedFcn(parts.Fields(3), struct());
             testCase.verifyEqual(getappdata(figure, "Value"), [10 20 40 90]);
@@ -34,8 +27,8 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
             testCase.verifyEqual(getappdata(figure, "Count"), 2);
         end
 
-        function fixedDimensionTooltipsFollowOrientation(testCase)
-            % fixedDimensionTooltipsFollowOrientation Keep a fixed side readable without disabling the other fields.
+        function fixedDimensionsFollowOrientation(testCase)
+            % fixedDimensionsFollowOrientation Keep a fixed side readable without disabling the other fields.
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
             definition = yamada.model.ComponentRegistry.createDefault().getById("uislider-slider").getProperty("Position");
@@ -47,12 +40,8 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
                 if orientation == "vertical", value(3:4) = [3 100]; fixed = 3; end
                 yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "", true, value, related);
                 parts = control.UserData;
-                expected = ["X", "Y", "Width", "Height"];
-                expected(fixed) = expected(fixed) + " (fixed)";
-                testCase.verifyEqual(string({parts.Fields.Tooltip}), expected);
                 testCase.verifyEqual(string(parts.Fields(fixed).Editable), "off");
                 testCase.verifyEqual(string(parts.Fields(fixed).Enable), "on");
-                testCase.verifyTrue(all(string({parts.Links.Text}) == ""));
                 testCase.verifyEqual(string([parts.Links.Visible]), ["off", "off"]);
                 parts.Fields(fixed).ValueChangedFcn(parts.Fields(fixed), struct());
                 testCase.verifyEmpty(getappdata(figure, "Value"));

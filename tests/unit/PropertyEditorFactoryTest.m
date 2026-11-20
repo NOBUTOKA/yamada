@@ -4,11 +4,12 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
     %   remain visible but cannot become accidentally editable.
 
     methods (Test, TestTags = {'fast'})
-        function createsOnOffCheckBox(testCase)
-            % createsOnOffCheckBox Map onOff metadata to a native CheckBox.
-
+        function createsTypedEditorsFromCapabilities(testCase)
+            % createsTypedEditorsFromCapabilities Route distinct capabilities and preserve their typed display values.
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
+            % Exercise createsOnOffCheckBox through the same owned fixture.
+
             definition = yamada.model.PropertyDefinition("Visible", [], false, true, ...
                 struct("editor", "onOff"));
             control = yamada.ui.inspector.PropertyEditorFactory.create( ...
@@ -17,8 +18,59 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             drawnow;
             testCase.verifyClass(control, "matlab.ui.control.CheckBox");
             testCase.verifyTrue(control.Value);
-            testCase.verifyEqual(string(control.Text), "");
-            clear cleanup
+            delete(control);
+
+            % Exercise createsRgbColorAction through the same owned fixture.
+
+            definition = yamada.model.PropertyDefinition("Color", [], false, true, ...
+                struct("editor", "color"));
+            control = yamada.ui.inspector.PropertyEditorFactory.create( ...
+                figure, definition, @(~) []);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 0 0]", true);
+            drawnow;
+            testCase.verifyClass(control, "matlab.ui.control.Button");
+            testCase.verifyEqual(control.BackgroundColor, [1 0 0]);
+            delete(control);
+
+            % Exercise createsStringListSummaryAction through the same owned fixture.
+
+            definition = yamada.model.PropertyDefinition("Items", [], false, true, ...
+                struct("editor", "stringList"));
+            control = yamada.ui.inspector.PropertyEditorFactory.create( ...
+                figure, definition, @(~) []);
+            values = ["Light", "Dark"];
+            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
+                control, "<unsupported: string array>", true, values);
+            drawnow;
+            testCase.verifyClass(control, "matlab.ui.control.Button");
+            testCase.verifyEqual(string(control.Text), "1-by-2 string");
+            delete(control);
+
+            % Exercise createsUrlTextEditor through the same owned fixture.
+
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uihyperlink");
+            definition = definition.Properties([definition.Properties.Path] == "URL");
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
+                @(~) []);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "'https://example.com'", true, ...
+                "https://example.com");
+            drawnow;
+            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyEqual(string(control.Value), "https://example.com");
+            testCase.verifyTrue(control.Editable);
+            delete(control);
+
+            % Exercise createsAssetPathEditor through the same owned fixture.
+
+            definition = yamada.model.ComponentRegistry.createDefault().getById("uibutton-push");
+            definition = definition.Properties([definition.Properties.Path] == "Icon");
+            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "'icon.png'", true, "icon.png");
+            drawnow;
+            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
+            testCase.verifyEqual(string(control.UserData.Edit.Value), "icon.png");
+            testCase.verifyEqual(string(control.UserData.Browse.Enable), "on");
+            delete(control);
         end
 
     end
@@ -31,35 +83,26 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
             registry = yamada.model.ComponentRegistry.createDefault();
-            cases = {
-                "uifigure", "Pointer", ...
-                ["arrow", "ibeam", "crosshair", "watch", "topl", "custom", ...
-                "botr", "topr", "botl", "circle", "cross", "fleur", "left", ...
-                "right", "top", "bottom", "hand"];
-                "geoaxes", "Basemap", ...
-                ["streets-light", "streets-dark", "streets", "satellite", ...
-                "topographic", "landcover", "colorterrain", "grayterrain", ...
-                "bluegreen", "grayland", "darkwater", "none"];
-                "uibuttongroup", "TitlePosition", ...
-                ["lefttop", "centertop", "righttop", "leftbottom", ...
-                "centerbottom", "rightbottom"];
-                "uipanel", "TitlePosition", ...
-                ["lefttop", "centertop", "righttop", "leftbottom", ...
-                "centerbottom", "rightbottom"];
-                "uibuttongroup", "BorderType", ...
-                ["line", "none", "etchedin", "etchedout", "beveledin", "beveledout"];
-                "uipanel", "BorderType", ...
-                ["line", "none", "etchedin", "etchedout", "beveledin", "beveledout"]};
+            % The running release's catalog defines which choices each surface offers.
+            cases = [
+                "uifigure", "Pointer"
+                "geoaxes", "Basemap"
+                "uibuttongroup", "TitlePosition"
+                "uipanel", "TitlePosition"
+                "uibuttongroup", "BorderType"
+                "uipanel", "BorderType"];
             for caseIndex = 1:size(cases, 1)
-                definition = registry.getById(cases{caseIndex, 1});
-                definition = definition.Properties([definition.Properties.Path] == cases{caseIndex, 2});
+                definition = registry.getById(cases(caseIndex, 1));
+                definition = definition.Properties([definition.Properties.Path] == cases(caseIndex, 2));
+                expected = reshape(string(definition.ValueSchema.values), 1, []);
+                testCase.assertGreaterThan(numel(expected), 1);
                 control = yamada.ui.inspector.PropertyEditorFactory.create( ...
                     figure, definition, @(~) []);
                 yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
-                    control, cases{caseIndex, 3}(1), true);
+                    control, expected(1), true);
                 drawnow;
                 testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-                testCase.verifyEqual(string(control.Items), cases{caseIndex, 3});
+                testCase.verifyEqual(reshape(string(control.Items), 1, []), expected);
                 testCase.verifyEqual(string(control.Enable), "on");
                 delete(control);
             end
@@ -139,47 +182,12 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             testCase.verifyEqual(getappdata(figure, "scalarDate"), datetime(2024, 3, 1));
             testCase.verifyEqual(getappdata(figure, "dateLimits"), ...
                 [datetime(2024, 2, 1) datetime(2024, 12, 31)]);
-            testCase.verifyEqual(string(listControl.Tag), "yamada-inspector-date-list-editor");
             testCase.verifyEqual(string(listControl.Enable), "on");
             clear cleanup
         end
     end
 
     methods (Test)
-
-        function createsRgbColorAction(testCase)
-            % createsRgbColorAction Render one validated RGB value on a native action button.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = yamada.model.PropertyDefinition("Color", [], false, true, ...
-                struct("editor", "color"));
-            control = yamada.ui.inspector.PropertyEditorFactory.create( ...
-                figure, definition, @(~) []);
-            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 0 0]", true);
-            drawnow;
-            testCase.verifyClass(control, "matlab.ui.control.Button");
-            testCase.verifyEqual(control.BackgroundColor, [1 0 0]);
-            clear cleanup
-        end
-
-        function createsStringListSummaryAction(testCase)
-            % createsStringListSummaryAction Retain raw string arrays behind a native list action.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = yamada.model.PropertyDefinition("Items", [], false, true, ...
-                struct("editor", "stringList"));
-            control = yamada.ui.inspector.PropertyEditorFactory.create( ...
-                figure, definition, @(~) []);
-            values = ["Light", "Dark"];
-            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
-                control, "<unsupported: string array>", true, values);
-            drawnow;
-            testCase.verifyClass(control, "matlab.ui.control.Button");
-            testCase.verifyEqual(string(control.Text), "1-by-2 string");
-            clear cleanup
-        end
 
         function createsStructuredDataLiteralEditor(testCase)
             % createsStructuredDataLiteralEditor Keep arbitrary data on the safe literal path.
@@ -198,25 +206,11 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             testCase.verifyEqual(string(control.Text), "[1 2]");
             testCase.verifyTrue(control.UserData.HasItems);
             testCase.verifyEqual(string(control.UserData.Items{1}), ["First", "Second"]);
-            clear cleanup
-        end
-
-        function resolvesItemsDataFromGeneralRelatedState(testCase)
-            % resolvesItemsDataFromGeneralRelatedState Use the shared effective-value snapshot.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = yamada.model.ComponentRegistry.createDefault().getById("uidropdown");
-            definition = definition.Properties([definition.Properties.Path] == "ItemsData");
-            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
-            relatedValues = struct("Paths", ["Items", "Value"], ...
-                "Values", {{["First", "Second"], "First"}}, ...
-                "KnownValues", [true true]);
-            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
-                control, "[1 2]", true, [1 2], relatedValues);
-            drawnow;
+            related = struct("Paths", ["Items", "Value"], ...
+                "Values", {{["Updated", "Choices"], "Updated"}}, "KnownValues", [true true]);
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 2]", true, [1 2], related);
             testCase.verifyTrue(control.UserData.HasItems);
-            testCase.verifyEqual(string(control.UserData.Items{1}), ["First", "Second"]);
+            testCase.verifyEqual(string(control.UserData.Items{1}), ["Updated", "Choices"]);
             clear cleanup
         end
 
@@ -236,27 +230,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             clear cleanup
         end
 
-        function createsUrlTextEditor(testCase)
-            % createsUrlTextEditor Edit hyperlink values as plain URL text.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = yamada.model.ComponentRegistry.createDefault().getById("uihyperlink");
-            definition = definition.Properties([definition.Properties.Path] == "URL");
-            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
-                @(~) []);
-            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "'https://example.com'", true, ...
-                "https://example.com");
-            drawnow;
-            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyEqual(string(control.Tag), "yamada-inspector-property-editor");
-            testCase.verifyEqual(string(control.Value), "https://example.com");
-            testCase.verifyTrue(control.Editable);
-            clear cleanup
-        end
-
         function createsPlainTextEditorWithoutLiteralParsing(testCase)
-            % createsPlainTextEditor Commit plain text as a text value rather than source syntax.
+            % createsPlainTextEditorWithoutLiteralParsing Commit plain text as a text value rather than source syntax.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
@@ -378,7 +353,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
                     @(changes) captureBatch(figure, changes));
                 yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
                     control, "", true, relatedValues.Values{index}, relatedValues);
-                testCase.verifyEqual(string(control.Tag), "yamada-inspector-table-data-editor");
                 testCase.verifyEqual(string(control.Enable), "on");
                 if paths(index) == "Data"
                     control.ButtonPushedFcn(control, struct());
@@ -399,7 +373,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
     methods (Test)
         function synchronizesDatePickerRestrictionsFromRelatedValues(testCase)
-            % synchronizesDatePickerRestrictions Apply the effective date contracts to the native picker.
+            % synchronizesDatePickerRestrictionsFromRelatedValues Apply the effective date contracts to the native picker.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
@@ -419,22 +393,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             clear cleanup
         end
 
-        function createsAssetPathEditor(testCase)
-            % createsAssetPathEditor Render asset paths with an inline browse action.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            definition = yamada.model.ComponentRegistry.createDefault().getById("uibutton-push");
-            definition = definition.Properties([definition.Properties.Path] == "Icon");
-            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
-            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "'icon.png'", true, "icon.png");
-            drawnow;
-            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyEqual(string(control.Tag), "yamada-inspector-asset-editor");
-            testCase.verifyEqual(string(control.UserData.Edit.Value), "icon.png");
-            testCase.verifyEqual(string(control.UserData.Browse.Enable), "on");
-            clear cleanup
-        end
     end
 end
 

@@ -76,15 +76,19 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
 
         function styleSpecificNamedArgumentsUseTheirConcreteSurface(testCase)
             % styleSpecificNamedArgumentsUseTheirConcreteSurface Preserve state, discrete, and range factory styles through copying.
-            cases = {"app.Control = uibutton(app.Left, 'state', Value=true);", "matlab.ui.control.StateButton", 'state', true; ...
-                "app.Control = uiknob(app.Left, 'discrete', Items={'A','B'}, Value='B');", "matlab.ui.control.DiscreteKnob", 'discrete', 'B'; ...
-                "app.Control = uislider(app.Left, 'range', Value=[10 20], Limits=[5 25]);", "matlab.ui.control.RangeSlider", 'range', [10 20]};
-            for index = 1:size(cases, 1)
+            cases = {"app.Control = uibutton(app.Left, 'state', Value=true);", "matlab.ui.control.StateButton", 'state', true, "uibutton-state"; ...
+                "app.Control = uiknob(app.Left, 'discrete', Items={'A','B'}, Value='B');", "matlab.ui.control.DiscreteKnob", 'discrete', 'B', "uiknob-discrete"; ...
+                "app.Control = uislider(app.Left, 'range', Value=[10 20], Limits=[5 25]);", "matlab.ui.control.RangeSlider", 'range', [10 20], "uislider-range"};
+            % Styles missing from the running release's catalog are reported after the others run.
+            available = yamada.model.ComponentRegistry.createDefault().listVariantIds();
+            supported = ismember([cases{:, 5}], available);
+            for index = find(supported)
                 [document, registry, component, target] = testCase.fixture(cases{index, 1}, cases{index, 2});
                 pasted = document.pasteSubtree(document.copySubtree(component.Id, registry), target.Id, registry);
                 testCase.verifyEqual(pasted.CreationArguments, cases(index, 3));
                 testCase.verifyEqual(pasted.getProperty("Value").LiteralValue, cases{index, 4});
             end
+            for index = find(~supported), assumeCatalogSupports(testCase, cases{index, 5}); end
         end
 
         function rawSnapshotPreparationUsesFrozenRecords(testCase)

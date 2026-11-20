@@ -7,9 +7,15 @@
 Generates review artifacts for category-oriented property grouping.
 
 .DESCRIPTION
-Validates the grouping-relevant R2024a audit ledger, freezes its input hash,
+Validates the grouping-relevant release audit ledger, freezes its input hash,
 and derives category-surface clusters, initial exact shared-group candidates,
 and human judgment candidates for Steps 4 and 6 of the grouping procedure.
+
+When ReleaseDirectory is a generated release projection outside the
+repository, ProvenanceDirectory names the source ledger whose Git history
+records the baseline commit. The baseline commit is provenance only; it is
+recorded as "unavailable" when Git is not installed or the ledger is not in a
+Git repository.
 
 .EXAMPLE
 ./GenerateGroupingArtifacts.ps1 -ReleaseDirectory ./R2024a
@@ -18,7 +24,10 @@ and human judgment candidates for Steps 4 and 6 of the grouping procedure.
 param(
     [Parameter(Mandatory = $true)]
     [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
-    [string]$ReleaseDirectory
+    [string]$ReleaseDirectory,
+
+    [Parameter()]
+    [string]$ProvenanceDirectory = ''
 )
 
 $ErrorActionPreference = "Stop"
@@ -409,21 +418,26 @@ $inputFileDigests = @(
         $relativePath = $filePath.Substring($releasePath.Length + 1).Replace("\", "/")
         [ordered]@{
             path   = $relativePath
-            sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $filePath).Hash.ToLowerInvariant()
+            # Hash LF-normalized text so CRLF and LF checkouts record the same digest.
+            sha256 = Get-Sha256 ([IO.File]::ReadAllText($filePath).Replace("`r`n", "`n"))
         }
     }
 )
 $inputDigestText = ($inputFileDigests | ForEach-Object { "$($_.path):$($_.sha256)" }) -join "`n"
-$repositoryPath = (Resolve-Path -LiteralPath (Join-Path $releasePath "..\..\..")).Path
-$releaseRelativePath = $releasePath.Substring($repositoryPath.Length + 1).Replace("\", "/")
+# A projection takes its baseline commit from the source ledger it was generated from.
+$provenancePath = $releasePath
+if ($ProvenanceDirectory) { $provenancePath = (Resolve-Path -LiteralPath $ProvenanceDirectory).Path }
+$repositoryPath = (Resolve-Path -LiteralPath (Join-Path $provenancePath "..\..\..")).Path
+$releaseRelativePath = $provenancePath.Substring($repositoryPath.Length + 1).Replace("\", "/")
 $ledgerRelativePaths = @($ledgerInputFiles | ForEach-Object { "$releaseRelativePath/$($_.Substring($releasePath.Length + 1).Replace("\", "/"))" })
 $inputRelativePaths = $ledgerRelativePaths
-$gitCommitOutput = @(& git -C $repositoryPath log -1 --format=%H -- $inputRelativePaths 2>$null)
-if ($LASTEXITCODE -ne 0 -or $gitCommitOutput.Count -eq 0) {
-    $gitCommit = "unavailable"
-}
-else {
-    $gitCommit = ([string]$gitCommitOutput[0]).Trim()
+# Without Git or a repository the baseline commit is unavailable; generation does not depend on it.
+$gitCommit = "unavailable"
+if ($null -ne (Get-Command git -CommandType Application -ErrorAction SilentlyContinue)) {
+    $gitCommitOutput = @(& git -C $repositoryPath log -1 --format=%H -- $inputRelativePaths 2>$null)
+    if ($LASTEXITCODE -eq 0 -and $gitCommitOutput.Count -gt 0) {
+        $gitCommit = ([string]$gitCommitOutput[0]).Trim()
+    }
 }
 
 $matrix = @()

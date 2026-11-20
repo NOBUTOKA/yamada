@@ -16,7 +16,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
     methods (Test)
         function reusesACompleteCheckpointAcrossNumericOwners(testCase)
             % reusesACompleteCheckpointAcrossNumericOwners Avoid parsing for owned re-edits across grid layouts.
-            for layout = ["absolute", "flat", "nested"]
+            for layout = ["absolute", "nested"]
                 document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
                 second = document.getComponentByName("Second");
@@ -41,7 +41,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function localValueEditsRetainEquivalentAvailabilityAcrossOwners(testCase)
             % localValueEditsRetainEquivalentAvailabilityAcrossOwners Reuse answers while commands retain current values.
-            for layout = ["absolute", "flat", "nested"]
+            for layout = ["absolute", "nested"]
                 document = testCase.availabilityFixture(layout);
                 first = document.getComponentByName("First");
                 second = document.getComponentByName("Second");
@@ -121,7 +121,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function numericEditsRetainOtherOwnerStates(testCase)
             % numericEditsRetainOtherOwnerStates Reuse logical state values while matching a fresh complete resolution.
-            for layout = ["absolute", "flat", "nested"]
+            for layout = ["absolute", "nested"]
                 document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
                 second = document.getComponentByName("Second");
@@ -185,7 +185,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function ownedCheckpointReadsAvoidDocumentMaterialization(testCase)
             % ownedCheckpointReadsAvoidDocumentMaterialization Keep local reads private and public copies independent.
-            for layout = ["absolute", "flat", "nested"]
+            for layout = ["absolute", "nested"]
                 document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
                 document.setProperty(first.Id, "Value", 1, testCase.Registry);
@@ -203,9 +203,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 testCase.assertNotEmpty(again.Component);
                 testCase.verifyEqual(yamada.model.SubtreeSnapshot(normal, normal.RootComponentId).Records, ...
                     yamada.model.SubtreeSnapshot(again.Document, again.Document.RootComponentId).Records);
-                for name = reshape(string(properties(normal)), 1, [])
-                    if name ~= "Components", testCase.verifyEqual(again.Document.(name), normal.(name), name); end
-                end
+                testCase.verifyEqual(again.Document.CurrentText, normal.CurrentText);
                 copy.Component.setProperty("Value", 9);
                 testCase.verifyEqual(first.getProperty("Value").LiteralValue, 2);
                 again = yamada.source.PropertySourcePlan.combined(document, first, testCase.Registry);
@@ -263,7 +261,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function checkpointStateReadsMatchIndependentPlans(testCase)
             % checkpointStateReadsMatchIndependentPlans Preserve pending identities and values while avoiding read-only copies.
-            for layout = ["absolute", "flat", "nested"]
+            for layout = ["absolute", "nested"]
                 document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
                 document.setProperty(first.Id, "Value", 4, testCase.Registry);
@@ -344,6 +342,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                 else
                     testCase.Registry.register(testCase.Registry.get("uieditfield", {"numeric"}));
                 end
+                if kind == "limits"
+                    testCase.verifyError(@() document.setProperty(first.Id, "Value", 6, testCase.Registry), ...
+                        "yamada:DocumentModel:UnsafePropertyEdit");
+                end
                 document.setProperty(first.Id, "Value", 4, testCase.Registry);
                 document.validatePropertyCommit(testCase.Registry);
                 testCase.verifyEqual(first.getProperty("Value").LiteralValue, 4);
@@ -377,6 +379,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function emptyValuesUseTheFullAllowedEmptyPath(testCase)
             % emptyValuesUseTheFullAllowedEmptyPath Keep non-scalar requests outside finite scalar local validation.
+            assumeCatalogSupports(testCase, "uieditfield-numeric", "AllowEmpty");
             document = testCase.fixture("absolute", ...
                 ["app.First = uieditfield(PARENT,'numeric');", "app.First.AllowEmpty = 'on';", "app.First.Value = 1;"]);
             first = document.getComponentByName("First");

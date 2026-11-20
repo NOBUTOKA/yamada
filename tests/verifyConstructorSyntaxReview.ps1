@@ -12,6 +12,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $root = Split-Path -Parent $PSScriptRoot
 $tools = Join-Path $root 'dev/component-data'
+$surface = [string]([IO.File]::ReadAllText((Join-Path $tools 'releases.json')) | ConvertFrom-Json).surfaceRelease
 $temporaryRoot = Join-Path ([IO.Path]::GetTempPath()) ('yamada-constructor-review-' + [guid]::NewGuid())
 New-Item -ItemType Directory -Path $temporaryRoot | Out-Null
 
@@ -22,12 +23,20 @@ function Get-LedgerHash {
 }
 
 try {
-    $release = Join-Path $temporaryRoot 'R2024a'
-    Copy-Item -LiteralPath (Join-Path $tools 'R2024a') -Destination $release -Recurse
+    $release = Join-Path $temporaryRoot $surface
+    Copy-Item -LiteralPath (Join-Path $tools $surface) -Destination $release -Recurse
     $path = Join-Path $release 'CONSTRUCTOR_SYNTAX_REVIEW.json'
     $original = Get-Content -LiteralPath $path -Raw
     $review = $original | ConvertFrom-Json
-    if ($review.factories.Count -ne 38 -or $review.variants.Count -ne 48) { throw 'Constructor review does not cover the complete catalog.' }
+    $components = @(Get-ChildItem -LiteralPath (Join-Path $release 'components') -Filter '*.json' -File | ForEach-Object {
+        Get-Content -LiteralPath $_.FullName -Raw | ConvertFrom-Json
+    })
+    $expectedFactories = @($components.factory | Sort-Object -Unique)
+    $expectedVariants = @($components.id | Sort-Object)
+    if (@(Compare-Object $expectedFactories @($review.factories.factory | Sort-Object)).Count -ne 0 -or
+        @(Compare-Object $expectedVariants @($review.variants.componentId | Sort-Object)).Count -ne 0) {
+        throw 'Constructor review does not cover the current catalog.'
+    }
     $total = 0
     foreach ($variant in $review.variants) {
         $classified = @($variant.documentedReadOnly) + @($variant.restrictedSetter) + @($variant.documentedWritable)
@@ -36,7 +45,7 @@ try {
         }
         $total += $classified.Count
     }
-    if ($total -ne 1542) { throw 'The previous unknown constructor entries are not fully accounted for.' }
+    if ($total -ne $review.previousUnknown) { throw 'The declared prior unknown entries are not fully accounted for.' }
 
     # Old support flags must be retired without changing any other application policy.
     $file = Join-Path $release 'components/uilabel.json'
@@ -61,7 +70,7 @@ try {
         try { & $apply -ReleaseDirectory $release | Out-Null } catch { $failed = $true }
         if (-not $failed -or $expected -cne (Get-LedgerHash $release)) { throw "Invalid constructor evidence $case was not rejected atomically." }
     }
-    Write-Output 'CONSTRUCTOR_SYNTAX_REVIEW_TEST Passed: 38 factories, 48 variants, 1542 classified unknowns, flag removal, idempotence, atomic evidence rejection.'
+    Write-Output "CONSTRUCTOR_SYNTAX_REVIEW_TEST Passed: $($expectedFactories.Count) factories, $($expectedVariants.Count) variants, $total classified entries, flag removal, idempotence, atomic evidence rejection."
 }
 finally {
     $resolved = [IO.Path]::GetFullPath($temporaryRoot)

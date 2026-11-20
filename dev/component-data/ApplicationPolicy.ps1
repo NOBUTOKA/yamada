@@ -41,7 +41,7 @@ function ConvertTo-ApplicationPolicy {
         $effect = $Policy.effectPolicy
     }
     if ($effect -isnot [string] -or $effect -cnotin @('none', 'itemSelection', 'boundedValue',
-            'numericValue', 'tickMode', 'valueMode', 'modeFlag', 'axisWidth', 'positionAlias', 'squarePositionAlias',
+            'numericValue', 'tickMode', 'valueMode', 'modeFlag', 'setterModeFlag', 'axisWidth', 'positionAlias', 'squarePositionAlias',
             'textValue', 'componentReference', 'layout', 'gridTracks', 'buttonSelection', 'positionInput', 'sliderPosition', 'squarePosition', 'switchPosition', 'semicircularPosition', 'linearPosition')) {
         throw "$Context.effectPolicy has an unknown effect policy."
     }

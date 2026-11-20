@@ -8,6 +8,74 @@ classdef SubtreeCopyPlanner
     %   and the original document retain their bindings and method bodies.
 
     methods (Static)
+        function catalog = sourceCatalog(snapshot, registry)
+            % sourceCatalog Select the bundled catalog required by the frozen subtree.
+            arguments (Input)
+                snapshot (1, 1) yamada.model.SubtreeSnapshot
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                catalog (1, 1) yamada.model.ComponentRegistry
+            end
+
+            catalog = registry;
+            records = snapshot.Records;
+            index = find(arrayfun(@(record) isfield(record.Metadata, "UnavailableRelease"), records), 1);
+            if ~isempty(index)
+                catalog = registry.structuralCatalog(records(index).Metadata.SourceCatalogRelease);
+            end
+        end
+
+        function snapshot = prepareUnavailable(document, snapshot, catalog)
+            % prepareUnavailable Prove the copied configuration using the original source variant surface.
+            arguments (Input)
+                document (1, 1) yamada.model.DocumentModel
+                snapshot (1, 1) yamada.model.SubtreeSnapshot
+                catalog (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                snapshot (1, 1) yamada.model.SubtreeSnapshot
+            end
+
+            % Resolve source behavior in a detached document without changing the runtime surface.
+            [source, diagnostics] = yamada.source.AppSourceParser.parseText(document.CurrentText, catalog, document.FilePath);
+            if yamada.validation.ModelValidator.hasErrors(diagnostics)
+                error("yamada:DocumentModel:UnsafeSubtreeCopy", "The source catalog could not verify this application.");
+            end
+            root = source.getComponentByName(snapshot.Records(1).Name);
+            if isempty(root) || root.isReleaseUnavailable()
+                error("yamada:DocumentModel:UnsafeSubtreeCopy", "The source catalog could not resolve this component.");
+            end
+            sourceSubtree = yamada.model.SubtreeSnapshot(source, root.Id);
+            if any(arrayfun(@(record) isfield(record.Metadata, "UnavailableRelease"), sourceSubtree.Records))
+                error("yamada:DocumentModel:UnsafeSubtreeCopy", "The source catalog could not resolve every component in this subtree.");
+            end
+            copied = source.copySubtree(root.Id, catalog);
+            if ~isequal(string({copied.Records.Name}), string({snapshot.Records.Name}))
+                error("yamada:DocumentModel:UnsafeSubtreeCopy", "The source catalog did not reproduce the subtree.");
+            end
+
+            % Map proven reference targets back to the live document's stable identities.
+            configuration = copied.CopyConfiguration;
+            for index = 1:numel(configuration)
+                configuration(index).ComponentId = snapshot.Records(index).Id;
+                values = configuration(index).Properties;
+                for propertyIndex = 1:numel(values)
+                    metadata = values(propertyIndex).Metadata;
+                    if ~isfield(metadata, "SubtreeReferenceId"), continue, end
+                    target = source.getComponent(string(metadata.SubtreeReferenceId));
+                    live = yamada.model.ComponentRecord.empty;
+                    if ~isempty(target), live = document.getComponentByName(target.Name); end
+                    if isempty(live)
+                        error("yamada:DocumentModel:UnsafeSubtreeCopy", "A copied reference target could not be identified.");
+                    end
+                    values(propertyIndex).Metadata.SubtreeReferenceId = live.Id;
+                end
+                configuration(index).Properties = values;
+            end
+            snapshot = snapshot.withCopyConfiguration(configuration);
+        end
+
         function paths = callbackPaths(document, componentId, registry)
             % callbackPaths Identify omitted bindings from the effective catalog, never from name suffixes.
             arguments (Input)

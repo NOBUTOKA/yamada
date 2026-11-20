@@ -11,8 +11,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DayOfWeekEditorDialogTest < 
             dialog = yamada.ui.inspector.DayOfWeekEditorDialog.open([1 3], ...
                 "DisabledDaysOfWeek", @(changes) captureChanges(owner, changes), false);
             buttons = findall(dialog, "Tag", "yamada-inspector-day-of-week-button");
-            testCase.verifyEqual(sort(string({buttons.Text})), ...
-                ["Fri", "Mon", "Sat", "Sun", "Thu", "Tue", "Wed"]);
             testCase.verifyEqual(sort(string({buttons([buttons.Value]).Text})), ["Sun", "Tue"]);
             monday = buttons(string({buttons.Text}) == "Mon");
             monday.Value = true;

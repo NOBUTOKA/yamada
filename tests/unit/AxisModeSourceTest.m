@@ -304,17 +304,29 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function storedColorCanBeEditedUnderAFinalAutomaticRenderingMode(testCase)
             % storedColorCanBeEditedUnderAFinalAutomaticRenderingMode Keep getter data known without claiming a rendered grid color.
-            [document, registry, control] = testCase.fixture( ...
-                "app.Control = uiaxes(app.UIFigure, GridColor=[0.3 0.5 0.7], GridColorMode='auto');");
-            document.setProperty(control.Id, "GridColor", [0.6 0.2 0.1], registry);
-            source = yamada.source.RoundTripGenerator(registry).generate(document);
-            reopened = yamada.source.AppSourceParser.parseText(source, registry);
-            other = reopened.getComponentByName("Control");
-            states = reopened.getEffectivePropertyStates(registry, other.Id);
-            testCase.verifyEqual(testCase.state(states, "GridColor").EffectiveValue, [0.6 0.2 0.1]);
-            testCase.verifyEqual(string(testCase.state(states, "GridColorMode").EffectiveValue), "auto");
-            testCase.verifyNumElements(other.getSettings("GridColor"), 1);
-            testCase.verifyEqual(other.getSettings("GridColor").Method, "nameValue");
+            %   A constructor that restores auto last keeps the stored color
+            %   only under a plain mode flag; other catalog policies leave it
+            %   to the runtime, so the edit cannot be confirmed.
+            for factory = ["uiaxes", "axes"]
+                [document, registry, control] = testCase.fixture("app.Control = " + factory + ...
+                    "(app.UIFigure, GridColor=[0.3 0.5 0.7], GridColorMode='auto');", factory);
+                definition = registry.get(factory);
+                policy = definition.Properties([definition.Properties.Path] == "GridColor").Application.EffectPolicy;
+                if policy ~= "modeFlag"
+                    testCase.verifyError(@() document.setProperty(control.Id, "GridColor", [0.6 0.2 0.1], registry), ...
+                        "yamada:DocumentModel:UnsafePropertyEdit", factory);
+                    continue
+                end
+                document.setProperty(control.Id, "GridColor", [0.6 0.2 0.1], registry);
+                source = yamada.source.RoundTripGenerator(registry).generate(document);
+                reopened = yamada.source.AppSourceParser.parseText(source, registry);
+                other = reopened.getComponentByName("Control");
+                states = reopened.getEffectivePropertyStates(registry, other.Id);
+                testCase.verifyEqual(testCase.state(states, "GridColor").EffectiveValue, [0.6 0.2 0.1], factory);
+                testCase.verifyEqual(string(testCase.state(states, "GridColorMode").EffectiveValue), "auto", factory);
+                testCase.verifyNumElements(other.getSettings("GridColor"), 1, factory);
+                testCase.verifyEqual(other.getSettings("GridColor").Method, "nameValue", factory);
+            end
         end
 
         function laterAutomaticModePreventsPretendedLiteralEdits(testCase)

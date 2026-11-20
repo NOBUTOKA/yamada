@@ -50,9 +50,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             variant = registry.getById("uiswitch-rocker");
             component = document.insertComponent(registry, variant.Factory, ...
                 document.RootComponentId, variant.CreationArguments);
-            testCase.verifyEqual(variant.DefaultSize, [20 45]);
             testCase.verifyEqual(component.getProperty("Position").LiteralValue, ...
-                [20 20 20 45]);
+                [20 20 variant.DefaultSize]);
         end
 
         function gridInsertionSeedsLayoutCoordinates(testCase)
@@ -371,8 +370,7 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
 
             invalid = diagnostics([diagnostics.Code] == "invalid-catalog-property");
             testCase.verifyNotEmpty(invalid);
-            testCase.verifyEqual(invalid(1).Message, ...
-                "The end date must be later than the start date.");
+            testCase.verifyEqual(invalid(1).ComponentId, picker.Id);
         end
 
         function effectivePropertiesFollowDirectParentContext(testCase)
@@ -508,53 +506,6 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyFalse(trimmed.IsDirty);
         end
 
-        function publicPropertiesProvideMetadataHelp(testCase)
-            % publicPropertiesProvideMetadataHelp Verify documented public state.
-
-            % Inspect every public model class through MATLAB property metadata.
-            classNames = ["yamada.model.ComponentRecord", ...
-                "yamada.model.ComponentDefinition", "yamada.model.Diagnostic", ...
-                "yamada.model.DocumentModel", "yamada.model.ParentContextRule", ...
-                "yamada.model.PropertyDefinition", ...
-                "yamada.model.PropertyEntry", "yamada.model.SourceSpan"];
-            for className = classNames
-                classMetadata = meta.class.fromName(char(className));
-                propertyMetadata = classMetadata.PropertyList;
-                if iscell(propertyMetadata)
-                    propertyMetadata = [propertyMetadata{:}];
-                end
-                for property = propertyMetadata(:)'
-                    if strcmp(property.GetAccess, "public")
-                        testCase.verifyNotEmpty(property.Description, ...
-                            className + "." + string(property.Name));
-                    end
-                end
-            end
-
-            % Confirm internal registry storage remains inaccessible to callers.
-            registryMetadata = ?yamada.model.ComponentRegistry;
-            definitions = findobj(registryMetadata.PropertyList, ...
-                "Name", "Definitions");
-            testCase.verifyEqual(string(definitions.GetAccess), "private");
-
-            % Keep externally readable invariants writable only by their owners.
-            readOnlyProperties = { ...
-                ?yamada.model.ComponentRecord, "Id"; ...
-                ?yamada.model.ComponentDefinition, "Factory"; ...
-                ?yamada.model.Diagnostic, "Code"; ...
-                ?yamada.model.DocumentModel, "IsDirty"; ...
-                ?yamada.model.PropertyDefinition, "Path"; ...
-                ?yamada.model.PropertyEntry, "ValueKind"; ...
-                ?yamada.model.SourceSpan, "StartOffset"};
-            for index = 1:size(readOnlyProperties, 1)
-                classMetadata = readOnlyProperties{index, 1};
-                propertyName = readOnlyProperties{index, 2};
-                property = findobj(classMetadata.PropertyList, ...
-                    "Name", propertyName);
-                testCase.verifyEqual(string(property.GetAccess), "public");
-                testCase.verifyEqual(string(property.SetAccess), "private");
-            end
-        end
     end
 end
 

@@ -6,15 +6,15 @@ For maintainers preparing a release, this guide covers candidate validation, ver
 
 Use the [contributor workflow](../CONTRIBUTING.md#branch-workflow): focused work branches and pull requests into `main`, with no permanent `develop`. `main` holds verified integrated development for the next release. Use a release branch only when stabilization or maintenance must proceed in parallel with development.
 
-Preserve cohesive commits. An `AGENTS.md` commit must contain only that file and must remain separate when merged; use a merge commit or rebase merge for a pull request that also contains other changes. Squash merging is suitable only when it does not violate this separation.
+Preserve cohesive commits when merging. Use a merge commit or rebase merge for a pull request whose commits explain separate steps; squash merging is suitable only for a pull request that forms one cohesive change.
 
 ## Version Policy
 
 Use `major.minor.patch`: `1.0.0` for the first stable release, `1.0.1` for compatible fixes, `1.1.0` for compatible feature additions, and `2.0.0` for breaking changes. Compatibility includes supported input source, preservation and generation behavior, and documented user workflows, not just callable MATLAB APIs. Describe intentional compatibility changes in release notes. MATLAB release compatibility such as R2024a is a separate setting.
 
-Use `1.0.0` in Toolbox metadata, `v1.0.0` as the Git tag, `yamada 1.0.0` as the Release title, and `yamada-1.0.0.mltbx` as the asset name. Keep one authoritative version value when packaging is implemented and validate derived names against it. Keep the Toolbox UUID stable across versions.
+Use `1.0.0` in Toolbox metadata, `v1.0.0` as the Git tag, `yamada 1.0.0` as the Release title, and `yamada-1.0.0.mltbx` as the asset name. Set the Toolbox version in the release metadata and verify that the tag, release title, and asset name agree. Keep the Toolbox UUID stable across versions.
 
-The version, permanent UUID, author, public contact, description, and compatibility are defined in [`dev/release/toolbox.json`](../dev/release/toolbox.json). Use [`buildYamadaToolbox`](../dev/release/buildYamadaToolbox.m) to create a candidate, input manifest, and `SHA256SUMS`; see the [build procedure](../dev/release/README.md). The default output is ignored under `build/`. Existing candidates are not overwritten.
+The version, permanent UUID, author, public contact, description, and compatibility are defined in [`dev/release/toolbox.json`](../dev/release/toolbox.json). Use [`buildYamadaToolbox`](../dev/release/buildYamadaToolbox.m) to create a candidate, input manifest, and `.mltbx.sha256`; see the [build procedure](../dev/release/README.md). The default output is ignored under `build/`. Existing candidates are not overwritten.
 
 ## Repository Settings
 
@@ -24,7 +24,7 @@ A repository administrator configures GitHub Settings > Rules > Rulesets with an
 - Restrict deletions and block force pushes. Do not configure routine bypass actors.
 - Do not require Code Owner approval or approval of the most recent push for sole-maintainer operation.
 - Add required status checks only after the actual CI jobs exist and have been verified. Until then, maintainers inspect recorded local verification results in the pull request.
-- Do not require linear history while merge commits are needed to preserve separate `AGENTS.md` commits. Keep at least one merge method available that preserves those commits.
+- Keep at least one merge method available that preserves individual commits.
 
 Apply equivalent protection to maintenance branches when they are created. Enable Issues for bug reports. Keep the default branch as `main`. Automatic work-branch deletion is optional; retained maintenance branches must not be deleted inadvertently.
 
@@ -33,16 +33,17 @@ GitHub documents these controls in [Available rules for rulesets](https://docs.g
 ## Prepare the Release
 
 1. Confirm the version's supported feature set against `SPECIFICATION.md`. Classify known issues as release blockers or documented limitations. Source loss, corrupt saves, execution of input application code, and failure of essential installed workflows block publication.
-2. Confirm the MATLAB releases, platforms, and required products actually verified. Initially target R2024a; declare only platforms validated for the artifact. Audit internal MATLAB dependencies and their failure behavior.
+2. Confirm the MATLAB releases, platforms, and required products actually verified. The current targets are R2023a through R2026b; complete the two GitHub Actions test groups and the local checks below, and declare only platforms validated for the artifact. Audit internal MATLAB dependencies and their failure behavior.
 3. Reconcile README, specification, examples, and release notes with the implementation. Document installation, update, removal, limitations, and bug reporting. Use `yamada` as the normal launch command; reserve handle-returning forms for development and tests.
-4. Audit runtime resources and redistribution rights. Package runtime MATLAB code, the release-specific JSON catalog, `EditorInteractionOverlay.html`, `RootResizeGuide.html`, `SourceDiffPreview.html`, `stabilize-request.js`, license notices, and appropriate user documentation. Explicitly exclude development tools, tests, investigation reports, logs, repository metadata, and build output.
-5. Review the explicit packaging inputs and metadata, then build with the R2024a-supported `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox` procedure. Include the Apps gallery entry alongside the documented command, and verify both paths using the installed candidate.
+4. Audit runtime resources and redistribution rights. Package runtime MATLAB code, the release-specific JSON catalog, `EditorInteractionOverlay.html`, `RootResizeGuide.html`, `SourceDiffPreview.html`, `layout-settle-request.js`, license notices, and appropriate user documentation. Explicitly exclude development tools, tests, investigation reports, logs, repository metadata, and build output.
+5. Review the explicit packaging inputs and metadata, then build on R2026b, the declared maximum release, with the documented `matlab.addons.toolbox.ToolboxOptions` and `matlab.addons.toolbox.packageToolbox` procedure. Include the Apps gallery entry alongside the documented command, and verify both paths using the installed candidate.
 
 ## Validate the Candidate
 
 Record the source commit, MATLAB release/update, operating system, commands, completed test summaries, and artifact SHA-256. Keep generated logs and measurement artifacts in ignored local results or the investigation branch.
 
-- Run the full MATLAB regression suite as described in `CONTRIBUTING.md`, relevant HTML/JavaScript checks, and applicable static and convention checks. Use a licensed MATLAB session and retain the completed test results.
+- On GitHub, open **Actions → MATLAB tests → Run workflow** and select the branch containing the release candidate. Verify the run's source commit matches the candidate. The first group runs R2023a without the `ui` tag and the full suite on R2023b, R2024a, and R2024b. The second group runs the full suite on R2025a, R2025b, R2026a, and R2026b. Each release uses five jobs. Retain the results from both groups.
+- In a graphical local R2023a session, run `runYamadaFullTestPartition("ui")` as described in [Testing](../CONTRIBUTING.md#testing). Run the desktop-mode checks below in the environments affected by the candidate, including the launch and Preview paths that depend on the MATLAB desktop. Also run relevant HTML/JavaScript checks and applicable static and convention checks.
 - Build from the final intended source commit. Install the resulting Toolbox with the source checkout absent from the MATLAB path and confirm the resolved entry point belongs to the installed copy.
 - Launch with `yamada` without parentheses or an output assignment. Verify the app survives startup and cleans up correctly when closed.
 - Exercise New/Open, component and property editing, Validate, Diff Preview, Save/Save As, and reopen. Cover subtree operations, rename, callback management, and Undo/Redo.
@@ -54,7 +55,7 @@ If candidate code or packaged contents change, repeat affected checks and rebuil
 ## Publish
 
 1. GPG-sign the final release commit on a work branch and integrate it through a PR while preserving that signed commit. Build from that exact clean revision, resolve remaining blockers, and complete final artifact acceptance. Prepare the detached `.mltbx.asc` signature for the accepted artifact. If a separate merge commit is used, verify the intended release tree and repeat affected acceptance checks after integration.
-2. Prepare a draft GitHub Release with the version, source commit, `.mltbx`, `.mltbx.asc`, `SHA256SUMS`, supported environments, installation and `yamada` launch instructions, features, known limitations, and changes from the prior release. GitHub's automatic source archives are distinct from the installable Toolbox asset.
+2. Prepare a draft GitHub Release with the version, source commit, `.mltbx`, `.mltbx.asc`, `.mltbx.sha256`, supported environments, installation and `yamada` launch instructions, features, known limitations, and changes from the prior release. GitHub's automatic source archives are distinct from the installable Toolbox asset.
 3. Review the installer, detached signature, checksums, and Release text together before publishing.
 4. GPG-sign the `v<version>` tag pointing to the accepted source commit, then push the tag and publish the matching assets. Verify that source identity, Toolbox metadata, asset name, checksum, and release notes agree. Resolve any signing failure before publishing.
 5. Download the published asset and verify its checksum and public documentation links. Record completion without committing generated measurement reports to `main`.

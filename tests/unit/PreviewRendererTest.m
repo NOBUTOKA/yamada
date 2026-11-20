@@ -19,6 +19,66 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
     end
 
     methods (Test)
+        function preservesNewerControlsAsLabelsInOlderPreview(testCase)
+            % preservesNewerControlsAsLabelsInOlderPreview Check source-owned grid and absolute placement.
+
+            % Render all three fixture surfaces against the oldest runtime catalog.
+            registry = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2023a"));
+            fixtureFolder = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures");
+            figure = uifigure("Visible", "off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            panel = uipanel(figure, "AutoResizeChildren", "off");
+            renderer = yamada.ui.PreviewRenderer(registry);
+            folders = [fullfile(fixtureFolder, "R2023a"), fullfile(fixtureFolder, "R2023b"), fixtureFolder];
+            for index = 1:numel(folders)
+                path = fullfile(folders(index), "ControlGalleryApp.m");
+                document = yamada.source.AppSourceParser.parseFile(path, registry);
+                [handles, diagnostics] = renderer.render(document, panel);
+                testCase.verifyFalse(any(string({diagnostics.Code}) == "preview-render-failed"));
+                slider = handles("parsed-IntensitySlider");
+                if index == 1
+                    testCase.verifyClass(slider, "matlab.ui.control.Slider");
+                else
+                    testCase.verifyClass(slider, "matlab.ui.control.Label");
+                    testCase.verifySubstring(string(slider.Text), "R2023b");
+                end
+                testCase.verifyEqual(slider.Layout.Row, 4);
+                testCase.verifyEqual(slider.Layout.Column, [1 2]);
+                if index == 3
+                    picker = handles("parsed-AccentColorPicker");
+                    testCase.verifyClass(picker, "matlab.ui.control.Label");
+                    testCase.verifySubstring(string(picker.Text), "R2024a");
+                    testCase.verifyEqual(picker.Layout.Row, 2);
+                    testCase.verifyEqual(picker.Layout.Column, 1);
+                end
+            end
+
+            % Parse an absolute child through the same model and preview entry points.
+            source = join(["classdef ReleaseExample < handle", "methods", ...
+                "function app = ReleaseExample", "app.Figure = uifigure();", ...
+                "app.Picker = uicolorpicker(app.Figure, Position=[20 30 140 25]);", ...
+                "end", "end", "end"], newline);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
+            handles = renderer.render(document, panel);
+            testCase.verifyEqual(handles("parsed-Picker").Position, [20 30 140 25]);
+
+            % Replay implicit allocation before a sibling's later explicit move.
+            source = join(["classdef ReleaseExample < handle", "methods", ...
+                "function app = ReleaseExample", "app.Figure = uifigure();", ...
+                "app.Grid = uigridlayout(app.Figure, [2 2]);", ...
+                "app.First = uilabel(app.Grid);", "app.Picker = uicolorpicker(app.Grid);", ...
+                "app.First.Layout.Row = 2;", "app.First.Layout.Column = 2;", ...
+                "app.Last = uilabel(app.Grid);", "end", "end", "end"], newline);
+            document = yamada.source.AppSourceParser.parseText(source, registry);
+            handles = renderer.render(document, panel);
+            testCase.verifyEqual(handles("parsed-Picker").Layout.Row, 1);
+            testCase.verifyEqual(handles("parsed-Picker").Layout.Column, 2);
+            testCase.verifyEqual(handles("parsed-Last").Layout.Row, 3);
+            testCase.verifyEqual(handles("parsed-Last").Layout.Column, 1);
+            clear cleanup
+        end
+
         function actualSizeFixturesKeepCanvasAndEdgeControlsUnscaled(testCase)
             % actualSizeFixturesKeepCanvasAndEdgeControlsUnscaled Cover fit and overflow.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -128,7 +188,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             testCase.verifyEmpty(toolsDocument.Diagnostics);
             testCase.verifyEqual(string({toolsDiagnostics.Code}), "preview-position-unknown");
             testCase.verifyEqual(string({toolsDiagnostics.Severity}), "warning");
-            testCase.verifyEqual(double(toolsHandles.Count), 1);
+            testCase.verifyEqual(numEntries(toolsHandles), 1);
             testCase.verifyTrue(isKey(toolsHandles, "parsed-PreviewLabel"));
             testCase.verifyEqual(string(toolsHandles("parsed-PreviewLabel").Text), ...
                 "Figure tools are ignored in Safe Preview.");
@@ -175,7 +235,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
 
             testCase.verifyEmpty(diagnostics);
             for id = [rockerComponent.Id, toggleComponent.Id]
-                position = double(handles(char(id)).Position);
+                position = double(handles(id).Position);
                 testCase.verifyEqual(position(3) / position(4), 20 / 45, "AbsTol", 1e-10);
                 testCase.verifyLessThan(position(4), 60);
             end
@@ -206,8 +266,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             [handles, diagnostics] = renderer.render(document, panel);
 
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(handles(char(dropDown.Id)).Value, 20);
-            testCase.verifyEqual(handles(char(listBox.Id)).Value, [10 30]);
+            testCase.verifyEqual(handles(dropDown.Id).Value, 20);
+            testCase.verifyEqual(handles(listBox.Id).Value, [10 30]);
             clear cleanup
         end
 
@@ -231,7 +291,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             [handles, diagnostics] = renderer.render(document, panel);
 
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(string(handles(char(imageComponent.Id)).ImageSource), imagePath);
+            testCase.verifyEqual(string(handles(imageComponent.Id).ImageSource), imagePath);
             clear figureCleanup imageCleanup
         end
     end
@@ -268,9 +328,9 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 if component.Id == document.RootComponentId
                     continue
                 end
-                testCase.assertTrue(isKey(handles, char(component.Id)), ...
+                testCase.assertTrue(isKey(handles, component.Id), ...
                     fixturePath + ": preview is missing " + component.Name);
-                preview = handles(char(component.Id));
+                preview = handles(component.Id);
                 actualComponent = actual.(char(component.Name));
                 for propertyIndex = 1:numel(component.Properties)
                     entry = component.Properties(propertyIndex);
@@ -313,14 +373,16 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             end
             arguments (Output)
                 document (1, 1) yamada.model.DocumentModel
-                handles containers.Map
+                handles dictionary
                 diagnostics yamada.model.Diagnostic
                 panel (1, 1) matlab.ui.container.Panel
             end
 
             % Keep each fixture isolated while sharing a stable editor-sized surface.
-            document = yamada.source.AppSourceParser.parseFile( ...
-                fullfile(fixtureFolder, fixtureName + ".m"), registry);
+            % Fixtures in the shared folder may have variants for older release catalogs.
+            path = fullfile(fixtureFolder, fixtureName + ".m");
+            if isfile(path), path = yamadaFixturePath(fixtureName + ".m"); end
+            document = yamada.source.AppSourceParser.parseFile(path, registry);
             panel = uipanel(previewFigure, "Position", [1 1 900 700]);
             renderer = yamada.ui.PreviewRenderer(registry);
             [handles, diagnostics] = renderer.render(document, panel);

@@ -7,6 +7,45 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
     end
 
     methods (Test)
+        function clipboardMenusAcceptUnavailableComponents(testCase)
+            % clipboardMenusAcceptUnavailableComponents Exercise newer source components through Edit menus.
+
+            % Open the common fixture in a runtime where its Color Picker has a Preview stand-in.
+            registry = yamada.model.ComponentRegistry.createDefault();
+            testCase.assumeFalse(registry.contains("uicolorpicker"));
+            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "ControlGalleryApp.m");
+            lifecycle = yamada.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, path)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() delete(app));
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
+            menus = findall(figure, "Type", "uimenu");
+            open = menus(erase(string({menus.Text}), "&") == "Open...");
+            open.MenuSelectedFcn(open, []);
+            picker = app.Document.getComponentByName("AccentColorPicker");
+            testCase.select(figure, picker.Id);
+            copy = findall(figure, "Tag", "yamada-edit-copy");
+            testCase.verifyEqual(string(copy.Enable), "on");
+            copy.MenuSelectedFcn(copy, []);
+
+            % After the paste, a cut and paste preserves the copied name and settings.
+            testCase.select(figure, app.Document.RootComponentId);
+            paste = findall(figure, "Tag", "yamada-edit-paste");
+            testCase.verifyEqual(string(paste.Enable), "on");
+            paste.MenuSelectedFcn(paste, []);
+            copied = app.Document.getComponentByName("AccentColorPickerCopy");
+            testCase.assertTrue(copied.isReleaseUnavailable());
+            testCase.select(figure, copied.Id);
+            cut = findall(figure, "Tag", "yamada-edit-cut");
+            testCase.verifyEqual(string(cut.Enable), "on");
+            cut.MenuSelectedFcn(cut, []);
+            testCase.verifyEmpty(app.Document.getComponentByName("AccentColorPickerCopy"));
+            paste.MenuSelectedFcn(paste, []);
+            restored = app.Document.getComponentByName("AccentColorPickerCopy");
+            testCase.verifyTrue(restored.isReleaseUnavailable());
+            testCase.verifyEqual(restored.getSettings("Value").LiteralValue, picker.getSettings("Value").LiteralValue);
+            clear cleanup
+        end
+
         function editMenuUsesAtomicSubtreeCommands(testCase)
             % editMenuUsesAtomicSubtreeCommands Exercise Copy, Paste and Cut through Edit menus.
             testCase.exerciseRoute("menu");
@@ -43,23 +82,15 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(app.Document.Components, before);
         end
 
-        function menusShowShortcutsAndReparentHasNoMenu(testCase)
-            % menusShowShortcutsAndReparentHasNoMenu Keep parent changes exclusive to Preview drag.
+        function fileAndEditAcceleratorsAreUnambiguous(testCase)
+            % fileAndEditAcceleratorsAreUnambiguous Keep file and edit shortcuts unambiguous.
             [app, figure] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             actions = ["Copy", "Cut", "Paste"];
             keys = ["C", "X", "V"];
             for index = 1:numel(actions)
                 item = findall(figure, "Tag", "yamada-edit-" + lower(actions(index)));
-                testCase.verifyEqual(string(item.Text), actions(index));
                 testCase.verifyEqual(string(item.Accelerator), keys(index));
-            end
-            rename = findall(figure, "Tag", "yamada-rename-component");
-            testCase.verifyEmpty(rename);
-            items = findall(figure, "Type", "uimenu");
-            labels = string({items.Text});
-            for label = ["&Delete" + string(sprintf("\t\t\t")) + "(Del)", "&Undo", "&Redo", "Reload Source" + string(char(9)) + "(F5)"]
-                testCase.verifyTrue(any(labels == label));
             end
             undo = findall(figure, "Tag", "yamada-edit-undo");
             redo = findall(figure, "Tag", "yamada-edit-redo");
@@ -69,8 +100,6 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
                 testCase.verifyNumElements(findall(figure, "Type", "uimenu", "Accelerator", key), 1);
             end
             testCase.verifyEmpty(findall(figure, "Type", "uimenu", "Accelerator", "A"));
-            testCase.verifyEmpty(findall(figure, "Tag", "yamada-edit-reparent"));
-            testCase.verifyEmpty(findall(figure, "Tag", "yamada-context-reparent"));
         end
 
         function previewContextTargetsAndShortcutsShareCommands(testCase)
@@ -83,7 +112,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "ContextMenu", "HTMLEventData", request));
             testCase.verifyEqual(app.SelectedComponentId, selected);
             tree = findall(figure, "Type", "uitree");
-            copy = findall(tree.ContextMenu, "Tag", "yamada-context-copy");
+            copy = findall(findall(figure, "Tag", "yamada-hierarchy-context"), "Tag", "yamada-context-copy");
             testCase.verifyEqual(string(copy.Enable), "on");
             copy.MenuSelectedFcn(copy, []);
             testCase.select(figure, app.Document.RootComponentId);
@@ -147,7 +176,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             request = struct("componentId", panelId, "revision", overlay.Data.gridEditor.revision, "x", 30, "y", 40);
             overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "ContextMenu", "HTMLEventData", request));
             tree = findall(figure, "Type", "uitree");
-            item = findall(tree.ContextMenu, "Tag", "yamada-context-delete");
+            item = findall(findall(figure, "Tag", "yamada-hierarchy-context"), "Tag", "yamada-context-delete");
             testCase.verifyEqual(string(item.Enable), "on");
             item.MenuSelectedFcn(item, []);
             testCase.verifyEmpty(app.Document.getComponent(panelId));
@@ -352,13 +381,21 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
                 item = findall(figure, "Type", "uimenu", "Accelerator", upper(keys(actions == action)));
                 testCase.assertEqual(string(item.Enable), "on");
                 item.MenuSelectedFcn(item, []);
+            elseif isMATLABReleaseOlderThan("R2023b")
+                % Before R2023b the shared menu opens only from a Preview right-click.
+                overlay = findall(figure, "Tag", "yamada-interaction-overlay");
+                request = struct("componentId", id, "revision", overlay.Data.gridEditor.revision, "x", 30, "y", 40);
+                overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "ContextMenu", "HTMLEventData", request));
+                item = findall(findall(figure, "Tag", "yamada-hierarchy-context"), "Tag", "yamada-context-" + lower(action));
+                testCase.assertEqual(string(item.Enable), "on");
+                item.MenuSelectedFcn(item, []);
             else
                 tree = findall(figure, "Type", "uitree");
                 nodes = findall(tree, "Type", "uitreenode");
                 node = nodes(arrayfun(@(value) string(value.NodeData) == id, nodes));
                 expand(tree.Children(1));
                 drawnow;
-                item = findall(tree.ContextMenu, "Tag", "yamada-context-" + lower(action));
+                item = findall(findall(figure, "Tag", "yamada-hierarchy-context"), "Tag", "yamada-context-" + lower(action));
                 testCase.chooseContextMenu(node, item);
             end
             drawnow;

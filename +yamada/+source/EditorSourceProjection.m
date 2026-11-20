@@ -172,7 +172,7 @@ classdef EditorSourceProjection
                 if ~isempty(old) && before.Statements(old).Text == after.Statements(statement).Text
                     creationCounts(index) = nnz(string({component.Settings.Method}) == "nameValue");
                 else
-                    definition = registry.get(component.Factory, component.CreationArguments);
+                    definition = registry.sourceDefinition(component);
                     [~, ~, settings, ~, supported] = yamada.source.PropertySettingSyntax.factory(after.Statements(statement), definition, "editor");
                     assert(supported); creationCounts(index) = numel(settings);
                 end

@@ -40,8 +40,14 @@ classdef CustomColormapDialog
             position = uieditfield(fields,"numeric","Limits",[0 100], ...
                 "Tag","yamada-colormap-stop-position","ValueChangedFcn",@positionChanged);
             uilabel(fields,"Text","Color");
-            color = uicolorpicker(fields,"Tag","yamada-colormap-stop-color", ...
-                "ValueChangedFcn",@colorChanged);
+            % Older releases use the same desktop picker as a marker double-click.
+            if isMATLABReleaseOlderThan("R2024a")
+                color = uibutton(fields,"Tag","yamada-colormap-stop-color", ...
+                    "Text","...","ButtonPushedFcn",@(~,~) pickMarkerColor(selected));
+            else
+                color = uicolorpicker(fields,"Tag","yamada-colormap-stop-color", ...
+                    "ValueChangedFcn",@colorChanged);
+            end
             actions = uigridlayout(layout,[1 3],"Padding",[0 0 0 0], ...
                 "ColumnWidth",{"1x","fit","fit"});
             status = uilabel(actions,"WordWrap","on");
@@ -89,7 +95,11 @@ classdef CustomColormapDialog
                     "acknowledgedMove",acknowledgedMove);
                 position.Value = positions(selected);
                 position.Editable = selected > 1 && selected < numel(positions);
-                color.Value = colors(selected,:);
+                if isa(color,"matlab.ui.control.Button")
+                    color.BackgroundColor = colors(selected,:);
+                else
+                    color.Value = colors(selected,:);
+                end
             end
 
             function handleMarker(event)
@@ -120,9 +130,14 @@ classdef CustomColormapDialog
                     case "pickColor"
                         selected = index;
                         refresh();
-                        value = pickColor(colors(index,:));
-                        if isvalid(dialog) && numel(value) == 3, changeColor(index,value); end
+                        pickMarkerColor(index);
                 end
+            end
+
+            function pickMarkerColor(index)
+                % pickMarkerColor Open the desktop picker for the requested marker.
+                value = pickColor(colors(index,:));
+                if isvalid(dialog) && numel(value) == 3, changeColor(index,value); end
             end
 
             function value = pickColor(initialColor)

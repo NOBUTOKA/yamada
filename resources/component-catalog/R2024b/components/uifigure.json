@@ -1,0 +1,1935 @@
+{
+  "id": "uifigure",
+  "factory": "uifigure",
+  "declaredType": "matlab.ui.Figure",
+  "allowedParentFactories": [],
+  "isRoot": true,
+  "creationArguments": [],
+  "profileId": "uifigure",
+  "profileDelta": {
+    "omittedCategoryIds": [],
+    "insertions": []
+  },
+  "categories": [
+    {
+      "id": "windowappearance",
+      "displayName": "Window Appearance",
+      "order": 1,
+      "entries": [
+        {
+          "path": "Color",
+          "groupId": "local.uifigure.windowappearance",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Color",
+            "description": "Color used by the component.",
+            "categoryId": "windowappearance",
+            "category": "Window Appearance",
+            "order": 1,
+            "groupId": "local.uifigure.windowappearance",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "WindowStyle",
+          "groupId": "local.uifigure.windowappearance",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "WindowStyle",
+            "description": "Choice controlling window style.",
+            "categoryId": "windowappearance",
+            "category": "Window Appearance",
+            "order": 2,
+            "groupId": "local.uifigure.windowappearance",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "normal",
+                "modal",
+                "alwaysontop"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "WindowState",
+          "groupId": "local.uifigure.windowappearance",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "WindowState",
+            "description": "Choice controlling window state.",
+            "categoryId": "windowappearance",
+            "category": "Window Appearance",
+            "order": 3,
+            "groupId": "local.uifigure.windowappearance",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "normal",
+                "minimized",
+                "maximized",
+                "fullscreen"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "positionandsize",
+      "displayName": "Position and Size",
+      "order": 2,
+      "entries": [
+        {
+          "path": "Position",
+          "groupId": "local.uifigure.positionandsize",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Position",
+            "description": "Component rectangle [left bottom width height] in its configured units.",
+            "categoryId": "positionandsize",
+            "category": "Position and Size",
+            "order": 1,
+            "groupId": "local.uifigure.positionandsize",
+            "editor": "position",
+            "previewPolicy": "adapt",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "Units",
+                "WindowStyle"
+              ],
+              "effectPolicy": "positionInput",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Finite stored Position behavior verified by the owned R2024a probe. InnerPosition and OuterPosition are not assumed equivalent."
+            }
+          }
+        },
+        {
+          "path": "Units",
+          "groupId": "local.uifigure.positionandsize",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Units",
+            "description": "Measurement unit used for component geometry.",
+            "categoryId": "positionandsize",
+            "category": "Position and Size",
+            "order": 2,
+            "groupId": "local.uifigure.positionandsize",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "pixels",
+                "normalized",
+                "inches",
+                "centimeters",
+                "points",
+                "characters"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "defaultLiteral": "'pixels'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "InnerPosition",
+          "groupId": "local.uifigure.positionandsize",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "InnerPosition",
+            "description": "Inner rectangle [left bottom width height] in its configured units.",
+            "categoryId": "positionandsize",
+            "category": "Position and Size",
+            "order": 3,
+            "groupId": "local.uifigure.positionandsize",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "InnerPosition",
+                "Position"
+              ],
+              "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+            }
+          }
+        },
+        {
+          "path": "Resize",
+          "groupId": "local.uifigure.positionandsize",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Resize",
+            "description": "Whether the user can resize the window.",
+            "categoryId": "positionandsize",
+            "category": "Position and Size",
+            "order": 4,
+            "groupId": "local.uifigure.positionandsize",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "WindowStyle"
+              ],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "AutoResizeChildren",
+          "groupId": "local.uifigure.positionandsize",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "AutoResizeChildren",
+            "description": "Whether the container resizes its children automatically.",
+            "categoryId": "positionandsize",
+            "category": "Position and Size",
+            "order": 5,
+            "groupId": "local.uifigure.positionandsize",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "plotting",
+      "displayName": "Plotting",
+      "order": 3,
+      "entries": [
+        {
+          "path": "Colormap",
+          "groupId": "local.uifigure.plotting",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Colormap",
+            "description": "Sequence of colors used to map indexed data.",
+            "categoryId": "plotting",
+            "category": "Plotting",
+            "order": 1,
+            "groupId": "local.uifigure.plotting",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "Alphamap",
+          "groupId": "local.uifigure.plotting",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Alphamap",
+            "description": "Sequence of transparency values used for indexed data.",
+            "categoryId": "plotting",
+            "category": "Plotting",
+            "order": 2,
+            "groupId": "local.uifigure.plotting",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "mousepointer",
+      "displayName": "Mouse Pointer",
+      "order": 4,
+      "entries": [
+        {
+          "path": "Pointer",
+          "groupId": "local.uifigure.mousepointer",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Pointer",
+            "description": "Pointer shape displayed over the window.",
+            "categoryId": "mousepointer",
+            "category": "Mouse Pointer",
+            "order": 1,
+            "groupId": "local.uifigure.mousepointer",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "arrow",
+                "ibeam",
+                "crosshair",
+                "watch",
+                "topl",
+                "custom",
+                "botr",
+                "topr",
+                "botl",
+                "circle",
+                "cross",
+                "fleur",
+                "left",
+                "right",
+                "top",
+                "bottom",
+                "hand"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "PointerShapeCData",
+          "groupId": "local.uifigure.mousepointer",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "PointerShapeCData",
+            "description": "Pixel data for a custom pointer shape.",
+            "categoryId": "mousepointer",
+            "category": "Mouse Pointer",
+            "order": 2,
+            "groupId": "local.uifigure.mousepointer",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "PointerShapeHotSpot",
+          "groupId": "local.uifigure.mousepointer",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "PointerShapeHotSpot",
+            "description": "Active pixel location within a custom pointer image.",
+            "categoryId": "mousepointer",
+            "category": "Mouse Pointer",
+            "order": 3,
+            "groupId": "local.uifigure.mousepointer",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "interactivity",
+      "displayName": "Interactivity",
+      "order": 5,
+      "entries": [
+        {
+          "path": "Visible",
+          "groupId": "local.uifigure.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Visible",
+            "description": "Whether this component is displayed.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 1,
+            "groupId": "local.uifigure.interactivity",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "CurrentAxes",
+          "groupId": "local.uifigure.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CurrentAxes",
+            "description": "Graphics object associated with the current axes setting.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 2,
+            "groupId": "local.uifigure.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "CurrentObject",
+          "groupId": "local.uifigure.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CurrentObject",
+            "description": "Graphics object associated with the current object setting.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 3,
+            "groupId": "local.uifigure.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "CurrentPoint",
+          "groupId": "local.uifigure.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CurrentPoint",
+            "description": "Pointer location reported in the component coordinates.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 4,
+            "groupId": "local.uifigure.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "CurrentCharacter",
+          "groupId": "local.uifigure.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CurrentCharacter",
+            "description": "Choice controlling current character.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 5,
+            "groupId": "local.uifigure.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "SelectionType",
+          "groupId": "local.uifigure.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SelectionType",
+            "description": "Choice controlling selection type.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 6,
+            "groupId": "local.uifigure.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "normal",
+                "extend",
+                "alt",
+                "open"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Scrollable",
+          "groupId": "local.uifigure.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Scrollable",
+            "description": "Whether scrolling is available for the container.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 7,
+            "groupId": "local.uifigure.interactivity",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "groupId": "local.uifigure.interactivity",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ContextMenu",
+            "description": "Menu opened for this component by a context-menu gesture.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 8,
+            "groupId": "local.uifigure.interactivity",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "componentReference",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "commoncallbacks",
+      "displayName": "Common Callbacks",
+      "order": 6,
+      "entries": [
+        {
+          "path": "ButtonDownFcn",
+          "groupId": "local.uifigure.commoncallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ButtonDownFcn",
+            "description": "Callback invoked for the button down event.",
+            "categoryId": "commoncallbacks",
+            "category": "Common Callbacks",
+            "order": 1,
+            "groupId": "local.uifigure.commoncallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "ButtonDown"
+          }
+        },
+        {
+          "path": "CreateFcn",
+          "groupId": "local.uifigure.commoncallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CreateFcn",
+            "description": "Callback invoked for the create event.",
+            "categoryId": "commoncallbacks",
+            "category": "Common Callbacks",
+            "order": 2,
+            "groupId": "local.uifigure.commoncallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [],
+              "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "double",
+                "shape": [
+                  0,
+                  0
+                ]
+              }
+            },
+            "handlerSuffix": "Create"
+          }
+        },
+        {
+          "path": "DeleteFcn",
+          "groupId": "local.uifigure.commoncallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "DeleteFcn",
+            "description": "Callback invoked for the delete event.",
+            "categoryId": "commoncallbacks",
+            "category": "Common Callbacks",
+            "order": 3,
+            "groupId": "local.uifigure.commoncallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [],
+              "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "event.EventData",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "Delete"
+          }
+        }
+      ]
+    },
+    {
+      "id": "keyboardcallbacks",
+      "displayName": "Keyboard Callbacks",
+      "order": 7,
+      "entries": [
+        {
+          "path": "KeyPressFcn",
+          "groupId": "local.uifigure.keyboardcallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "KeyPressFcn",
+            "description": "Callback invoked for the key press event.",
+            "categoryId": "keyboardcallbacks",
+            "category": "Keyboard Callbacks",
+            "order": 1,
+            "groupId": "local.uifigure.keyboardcallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.KeyData",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "KeyPress"
+          }
+        },
+        {
+          "path": "KeyReleaseFcn",
+          "groupId": "local.uifigure.keyboardcallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "KeyReleaseFcn",
+            "description": "Callback invoked for the key release event.",
+            "categoryId": "keyboardcallbacks",
+            "category": "Keyboard Callbacks",
+            "order": 2,
+            "groupId": "local.uifigure.keyboardcallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.KeyData",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "KeyRelease"
+          }
+        }
+      ]
+    },
+    {
+      "id": "windowcallbacks",
+      "displayName": "Window Callbacks",
+      "order": 8,
+      "entries": [
+        {
+          "path": "CloseRequestFcn",
+          "groupId": "local.uifigure.windowcallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CloseRequestFcn",
+            "description": "Callback invoked for the close request event.",
+            "categoryId": "windowcallbacks",
+            "category": "Window Callbacks",
+            "order": 1,
+            "groupId": "local.uifigure.windowcallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "CloseRequest"
+          }
+        },
+        {
+          "path": "SizeChangedFcn",
+          "groupId": "local.uifigure.windowcallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SizeChangedFcn",
+            "description": "Callback invoked for the size changed event.",
+            "categoryId": "windowcallbacks",
+            "category": "Window Callbacks",
+            "order": 2,
+            "groupId": "local.uifigure.windowcallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "SizeChanged"
+          }
+        },
+        {
+          "path": "WindowButtonDownFcn",
+          "groupId": "local.uifigure.windowcallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "WindowButtonDownFcn",
+            "description": "Callback invoked for the window button down event.",
+            "categoryId": "windowcallbacks",
+            "category": "Window Callbacks",
+            "order": 3,
+            "groupId": "local.uifigure.windowcallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.WindowMouseData",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "WindowButtonDown"
+          }
+        },
+        {
+          "path": "WindowButtonMotionFcn",
+          "groupId": "local.uifigure.windowcallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "WindowButtonMotionFcn",
+            "description": "Callback invoked for the window button motion event.",
+            "categoryId": "windowcallbacks",
+            "category": "Window Callbacks",
+            "order": 4,
+            "groupId": "local.uifigure.windowcallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.WindowMouseData",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "WindowButtonMotion"
+          }
+        },
+        {
+          "path": "WindowButtonUpFcn",
+          "groupId": "local.uifigure.windowcallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "WindowButtonUpFcn",
+            "description": "Callback invoked for the window button up event.",
+            "categoryId": "windowcallbacks",
+            "category": "Window Callbacks",
+            "order": 5,
+            "groupId": "local.uifigure.windowcallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.WindowMouseData",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "WindowButtonUp"
+          }
+        },
+        {
+          "path": "WindowKeyPressFcn",
+          "groupId": "local.uifigure.windowcallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "WindowKeyPressFcn",
+            "description": "Callback invoked for the window key press event.",
+            "categoryId": "windowcallbacks",
+            "category": "Window Callbacks",
+            "order": 6,
+            "groupId": "local.uifigure.windowcallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.KeyData",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "WindowKeyPress"
+          }
+        },
+        {
+          "path": "WindowKeyReleaseFcn",
+          "groupId": "local.uifigure.windowcallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "WindowKeyReleaseFcn",
+            "description": "Callback invoked for the window key release event.",
+            "categoryId": "windowcallbacks",
+            "category": "Window Callbacks",
+            "order": 7,
+            "groupId": "local.uifigure.windowcallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.KeyData",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "WindowKeyRelease"
+          }
+        },
+        {
+          "path": "WindowScrollWheelFcn",
+          "groupId": "local.uifigure.windowcallbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "WindowScrollWheelFcn",
+            "description": "Callback invoked for the window scroll wheel event.",
+            "categoryId": "windowcallbacks",
+            "category": "Window Callbacks",
+            "order": 8,
+            "groupId": "local.uifigure.windowcallbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "matlab.ui.eventdata.ScrollWheelData",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "WindowScrollWheel"
+          }
+        }
+      ]
+    },
+    {
+      "id": "callbackexecutioncontrol",
+      "displayName": "Callback Execution Control",
+      "order": 9,
+      "entries": [
+        {
+          "path": "Interruptible",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Interruptible",
+            "description": "Whether another callback can interrupt the running callback.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 1,
+            "groupId": "callbackExecutionCore",
+            "editor": "onOff",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "BusyAction",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BusyAction",
+            "description": "How a callback is handled while another callback is busy.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 2,
+            "groupId": "callbackExecutionCore",
+            "editor": "enum",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "BeingDeleted",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "BeingDeleted",
+            "description": "Whether destruction of this object is in progress.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 3,
+            "groupId": "callbackExecutionCore",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "parentchildren",
+      "displayName": "Parent/Children",
+      "order": 10,
+      "entries": [
+        {
+          "path": "Parent",
+          "groupId": "local.uifigure.parentchildren",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Parent",
+            "description": "Container that owns this component.",
+            "categoryId": "parentchildren",
+            "category": "Parent/Children",
+            "order": 1,
+            "groupId": "local.uifigure.parentchildren",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Children",
+          "groupId": "local.uifigure.parentchildren",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Children",
+            "description": "Components owned directly by this container.",
+            "categoryId": "parentchildren",
+            "category": "Parent/Children",
+            "order": 2,
+            "groupId": "local.uifigure.parentchildren",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "HandleVisibility",
+          "groupId": "local.uifigure.parentchildren",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "HandleVisibility",
+            "description": "Whether handle-search operations expose this object.",
+            "categoryId": "parentchildren",
+            "category": "Parent/Children",
+            "order": 3,
+            "groupId": "local.uifigure.parentchildren",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "identifiers",
+      "displayName": "Identifiers",
+      "order": 11,
+      "entries": [
+        {
+          "path": "Name",
+          "groupId": "local.uifigure.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Name",
+            "description": "Name displayed for the window.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 1,
+            "groupId": "local.uifigure.identifiers",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "Icon",
+          "groupId": "local.uifigure.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Icon",
+            "description": "Image displayed beside the component text.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 2,
+            "groupId": "local.uifigure.identifiers",
+            "editor": "asset",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "filePath",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "Number",
+          "groupId": "local.uifigure.identifiers",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Number",
+            "description": "Numeric identifier assigned to the figure.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 3,
+            "groupId": "local.uifigure.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "NumberTitle",
+          "groupId": "local.uifigure.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "NumberTitle",
+            "description": "Whether number title is enabled.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 4,
+            "groupId": "local.uifigure.identifiers",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "IntegerHandle",
+          "groupId": "local.uifigure.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "IntegerHandle",
+            "description": "Whether integer handle is enabled.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 5,
+            "groupId": "local.uifigure.identifiers",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Type",
+          "groupId": "local.uifigure.identifiers",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Type",
+            "description": "MATLAB graphics type identifying the object.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 6,
+            "groupId": "local.uifigure.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Tag",
+          "groupId": "local.uifigure.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Tag",
+            "description": "Identifier available to application code.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 7,
+            "groupId": "local.uifigure.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "UserData",
+          "groupId": "local.uifigure.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "UserData",
+            "description": "Application-defined data attached to the component.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 8,
+            "groupId": "local.uifigure.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "arbitraryData",
+              "matlabClasses": [
+                "any"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "displayName": "UI Figure",
+    "category": "Figure"
+  }
+}

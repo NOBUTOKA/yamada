@@ -57,7 +57,7 @@ classdef PropertyApplicationPlanner
                 index = setting.FactoryArgumentIndex;
                 if index < 2 || index > numel(values), continue, end
                 property = definition.getProperty(setting.Path);
-                allowed = ~isempty(property) && property.IsEditable && ...
+                allowed = ~setting.IsReleaseUnavailable && ~isempty(property) && property.IsEditable && ...
                     ~any(property.PreviewPolicy == ["skip", "notRendered"]);
                 % Assets and reviewed aliases are adapted once after construction.
                 if ~allowed || setting.Path == "ImageSource" || ...
@@ -94,6 +94,7 @@ classdef PropertyApplicationPlanner
             [~, order] = sort([settings.Sequence]);
             axesPaths = yamada.model.AxesInspectorProperties.paths(component.Factory);
             for setting = settings(order)
+                if setting.IsReleaseUnavailable, continue, end
                 if any(axesPaths == setting.Path) && setting.IsCertain && setting.ValueKind == "literal" && ...
                         any(setting.Method == ["functionCall","assignment"])
                     % Replay reviewed axes effects as native values without executing their source.

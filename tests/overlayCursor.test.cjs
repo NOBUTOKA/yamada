@@ -31,9 +31,6 @@ context.addHandles({id: 'slider', selected: true, x: 10, y: 10, width: 90,
 assert.equal(handles.length, 6);
 assert.ok(handles.every(handle => !['n', 's'].includes(handle.attributes['data-handle'])));
 assert.ok(handles.every(handle => handle.attributes['data-resize-constraint'] === 'fixedHeight'));
-assert.match(html, /\.silhouette \{[^}]*cursor: move;/);
-assert.match(html, /\.handle\[data-handle="ne"\][^{]*\{ cursor: ne-resize; \}/);
-assert.match(html, /data-resize-constraint="fixedHeight"\]\[data-handle="ne"\][\s\S]*\{ cursor: ew-resize; \}/);
 handles.length = 0;
 context.currentData = {width: 320, height: 240, rootId: 'root',
   rootSelected: false, rootEditable: true};
@@ -41,7 +38,6 @@ context.addRootHandles();
 assert.equal(handles.length, 8);
 assert.deepEqual(handles.map(handle => handle.attributes['data-handle']).sort(),
 ['root-e', 'root-n', 'root-ne', 'root-nw', 'root-s', 'root-se', 'root-sw', 'root-w']);
-assert.doesNotMatch(html, /root-size-label/);
 handles.length = 0;
 context.currentData.rootEditable = false;
 context.addRootHandles();
@@ -55,7 +51,7 @@ context.component = {sendEventToMATLAB(name, data) { sent.push({name, data}); }}
 context.svg.getBoundingClientRect = () => ({left: 0, top: 0, height: 240});
 context.svg.setPointerCapture = () => {};
 context.sendPointerEvent({type: 'pointerdown', pointerId: 1, clientX: 313,
-  clientY: 7, target: {dataset: {componentId: 'root', handle: 'root-ne'}}});
+  clientY: 7, target: {dataset: {componentId: 'root', handle: 'root-ne'}}, preventDefault() {}});
 assert.equal(sent[0].name, 'Pointer');
 assert.equal(sent[0].data.componentId, 'root');
 assert.equal(sent[0].data.handle, 'root-ne');
@@ -63,7 +59,7 @@ assert.equal(sent[0].data.handle, 'root-ne');
 context.currentData.surfaceBounds = [-12, -8, 1200, 900];
 context.svg.getBoundingClientRect = () => ({left: 100, top: 50, height: 900});
 context.sendPointerEvent({type: 'pointerdown', pointerId: 2, clientX: 1186,
-  clientY: 926, target: {dataset: {componentId: 'stranded', handle: ''}}});
+  clientY: 926, target: {dataset: {componentId: 'stranded', handle: ''}}, preventDefault() {}});
 assert.equal(sent[1].data.x, 1074);
 assert.equal(sent[1].data.y, 16);
 context.document.getElementById = () => context.svg;

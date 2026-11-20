@@ -20,16 +20,9 @@ classdef EditorInteractionTest < matlab.uitest.TestCase
             testCase.verifyEqual(numel(palette), 1);
             testCase.verifyNotEmpty(palette.DoubleClickedFcn);
             testCase.verifyNotEmpty(palette.CellSelectionCallback);
-            testCase.verifyEqual(string(palette.Data{1, 1}), "UI Axes");
-
-            panels = findall(0, "Type", "uipanel");
-            titles = string({panels.Title});
-            testCase.verifyTrue(any(titles == "Hierarchy"));
-            testCase.verifyTrue(any(titles == "Properties"));
 
             toolbars = findall(0, "Type", "uitoolbar");
             testCase.verifyEqual(numel(toolbars), 1);
-            testCase.verifyEqual(numel(toolbars.Children), 3);
             refresh = findall(toolbars, "Tag", "yamada-refresh-source");
             testCase.verifyEqual(numel(refresh), 1);
             testCase.verifyEqual(string(refresh.Enable), "off");
@@ -76,8 +69,16 @@ classdef EditorInteractionTest < matlab.uitest.TestCase
             axesRecord = app.Document.getComponent(app.SelectedComponentId);
             tree = findall(figure,"Type","uitree");
             node = tree.SelectedNodes;
-            menu = tree.ContextMenu;
-            menu.ContextMenuOpeningFcn(menu,struct("InteractionInformation",struct("Node",node)));
+            if isMATLABReleaseOlderThan("R2023b")
+                overlay = findall(figure,"Tag","yamada-interaction-overlay");
+                menu = findall(figure,"Tag","yamada-hierarchy-context");
+                overlay.HTMLEventReceivedFcn(overlay,struct("HTMLEventName","ContextMenu", ...
+                    "HTMLEventData",struct("componentId",axesRecord.Id, ...
+                    "revision",overlay.Data.gridEditor.revision,"x",20,"y",20)));
+            else
+                menu = tree.ContextMenu;
+                menu.ContextMenuOpeningFcn(menu,struct("InteractionInformation",struct("Node",node)));
+            end
             add = findall(menu,"Tag","yamada-context-add-colorbar");
             testCase.assertEqual(string(add.Enable),"on");
             add.MenuSelectedFcn(add,struct());
@@ -115,8 +116,10 @@ classdef EditorInteractionTest < matlab.uitest.TestCase
                 host = host.Parent;
             end
             scroll(host,"top");
-            drawnow;
-            testCase.assertFalse(colormapInViewport(host,picker), ...
+            yamada.ui.waitForPreviewLayout(figure, picker);
+            viewport = getpixelposition(host,true);
+            pickerBounds = getpixelposition(picker,true);
+            testCase.assertLessThan(pickerBounds(2),viewport(2), ...
                 "Colormap should start outside the viewport.");
 
             tree.SelectedNodes = barNode;
@@ -186,16 +189,20 @@ classdef EditorInteractionTest < matlab.uitest.TestCase
                 struct("index",2,"position",strip.Data.positions(2)*0.98,"sequence",1)));
             testCase.verifyEqual(strip.Data.acknowledgedMove,1);
             color = findall(dialog,"Tag","yamada-colormap-stop-color");
-            color.Value = [1 1 1];
-            color.ValueChangedFcn(color,struct());
+            if isa(color,"matlab.ui.control.Button")
+                testCase.verifyEqual(color.BackgroundColor,strip.Data.colors(strip.Data.selected,:));
+            else
+                color.Value = [1 1 1];
+                color.ValueChangedFcn(color,struct());
+            end
+            expectedCustom = strip.Data.map;
             testCase.verifyEqual(app.Document.CurrentText,text);
             apply = findall(dialog,"Tag","yamada-colormap-apply");
             apply.ButtonPushedFcn(apply,struct());
             testCase.verifyFalse(isvalid(dialog));
             custom = axesRecord.getSettings("Colormap").LiteralValue;
             testCase.verifySize(custom,size(expectedMap));
-            testCase.verifyTrue(all(custom(2,:) > 0.95));
-            testCase.verifyEqual(custom(4:end,:),expectedMap(4:end,:));
+            testCase.verifyEqual(custom,expectedCustom);
             ax = findall(figure,"-isa","matlab.ui.control.UIAxes");
             testCase.verifyEqual(ax.Colormap,custom);
             app.Document.undo();
@@ -217,8 +224,13 @@ classdef EditorInteractionTest < matlab.uitest.TestCase
             callback = strip.HTMLEventReceivedFcn;
             for stop = [40.17 60.13]
                 callback(strip,struct("HTMLEventName","add","HTMLEventData",struct("position",stop)));
-                color.Value = [0.2 stop/100 0.8];
-                color.ValueChangedFcn(color,struct());
+                if isa(color,"matlab.ui.control.Button")
+                    callback(strip,struct("HTMLEventName","move","HTMLEventData", ...
+                        struct("index",strip.Data.selected,"position",stop + 3)));
+                else
+                    color.Value = [0.2 stop/100 0.8];
+                    color.ValueChangedFcn(color,struct());
+                end
             end
             before = strip.Data;
             [map,safe] = yamada.source.MatlabLiteralParser.parse(yamada.source.LiteralEncoder.encode(before.map));
@@ -454,10 +466,15 @@ classdef EditorInteractionTest < matlab.uitest.TestCase
             palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
                 any(string(table.ColumnName) == "Category"), tables));
             names = string(palette.Data(:, 1));
-            testCase.verifyTrue(all(ismember(["State Button", "Numeric Edit Field", ...
-                "Linear Gauge", "90-Degree Gauge", "Semicircular Gauge", ...
-                "Discrete Knob", "Range Slider", "Rocker Switch", ...
-                "Toggle Switch", "Check Box Tree"], names)));
+            % Every style variant in the running release's catalog appears under its own name.
+            styles = ["uibutton-state", "State Button"; "uieditfield-numeric", "Numeric Edit Field"; ...
+                "uigauge-linear", "Linear Gauge"; "uigauge-ninetydegree", "90-Degree Gauge"; ...
+                "uigauge-semicircular", "Semicircular Gauge"; "uiknob-discrete", "Discrete Knob"; ...
+                "uislider-range", "Range Slider"; "uiswitch-rocker", "Rocker Switch"; ...
+                "uiswitch-toggle", "Toggle Switch"; "uitree-checkbox", "Check Box Tree"];
+            available = ismember(styles(:, 1), yamada.model.ComponentRegistry.createDefault().listVariantIds());
+            testCase.verifyTrue(all(ismember(styles(available, 2), names)));
+            testCase.verifyFalse(any(ismember(styles(~available, 2), names)));
             row = find(names == "State Button", 1);
             palette.DoubleClickedFcn(palette, ...
                 struct("InteractionInformation", struct("Row", row)));
@@ -711,6 +728,7 @@ classdef EditorInteractionTest < matlab.uitest.TestCase
             testCase.verifyEqual(app.Document.HistoryIndex, historyIndex + 1);
             overlays = findall(figure, "Type", "uihtml");
             refreshed = overlays.Data.gridEditor;
+            testCase.verifyTrue(refreshed.geometryAvailable);
             overlays.HTMLEventReceivedFcn(overlays, struct( ...
                 "HTMLEventName", "GridAction", ...
                 "HTMLEventData", struct("action", "insert-track", ...
@@ -1093,9 +1111,7 @@ classdef EditorInteractionTest < matlab.uitest.TestCase
         function gridOverlaySelectsOpenedControlGalleryNestedGridChild(testCase)
             % gridOverlaySelectsOpenedControlGalleryNestedGridChild Select a parsed nested-grid child from the root view.
 
-            testPath = mfilename("fullpath");
-            projectRoot = fileparts(fileparts(fileparts(testPath)));
-            fixture = string(fullfile(projectRoot, "tests", "fixtures", "ControlGalleryApp.m"));
+            fixture = yamadaFixturePath("ControlGalleryApp.m");
             lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
             app = yamada(lifecycle);
@@ -1354,7 +1370,10 @@ classdef EditorInteractionTest < matlab.uitest.TestCase
                 testCase.assertEqual(numel(editor), 1);
                 editor.Value = value;
                 editor.ValueChangedFcn(editor, struct());
-                drawnow; pause(0.25); drawnow;
+                drawnow;
+                canvas = findall(figure, "Tag", "yamada-preview-canvas");
+                yamada.ui.waitForPreviewLayout(figure, canvas);
+                drawnow;
             end
 
             % The retained payload must equal an independent measurement of the current native controls.
@@ -1362,7 +1381,9 @@ classdef EditorInteractionTest < matlab.uitest.TestCase
             controls = findall(canvas);
             nativeGrid = controls(arrayfun(@(item) isa(item, "matlab.ui.container.GridLayout"), controls));
             nativeField = controls(arrayfun(@(item) isa(item, "matlab.ui.control.NumericEditField"), controls));
-            handles = containers.Map(cellstr([grid.Id, field.Id]), {nativeGrid, nativeField});
+            handles = yamada.ui.PreviewRenderer.emptyHandles();
+            handles(grid.Id) = nativeGrid;
+            handles(field.Id) = nativeField;
             overlay = findall(figure, "Tag", "yamada-interaction-overlay");
             actual = overlay.Data.gridEditor;
             expected = yamada.ui.GridLayoutOverlayDataBuilder().build(app.Document, handles, canvas, ...
@@ -2200,7 +2221,7 @@ end
 end
 
 function visible = colormapInViewport(host, control)
-% colormapInViewport Check native window coordinates after the browser scrolls.
+% colormapInViewport Ask the scrollable container whether its descendant is visible.
 arguments (Input)
     host (1,1) matlab.ui.container.Panel
     control
@@ -2208,9 +2229,7 @@ end
 arguments (Output)
     visible (1,1) logical
 end
-viewport = getpixelposition(host,true);
-bounds = getpixelposition(control,true);
-visible = bounds(2) >= viewport(2)-1 && bounds(2)+bounds(4) <= viewport(2)+viewport(4)+1;
+visible = isInScrollView(host,control);
 end
 
 

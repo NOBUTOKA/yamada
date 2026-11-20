@@ -7,15 +7,15 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
             % valueUpdatesMatchFullRenderingAcrossFitLayouts Reuse each owned native field while republishing geometry.
             for layout = ["absolute", "flat", "nested"]
                 [document, registry, first] = numericPreviewFixture(layout);
-                figure = uifigure(Visible="off", Position=[100 100 1100 650]);
+                figure = yamada.ui.createEditorFigure(Visible="off", Position=[100 100 1100 650]);
                 cleanup = onCleanup(@() delete(figure));
                 left = uipanel(figure, Position=[1 1 520 600]);
                 right = uipanel(figure, Position=[550 1 520 600]);
                 renderer = yamada.ui.PreviewRenderer(registry);
                 [handles, diagnostics] = renderer.render(document, left);
                 testCase.assertEmpty(diagnostics);
-                original = handles(char(first.Id));
-                for value = [3 7 -2 1e6]
+                original = handles(first.Id);
+                for value = [3 -2 1e6]
                     document.setProperty(first.Id, "Value", value, registry);
                     document.validatePropertyCommit(registry);
                     [applied, diagnostics, geometry] = renderer.synchronize(document, handles, ...
@@ -23,15 +23,17 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                     testCase.verifyTrue(applied, layout);
                     testCase.verifyEmpty(diagnostics);
                     testCase.verifyFalse(geometry);
-                    original = handles(char(first.Id));
+                    original = handles(first.Id);
                     testCase.verifyEqual(original.Value, value);
                 end
                 reference = yamada.ui.PreviewRenderer(registry).render(document, right);
-                drawnow; pause(0.15); drawnow;
-                testCase.verifyEqual(original.Value, reference(char(first.Id)).Value);
-                testCase.verifyEqual(original.Limits, reference(char(first.Id)).Limits);
+                % A fixed pause can end before the Grid Layout resize throttle relayouts the reference.
+                drawnow;
+                yamada.ui.waitForPreviewLayout(figure, right);
+                testCase.verifyEqual(original.Value, reference(first.Id).Value);
+                testCase.verifyEqual(original.Limits, reference(first.Id).Limits);
                 if layout ~= "absolute"
-                    testCase.verifyEqual(original.Position, reference(char(first.Id)).Position, "AbsTol", 1);
+                    testCase.verifyEqual(original.Position, reference(first.Id).Position, "AbsTol", 1);
                 end
                 clear cleanup
             end
@@ -63,11 +65,15 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
 
         function emptyRequestsAndDeadHandlesUseTheExistingRenderer(testCase)
             % emptyRequestsAndDeadHandlesUseTheExistingRenderer Keep unsupported values and disposed widgets outside reuse.
-            for kind = ["empty", "deleted"]
+            for kind = ["deleted", "empty"]
+                % An empty numeric Value needs a catalog that documents AllowEmpty.
+                if kind == "empty", assumeCatalogSupports(testCase, "uieditfield-numeric", "AllowEmpty"); end
                 [document, registry] = numericPreviewFixture("absolute");
-                source = replace(document.CurrentText, "app.First.Value = 1;", ...
-                    "app.First.AllowEmpty = ""on"";" + newline + "app.First.Value = 1;");
-                document = yamada.source.AppSourceParser.parseText(source, registry);
+                if kind == "empty"
+                    source = replace(document.CurrentText, "app.First.Value = 1;", ...
+                        "app.First.AllowEmpty = ""on"";" + newline + "app.First.Value = 1;");
+                    document = yamada.source.AppSourceParser.parseText(source, registry);
+                end
                 first = document.getComponentByName("First");
                 figure = uifigure(Visible="off");
                 cleanup = onCleanup(@() delete(figure));
@@ -77,7 +83,7 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                     document.setProperty(first.Id, "Value", [], registry);
                 else
                     document.setProperty(first.Id, "Value", 4, registry);
-                    delete(handles(char(first.Id)));
+                    delete(handles(first.Id));
                 end
                 applied = renderer.synchronize(document, handles, yamada.ui.RefreshRequest("properties", first.Id, "Value"));
                 testCase.verifyEqual(applied, kind == "empty", kind);

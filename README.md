@@ -1,10 +1,28 @@
 # yamada - Yet Another MATLAB App Designer Alternative
 
+[![GitHub release](https://img.shields.io/github/v/release/NOBUTOKA/yamada)](https://github.com/NOBUTOKA/yamada/releases/latest) [![View yamada on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/185225-yamada) [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
+
 `yamada` is a visual editor for GUI classes that inherit from `handle` and own a `uifigure`. You can create or open ordinary MATLAB `.m` class files and edit their UI components graphically.
+
+## Why yamada?
+
+yamada keeps your whole app in an ordinary MATLAB class file, so it fits the tools you already use for the rest of your code:
+
+- **Edit anywhere.** Edit the same file in the MATLAB Editor, another text editor, or with an AI agent, then reload it in yamada.
+- **Readable history.** Changes to the layout appear as ordinary text diffs, so the app can live in Git or any other version control system alongside your other code.
+- **Predictable source.** Values keep the type you entered: item data typed as `1`, `2`, `3` is saved as `[1 2 3]`, while `"1"` is saved as text. You can also review the code changes with **Tools > Diff Preview** before saving.
+
+yamada does not replace App Designer's `.mlapp` workflow and cannot open `.mlapp` files. It is for people who want to build GUIs visually while keeping the source as plain MATLAB code.
+
+## Example
+
+This video shows yamada editing [SignalExplorer](https://github.com/NOBUTOKA/yamada/blob/main/examples/SignalExplorer.m), a demo in the GitHub repository. For an example included in the installed Toolbox, see [WelcomeApp](doc/GETTING_STARTED.md#edit-the-included-example).
+
+https://github.com/user-attachments/assets/ef965c59-a430-4c2f-9f11-2f8f3395d9e0
 
 ## Important
 
-`yamada` is under active development. Development and verification currently target MATLAB R2024a, and no versioned release is available yet. Review the generated diff before saving, and keep the target file under version control or make a backup.
+`yamada` is under active development. Development and verification currently target MATLAB R2023a through R2026b. Review the generated diff before saving, and keep the target file under version control or make a backup.
 
 ## Features
 
@@ -17,21 +35,21 @@
 
 ## Supported Environment
 
-- MATLAB R2024a on 64-bit Windows, with a graphical session, JVM enabled, and MATLAB .NET support
+- MATLAB R2023a through R2026b on 64-bit Windows, with a graphical session, JVM enabled (R2026b installs no Java runtime, so install the MATLAB Support for OpenJDK add-on or another OpenJDK distribution first), and MATLAB .NET support
 
-The 1.0.0 release target is R2024a on Windows only. Other MATLAB releases, macOS, Linux, and MATLAB Online are not supported release targets. MATLAB is required; this is not a standalone application. The editor requires MATLAB without additional toolboxes.
+Release targets are R2023a through R2026b on Windows only. On an older supported release, yamada can open apps that use newer features recognized by its bundled catalogs. Safe Preview shows labels for unavailable components, and you can edit supported settings while retaining unavailable components and explicit settings in the saved source. Running the saved app still requires MATLAB with support for the features it uses. The editor requires MATLAB without additional toolboxes.
 
 ## Getting Started
 
-To install version 1.0.0, download `yamada-1.0.0.mltbx` from [GitHub Releases](https://github.com/NOBUTOKA/yamada/releases), open it in MATLAB, and follow the installation dialog. Then enter:
+To install, download the `.mltbx` file from the [latest GitHub Release](https://github.com/NOBUTOKA/yamada/releases/latest) or from [File Exchange](https://www.mathworks.com/matlabcentral/fileexchange/185225-yamada), open it in MATLAB, and follow the installation dialog. Then enter:
 
 ```matlab
 yamada
 ```
 
-You can also launch the installed app from MATLAB's **Apps** tab. See [Getting Started](doc/GETTING_STARTED.md) for a walkthrough, the included example, and update/removal instructions. The normal launch command requires neither parentheses nor an output assignment.
+You can also launch the installed app from MATLAB's **Apps** tab. See [Getting Started](doc/GETTING_STARTED.md) for a walkthrough, the included example, and update/removal instructions.
 
-To run a development checkout before the release is published, clone the repository or extract **Code > Download ZIP**, add only its root to the MATLAB path, and enter `yamada`. See the [contributing guide](https://github.com/NOBUTOKA/yamada/blob/main/CONTRIBUTING.md) for development setup.
+To run a development checkout, clone the repository or extract **Code > Download ZIP**, add only its root to the MATLAB path, and enter `yamada`. See the [contributing guide](https://github.com/NOBUTOKA/yamada/blob/main/CONTRIBUTING.md) for development setup.
 
 ## Basic Usage
 
@@ -74,7 +92,7 @@ This changes the component's name in the MATLAB code, such as `app.Button`, and 
 
 ### Copy, cut, and paste components
 
-Select a component in **Hierarchy** or on the canvas, then use **Edit > Copy / Cut / Paste**, or **Ctrl+C / Ctrl+X / Ctrl+V**. These commands are also available by right-clicking a component in **Hierarchy**.
+Select a component in **Hierarchy** or on the canvas, then use **Edit > Copy / Cut / Paste**, or **Ctrl+C / Ctrl+X / Ctrl+V**. You can also right-click a component in **Preview**. On R2023b and later, the same menu is available by right-clicking a component in **Hierarchy**.
 
 - Copying or cutting a container includes the components inside it. **Cut** removes them immediately; **Undo** restores them.
 - Select the destination container before pasting. If it cannot contain the copied component, yamada looks for a suitable enclosing container. Hover over the status line to check the destination or read why an action is unavailable.
@@ -93,7 +111,7 @@ For a Grid Layout destination, the component snaps to cells. A move into occupie
 
 Callbacks let you run MATLAB code when a user interacts with your app, such as clicking a button.
 
-1. Right-click the component in **Hierarchy** and select **Manage Callbacks...**.
+1. Right-click the component in **Preview** and select **Manage Callbacks...**. On R2023b and later, you can also open this menu from **Hierarchy**.
 2. Use the dropdown beside a callback to select an existing method, or choose `<New...>` and enter a name to create one.
 3. Choose `<Disconnect>` to stop that callback from calling its method. **The method and its code stay in the file**, so you can reconnect it later. This dialog does not delete methods.
 
@@ -113,7 +131,7 @@ Reload reads the saved file, so unsaved changes in MATLAB's editor are not inclu
 
 Supported apps directly inherit from `handle` and own one `uifigure`. All their UI components must be descendants of that figure. Use an ordinary `.m` class with component creation and settings that yamada can read from source. `.mlapp` files and AppBase apps are outside the supported format.
 
-The preview uses supported initialization settings. Some components and properties have limited editing or preview support, especially when their values depend on expressions or runtime code. The editor shows diagnostics when it cannot safely apply a change. See the [product specification](SPECIFICATION.md) for supported syntax, operations, and source-preservation limits.
+The preview uses supported initialization settings. Some components and properties have limited editing or preview support, especially when their values depend on expressions or runtime code. The editor shows diagnostics when it cannot safely apply a change. On R2026b, radio and toggle buttons are supported only inside a `uibuttongroup`. R2026b also lets them be placed directly in other containers, adds their read-only `Group` property, and introduces `uiselectiongroup`; yamada does not support these yet. A button placed outside a button group is reported as an invalid parent, `uiselectiongroup` is kept in the source as an unsupported component and is not previewed, and editing apps that use them is not supported. See the [product specification](SPECIFICATION.md) for supported syntax, operations, and source-preservation limits.
 
 ## Documentation
 

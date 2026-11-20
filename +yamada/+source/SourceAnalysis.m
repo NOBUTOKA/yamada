@@ -27,7 +27,7 @@ classdef SourceAnalysis < handle
         CallbackCreationOffsets double = []
         CallbackInsertion logical = false
         HasCallbackInsertion logical = false
-        CallbackCandidates containers.Map
+        CallbackCandidates dictionary = dictionary(string([]), {})
         NameIndex struct = struct()
         StatementStarts double = []
         StatementEnds double = []
@@ -43,7 +43,6 @@ classdef SourceAnalysis < handle
                 obj (1, 1) yamada.source.SourceAnalysis
             end
             obj.Source = source;
-            obj.CallbackCandidates = containers.Map("KeyType", "char", "ValueType", "any");
             obj.Statements = yamada.source.MatlabLexicalScanner.splitStatements(source);
             obj.indexStatements();
             obj.Layout = yamada.source.CallbackSourceAnalyzer.sourceLayout(obj.Statements);
@@ -323,7 +322,7 @@ classdef SourceAnalysis < handle
                     count = 1;
                     if kind == "creation"
                         component = document.getComponentByName(owner);
-                        definition = registry.get(component.Factory, component.CreationArguments);
+                        definition = registry.sourceDefinition(component);
                         [~, ~, settings, ~, supported] = yamada.source.PropertySettingSyntax.factory(statement, definition, "candidate");
                         assert(supported); count = count + numel(settings);
                     end
@@ -735,11 +734,10 @@ classdef SourceAnalysis < handle
             arguments (Output)
                 indices (1, :) double
             end
-            key = char(name);
-            if ~isKey(obj.CallbackCandidates, key)
-                obj.CallbackCandidates(key) = yamada.source.CallbackSourceAnalyzer.sourceCallbackCandidates(obj.Statements, name);
+            if ~isKey(obj.CallbackCandidates, name)
+                obj.CallbackCandidates{name} = yamada.source.CallbackSourceAnalyzer.sourceCallbackCandidates(obj.Statements, name);
             end
-            indices = obj.CallbackCandidates(key);
+            indices = obj.CallbackCandidates{name};
         end
     end
 

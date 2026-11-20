@@ -1,15 +1,173 @@
 classdef ComponentCatalogLoader
     % ComponentCatalogLoader Build typed component definitions from strict JSON files.
-    %   The loader reads an explicit R2024a manifest, expands ordered property
+    %   The loader reads an explicit release manifest, expands ordered property
     %   groups, validates catalog data and symbolic behavior names, then returns a
     %   complete ComponentRegistry. A malformed catalog never returns a partial
     %   registry and never invokes catalog-provided executable code.
+    %
+    %   Successful loads are remembered in process memory per catalog root. A
+    %   later load reuses that validated state only when every file under the
+    %   root and its release index are byte-identical, and always returns an
+    %   independent registry.
 
     methods (Static)
         function registry = load(catalogRoot)
             % load Validate one catalog root and return its complete runtime registry.
             arguments (Input)
                 catalogRoot (1, 1) string = yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()
+            end
+            arguments (Output)
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+
+            % Reuse validated state only for byte-identical catalog contents.
+            fingerprint = yamada.catalog.ComponentCatalogLoader.fingerprint(catalogRoot);
+            if strlength(fingerprint) > 0
+                validated = yamada.catalog.ComponentCatalogLoader.validatedCache( ...
+                    "get", catalogRoot, fingerprint);
+                if ~isempty(validated)
+                    registry = validated.duplicate();
+                    return
+                end
+            end
+
+            % Validate from source, then retain a private copy that callers cannot mutate.
+            registry = yamada.catalog.ComponentCatalogLoader.loadUncached(catalogRoot);
+            yamada.catalog.ComponentCatalogLoader.loadSourceAvailability(registry, catalogRoot);
+            if strlength(fingerprint) > 0
+                yamada.catalog.ComponentCatalogLoader.validatedCache( ...
+                    "set", catalogRoot, fingerprint, registry.duplicate());
+            end
+        end
+
+        function root = defaultCatalogRoot()
+            % defaultCatalogRoot Return the packaged catalog selected for the running release.
+            arguments (Output)
+                root (1, 1) string
+            end
+
+            root = fullfile(yamada.catalog.ComponentCatalogLoader.catalogsFolder(), ...
+                yamada.catalog.ComponentCatalogLoader.defaultRelease());
+        end
+
+        function release = defaultRelease()
+            % defaultRelease Name the packaged catalog release used by the running MATLAB.
+            arguments (Output)
+                release (1, 1) string
+            end
+
+            release = yamada.catalog.ComponentCatalogLoader.selectRelease( ...
+                yamada.catalog.ComponentCatalogLoader.availableReleases( ...
+                yamada.catalog.ComponentCatalogLoader.catalogsFolder()), string(matlabRelease().Release));
+        end
+
+        function release = selectRelease(available, running)
+            % selectRelease Choose the newest catalog release that is not newer than the running release.
+            %   Newer MATLAB releases reuse the newest older catalog, relying on
+            %   backward compatibility until a catalog for that release exists.
+            arguments (Input)
+                available (1, :) string
+                running (1, 1) string
+            end
+            arguments (Output)
+                release (1, 1) string
+            end
+
+            % Release names such as R2023a and R2024b order correctly as text.
+            candidates = sort(available(available <= running));
+            if isempty(candidates)
+                error("yamada:ComponentCatalogLoader:UnsupportedRelease", ...
+                    "No component catalog supports MATLAB %s.", running);
+            end
+            release = candidates(end);
+        end
+    end
+
+    methods (Static, Access = private)
+        function loadSourceAvailability(registry, root)
+            % loadSourceAvailability Read the sibling release index for parsed settings.
+            arguments (Input)
+                registry (1, 1) yamada.model.ComponentRegistry
+                root (1, 1) string
+            end
+
+            % Custom catalogs without a release index have no release-based exclusions.
+            [folder, release] = fileparts(root);
+            indexPath = fullfile(folder, "availability.json");
+            if ~yamada.catalog.ComponentCatalogLoader.isReleaseName(release) || ~isfile(indexPath)
+                return
+            end
+            availability = jsondecode(fileread(indexPath));
+            paths = strings(1, 0);
+            values = strings(1, 0);
+            for property = reshape(availability.properties, 1, [])
+                if yamada.catalog.ComponentCatalogLoader.excludesRelease(property.releases, release)
+                    paths(end + 1) = string(property.variantId) + "." + string(property.path); %#ok<AGROW>
+                end
+            end
+            for entry = reshape(availability.values, 1, [])
+                if yamada.catalog.ComponentCatalogLoader.excludesRelease(entry.releases, release)
+                    values(end + 1) = string(entry.variantId) + "." + string(entry.path) + "=" + string(entry.value); %#ok<AGROW>
+                end
+            end
+            registry.setSourceAvailability(root, paths, values);
+        end
+
+        function result = excludesRelease(bounds, release)
+            % excludesRelease Test inclusive since and exclusive before annotations.
+            arguments (Input)
+                bounds (1, 1) struct
+                release (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = (isfield(bounds, "since") && release < string(bounds.since)) || ...
+                (isfield(bounds, "before") && release >= string(bounds.before));
+        end
+
+        function folder = catalogsFolder()
+            % catalogsFolder Return the packaged folder that holds one catalog per release.
+            arguments (Output)
+                folder (1, 1) string
+            end
+
+            % Resolve from this package file so the current folder is irrelevant.
+            projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
+            folder = string(fullfile(projectRoot, "resources", "component-catalog"));
+        end
+
+        function releases = availableReleases(folder)
+            % availableReleases List the release-named catalog folders.
+            arguments (Input)
+                folder (1, 1) string
+            end
+            arguments (Output)
+                releases (1, :) string
+            end
+
+            entries = dir(folder);
+            names = string({entries([entries.isdir]).name});
+            releases = sort(names(yamada.catalog.ComponentCatalogLoader.isReleaseName(names)));
+        end
+
+        function result = isReleaseName(names)
+            % isReleaseName Identify MATLAB release names such as R2023a.
+            arguments (Input)
+                names string
+            end
+            arguments (Output)
+                result logical
+            end
+
+            result = ~cellfun(@isempty, regexp(cellstr(names), '^R\d{4}[ab]$', 'once'));
+        end
+
+        function registry = loadUncached(catalogRoot)
+            % loadUncached Read and validate one catalog root without consulting the cache.
+            arguments (Input)
+                catalogRoot (1, 1) string
             end
             arguments (Output)
                 registry (1, 1) yamada.model.ComponentRegistry
@@ -28,10 +186,11 @@ classdef ComponentCatalogLoader
                 registry = yamada.catalog.ComponentCatalogLoader.loadVersion2(catalogRoot, manifest);
                 return
             end
-            if manifest.schemaVersion ~= 1 || string(manifest.matlabRelease) ~= "R2024a"
+            if manifest.schemaVersion ~= 1
                 yamada.catalog.ComponentCatalogLoader.fail(catalogRoot + "/catalog.json", ...
-                    "schemaVersion must be 1 and matlabRelease must be R2024a.");
+                    "schemaVersion must be 1 or 2.");
             end
+            yamada.catalog.ComponentCatalogLoader.manifestRelease(manifest, catalogRoot + "/catalog.json");
             groups = yamada.catalog.ComponentCatalogLoader.readGroups(catalogRoot, ...
                 yamada.catalog.ComponentCatalogLoader.stringList(manifest.propertyGroupFiles, ...
                 catalogRoot + "/catalog.json.propertyGroupFiles"));
@@ -64,20 +223,82 @@ classdef ComponentCatalogLoader
             yamada.catalog.ComponentCatalogLoader.validateApplicationContexts(registry);
         end
 
-        function root = defaultCatalogRoot()
-            % defaultCatalogRoot Return the packaged standard catalog location.
+        function digest = fingerprint(catalogRoot)
+            % fingerprint Hash the catalog files and any sibling release index.
+            arguments (Input)
+                catalogRoot (1, 1) string
+            end
             arguments (Output)
-                root (1, 1) string
+                digest (1, 1) string
             end
 
-            % Resolve from this package file so the current folder is irrelevant.
-            sourcePath = mfilename("fullpath");
-            projectRoot = fileparts(fileparts(fileparts(sourcePath)));
-            root = string(fullfile(projectRoot, "resources", "component-catalog", "R2024a"));
-        end
-    end
+            % An empty digest disables reuse whenever the root cannot be read completely.
+            digest = "";
+            if ~isfolder(catalogRoot), return, end
+            try
+                entries = dir(fullfile(catalogRoot, "**", "*"));
+                entries = entries(~[entries.isdir]);
+                paths = string(fullfile({entries.folder}, {entries.name}));
+                [folder, release] = fileparts(catalogRoot);
+                indexPath = fullfile(folder, "availability.json");
+                if yamada.catalog.ComponentCatalogLoader.isReleaseName(release) && isfile(indexPath)
+                    paths(end + 1) = indexPath;
+                end
+                paths = sort(paths);
+                hasher = java.security.MessageDigest.getInstance("SHA-256");
+                for index = 1:numel(paths)
+                    fileId = fopen(paths(index), "r");
+                    if fileId < 0, return, end
+                    closer = onCleanup(@() fclose(fileId));
+                    bytes = fread(fileId, Inf, "*uint8");
+                    clear closer
 
-    methods (Static, Access = private)
+                    % Length-delimit each record so adjacent paths and bytes cannot alias.
+                    header = paths(index) + newline + numel(bytes) + newline;
+                    hasher.update(unicode2native(char(header), "UTF-8"));
+                    if ~isempty(bytes), hasher.update(bytes); end
+                end
+                hash = typecast(hasher.digest(), "uint8");
+                digest = string(lower(reshape(dec2hex(hash, 2)', 1, [])));
+            catch
+                digest = "";
+            end
+        end
+
+        function registry = validatedCache(action, catalogRoot, fingerprint, registry)
+            % validatedCache Get or store one validated registry per catalog root.
+            arguments (Input)
+                action (1, 1) string {mustBeMember(action, ["get", "set"])}
+                catalogRoot (1, 1) string
+                fingerprint (1, 1) string
+                registry yamada.model.ComponentRegistry = yamada.model.ComponentRegistry.empty
+            end
+            arguments (Output)
+                registry yamada.model.ComponentRegistry
+            end
+
+            % Process memory holds only successful loads; failures are never stored.
+            persistent entries
+            if isempty(entries)
+                entries = dictionary(string([]), struct("Fingerprint", {}, "Registry", {}));
+            end
+            key = catalogRoot;
+            if action == "get"
+                registry = yamada.model.ComponentRegistry.empty;
+                if isKey(entries, key)
+                    entry = entries(key);
+                    if entry.Fingerprint == fingerprint, registry = entry.Registry; end
+                end
+                return
+            end
+
+            % Bound memory when many temporary roots are loaded in one session.
+            if numEntries(entries) >= 8 && ~isKey(entries, key)
+                entries = dictionary(string([]), struct("Fingerprint", {}, "Registry", {}));
+            end
+            entries(key) = struct("Fingerprint", fingerprint, "Registry", registry);
+        end
+
         function registry = loadVersion2(root, manifest)
             % loadVersion2 Load concrete variants composed from audited group data.
             arguments (Input)
@@ -88,13 +309,11 @@ classdef ComponentCatalogLoader
                 registry (1, 1) yamada.model.ComponentRegistry
             end
 
-            if string(manifest.matlabRelease) ~= "R2024a"
-                yamada.catalog.ComponentCatalogLoader.fail(root + "/catalog.json", ...
-                    "schemaVersion 2 requires matlabRelease R2024a.");
-            end
+            % Every artifact must describe the release the manifest names.
+            release = yamada.catalog.ComponentCatalogLoader.manifestRelease(manifest, root + "/catalog.json");
             groups = yamada.catalog.ComponentCatalogLoader.readVersion2Groups(root, ...
                 yamada.catalog.ComponentCatalogLoader.stringList(manifest.propertyGroupFiles, ...
-                root + "/catalog.json.propertyGroupFiles"));
+                root + "/catalog.json.propertyGroupFiles"), release);
             if ~isfield(manifest, "orderProfileFiles")
                 yamada.catalog.ComponentCatalogLoader.fail(root + "/catalog.json", ...
                     "schemaVersion 2 requires orderProfileFiles.");
@@ -106,7 +325,7 @@ classdef ComponentCatalogLoader
             if isfield(manifest, "inspectorRowFiles")
                 inspectorRows = yamada.catalog.ComponentCatalogLoader.readInspectorRows(root, ...
                     yamada.catalog.ComponentCatalogLoader.stringList(manifest.inspectorRowFiles, ...
-                    root + "/catalog.json.inspectorRowFiles"));
+                    root + "/catalog.json.inspectorRowFiles"), release);
             end
             files = yamada.catalog.ComponentCatalogLoader.stringList(manifest.componentFiles, ...
                 root + "/catalog.json.componentFiles");
@@ -152,17 +371,19 @@ classdef ComponentCatalogLoader
             end
         end
 
-        function groups = readVersion2Groups(root, files)
-            % readVersion2Groups Load the stable reusable property-group map.
+        function groups = readVersion2Groups(root, files, release)
+            % readVersion2Groups Load the stable reusable property-group map for one release.
             arguments (Input)
                 root (1, 1) string
                 files (1, :) string
+                release (1, 1) string
             end
             arguments (Output)
-                groups containers.Map
+                groups dictionary
             end
 
-            groups = containers.Map("KeyType", "char", "ValueType", "any");
+            % Each group keeps its own decoded JSON fields.
+            groups = dictionary(string([]), struct([]));
             for fileIndex = 1:numel(files)
                 relativePath = files(fileIndex);
                 document = yamada.catalog.ComponentCatalogLoader.readDocument(root, relativePath);
@@ -171,9 +392,9 @@ classdef ComponentCatalogLoader
                     ["artifactVersion", "matlabRelease", "groups"], context);
                 yamada.catalog.ComponentCatalogLoader.rejectUnknownFields(document, ...
                     ["artifactVersion", "matlabRelease", "inputSha256", "groups"], context);
-                if document.artifactVersion ~= 1 || string(document.matlabRelease) ~= "R2024a"
+                if document.artifactVersion ~= 1 || string(document.matlabRelease) ~= release
                     yamada.catalog.ComponentCatalogLoader.fail(context, ...
-                        "Expected R2024a property-group artifactVersion 1.");
+                        "Expected " + release + " property-group artifactVersion 1.");
                 end
                 groupList = yamada.catalog.ComponentCatalogLoader.objectList(document.groups, context + ".groups");
                 for groupIndex = 1:numel(groupList)
@@ -183,11 +404,11 @@ classdef ComponentCatalogLoader
                     yamada.catalog.ComponentCatalogLoader.rejectUnknownFields(value, ...
                         ["id", "kind", "categoryId", "entries"], context + ".groups");
                     id = yamada.catalog.ComponentCatalogLoader.scalarString(value.id, context + ".groups.id");
-                    if isKey(groups, char(id))
+                    if isKey(groups, id)
                         yamada.catalog.ComponentCatalogLoader.fail(context + ".groups.id", ...
                             "Duplicate property group \"" + id + "\".");
                     end
-                    groups(char(id)) = value;
+                    groups(id) = value;
                 end
             end
         end
@@ -199,10 +420,11 @@ classdef ComponentCatalogLoader
                 files (1, :) string
             end
             arguments (Output)
-                profiles containers.Map
+                profiles dictionary
             end
 
-            profiles = containers.Map("KeyType", "char", "ValueType", "any");
+            % Category orders have different lengths, so each entry is one cell value.
+            profiles = dictionary(string([]), {});
             for fileIndex = 1:numel(files)
                 document = yamada.catalog.ComponentCatalogLoader.readDocument(root, files(fileIndex));
                 context = root + "/" + files(fileIndex);
@@ -212,21 +434,22 @@ classdef ComponentCatalogLoader
                 for profileIndex = 1:numel(profileList)
                     value = profileList{profileIndex};
                     id = yamada.catalog.ComponentCatalogLoader.scalarString(value.id, context + ".profiles.id");
-                    if isKey(profiles, char(id))
+                    if isKey(profiles, id)
                         yamada.catalog.ComponentCatalogLoader.fail(context + ".profiles.id", ...
                             "Duplicate order profile \"" + id + "\".");
                     end
-                    profiles(char(id)) = yamada.catalog.ComponentCatalogLoader.stringList( ...
+                    profiles{id} = yamada.catalog.ComponentCatalogLoader.stringList( ...
                         value.categoryOrder, context + ".profiles.categoryOrder");
                 end
             end
         end
 
-        function definitions = readInspectorRows(root, files)
-            % readInspectorRows Load strict presentation-only composite row templates.
+        function definitions = readInspectorRows(root, files, release)
+            % readInspectorRows Load strict presentation-only composite row templates for one release.
             arguments (Input)
                 root (1, 1) string
                 files (1, :) string
+                release (1, 1) string
             end
             arguments (Output)
                 definitions yamada.model.InspectorRowDefinition
@@ -241,9 +464,9 @@ classdef ComponentCatalogLoader
                     ["artifactVersion", "matlabRelease", "rows"], context);
                 yamada.catalog.ComponentCatalogLoader.rejectUnknownFields(document, ...
                     ["artifactVersion", "matlabRelease", "rows"], context);
-                if document.artifactVersion ~= 1 || string(document.matlabRelease) ~= "R2024a"
+                if document.artifactVersion ~= 1 || string(document.matlabRelease) ~= release
                     yamada.catalog.ComponentCatalogLoader.fail(context, ...
-                        "Expected R2024a inspector-row artifactVersion 1.");
+                        "Expected " + release + " inspector-row artifactVersion 1.");
                 end
                 rows = yamada.catalog.ComponentCatalogLoader.objectList(document.rows, context + ".rows");
                 for rowIndex = 1:numel(rows)
@@ -341,8 +564,8 @@ classdef ComponentCatalogLoader
             % componentDefinitionVersion2 Compose one concrete variant in category order.
             arguments (Input)
                 document (1, 1) struct
-                groups containers.Map
-                profiles containers.Map
+                groups dictionary
+                profiles dictionary
                 context (1, 1) string
             end
             arguments (Output)
@@ -355,7 +578,7 @@ classdef ComponentCatalogLoader
             yamada.catalog.ComponentCatalogLoader.rejectUnknownFields(document, required, context);
             id = yamada.catalog.ComponentCatalogLoader.scalarString(document.id, context + ".id");
             profileId = yamada.catalog.ComponentCatalogLoader.scalarString(document.profileId, context + ".profileId");
-            if ~isKey(profiles, char(profileId))
+            if ~isKey(profiles, profileId)
                 yamada.catalog.ComponentCatalogLoader.fail(context + ".profileId", "Unknown order profile.");
             end
             factory = yamada.catalog.ComponentCatalogLoader.scalarString(document.factory, context + ".factory");
@@ -367,7 +590,7 @@ classdef ComponentCatalogLoader
             properties = yamada.model.PropertyDefinition.empty(0, 1);
             categories = yamada.catalog.ComponentCatalogLoader.objectList(document.categories, context + ".categories");
             yamada.catalog.ComponentCatalogLoader.validateProfileDelta( ...
-                profiles(char(profileId)), document.profileDelta, categories, context + ".profileDelta");
+                profiles{profileId}, document.profileDelta, categories, context + ".profileDelta");
             for categoryIndex = 1:numel(categories)
                 category = categories{categoryIndex};
                 categoryContext = context + ".categories[" + string(categoryIndex) + "]";
@@ -384,12 +607,12 @@ classdef ComponentCatalogLoader
                     yamada.catalog.ComponentCatalogLoader.rejectUnknownFields(entry, ...
                         ["path", "groupId", "runtimeSetAccess", "metadata"], entryContext);
                     groupId = yamada.catalog.ComponentCatalogLoader.scalarString(entry.groupId, entryContext + ".groupId");
-                    if ~isKey(groups, char(groupId))
+                    if ~isKey(groups, groupId)
                         yamada.catalog.ComponentCatalogLoader.fail(entryContext + ".groupId", ...
                             "Unknown property group \"" + groupId + "\".");
                     end
                     yamada.catalog.ComponentCatalogLoader.validateVersion2GroupEntry( ...
-                        groups(char(groupId)), entry, entryContext);
+                        groups(groupId), entry, entryContext);
                     isEditable = string(entry.runtimeSetAccess) == "public";
                     properties(end + 1) = yamada.catalog.ComponentCatalogLoader.propertyDefinition( ...
                         struct("path", entry.path, "isEditable", isEditable, "metadata", entry.metadata), ...
@@ -495,11 +718,11 @@ classdef ComponentCatalogLoader
                 files (1, :) string
             end
             arguments (Output)
-                groups containers.Map
+                groups dictionary
             end
 
             % Use an explicit map only after all group documents have passed validation.
-            groups = containers.Map("KeyType", "char", "ValueType", "any");
+            groups = dictionary(string([]), struct("Entries", {}, "Context", {}));
             for index = 1:numel(files)
                 relativePath = files(index);
                 document = yamada.catalog.ComponentCatalogLoader.readDocument(root, relativePath);
@@ -507,14 +730,14 @@ classdef ComponentCatalogLoader
                 yamada.catalog.ComponentCatalogLoader.requireFields(document, ["name", "entries"], context);
                 yamada.catalog.ComponentCatalogLoader.rejectUnknownFields(document, ["name", "entries"], context);
                 name = yamada.catalog.ComponentCatalogLoader.scalarString(document.name, context + ".name");
-                if isKey(groups, char(name))
+                if isKey(groups, name)
                     yamada.catalog.ComponentCatalogLoader.fail(context + ".name", ...
                         "Duplicate property group """ + name + """.");
                 end
                 group = struct();
                 group.Entries = document.entries;
                 group.Context = context;
-                groups(char(name)) = group;
+                groups(name) = group;
             end
         end
 
@@ -522,7 +745,7 @@ classdef ComponentCatalogLoader
             % componentDefinition Convert one validated component document to a typed definition.
             arguments (Input)
                 document struct
-                groups containers.Map
+                groups dictionary
                 context (1, 1) string
             end
             arguments (Output)
@@ -563,7 +786,7 @@ classdef ComponentCatalogLoader
             % expandProperties Expand ordered property and group entries without cycles.
             arguments (Input)
                 entries
-                groups containers.Map
+                groups dictionary
                 stack (1, :) string
                 context (1, 1) string
             end
@@ -591,11 +814,11 @@ classdef ComponentCatalogLoader
                         yamada.catalog.ComponentCatalogLoader.fail(entryContext + ".group", ...
                             "Property group cycle: " + strjoin([stack, groupName], " -> ") + ".");
                     end
-                    if ~isKey(groups, char(groupName))
+                    if ~isKey(groups, groupName)
                         yamada.catalog.ComponentCatalogLoader.fail(entryContext + ".group", ...
                             "Unknown property group """ + groupName + """.");
                     end
-                    group = groups(char(groupName));
+                    group = groups(groupName);
                     nextStack = strings(1, numel(stack) + 1);
                     nextStack(1:numel(stack)) = stack;
                     nextStack(end) = groupName;
@@ -1142,6 +1365,24 @@ classdef ComponentCatalogLoader
                 end
                 yamada.catalog.ComponentCatalogLoader.fail(context + "." + fieldName, ...
                     "Unknown field """ + fieldName + """.");
+            end
+        end
+
+        function release = manifestRelease(manifest, context)
+            % manifestRelease Return the MATLAB release that one catalog manifest describes.
+            arguments (Input)
+                manifest (1, 1) struct
+                context (1, 1) string
+            end
+            arguments (Output)
+                release (1, 1) string
+            end
+
+            release = yamada.catalog.ComponentCatalogLoader.scalarString( ...
+                manifest.matlabRelease, context + ".matlabRelease");
+            if ~yamada.catalog.ComponentCatalogLoader.isReleaseName(release)
+                yamada.catalog.ComponentCatalogLoader.fail(context + ".matlabRelease", ...
+                    "Expected a MATLAB release name such as R2024a.");
             end
         end
 

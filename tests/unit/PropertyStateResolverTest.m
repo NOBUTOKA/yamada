@@ -91,6 +91,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             [component, definitions] = testCase.fixture("uieditfield-numeric", {"Value", []});
             [~, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyNotEmpty(diagnostics);
+            % Only catalogs that document AllowEmpty can make an empty Value valid.
+            assumeCatalogSupports(testCase, "uieditfield-numeric", "AllowEmpty");
             [component, definitions] = testCase.fixture("uieditfield-numeric", {"AllowEmpty", "on"; "Value", []});
             [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEmpty(diagnostics);
@@ -259,12 +261,47 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
                 [component, definitions] = testCase.fixture(id, {"GridColor", [0.3 0.5 0.7]; ...
                     "GridColorMode", "auto"; "GridAlphaMode", "auto"; "GridAlpha", 0.4});
                 states = yamada.model.PropertyStateResolver.resolve(component, definitions);
-                testCase.verifyEqual(testCase.state(states, "GridColor").EffectiveValue, [0.3 0.5 0.7]);
+
+                % A value-mode color, as catalogs record from R2026a, is computed once auto is restored.
+                color = definitions([definitions.Path] == "GridColor").Application.EffectPolicy;
+                if color == "valueMode"
+                    testCase.verifyFalse(testCase.state(states, "GridColor").IsKnown, id);
+                    testCase.verifyEqual(testCase.state(states, "GridColor").ReasonCode, "automatic", id);
+                else
+                    testCase.verifyEqual(testCase.state(states, "GridColor").EffectiveValue, [0.3 0.5 0.7], id);
+                end
                 testCase.verifyEqual(testCase.state(states, "GridColorMode").EffectiveValue, "auto");
                 testCase.verifyEqual(testCase.state(states, "GridAlpha").EffectiveValue, 0.4);
                 testCase.verifyEqual(testCase.state(states, "GridAlphaMode").EffectiveValue, "manual");
                 testCase.verifyNumElements(component.Settings, 4);
             end
+        end
+
+        function setterModeFlagsDeriveConstructorAutoValues(testCase)
+            % setterModeFlagsDeriveConstructorAutoValues Distinguish assignments from constructors that restore auto last.
+            definition = testCase.Registry.getById("uiaxes");
+            alpha = definition.Properties([definition.Properties.Path] == "GridAlpha");
+            testCase.assumeEqual(alpha.Application.EffectPolicy, "setterModeFlag", ...
+                "The loaded catalog keeps uiaxes GridAlpha as a plain mode flag.");
+            writes = {"GridAlpha", 0.4; "GridAlphaMode", "auto"};
+
+            % Assignments keep the stored alpha after auto is restored.
+            [component, definitions] = testCase.fixture("uiaxes", writes);
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyEqual(testCase.state(states, "GridAlpha").EffectiveValue, 0.4);
+
+            % Constructor arguments that restore auto last leave the alpha to the runtime theme.
+            [component, definitions] = testCase.fixture("uiaxes", writes, "nameValue");
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyFalse(testCase.state(states, "GridAlpha").IsKnown);
+            testCase.verifyEqual(testCase.state(states, "GridAlpha").ReasonCode, "automatic");
+            testCase.verifyEqual(testCase.state(states, "GridAlphaMode").EffectiveValue, "auto");
+
+            % A constructor value after the mode selects manual mode and keeps the alpha.
+            [component, definitions] = testCase.fixture("uiaxes", flipud(writes), "nameValue");
+            states = yamada.model.PropertyStateResolver.resolve(component, definitions);
+            testCase.verifyEqual(testCase.state(states, "GridAlpha").EffectiveValue, 0.4);
+            testCase.verifyEqual(testCase.state(states, "GridAlphaMode").EffectiveValue, "manual");
         end
 
         function invalidWidthIsAnInitializationError(testCase)

@@ -63,6 +63,22 @@ classdef InspectorView < handle
             result = obj.Panel.Scrollable == "on";
         end
 
+        function reveal(obj, row)
+            % reveal Bring the settled editor row into the scrollable Inspector viewport.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorView
+                row (1, 1) matlab.ui.container.GridLayout
+            end
+
+            % Scroll a nested row through the outer panel without scrolling its inner grids.
+            bounds = getpixelposition(row, true);
+            content = getpixelposition(obj.ContentPanel, true);
+            viewport = getpixelposition(obj.Panel);
+            bottom = bounds(2) - content(2) + obj.ContentPanel.Position(2);
+            bottom = bottom - max(0, (viewport(4) - bounds(4))/2);
+            scroll(obj.Panel, 0, max(0, round(bottom)));
+        end
+
         function grid = contentGrid(obj)
             % contentGrid Return the inspector-owned grid for section construction.
             arguments (Input)

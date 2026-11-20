@@ -1,10 +1,10 @@
-classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab.unittest.TestCase
-    % ComponentRegistryBaselineTest Verify promotion of the R2024a grouping catalog.
+classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittest.TestCase
+    % ComponentRegistryBaselineTest Verify promotion of the running release's grouping catalog.
     %   This class compares every runtime concrete variant with the audited
     %   development ledger and checks that direct-parent projections remain
-    %   deterministic across the complete audited R2024a catalog.
+    %   deterministic across the complete audited release catalog.
 
-    methods (Test)
+    methods (Test, TestTags = {'fast'})
         function cachedParentProjectionIsInvalidatedByRulesAndRegistration(testCase)
             % cachedParentProjectionIsInvalidatedByRulesAndRegistration Observe changes after a cache hit.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -20,9 +20,21 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             replaced = registry.getEffectiveProperties("uilabel", "uigridlayout");
             testCase.verifyEqual(string({replaced.Path}), "Custom");
         end
+    end
 
-        function runtimeRegistryMatchesAuditedR2024aLedger(testCase)
-            % runtimeRegistryMatchesAuditedR2024aLedger Compare every variant with the audited ledger.
+    methods (Test, TestTags = {'exhaustive'})
+        function runtimeRegistryMatchesAuditedLedger(testCase)
+            % runtimeRegistryMatchesAuditedLedger Compare every variant with the audited ledger.
+            %   Only the surface release has a ledger transcript; catalogs of
+            %   other releases are checked against their projections by
+            %   tests/verifyReleaseProjection.ps1.
+
+            % Compare only when the running release serves the surface catalog.
+            projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
+            releases = jsondecode(fileread(fullfile(projectRoot, "dev", "component-data", "releases.json")));
+            testCase.assumeEqual(yamada.catalog.ComponentCatalogLoader.defaultRelease(), ...
+                string(releases.surfaceRelease), ...
+                "The audited ledger transcript describes the surface release only.");
 
             % Resolve the generated catalog through the production loader.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -84,7 +96,9 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
             % Presentation rows have their own reviewed ledger and ordered membership.
             ComponentRegistryBaselineTest.verifyInspectorRows(testCase, registry);
         end
+    end
 
+    methods (Test, TestTags = {'fast'})
         function editablePropertiesProjectToSupportedInspectorEditors(testCase)
             % editablePropertiesProjectToSupportedInspectorEditors Verify every editable capability has a row adapter.
 
@@ -134,9 +148,13 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
                     testCase.verifyGreaterThanOrEqual(numel(property.ValueSchema.values), 2);
                 end
             end
+
+            % FontSmoothing stays omitted in the releases whose catalogs still offer it.
             definition = registry.getById("uiaxes");
             smoothing = definition.Properties([definition.Properties.Path] == "FontSmoothing");
-            testCase.verifyEqual(smoothing.AuditDisposition, "omitted");
+            if ~isempty(smoothing)
+                testCase.verifyEqual(smoothing.AuditDisposition, "omitted");
+            end
         end
 
         function checkboxTreeGeometryRetainsNativeAndProductAccessBoundaries(testCase)
@@ -195,7 +213,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
 
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
             ledger = jsondecode(fileread(fullfile(projectRoot, "dev", "component-data", ...
-                "R2024a", "inspector-rows.json")));
+                yamada.catalog.ComponentCatalogLoader.defaultRelease(), "inspector-rows.json")));
             expectedRows = ComponentRegistryBaselineTest.objectList(ledger.rows);
             actualRows = registry.inspectorRows();
             testCase.assertNumElements(actualRows, numel(expectedRows));
@@ -223,19 +241,68 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentRegistryBaselineTest < matlab
         end
 
         function documents = ledgerDocuments()
-            % ledgerDocuments Read the audited R2024a concrete component transcript.
+            % ledgerDocuments Read the audited concrete component transcript of the running catalog release.
             arguments (Output)
                 documents cell
             end
 
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
-            directory = fullfile(projectRoot, "dev", "component-data", "R2024a", "components");
+            tools = fullfile(projectRoot, "dev", "component-data");
+            release = yamada.catalog.ComponentCatalogLoader.defaultRelease();
+            directory = fullfile(tools, release, "components");
+            listed = jsondecode(fileread(fullfile(tools, "releases.json")));
+            order = string(cellfun(@(entry) entry.release, ...
+                ComponentRegistryBaselineTest.objectList(listed.releases), "UniformOutput", false));
             files = dir(fullfile(directory, "*.json"));
-            documents = cell(1, numel(files));
+            documents = cell(1, 0);
             for index = 1:numel(files)
-                documents{index} = jsondecode(fileread(fullfile(directory, files(index).name)));
+                document = jsondecode(fileread(fullfile(directory, files(index).name)));
+
+                % Keep only the records and enum values that the release offers.
+                if ~ComponentRegistryBaselineTest.availableIn(document, release, order), continue, end
+                properties = ComponentRegistryBaselineTest.objectList(document.properties);
+                kept = cellfun(@(property) ComponentRegistryBaselineTest.availableIn( ...
+                    property, release, order), properties);
+                properties = properties(kept);
+                for propertyIndex = 1:numel(properties)
+                    contract = properties{propertyIndex}.valueContract;
+                    if ~isfield(contract, "valueAvailability"), continue, end
+                    ranges = ComponentRegistryBaselineTest.objectList(contract.valueAvailability);
+                    absent = string(cellfun(@(range) char(range.value), ranges(~cellfun(@(range) ...
+                        ComponentRegistryBaselineTest.availableIn(range, release, order), ranges)), ...
+                        "UniformOutput", false));
+                    values = string(contract.values);
+                    contract.values = cellstr(reshape(values(~ismember(values, absent)), [], 1));
+                    properties{propertyIndex}.valueContract = rmfield(contract, "valueAvailability");
+                end
+                document.properties = properties;
+                documents{end + 1} = document; %#ok<AGROW>
             end
+        end
+
+        function available = availableIn(record, release, order)
+            % availableIn Test whether a ledger record or value range includes a release.
+            arguments (Input)
+                record (1, 1) struct
+                release (1, 1) string
+                order (1, :) string
+            end
+            arguments (Output)
+                available (1, 1) logical
+            end
+
+            available = true;
+            if isfield(record, "availability")
+                range = record.availability.releases;
+            elseif isfield(record, "releases") && isfield(record, "value")
+                range = record.releases;
+            else
+                return
+            end
+            position = find(order == release, 1);
+            if isfield(range, "since"), available = position >= find(order == string(range.since), 1); end
+            if available && isfield(range, "before"), available = position < find(order == string(range.before), 1); end
         end
 
         function result = cellArguments(value)

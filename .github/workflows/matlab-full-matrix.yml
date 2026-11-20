@@ -1,0 +1,46 @@
+name: MATLAB full test matrix
+
+on:
+  workflow_call:
+    inputs:
+      releases:
+        description: MATLAB releases as a JSON array
+        required: true
+        type: string
+      shard-count:
+        description: Number of shards per MATLAB release, either 5 or 20
+        required: true
+        type: number
+
+permissions:
+  contents: read
+
+jobs:
+  full:
+    name: ${{ matrix.release }} ${{ matrix.release == 'R2023a' && 'non-UI' || 'full' }} (${{ matrix.shard }}/${{ inputs.shard-count }})
+    runs-on: windows-2022
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        release: ${{ fromJSON(inputs.releases) }}
+        shard: ${{ fromJSON(inputs.shard-count == 20 && '[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]' || '[1,2,3,4,5]') }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: matlab-actions/setup-matlab@v3
+        with:
+          release: ${{ matrix.release }}
+      - name: Run assigned MATLAB tests
+        uses: matlab-actions/run-command@v3
+        env:
+          YAMADA_TEST_UI: ${{ matrix.release == 'R2023a' && 'non-ui' || 'all' }}
+          YAMADA_SHARD_INDEX: ${{ matrix.shard }}
+          YAMADA_SHARD_COUNT: ${{ inputs.shard-count }}
+        with:
+          command: >-
+            addpath(pwd, fullfile(pwd, "tests"));
+            runYamadaFullTestPartition(string(getenv("YAMADA_TEST_UI")),
+            str2double(getenv("YAMADA_SHARD_INDEX")), str2double(getenv("YAMADA_SHARD_COUNT")));

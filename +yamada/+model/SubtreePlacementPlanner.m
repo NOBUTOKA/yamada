@@ -69,11 +69,27 @@ classdef SubtreePlacementPlanner
             if root.Id == document.RootComponentId
                 error("yamada:SubtreePlacementPlanner:RootOperation", "The document root cannot be moved or pasted.");
             end
-            for record = snapshot.Records
-                if ~record.IsEditable
-                    error("yamada:SubtreePlacementPlanner:ReadOnly", "The subtree contains a read-only component.");
+            movingSourceOnly = isfield(root.Metadata, "UnavailableRelease") && any(excludedIds == root.Id);
+            placementCatalog = registry;
+            if ~isempty(snapshot.CopyConfiguration)
+                placementCatalog = yamada.model.SubtreeCopyPlanner.sourceCatalog(snapshot, registry);
+                if isfield(root.Metadata, "UnavailableRelease")
+                    root.Properties = snapshot.CopyConfiguration(1).Properties;
                 end
-                definition = registry.get(record.Factory, record.CreationArguments);
+            end
+            for record = snapshot.Records
+                % Relocating the enclosing subtree leaves a source-only child's parent intact.
+                if record.Id ~= root.Id && any(excludedIds == record.Id) && ...
+                        isfield(record.Metadata, "UnavailableRelease")
+                    continue
+                end
+                if record.Id == root.Id && movingSourceOnly
+                    [definition, placementCatalog] = registry.sourceDefinition(document.getComponent(root.Id));
+                elseif ~record.IsEditable && ~(placementCatalog ~= registry && isfield(record.Metadata, "UnavailableRelease"))
+                    error("yamada:SubtreePlacementPlanner:ReadOnly", "The subtree contains a read-only component.");
+                else
+                    definition = placementCatalog.get(record.Factory, record.CreationArguments);
+                end
                 if definition.IsProgrammaticOnly || definition.Category == "FigureTools"
                     error("yamada:SubtreePlacementPlanner:UnsupportedFactory", "This construction family is not supported for subtree placement.");
                 end
@@ -87,7 +103,24 @@ classdef SubtreePlacementPlanner
                     error("yamada:SubtreePlacementPlanner:InvalidParent", "The destination does not accept this construction style.");
                 end
             end
-            definitions = registry.getEffectiveProperties(root.Factory, parent.Factory, root.CreationArguments);
+            definitions = placementCatalog.getEffectiveProperties(root.Factory, parent.Factory, root.CreationArguments);
+            if movingSourceOnly
+                % Only certain literal geometry may be changed by a structural operation.
+                source = document.getComponent(root.Id);
+                for index = 1:numel(root.Properties)
+                    path = root.Properties(index).Path;
+                    if ~any(path == ["Position", "Layout.Row", "Layout.Column", "Orientation"]), continue, end
+                    settings = source.getSettings(path);
+                    if isempty(settings) || ~all([settings.IsCertain]) || ...
+                            any(string({settings.ValueKind}) ~= "literal") || any([settings.IsReleaseUnavailable])
+                        if path == "Orientation", continue, end
+                        error("yamada:SubtreePlacementPlanner:ImplicitPlacement", "Placement depends on an unsupported or uncertain source setting.");
+                    end
+                    root.Properties(index).IsEditable = true;
+                    root.Properties(index).ValueKind = "literal";
+                    root.Properties(index).LiteralValue = settings(end).LiteralValue;
+                end
+            end
             paths = string({definitions.Path});
             changes = struct("Path", {}, "Value", {}, "Remove", {});
             wasGrid = ~isempty(originalParent) && originalParent.Factory == "uigridlayout";
@@ -98,8 +131,16 @@ classdef SubtreePlacementPlanner
                 height = 1;
                 width = 1;
                 if wasGrid || hasGridPlacement
-                    rows = yamada.model.SubtreePlacementPlanner.coordinate(root.Properties, "Layout.Row");
-                    columns = yamada.model.SubtreePlacementPlanner.coordinate(root.Properties, "Layout.Column");
+                    if movingSourceOnly && wasGrid
+                        coordinates = yamada.model.GridLayoutStatePolicy.previewChildCoordinates(source, document, registry);
+                        [rows, columns] = coordinates{:};
+                        if isempty(rows) || isempty(columns)
+                            error("yamada:SubtreePlacementPlanner:ImplicitPlacement", "The current grid span cannot be resolved.");
+                        end
+                    else
+                        rows = yamada.model.SubtreePlacementPlanner.coordinate(root.Properties, "Layout.Row");
+                        columns = yamada.model.SubtreePlacementPlanner.coordinate(root.Properties, "Layout.Column");
+                    end
                     height = rows(end) - rows(1) + 1;
                     width = columns(end) - columns(1) + 1;
                 end
@@ -167,7 +208,7 @@ classdef SubtreePlacementPlanner
                     if (yamada.model.PositionAliasPolicy.applies(definitions(find(paths == "Position", 1))) || ...
                             any(definitions(find(paths == "Position", 1)).Application.EffectPolicy == ...
                             ["positionInput", "sliderPosition", "squarePosition", "switchPosition", "semicircularPosition", "linearPosition"])) && ...
-                            ~wasGrid && ~hasGridPlacement && isempty(targetPosition)
+                            ~movingSourceOnly && ~wasGrid && ~hasGridPlacement && isempty(targetPosition)
                         if ~isempty(snapshot.CopyConfiguration)
                             position = yamada.model.SubtreePlacementPlanner.literal( ...
                                 snapshot.CopyConfiguration(1).Properties, "Position", []);

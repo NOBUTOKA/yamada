@@ -11,13 +11,19 @@ classdef ComponentRegistry < handle
     properties (SetAccess = private)
         % Revision - Monotonic version of capability and presentation definitions.
         Revision uint64 = uint64(0)
+        % CatalogRoot - Directory of the loaded release projection, if any.
+        CatalogRoot string = ""
     end
 
     properties (Access = private)
-        Definitions containers.Map
-        FactoryVariantIds containers.Map
-        EffectiveProperties containers.Map
-        IndependentDefinitions containers.Map
+        % Array-valued entries use cell values because each key holds one element.
+        Definitions dictionary = dictionary(string([]), yamada.model.ComponentDefinition.empty)
+        FactoryVariantIds dictionary = dictionary(string([]), {})
+        EffectiveProperties dictionary = dictionary(string([]), {})
+        IndependentDefinitions dictionary = dictionary(string([]), {})
+        UnavailableSourceProperties string = strings(1, 0)
+        UnavailableSourceValues string = strings(1, 0)
+        StructuralCatalogs dictionary = dictionary(string([]), {})
         AxesAttachment yamada.model.ComponentDefinition = yamada.model.ComponentDefinition.empty
         ParentContextRules yamada.model.ParentContextRule = yamada.model.ParentContextRule.empty
         InspectorRowDefinitions yamada.model.InspectorRowDefinition = ...
@@ -37,33 +43,152 @@ classdef ComponentRegistry < handle
             result = true;
             if isempty(definitions), return, end
             definitions = reshape(definitions, 1, []);
-            key = char("definitions:" + strjoin(string({definitions.Path}), "|"));
+            key = "definitions:" + strjoin(string({definitions.Path}), "|");
             if isKey(obj.IndependentDefinitions, key)
-                previous = obj.IndependentDefinitions(key);
+                previous = obj.IndependentDefinitions{key};
                 if isequaln(previous, definitions), return, end
             end
             % Only independent values enter this map; rejected live data is never retained.
             result = yamada.model.InputChangeClock.isValueData(definitions);
             if ~result, return, end
-            if obj.IndependentDefinitions.Count >= 128 && ~isKey(obj.IndependentDefinitions, key)
-                obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
+            if numEntries(obj.IndependentDefinitions) >= 128 && ~isKey(obj.IndependentDefinitions, key)
+                obj.IndependentDefinitions = dictionary(string([]), {});
             end
-            obj.IndependentDefinitions(key) = definitions;
+            obj.IndependentDefinitions{key} = definitions;
+        end
+    end
+
+    methods (Access = ?yamada.catalog.ComponentCatalogLoader)
+        function setSourceAvailability(obj, root, paths, values)
+            % setSourceAvailability Retain release annotations for source-only settings.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                root (1, 1) string
+                paths (1, :) string
+                values (1, :) string
+            end
+
+            obj.CatalogRoot = root;
+            obj.UnavailableSourceProperties = paths;
+            obj.UnavailableSourceValues = values;
+        end
+
+        function copy = duplicate(obj)
+            % duplicate Return an independent registry with the same validated catalog state.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                copy (1, 1) yamada.model.ComponentRegistry
+            end
+
+            % Definitions, derived surfaces, and their dictionaries are all value data.
+            copy = yamada.model.ComponentRegistry();
+            copy.Definitions = obj.Definitions;
+            copy.FactoryVariantIds = obj.FactoryVariantIds;
+            copy.EffectiveProperties = obj.EffectiveProperties;
+            copy.ParentContextRules = obj.ParentContextRules;
+            copy.InspectorRowDefinitions = obj.InspectorRowDefinitions;
+            copy.UnavailableSourceProperties = obj.UnavailableSourceProperties;
+            copy.UnavailableSourceValues = obj.UnavailableSourceValues;
+            copy.CatalogRoot = obj.CatalogRoot;
+            copy.Revision = obj.Revision;
+        end
+    end
+
+    methods (Access = ?yamada.model.SubtreeCopyPlanner)
+        function catalog = structuralCatalog(obj, release)
+            % structuralCatalog Reuse the bundled source surface across clipboard and placement checks.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                release (1, 1) string
+            end
+            arguments (Output)
+                catalog (1, 1) yamada.model.ComponentRegistry
+            end
+
+            % One editor registry retains a validated snapshot of each supplemental surface.
+            if ~isKey(obj.StructuralCatalogs, release)
+                obj.StructuralCatalogs{release} = yamada.catalog.ComponentCatalogLoader.load( ...
+                    fullfile(fileparts(obj.CatalogRoot), release));
+            end
+            catalog = obj.StructuralCatalogs{release};
         end
     end
 
     methods
+        function [definition, catalog] = sourceDefinition(obj, component)
+            % sourceDefinition Resolve a component's concrete source variant for structural analysis.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                component (1, 1) yamada.model.ComponentRecord
+            end
+            arguments (Output)
+                definition (1, 1) yamada.model.ComponentDefinition
+                catalog (1, 1) yamada.model.ComponentRegistry
+            end
+
+            % A protected descendant can still have a definition in the runtime projection.
+            catalog = obj;
+            if ~component.isReleaseUnavailable()
+                definition = obj.get(component.Factory, component.CreationArguments);
+                return
+            end
+            variantId = component.Metadata.SourceVariantId;
+            if isKey(obj.Definitions, variantId)
+                definition = obj.getById(variantId);
+                return
+            end
+            catalog = obj.structuralCatalog(component.Metadata.SourceCatalogRelease);
+            definition = catalog.getById(variantId);
+        end
+
+        function setting = protectSourceSetting(obj, variantId, setting)
+            % protectSourceSetting Keep unsupported explicit settings outside runtime replay.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                variantId (1, 1) string
+                setting (1, 1) yamada.model.PropertySetting
+            end
+            arguments (Output)
+                setting (1, 1) yamada.model.PropertySetting
+            end
+
+            % Only annotated literal values qualify. Expressions retain their existing checks.
+            unavailable = obj.isUnavailableSourceProperty(variantId, setting.Path);
+            value = setting.LiteralValue;
+            if ~unavailable && setting.ValueKind == "literal" && ...
+                    ((isstring(value) && isscalar(value)) || (ischar(value) && isrow(value)))
+                unavailable = any(obj.UnavailableSourceValues == variantId + "." + setting.Path + "=" + string(value));
+            end
+            if unavailable
+                record = setting.toStruct();
+                record.Location.IsReleaseUnavailable = true;
+                setting = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
+            end
+        end
+
+        function result = isUnavailableSourceProperty(obj, variantId, path)
+            % isUnavailableSourceProperty Identify a property excluded by the loaded release.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                variantId (1, 1) string
+                path (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = any(obj.UnavailableSourceProperties == variantId + "." + path);
+        end
+
         function obj = ComponentRegistry()
             % ComponentRegistry Create an empty data-driven component registry.
             arguments (Output)
                 obj (1, 1) yamada.model.ComponentRegistry
             end
 
-            % Store definitions by factory without coupling the model to types.
-            obj.Definitions = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.FactoryVariantIds = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
+            % Definition dictionaries start empty from their property defaults.
             obj.ParentContextRules = [yamada.model.ParentContextRule.grid(); yamada.model.ParentContextRule.absolute()];
             obj.InspectorRowDefinitions = yamada.model.InspectorRowDefinition.empty;
         end
@@ -76,13 +201,13 @@ classdef ComponentRegistry < handle
             end
 
             % Index variants by their stable identifier and factory name.
-            factoryKey = char(definition.Factory);
-            variantKey = char(definition.Id);
-            if isempty(factoryKey) || ~isvarname(factoryKey)
+            factoryKey = string(definition.Factory);
+            variantKey = string(definition.Id);
+            if strlength(factoryKey) == 0 || ~isvarname(char(factoryKey))
                 error("yamada:ComponentRegistry:InvalidFactory", ...
                     "Factory must be a valid MATLAB function name.");
             end
-            if isempty(variantKey)
+            if strlength(variantKey) == 0
                 error("yamada:ComponentRegistry:InvalidVariantId", ...
                     "Component variant ID must not be empty.");
             end
@@ -95,14 +220,14 @@ classdef ComponentRegistry < handle
             end
             obj.Definitions(variantKey) = definition;
             obj.Revision = obj.Revision + 1;
-            obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.EffectiveProperties = dictionary(string([]), {});
+            obj.IndependentDefinitions = dictionary(string([]), {});
             if ~isKey(obj.FactoryVariantIds, factoryKey)
-                obj.FactoryVariantIds(factoryKey) = string(definition.Id);
+                obj.FactoryVariantIds{factoryKey} = variantKey;
             else
-                variants = string(obj.FactoryVariantIds(factoryKey));
+                variants = obj.FactoryVariantIds{factoryKey};
                 if ~any(variants == definition.Id)
-                    obj.FactoryVariantIds(factoryKey) = [variants, definition.Id];
+                    obj.FactoryVariantIds{factoryKey} = [variants, variantKey];
                 end
             end
         end
@@ -117,8 +242,8 @@ classdef ComponentRegistry < handle
                 result (1, 1) logical
             end
 
-            result = isKey(obj.FactoryVariantIds, char(factory)) || ...
-                (~isempty(obj.AxesAttachment) && obj.AxesAttachment.Factory == factory);
+            result = isscalar(factory) && isKey(obj.FactoryVariantIds, factory) || ...
+                (isscalar(factory) && ~isempty(obj.AxesAttachment) && obj.AxesAttachment.Factory == factory);
         end
 
         function definition = get(obj, factory, creationArguments)
@@ -133,20 +258,16 @@ classdef ComponentRegistry < handle
             end
 
             % Fail explicitly so callers cannot infer unsafe defaults.
-            key = char(factory);
-            if ~isKey(obj.FactoryVariantIds, key)
-                if ~isempty(obj.AxesAttachment) && obj.AxesAttachment.Factory == factory
-                    definition = obj.AxesAttachment;
-                    return
-                end
+            if isscalar(factory) && ~isKey(obj.FactoryVariantIds, factory) && ...
+                    ~isempty(obj.AxesAttachment) && obj.AxesAttachment.Factory == factory
+                definition = obj.AxesAttachment;
+                return
+            end
+            if ~obj.contains(factory)
                 error("yamada:ComponentRegistry:UnknownFactory", ...
-                    "Component factory ""%s"" is not registered.", key);
+                    "Component factory ""%s"" is not registered.", strjoin(factory, ", "));
             end
-            variantIds = string(obj.FactoryVariantIds(key));
-            candidates = yamada.model.ComponentDefinition.empty;
-            for index = 1:numel(variantIds)
-                candidates(end + 1) = obj.Definitions(char(variantIds(index))); %#ok<AGROW>
-            end
+            candidates = obj.Definitions(obj.FactoryVariantIds{factory});
             definition = obj.selectVariant(candidates, creationArguments, factory);
         end
 
@@ -160,7 +281,7 @@ classdef ComponentRegistry < handle
             end
 
             % Sorting makes palettes, tests, and generated output deterministic.
-            factories = sort(string(keys(obj.FactoryVariantIds)));
+            factories = sort(keys(obj.FactoryVariantIds))';
         end
 
         function ids = listVariantIds(obj)
@@ -172,7 +293,7 @@ classdef ComponentRegistry < handle
                 ids string
             end
 
-            ids = sort(string(keys(obj.Definitions)));
+            ids = sort(keys(obj.Definitions))';
         end
 
         function definition = getById(obj, id)
@@ -185,12 +306,11 @@ classdef ComponentRegistry < handle
                 definition (1, 1) yamada.model.ComponentDefinition
             end
 
-            key = char(id);
-            if ~isKey(obj.Definitions, key)
+            if ~isKey(obj.Definitions, id)
                 error("yamada:ComponentRegistry:UnknownVariantId", ...
-                    "Component variant ID ""%s"" is not registered.", key);
+                    "Component variant ID ""%s"" is not registered.", id);
             end
-            definition = obj.Definitions(key);
+            definition = obj.Definitions(id);
         end
 
         function name = displayName(obj, factory)
@@ -215,8 +335,8 @@ classdef ComponentRegistry < handle
             end
             obj.ParentContextRules = rules(:);
             obj.Revision = obj.Revision + 1;
-            obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.EffectiveProperties = dictionary(string([]), {});
+            obj.IndependentDefinitions = dictionary(string([]), {});
         end
 
         function setInspectorRowDefinitions(obj, definitions)
@@ -233,8 +353,8 @@ classdef ComponentRegistry < handle
             end
             obj.InspectorRowDefinitions = definitions(:);
             obj.Revision = obj.Revision + 1;
-            obj.EffectiveProperties = containers.Map("KeyType", "char", "ValueType", "any");
-            obj.IndependentDefinitions = containers.Map("KeyType", "char", "ValueType", "any");
+            obj.EffectiveProperties = dictionary(string([]), {});
+            obj.IndependentDefinitions = dictionary(string([]), {});
         end
 
         function definitions = inspectorRows(obj)
@@ -263,9 +383,9 @@ classdef ComponentRegistry < handle
 
             % Compose only the parent rule selected by the direct parent factory.
             definition = obj.get(factory, creationArguments);
-            key = char(definition.Id + "|" + parentFactory);
+            key = definition.Id + "|" + parentFactory;
             if isKey(obj.EffectiveProperties, key)
-                properties = obj.EffectiveProperties(key);
+                properties = obj.EffectiveProperties{key};
                 return
             end
             properties = yamada.model.AxesInspectorProperties.extend(factory,definition.Properties);
@@ -291,7 +411,7 @@ classdef ComponentRegistry < handle
             end
             yamada.model.PropertyApplicationPolicy.orderDefinitions(properties, ...
                 definition.Id + " under " + parentFactory, suppressedPaths);
-            obj.EffectiveProperties(key) = properties;
+            obj.EffectiveProperties{key} = properties;
         end
 
         function result = isReadOnlyProperty(obj, factory, path, creationArguments)
@@ -385,7 +505,7 @@ classdef ComponentRegistry < handle
 
     methods (Static)
         function obj = createDefault()
-            % createDefault Load the packaged MATLAB R2024a component catalog.
+            % createDefault Load the packaged component catalog selected for the running release.
             arguments (Output)
                 obj (1, 1) yamada.model.ComponentRegistry
             end

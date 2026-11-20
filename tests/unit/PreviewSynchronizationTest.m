@@ -20,7 +20,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                 [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, ...
                     yamada.ui.RefreshRequest("properties", owner.Id, path));
                 testCase.verifyEmpty(diagnostics);
-                current = handles(char(owner.Id));
+                current = handles(owner.Id);
                 if path == "Text"
                     testCase.verifyEqual(string(current.Text), value);
                 else
@@ -32,8 +32,32 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             applied = renderer.synchronize(document, handles, ...
                 yamada.ui.RefreshRequest("properties", owner.Id, "Text"));
             testCase.verifyFalse(applied);
-        end
 
+            % Compare a generated owner with a fresh renderer before testing an unrelated root write.
+            delete(figure.Children);
+            document = yamada.model.NewAppFactory.createEmpty("IncrementalFixture", registry);
+            owner = document.insertComponent(registry, "uilabel", document.RootComponentId);
+            owner.setProperty("FontSize", 13);
+            left = uipanel(figure, "Position", [1 1 300 300]);
+            right = uipanel(figure, "Position", [301 1 300 300]);
+            renderer = yamada.ui.PreviewRenderer(registry);
+            handles = renderer.render(document, left);
+            document.setPropertyBatch(owner.Id, yamada.model.PropertyTransaction.singleChange("FontSize", 21), registry);
+            [applied, diagnostics, geometry] = renderer.synchronize(document, handles, ...
+                yamada.ui.RefreshRequest("properties", owner.Id, "FontSize"));
+            testCase.verifyTrue(applied);
+            testCase.verifyEmpty(diagnostics);
+            testCase.verifyFalse(geometry);
+            reference = yamada.ui.PreviewRenderer(registry).render(document, right);
+            testCase.verifyEqual(handles(owner.Id).FontSize, reference(owner.Id).FontSize);
+            document.getComponent(document.RootComponentId).setProperty("Color", [0.2 0.3 0.4]);
+            owner.setProperty("FontSize", 23);
+            testCase.verifyFalse(renderer.synchronize(document, handles, ...
+                yamada.ui.RefreshRequest("properties", owner.Id, "FontSize")));
+        end
+    end
+
+    methods (Test, TestTags = {'exhaustive'})
         function appliesIndependentPropertiesAcrossAllCatalogVariants(testCase)
             % appliesIndependentPropertiesAcrossAllCatalogVariants Match independently rendered values across every eligible variant.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -53,7 +77,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                 renderer = yamada.ui.PreviewRenderer(registry);
                 [handles, initialDiagnostics] = renderer.render(document, figure);
                 original = [];
-                if isKey(handles, char(component.Id)), original = handles(char(component.Id)); end
+                if isKey(handles, component.Id), original = handles(component.Id); end
                 if isempty(original) && ~definition.IsRoot && ~isempty(initialDiagnostics)
                     fprintf("CATALOG_NATIVE_DIAGNOSTIC %s: %s\n", variant, strjoin(string({initialDiagnostics.Message}), "; "));
                 end
@@ -72,7 +96,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                     [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, ...
                         yamada.ui.RefreshRequest("properties", component.Id, property.Path));
                     testCase.verifyEmpty(diagnostics, variant + "." + property.Path);
-                    if isKey(handles, char(component.Id)), original = handles(char(component.Id)); end
+                    if isKey(handles, component.Id), original = handles(component.Id); end
                     touched(end + 1) = property.Path; %#ok<AGROW>
                     exercised = exercised + 1;
                     changes = changes + 1;
@@ -84,7 +108,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                     reference = yamada.ui.PreviewRenderer(registry).render(document, referenceFigure);
                     drawnow;
                     for path = unique(touched)
-                        testCase.verifyEqual(handles(char(component.Id)).(path), reference(char(component.Id)).(path), ...
+                        testCase.verifyEqual(handles(component.Id).(path), reference(component.Id).(path), ...
                             variant + "." + path);
                     end
                     clear referenceCleanup
@@ -93,7 +117,9 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             end
             fprintf("CATALOG_DELTA_COVERAGE Variants=%d Changes=%d\n", numel(variants), changes);
         end
+    end
 
+    methods (Test)
         function movesDisjointRangesAndItemsAsResolvedBatches(testCase)
             % movesDisjointRangesAndItemsAsResolvedBatches Preserve final values through otherwise invalid intermediate states.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -132,7 +158,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                 [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, ...
                     yamada.ui.RefreshRequest("properties", component.Id, paths));
                 testCase.verifyEmpty(diagnostics, kind);
-                original = handles(char(component.Id));
+                original = handles(component.Id);
                 if kind == "text"
                     testCase.verifyEqual(string(original.Value), string(values{end}), kind);
                 else
@@ -155,7 +181,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                 struct("ComponentId", second.Id, "Path", "Text")];
             [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest.forChanges(changes));
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(string(handles(char(second.Id)).Text), "Batch update");
+            testCase.verifyEqual(string(handles(second.Id).Text), "Batch update");
             first.setProperty("FontColor", [0.4 0.3 0.2]); second.setProperty("Text", "Next batch");
             second.setProperty("FontColor", [0.1 0.1 0.1]);
             testCase.verifyFalse(renderer.synchronize(document, handles, yamada.ui.RefreshRequest.forChanges(changes)));
@@ -179,8 +205,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             label.setProperty("FontSize", 24);
             [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", label.Id, "FontSize"));
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(handles(char(label.Id)).FontSize, 24);
-            currentSibling = handles(char(sibling.Id));
+            testCase.verifyEqual(handles(label.Id).FontSize, 24);
+            currentSibling = handles(sibling.Id);
             testCase.verifyEqual(currentSibling.Parent.Children(1), currentSibling);
             clear cleanup
         end
@@ -201,7 +227,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
                 image.setProperty("ImageSource", value);
                 [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", image.Id, "ImageSource"));
                 testCase.verifyEmpty(diagnostics);
-                original = handles(char(image.Id));
+                original = handles(image.Id);
                 if strlength(value) > 0
                     testCase.verifyEqual(string(original.ImageSource), string(fullfile(temporary.Folder, value)));
                 else
@@ -219,13 +245,16 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             panel.setProperty("Position", [10 10 300 200]); panel.setProperty("AutoResizeChildren", "on");
             label = fixtureComponent(document, registry.get("uilabel"), panel.Id, "Subject");
             label.setProperty("Position", [10 20 100 22]);
-            figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
+            figure = yamada.ui.createEditorFigure(Visible="on");
+            cleanup = onCleanup(@() delete(figure));
             renderer = yamada.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             panel.setProperty("Position", [20 20 500 300]);
             [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", panel.Id, "Position"));
             testCase.verifyEmpty(diagnostics);
-            original = handles(char(label.Id));
-            drawnow; pause(0.15); drawnow;
+            original = handles(label.Id);
+            % Wait for native child geometry after the parent resize.
+            drawnow;
+            yamada.ui.waitForPreviewLayout(figure, original);
             testCase.verifyEqual(original.Position, [10 20 100 22]);
             clear cleanup
         end
@@ -251,12 +280,12 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             label.setProperty("Layout.Row", 2);
             [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", label.Id, "Layout.Row"));
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(handles(char(label.Id)).Layout.Row, 2);
+            testCase.verifyEqual(handles(label.Id).Layout.Row, 2);
             second.setProperty("Value", true);
             [handles, diagnostics] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", second.Id, "Value"));
             testCase.verifyEmpty(diagnostics);
-            testCase.verifyEqual(handles(char(group.Id)).SelectedObject, handles(char(second.Id)));
-            testCase.verifyFalse(logical(handles(char(first.Id)).Value));
+            testCase.verifyEqual(handles(group.Id).SelectedObject, handles(second.Id));
+            testCase.verifyFalse(logical(handles(first.Id).Value));
             root.setProperty("Position", [100 100 720 480]);
             [~, diagnostics, canvas] = synchronizePreview(renderer, document, handles, figure, yamada.ui.RefreshRequest("properties", root.Id, "Position"));
             testCase.verifyEmpty(diagnostics);
@@ -271,22 +300,22 @@ function [handles, diagnostics, surface] = synchronizePreview(renderer, document
 arguments (Input)
     renderer (1, 1) yamada.ui.PreviewRenderer
     document (1, 1) yamada.model.DocumentModel
-    handles containers.Map
+    handles dictionary
     parent (1, 1) matlab.ui.Figure
     request (1, 1) yamada.ui.RefreshRequest
 end
 arguments (Output)
-    handles containers.Map
+    handles dictionary
     diagnostics yamada.model.Diagnostic
     surface
 end
 surface = [];
-[applied, diagnostics] = renderer.synchronize(document, handles, request);
+[applied, diagnostics, ~, handles] = renderer.synchronize(document, handles, request);
 if ~applied
     [handles, diagnostics, surface] = renderer.render(document, parent);
 elseif nargout > 2
     root = document.getComponent(document.RootComponentId);
-    surface = handles(char(root.Children(1))).Parent;
+    surface = handles(root.Children(1)).Parent;
 end
 end
 

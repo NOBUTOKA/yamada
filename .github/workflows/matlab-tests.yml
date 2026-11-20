@@ -1,0 +1,32 @@
+name: MATLAB tests
+
+on:
+  pull_request:
+    branches: [main, 'release/*']
+    types: [opened, reopened, synchronize, ready_for_review, converted_to_draft]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: matlab-tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  first:
+    name: First test group
+    if: github.event_name == 'workflow_dispatch' || !github.event.pull_request.draft
+    uses: ./.github/workflows/matlab-full-matrix.yml
+    with:
+      releases: ${{ github.event_name == 'pull_request' && '["R2026b"]' || '["R2023a","R2023b","R2024a","R2024b"]' }}
+      shard-count: ${{ github.event_name == 'pull_request' && 20 || 5 }}
+
+  second:
+    name: Second test group
+    needs: first
+    if: ${{ !cancelled() && needs.first.result != 'skipped' }}
+    uses: ./.github/workflows/matlab-full-matrix.yml
+    with:
+      releases: ${{ github.event_name == 'pull_request' && '["R2023a"]' || '["R2025a","R2025b","R2026a","R2026b"]' }}
+      shard-count: ${{ github.event_name == 'pull_request' && 20 || 5 }}

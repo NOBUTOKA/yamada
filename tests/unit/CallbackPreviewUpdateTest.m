@@ -1,11 +1,12 @@
 classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < matlab.unittest.TestCase
     % CallbackPreviewUpdateTest Verify callback source edits preserve the displayed component state.
     %   Real Manage Callbacks actions preserve displayed bounds, source safety,
-    %   and history across free, fixed-grid, and nested-grid fixtures.
+    %   and history across free and nested-grid fixtures. The nested chain
+    %   includes a direct grid parent, so no separate single-grid case is run.
     methods (Test)
         function managerActionsAndHistoryRetainAllPreviewGeometry(testCase)
             % managerActionsAndHistoryRetainAllPreviewGeometry Exercise target selection, disconnection and callback history.
-            for layout = ["absolute", "flat", "nested"]
+            for layout = ["absolute", "nested"]
                 folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
                 path = fullfile(folder.Folder, "CallbackPreviewFixture.m");
                 source = callbackFixture(layout);
@@ -23,8 +24,9 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
                 tree.SelectedNodes = node;
                 tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
                 % Finish unrelated initial layout before a callback source operation.
-                drawnow; pause(0.5); drawnow;
+                drawnow;
                 canvas = findall(figure, "Tag", "yamada-preview-canvas");
+                yamada.ui.waitForPreviewLayout(figure, canvas);
                 native = findall(canvas, "Type", "uibutton");
                 rectangle = native.Position;
                 context = findall(figure, "Tag", "yamada-hierarchy-context");
@@ -43,6 +45,7 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
                     canvas = findall(figure, "Tag", "yamada-preview-canvas");
                     native = findall(canvas, "Type", "uibutton");
                     testCase.assertNumElements(native, 1);
+                    yamada.ui.waitForPreviewLayout(figure, native);
                     testCase.verifyEqual(native.Position, rectangle);
                     testCase.verifyEmpty(native.ButtonPushedFcn);
                     if selection == "SubjectPushed"
@@ -60,6 +63,7 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
                     canvas = findall(figure, "Tag", "yamada-preview-canvas");
                     native = findall(canvas, "Type", "uibutton");
                     testCase.assertNumElements(native, 1);
+                    yamada.ui.waitForPreviewLayout(figure, native);
                     testCase.verifyEqual(native.Position, rectangle);
                     testCase.verifyEmpty(native.ButtonPushedFcn);
                     if action == "Undo"
@@ -87,7 +91,7 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
             subject.setProperty("Text", "After callback");
             testCase.verifyFalse(renderer.acknowledgeCallbackChanges(document));
             testCase.verifyTrue(renderer.synchronize(document, handles, yamada.ui.RefreshRequest("properties", subject.Id, "Text")));
-            testCase.verifyEqual(string(handles(char(subject.Id)).Text), "After callback");
+            testCase.verifyEqual(string(handles(subject.Id).Text), "After callback");
             clear cleanup
         end
     end

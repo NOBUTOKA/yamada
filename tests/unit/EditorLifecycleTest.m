@@ -4,6 +4,102 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
     %   only native dialogs and filesystem decisions through the lifecycle service.
 
     methods (Test)
+        function inspectorShowsProtectedEnumFromSource(testCase)
+            % inspectorShowsProtectedEnumFromSource Show an unavailable literal in a disabled enum row.
+
+            % Use a removed enum value to exercise the same source-backed row on the current release.
+            testCase.assumeFalse(isMATLABReleaseOlderThan("R2025a"));
+            folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
+            target = fullfile(string(folder.Folder), "EnumExample.m");
+            source = join(["classdef EnumExample < handle", "properties", "Figure", "First", "Second", ...
+                "end", "methods", "function app = EnumExample", "app.Figure = uifigure();", ...
+                "app.First = uibuttongroup(app.Figure);", "app.First.TitlePosition = 'leftbottom';", ...
+                "app.Second = uibuttongroup(app.Figure);", "app.Second.TitlePosition = 'lefttop';", ...
+                "end", "end", "end"], newline);
+            yamada.source.SourceWriter.write(target, source, "CRLF");
+            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            cleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+
+            % Selecting the supported sibling must restore the runtime's enum choices.
+            window = editorFigure();
+            tree = findall(window, "Type", "uitree");
+            nodes = findall(tree, "Type", "uitreenode");
+            paths = string({nodes.NodeData});
+            for name = ["First", "Second"]
+                node = nodes(paths == app.Document.getComponentByName(name).Id);
+                tree.SelectedNodes = node;
+                tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
+                labels = findall(window, "Tag", "yamada-inspector-property-label");
+                label = labels(erase(string({labels.Text}), " ") == "TitlePosition");
+                testCase.assertNumElements(label, 1);
+                dropdown = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
+                testCase.assertNumElements(dropdown, 1);
+                if name == "First"
+                    testCase.verifyEqual(string(dropdown.Value), "leftbottom");
+                    testCase.verifyEqual(string(dropdown.Enable), "off");
+                else
+                    testCase.verifyEqual(string(dropdown.Value), "lefttop");
+                    testCase.verifyFalse(any(string(dropdown.Items) == "leftbottom"));
+                    testCase.verifyEqual(string(dropdown.Enable), "on");
+                end
+            end
+            clear cleanup
+        end
+
+        function savesAndReloadsNewerGalleryOnOlderMatlab(testCase)
+            % savesAndReloadsNewerGalleryOnOlderMatlab Exercise source-owned placeholders through the editor.
+
+            % Use the shared newer fixture explicitly and keep the original class filename.
+            runtime = yamada.model.ComponentRegistry.createDefault();
+            testCase.assumeFalse(runtime.contains("uicolorpicker"));
+            folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
+            fixture = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "ControlGalleryApp.m");
+            target = fullfile(string(folder.Folder), "ControlGalleryApp.m");
+            copyfile(fixture, target);
+            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            cleanup = onCleanup(@() deleteIfValid(app));
+            invokeEditorMenu("Open...");
+            original = app.Document.OriginalText;
+            picker = app.Document.getComponentByName("AccentColorPicker");
+            testCase.assertTrue(picker.isReleaseUnavailable());
+            window = editorFigure();
+            labels = findall(window, "Type", "uilabel");
+            testCase.verifyTrue(any(contains(string({labels.Text}), "Color Picker (MATLAB R2024a")));
+            tree = findall(window, "Type", "uitree");
+            nodes = findall(tree, "Type", "uitreenode");
+            paths = string({nodes.NodeData});
+            node = nodes(paths == picker.Id);
+            tree.SelectedNodes = node;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
+            node = nodes(paths == app.Document.getComponentByName("SaveButton").Id);
+            tree.SelectedNodes = node;
+            tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
+
+            % Commit through the Inspector and use the real Save and Reload commands.
+            labels = findall(window, "Tag", "yamada-inspector-property-label");
+            textLabel = labels(string({labels.Text}) == "Text");
+            testCase.assertNumElements(textLabel, 1);
+            editor = findall(textLabel.Parent, "Tag", "yamada-inspector-property-editor");
+            testCase.assertNumElements(editor, 1);
+            editor.Value = "Save preferences";
+            editor.ValueChangedFcn(editor, struct());
+            edited = replace(original, "Save settings", "Save preferences");
+            testCase.verifyEqual(app.Document.CurrentText, edited);
+            invokeEditorMenu("Save");
+            invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
+            testCase.verifyEqual(app.Document.OriginalText, edited);
+            testCase.verifyTrue(app.Document.getComponentByName("AccentColorPicker").isReleaseUnavailable());
+
+            % The saved source restores the native component identity in the newer catalog.
+            newer = yamada.catalog.ComponentCatalogLoader.load(fullfile( ...
+                fileparts(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot()), "R2026b"));
+            reloaded = yamada.source.AppSourceParser.parseFile(target, newer);
+            testCase.verifyFalse(reloaded.getComponentByName("AccentColorPicker").isReleaseUnavailable());
+            testCase.verifyEqual(reloaded.getComponentByName("SaveButton").getProperty("Text").LiteralValue, "Save preferences");
+            clear cleanup
+        end
+
         function diffPreviewReceivesOriginalAndCommittedSource(testCase)
             % diffPreviewReceivesOriginalAndCommittedSource Open the comparison from the Tools menu.
             [target, ~] = reloadFixture();
@@ -138,14 +234,17 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % reloadChangedReadAndSaveFailureRetainCurrentState Reject changing snapshots and failed saves atomically.
             [target, ~] = reloadFixture();
             fileCleanup = onCleanup(@() deleteTemporaryFile(target));
+            [reader, armReader] = changingReader(target);
             service = yamada.ui.DocumentLifecycleService(struct( ...
-                "RequestOpenPathFcn", @() deal(true, target), "ReadSourceBytesFcn", changingReader(target)));
+                "RequestOpenPathFcn", @() deal(true, target), "ReadSourceBytesFcn", reader));
             app = yamada(service);
             appCleanup = onCleanup(@() deleteIfValid(app));
             tool = findall(editorFigure(), "Tag", "yamada-refresh-source");
             testCase.verifyEqual(string(tool.Enable), "off");
             invokeEditorMenu("Open...");
             original = app.Document;
+            % Change the snapshot between the reload's first and second reads.
+            armReader();
             invokeEditorMenu("Reload Source" + string(char(9)) + "(F5)");
             testCase.verifyTrue(app.Document == original);
             testCase.verifyEqual(string(tool.Enable), "on");
@@ -638,21 +737,32 @@ writer = @write;
     end
 end
 
-function reader = changingReader(target)
-% changingReader Return a reader whose third snapshot differs from the parsed file.
+function [reader, arm] = changingReader(target)
+% changingReader Return a reader whose second snapshot after arming differs from the parsed file.
+%   Window activation also reads the source to detect external changes, and
+%   the number of activations depends on the operating system, so only reads
+%   after arm() count toward the changed snapshot.
 arguments (Input)
     target (1, 1) string
 end
 arguments (Output)
     reader (1, 1) function_handle
+    arm (1, 1) function_handle
 end
 count = 0;
+armed = false;
 reader = @read;
+arm = @start;
     function bytes = read(~)
         % read Supply deterministic byte snapshots to exercise concurrent change detection.
-        count = count + 1;
+        if armed, count = count + 1; end
         bytes = unicode2native(fileread(target), "UTF-8");
-        if count == 3, bytes(end + 1) = uint8(32); end
+        if count == 2, bytes(end + 1) = uint8(32); end
+    end
+    function start()
+        % start Begin counting the reads of the operation under test.
+        armed = true;
+        count = 0;
     end
 end
 

@@ -51,7 +51,7 @@ classdef AppSourceParser
 
             % Parse decoded text and append file-format diagnostics afterwards.
             [document, diagnostics] = yamada.source.AppSourceParser.parseText( ...
-                source, registry, filePath);
+                source, registry, filePath, strings(1, 0), string(matlabRelease().Release));
             if ~isempty(readDiagnostic)
                 diagnostics(end + 1) = readDiagnostic;
             end
@@ -64,16 +64,18 @@ classdef AppSourceParser
             document.Diagnostics = diagnostics;
         end
 
-        function [document, diagnostics] = parseText(source, registry, filePath, propertyNames)
+        function [document, diagnostics] = parseText(source, registry, filePath, propertyNames, runningRelease)
             % parseText Parse handle-based source text into the shared document model.
             %   Whole-source parsing is expensive. Avoid calls outside file loading and
             %   saving; editor changes should use maintained indexes and local updates.
             %   Property names may bound semantic validation of an internally proven candidate.
+            %   A running release enables source availability diagnostics on file load.
             arguments (Input)
                 source string
                 registry (1, 1) yamada.model.ComponentRegistry
                 filePath string = ""
                 propertyNames (1, :) string = strings(1, 0)
+                runningRelease (1, 1) string = ""
             end
             arguments (Output)
                 document (1, 1) yamada.model.DocumentModel
@@ -117,10 +119,30 @@ classdef AppSourceParser
 
             % Collect declared component types before constructing model records.
             declarations = yamada.source.AppSourceParser.propertyDeclarations(statements);
+            availability = [];
+            sourceRegistry = registry;
+            variantIds = registry.listVariantIds();
+            unavailableFactories = strings(1, 0);
+            if strlength(registry.CatalogRoot) > 0 || strlength(runningRelease) > 0
+                catalogRoot = registry.CatalogRoot;
+                if catalogRoot == "", catalogRoot = yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot(); end
+                catalogFolder = fileparts(catalogRoot);
+                indexPath = fullfile(catalogFolder, "availability.json");
+                if isfile(indexPath)
+                    availability = jsondecode(fileread(indexPath));
+                    unavailable = availability.variants(~ismember(string({availability.variants.id}), variantIds));
+                    unavailableFactories = string({unavailable.factory});
+                end
+            end
             creationOffsets = [];
             for index = 1:numel(statements)
                 creation = yamada.source.AppSourceParser.creationMatch(statements(index).Text);
-                if ~isempty(creation) && registry.contains(creation.Factory)
+                if isempty(creation), continue, end
+                if sourceRegistry == registry && any(unavailableFactories == creation.Factory)
+                    sourceRegistry = yamada.catalog.ComponentCatalogLoader.load( ...
+                        fullfile(catalogFolder, string(availability.surfaceRelease)));
+                end
+                if registry.contains(creation.Factory) || sourceRegistry.contains(creation.Factory)
                     creationOffsets(end + 1) = statements(index).Span.StartOffset;
                 end
             end
@@ -137,7 +159,9 @@ classdef AppSourceParser
             document.Metadata.HasUnresolvedInitialization = false;
             creationOrder = unique(initializationOrder, 'stable');
             creationOrder = [creationOrder setdiff(1:numel(statements), creationOrder, 'stable')];
-            creationSettings = containers.Map("KeyType", "char", "ValueType", "any");
+            % Each component has its own number of settings, so each entry is one cell value.
+            creationSettings = dictionary(string([]), {});
+            definitions = dictionary(string([]), yamada.model.ComponentDefinition.empty);
 
             % Recover reachable creations first so parent discovery follows initialization calls.
             for index = creationOrder
@@ -146,7 +170,7 @@ classdef AppSourceParser
                 if isempty(creation)
                     continue
                 end
-                if ~registry.contains(creation.Factory)
+                if ~registry.contains(creation.Factory) && ~sourceRegistry.contains(creation.Factory)
                     diagnostics(end + 1) = yamada.source.AppSourceParser.diagnostic( ...
                         "unsupported-factory", "warning", ...
                         "Component factory is not registered and was retained as source.", ...
@@ -158,12 +182,21 @@ classdef AppSourceParser
                 end
 
                 % Recover an optional parent and safe name/value factory arguments.
-                definition = registry.get(creation.Factory);
+                catalog = registry;
+                if sourceRegistry.contains(creation.Factory) && any(unavailableFactories == creation.Factory)
+                    catalog = sourceRegistry;
+                end
+                definition = catalog.get(creation.Factory);
                 [parentName, creationArguments, settings, skippedProperties, isSupported] = ...
                     yamada.source.PropertySettingSyntax.factory(statement, definition, document.Metadata.SourceSnapshotId);
                 if isSupported
-                    concrete = registry.get(creation.Factory, creationArguments);
-                    if concrete.Id ~= definition.Id
+                    concrete = catalog.get(creation.Factory, creationArguments);
+                    usingSourceSurface = catalog ~= registry;
+                    usingRuntimeVariant = any(variantIds == concrete.Id);
+                    if usingRuntimeVariant
+                        concrete = registry.getById(concrete.Id);
+                    end
+                    if concrete.Id ~= definition.Id || (usingSourceSurface && usingRuntimeVariant)
                         % A positional style selects the property surface for subsequent named arguments.
                         [parentName, creationArguments, settings, skippedProperties, isSupported] = ...
                             yamada.source.PropertySettingSyntax.factory(statement, concrete, document.Metadata.SourceSnapshotId);
@@ -180,13 +213,19 @@ classdef AppSourceParser
                         statement.Text, statement.Span, "nonliteral-creation-argument");
                     continue
                 end
-                definition = registry.get(creation.Factory, creationArguments);
+                definition = concrete;
+                for settingIndex = 1:numel(settings)
+                    settings(settingIndex) = registry.protectSourceSetting(definition.Id, settings(settingIndex));
+                    if settings(settingIndex).IsReleaseUnavailable && ~any(skippedProperties == settings(settingIndex).Path)
+                        skippedProperties(end + 1) = settings(settingIndex).Path;
+                    end
+                end
 
                 % Resolve declaration metadata and parent identity before mutation.
                 declaredType = definition.DeclaredType;
                 declarationSpan = yamada.model.SourceSpan.empty;
-                if isKey(declarations, char(creation.Name))
-                    declaration = declarations(char(creation.Name));
+                if isKey(declarations, creation.Name)
+                    declaration = declarations(creation.Name);
                     declaredType = declaration.DeclaredType;
                     declarationSpan = declaration.Span;
                 else
@@ -196,6 +235,13 @@ classdef AppSourceParser
                         creation.Name, statement.Span);
                 end
                 parentId = "";
+                unavailableRelease = "";
+                if ~any(variantIds == definition.Id)
+                    entry = unavailable(string({unavailable.id}) == definition.Id);
+                    if ~isempty(entry) && isfield(entry.releases, "since")
+                        unavailableRelease = string(entry.releases.since);
+                    end
+                end
                 if strlength(parentName) > 0
                     parent = document.getComponentByName(parentName);
                     if isempty(parent)
@@ -210,6 +256,9 @@ classdef AppSourceParser
                         continue
                     end
                     parentId = parent.Id;
+                    if unavailableRelease == "" && parent.isReleaseUnavailable()
+                        unavailableRelease = parent.Metadata.UnavailableRelease;
+                    end
                 end
 
                 if creation.Factory == "colorbar" && ...
@@ -228,12 +277,25 @@ classdef AppSourceParser
                     "parsed-" + creation.Name, creation.Name, creation.Factory, ...
                     declaredType, "parsed");
                 component.CreationArguments = creationArguments;
-                creationSettings(char(component.Id)) = settings;
+                if unavailableRelease ~= ""
+                    component.IsEditable = false;
+                    component.Metadata.UnavailableRelease = unavailableRelease;
+                    component.Metadata.SourceDisplayName = definition.DisplayName;
+                    component.Metadata.SourceVariantId = definition.Id;
+                    component.Metadata.SourceCatalogRelease = string(availability.surfaceRelease);
+                    component.Metadata.SourceAllowedParents = definition.AllowedParentFactories;
+                    callbacks = arrayfun(@(property) isfield(property.ValueSchema, "kind") && ...
+                        string(property.ValueSchema.kind) == "callback", definition.Properties);
+                    component.Metadata.SourceCallbackPaths = string({definition.Properties(callbacks).Path});
+                end
+                creationSettings{component.Id} = settings;
+                definitions(component.Id) = definition;
                 component.SourceSpans = struct( ...
                     "Declaration", declarationSpan, "Creation", statement.Span);
                 try
                     document.addComponent(component, parentId);
                     for propertyIndex = 1:numel(skippedProperties)
+                        if registry.isUnavailableSourceProperty(definition.Id, skippedProperties(propertyIndex)), continue, end
                         diagnostics(end + 1) = yamada.source.AppSourceParser.diagnostic( ...
                             "source-creation-property", "warning", ...
                             "Creation property was retained as source and omitted from Safe Preview.", ...
@@ -278,12 +340,13 @@ classdef AppSourceParser
                         elseif component.Factory == "uifigure"
                             currentAxes = "";
                         end
-                        for setting = creationSettings(char(component.Id))
+                        for setting = creationSettings{component.Id}
                             sequence = sequence + 1;
                             record = setting.toStruct();
                             record.Location.Sequence = sequence;
                             record.Location.IsCertain = setting.IsCertain && initializationCertain(visit) && ...
                                 nnz(initializationOrder == index) == 1;
+                            record.Location.IsEditable = record.Location.IsEditable && component.IsEditable;
                             captured = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
                             component.recordSetting(yamada.source.AppSourceParser.scopedSetting(captured, initializationLayout, index));
                         end
@@ -298,7 +361,7 @@ classdef AppSourceParser
                 if isempty(assignment)
                     % Capture reviewed call effects without executing source or granting write ownership.
                     if contains(statement.Text,"(")
-                        [name, target, tokens, valueSpans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement);
+                        [name, target, tokens, valueSpans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry.CatalogRoot);
                         if name == "axes" && ~any(blockedCallNames == name) && ...
                                 strlength(target) > 0 && isempty(tokens)
                             selected = document.getComponentByName(target);
@@ -385,17 +448,34 @@ classdef AppSourceParser
                     parent = document.getComponent(component.ParentId);
                     if ~isempty(parent), parentFactory = parent.Factory; end
                 end
-                effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory, ...
-                    component.CreationArguments);
+                variant = definitions(component.Id);
+                effectiveProperties = yamada.model.PropertyDefinition.empty;
+                if ~component.isReleaseUnavailable()
+                    effectiveProperties = registry.getEffectiveProperties(component.Factory, parentFactory, ...
+                        component.CreationArguments);
+                end
                 sequence = sequence + 1;
                 setting = yamada.source.PropertySettingSyntax.assignment(statement, ...
                     document.Metadata.SourceSnapshotId, sequence, initializationCertain(visit));
+                setting = registry.protectSourceSetting(variant.Id, setting);
                 setting = yamada.source.AppSourceParser.scopedSetting(setting, initializationLayout, index);
+                if component.isReleaseUnavailable()
+                    record = setting.toStruct();
+                    record.Location.IsEditable = false;
+                    component.recordSetting(yamada.model.PropertySetting(record.Path, record.Value, record.Location));
+                    continue
+                end
+                if setting.IsReleaseUnavailable && any(string({effectiveProperties.Path}) == assignment.Path)
+                    diagnostics(end + 1) = yamada.source.AppSourceParser.diagnostic( ...
+                        "source-release-value", "warning", ...
+                        "This property's value is unavailable in the loaded MATLAB catalog and was retained as source.", ...
+                        component.Id, statement.Span);
+                end
                 if ~any(string({effectiveProperties.Path}) == assignment.Path)
                     record = setting.toStruct();
                     record.Location.IsEditable = false;
                     component.recordSetting(yamada.model.PropertySetting(record.Path, record.Value, record.Location));
-                    if ~yamada.source.AppSourceParser.isNotRenderedFigureTool(component.Factory)
+                    if ~setting.IsReleaseUnavailable && ~yamada.source.AppSourceParser.isNotRenderedFigureTool(component.Factory)
                         diagnostics(end + 1) = yamada.source.AppSourceParser.diagnostic( ...
                             "context-inapplicable-property", "warning", ...
                             "Property assignment is preserved read-only outside its direct-parent context.", ...
@@ -442,10 +522,16 @@ classdef AppSourceParser
                 ~ismember(unresolvedOffsets, reviewedAxesOffsets));
             yamada.model.SourceEffectSummary.refresh(document, registry);
 
-            % Combine parser findings with shared model validation diagnostics.
+            % Keep the Open-time range warning available to later model validation.
+            if ~isempty(availability) && strlength(runningRelease) > 0
+                releaseDiagnostic = yamada.source.AppSourceParser.releaseDiagnostic( ...
+                    statements, initializationOrder, sourceRegistry, registry, availability, runningRelease);
+                if ~isempty(releaseDiagnostic), document.Metadata.SourceReleaseDiagnostic = releaseDiagnostic; end
+            end
             validationDiagnostics = yamada.validation.ModelValidator.validate( ...
                 document, registry, propertyNames);
-            diagnostics = [diagnostics(:)' validationDiagnostics(:)'];
+            range = string({validationDiagnostics.Code}) == "source-release-range";
+            diagnostics = [validationDiagnostics(range) diagnostics(:)' validationDiagnostics(~range)];
             document.Diagnostics = diagnostics;
             document.markSaved();
             document.finishParsedSource(registry, validationDiagnostics, isempty(propertyNames));
@@ -453,6 +539,108 @@ classdef AppSourceParser
     end
 
     methods (Static, Access = private)
+        function diagnostic = releaseDiagnostic(statements, order, sourceRegistry, registry, availability, runningRelease)
+            % releaseDiagnostic Intersect catalog availability of recognizable initialization syntax.
+            arguments (Input)
+                statements yamada.source.SourceStatement
+                order double
+                sourceRegistry (1, 1) yamada.model.ComponentRegistry
+                registry (1, 1) yamada.model.ComponentRegistry
+                availability (1, 1) struct
+                runningRelease (1, 1) string
+            end
+            arguments (Output)
+                diagnostic yamada.model.Diagnostic
+            end
+
+            % Recover source variant identities and explicit paths even if the runtime cannot use them.
+            variants = dictionary(string([]), string([]));
+            usedVariants = strings(1, 0);
+            usedProperties = strings(1, 0);
+            for index = reshape(unique(order, "stable"), 1, [])
+                statement = statements(index);
+                creation = yamada.source.AppSourceParser.creationMatch(statement.Text);
+                if ~isempty(creation)
+                    catalog = sourceRegistry;
+                    if ~catalog.contains(creation.Factory), catalog = registry; end
+                    if ~catalog.contains(creation.Factory), continue, end
+                    definition = catalog.get(creation.Factory);
+                    [~, args, settings, ~, supported] = ...
+                        yamada.source.PropertySettingSyntax.factory(statement, definition, "");
+                    if supported
+                        definition = catalog.get(creation.Factory, args);
+                    elseif ~isempty(definition.SupportedStyles)
+                        continue
+                    end
+                    variants(creation.Name) = definition.Id;
+                    usedVariants(end + 1) = definition.Id;
+                    usedProperties = [usedProperties definition.Id + "." + string({settings.Path})];
+                    continue
+                end
+                assignment = yamada.source.AppSourceParser.assignmentMatch(statement.Text);
+                if ~isempty(assignment) && isKey(variants, assignment.ComponentName)
+                    usedProperties(end + 1) = variants(assignment.ComponentName) + "." + assignment.Path;
+                end
+            end
+
+            % Derive inclusive lower and exclusive upper bounds from matched entries.
+            minimum = "";
+            before = "";
+            for entry = reshape(availability.variants, 1, [])
+                if any(usedVariants == string(entry.id))
+                    [minimum, before] = yamada.source.AppSourceParser.intersectReleases(minimum, before, entry.releases);
+                end
+            end
+            for entry = reshape(availability.properties, 1, [])
+                if any(usedProperties == string(entry.variantId) + "." + string(entry.path))
+                    [minimum, before] = yamada.source.AppSourceParser.intersectReleases(minimum, before, entry.releases);
+                end
+            end
+
+            % Keep compatible and unbounded releases quiet. Conflicting evidence gets its own warning.
+            diagnostic = yamada.model.Diagnostic.empty(1, 0);
+            if minimum ~= "" && before ~= "" && minimum >= before
+                message = "The component and property usage has no common MATLAB release in the catalog.";
+            elseif (minimum ~= "" && runningRelease < minimum) || (before ~= "" && runningRelease >= before)
+                lower = "no known minimum";
+                upper = "no known maximum";
+                if minimum ~= "", lower = minimum; end
+                if before ~= ""
+                    releases = sort(string({availability.releases.release}));
+                    earlier = releases(releases < before);
+                    upper = "earlier than " + before;
+                    if ~isempty(earlier), upper = earlier(end); end
+                end
+                message = "Running MATLAB " + runningRelease + ...
+                    " is outside the range indicated by this app's components and properties (" + lower + ...
+                    " through " + upper + ").";
+            else
+                return
+            end
+            diagnostic = yamada.source.AppSourceParser.diagnostic("source-release-range", "warning", ...
+                message, "", yamada.model.SourceSpan.empty);
+        end
+
+        function [minimum, before] = intersectReleases(minimum, before, bounds)
+            % intersectReleases Narrow accumulated bounds using one availability record.
+            arguments (Input)
+                minimum (1, 1) string
+                before (1, 1) string
+                bounds (1, 1) struct
+            end
+            arguments (Output)
+                minimum (1, 1) string
+                before (1, 1) string
+            end
+
+            if isfield(bounds, "since") && string(bounds.since) > minimum
+                minimum = string(bounds.since);
+            end
+            if isfield(bounds, "before") && (before == "" || string(bounds.before) < before)
+                before = string(bounds.before);
+            end
+        end
+
         function setting = scopedSetting(setting, layout, index)
             % scopedSetting Attach a proven original initializer method to one occurrence.
             arguments (Input)
@@ -553,11 +741,11 @@ classdef AppSourceParser
                 statements yamada.source.SourceStatement
             end
             arguments (Output)
-                declarations containers.Map
+                declarations dictionary
             end
 
             % Track only direct property block lines, never function-local values.
-            declarations = containers.Map("KeyType", "char", "ValueType", "any");
+            declarations = dictionary(string([]), struct("DeclaredType", {}, "Span", {}));
             inProperties = false;
             pattern = '^(?<name>[A-Za-z]\w*)\s+(?<type>[A-Za-z]\w*(?:\.[A-Za-z]\w*)*)\s*$';
             for index = 1:numel(statements)
@@ -578,7 +766,7 @@ classdef AppSourceParser
                 if isempty(tokens)
                     continue
                 end
-                declarations(tokens.name) = struct( ...
+                declarations(string(tokens.name)) = struct( ...
                     "DeclaredType", string(tokens.type), "Span", statement.Span);
             end
         end

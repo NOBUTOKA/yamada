@@ -76,7 +76,7 @@ classdef DocumentModel < handle
         PropertyValidationDiagnostics yamada.model.Diagnostic = yamada.model.Diagnostic.empty
         SavedHistoryIndex double = NaN
         HasSavedHistoryCheckpoint logical = false
-        ComponentLookup containers.Map
+        ComponentLookup dictionary = dictionary(string([]), [])
         ComponentLookupReady logical = false
         SettingStore yamada.model.SourceSettingStore = yamada.model.SourceSettingStore.empty
     end
@@ -908,7 +908,6 @@ classdef DocumentModel < handle
             end
 
             % Keep the identity map private to this document and normalize its class name.
-            obj.ComponentLookup = containers.Map("KeyType", "char", "ValueType", "double");
             obj.ComponentLookupReady = true;
             obj.ClassName = className;
         end
@@ -1074,6 +1073,9 @@ classdef DocumentModel < handle
                 error("yamada:DocumentModel:UnknownComponent", ...
                     "Component ID ""%s"" does not exist.", componentId);
             end
+            if component.isReleaseUnavailable()
+                error("yamada:DocumentModel:ReadOnlyProperty", "This component is unavailable in the loaded MATLAB release.");
+            end
             oldEntry = component.getProperty(path);
             oldValue = [];
             hadOldValue = ~isempty(oldEntry);
@@ -1125,6 +1127,9 @@ classdef DocumentModel < handle
             if isempty(component)
                 error("yamada:DocumentModel:UnknownComponent", ...
                     "Component ID ""%s"" does not exist.", componentId);
+            end
+            if component.isReleaseUnavailable()
+                error("yamada:DocumentModel:ReadOnlyProperty", "This component is unavailable in the loaded MATLAB release.");
             end
             if isempty(changes) || ~isfield(changes, "Path") || ~isfield(changes, "Value")
                 error("yamada:DocumentModel:InvalidPropertyBatch", ...
@@ -1358,9 +1363,15 @@ classdef DocumentModel < handle
                 parent = obj.getComponent(component.ParentId);
                 parentFactory = parent.Factory;
             end
-            definitions = registry.getEffectiveProperties(component.Factory, parentFactory, ...
-                component.CreationArguments);
-            [resolved, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions, obj, registry);
+            if component.isReleaseUnavailable()
+                definitions = yamada.model.PropertyDefinition.empty;
+                resolved = yamada.model.PropertyState.empty;
+                diagnostics = yamada.model.Diagnostic.empty;
+            else
+                definitions = registry.getEffectiveProperties(component.Factory, parentFactory, ...
+                    component.CreationArguments);
+                [resolved, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions, obj, registry);
+            end
             states = repmat(struct("Definition", yamada.model.PropertyDefinition(), ...
                 "Entry", yamada.model.PropertyEntry.empty, "IsExplicit", false, ...
                 "Resolution", yamada.model.PropertyState()), ...
@@ -1482,12 +1493,12 @@ classdef DocumentModel < handle
                 all(isvalid(obj.Components), "all");
             if reusable
                 if ~obj.ComponentLookupReady
-                    if obj.ComponentLookup.Count > 0
-                        obj.ComponentLookup = containers.Map("KeyType", "char", "ValueType", "double");
+                    if numEntries(obj.ComponentLookup) > 0
+                        obj.ComponentLookup = dictionary(string([]), []);
                     end
                     obj.ComponentLookupReady = true;
                 end
-                key = char(id);
+                key = id;
                 if isKey(obj.ComponentLookup, key)
                     component = obj.Components(obj.ComponentLookup(key));
                     return
@@ -1962,10 +1973,10 @@ classdef DocumentModel < handle
             ids = string({snapshot.Records.Id});
             removed = obj.Components(ismember(string({obj.Components.Id}), ids));
             for component = removed
-                if ~component.IsEditable
+                if ~component.IsEditable && ~component.isReleaseUnavailable()
                     error("yamada:DocumentModel:UnsafeSubtreeEdit", "The subtree contains a read-only component.");
                 end
-                callbacks = yamada.source.CallbackSourceAnalyzer.analyze(obj, component.Id, registry);
+                callbacks = yamada.source.CallbackSourceAnalyzer.analyze(obj, component.Id, registry, false, true);
                 if any(string({callbacks.State}) ~= "absent")
                     error("yamada:DocumentModel:UnsafeSubtreeEdit", "Callback ownership prevents complete subtree deletion.");
                 end
@@ -2021,7 +2032,8 @@ classdef DocumentModel < handle
             end
             obj.ensureCurrentSource(registry);
             root = obj.getComponent(id);
-            if root.ParentId == parentId, return, end
+            sameParent = root.ParentId == parentId;
+            if sameParent && (~root.isReleaseUnavailable() || (isempty(targetCell) && isempty(targetPosition))), return, end
             oldParent = obj.getComponent(root.ParentId);
             newParent = obj.getComponent(parentId);
             beforeParents = struct("Id", {oldParent.Id, newParent.Id}, ...
@@ -2032,13 +2044,22 @@ classdef DocumentModel < handle
             candidateRoot = candidate.getComponent(id);
             candidateOldParent = candidate.getComponent(root.ParentId);
             candidateNewParent = candidate.getComponent(parentId);
-            candidateOldParent.removeChild(id);
-            candidateNewParent.addChild(id);
+            if ~sameParent
+                candidateOldParent.removeChild(id);
+                candidateNewParent.addChild(id);
+            end
             candidateRoot.ParentId = parentId;
             for change = plan.Changes
                 if change.Remove
                     candidateRoot.removeProperty(change.Path);
                 else
+                    existing = candidateRoot.getProperty(change.Path);
+                    if candidateRoot.isReleaseUnavailable() && ~isempty(existing)
+                        settings = candidateRoot.getSettings(change.Path);
+                        record = settings(end).toStruct();
+                        record.Location.IsEditable = true;
+                        existing.applySourceSetting(yamada.model.PropertySetting(record.Path, record.Value, record.Location));
+                    end
                     candidateRoot.setProperty(change.Path, change.Value);
                 end
             end
@@ -2049,12 +2070,27 @@ classdef DocumentModel < handle
             currentIds = string({candidate.Components.Id});
             [~, indices] = ismember(orderedIds, currentIds);
             candidate.Components = candidate.Components(indices);
-            candidate.PendingEdits{end + 1} = struct("Kind", "reparent-subtree", ...
-                "OriginalRecords", snapshot.Records);
             try
-                if obj.currentModelIsBound() && all(arrayfun(@yamada.model.SourceOwnership.hasSource, snapshot.Records))
+                if sameParent
+                    % A move within one parent patches placement literals in place.
+                    sourcePatches = struct("Start", {}, "End", {}, "Text", {});
+                    for change = plan.Changes
+                        settings = root.getSettings(change.Path);
+                        if change.Remove || isempty(settings) || isempty(settings(end).ValueSpan)
+                            error("yamada:DocumentModel:UnsafeSubtreeEdit", "This move requires explicit owned placement literals.");
+                        end
+                        span = settings(end).ValueSpan;
+                        sourcePatches(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, ...
+                            "Text", yamada.source.LiteralEncoder.encode(change.Value)); %#ok<AGROW>
+                    end
+                    batch = yamada.source.SourcePatchBatch(obj.CurrentText, sourcePatches);
+                    if batch.AfterText == obj.CurrentText, return, end
+                    [placedDocument, ~] = candidate.editedSourceCandidate(batch.AfterText, sourcePatches, registry);
+                elseif obj.currentModelIsBound() && all(arrayfun(@yamada.model.SourceOwnership.hasSource, snapshot.Records))
+                    candidate.PendingEdits{end + 1} = struct("Kind", "reparent-subtree", "OriginalRecords", snapshot.Records);
                     [sourcePatches, ~, placedDocument] = yamada.source.SubtreeReparentSourceEdits.build(candidate, registry);
                 else
+                    candidate.PendingEdits{end + 1} = struct("Kind", "reparent-subtree", "OriginalRecords", snapshot.Records);
                     [text, diagnostics, sourcePatches] = yamada.source.RoundTripGenerator(registry).generate(candidate);
                     if yamada.validation.ModelValidator.hasErrors(diagnostics)
                         error("yamada:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
@@ -2101,6 +2137,14 @@ classdef DocumentModel < handle
                 error("yamada:DocumentModel:UnsafeSubtreeCopy", "The document root cannot be copied.");
             end
             snapshot = yamada.model.SubtreeSnapshot(obj, id);
+            if any(arrayfun(@(record) isfield(record.Metadata, "UnavailableRelease"), snapshot.Records))
+                if ~obj.currentModelIsBound()
+                    error("yamada:DocumentModel:UnsafeSubtreeCopy", "The subtree requires a bound source snapshot.");
+                end
+                catalog = yamada.model.SubtreeCopyPlanner.sourceCatalog(snapshot, registry);
+                snapshot = yamada.model.SubtreeCopyPlanner.prepareUnavailable(obj, snapshot, catalog);
+                return
+            end
             analysis = obj.sourceAnalysis();
             direct = false(1, 0);
             if any(arrayfun(@yamada.model.SourceOwnership.hasSource, snapshot.Records)), [direct, ~] = analysis.directInitializationScope(); end
@@ -2177,6 +2221,7 @@ classdef DocumentModel < handle
                 configuration = yamada.model.SubtreeCopyPlanner.prepare(obj, snapshot, registry);
             end
             snapshot = snapshot.withCopyConfiguration(configuration);
+            catalog = yamada.model.SubtreeCopyPlanner.sourceCatalog(snapshot, registry);
             plan = yamada.model.SubtreePlacementPlanner.prepare(base, snapshot, parentId, registry, ...
                 strings(1, 0), measuredPosition, offset);
             candidate = base.structuralCandidate();
@@ -2226,6 +2271,7 @@ classdef DocumentModel < handle
                 fresh = yamada.model.ComponentRecord(newIds(index), newNames(index), record.Factory, record.DeclaredType, "generated");
                 fresh.CreationArguments = configuration(index).CreationArguments;
                 fresh.Metadata = record.Metadata;
+                fresh.IsEditable = record.IsEditable;
                 for property = configuration(index).Properties
                     if property.ValueKind == "expression" && isfield(property.Metadata, "SubtreeReferenceId")
                         targetId = string(property.Metadata.SubtreeReferenceId);
@@ -2244,7 +2290,7 @@ classdef DocumentModel < handle
                         continue
                     end
                     if property.ValueKind ~= "literal" || ...
-                            registry.isReadOnlyProperty(record.Factory, property.Path, record.CreationArguments)
+                            catalog.isReadOnlyProperty(record.Factory, property.Path, record.CreationArguments)
                         error("yamada:DocumentModel:UnsafeSubtreeCopy", "Paste requires a validated literal snapshot.");
                     end
                     fresh.setProperty(property.Path, property.LiteralValue);
@@ -2260,10 +2306,18 @@ classdef DocumentModel < handle
             end
             % Emit and recognize only the newly inserted component block.
             obj.ensureCurrentSource(registry);
-            edits = yamada.source.RoundTripGenerator(registry).componentInsertionEdits(candidate, inserted);
+            edits = yamada.source.RoundTripGenerator(catalog).componentInsertionEdits(candidate, inserted);
             batch = yamada.source.SourcePatchBatch(base.CurrentText, edits);
             [candidate, state] = base.prepareComponentPublication(candidate, batch, newNames, registry, "", obj);
-            yamada.model.SubtreeCopyPlanner.verify(candidate, configuration, inserted, plan.Changes, registry);
+            if catalog ~= registry
+                [verification, diagnostics] = yamada.source.AppSourceParser.parseText(state.Text, catalog, obj.FilePath);
+                if yamada.validation.ModelValidator.hasErrors(diagnostics)
+                    error("yamada:DocumentModel:UnsafeSubtreeEdit", "The pasted source could not be verified with its catalog.");
+                end
+            else
+                verification = candidate;
+            end
+            yamada.model.SubtreeCopyPlanner.verify(verification, configuration, inserted, plan.Changes, catalog);
             frozen = yamada.model.SubtreeSnapshot(candidate, component.Id);
             inserted = frozen.materialize(); component = inserted(1);
             parent = obj.getComponent(parentId); beforeChildren = parent.Children;
@@ -2437,7 +2491,7 @@ classdef DocumentModel < handle
                 registry (1, 1) yamada.model.ComponentRegistry
             end
             for component = obj.Components
-                if ~registry.contains(component.Factory), continue, end
+                if component.isReleaseUnavailable() || ~registry.contains(component.Factory), continue, end
                 for entry = component.Properties
                     if entry.Origin ~= "generated" || ~isempty(entry.SourceSpan), continue, end
                     settings = component.getSettings(entry.Path);
@@ -2764,6 +2818,13 @@ classdef DocumentModel < handle
             if yamada.validation.ModelValidator.hasErrors(diagnostics)
                 error("yamada:DocumentModel:UnsafeSourceCommit", "%s", strjoin(string({diagnostics.Message}), newline));
             end
+            % Internal reparses do not run the Open-time release inference.
+            if isfield(obj.Metadata, "SourceReleaseDiagnostic") && ~isfield(parsed.Metadata, "SourceReleaseDiagnostic")
+                releaseDiagnostic = obj.Metadata.SourceReleaseDiagnostic;
+                parsed.Metadata.SourceReleaseDiagnostic = releaseDiagnostic;
+                parsed.Diagnostics = [releaseDiagnostic parsed.Diagnostics];
+                parsed.finishParsedSource(registry, [releaseDiagnostic diagnostics], true);
+            end
             assert(numel(parsed.Components) == numel(obj.Components), ...
                 "yamada:DocumentModel:SourceComponentMismatch", "Current source must retain the committed component set.");
             % Validate the complete join before changing any live record.
@@ -3042,6 +3103,7 @@ classdef DocumentModel < handle
                 settings = yamada.model.PropertySetting.empty;
                 declaration = yamada.model.SourceSpan.empty; creation = declaration;
                 arguments = component.CreationArguments;
+                definition = registry.sourceDefinition(component);
                 for statement = statements
                     code = statement.Text;
                     if startsWith(code, name + " "), declaration = statement.Span; continue, end
@@ -3050,7 +3112,6 @@ classdef DocumentModel < handle
                     assert(isscalar(visit), "yamada:DocumentModel:UnsafeSubtreeEdit", "An emitted statement requires one initialization visit.");
                     if ~isempty(regexp(code, '^app\.' + regexptranslate('escape',name) + '\s*=', 'once'))
                         creation = statement.Span;
-                        definition = registry.get(component.Factory, component.CreationArguments);
                         [parentName, arguments, factorySettings, ~, supported] = yamada.source.PropertySettingSyntax.factory(statement, definition, state.StateId);
                         parent = obj.getComponent(component.ParentId);
                         root = component.Id == obj.RootComponentId && component.Factory == "uifigure" && isempty(parent) && parentName == "";
@@ -3061,7 +3122,9 @@ classdef DocumentModel < handle
                         owner = analysis.Layout.Owner(index); scopes = analysis.Layout.Methods;
                         scope = scopes(string({scopes.Name}) == owner); assert(isscalar(scope));
                         for factoryIndex = 1:numel(factorySettings)
-                            record = factorySettings(factoryIndex).toStruct();
+                            setting = registry.protectSourceSetting(definition.Id, factorySettings(factoryIndex));
+                            record = setting.toStruct();
+                            record.Location.IsEditable = record.Location.IsEditable && ~component.isReleaseUnavailable();
                             record.Location.Sequence = execution.Creation(visit) + factoryIndex;
                             captured = yamada.model.PropertySetting(record.Path, record.Value, record.Location).withScope(owner, scope.Span);
                             old = previous(string({previous.Path}) == captured.Path & string({previous.Method}) == "nameValue");
@@ -3072,6 +3135,12 @@ classdef DocumentModel < handle
                     end
                     setting = yamada.source.PropertySettingSyntax.assignment(statement, state.StateId, ...
                         execution.Assignment(visit), execution.Trace.Certain(visit));
+                    setting = registry.protectSourceSetting(definition.Id, setting);
+                    if component.isReleaseUnavailable()
+                        record = setting.toStruct();
+                        record.Location.IsEditable = false;
+                        setting = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
+                    end
                     owner = analysis.Layout.Owner(index); methods = analysis.Layout.Methods;
                     scope = methods(string({methods.Name}) == owner);
                     assert(isscalar(scope)); setting = setting.withScope(owner, scope.Span);

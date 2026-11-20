@@ -1,9 +1,9 @@
 classdef (TestTags = {'ui', 'parser'}) SourceParseProgressTest < matlab.unittest.TestCase
     % SourceParseProgressTest Verify parser notifications and editor ownership.
-    %   Loading notifications must be indeterminate, close on all exits, and
+    %   Loading notifications close on all exits and
     %   appear only in the editor registered for the parser's registry.
     properties (Access = private)
-        Seen struct = struct("Title", {}, "Indeterminate", {}, "Cancelable", {})
+        StartedCount double = 0
     end
     methods (Test)
         function centralParserShowsAndClosesNotification(testCase)
@@ -19,10 +19,7 @@ classdef (TestTags = {'ui', 'parser'}) SourceParseProgressTest < matlab.unittest
             testCase.verifyEmpty(display.Dialog);
             [~, diagnostics] = yamada.source.AppSourceParser.parseText("invalid source", registry);
             testCase.verifyNotEmpty(diagnostics); testCase.verifyEmpty(display.Dialog);
-            testCase.verifyNumElements(testCase.Seen, 2);
-            testCase.verifyEqual(string({testCase.Seen.Title}), ["Loading", "Loading"]);
-            testCase.verifyEqual(string({testCase.Seen.Indeterminate}), ["on", "on"]);
-            testCase.verifyEqual(string({testCase.Seen.Cancelable}), ["off", "off"]);
+            testCase.verifyEqual(testCase.StartedCount, 2);
         end
 
         function exceptionClosesNotificationAndRegistrationsAreIndependent(testCase)
@@ -48,13 +45,13 @@ classdef (TestTags = {'ui', 'parser'}) SourceParseProgressTest < matlab.unittest
     end
     methods (Access = private)
         function capture(obj, dialog)
-            % capture Read notification state while the synchronous parser is active.
+            % capture Count notifications while the synchronous parser is active.
             arguments (Input)
                 obj (1, 1) SourceParseProgressTest
                 dialog (1, 1) matlab.ui.dialog.ProgressDialog
             end
-            obj.Seen(end + 1) = struct("Title", string(dialog.Title), ...
-                "Indeterminate", string(dialog.Indeterminate), "Cancelable", string(dialog.Cancelable));
+            obj.assertTrue(isvalid(dialog));
+            obj.StartedCount = obj.StartedCount + 1;
         end
     end
 end

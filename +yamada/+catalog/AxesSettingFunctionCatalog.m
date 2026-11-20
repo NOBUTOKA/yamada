@@ -1,24 +1,27 @@
 classdef AxesSettingFunctionCatalog
-    % AxesSettingFunctionCatalog Match packaged R2024a axes setting call forms.
+    % AxesSettingFunctionCatalog Match release-specific axes setting call forms.
     %   Decodes only inert literals. Each effect identifies its source argument;
     %   callers retain statement ownership and decide when the target is certain.
 
     methods (Static)
-        function forms = forName(name)
+        function forms = forName(name, root)
             % forName Look up the exact function name in the packaged catalog.
             arguments (Input)
                 name (1, 1) string
+                root (1, 1) string
             end
             arguments (Output)
                 forms cell
             end
 
             persistent byName
-            if isempty(byName)
-                byName = yamada.catalog.AxesSettingFunctionCatalog.load();
+            persistent catalogRoot
+            if isempty(byName) || catalogRoot ~= root
+                byName = yamada.catalog.AxesSettingFunctionCatalog.load(root);
+                catalogRoot = root;
             end
             forms = {};
-            if isKey(byName, char(name)), forms = byName(char(name)); end
+            if isKey(byName, name), forms = byName{name}; end
         end
 
         function [paths, values, argumentsUsed] = match(forms, factory, tokens, implicit)
@@ -56,17 +59,22 @@ classdef AxesSettingFunctionCatalog
     end
 
     methods (Static, Access = private)
-        function byName = load()
+        function byName = load(root)
             % load Index packaged call forms and check source argument references.
+            arguments (Input)
+                root (1, 1) string
+            end
             arguments (Output)
-                byName containers.Map
+                byName dictionary
             end
 
-            root = yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot();
-            data = jsondecode(fileread(fullfile(root,"axes-setting-functions.json")));
-            assert(data.schemaVersion == 1 && string(data.matlabRelease) == "R2024a", ...
+            [~, release] = fileparts(root);
+            byName = dictionary(string([]), {});
+            path = fullfile(root,"axes-setting-functions.json");
+            if root == "" || ~isfile(path), return, end
+            data = jsondecode(fileread(path));
+            assert(data.schemaVersion == 1 && string(data.matlabRelease) == release, ...
                 "yamada:AxesSettingFunctionCatalog:Version", "Invalid axes setting function catalog version.");
-            byName = containers.Map("KeyType","char","ValueType","any");
             ids = strings(1,0);
             for item = yamada.catalog.AxesSettingFunctionCatalog.records(data.forms)
                 form = item{1};
@@ -83,9 +91,10 @@ classdef AxesSettingFunctionCatalog
                         (~fromArgument || any(names == string(effect.argument))), ...
                         "yamada:AxesSettingFunctionCatalog:Effect", "Invalid effect in axes setting form %s.",form.id);
                 end
+                name = string(form.name);
                 existing = {};
-                if isKey(byName,form.name), existing = byName(form.name); end
-                byName(form.name) = [existing {form}];
+                if isKey(byName,name), existing = byName{name}; end
+                byName(name) = {[existing {form}]};
             end
         end
 

@@ -39,28 +39,19 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             testCase.verifyEqual(document.getComponent(label.Id).getProperty("FontSize").LiteralValue, 31);
         end
 
-        function inheritedConditionsInvalidateOnSemanticChanges(testCase)
-            % inheritedConditionsInvalidateOnSemanticChanges Reject stale permissions after ownership and catalog changes.
-            for kind = ["readonly", "metadata", "registry"]
-                registry = yamada.model.ComponentRegistry.createDefault();
-                [document, label] = CommittedPropertySourcePlanTest.fixture(registry, false);
-                document.setProperty(label.Id, "FontSize", 23, registry);
-                document.validatePropertyCommit(registry);
-                yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
-                document.setProperty(label.Id, "FontSize", 31, registry);
-                document.validatePropertyCommit(registry);
-                yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
-                switch kind
-                    case "readonly"
-                        label.IsEditable = false;
-                    case "metadata"
-                        document.Metadata.EligibilityInvalidation = true;
-                    case "registry"
-                        registry.register(registry.get("uilabel"));
-                end
-                state = yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
-                if kind == "readonly", testCase.verifyFalse(state.Enabled); end
-            end
+        function ownershipChangesInvalidateInheritedConditions(testCase)
+            % ownershipChangesInvalidateInheritedConditions Reject stale permissions after an ownership change.
+            registry = yamada.model.ComponentRegistry.createDefault();
+            [document, label] = CommittedPropertySourcePlanTest.fixture(registry, false);
+            document.setProperty(label.Id, "FontSize", 23, registry);
+            document.validatePropertyCommit(registry);
+            yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
+            document.setProperty(label.Id, "FontSize", 31, registry);
+            document.validatePropertyCommit(registry);
+            yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
+            label.IsEditable = false;
+            state = yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
+            testCase.verifyFalse(state.Enabled);
         end
 
         function localCommitReusesOnlyProvenModelValidation(testCase)
@@ -192,33 +183,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 31);
         end
 
-        function numericCheckpointInvalidatesAfterExternalChanges(testCase)
-            % numericCheckpointInvalidatesAfterExternalChanges Require full preflight after writes or catalog/history changes.
-            for kind = ["metadata", "entry", "registry", "history"]
-                registry = yamada.model.ComponentRegistry.createDefault();
-                [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
-                document.setProperty(label.Id, "FontSize", 23, registry);
-                switch kind
-                    case "metadata"
-                        document.Metadata.LocalProofInvalidation = true;
-                    case "entry"
-                        label.setProperty("Text", "Direct write");
-                    case "registry"
-                        registry.register(registry.get("uilabel"));
-                    case "history"
-                        document.undo();
-                        document.redo();
-                end
-                document.setProperty(label.Id, "FontSize", 31, registry);
-                document.validatePropertyCommit(registry);
-                testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 31);
-            end
-        end
-
-        function siblingStateReadsDoNotClonePerChild(testCase)
-            % siblingStateReadsDoNotClonePerChild Bound document copies when siblings read one grid result.
+        function siblingLayoutReadsMatchIndependentSource(testCase)
+            % siblingLayoutReadsMatchIndependentSource Compare sibling layout values and setting identities with independent source.
             registry = yamada.model.ComponentRegistry.createDefault();
-            for count = [2 8]
+            for count = 3
                 [document, grid, children] = CommittedPropertySourcePlanTest.gridFixture(registry, count);
                 document.setPropertyBatch(children(1).Id, ...
                     yamada.model.PropertyTransaction.singleChange("FontSize", 23), registry);

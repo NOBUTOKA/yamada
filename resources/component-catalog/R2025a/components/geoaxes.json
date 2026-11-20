@@ -1,0 +1,3291 @@
+{
+  "id": "geoaxes",
+  "factory": "geoaxes",
+  "declaredType": "matlab.graphics.axis.GeographicAxes",
+  "allowedParentFactories": [
+    "uifigure",
+    "uipanel",
+    "uigridlayout",
+    "uitab",
+    "uibuttongroup"
+  ],
+  "isRoot": false,
+  "creationArguments": [],
+  "profileId": "axes",
+  "profileDelta": {
+    "omittedCategoryIds": [
+      "view"
+    ],
+    "insertions": [
+      {
+        "categoryId": "maps",
+        "documentedOrder": 1,
+        "afterCategoryId": "",
+        "beforeCategoryId": "font"
+      }
+    ]
+  },
+  "categories": [
+    {
+      "id": "maps",
+      "displayName": "Maps",
+      "order": 1,
+      "entries": [
+        {
+          "path": "Basemap",
+          "groupId": "local.geoaxes.maps",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Basemap",
+            "description": "Map background selected for geographic display.",
+            "categoryId": "maps",
+            "category": "Maps",
+            "order": 1,
+            "groupId": "local.geoaxes.maps",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "streets-light",
+                "streets-dark",
+                "streets",
+                "satellite",
+                "topographic",
+                "landcover",
+                "colorterrain",
+                "grayterrain",
+                "bluegreen",
+                "grayland",
+                "darkwater",
+                "none"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "LatitudeLimits",
+          "groupId": "local.geoaxes.maps",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LatitudeLimits",
+            "description": "Latitude interval shown by the map.",
+            "categoryId": "maps",
+            "category": "Maps",
+            "order": 2,
+            "groupId": "local.geoaxes.maps",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "LongitudeLimits",
+          "groupId": "local.geoaxes.maps",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LongitudeLimits",
+            "description": "Longitude interval shown by the map.",
+            "categoryId": "maps",
+            "category": "Maps",
+            "order": 3,
+            "groupId": "local.geoaxes.maps",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "MapCenter",
+          "groupId": "local.geoaxes.maps",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MapCenter",
+            "description": "Latitude and longitude of the map center.",
+            "categoryId": "maps",
+            "category": "Maps",
+            "order": 4,
+            "groupId": "local.geoaxes.maps",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": [],
+              "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "MapCenterMode",
+          "groupId": "local.geoaxes.maps",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "MapCenterMode",
+            "description": "Automatic or explicit control of MapCenter.",
+            "categoryId": "maps",
+            "category": "Maps",
+            "order": 5,
+            "groupId": "local.geoaxes.maps",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "MapCenter"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "ZoomLevel",
+          "groupId": "local.geoaxes.maps",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZoomLevel",
+            "description": "Map magnification level.",
+            "categoryId": "maps",
+            "category": "Maps",
+            "order": 6,
+            "groupId": "local.geoaxes.maps",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "minimum": 0,
+              "maximum": 25
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "ZoomLevelMode",
+          "groupId": "local.geoaxes.maps",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ZoomLevelMode",
+            "description": "Automatic or explicit control of ZoomLevel.",
+            "categoryId": "maps",
+            "category": "Maps",
+            "order": 7,
+            "groupId": "local.geoaxes.maps",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "ZoomLevel"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "Scalebar",
+          "groupId": "local.geoaxes.maps",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Scalebar",
+            "description": "Distance-scale object associated with the geographic axes.",
+            "categoryId": "maps",
+            "category": "Maps",
+            "order": 8,
+            "groupId": "local.geoaxes.maps",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "font",
+      "displayName": "Font",
+      "order": 2,
+      "entries": [
+        {
+          "path": "FontName",
+          "groupId": "local.geoaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontName",
+            "description": "Typeface used to render text.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 1,
+            "groupId": "local.geoaxes.font",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "FontSize",
+          "groupId": "local.geoaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontSize",
+            "description": "Size used to render text.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 2,
+            "groupId": "local.geoaxes.font",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "FontUnits"
+              ],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "FontSizeMode",
+          "groupId": "local.geoaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontSizeMode",
+            "description": "Automatic or explicit control of FontSize.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 3,
+            "groupId": "local.geoaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "FontSize"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "FontWeight",
+          "groupId": "local.geoaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontWeight",
+            "description": "Weight used to render text.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 4,
+            "groupId": "local.geoaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "FontAngle",
+          "groupId": "local.geoaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontAngle",
+            "description": "Upright or italic text style.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 5,
+            "groupId": "local.geoaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "normal",
+                "italic"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "LabelFontSizeMultiplier",
+          "groupId": "local.geoaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LabelFontSizeMultiplier",
+            "description": "Text-size multiplier for labels relative to axes text.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 6,
+            "groupId": "local.geoaxes.font",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "TitleFontSizeMultiplier",
+          "groupId": "local.geoaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TitleFontSizeMultiplier",
+            "description": "Text-size multiplier for the title relative to axes text.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 7,
+            "groupId": "local.geoaxes.font",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "TitleFontWeight",
+          "groupId": "local.geoaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TitleFontWeight",
+            "description": "Choice controlling title font weight.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 8,
+            "groupId": "local.geoaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "bold",
+                "normal"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "SubtitleFontWeight",
+          "groupId": "local.geoaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SubtitleFontWeight",
+            "description": "Choice controlling subtitle font weight.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 9,
+            "groupId": "local.geoaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "normal",
+                "bold"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "FontUnits",
+          "groupId": "local.geoaxes.font",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "FontUnits",
+            "description": "Measurement unit used for text size.",
+            "categoryId": "font",
+            "category": "Font",
+            "order": 10,
+            "groupId": "local.geoaxes.font",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "points",
+                "inches",
+                "centimeters",
+                "normalized",
+                "pixels"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "defaultLiteral": "'points'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "ticks",
+      "displayName": "Ticks",
+      "order": 3,
+      "entries": [
+        {
+          "path": "TickDir",
+          "groupId": "local.geoaxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TickDir",
+            "description": "Choice controlling tick dir.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 1,
+            "groupId": "local.geoaxes.ticks",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "in",
+                "out",
+                "both",
+                "none"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "TickDir",
+                "TickDirMode"
+              ],
+              "effectReason": "Release documentation and the owned Basemap=none fixture disagree; Cartesian tick semantics must not be inferred."
+            }
+          }
+        },
+        {
+          "path": "TickDirMode",
+          "groupId": "local.geoaxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TickDirMode",
+            "description": "Automatic or explicit control of TickDir.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 2,
+            "groupId": "local.geoaxes.ticks",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "manual",
+                "auto"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "TickDir",
+                "TickDirMode"
+              ],
+              "effectReason": "Release documentation and the owned Basemap=none fixture disagree; Cartesian tick semantics must not be inferred."
+            }
+          }
+        },
+        {
+          "path": "TickLength",
+          "groupId": "local.geoaxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TickLength",
+            "description": "Numeric values used for tick length.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 3,
+            "groupId": "local.geoaxes.ticks",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": [],
+              "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "TickLabelFormat",
+          "groupId": "local.geoaxes.ticks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TickLabelFormat",
+            "description": "Formatting specification used for tick text.",
+            "categoryId": "ticks",
+            "category": "Ticks",
+            "order": 4,
+            "groupId": "local.geoaxes.ticks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "rulers",
+      "displayName": "Rulers",
+      "order": 4,
+      "entries": [
+        {
+          "path": "LatitudeAxis",
+          "groupId": "local.geoaxes.rulers",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "LatitudeAxis",
+            "description": "Ruler object used for geographic latitude.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 1,
+            "groupId": "local.geoaxes.rulers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "LongitudeAxis",
+          "groupId": "local.geoaxes.rulers",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "LongitudeAxis",
+            "description": "Ruler object used for geographic longitude.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 2,
+            "groupId": "local.geoaxes.rulers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "AxisColor",
+          "groupId": "local.geoaxes.rulers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "AxisColor",
+            "description": "Color used for axis color.",
+            "categoryId": "rulers",
+            "category": "Rulers",
+            "order": 3,
+            "groupId": "local.geoaxes.rulers",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "grids",
+      "displayName": "Grids",
+      "order": 5,
+      "entries": [
+        {
+          "path": "Grid",
+          "groupId": "local.geoaxes.grids",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Grid",
+            "description": "Whether the plotted grid is displayed.",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 1,
+            "groupId": "local.geoaxes.grids",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "GridLineStyle",
+          "groupId": "local.geoaxes.grids",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridLineStyle",
+            "description": "Choice controlling grid line style.",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 2,
+            "groupId": "local.geoaxes.grids",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "-",
+                "--",
+                ":",
+                "-.",
+                "none"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "GridColor",
+          "groupId": "local.geoaxes.grids",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridColor",
+            "description": "Color used for grid color.",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 3,
+            "groupId": "local.geoaxes.grids",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "GridColorMode",
+          "groupId": "local.geoaxes.grids",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridColorMode",
+            "description": "Automatic or explicit control of GridColor.",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 4,
+            "groupId": "local.geoaxes.grids",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "GridColor"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "GridAlpha",
+          "groupId": "local.geoaxes.grids",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridAlpha",
+            "description": "Numeric setting for grid alpha.",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 5,
+            "groupId": "local.geoaxes.grids",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "modeFlag",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "GridAlphaMode",
+          "groupId": "local.geoaxes.grids",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "GridAlphaMode",
+            "description": "Automatic or explicit control of GridAlpha.",
+            "categoryId": "grids",
+            "category": "Grids",
+            "order": 6,
+            "groupId": "local.geoaxes.grids",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "GridAlpha"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "labels",
+      "displayName": "Labels",
+      "order": 6,
+      "entries": [
+        {
+          "path": "Title",
+          "groupId": "local.geoaxes.labels",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Title",
+            "description": "Heading displayed with the component.",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 1,
+            "groupId": "local.geoaxes.labels",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "Subtitle",
+          "groupId": "local.geoaxes.labels",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Subtitle",
+            "description": "Secondary heading displayed below the title.",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 2,
+            "groupId": "local.geoaxes.labels",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "TitleHorizontalAlignment",
+          "groupId": "local.geoaxes.labels",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "TitleHorizontalAlignment",
+            "description": "Choice controlling title horizontal alignment.",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 3,
+            "groupId": "local.geoaxes.labels",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "center",
+                "left",
+                "right"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "LatitudeLabel",
+          "groupId": "local.geoaxes.labels",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LatitudeLabel",
+            "description": "Text used for latitude label.",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 4,
+            "groupId": "local.geoaxes.labels",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "LongitudeLabel",
+          "groupId": "local.geoaxes.labels",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LongitudeLabel",
+            "description": "Text used for longitude label.",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 5,
+            "groupId": "local.geoaxes.labels",
+            "editor": "text",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "Legend",
+          "groupId": "local.geoaxes.labels",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Legend",
+            "description": "Legend object associated with these axes.",
+            "categoryId": "labels",
+            "category": "Labels",
+            "order": 6,
+            "groupId": "local.geoaxes.labels",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "multipleplots",
+      "displayName": "Multiple Plots",
+      "order": 7,
+      "entries": [
+        {
+          "path": "ColorOrder",
+          "groupId": "exact.multipleplots.f2725279ab22",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ColorOrder",
+            "description": "Sequence of colors selected for successive plots.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 1,
+            "groupId": "exact.multipleplots.f2725279ab22",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "LineStyleOrder",
+          "groupId": "exact.multipleplots.f2725279ab22",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LineStyleOrder",
+            "description": "Sequence of line patterns selected for successive plots.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 2,
+            "groupId": "exact.multipleplots.f2725279ab22",
+            "editor": "stringList",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "stringList",
+              "matlabClasses": [
+                "categorical",
+                "cell",
+                "char",
+                "string"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "LineStyleCyclingMethod",
+          "groupId": "exact.multipleplots.f2725279ab22",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LineStyleCyclingMethod",
+            "description": "How color and line-pattern sequences advance together.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 3,
+            "groupId": "exact.multipleplots.f2725279ab22",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "NextSeriesIndex",
+          "groupId": "exact.multipleplots.f2725279ab22",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "NextSeriesIndex",
+            "description": "Series index assigned to the next plotted object.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 4,
+            "groupId": "exact.multipleplots.f2725279ab22",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "NextPlot",
+          "groupId": "exact.multipleplots.f2725279ab22",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "NextPlot",
+            "description": "How a subsequent plot affects the existing axes content.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 5,
+            "groupId": "exact.multipleplots.f2725279ab22",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "replace",
+                "add",
+                "replacechildren",
+                "replaceall"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "SortMethod",
+          "groupId": "exact.multipleplots.f2725279ab22",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SortMethod",
+            "description": "Choice controlling sort method.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 6,
+            "groupId": "exact.multipleplots.f2725279ab22",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "depth",
+                "childorder"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "ColorOrderIndex",
+          "groupId": "exact.multipleplots.f2725279ab22",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ColorOrderIndex",
+            "description": "Position within the color sequence for the next plot.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 7,
+            "groupId": "exact.multipleplots.f2725279ab22",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "LineStyleOrderIndex",
+          "groupId": "exact.multipleplots.f2725279ab22",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LineStyleOrderIndex",
+            "description": "Position within the line-pattern sequence for the next plot.",
+            "categoryId": "multipleplots",
+            "category": "Multiple Plots",
+            "order": 8,
+            "groupId": "exact.multipleplots.f2725279ab22",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "colorandtransparencymaps",
+      "displayName": "Color and Transparency Maps",
+      "order": 8,
+      "entries": [
+        {
+          "path": "Colormap",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Colormap",
+            "description": "Sequence of colors used to map indexed data.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 1,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "ColorScale",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ColorScale",
+            "description": "Choice controlling color scale.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 2,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "linear",
+                "log"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "CLim",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CLim",
+            "description": "Numeric values used for clim.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 3,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": [],
+              "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "CLimMode",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CLimMode",
+            "description": "Automatic or explicit control of CLim.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 4,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "CLim"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "Alphamap",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Alphamap",
+            "description": "Sequence of transparency values used for indexed data.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 5,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": true,
+              "constraints": [],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "AlphaScale",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "AlphaScale",
+            "description": "Choice controlling alpha scale.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 6,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "linear",
+                "log"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "ALim",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ALim",
+            "description": "Numeric values used for alim.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 7,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": [],
+              "fixedLength": 2
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "valueMode",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "ALimMode",
+          "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ALimMode",
+            "description": "Automatic or explicit control of ALim.",
+            "categoryId": "colorandtransparencymaps",
+            "category": "Color and Transparency Maps",
+            "order": 8,
+            "groupId": "exact.colorandtransparencymaps.692e7af6cac8",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "auto",
+                "manual"
+              ]
+            },
+            "application": {
+              "applyAfter": [
+                "ALim"
+              ],
+              "effectPolicy": "none",
+              "defaultLiteral": "'auto'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "boxstyling",
+      "displayName": "Box Styling",
+      "order": 9,
+      "entries": [
+        {
+          "path": "Color",
+          "groupId": "local.geoaxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Color",
+            "description": "Color used by the component.",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 1,
+            "groupId": "local.geoaxes.boxstyling",
+            "editor": "color",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "color",
+              "matlabClasses": [
+                "char",
+                "double",
+                "string"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "LineWidth",
+          "groupId": "local.geoaxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "LineWidth",
+            "description": "Width used to draw lines.",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 2,
+            "groupId": "local.geoaxes.boxstyling",
+            "editor": "number",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "number",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "minimum": 0,
+              "exclusiveMinimum": true
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Box",
+          "groupId": "local.geoaxes.boxstyling",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Box",
+            "description": "Whether box is enabled.",
+            "categoryId": "boxstyling",
+            "category": "Box Styling",
+            "order": 3,
+            "groupId": "local.geoaxes.boxstyling",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "position",
+      "displayName": "Position",
+      "order": 10,
+      "entries": [
+        {
+          "path": "OuterPosition",
+          "groupId": "local.geoaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "OuterPosition",
+            "description": "Outer rectangle [left bottom width height] in its configured units.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 1,
+            "groupId": "local.geoaxes.position",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": [],
+              "fixedLength": 4
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "InnerPosition",
+                "OuterPosition",
+                "Position"
+              ],
+              "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+            }
+          }
+        },
+        {
+          "path": "InnerPosition",
+          "groupId": "local.geoaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "InnerPosition",
+            "description": "Inner rectangle [left bottom width height] in its configured units.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 2,
+            "groupId": "local.geoaxes.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [
+                "InnerPosition",
+                "OuterPosition",
+                "Position"
+              ],
+              "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+            }
+          }
+        },
+        {
+          "path": "Position",
+          "groupId": "local.geoaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Position",
+            "description": "Component rectangle [left bottom width height] in its configured units.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 3,
+            "groupId": "local.geoaxes.position",
+            "editor": "position",
+            "previewPolicy": "adapt",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "fixedLengthVector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [
+                "Units"
+              ],
+              "effectPolicy": "layout",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "TightInset",
+          "groupId": "local.geoaxes.position",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "TightInset",
+            "description": "Margins [left bottom right top] needed around the plotted area.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 4,
+            "groupId": "local.geoaxes.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "PositionConstraint",
+          "groupId": "local.geoaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "PositionConstraint",
+            "description": "Rectangle kept fixed while related geometry changes.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 5,
+            "groupId": "local.geoaxes.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "Units",
+          "groupId": "local.geoaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Units",
+            "description": "Measurement unit used for component geometry.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 6,
+            "groupId": "local.geoaxes.position",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "normalized",
+                "inches",
+                "centimeters",
+                "points",
+                "pixels",
+                "characters"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "defaultLiteral": "'normalized'",
+              "effectStatus": "modeled",
+              "affectedPaths": [],
+              "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+            }
+          }
+        },
+        {
+          "path": "Layout",
+          "groupId": "local.geoaxes.position",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Layout",
+            "description": "Placement settings supplied by the parent layout.",
+            "categoryId": "position",
+            "category": "Position",
+            "order": 7,
+            "groupId": "local.geoaxes.position",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "interactivity",
+      "displayName": "Interactivity",
+      "order": 11,
+      "entries": [
+        {
+          "path": "InteractionOptions",
+          "groupId": "exact.interactivity.072eb36a6df5",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "InteractionOptions",
+            "description": "Options used by the axes interaction tools.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 1,
+            "groupId": "exact.interactivity.072eb36a6df5",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Toolbar",
+          "groupId": "exact.interactivity.072eb36a6df5",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Toolbar",
+            "description": "Toolbar associated with the window or axes.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 2,
+            "groupId": "exact.interactivity.072eb36a6df5",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Interactions",
+          "groupId": "exact.interactivity.072eb36a6df5",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Interactions",
+            "description": "Interaction tools enabled on the axes.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 3,
+            "groupId": "exact.interactivity.072eb36a6df5",
+            "editor": "numericVector",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "numericArray",
+              "matlabClasses": [
+                "double"
+              ],
+              "shape": "vector",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Visible",
+          "groupId": "exact.interactivity.072eb36a6df5",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Visible",
+            "description": "Whether this component is displayed.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 4,
+            "groupId": "exact.interactivity.072eb36a6df5",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "CurrentPoint",
+          "groupId": "exact.interactivity.072eb36a6df5",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "CurrentPoint",
+            "description": "Pointer location reported in the component coordinates.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 5,
+            "groupId": "exact.interactivity.072eb36a6df5",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "ContextMenu",
+          "groupId": "exact.interactivity.072eb36a6df5",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ContextMenu",
+            "description": "Menu opened for this component by a context-menu gesture.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 6,
+            "groupId": "exact.interactivity.072eb36a6df5",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "componentReference",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Selected",
+          "groupId": "exact.interactivity.072eb36a6df5",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Selected",
+            "description": "Whether the object is selected.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 7,
+            "groupId": "exact.interactivity.072eb36a6df5",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "SelectionHighlight",
+          "groupId": "exact.interactivity.072eb36a6df5",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "SelectionHighlight",
+            "description": "Whether selection highlight is enabled.",
+            "categoryId": "interactivity",
+            "category": "Interactivity",
+            "order": 8,
+            "groupId": "exact.interactivity.072eb36a6df5",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "callbacks",
+      "displayName": "Callbacks",
+      "order": 12,
+      "entries": [
+        {
+          "path": "ButtonDownFcn",
+          "groupId": "local.geoaxes.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "ButtonDownFcn",
+            "description": "Callback invoked for the button down event.",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 1,
+            "groupId": "local.geoaxes.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "ButtonDown"
+          }
+        },
+        {
+          "path": "CreateFcn",
+          "groupId": "local.geoaxes.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "CreateFcn",
+            "description": "Callback invoked for the create event.",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 2,
+            "groupId": "local.geoaxes.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [],
+              "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "Create"
+          }
+        },
+        {
+          "path": "DeleteFcn",
+          "groupId": "local.geoaxes.callbacks",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "DeleteFcn",
+            "description": "Callback invoked for the delete event.",
+            "categoryId": "callbacks",
+            "category": "Callbacks",
+            "order": 3,
+            "groupId": "local.geoaxes.callbacks",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "callback",
+              "matlabClasses": [
+                "cell",
+                "char",
+                "function_handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unsupported",
+              "affectedPaths": [],
+              "effectReason": "Lifecycle callbacks may execute arbitrary application code; their effects are not evaluated."
+            },
+            "callbackSignature": {
+              "eventArgument": {
+                "className": "",
+                "shape": []
+              }
+            },
+            "handlerSuffix": "Delete"
+          }
+        }
+      ]
+    },
+    {
+      "id": "callbackexecutioncontrol",
+      "displayName": "Callback Execution Control",
+      "order": 13,
+      "entries": [
+        {
+          "path": "Interruptible",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Interruptible",
+            "description": "Whether another callback can interrupt the running callback.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 1,
+            "groupId": "callbackExecutionCore",
+            "editor": "onOff",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "BusyAction",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "BusyAction",
+            "description": "How a callback is handled while another callback is busy.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 2,
+            "groupId": "callbackExecutionCore",
+            "editor": "enum",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "queue",
+                "cancel"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "PickableParts",
+          "groupId": "local.geoaxes.callbackexecutioncontrol",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "PickableParts",
+            "description": "Parts of the object eligible for pointer hit testing.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 3,
+            "groupId": "local.geoaxes.callbackexecutioncontrol",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": [],
+              "values": [
+                "visible",
+                "all",
+                "none"
+              ]
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "HitTest",
+          "groupId": "local.geoaxes.callbackexecutioncontrol",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "HitTest",
+            "description": "Whether this object responds to pointer hit testing.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 4,
+            "groupId": "local.geoaxes.callbackexecutioncontrol",
+            "editor": "onOff",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
+            "valueSchema": {
+              "kind": "onOff",
+              "matlabClasses": [
+                "char",
+                "logical",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "BeingDeleted",
+          "groupId": "callbackExecutionCore",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "BeingDeleted",
+            "description": "Whether destruction of this object is in progress.",
+            "categoryId": "callbackexecutioncontrol",
+            "category": "Callback Execution Control",
+            "order": 5,
+            "groupId": "callbackExecutionCore",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "parentchild",
+      "displayName": "Parent/Child",
+      "order": 14,
+      "entries": [
+        {
+          "path": "Parent",
+          "groupId": "local.geoaxes.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Parent",
+            "description": "Container that owns this component.",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 1,
+            "groupId": "local.geoaxes.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "readOnly",
+            "valueSchema": {
+              "kind": "componentReference",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Children",
+          "groupId": "local.geoaxes.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Children",
+            "description": "Components owned directly by this container.",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 2,
+            "groupId": "local.geoaxes.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "graphicsObject",
+              "matlabClasses": [
+                "handle"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "HandleVisibility",
+          "groupId": "local.geoaxes.parentchild",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "HandleVisibility",
+            "description": "Whether handle-search operations expose this object.",
+            "categoryId": "parentchild",
+            "category": "Parent/Child",
+            "order": 3,
+            "groupId": "local.geoaxes.parentchild",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "enum",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "identifiers",
+      "displayName": "Identifiers",
+      "order": 15,
+      "entries": [
+        {
+          "path": "Type",
+          "groupId": "local.geoaxes.identifiers",
+          "runtimeSetAccess": "restricted",
+          "metadata": {
+            "displayName": "Type",
+            "description": "MATLAB graphics type identifying the object.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 1,
+            "groupId": "local.geoaxes.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "opaque",
+              "matlabClasses": [
+                "unknown"
+              ],
+              "shape": "any",
+              "allowsEmpty": false,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "unknown",
+              "affectedPaths": [],
+              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            }
+          }
+        },
+        {
+          "path": "Tag",
+          "groupId": "local.geoaxes.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "Tag",
+            "description": "Identifier available to application code.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 2,
+            "groupId": "local.geoaxes.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "text",
+              "matlabClasses": [
+                "char",
+                "string"
+              ],
+              "shape": "scalar",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        },
+        {
+          "path": "UserData",
+          "groupId": "local.geoaxes.identifiers",
+          "runtimeSetAccess": "public",
+          "metadata": {
+            "displayName": "UserData",
+            "description": "Application-defined data attached to the component.",
+            "categoryId": "identifiers",
+            "category": "Identifiers",
+            "order": 3,
+            "groupId": "local.geoaxes.identifiers",
+            "editor": "readOnly",
+            "previewPolicy": "skip",
+            "gridGeometryImpact": "none",
+            "absoluteGeometryImpact": false,
+            "auditDisposition": "omitted",
+            "valueSchema": {
+              "kind": "arbitraryData",
+              "matlabClasses": [
+                "any"
+              ],
+              "shape": "any",
+              "allowsEmpty": true,
+              "constraints": []
+            },
+            "application": {
+              "applyAfter": [],
+              "effectPolicy": "none",
+              "effectStatus": "independent",
+              "affectedPaths": [],
+              "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "displayName": "Geographic Axes",
+    "category": "Axes",
+    "programmaticOnly": true
+  }
+}

@@ -63,14 +63,11 @@ test('maps contiguous changes to the corresponding source sides', () => {
   const map = { querySelector: selector => lanes[selector] };
   const rows = ['deleted', '', 'modified', 'modified', 'added'].map(kind => ({ kind }));
   context.renderLocationMap(map, rows);
-  const geometry = ({ marks }) => marks.map(({ className, style }) => [className, style.top, style.height]);
-  const modified = ['map-mark modified', 'min(40%, calc(100% - 2px))', '40%'];
-  assert.deepEqual(geometry(lanes['.map-original']), [
-    ['map-mark deleted', 'min(0%, calc(100% - 2px))', '20%'], modified
+  const intervals = ({ marks }) => marks.map(({ style }) => [
+    Number.parseFloat(style.top.replace(/^min\(/, '')), Number.parseFloat(style.height)
   ]);
-  assert.deepEqual(geometry(lanes['.map-generated']), [
-    modified, ['map-mark added', 'min(80%, calc(100% - 2px))', '20%']
-  ]);
+  assert.deepEqual(intervals(lanes['.map-original']), [[0, 20], [40, 40]]);
+  assert.deepEqual(intervals(lanes['.map-generated']), [[40, 40], [80, 20]]);
 
   context.renderLocationMap(map, [{ kind: '' }]);
   assert.ok(Object.values(lanes).every(lane => lane.marks.length === 0));

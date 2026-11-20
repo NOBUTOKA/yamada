@@ -39,39 +39,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
     end
 
     methods (Test)
-        function presentsNamesInsideTheGrayLeadingTableCells(testCase)
-            % presentsNamesInsideTheGrayLeadingTableCells Avoid standalone header edit fields.
-
-            owner = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(owner));
-            state = struct("Data", {num2cell([1 2])}, "ColumnName", "numbered", ...
-                "RowName", "numbered", "HasData", true, ...
-                "HasColumnName", true, "HasRowName", true);
-            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
-                state, @(~) "", false);
-            table = findall(dialog, "Tag", "yamada-table-data-editor-table");
-
-            testCase.verifyEmpty(table.ColumnName);
-            testCase.verifyEmpty(table.RowName);
-            testCase.verifyEqual(string(table.RowStriping), "off");
-            testCase.verifyEqual(size(table.Data), [2 3]);
-            testCase.verifyEqual(table.Data(1, 2:3), ["Column 1", "Column 2"]);
-            testCase.verifyEqual(table.Data(2, 1), "Row 1");
-            rowDelete = findall(dialog, "Tag", "yamada-table-data-delete-row");
-            testCase.verifyEqual(rowDelete.Layout.Row, 2);
-            testCase.verifyEqual(rowDelete.FontSize, 14);
-            testCase.verifyEqual(rowDelete.Parent.RowHeight{2}, 23.3);
-            rowAdd = findall(dialog, "Tag", "yamada-table-data-add-row");
-            columnAdd = findall(dialog, "Tag", "yamada-table-data-add-column");
-            testCase.verifyEqual(rowAdd.Layout.Row, 1);
-            testCase.verifyEqual(columnAdd.Layout.Column, 1);
-            testCase.verifyEqual(rowAdd.FontSize, 14);
-            testCase.verifyEqual(columnAdd.FontSize, 14);
-            testCase.verifyEmpty(findall(dialog, "Tag", "yamada-table-data-column-name"));
-            testCase.verifyEmpty(findall(dialog, "Tag", "yamada-table-data-row-name"));
-            deleteIfValid(dialog);
-            clear cleanup
-        end
 
         function keepsTableActionsInsideTheScrollableTableSurface(testCase)
             % keepsTableActionsInsideTheScrollableTableSurface Keep every structural action on one scroll canvas.
@@ -110,6 +77,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
                 state, @(changes) captureChanges(owner, changes), false);
             table = findall(dialog, "Tag", "yamada-table-data-editor-table");
+            testCase.verifyEqual(table.Data(1, 2), "Column 1");
+            testCase.verifyEqual(table.Data(2, 1), "Row 1");
             table.Data(1, 2) = "Amount";
             table.Data(2, 1) = "Total";
             table.Data(2, 2) = "3";

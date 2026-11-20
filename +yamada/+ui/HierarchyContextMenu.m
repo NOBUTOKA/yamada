@@ -45,7 +45,9 @@ classdef HierarchyContextMenu < handle
             obj.CallbackItem = uimenu(obj.Menu, "Text", "Manage Callbacks...", ...
                 "Tag", "yamada-manage-callbacks", "Enable", "off", ...
                 "MenuSelectedFcn", @(~, ~) obj.invoke());
-            tree.ContextMenu = obj.Menu;
+            % Before R2023b a tree menu opens only outside nodes and reports no hit node, so
+            % those releases offer the menu from Preview only.
+            if ~isMATLABReleaseOlderThan("R2023b"), tree.ContextMenu = obj.Menu; end
             for action = ["Copy", "Cut", "Paste", "Delete", "Add Colorbar"]
                 obj.EditItems(end + 1) = uimenu(obj.Menu, "Text", action, ...
                     "Tag", "yamada-context-" + replace(lower(action)," ","-"), "Enable", "off", ...
@@ -123,7 +125,10 @@ classdef HierarchyContextMenu < handle
                 parentComponent = document.getComponent(component.ParentId);
                 if ~isempty(parentComponent), parentFactory = parentComponent.Factory; end
             end
-            callbacks = obj.Registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+            callbacks = yamada.model.PropertyDefinition.empty;
+            if ~component.isReleaseUnavailable()
+                callbacks = obj.Registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+            end
             obj.TargetId = component.Id;
             obj.TargetDocument = document;
             if ~isempty(callbacks), obj.CallbackItem.Enable = "on"; end

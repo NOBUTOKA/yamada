@@ -10,7 +10,7 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
                 [document, label] = TextPreviewReuseTest.fixture(registry, layout);
                 document.setProperty(label.Id, "Text", "Baseline", registry);
                 document.validatePropertyCommit(registry);
-                figure = uifigure(Visible="on", Position=[100 100 900 700]);
+                figure = yamada.ui.createEditorFigure(Visible="on", Position=[100 100 900 700]);
                 cleanup = onCleanup(@() delete(figure));
                 left = uipanel(figure, Position=[1 1 440 680]);
                 right = uipanel(figure, Position=[451 1 440 680]);
@@ -18,7 +18,7 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
                 referenceRenderer = yamada.ui.PreviewRenderer(registry);
                 [handles, diagnostics] = renderer.render(document, left);
                 testCase.assertEmpty(diagnostics);
-                original = handles(char(label.Id));
+                original = handles(label.Id);
                 TextPreviewReuseTest.settle(original);
                 initialHeight = original.Position(4);
                 values = {["First line", "Second line", "Third line"], "Short again"};
@@ -32,13 +32,13 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
                     testCase.verifyTrue(applied, layout);
                     testCase.verifyEmpty(diagnostics);
                     testCase.verifyEqual(geometry, layout ~= "absolute");
-                    original = handles(char(label.Id));
+                    original = handles(label.Id);
                     reference = referenceRenderer.render(document, right);
                     TextPreviewReuseTest.settle(original);
-                    TextPreviewReuseTest.settle(reference(char(label.Id)));
+                    TextPreviewReuseTest.settle(reference(label.Id));
                     testCase.verifyEqual(reshape(string(original.Text), [], 1), ...
                         reshape(string(values{index}), [], 1));
-                    testCase.verifyEqual(original.Position, reference(char(label.Id)).Position, "AbsTol", 1);
+                    testCase.verifyEqual(original.Position, reference(label.Id).Position, "AbsTol", 1);
                     if layout ~= "absolute" && index == 1
                         testCase.verifyGreaterThan(original.Position(4), initialHeight);
                     end
@@ -85,25 +85,13 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
         end
 
         function settle(target)
-            % settle Wait for several stable native geometry observations with a bounded deadline.
+            % settle Wait until the Preview layout of the target's figure has settled.
             arguments (Input)
                 target (1, 1) matlab.ui.control.Label
             end
-            started = tic;
-            previous = double(target.Position);
-            stable = 0;
-            while toc(started) < 5
-                drawnow; pause(0.04); drawnow;
-                current = double(target.Position);
-                if all(abs(current - previous) < 0.1)
-                    stable = stable + 1;
-                else
-                    stable = 0;
-                end
-                if stable >= 4, return, end
-                previous = current;
-            end
-            error("yamada:TextPreviewReuseTest:UnsettledGeometry", "Text layout did not settle.");
+            % Repeated stable reads can end before the Grid Layout resize throttle relayouts the label.
+            drawnow;
+            yamada.ui.waitForPreviewLayout(ancestor(target, "figure"), target);
         end
     end
 end

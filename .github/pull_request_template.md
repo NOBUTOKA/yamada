@@ -13,6 +13,7 @@ Describe effects on source preservation, Safe Preview, and the supported input/o
 - Checks run and results:
 - Checks not run and why:
 - MATLAB release and platform, when applicable:
+- Local R2023a UI subset (commit, MATLAB update, passed/failed/incomplete, or reason not run):
 
 ## Checklist
 
@@ -20,4 +21,3 @@ Describe effects on source preservation, Safe Preview, and the supported input/o
 - [ ] Relevant checks pass; omitted checks are explained above.
 - [ ] Documentation reflects any public behavior changes.
 - [ ] `git diff --check` passes.
-- [ ] Any `AGENTS.md` change is in its own commit, and the merge method preserves that separation.

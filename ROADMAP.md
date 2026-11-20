@@ -25,7 +25,3 @@ For users following planned features and contributors choosing work, this roadma
 ## More responsive editing
 
 Reduce the time spent selecting components, updating properties, and refreshing the preview, particularly in large or deeply nested apps. Keep source preservation, validation, and Undo/Redo guarantees. Contributors can use the [performance guide](tests/performance/README.md) to compare changes under matching conditions.
-
-## Install and launch from MATLAB
-
-Validate the `.mltbx` installer and both launch paths on the final release candidate. Check that the installed copy can create and open apps, edit and save source, and uninstall. The [release procedure](doc/RELEASING.md) describes the package contents and acceptance checks.

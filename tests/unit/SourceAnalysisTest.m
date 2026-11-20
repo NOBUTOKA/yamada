@@ -62,7 +62,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
                         actual = analysis.statementIndices(span, matchEnd);
                         testCase.verifyEqual(actual, expected);
                         actual(:) = 0;
-                        testCase.verifyEqual(actual, zeros(size(actual)));
                         testCase.verifyEqual(analysis.statementIndices(span, matchEnd), expected);
                     end
                     shifted = yamada.model.SourceSpan(span.StartOffset, span.EndOffset + 1);

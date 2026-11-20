@@ -42,19 +42,26 @@ context.renderNestedGridComponents([
 ]);
 assert.equal(controls.children.length, 2);
 const target = controls.children[1];
-assert.equal(target.className, 'nested-grid-component');
 assert.equal(target.dataset.componentId, 'button');
-assert.equal(target.children.length, 8);
 
-target.listeners.pointerdown({type: 'pointerdown', target, pointerId: 1, clientX: 55, clientY: 315});
+let defaultPrevented = false;
+target.listeners.pointerdown({
+  type: 'pointerdown', target, pointerId: 1, clientX: 55, clientY: 315,
+  preventDefault() { defaultPrevented = true; }
+});
+assert.equal(defaultPrevented, true);
 assert.equal(captured, true);
 assert.equal(sent[0].name, 'Pointer');
 assert.equal(sent[0].data.componentId, 'button');
 assert.equal(sent[0].data.handle, '');
 
 const eastHandle = target.children.find(child => child.dataset.handle === 'e');
-target.listeners.pointerdown({type: 'pointerdown', target: eastHandle, pointerId: 2,
-  clientX: 140, clientY: 315});
+defaultPrevented = false;
+target.listeners.pointerdown({
+  type: 'pointerdown', target: eastHandle, pointerId: 2, clientX: 140, clientY: 315,
+  preventDefault() { defaultPrevented = true; }
+});
+assert.equal(defaultPrevented, true);
 assert.equal(sent[1].data.componentId, 'button');
 assert.equal(sent[1].data.handle, 'e');
 console.log('Nested grid component selection and resize targets passed.');

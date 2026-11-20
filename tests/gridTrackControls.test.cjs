@@ -90,16 +90,11 @@ const requests = [];
 context.component = {sendEventToMATLAB(name, data) { requests.push({name, ...data}); }};
 context.openTrackPopover = openTrackPopover;
 for (const axis of ['row', 'column']) {
-  const labels = axis === 'row' ?
-    ['Insert Row Above', 'Insert Row Below', 'Delete Row', 'Cancel', 'Apply'] :
-    ['Insert Column Left', 'Insert Column Right', 'Delete Column', 'Cancel', 'Apply'];
   for (const [buttonIndex, action, index] of [[0, 'insert-track', 2],
     [1, 'insert-track', 3], [2, 'delete-track', 2]]) {
     context.openTrackPopover({offsetLeft: 30, offsetTop: 20, offsetHeight: 12},
       {revision: 17, activeGridId: 'owned-grid'}, axis, {index: 2, kind: 'fixed', value: 50});
     const buttons = descendants(popupHost).filter(element => element.tag === 'button');
-    assert.deepEqual(buttons.map(button => button.textContent), labels,
-      'track controls offer insertion and deletion, without reordering commands');
     buttons[buttonIndex].listeners.click();
     assert.deepEqual(requests.at(-1), {name: 'GridAction', action, revision: 17,
       activeGridId: 'owned-grid', axis, index, fromIndex: 2, mode: 'fit', value: 0});

@@ -1,0 +1,604 @@
+{
+  "schemaVersion": 1,
+  "surfaceRelease": "R2026b",
+  "releases": [
+    {
+      "release": "R2023a",
+      "catalog": true
+    },
+    {
+      "release": "R2023b",
+      "catalog": true
+    },
+    {
+      "release": "R2024a",
+      "catalog": true
+    },
+    {
+      "release": "R2024b",
+      "catalog": true
+    },
+    {
+      "release": "R2025a",
+      "catalog": true
+    },
+    {
+      "release": "R2025b",
+      "catalog": true
+    },
+    {
+      "release": "R2026a",
+      "catalog": true
+    },
+    {
+      "release": "R2026b",
+      "catalog": true
+    }
+  ],
+  "variants": [
+    {
+      "id": "uicolorpicker",
+      "factory": "uicolorpicker",
+      "creationArguments": [],
+      "displayName": "Color Picker",
+      "releases": {
+        "since": "R2024a"
+      }
+    },
+    {
+      "id": "uislider-range",
+      "factory": "uislider",
+      "creationArguments": [
+        "range"
+      ],
+      "displayName": "Range Slider",
+      "releases": {
+        "since": "R2023b"
+      }
+    }
+  ],
+  "properties": [
+    {
+      "variantId": "axes",
+      "path": "FontSmoothing",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "axes",
+      "path": "InteractionOptions",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
+      "variantId": "axes",
+      "path": "ToolbarLocation",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "axes",
+      "path": "ToolbarLocationMode",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "geoaxes",
+      "path": "MapLayout",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
+      "variantId": "geoaxes",
+      "path": "InteractionOptions",
+      "releases": {
+        "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "geoaxes",
+      "path": "ToolbarLocation",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "geoaxes",
+      "path": "ToolbarLocationMode",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "polaraxes",
+      "path": "FontSmoothing",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "polaraxes",
+      "path": "InteractionOptions",
+      "releases": {
+        "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "polaraxes",
+      "path": "ToolbarLocation",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "polaraxes",
+      "path": "ToolbarLocationMode",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uiaxes",
+      "path": "FontSmoothing",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uiaxes",
+      "path": "ToolbarLocation",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uiaxes",
+      "path": "ToolbarLocationMode",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uibutton-push",
+      "path": "Interpreter",
+      "releases": {
+        "since": "R2024b"
+      }
+    },
+    {
+      "variantId": "uibutton-push",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uibutton-state",
+      "path": "Interpreter",
+      "releases": {
+        "since": "R2024b"
+      }
+    },
+    {
+      "variantId": "uibutton-state",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "ShadowColor",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uicheckbox",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uicolorpicker",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uidatepicker",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uidropdown",
+      "path": "ValueIndex",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uidropdown",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
+      "variantId": "uieditfield-numeric",
+      "path": "AllowEmpty",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uieditfield-numeric",
+      "path": "Placeholder",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uieditfield-numeric",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uieditfield-text",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uifigure",
+      "path": "Theme",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
+      "variantId": "uifigure",
+      "path": "ThemeMode",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
+      "variantId": "uifigure",
+      "path": "ThemeChangedFcn",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
+      "variantId": "uihyperlink",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uiimage",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uiknob-continuous",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
+      "variantId": "uiknob-discrete",
+      "path": "ValueIndex",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uiknob-discrete",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
+      "variantId": "uilistbox",
+      "path": "ValueIndex",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uilistbox",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "ShadowColor",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uiradiobutton",
+      "path": "Interpreter",
+      "releases": {
+        "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "uiradiobutton",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uislider-range",
+      "path": "Step",
+      "releases": {
+        "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "uislider-range",
+      "path": "StepMode",
+      "releases": {
+        "since": "R2024a"
+      }
+    },
+    {
+      "variantId": "uislider-slider",
+      "path": "Step",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
+      "variantId": "uislider-slider",
+      "path": "StepMode",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
+      "variantId": "uispinner",
+      "path": "AllowEmpty",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uispinner",
+      "path": "Placeholder",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uispinner",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uiswitch-rocker",
+      "path": "ValueIndex",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uiswitch-rocker",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
+      "variantId": "uiswitch-slider",
+      "path": "ValueIndex",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uiswitch-slider",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
+      "variantId": "uiswitch-toggle",
+      "path": "ValueIndex",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uiswitch-toggle",
+      "path": "Label",
+      "releases": {
+        "since": "R2026b"
+      }
+    },
+    {
+      "variantId": "uitable",
+      "path": "DisplaySelection",
+      "releases": {
+        "since": "R2023b"
+      }
+    },
+    {
+      "variantId": "uitable",
+      "path": "Extent",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uitextarea",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    },
+    {
+      "variantId": "uitogglebutton",
+      "path": "Interpreter",
+      "releases": {
+        "since": "R2024b"
+      }
+    },
+    {
+      "variantId": "uitogglebutton",
+      "path": "Label",
+      "releases": {
+        "since": "R2026a"
+      }
+    }
+  ],
+  "values": [
+    {
+      "variantId": "uibuttongroup",
+      "path": "TitlePosition",
+      "value": "leftbottom",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "TitlePosition",
+      "value": "centerbottom",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "TitlePosition",
+      "value": "rightbottom",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "BorderType",
+      "value": "etchedin",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "BorderType",
+      "value": "etchedout",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "BorderType",
+      "value": "beveledin",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uibuttongroup",
+      "path": "BorderType",
+      "value": "beveledout",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uifigure",
+      "path": "WindowStyle",
+      "value": "docked",
+      "releases": {
+        "since": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "TitlePosition",
+      "value": "leftbottom",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "TitlePosition",
+      "value": "centerbottom",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "TitlePosition",
+      "value": "rightbottom",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "BorderType",
+      "value": "etchedin",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "BorderType",
+      "value": "etchedout",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "BorderType",
+      "value": "beveledin",
+      "releases": {
+        "before": "R2025a"
+      }
+    },
+    {
+      "variantId": "uipanel",
+      "path": "BorderType",
+      "value": "beveledout",
+      "releases": {
+        "before": "R2025a"
+      }
+    }
+  ]
+}

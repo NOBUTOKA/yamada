@@ -1,5 +1,5 @@
 classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.unittest.TestCase
-    % PreviewLayoutStabilizationTest Verify request isolation and real R2024a fit-layout completion.
+    % PreviewLayoutStabilizationTest Verify request isolation and real fit-layout completion.
     properties (TestParameter)
         % Widget - Native asynchronous and nested-container geometry under test.
         Widget = {"table", "axes", "html", "tabs"}
@@ -30,7 +30,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
 
         function mixedWidgetLayoutsSettleBeforeMeasurement(testCase, Widget)
             % mixedWidgetLayoutsSettleBeforeMeasurement Check fit content, resize, and native asynchronous widgets.
-            figure = uifigure("Visible", "on", "Position", [100 100 500 400]);
+            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 500 400]);
             cleanup = onCleanup(@() delete(figure));
             canvas = uipanel(figure, "BorderType", "none", "AutoResizeChildren", "off", ...
                 "Position", [1 1 500 400]);
@@ -70,9 +70,41 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
             testCase.verifyEqual(later, immediate, "AbsTol", 1e-8);
         end
 
+        function repeatedWaitObservesResizeBurst(testCase)
+            % repeatedWaitObservesResizeBurst Await a throttled trailing relayout in a later wait on one figure.
+            %   A resize inside the Grid Layout throttle window defers the
+            %   relayout to the trailing call, which only the quiet period
+            %   observes; this fails when no container controller is hooked.
+            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 500 400]);
+            cleanup = onCleanup(@() delete(figure));
+            canvas = uipanel(figure, "BorderType", "none", "AutoResizeChildren", "off", ...
+                "Position", [1 1 500 400]);
+            grid = uigridlayout(canvas, [2 1], "RowHeight", {"fit", "1x"});
+            label = uilabel(grid, "Text", "Initial");
+            target = uitabgroup(grid);
+            uitab(target, "Title", "First");
+            drawnow;
+            first = yamada.ui.waitForPreviewLayout(figure, grid);
+            testCase.verifyGreaterThan(first.hooked, 0);
+            pause(0.5); drawnow;
+            % The first resize opens the throttle window and the second lands inside it.
+            canvas.Position(3:4) = [550 450];
+            drawnow; pause(0.05);
+            canvas.Position(3:4) = [600 500];
+            label.FontSize = 26;
+            drawnow;
+            second = yamada.ui.waitForPreviewLayout(figure, grid);
+            drawnow;
+            immediate = [label.Position target.Position];
+            pause(0.3); drawnow;
+            testCase.verifyEqual([label.Position target.Position], immediate, "AbsTol", 1e-8);
+            testCase.verifyGreaterThan(second.watched, 0);
+            testCase.verifyTrue(second.quieted);
+        end
+
         function fitLayoutCompletesWithoutImageCaptureOrPolling(testCase)
             % fitLayoutCompletesWithoutImageCaptureOrPolling Compare acknowledged geometry with a later independent read.
-            figure = uifigure("Visible", "on", "Position", [100 100 500 400]);
+            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 500 400]);
             cleanup = onCleanup(@() delete(figure));
             grid = uigridlayout(figure, [2 1], "RowHeight", {"fit", "1x"});
             label = uilabel(grid, "Text", "Initial");
@@ -87,8 +119,22 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
             immediate = label.Position;
             pause(0.2); drawnow;
             testCase.verifyEqual(label.Position, immediate, "AbsTol", 1e-8);
-            testCase.verifyNotEmpty(string(response.rootId));
+            testCase.verifyTrue(response.framed);
             testCase.verifyEqual(numel(timerfindall()), numel(before));
+        end
+
+        function editorFigureProvidesLayoutWaitWindow(testCase)
+            % editorFigureProvidesLayoutWaitWindow Run the wait in an editor figure of the current session.
+            %   Under matlab -batch every uifigure has its own window; run this
+            %   file from a desktop session to check the R2025a+ desktop host.
+            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 500 400]);
+            cleanup = onCleanup(@() delete(figure));
+            grid = uigridlayout(figure, [1 1]);
+            uilabel(grid, "Text", "Label");
+            drawnow;
+            response = yamada.ui.waitForPreviewLayout(figure, grid);
+            testCase.verifyGreaterThan(response.watched, 0);
+            testCase.verifyTrue(response.quieted);
         end
     end
 end
