@@ -294,6 +294,12 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
                     heights = data.rowBoundaries(:, 4);
                     testCase.verifyEqual(heights([1 3]), heights([2 4]), "AbsTol", 1e-8);
                 end
+                if name == "OverlapCross"
+                    rows = data.rowBoundaries;
+                    testCase.verifyEqual(rows([1 5], 4), [0; 0], "AbsTol", 1e-8);
+                    gaps = rows(1:end-1, 2) - sum(rows(2:end, [2 4]), 2);
+                    testCase.verifyEqual(gaps, [0; 10; 10; 0], "AbsTol", 1e-8);
+                end
                 clear cleanup
             end
         end
