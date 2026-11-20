@@ -1,7 +1,7 @@
-classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuilderTest < matlab.unittest.TestCase
+classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTest < matlab.unittest.TestCase
     % GridLayoutOverlayDataBuilderTest Verify public-geometry grid overlay payloads.
 
-    methods (Test, TestTags = {'fast'})
+    methods (Test, TestTags = {'fast', 'ui'})
         function publishesFixedTrackBoundsAndImmediateChildren(testCase)
             % publishesFixedTrackBoundsAndImmediateChildren Match fixed tracks to realized child bounds.
 
@@ -29,7 +29,7 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
         end
     end
 
-    methods (Test)
+    methods (Test, TestTags = {'ui'})
         function sharedSnapshotRemainsIndependentOfLaterNativeGeometry(testCase)
             % sharedSnapshotRemainsIndependentOfLaterNativeGeometry Use one observation for all grid consumers.
             [document, handles, panel, grid, first, ~, cleanup, registry] = ...
@@ -75,23 +75,6 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             second.IsEditable = false;
             [locked, ~] = builder.cacheInputs(document, registry, grid.Id);
             testCase.verifyNotEqual(locked, moved);
-        end
-
-        function cacheInputsRejectLiveDataAndFollowCatalogRevision(testCase)
-            % cacheInputsRejectLiveDataAndFollowCatalogRevision Keep unresolved mutable inputs on the full path.
-            [document, ~, ~, grid, ~, ~, cleanup, registry] = testCase.renderGrid([40 50], [60 70]);
-            testCase.addTeardown(@() delete(cleanup));
-            builder = yamada.ui.GridLayoutOverlayDataBuilder();
-            [before, safe] = builder.cacheInputs(document, registry, grid.Id);
-            testCase.assertTrue(safe);
-            registry.register(registry.get("uigridlayout"));
-            [changed, safe] = builder.cacheInputs(document, registry, grid.Id);
-            testCase.verifyTrue(safe);
-            testCase.verifyNotEqual(changed, before);
-            document.Metadata.Live = containers.Map("mutable", 1);
-            [unknown, safe] = builder.cacheInputs(document, registry, grid.Id);
-            testCase.verifyFalse(safe);
-            testCase.verifyEmpty(fieldnames(unknown));
         end
 
         function nativeInputsObserveFitTracksAndUnmappedAncestors(testCase)
@@ -462,6 +445,26 @@ classdef (TestTags = {'gridOverlay', 'preview', 'ui'}) GridLayoutOverlayDataBuil
             testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, 1);
             testCase.verifyEqual(child.getProperty("Layout.Column").LiteralValue, 1);
             clear cleanup
+        end
+    end
+
+    methods (Test, TestTags = {'fast'})
+        function cacheInputsRejectLiveDataAndFollowCatalogRevision(testCase)
+            % cacheInputsRejectLiveDataAndFollowCatalogRevision Keep unresolved mutable inputs on the full path.
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("GridOverlayApp", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            builder = yamada.ui.GridLayoutOverlayDataBuilder();
+            [before, safe] = builder.cacheInputs(document, registry, grid.Id);
+            testCase.assertTrue(safe);
+            registry.register(registry.get("uigridlayout"));
+            [changed, safe] = builder.cacheInputs(document, registry, grid.Id);
+            testCase.verifyTrue(safe);
+            testCase.verifyNotEqual(changed, before);
+            document.Metadata.Live = containers.Map("mutable", 1);
+            [unknown, safe] = builder.cacheInputs(document, registry, grid.Id);
+            testCase.verifyFalse(safe);
+            testCase.verifyEmpty(fieldnames(unknown));
         end
     end
 

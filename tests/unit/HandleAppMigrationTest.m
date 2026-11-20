@@ -1,9 +1,9 @@
-classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigrationTest < matlab.unittest.TestCase
+classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTest < matlab.unittest.TestCase
     % HandleAppMigrationTest Verify the handle app contract and actual owner lifetime.
     %   Generated test apps execute only in explicit runtime tests. Parser tests
     %   preserve source without constructing the app or invoking its callbacks.
 
-    methods (Test)
+    methods (Test, TestTags = {'fast'})
         function cleanupRethrowPreservesCertainInitialization(testCase)
             % cleanupRethrowPreservesCertainInitialization Trace the successful constructor path only when proven.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -67,7 +67,9 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle', 'ui'}) HandleAppMigra
             document.undo();
             testCase.verifyEqual(generator.generate(document), source);
         end
+    end
 
+    methods (Test, TestTags = {'ui'})
         function generatedCallbacksReceiveSourceAndEvent(testCase)
             % generatedCallbacksReceiveSourceAndEvent Exercise the documented bound-method calling convention.
             [document, registry] = testCase.runtimeDocument();

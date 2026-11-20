@@ -23,6 +23,7 @@ classdef yamada < handle
         PreviewRenderer yamada.ui.PreviewRenderer
         GridLayoutOverlayDataBuilder yamada.ui.GridLayoutOverlayDataBuilder
         UIFigure matlab.ui.Figure
+        EditorVisibility string
         MainGrid matlab.ui.container.GridLayout
         CommandGrid matlab.ui.container.GridLayout
         RightGrid matlab.ui.container.GridLayout
@@ -115,11 +116,14 @@ classdef yamada < handle
     end
 
     methods
-        function app = yamada(lifecycle)
+        function app = yamada(lifecycle, options)
             % yamada Create the editor shell and an empty document.
+            %   yamada(Visible="off") keeps the editor figure hidden during
+            %   programmatic inspection and callbacks.
             arguments (Input)
                 lifecycle (1, 1) yamada.ui.DocumentLifecycleService = ...
                     yamada.ui.DocumentLifecycleService()
+                options.Visible (1, 1) string {mustBeMember(options.Visible, ["on", "off"])} = "on"
             end
             arguments (Output)
                 app (1, 1) yamada
@@ -127,6 +131,7 @@ classdef yamada < handle
 
             % Keep capability definitions shared by New, Open, preview, and validation.
             app.Lifecycle = lifecycle;
+            app.EditorVisibility = options.Visible;
             app.Registry = yamada.model.ComponentRegistry.createDefault();
             app.Clipboard = yamada.model.ComponentClipboard();
             app.DefaultValueProvider = yamada.ui.inspector.DefaultValueProvider(app.Registry);
@@ -138,7 +143,7 @@ classdef yamada < handle
                 addlistener(app.UIFigure, "ObjectBeingDestroyed", @app.figureDeleted);
                 app.createMenus();
                 app.newDocument("UntitledApp");
-                app.UIFigure.Visible = "on";
+                app.UIFigure.Visible = app.EditorVisibility;
             catch exception
                 delete(app);
                 rethrow(exception);
@@ -683,7 +688,7 @@ classdef yamada < handle
             app.setStatus("Added " + component.Name);
             app.PreviewOwnsKeyboard = true;
             app.KeyboardFocusMoved = false;
-            focus(app.InteractionOverlay);
+            app.focusEditorControl(app.InteractionOverlay);
         end
 
         function deleteComponentButtonPushed(app, id)
@@ -719,7 +724,7 @@ classdef yamada < handle
             end
             app.refreshShell(retainHierarchy);
             if retainHierarchy
-                focus(app.HierarchyTree);
+                app.focusEditorControl(app.HierarchyTree);
             end
             app.setStatus("Deleted " + component.Name);
         end
@@ -1016,7 +1021,7 @@ classdef yamada < handle
                 "ValueChangingFcn", @(~, change) app.hierarchyRenameChanging(change), ...
                 "ValueChangedFcn", @(~, change) app.commitHierarchyRename(change.Value));
             app.refreshEditCommands();
-            focus(app.HierarchyRenameField);
+            app.focusEditorControl(app.HierarchyRenameField);
         end
 
         function hierarchyRenameChanging(app, event)
@@ -1043,7 +1048,7 @@ classdef yamada < handle
                 app.setStatus(string(exception.message));
                 app.HierarchyRenameField.Tooltip = string(exception.message);
                 app.HierarchyRenameField.BackgroundColor = [1 0.88 0.88];
-                focus(app.HierarchyRenameField);
+                app.focusEditorControl(app.HierarchyRenameField);
                 return
             end
             app.endHierarchyRename();
@@ -1072,7 +1077,7 @@ classdef yamada < handle
             if restoreFocus
                 app.KeyboardFocusMoved = false;
                 app.UIFigure.CurrentObject = app.HierarchyTree;
-                focus(app.HierarchyTree);
+                app.focusEditorControl(app.HierarchyTree);
             end
         end
 
@@ -4294,6 +4299,19 @@ classdef yamada < handle
             app.StatusLabel.Text = message;
         end
 
+        function focusEditorControl(app, control)
+            % focusEditorControl Focus a native control when the editor is visible.
+            arguments (Input)
+                app (1, 1) yamada
+                control (1, 1)
+            end
+
+            % MATLAB cannot focus controls in a hidden editor.
+            if app.UIFigure.Visible == "on"
+                focus(control);
+            end
+        end
+
         function focusEditor(app)
             % focusEditor Bring the editor figure to the foreground after a dialog.
             arguments (Input)
@@ -4301,7 +4319,7 @@ classdef yamada < handle
             end
 
             % Restore the app window after native dialogs return focus to MATLAB.
-            if ~isempty(app.UIFigure) && isvalid(app.UIFigure)
+            if app.EditorVisibility == "on" && ~isempty(app.UIFigure) && isvalid(app.UIFigure)
                 app.UIFigure.Visible = "on";
                 drawnow;
                 figure(app.UIFigure);

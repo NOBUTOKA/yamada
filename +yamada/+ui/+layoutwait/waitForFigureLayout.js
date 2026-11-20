@@ -1,15 +1,22 @@
 // Copyright (C) 2026 Nobuto Kaitoh
 // SPDX-License-Identifier: GPL-3.0-or-later
-// This file is part of yamada. See LICENSE for the license text.
+// This file is part of waitForFigureLayout. See LICENSE for the license text.
 
-// Executed only inside the editor-owned figure window.
+// Executed only inside the figure window.
 (() => {
-    const cfg = CFG;
+    const cfg = __LAYOUT_WAIT_CONFIGURATION__;
     // Resolve to false instead of waiting forever when a browser pauses the awaited work.
-    const bounded = (promise, milliseconds) => Promise.race([
-        promise.then(() => true),
-        new Promise(resolve => setTimeout(() => resolve(false), milliseconds))
-    ]);
+    const bounded = async promise => {
+        let timer;
+        try {
+            return await Promise.race([
+                promise.then(() => true),
+                new Promise(resolve => { timer = setTimeout(() => resolve(false), cfg.limit); })
+            ]);
+        } finally {
+            clearTimeout(timer);
+        }
+    };
     const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
     // Report failures that happen before the figure ViewModel is reachable.
     const fail = error => require(['mw-messageservice/MessageService'], bus => bus.publish(cfg.channel, {
@@ -26,7 +33,9 @@
             const send = data => figureViewModel.dispatchEvent(cfg.event, figureViewModel, Object.assign({token: cfg.token}, data));
             (async () => {
                 // Record when any container last told its children that their client area changed.
-                const resize = window.__yamadaLayoutResize || (window.__yamadaLayoutResize = {last: performance.now()});
+                const resize = figureViewModel.figureLayoutWaitResize ??= {
+                    last: performance.now(), hooked: new WeakSet()
+                };
                 // The channel-wide controller cache exists in R2023a through R2026b; the figure
                 // controller's _controllerMap is absent in R2023a and R2026b.
                 const cache = service.getInstance(cfg.figureChannel)._controllerCache || {};
@@ -36,13 +45,13 @@
                 for (const controller of controllers) {
                     if (!controller || typeof controller.emitContainerResizeControllerEvent !== 'function') { continue; }
                     watched++;
-                    if (controller.__yamadaResizeHook) { continue; }
+                    if (resize.hooked.has(controller)) { continue; }
                     const original = controller.emitContainerResizeControllerEvent;
                     controller.emitContainerResizeControllerEvent = function (...args) {
                         resize.last = performance.now();
                         return original.apply(this, args);
                     };
-                    controller.__yamadaResizeHook = true;
+                    resize.hooked.add(controller);
                     hooked++;
                 }
                 // Resizes before a controller was hooked are unknown, so treat them as just happened.
@@ -51,26 +60,34 @@
                 document.body.getBoundingClientRect();
                 await delay(0);
                 // Grid Layouts receive these resizes through a throttled handler whose trailing call
-                // runs on a timer that neither stabilize() nor an animation frame observes; see
-                // waitForPreviewLayout for the delay this quiet period covers.
+                // runs on a timer that neither stabilize() nor an animation frame observes.
                 const started = performance.now();
                 while (performance.now() - resize.last < cfg.quiet && performance.now() - started < cfg.quietLimit) {
                     await delay(10);
                 }
                 const quieted = performance.now() - resize.last >= cfg.quiet;
                 // Image loads can resize fit layouts after the frame that started them.
-                const pending = Array.from(document.images).filter(image => !image.complete).map(image =>
-                    new Promise(resolve => {
-                        image.addEventListener('load', resolve, {once: true});
-                        image.addEventListener('error', resolve, {once: true});
-                    }));
-                const imagesLoaded = await bounded(Promise.all(pending), cfg.limit);
+                const pending = Array.from(document.images).filter(image => !image.complete);
+                const imageListeners = new AbortController();
+                let imagesLoaded;
+                try {
+                    imagesLoaded = await bounded(Promise.all(pending.map(image =>
+                        new Promise(resolve => {
+                            const options = {once: true, signal: imageListeners.signal};
+                            image.addEventListener('load', resolve, options);
+                            image.addEventListener('error', resolve, options);
+                        }))));
+                } finally {
+                    imageListeners.abort();
+                }
                 // Await relayouts queued by the throttled handlers; R2023a has no stabilize().
                 const root = manager.getRoot();
-                const stabilized = typeof root.stabilize === 'function' ? await bounded(root.stabilize(), cfg.limit) : false;
+                const stabilized = typeof root.stabilize === 'function' && await bounded(root.stabilize());
                 // One animation frame runs after the callbacks that relayout grid children.
                 document.body.getBoundingClientRect();
-                const framed = await bounded(new Promise(resolve => window.requestAnimationFrame(resolve)), cfg.limit);
+                let frame;
+                const framed = await bounded(new Promise(resolve => { frame = requestAnimationFrame(resolve); }));
+                cancelAnimationFrame(frame);
                 send({hooked: hooked, watched: watched, imagesWaited: pending.length, imagesLoaded: imagesLoaded, quieted: quieted,
                     stabilized: stabilized, framed: framed});
             })().catch(error => send({error: String(error)}));

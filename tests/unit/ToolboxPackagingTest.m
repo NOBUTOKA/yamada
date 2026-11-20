@@ -52,6 +52,11 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
             testCase.verifyFalse(any(ismember(testCase.PackagerEntries, relative)));
             generated = intersect(actual(:), testCase.PackagerEntries(:));
             testCase.verifyEqual(sort(actual(:)), sort([relative; "DesktopToolset.xml"; generated]));
+            % Ship exactly the layout wait runtime and license under the subtree path.
+            prefix = "+yamada/+ui/+layoutwait/";
+            layoutWaitFiles = prefix + ["FigureLayoutWaitReply.m"; "LICENSE"; ...
+                "waitForFigureLayout.js"; "waitForFigureLayout.m"];
+            testCase.verifyEqual(sort(reshape(actual(startsWith(actual, prefix)), [], 1)), sort(layoutWaitFiles));
             for filePath = testCase.Files'
                 name = extractAfter(filePath, strlength(testCase.ProjectRoot) + 1);
                 shipped = fullfile(payloadRoot, name);
