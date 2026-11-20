@@ -17,7 +17,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                 "app.Second = uibuttongroup(app.Figure);", "app.Second.TitlePosition = 'lefttop';", ...
                 "end", "end", "end"], newline);
             yamada.source.SourceWriter.write(target, source, "CRLF");
-            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            app = yamada(lifecycleForTest(struct("OpenPath", target)), Visible="off");
             cleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
 
@@ -57,7 +57,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             fixture = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "ControlGalleryApp.m");
             target = fullfile(string(folder.Folder), "ControlGalleryApp.m");
             copyfile(fixture, target);
-            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            app = yamada(lifecycleForTest(struct("OpenPath", target)), Visible="off");
             cleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             original = app.Document.OriginalText;
@@ -104,7 +104,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % diffPreviewReceivesOriginalAndCommittedSource Open the comparison from the Tools menu.
             [target, ~] = reloadFixture();
             fileCleanup = onCleanup(@() deleteTemporaryFile(target));
-            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            app = yamada(lifecycleForTest(struct("OpenPath", target)), Visible="off");
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             addPaletteComponent("Button");
@@ -131,7 +131,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             service = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() deal(true, target), ...
                 "ConfirmExternalSourceChangeFcn", confirm));
-            app = yamada(service);
+            app = yamada(service, Visible="off");
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             window = editorFigure();
@@ -181,7 +181,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                 [target, source] = reloadFixture();
                 fileCleanup = onCleanup(@() deleteTemporaryFile(target));
                 app = yamada(lifecycleForTest(struct("OpenPath", target, ...
-                    "ExternalAccepted", accepted, "ReloadChoice", "Discard")));
+                    "ExternalAccepted", accepted, "ReloadChoice", "Discard")), Visible="off");
                 appCleanup = onCleanup(@() deleteIfValid(app));
                 invokeEditorMenu("Open...");
                 original = app.Document;
@@ -214,7 +214,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             for choice = ["Save", "Discard"]
                 [target, ~] = reloadFixture();
                 fileCleanup = onCleanup(@() deleteTemporaryFile(target));
-                app = yamada(lifecycleForTest(struct("OpenPath", target, "UnsavedChoice", choice)));
+                app = yamada(lifecycleForTest(struct("OpenPath", target, "UnsavedChoice", choice)), Visible="off");
                 appCleanup = onCleanup(@() deleteIfValid(app));
                 invokeEditorMenu("Open...");
                 addPaletteComponent("Button");
@@ -237,7 +237,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             [reader, armReader] = changingReader(target);
             service = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() deal(true, target), "ReadSourceBytesFcn", reader));
-            app = yamada(service);
+            app = yamada(service, Visible="off");
             appCleanup = onCleanup(@() deleteIfValid(app));
             tool = findall(editorFigure(), "Tag", "yamada-refresh-source");
             testCase.verifyEqual(string(tool.Enable), "off");
@@ -249,7 +249,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyTrue(app.Document == original);
             testCase.verifyEqual(string(tool.Enable), "on");
             clear appCleanup
-            app = yamada(lifecycleForTest(struct("OpenPath", target, "UnsavedChoice", "Save", "WriteSucceeds", false)));
+            app = yamada(lifecycleForTest(struct("OpenPath", target, "UnsavedChoice", "Save", "WriteSucceeds", false)), Visible="off");
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             original = app.Document;
@@ -263,7 +263,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % reloadEntriesReadFreshSourceAndResetHistory Exercise menu, toolbar and F5 dispatch.
             [target, source] = reloadFixture();
             fileCleanup = onCleanup(@() deleteTemporaryFile(target));
-            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            app = yamada(lifecycleForTest(struct("OpenPath", target)), Visible="off");
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             for entry = 1:3
@@ -287,7 +287,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % reloadFailuresRetainDocument Preserve model and history on unsuccessful reloads.
             [target, ~] = reloadFixture();
             fileCleanup = onCleanup(@() deleteTemporaryFile(target));
-            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            app = yamada(lifecycleForTest(struct("OpenPath", target)), Visible="off");
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             original = app.Document;
@@ -311,7 +311,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             separateCleanup = onCleanup(@() deleteTemporaryFile(separate));
             for saveTarget = [target, separate]
                 service = lifecycleForTest(struct("OpenPath", target, "SavePath", saveTarget, "ReloadChoice", "Save As"));
-                app = yamada(service);
+                app = yamada(service, Visible="off");
                 appCleanup = onCleanup(@() deleteIfValid(app));
                 invokeEditorMenu("Open...");
                 addPaletteComponent("Button");
@@ -335,7 +335,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % saveNewDocumentRequestsTarget Offer Save As through ordinary Save for a new document.
             target = string(tempname) + ".m";
             cleanupFile = onCleanup(@() deleteTemporaryFile(target));
-            app = yamada(lifecycleForTest(struct("SavePath", target)));
+            app = yamada(lifecycleForTest(struct("SavePath", target)), Visible="off");
             cleanupApp = onCleanup(@() deleteIfValid(app));
             addPaletteComponent("Button");
             item = findall(editorFigure(), "Type", "uimenu", "Accelerator", "S");
@@ -353,7 +353,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             original = reloadFixture();
             target = string(tempname) + ".m";
             cleanupFiles = onCleanup(@() cleanupTemporaryPaths([original target]));
-            app = yamada(lifecycleForTest(struct("OpenPath", original, "SavePath", target)));
+            app = yamada(lifecycleForTest(struct("OpenPath", original, "SavePath", target)), Visible="off");
             cleanupApp = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             app.Document.setProperty(app.Document.RootComponentId, "Name", "Edited before saving");
@@ -370,7 +370,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % canceledSaveMissingTargetKeepsState Keep the document and checkpoint when automatic Save As is canceled.
             original = reloadFixture();
             cleanupFile = onCleanup(@() deleteTemporaryFile(original));
-            app = yamada(lifecycleForTest(struct("OpenPath", original, "SaveAccepted", false)));
+            app = yamada(lifecycleForTest(struct("OpenPath", original, "SaveAccepted", false)), Visible="off");
             cleanupApp = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             app.Document.setProperty(app.Document.RootComponentId, "Name", "Unsaved edit");
@@ -394,7 +394,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             service = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestOpenPathFcn", @() deal(true, target), ...
                 "RequestSavePathFcn", @(~) error("yamada:EditorLifecycleTest:UnexpectedSaveAs", "Existing Save must not open a chooser.")));
-            app = yamada(service);
+            app = yamada(service, Visible="off");
             cleanupApp = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             app.Document.setProperty(app.Document.RootComponentId, "Name", "Direct Save");
@@ -412,7 +412,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             yamada.source.SourceWriter.write(target, "original", "CRLF");
             refused = lifecycleForTest(struct("SavePath", target, ...
                 "SaveAccepted", true, "FileExists", true, "ReplaceAccepted", false));
-            app = yamada(refused);
+            app = yamada(refused, Visible="off");
             appCleanup = onCleanup(@() deleteIfValid(app));
             addPaletteComponent("Button");
 
@@ -424,7 +424,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             delete(app);
             service = lifecycleForTest(struct("SavePath", target, ...
                 "SaveAccepted", true, "FileExists", true, "ReplaceAccepted", true));
-            app = yamada(service);
+            app = yamada(service, Visible="off");
             appCleanup = onCleanup(@() deleteIfValid(app));
             testCase.verifyEqual(string(editorFigure().Name), ...
                 "UntitledApp - Yet Another MATLAB App Designer Alternative");
@@ -461,7 +461,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             target = string(tempname) + ".m";
             cleanupFile = onCleanup(@() deleteTemporaryFile(target));
             service = lifecycleForTest(struct("OpenPath", fixture, "SavePath", target));
-            app = yamada(service);
+            app = yamada(service, Visible="off");
             cleanupApp = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             testCase.verifyEqual(app.Document.ClassName, "SimpleCalculatorApp");
@@ -498,7 +498,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                 "app.Choice = uidropdown(app.UIFigure, Items=[""A"" ""B""], Value='A');", ...
                 "app.Choice.Value = 'B';", "end", "end", "end"], sprintf('\r\n'));
             yamada.source.SourceWriter.write(originalPath, source, "CRLF");
-            app = yamada(lifecycleForTest(struct("OpenPath", originalPath, "SavePath", target)));
+            app = yamada(lifecycleForTest(struct("OpenPath", originalPath, "SavePath", target)), Visible="off");
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             control = app.Document.getComponentByName("Choice");
@@ -522,7 +522,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyEqual([control.getSettings("Value").LiteralValue], 'AA');
             clear appCleanup
 
-            app = yamada(lifecycleForTest(struct("OpenPath", target)));
+            app = yamada(lifecycleForTest(struct("OpenPath", target)), Visible="off");
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Open...");
             control = app.Document.getComponentByName("Choice");
@@ -542,7 +542,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             service = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestSavePathFcn", @(~) deal(true, target), ...
                 "WriteSourceFcn", failingSecondWriter()));
-            app = yamada(service);
+            app = yamada(service, Visible="off");
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Save As...");
             testCase.verifyFalse(app.Document.IsDirty);
@@ -569,7 +569,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             targetCleanup = onCleanup(@() deleteTemporaryFile(target));
             service = yamada.ui.DocumentLifecycleService(struct( ...
                 "RequestSavePathFcn", @(~) deal(true, target)));
-            app = yamada(service);
+            app = yamada(service, Visible="off");
             appCleanup = onCleanup(@() deleteIfValid(app));
             invokeEditorMenu("Save As...");
             first = app.Document.SavedSource;
@@ -600,7 +600,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % canceledAndFailedSavesKeepTheDocumentDirty Preserve state after unsuccessful writes.
 
             canceled = lifecycleForTest(struct("SaveAccepted", false));
-            app = yamada(canceled);
+            app = yamada(canceled, Visible="off");
             cleanup = onCleanup(@() deleteIfValid(app));
             addPaletteComponent("Button");
             invokeEditorMenu("Save As...");
@@ -614,7 +614,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             cleanupFile = onCleanup(@() deleteTemporaryFile(target));
             failed = lifecycleForTest(struct("SavePath", target, ...
                 "SaveAccepted", true, "WriteSucceeds", false));
-            app = yamada(failed);
+            app = yamada(failed, Visible="off");
             cleanup = onCleanup(@() deleteIfValid(app));
             addPaletteComponent("Button");
             invokeEditorMenu("Save As...");
@@ -634,7 +634,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % invalidSaveAsFilenameDoesNotChangeDocument Require a valid MATLAB class file name.
             target = string(tempname) + " invalid.m";
             service = lifecycleForTest(struct("SavePath", target));
-            app = yamada(service);
+            app = yamada(service, Visible="off");
             cleanup = onCleanup(@() deleteIfValid(app));
 
             invokeEditorMenu("Save As...");
@@ -652,7 +652,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
                 "fixtures", "SimpleCalculatorApp.m");
             canceled = lifecycleForTest(struct("NewClassName", "NextApp", ...
                 "OpenPath", fixture, "UnsavedChoice", "Cancel"));
-            app = yamada(canceled);
+            app = yamada(canceled, Visible="off");
             cleanup = onCleanup(@() deleteIfValid(app));
             addPaletteComponent("Button");
             invokeEditorMenu("New");
@@ -664,7 +664,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
 
             discarded = lifecycleForTest(struct("NewClassName", "NextApp", ...
                 "OpenPath", fixture, "UnsavedChoice", "Discard"));
-            app = yamada(discarded);
+            app = yamada(discarded, Visible="off");
             cleanup = onCleanup(@() deleteIfValid(app));
             addPaletteComponent("Button");
             invokeEditorMenu("New");
@@ -680,7 +680,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             % closeGuardSupportsCancelSaveDiscardAndCleanClose Exercise all editor close decisions.
 
             canceled = lifecycleForTest(struct("UnsavedChoice", "Cancel"));
-            app = yamada(canceled);
+            app = yamada(canceled, Visible="off");
             addPaletteComponent("Button");
             figure = editorFigure();
             figure.CloseRequestFcn(figure, struct());
@@ -691,7 +691,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             cleanupFile = onCleanup(@() deleteTemporaryFile(target));
             saved = lifecycleForTest(struct("UnsavedChoice", "Save", ...
                 "SavePath", target, "SaveAccepted", true));
-            app = yamada(saved);
+            app = yamada(saved, Visible="off");
             addPaletteComponent("Button");
             testCase.verifyTrue(app.Document.IsDirty);
             figure = editorFigure();
@@ -700,7 +700,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyTrue(isfile(target));
 
             discarded = lifecycleForTest(struct("UnsavedChoice", "Discard"));
-            app = yamada(discarded);
+            app = yamada(discarded, Visible="off");
             addPaletteComponent("Button");
             testCase.verifyTrue(app.Document.IsDirty);
             figure = editorFigure();
@@ -709,7 +709,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
 
             clean = lifecycleForTest(struct("SavePath", target, ...
                 "SaveAccepted", true, "ConfirmMustNotRun", true));
-            app = yamada(clean);
+            app = yamada(clean, Visible="off");
             invokeEditorMenu("Save As...");
             testCase.verifyFalse(app.Document.IsDirty);
             figure = editorFigure();

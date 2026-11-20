@@ -2,6 +2,12 @@
 
 For users deciding whether to update, this log describes changes and compatibility limits by version.
 
+## 1.1.2
+
+- Improve Safe Preview grid boundaries for overflowing content-sized tracks, collapsed flexible tracks, and overlapping spans.
+- Synchronize Safe Preview layout updates with the bundled waitForFigureLayout utility.
+- Restore File Exchange keywords in the Toolbox package.
+
 ## 1.1.1
 
 - Set the MATLAB Package Manager package name to yamada.

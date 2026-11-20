@@ -74,10 +74,9 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
     methods (Test)
         function liveInspectorUsesOneUndoForBothLinkedSizes(testCase)
             % liveInspectorUsesOneUndoForBothLinkedSizes Verify palette, Inspector, model, and Preview agreement.
-            app = yamada();
+            app = yamada(Visible="off");
             cleanup = onCleanup(@() delete(app));
             figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
-            figure.Visible = "off";
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(item) any(string(item.ColumnName) == "Component") && ...
                 any(string(item.ColumnName) == "Category"), tables));

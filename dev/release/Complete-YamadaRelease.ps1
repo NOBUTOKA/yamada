@@ -20,16 +20,20 @@ if ($manifest.sourceDirty) { throw 'Do not sign a build from a dirty checkout. B
 if ($manifest.sourceCommit -notmatch '^[0-9a-f]{40}$') { throw 'The manifest does not identify a valid source commit.' }
 $actualHash = (Get-FileHash -LiteralPath $artifactPath -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actualHash -ne $manifest.toolboxSha256) { throw 'The artifact differs from the build manifest.' }
-$checksumPath = Join-Path $folder 'SHA256SUMS'
+$checksumPath = $artifactPath + ".sha256"
 $expectedChecksum = $actualHash + '  ' + $expectedName
-if ((Get-Content -LiteralPath $checksumPath -Raw).Trim() -ne $expectedChecksum) { throw 'SHA256SUMS does not match the artifact.' }
+if ((Get-Content -LiteralPath $checksumPath -Raw).Trim() -ne $expectedChecksum) { throw 'The checksum file does not match the artifact.' }
 
 # Require the recorded release commit to carry a valid GPG signature.
 $repository = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
 & git -C $repository verify-commit $manifest.sourceCommit
 if ($LASTEXITCODE -ne 0) { throw 'The release source commit does not have a verifiable GPG signature.' }
+$maintenanceBranch = "release/" + ($metadata.version -replace '\.[0-9]+$', '')
 & git -C $repository merge-base --is-ancestor $manifest.sourceCommit main
-if ($LASTEXITCODE -ne 0) { throw 'The release source commit has not been integrated into main.' }
+if ($LASTEXITCODE -ne 0) {
+    & git -C $repository merge-base --is-ancestor $manifest.sourceCommit $maintenanceBranch
+    if ($LASTEXITCODE -ne 0) { throw "The release source commit has not been integrated into main or $maintenanceBranch." }
+}
 
 # Keep signed outputs fixed and let GnuPG request hardware interaction itself.
 $signature = $artifactPath + '.asc'

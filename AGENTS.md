@@ -63,6 +63,7 @@ These conventions apply to project-owned source code.
 ## Git and Contribution Workflow
 
 - Follow `CONTRIBUTING.md` for branches and pull requests, and `doc/RELEASING.md` for releases.
+- Do not use the agent name prefix such as `codex/` for work branches. Use a descriptive name such as `feature/<purpose>`, `fix/<purpose>`, or `docs/<purpose>`.
 - Inspect the working tree before editing and preserve unrelated changes.
 - Treat Git history as project documentation. Make coherent, independently reviewable commits that explain the progression of work.
 - Proactively commit completed logical implementation units after relevant checks pass, and check `git status` before finishing a file-changing task.
