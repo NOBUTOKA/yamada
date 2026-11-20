@@ -1978,6 +1978,129 @@
           "argument": "format"
         }
       ]
+    },
+    {
+      "id": "xtickformat.format",
+      "name": "xtickformat",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "format",
+          "type": "textScalar"
+        }
+      ],
+      "effects": [
+        {
+          "path": "XAxis.TickLabelFormat",
+          "argument": "format"
+        }
+      ]
+    },
+    {
+      "id": "ytickformat.format",
+      "name": "ytickformat",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "format",
+          "type": "textScalar"
+        }
+      ],
+      "effects": [
+        {
+          "path": "YAxis.TickLabelFormat",
+          "argument": "format"
+        }
+      ]
+    },
+    {
+      "id": "ztickformat.format",
+      "name": "ztickformat",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "format",
+          "type": "textScalar"
+        }
+      ],
+      "effects": [
+        {
+          "path": "ZAxis.TickLabelFormat",
+          "argument": "format"
+        }
+      ]
+    },
+    {
+      "id": "rtickformat.format",
+      "name": "rtickformat",
+      "targetFactories": [
+        "polaraxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "format",
+          "type": "textScalar"
+        }
+      ],
+      "effects": [
+        {
+          "path": "RAxis.TickLabelFormat",
+          "argument": "format"
+        }
+      ]
+    },
+    {
+      "id": "thetatickformat.format",
+      "name": "thetatickformat",
+      "targetFactories": [
+        "polaraxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "format",
+          "type": "textScalar"
+        }
+      ],
+      "effects": [
+        {
+          "path": "ThetaAxis.TickLabelFormat",
+          "argument": "format"
+        }
+      ]
     }
   ]
 }

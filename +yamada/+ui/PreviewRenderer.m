@@ -928,7 +928,7 @@ classdef PreviewRenderer < handle
         end
 
         function setProperty(obj, target, path, value, component)
-            % setProperty Assign a direct or one-level nested graphics property.
+            % setProperty Apply a reviewed direct or nested graphics property.
             arguments (Input)
                 obj (1, 1) yamada.ui.PreviewRenderer
                 target
@@ -977,6 +977,9 @@ classdef PreviewRenderer < handle
                 target.(parts(1)) = value;
             elseif numel(parts) == 2
                 target.(parts(1)).(parts(2)) = value;
+            elseif numel(parts) == 3 && any(parts(1) == ["XAxis","YAxis","ZAxis"]) && ...
+                    parts(2) == "SecondaryLabel" && parts(3) == "String"
+                target.(parts(1)).SecondaryLabel.String = value;
             else
                 error("yamada:PreviewRenderer:UnsupportedPropertyPath", ...
                     "Preview property path ""%s"" is too deeply nested.", path);

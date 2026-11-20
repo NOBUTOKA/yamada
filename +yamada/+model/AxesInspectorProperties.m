@@ -37,6 +37,24 @@ classdef AxesInspectorProperties
             result = ["dd","dm","dms","-dd","-dm","-dms"];
         end
 
+        function result = rulerPaths(factory)
+            % rulerPaths Return the supported numeric ruler details on this factory.
+            arguments (Input)
+                factory (1,1) string
+            end
+            arguments (Output)
+                result (1,:) string
+            end
+
+            result = strings(1,0);
+            if any(factory == ["axes","uiaxes"])
+                axesNames = ["XAxis","YAxis","ZAxis"];
+                result = [axesNames + ".TickLabelFormat", axesNames + ".Exponent", axesNames + ".SecondaryLabel.String"];
+            elseif factory == "polaraxes"
+                result = ["RAxis.TickLabelFormat","ThetaAxis.TickLabelFormat","ThetaAxis.TickLabelRotation"];
+            end
+        end
+
         function result = paths(factory)
             % paths Return the owned settings editable through the axes Inspector.
             arguments (Input)
@@ -49,6 +67,7 @@ classdef AxesInspectorProperties
             for group = yamada.model.AxesInspectorProperties.groups(factory)
                 result = [result group + "." + ["String" yamada.model.AxesInspectorProperties.names()]]; %#ok<AGROW>
             end
+            result = [result yamada.model.AxesInspectorProperties.rulerPaths(factory)];
             if factory == "geoaxes", result(end+1) = "TickLabelFormat"; end
             if any(factory == yamada.model.ColorbarDefinition.targets()), result(end+1) = "Colormap"; end
         end
@@ -110,6 +129,33 @@ classdef AxesInspectorProperties
                     definitionsOut(end+1) = yamada.model.PropertyDefinition(group+"."+member, ...
                         seed,member=="String",true,metadata); %#ok<AGROW>
                 end
+            end
+            for path = yamada.model.AxesInspectorProperties.rulerPaths(factory)
+                axisName = extractBefore(path,"Axis.");
+                member = extractAfter(path,".");
+                editor = "number";
+                valueClass = "double";
+                seed = 0;
+                switch member
+                    case "TickLabelFormat"
+                        label = "Tick Label Format";
+                        editor = "text";
+                        valueClass = ["char","string"];
+                        seed = "";
+                    case "SecondaryLabel.String"
+                        label = "Secondary Label";
+                        editor = "text";
+                        valueClass = ["char","string"];
+                        seed = "";
+                    case "TickLabelRotation"
+                        label = "Tick Label Rotation";
+                    case "Exponent"
+                        label = "Exponent";
+                end
+                metadata = struct("category","Rulers","displayName",axisName + " " + label, ...
+                    "editor",editor,"previewPolicy","apply", ...
+                    "valueSchema",struct("kind","literal","shape","scalar","matlabClasses",valueClass));
+                definitionsOut(end+1) = yamada.model.PropertyDefinition(path,seed,false,true,metadata); %#ok<AGROW>
             end
             if factory == "geoaxes"
                 index = find(string({definitionsOut.Path}) == "TickLabelFormat",1);

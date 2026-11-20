@@ -54,6 +54,62 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             end
         end
 
+        function editsNumericRulerTickFormats(testCase)
+            % editsNumericRulerTickFormats Preserve function syntax and emit direct new assignments.
+            [document, registry, component] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "xtickformat(app.Control, '%.1f'); % keep"]);
+            testCase.verifyEqual(string(component.getSettings("XAxis.TickLabelFormat").LiteralValue),"%.1f");
+            document.editAxesInspector(component.Id,"XAxis.TickLabelFormat","%.2f","set",registry);
+            document.editAxesInspector(component.Id,"YAxis.TickLabelFormat","%.3f","set",registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifySubstring(source,"xtickformat(app.Control, '%.2f'); % keep");
+            testCase.verifySubstring(source,'app.Control.YAxis.TickLabelFormat = "%.3f";');
+            reloaded = yamada.source.AppSourceParser.parseText(source,registry);
+            owner = reloaded.getComponentByName("Control");
+            testCase.verifyEqual(string(owner.getSettings("YAxis.TickLabelFormat").LiteralValue),"%.3f");
+            document.undo();
+            testCase.verifyEmpty(component.getSettings("YAxis.TickLabelFormat"));
+        end
+
+        function savesNumericRulerExponentAndThetaRotation(testCase)
+            % savesNumericRulerExponentAndThetaRotation Preserve validated nested numeric assignments.
+            fixtures = ["uiaxes","XAxis.Exponent", "2"; "polaraxes","ThetaAxis.TickLabelRotation","25"];
+            for index = 1:size(fixtures,1)
+                factory = fixtures(index,1);
+                path = fixtures(index,2);
+                value = str2double(fixtures(index,3));
+                [document, registry, component] = testCase.fixture( ...
+                    "app.Control = " + factory + "(app.UIFigure);", factory);
+                document.editAxesInspector(component.Id,path,value,"set",registry);
+                source = yamada.source.RoundTripGenerator(registry).generate(document);
+                testCase.verifySubstring(source,"app.Control." + path + " = " + fixtures(index,3) + ";");
+                reloaded = yamada.source.AppSourceParser.parseText(source,registry);
+                owner = reloaded.getComponentByName("Control");
+                testCase.verifyEqual(owner.getSettings(path).LiteralValue,value);
+                document.undo();
+                testCase.verifyEmpty(component.getSettings(path));
+            end
+        end
+
+        function editsSecondaryLabelWithTheAvailableSourceForm(testCase)
+            % editsSecondaryLabelWithTheAvailableSourceForm Keep new assignments and existing calls distinct.
+            [document, registry, component] = testCase.fixture("app.Control = uiaxes(app.UIFigure);");
+            path = "XAxis.SecondaryLabel.String";
+            document.editAxesInspector(component.Id,path,"units","set",registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifySubstring(source,'app.Control.XAxis.SecondaryLabel.String = "units";');
+            [calls, registry, component] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "xsecondarylabel(app.Control, 'units');"]);
+            if isempty(yamada.catalog.AxesSettingFunctionCatalog.forName("xsecondarylabel",registry.CatalogRoot))
+                testCase.verifyEmpty(component.getSettings(path));
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(calls),calls.OriginalText);
+            else
+                calls.editAxesInspector(component.Id,path,"new units","set",registry);
+                testCase.verifySubstring(yamada.source.RoundTripGenerator(registry).generate(calls), ...
+                    "xsecondarylabel(app.Control, 'new units');");
+            end
+        end
+
         function readsPolarCallsAndWarnsWhenTargetIsLost(testCase)
             % readsPolarCallsAndWarnsWhenTargetIsLost Stop inference after opaque code and accept explicit targets.
             [document, registry, control] = testCase.fixture([ ...

@@ -142,8 +142,26 @@ classdef AxesInspectorEdits
                         ~isempty(value) && size(value,2) == 3 && all(isfinite(value(:))) && ...
                         all(value(:) >= 0 & value(:) <= 1), ...
                         "yamada:AxesInspectorEdits:Colormap","Choose a colormap with RGB values between zero and one.");
+                case {"Exponent","TickLabelRotation"}
+                    assert(isnumeric(value) && isscalar(value) && isreal(value) && isfinite(value), ...
+                        "yamada:AxesInspectorEdits:RulerNumber", "Enter a finite number.");
+                    if member == "Exponent"
+                        assert(value == fix(value), "yamada:AxesInspectorEdits:RulerExponent", "Enter an integer exponent.");
+                    end
+                case "SecondaryLabel.String"
+                    value = string(value);
+                    assert(isscalar(value) && ~ismissing(value), ...
+                        "yamada:AxesInspectorEdits:RulerSecondaryLabel", "Enter one secondary label.");
+                    if ~isempty(original) && ischar(original.LiteralValue), value = char(value); end
                 case "TickLabelFormat"
-                    value = string(validatestring(value,yamada.model.AxesInspectorProperties.formats()));
+                    if path == "TickLabelFormat"
+                        value = string(validatestring(value,yamada.model.AxesInspectorProperties.formats()));
+                    else
+                        value = string(value);
+                        assert(isscalar(value) && ~ismissing(value) && strlength(value)>0, ...
+                            "yamada:AxesInspectorEdits:RulerFormat", "Enter one tick label format.");
+                        if ~isempty(original) && ischar(original.LiteralValue), value = char(value); end
+                    end
             end
             result = value;
         end
@@ -183,7 +201,7 @@ classdef AxesInspectorEdits
             receiver = "app." + component.Name;
             suffix = "";
             syntax = "assignment";
-            if isempty(original) && ((endsWith(path,".String") && path ~= "Label.String") || path == "TickLabelFormat")
+            if isempty(original) && any(path == ["Title.String","Subtitle.String","XLabel.String","YLabel.String","ZLabel.String","TickLabelFormat"])
                 switch path
                     case "Title.String"
                         name = "title";
