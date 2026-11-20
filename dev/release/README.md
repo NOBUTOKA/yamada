@@ -2,7 +2,7 @@
 
 For maintainers building and signing a Toolbox candidate, this guide describes the build inputs, output files, and signing command.
 
-Add `dev/release` to the MATLAB path and run `buildYamadaToolbox`. The build requires MATLAB R2026b, the declared maximum release, on Windows, because the packager rejects a maximum release newer than the running one. Its default output is the ignored `build/1.1.1` directory; pass a new output folder to keep multiple candidates. Existing output files are never replaced.
+Add `dev/release` to the MATLAB path and run `buildYamadaToolbox`. The build requires MATLAB R2026b, the declared maximum release, on Windows, because the packager rejects a maximum release newer than the running one. Its default output is the ignored `build/1.1.2` directory; pass a new output folder to keep multiple candidates. Existing output files are never replaced.
 
 ```matlab
 addpath(fullfile(pwd, "dev", "release"));
@@ -20,17 +20,17 @@ GPG-sign the final release commit on a work branch. Integrate it through a PR wh
 Build from that signed commit in a clean checkout, complete candidate validation, and prepare its detached signature using either command below.
 
 ```powershell
-./dev/release/Complete-YamadaRelease.ps1 -Artifact ./build/1.1.1/yamada-1.1.1.mltbx -SigningKey <signing-key>
+./dev/release/Complete-YamadaRelease.ps1 -Artifact ./build/1.1.2/yamada-1.1.2.mltbx -SigningKey <signing-key>
 ```
 
 From Command Prompt, pass the artifact path and signing key as positional arguments. The launcher uses PowerShell 7 (pwsh.exe on PATH) to run the same signing checks.
 
 ```cmd
-dev\release\Complete-YamadaRelease.cmd "build\1.1.1\yamada-1.1.1.mltbx" "SIGNING-KEY"
+dev\release\Complete-YamadaRelease.cmd "build\1.1.2\yamada-1.1.2.mltbx" "SIGNING-KEY"
 ```
 
-The script checks candidate identity, SHA-256, clean-build provenance, integration into `main`, and the release commit's GPG signature before invoking GnuPG. GnuPG may request a passphrase, PIN, or hardware-key confirmation. A signing error is a publication blocker. Keep the detached signature outside the Toolbox.
+The script checks candidate identity, SHA-256, clean-build provenance, integration into `main` or the matching maintenance branch, and the release commit's GPG signature before invoking GnuPG. GnuPG may request a passphrase, PIN, or hardware-key confirmation. A signing error is a publication blocker. Keep the detached signature outside the Toolbox.
 
-Publish the accepted `.mltbx`, its `.mltbx.asc`, and `.mltbx.sha256` as Release assets. Keep the build manifest as local verification evidence. Sign `v1.1.1` and make it point to the same release source commit.
+Publish the accepted `.mltbx`, its `.mltbx.asc`, and `.mltbx.sha256` as Release assets. Keep the build manifest as local verification evidence. Sign `v1.1.2` and make it point to the same release source commit.
 
 See the [release procedure](../../doc/RELEASING.md) for candidate acceptance and publication.

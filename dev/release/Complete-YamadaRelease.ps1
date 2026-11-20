@@ -28,8 +28,12 @@ if ((Get-Content -LiteralPath $checksumPath -Raw).Trim() -ne $expectedChecksum) 
 $repository = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
 & git -C $repository verify-commit $manifest.sourceCommit
 if ($LASTEXITCODE -ne 0) { throw 'The release source commit does not have a verifiable GPG signature.' }
+$maintenanceBranch = "release/" + ($metadata.version -replace '\.[0-9]+$', '')
 & git -C $repository merge-base --is-ancestor $manifest.sourceCommit main
-if ($LASTEXITCODE -ne 0) { throw 'The release source commit has not been integrated into main.' }
+if ($LASTEXITCODE -ne 0) {
+    & git -C $repository merge-base --is-ancestor $manifest.sourceCommit $maintenanceBranch
+    if ($LASTEXITCODE -ne 0) { throw "The release source commit has not been integrated into main or $maintenanceBranch." }
+}
 
 # Keep signed outputs fixed and let GnuPG request hardware interaction itself.
 $signature = $artifactPath + '.asc'
