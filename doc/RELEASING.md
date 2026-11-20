@@ -50,7 +50,7 @@ Record the source commit, MATLAB release/update, operating system, commands, com
 - Verify source preservation and non-execution of input code. Exercise cancellation, external changes, save failures, Japanese and space-containing paths, and startup from another working folder.
 - Check runtime resource discovery, cleanup of figures/listeners/timers, and uninstallation. For updates, test replacement of an installed earlier version and verify the stable Toolbox identity and resolved paths.
 
-If candidate code or packaged contents change, repeat affected checks and rebuild. Final validation must identify the exact commit and artifact to publish, including after integration into `main`.
+If candidate code or packaged contents change, repeat affected checks and rebuild. Final validation must identify the exact commit and artifact to publish, including after integration into `main` or the target maintenance branch.
 
 ## Publish
 
