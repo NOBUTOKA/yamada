@@ -68,6 +68,11 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
             requirements = string(fileread(fullfile(root, "metadata", "systemRequirements.xml")));
             paths = string(fileread(fullfile(root, "metadata", "configuration.xml")));
             gallery = string(fileread(fullfile(root, "fsroot", "DesktopToolset.xml")));
+            package = jsondecode(fileread(fullfile(root, "fsroot", "resources", "mpackage.json")));
+            testCase.verifyEqual(string(package.name), "yamada");
+            testCase.verifyEqual(string(package.readme), "doc/PACKAGE_OVERVIEW.md");
+            testCase.verifyEqual(string(package.displayName), string(testCase.Metadata.name));
+            testCase.verifyEqual(string(package.id), string(testCase.Metadata.identifier));
             testCase.verifySubstring(core, "<cp:version>" + testCase.Metadata.version + "</cp:version>");
             testCase.verifySubstring(addon, string(testCase.Metadata.identifier));
             testCase.verifySubstring(requirements, 'MATLABOnline="false" linux="false" mac="false" win="true"');
