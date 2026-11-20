@@ -155,11 +155,20 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
                     testCase.verifyEqual(copied.Value, app.Control.Value, scenario);
                     testCase.verifyEqual(handles(pasted.Id).Value, copied.Value, scenario);
                     if scenario == "automatic"
-                        testCase.verifyEqual(string(copied.MajorTicksMode), "auto");
-                        testCase.verifyEqual(copied.MajorTicks, app.Control.MajorTicks);
-                        testCase.verifyEqual(handles(pasted.Id).MajorTicks, copied.MajorTicks);
+                        % Automatic ticks are calculated independently as each slider lays out.
+                        % Copy preserves the explicit input and the final mode.
+                        reparsed = yamada.source.AppSourceParser.parseText(source, registry);
+                        savedCopy = reparsed.getComponentByName(pasted.Name);
+                        tickSettings = savedCopy.getSettings("MajorTicks");
+                        testCase.assertNumElements(tickSettings, 1);
+                        testCase.verifyEqual(tickSettings.LiteralValue, [0 25 100]);
+                        tickMode = savedCopy.getSettings("MajorTicksMode");
+                        testCase.assertNumElements(tickMode, 1);
+                        testCase.verifyLessThan(tickSettings.Sequence, tickMode.Sequence);
+                        testCase.verifyEqual(string(tickMode.LiteralValue), "auto");
                         drawnow;
-                        testCase.verifyEqual(copied.MajorTicks, app.Control.MajorTicks);
+                        testCase.verifyEqual(string(copied.MajorTicksMode), "auto");
+                        testCase.verifyEqual(string(handles(pasted.Id).MajorTicksMode), "auto");
                     end
                     clear figureCleanup appCleanup
                 end
