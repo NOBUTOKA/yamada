@@ -740,6 +740,16 @@ classdef yamada < handle
                 state (1, 1) struct
             end
             state = struct("Enabled", false, "Reason", "No component is available.", "ParentId", "");
+            if action == "Add Colorbar"
+                state = struct("Enabled",false,"Reason","Select an editable axes without a ColorBar.");
+                if isempty(app.Document) || app.HierarchyRenameId ~= "" || app.IsReloading, return, end
+                parent = app.Document.getComponent(id);
+                if ~isempty(parent) && parent.IsEditable
+                    definition = app.Registry.get("colorbar");
+                    state.Enabled = yamada.model.SubtreePlacementPlanner.accepts(app.Document,parent,definition);
+                end
+                return
+            end
             if isempty(app.Document) || strlength(app.HierarchyRenameId) > 0 || app.IsReloading, return, end
             if action == "Delete"
                 state = yamada.model.DocumentEditAvailability.deletion(app.Document, id, app.Registry);
@@ -779,7 +789,13 @@ classdef yamada < handle
                 return
             end
             try
-                if action == "Delete"
+                if action == "Add Colorbar"
+                    component = app.Document.insertComponent(app.Registry,"colorbar",id,{},true);
+                    app.SelectedComponentId = component.Id;
+                    app.refreshShell();
+                    app.setStatus("Added " + component.Name);
+                    return
+                elseif action == "Delete"
                     app.deleteComponentButtonPushed(id);
                     return
                 elseif action == "Copy"
@@ -810,6 +826,10 @@ classdef yamada < handle
 
             retainHierarchy = app.Document.canUndo() && app.Document.History{app.Document.HistoryIndex}.Kind == "rename";
             callbackOnly = app.Document.canUndo() && app.Document.History{app.Document.HistoryIndex}.Kind == "callback";
+            axesEdit = struct();
+            if app.Document.canUndo() && app.Document.History{app.Document.HistoryIndex}.Kind == "axes-inspector"
+                axesEdit = app.Document.History{app.Document.HistoryIndex};
+            end
             try
                 app.Document.undo();
             catch exception
@@ -818,7 +838,9 @@ classdef yamada < handle
             end
             app.ensureSelectionExists();
             if retainHierarchy, app.refreshHierarchyLabels(); end
-            if (callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)) || ...
+            if isfield(axesEdit,"Paths")
+                app.refreshViews(yamada.ui.RefreshRequest("properties",axesEdit.ComponentId,axesEdit.Paths));
+            elseif (callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)) || ...
                     (retainHierarchy && app.PreviewRenderer.acknowledgeRenameChanges(app.Document))
                 % History already restored exact current source without rebuilding Preview.
                 app.refreshSourceViews();
@@ -836,6 +858,10 @@ classdef yamada < handle
 
             retainHierarchy = app.Document.canRedo() && app.Document.History{app.Document.HistoryIndex + 1}.Kind == "rename";
             callbackOnly = app.Document.canRedo() && app.Document.History{app.Document.HistoryIndex + 1}.Kind == "callback";
+            axesEdit = struct();
+            if app.Document.canRedo() && app.Document.History{app.Document.HistoryIndex + 1}.Kind == "axes-inspector"
+                axesEdit = app.Document.History{app.Document.HistoryIndex + 1};
+            end
             try
                 app.Document.redo();
             catch exception
@@ -844,7 +870,9 @@ classdef yamada < handle
             end
             app.ensureSelectionExists();
             if retainHierarchy, app.refreshHierarchyLabels(); end
-            if (callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)) || ...
+            if isfield(axesEdit,"Paths")
+                app.refreshViews(yamada.ui.RefreshRequest("properties",axesEdit.ComponentId,axesEdit.Paths));
+            elseif (callbackOnly && app.PreviewRenderer.acknowledgeCallbackChanges(app.Document)) || ...
                     (retainHierarchy && app.PreviewRenderer.acknowledgeRenameChanges(app.Document))
                 % History already restored exact current source without rebuilding Preview.
                 app.refreshSourceViews();
@@ -3142,6 +3170,14 @@ classdef yamada < handle
                 message = "Selection changed before the edit could be applied.";
                 return
             end
+            if any(yamada.model.AxesInspectorProperties.paths(component.Factory) == path)
+                if path == "TickLabelFormat"
+                    [value, safe] = yamada.source.MatlabLiteralParser.parse(string(value));
+                    if ~safe, message = "Choose a geographic tick label format."; return, end
+                end
+                message = app.commitAxesSetting(app.Document,componentId,path,value,"set");
+                return
+            end
             definition = app.inspectorDefinition(component, path);
             allowsEmpty = isfield(definition.ValueSchema, "allowsEmpty") && ...
                 definition.ValueSchema.allowsEmpty;
@@ -3233,6 +3269,123 @@ classdef yamada < handle
             % Revalidate and dispatch the accepted property impact without rebuilding the shell.
             app.Document.validatePropertyCommit(app.Registry);
             app.refreshViews(yamada.ui.RefreshRequest("properties", component.Id, string({changes.Path})));
+        end
+
+        function message = commitAxesSetting(app,document,id,path,value,action)
+            % commitAxesSetting Commit axes Inspector input only for the current document and selection.
+            arguments (Input)
+                app (1,1) yamada
+                document (1,1) yamada.model.DocumentModel
+                id (1,1) string
+                path (1,1) string
+                value
+                action (1,1) string
+            end
+            arguments (Output)
+                message (1,1) string
+            end
+            message = "";
+            if isempty(app.Document) || app.Document ~= document || app.SelectedComponentId ~= id
+                message = "Selection changed before the edit could be applied.";
+                return
+            end
+            historyIndex = document.HistoryIndex;
+            try
+                document.editAxesInspector(id,path,value,action,app.Registry);
+            catch exception
+                message = string(exception.message);
+                app.setStatus(message);
+                return
+            end
+            % A shared argument can change both the Title and Subtitle.
+            if document.HistoryIndex ~= historyIndex
+                paths = document.History{document.HistoryIndex}.Paths;
+                app.refreshViews(yamada.ui.RefreshRequest("properties",id,paths));
+            end
+        end
+
+        function openAxesTextSettings(app,id,group)
+            % openAxesTextSettings Open a specialized Inspector editor or navigate to its owning axes.
+            arguments (Input)
+                app (1,1) yamada
+                id (1,1) string
+                group (1,1) string
+            end
+            if isempty(app.Document) || app.SelectedComponentId ~= id, return, end
+            document = app.Document;
+            if group == "Colormap"
+                axesId = document.getComponent(id).ParentId;
+                app.SelectedComponentId = axesId;
+                app.synchronizeHierarchySelection();
+                app.refreshInspector();
+                picker = findall(app.InspectorView.contentGrid(),"Tag","yamada-colormap-preset");
+                if isscalar(picker)
+                    % Flush newly created Inspector controls before observing resize events.
+                    drawnow;
+                    if ~isvalid(app) || ~isvalid(picker) || app.SelectedComponentId ~= axesId, return, end
+                    yamada.ui.waitForPreviewLayout(app.UIFigure, picker);
+                    if isvalid(app) && isvalid(picker) && app.SelectedComponentId == axesId
+                        app.InspectorView.reveal(picker.Parent);
+                    end
+                end
+                app.refreshEditCommands();
+                app.scheduleOverlayRefresh();
+                return
+            end
+            if group == "EditColormap"
+                component = document.getComponent(id);
+                settings = component.getSettings("Colormap");
+                if ~isempty(settings)
+                    map = settings(end).LiteralValue;
+                elseif ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles,id)
+                    native = app.PreviewHandles(id);
+                    if ~isvalid(native), return, end
+                    map = native.Colormap;
+                else
+                    return
+                end
+                yamada.ui.inspector.CustomColormapDialog.open(app.UIFigure,map, ...
+                    @(value) app.commitAxesSetting(document,id,"Colormap",value,"set"));
+                return
+            end
+            yamada.ui.inspector.AxesTextSettingsDialog.open(app.UIFigure,group, ...
+                @() app.axesTextSettingsSnapshot(document,id,group), ...
+                @(path,value,action) app.commitAxesSetting(document,id,path,value,action));
+        end
+
+        function rows = axesTextSettingsSnapshot(app,document,id,group)
+            % axesTextSettingsSnapshot Copy current literal and native default values for the popup.
+            arguments (Input)
+                app (1,1) yamada
+                document (1,1) yamada.model.DocumentModel
+                id (1,1) string
+                group (1,1) string
+            end
+            arguments (Output)
+                rows (1,:) struct
+            end
+            rows = struct("Path",{},"Value",{},"Editable",{},"Shared",{},"CanShare",{});
+            if isempty(app.Document) || app.Document ~= document || app.SelectedComponentId ~= id, return, end
+            component = document.getComponent(id);
+            for member = yamada.model.AxesInspectorProperties.names()
+                path = group + "." + member;
+                settings = component.getSettings(path);
+                value = [];
+                editable = component.IsEditable;
+                if ~isempty(settings)
+                    setting = settings(end);
+                    editable = editable && setting.IsCertain && setting.ValueKind == "literal" && ...
+                        (setting.IsEditable || setting.Method == "functionCall");
+                    if editable, value = setting.LiteralValue; end
+                elseif ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles,id)
+                    preview = app.PreviewHandles(id);
+                    value = preview.(group).(member);
+                end
+                [shared, canShare, titleValue] = yamada.model.AxesInspectorProperties.subtitleLink(component,path);
+                if shared, value = titleValue; end
+                rows(end+1) = struct("Path",path,"Value",{value},"Editable",editable && ~shared, ...
+                    "Shared",shared,"CanShare",canShare); %#ok<AGROW>
+            end
         end
 
         function reconcileItemSelectionValues(app, transaction, definitions)
@@ -3361,7 +3514,7 @@ classdef yamada < handle
                     row = yamada.ui.inspector.InspectorPropertyRow(section.contentGrid(), rowIndex, ...
                         component.Id, binding, @(id, path, text) ...
                         app.inspectorValueCommitted(id, path, text), @(id, changes) ...
-                        app.inspectorValuesCommitted(id, changes));
+                        app.inspectorValuesCommitted(id, changes), @(id, group) app.openAxesTextSettings(id,group));
                     section.setRowHeight(rowIndex, rowHeights(rowIndex));
                     app.InspectorRows(end + 1) = row;
                 end
@@ -3498,12 +3651,27 @@ classdef yamada < handle
                 applicable = arrayfun(@(state) isempty(state.Definition.ApplicableStyles) || ...
                     any(state.Definition.ApplicableStyles == style), states) & ...
                     arrayfun(@(state) state.Definition.AuditDisposition ~= "omitted", states);
+                groups = yamada.model.AxesInspectorProperties.groups(component.Factory);
+                for index = 1:numel(states)
+                    definition = states(index).Definition;
+                    if isfield(definition.Metadata,"axesTextMember")
+                        applicable(index) = definition.Metadata.axesTextMember == "String";
+                    elseif any(groups == definition.Path)
+                        applicable(index) = false;
+                    end
+                end
                 states = states(applicable);
+                if component.Factory == "colorbar"
+                    mapDefinition = yamada.model.PropertyDefinition("AxesColormap",[],false,false, ...
+                        struct("displayName","Colormap","category","Appearance","editor","colormapPreview"));
+                    states(end+1) = struct("Definition",mapDefinition,"Entry",yamada.model.PropertyEntry.empty, ...
+                        "IsExplicit",false,"Resolution",yamada.model.PropertyState(mapDefinition));
+                end
             end
             effectivePaths = string(arrayfun(@(state) state.Definition.Path, states));
             for index = 1:numel(component.Properties)
                 entry = component.Properties(index);
-                if any(effectivePaths == entry.Path)
+                if any(effectivePaths == entry.Path) || any(yamada.model.AxesInspectorProperties.paths(component.Factory) == entry.Path)
                     continue
                 end
                 metadata = struct("category", "Source", "order", index, ...
@@ -3553,7 +3721,21 @@ classdef yamada < handle
             if strlength(component.ParentId) > 0
                 parentFactory = app.Document.getComponent(component.ParentId).Factory;
             end
-            defaults = app.DefaultValueProvider.resolveAll(component, parentFactory, definitions);
+            if component.Factory == "colorbar"
+                defaults = struct("Found",false(1,numel(definitions)),"Values",{cell(1,numel(definitions))});
+                if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles,component.Id)
+                    native = app.PreviewHandles(component.Id);
+                    for index = 1:numel(definitions)
+                        path = definitions(index).Path;
+                        if isvalid(native) && isprop(native,path)
+                            defaults.Found(index) = true;
+                            defaults.Values{index} = native.(path);
+                        end
+                    end
+                end
+            else
+                defaults = app.DefaultValueProvider.resolveAll(component, parentFactory, definitions);
+            end
             values = cell(1, numel(states));
             known = false(1, numel(states));
             for index = 1:numel(states)
@@ -3629,7 +3811,32 @@ classdef yamada < handle
                 elseif ~editable
                     members(index).Reason = resolved.ReadOnlyReason;
                 end
-                members(index).Path = states(index).Definition.Path;
+                if any(yamada.model.AxesInspectorProperties.paths(component.Factory) == states(index).Definition.Path)
+                    settings = component.getSettings(states(index).Definition.Path);
+                    editable = component.IsEditable && isempty(entry);
+                    if ~isempty(settings)
+                        setting = settings(end);
+                        editable = component.IsEditable && setting.IsCertain && setting.ValueKind == "literal" && ...
+                            (setting.IsEditable || setting.Method == "functionCall");
+                        if editable
+                            rawValue = setting.LiteralValue;
+                            isKnown = true;
+                            value = yamada.ui.InspectorValueFormatter.format( ...
+                                yamada.model.PropertyEntry(setting.Path,rawValue));
+                        end
+                    end
+                    if editable, members(index).Reason = ""; end
+                end
+                path = states(index).Definition.Path;
+                if path == "AxesColormap" || (path == "Colormap" && isempty(entry))
+                    axesId = component.Id;
+                    if path == "AxesColormap", axesId = component.ParentId; end
+                    if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles,axesId)
+                        native = app.PreviewHandles(axesId);
+                        if isvalid(native), rawValue = native.Colormap; isKnown = true; end
+                    end
+                end
+                members(index).Path = path;
                 members(index).Value = value;
                 members(index).RawValue = rawValue;
                 members(index).IsEditable = editable;

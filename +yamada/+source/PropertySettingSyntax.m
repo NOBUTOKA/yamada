@@ -93,6 +93,11 @@ classdef PropertySettingSyntax
                 index = index + consumed;
             end
 
+            if definition.Factory == "colorbar"
+                % A creation must name its axes. Positional removal commands are opaque.
+                supported = parent ~= "" && numel(factoryArguments) == 2*nnz([settings.FactoryArgumentIndex] > 0);
+            end
+
             % Duplicate keys in one constructor are not treated as ordinary sequential writes.
             paths = string({settings.Path});
             for index = 1:numel(settings)
@@ -101,6 +106,49 @@ classdef PropertySettingSyntax
                     record.Location.IsCertain = false;
                     settings(index) = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
                 end
+            end
+        end
+
+        function [name, target, tokens, spans, forms] = axesCall(statement, catalogRoot)
+            % axesCall Tokenize an exact catalogued axes call or an axes selection.
+            arguments (Input)
+                statement (1, 1) yamada.source.SourceStatement
+                catalogRoot (1, 1) string
+            end
+            arguments (Output)
+                name (1, 1) string
+                target (1, 1) string
+                tokens (1, :) string
+                spans yamada.model.SourceSpan
+                forms cell
+            end
+
+            name = ""; target = ""; tokens = strings(1,0);
+            spans = yamada.model.SourceSpan.empty; forms = {};
+            text = char(statement.Text);
+            [prefix, match] = regexp(text,'^(?<name>[A-Za-z]\w*)\s*\(','end','names','once');
+            if isempty(prefix) || text(end) ~= ')', return, end
+            forms = yamada.catalog.AxesSettingFunctionCatalog.forName(string(match.name), catalogRoot);
+            if isempty(forms) && ~strcmp(match.name,'axes'), return, end
+
+            % Keep each argument and its original value range independently.
+            ranges = yamada.source.PropertySettingSyntax.argumentRanges(text,prefix+1,numel(text)-1);
+            if isempty(ranges), return, end
+            first = text(ranges(1,1):ranges(1,2));
+            component = regexp(first,'^app\s*\.\s*([A-Za-z]\w*)$','tokens','once');
+            if ~isempty(component)
+                target = string(component{1});
+                ranges(1,:) = [];
+            end
+            if strcmp(match.name,'axes') && (strlength(target) == 0 || ~isempty(ranges)), return, end
+            name = string(match.name);
+            for index = 1:size(ranges,1)
+                left = ranges(index,1); right = ranges(index,2);
+                token = text(left:right);
+                option = regexp(token,'^[A-Za-z]\w*\s*=\s*(?=\S)','end','once');
+                if ~isempty(option), left = left + option; end
+                tokens(end+1) = string(token); %#ok<AGROW>
+                spans(end+1) = yamada.source.PropertySettingSyntax.span(statement,left,right); %#ok<AGROW>
             end
         end
 

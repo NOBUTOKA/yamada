@@ -4,6 +4,167 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
     %   values even when the audited effective value is runtime-computed.
 
     methods (Test)
+        function readsAxesCallsInInitializationOrder(testCase)
+            % readsAxesCallsInInitializationOrder Preserve function source and resolve literal effects in order.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", ...
+                "app.Control.XLim = [0 3];", "xlim(app.Control, [1 4]);", ...
+                "app.Other = uiaxes(app.UIFigure);", "xticks([1 2]);", ...
+                "grid(app.Control, 'off');", "xlabel(app.Control, 'a,b');", ...
+                "xticklabels(app.Control, {'A','B'});", ...
+                "app.Control.XLimMode = 'auto';"]);
+            other = document.getComponentByName("Other");
+            limits = control.getSettings("XLim");
+            testCase.verifyEqual([limits.Method], ["assignment","functionCall"]);
+            testCase.verifyEqual(limits(2).LiteralValue, [1 4]);
+            testCase.verifyFalse(limits(2).IsEditable);
+            testCase.verifyEqual(control.getSettings("XLabel.String").LiteralValue, 'a,b');
+            testCase.verifyEqual(other.getSettings("XTick").LiteralValue, [1 2]);
+            testCase.verifyEmpty(control.getSettings("XTick"));
+            testCase.verifyEqual(control.getSettings("XTickMode").LiteralValue, "manual");
+            states = document.getEffectivePropertyStates(registry, control.Id);
+            testCase.verifyFalse(testCase.state(states,"XLim").IsKnown);
+            testCase.verifyEqual(string(testCase.state(states,"ZGrid").EffectiveValue), "off");
+            codes = string({document.Diagnostics.Code});
+            testCase.verifyEqual(nnz(codes == "implicit-axes-target"), 1);
+            document.insertComponent(registry, "uibutton", document.RootComponentId);
+            testCase.verifyEqual(other.getSettings("XTick").LiteralValue, [1 2]);
+            document.undo();
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+        end
+
+        function selectsAxesCallFormsFromRegistryRelease(testCase)
+            % selectsAxesCallFormsFromRegistryRelease Retain newer calls on older catalog surfaces.
+            [fixtureDocument, registry] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "xscale(app.Control, 'log');"]);
+            catalogs = fileparts(registry.CatalogRoot);
+            for release = ["R2023a","R2023b"]
+                projected = yamada.catalog.ComponentCatalogLoader.load(fullfile(catalogs,release));
+                document = yamada.source.AppSourceParser.parseText(fixtureDocument.OriginalText,projected);
+                control = document.getComponentByName("Control");
+                settings = control.getSettings("XScale");
+                if release == "R2023a"
+                    testCase.verifyEmpty(settings);
+                else
+                    testCase.assertNumElements(settings,1);
+                    testCase.verifyEqual(settings.Method,"functionCall");
+                    testCase.verifyEqual(string(settings.LiteralValue),"log");
+                end
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(projected).generate(document),fixtureDocument.OriginalText);
+            end
+        end
+
+        function readsPolarCallsAndWarnsWhenTargetIsLost(testCase)
+            % readsPolarCallsAndWarnsWhenTargetIsLost Stop inference after opaque code and accept explicit targets.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = polaraxes(app.UIFigure);", "rlim([0 5]);", ...
+                "opaque();", "thetalim([0 90]);", "thetaticks(app.Control, [0 90]);", ...
+                "rticklabels(app.Control, 'auto');"], "polaraxes");
+            testCase.verifyEqual(control.getSettings("RLim").LiteralValue, [0 5]);
+            testCase.verifyEmpty(control.getSettings("ThetaLim"));
+            testCase.verifyEqual(control.getSettings("ThetaTick").LiteralValue, [0 90]);
+            testCase.verifyEqual(string(control.getSettings("RTickLabelMode").LiteralValue), "auto");
+            testCase.verifyTrue(any(string({document.Diagnostics.Code}) == "unresolved-axes-target"));
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+        end
+
+        function readsGeographicSettingsThroughOtherEdits(testCase)
+            % readsGeographicSettingsThroughOtherEdits Keep multi-effect calls through local source publication.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = geoaxes(app.UIFigure, Basemap='none');", ...
+                "geotickformat(app.Control, 'dd');", "grid(app.Control, 'off');", ...
+                "clim(app.Control, [1 3]);", "app.Control.FontSize = 12;"], "geoaxes");
+            testCase.verifyEqual(string(control.getSettings("TickLabelFormat").LiteralValue), "dd");
+            testCase.verifyEqual(control.getSettings("CLim").LiteralValue, [1 3]);
+            testCase.verifyEqual(string(control.getSettings("Grid").LiteralValue), "off");
+            before = [control.Settings.Sequence];
+            document.setProperty(control.Id, "FontSize", 15, registry);
+            testCase.verifyEqual([control.Settings.Sequence], before);
+            testCase.verifyEqual(control.getSettings("CLim").LiteralValue, [1 3]);
+            document.undo();
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+        end
+
+        function readsRotationForTheApplicableAxes(testCase)
+            % readsRotationForTheApplicableAxes Read radial rotation and preserve an inapplicable Cartesian call.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = polaraxes(app.UIFigure);", ...
+                "rtickangle(app.Control, 25);", ...
+                "xtickangle(app.Control, 35);"], "polaraxes");
+            testCase.verifyEqual(control.getSettings("RTickLabelRotation").LiteralValue,25);
+            testCase.verifyEmpty(control.getSettings("XTickLabelRotation"));
+            testCase.verifyEqual(nnz(string({document.Diagnostics.Code}) == "unresolved-initialization-call"),1);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document),document.OriginalText);
+        end
+
+        function readsSharedTitleOptionsWithIndependentTextRanges(testCase)
+            % readsSharedTitleOptionsWithIndependentTextRanges Keep multiline text and shared style ownership.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", ...
+                "title(app.Control, {'First','Second'}, ""Subtitle"", Color=[1 0 0]);"]);
+            title = control.getSettings("Title.String");
+            subtitle = control.getSettings("Subtitle.String");
+            titleColor = control.getSettings("Title.Color");
+            subtitleColor = control.getSettings("Subtitle.Color");
+            testCase.verifyEqual(title.LiteralValue,{'First','Second'});
+            testCase.verifyEqual(subtitle.LiteralValue,"Subtitle");
+            testCase.verifyNotEqual(title.ValueSpan,subtitle.ValueSpan);
+            testCase.verifyEqual(titleColor.ValueSpan,subtitleColor.ValueSpan);
+            testCase.verifyEqual(titleColor.LiteralValue,[1 0 0]);
+            testCase.verifyEqual(extractBetween(document.OriginalText,titleColor.ValueSpan.StartOffset, ...
+                titleColor.ValueSpan.EndOffset),"[1 0 0]");
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document),document.OriginalText);
+        end
+
+        function editsAxesTextAndSubtitleLink(testCase)
+            % editsAxesTextAndSubtitleLink Preserve a shared call and undo independent Subtitle settings.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", ...
+                "title('Before', 'Sub', Color=[1 0 0]);"]);
+            id = control.Id;
+            document.editAxesInspector(id,"Title.String",["First","Second"],"set",registry);
+            testCase.verifySubstring(document.CurrentText,"title({'First', 'Second'}, 'Sub', Color=[1 0 0]);");
+            testCase.verifyTrue(any(string({document.Diagnostics.Code}) == "implicit-axes-target"));
+            document.editAxesInspector(id,"Title.Color",[0 0 1],"set",registry);
+            testCase.verifyEqual(control.getSettings("Subtitle.Color").LiteralValue,[0 0 1]);
+            document.undo();
+            testCase.verifyEqual(control.getSettings("Subtitle.Color").LiteralValue,[1 0 0]);
+            testCase.verifyTrue(yamada.model.AxesInspectorProperties.subtitleLink(control,"Subtitle.Color"));
+            document.editAxesInspector(id,"Subtitle.Color",[],"override",registry);
+            testCase.verifyFalse(yamada.model.AxesInspectorProperties.subtitleLink(control,"Subtitle.Color"));
+            document.editAxesInspector(id,"Subtitle.Color",[0 1 0],"set",registry);
+            testCase.verifyEqual(control.getSettings("Title.Color").LiteralValue,[1 0 0]);
+            testCase.verifyEqual(control.getProperty("Subtitle.Color").LiteralValue,[0 1 0]);
+            document.editAxesInspector(id,"Subtitle.Color",[],"share",registry);
+            testCase.verifyTrue(yamada.model.AxesInspectorProperties.subtitleLink(control,"Subtitle.Color"));
+            reopened = yamada.source.AppSourceParser.parseText(document.CurrentText,registry);
+            testCase.verifyTrue(yamada.model.AxesInspectorProperties.subtitleLink( ...
+                reopened.getComponentByName("Control"),"Subtitle.Color"));
+            document.undo();
+            testCase.verifyEqual(control.getProperty("Subtitle.Color").LiteralValue,[0 1 0]);
+            document.redo();
+            testCase.verifyTrue(yamada.model.AxesInspectorProperties.subtitleLink(control,"Subtitle.Color"));
+        end
+
+        function insertsAndEditsGeographicFormat(testCase)
+            % insertsAndEditsGeographicFormat Generate the explicit target form and update its value locally.
+            [document, registry, control] = testCase.fixture( ...
+                "app.Control = geoaxes(app.UIFigure, Basemap='none');","geoaxes");
+            original = document.CurrentText;
+            document.editAxesInspector(control.Id,"TickLabelFormat","dd","set",registry);
+            testCase.verifySubstring(document.CurrentText,'geotickformat(app.Control, "dd");');
+            document.editAxesInspector(control.Id,"TickLabelFormat","-dm","set",registry);
+            testCase.verifySubstring(document.CurrentText,'geotickformat(app.Control, "-dm");');
+            testCase.verifyEqual(string(control.getSettings("TickLabelFormat").LiteralValue),"-dm");
+            document.undo();
+            document.undo();
+            testCase.verifyEqual(document.CurrentText,original);
+            testCase.verifyEmpty(control.getSettings("TickLabelFormat"));
+            document.redo();
+            document.redo();
+            testCase.verifyEqual(string(control.getSettings("TickLabelFormat").LiteralValue),"-dm");
+        end
+
         function pendingModeIsAddedAfterExistingConstructorValue(testCase)
             % pendingModeIsAddedAfterExistingConstructorValue Keep the constructor syntax while preserving a requested final auto mode.
             for factory = ["uiaxes", "axes"]

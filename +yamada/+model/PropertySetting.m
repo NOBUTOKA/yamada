@@ -17,9 +17,9 @@ classdef PropertySetting
         LiteralValue = []
         % SourceExpression - Original unevaluated right-hand-side expression.
         SourceExpression string = ""
-        % Method - nameValue, assignment, or generated setting location.
+        % Method - nameValue, assignment, functionCall, or generated setting location.
         Method string = "generated"
-        % Syntax - quotedPair, nameEquals, dot, or generated spelling.
+        % Syntax - quotedPair, nameEquals, dot, call, or generated spelling.
         Syntax string = "generated"
         % SourceSpan - Complete owning statement in the original source.
         SourceSpan yamada.model.SourceSpan = yamada.model.SourceSpan.empty
@@ -78,8 +78,8 @@ classdef PropertySetting
             for field = allowed
                 if isfield(location, field) && field ~= "Id", obj.(field) = location.(field); end
             end
-            if ~isscalar(obj.Method) || ~any(obj.Method == ["generated", "assignment", "nameValue"]) || ...
-                    ~isscalar(obj.Syntax) || ~any(obj.Syntax == ["generated", "dot", "quotedPair", "nameEquals"])
+            if ~isscalar(obj.Method) || ~any(obj.Method == ["generated", "assignment", "nameValue", "functionCall"]) || ...
+                    ~isscalar(obj.Syntax) || ~any(obj.Syntax == ["generated", "dot", "quotedPair", "nameEquals", "call"])
                 error("yamada:PropertySetting:InvalidLocation", "Unknown setting method or syntax.");
             end
             validateattributes(obj.Sequence, "double", {"scalar", "integer", "nonnegative"});

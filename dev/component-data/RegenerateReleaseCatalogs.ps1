@@ -54,6 +54,9 @@ function Get-Range {
 $releases = [IO.File]::ReadAllText((Join-Path $ToolDirectory 'releases.json')) | ConvertFrom-Json
 $surface = [string]$releases.surfaceRelease
 $ledger = Join-Path $ToolDirectory $surface
+$axesSettings = Get-Content -LiteralPath (Join-Path $ledger 'axes-setting-functions.json') -Raw | ConvertFrom-Json -AsHashtable
+if ($axesSettings.matlabRelease -cne $surface) { throw 'Axes settings must describe the surface release.' }
+$releaseNames = @($releases.releases.release)
 & (Join-Path $ToolDirectory 'UpdateProjectPropertyText.ps1') -ReleaseDirectory $ledger | Out-Null
 $catalogs = Join-Path $RepositoryRoot 'resources/component-catalog'
 $reports = Join-Path $ToolDirectory 'projections'
@@ -74,6 +77,24 @@ try {
         & (Join-Path $ToolDirectory 'GenerateGroupingArtifacts.ps1') -ReleaseDirectory $projection -ProvenanceDirectory $ledger | Out-Null
         & (Join-Path $ToolDirectory 'GenerateGroupingDesign.ps1') -ReleaseDirectory $projection | Out-Null
         & (Join-Path $ToolDirectory 'PromoteGroupingToRuntimeCatalog.ps1') -ReleaseDirectory $projection -CatalogRoot $catalog | Out-Null
+        # Project the reviewed axes call forms without publishing review annotations.
+        $forms = @(foreach ($form in $axesSettings.forms) {
+            if ($form.Contains('availability')) {
+                $since = [array]::IndexOf($releaseNames, $form.availability.releases.since)
+                if ($since -lt 0) { throw "Unknown axes setting release for $($form.id)." }
+                if ([array]::IndexOf($releaseNames, $name) -lt $since) { continue }
+            }
+            $record = [ordered]@{}
+            foreach ($key in $form.Keys) {
+                if ($key -cne 'availability') { $record[$key] = $form[$key] }
+            }
+            $record
+        })
+        Write-Json (Join-Path $catalog 'axes-setting-functions.json') ([ordered]@{
+            schemaVersion = $axesSettings.schemaVersion
+            matlabRelease = $name
+            forms = $forms
+        })
         Copy-Item -LiteralPath (Join-Path $projection 'PROJECTION.md') -Destination (Join-Path $reports "$name.md") -Force
         if ($name -ceq $surface) {
             # The surface release keeps its reviewed grouping artifacts beside its ledger.

@@ -15,8 +15,9 @@ For users following planned features and contributors choosing work, this roadma
 
 ## Broader axes support
 
-- **Create and edit programmatic axes.** Extend the supported palette and Inspector operations for Cartesian, geographic, and polar axes where creation and source generation can be verified.
-- **Recognize axes setup calls.** Read settings expressed through calls such as `xlabel`, `ylabel`, `title`, and `xlim`. Support edits where the target and affected settings can be determined from source.
+- **Edit ruler details.** Add focused controls for tick formats, exponents, secondary labels, and supported rotations.
+- **Edit geographic limits.** Set requested latitude and longitude together and surface the extent MATLAB displays.
+- **Recognize more axes setup calls.** Support reviewed `axis` forms, aspect ratios, and absolute camera settings. Extend coverage of compound and data-dependent calls as their effects and ownership can be established.
 
 ## More control when saving
 

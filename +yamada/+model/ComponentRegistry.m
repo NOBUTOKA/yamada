@@ -24,6 +24,7 @@ classdef ComponentRegistry < handle
         UnavailableSourceProperties string = strings(1, 0)
         UnavailableSourceValues string = strings(1, 0)
         StructuralCatalogs dictionary = dictionary(string([]), {})
+        AxesAttachment yamada.model.ComponentDefinition = yamada.model.ComponentDefinition.empty
         ParentContextRules yamada.model.ParentContextRule = yamada.model.ParentContextRule.empty
         InspectorRowDefinitions yamada.model.InspectorRowDefinition = ...
             yamada.model.InspectorRowDefinition.empty
@@ -241,7 +242,8 @@ classdef ComponentRegistry < handle
                 result (1, 1) logical
             end
 
-            result = isscalar(factory) && isKey(obj.FactoryVariantIds, factory);
+            result = isscalar(factory) && isKey(obj.FactoryVariantIds, factory) || ...
+                (isscalar(factory) && ~isempty(obj.AxesAttachment) && obj.AxesAttachment.Factory == factory);
         end
 
         function definition = get(obj, factory, creationArguments)
@@ -256,6 +258,11 @@ classdef ComponentRegistry < handle
             end
 
             % Fail explicitly so callers cannot infer unsafe defaults.
+            if isscalar(factory) && ~isKey(obj.FactoryVariantIds, factory) && ...
+                    ~isempty(obj.AxesAttachment) && obj.AxesAttachment.Factory == factory
+                definition = obj.AxesAttachment;
+                return
+            end
             if ~obj.contains(factory)
                 error("yamada:ComponentRegistry:UnknownFactory", ...
                     "Component factory ""%s"" is not registered.", strjoin(factory, ", "));
@@ -381,7 +388,7 @@ classdef ComponentRegistry < handle
                 properties = obj.EffectiveProperties{key};
                 return
             end
-            properties = definition.Properties;
+            properties = yamada.model.AxesInspectorProperties.extend(factory,definition.Properties);
             suppressedPaths = strings(1, 0);
             for index = 1:numel(obj.ParentContextRules)
                 rule = obj.ParentContextRules(index);
@@ -503,6 +510,7 @@ classdef ComponentRegistry < handle
                 obj (1, 1) yamada.model.ComponentRegistry
             end
             obj = yamada.catalog.ComponentCatalogLoader.load();
+            obj.AxesAttachment = yamada.model.ColorbarDefinition.create();
         end
     end
 end

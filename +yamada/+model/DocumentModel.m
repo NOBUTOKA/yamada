@@ -269,7 +269,7 @@ classdef DocumentModel < handle
             identity = yamada.source.SourcePatchBatch(state.Text);
             for id = changed
                 other = candidate.getComponent(id); old = other.Settings;
-                other.applyProjectedSettings(yamada.model.PropertySetting.empty);
+                other.applyProjectedSettings(old(string({old.Method}) == "functionCall"));
                 [settings, ~, factoryArguments] = yamada.model.SourceSettingRebinder.rebind(candidate, other, state, identity, registry);
                 for index = 1:numel(settings)
                     setting = settings(index); matches = old(string({old.Path}) == setting.Path & string({old.Method}) == setting.Method);
@@ -283,6 +283,12 @@ classdef DocumentModel < handle
                 end
                 settings = obj.canonicalizeSettings(settings);
                 other.synchronizeSourceSettings(settings, factoryArguments);
+            end
+            if isfield(obj.Metadata, "HasImplicitAxesCalls") && obj.Metadata.HasImplicitAxesCalls
+                % Property-token edits preserve creation spans; relocation may change the current axes.
+                spans = arrayfun(@(component) {component.SourceSpans.Creation}, obj.Components);
+                [~, retained] = batch.mapSpanCells(spans);
+                if ~all(retained), candidate.verifyAxesCallOwnership(text, registry); end
             end
             yamada.model.SourceEffectSummary.refresh(candidate, registry);
             candidate.publishCurrentSource(state);
@@ -684,6 +690,8 @@ classdef DocumentModel < handle
                 switch edit.Kind
                     case {"source-property", "property-batch"}
                         changed = edit.ComponentId + ":" + string({edit.Changes.Path});
+                    case "axes-inspector"
+                        changed = edit.ComponentId + ":" + edit.Paths;
                     case "property"
                         changed = edit.ComponentId + ":" + edit.Path;
                     case {"grid-layout-edit", "source-property-batch"}
@@ -936,7 +944,7 @@ classdef DocumentModel < handle
             end
         end
 
-        function component = insertComponent(obj, registry, factory, parentId, creationArguments)
+        function component = insertComponent(obj, registry, factory, parentId, creationArguments, axesAttachment)
             % insertComponent Create and insert one registry-approved component variant.
             arguments (Input)
                 obj (1, 1) yamada.model.DocumentModel
@@ -944,6 +952,7 @@ classdef DocumentModel < handle
                 factory string
                 parentId string
                 creationArguments cell = {}
+                axesAttachment (1,1) logical = false
             end
             arguments (Output)
                 component (1, 1) yamada.model.ComponentRecord
@@ -952,9 +961,9 @@ classdef DocumentModel < handle
             obj.ensureCurrentSource(registry);
             % Validate the factory and parent before changing document state.
             definition = registry.get(factory, creationArguments);
-            if definition.IsRoot || definition.IsProgrammaticOnly || ...
-                    definition.Category == "FigureTools" || ...
-                    definition.RequiresParentComponent
+            isColorbar = factory == "colorbar" && axesAttachment;
+            if ~isColorbar && (definition.IsRoot || definition.IsProgrammaticOnly || ...
+                    definition.Category == "FigureTools" || definition.RequiresParentComponent)
                 error("yamada:DocumentModel:UnsupportedInsertion", ...
                     "Factory ""%s"" is not eligible for palette insertion.", factory);
             end
@@ -970,7 +979,9 @@ classdef DocumentModel < handle
             end
 
             % Choose a stable MATLAB property name and safe initial geometry.
-            name = obj.uniqueComponentName(obj.displayName(factory));
+            baseName = obj.displayName(factory);
+            if isColorbar, baseName = definition.DisplayName; end
+            name = obj.uniqueComponentName(baseName);
             component = yamada.model.ComponentRecord(obj.newComponentId(), name, ...
                 definition.Factory, definition.DeclaredType, "generated");
             component.CreationArguments = definition.CreationArguments;
@@ -1005,6 +1016,41 @@ classdef DocumentModel < handle
                 "SourceBeforeId", before.StateId, "SourceAfterId", obj.CurrentSource.StateId);
             obj.SourcePublication = true; cleanup = onCleanup(@() obj.endSourcePublication());
             obj.recordHistory(edit);
+        end
+
+        function editAxesInspector(obj,id,path,value,action,registry)
+            % editAxesInspector Validate and publish one axes setting with reversible source ownership.
+            arguments (Input)
+                obj (1,1) yamada.model.DocumentModel
+                id (1,1) string
+                path (1,1) string
+                value
+                action (1,1) string
+                registry (1,1) yamada.model.ComponentRegistry
+            end
+            if isempty(obj.CurrentSource) || isempty(obj.SourceRegistry) || obj.SourceRegistry ~= registry
+                obj.ensureCurrentSource(registry);
+            end
+            [~, revision, tracked] = obj.inputStamp();
+            bound = tracked && obj.HasPublishedInputStamp && revision == obj.SourceInputRevision;
+            assert(bound || obj.currentModelIsBound(), "yamada:DocumentModel:UnsafeAxesSource", ...
+                "The axes source must match the current document.");
+            component = obj.getComponent(id);
+            assert(~isempty(component) && component.IsEditable, ...
+                "yamada:DocumentModel:UnsafeAxesSource", "The selected axes cannot be edited.");
+            [batch, requested, forward, inverse, paths] = yamada.source.AxesInspectorEdits.plan( ...
+                obj,component,path,value,action);
+            if batch.AfterText == obj.CurrentText, return, end
+            before = obj.CurrentSource;
+            [state, forward] = obj.publishAxesSource(component,batch,forward,"",paths, ...
+                struct("Path",path,"Value",{requested},"Action",action));
+            if ~isempty(forward.Placements), inverse.RemovedIds = forward.Placements.Setting.Id; end
+            obj.SourcePublication = true;
+            cleanup = onCleanup(@() obj.endSourcePublication());
+            obj.recordHistory(struct("Kind","axes-inspector","ComponentId",id,"Paths",paths, ...
+                "AxesForward",forward,"AxesInverse",inverse, ...
+                "SourceForward",batch.Edits,"SourceInverse",batch.InverseEdits, ...
+                "SourceBeforeId",before.StateId,"SourceAfterId",state.StateId));
         end
 
         function entry = setProperty(obj, componentId, path, value, registry)
@@ -2995,6 +3041,9 @@ classdef DocumentModel < handle
                 update.assertCurrent(component); update.applyToCandidate(other);
             end
             candidate.bindInsertedComponents(additions, names, analysis, state, registry, allocator);
+            if isfield(obj.Metadata, "HasImplicitAxesCalls") && obj.Metadata.HasImplicitAxesCalls
+                candidate.verifyAxesCallOwnership(batch.AfterText, registry);
+            end
             [candidate.Diagnostics, candidate.UnknownRegions] = yamada.model.SourceLocationUpdate.annotations(obj, batch);
             trace = execution.Trace;
             candidate.Metadata.InitializationContext = struct("Order", trace.Order, "Certain", trace.Certain, ...
@@ -3008,6 +3057,31 @@ classdef DocumentModel < handle
             end
             assert(candidate.hasCurrentValidation(registry), ...
                 "yamada:DocumentModel:InvalidPreparedSource", "The emitted component block must retain its accepted input checks.");
+        end
+
+        function verifyAxesCallOwnership(obj, source, registry)
+            % verifyAxesCallOwnership Reject structural patches that would retarget implicit axes calls.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                source (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+
+            parsed = yamada.source.AppSourceParser.parseText(source, registry);
+            for component = obj.Components
+                rebound = parsed.getComponentByName(component.Name);
+                before = component.Settings(string({component.Settings.Method}) == "functionCall");
+                after = yamada.model.PropertySetting.empty;
+                if ~isempty(rebound)
+                    after = rebound.Settings(string({rebound.Settings.Method}) == "functionCall");
+                end
+                beforeStarts = arrayfun(@(setting) setting.SourceSpan.StartOffset, before);
+                afterStarts = arrayfun(@(setting) setting.SourceSpan.StartOffset, after);
+                if ~isequal(string({before.Path}), string({after.Path})) || ~isequal(beforeStarts, afterStarts)
+                    error("yamada:DocumentModel:UnsafeSubtreeEdit", ...
+                        "The structural change would alter axes setting ownership.");
+                end
+            end
         end
 
         function bindInsertedComponents(obj, statements, names, analysis, state, registry, allocator)
@@ -3268,6 +3342,12 @@ classdef DocumentModel < handle
                 stateId = edit.SourceBeforeId;
             end
             batch = yamada.source.SourcePatchBatch(obj.CurrentText, edits);
+            if edit.Kind == "axes-inspector"
+                delta = edit.AxesInverse;
+                if forward, delta = edit.AxesForward; end
+                obj.publishAxesSource(obj.getComponent(edit.ComponentId),batch,delta,stateId,edit.Paths);
+                return
+            end
             callback = struct();
             if edit.Kind == "callback" && isfield(edit, "ComponentId") && ...
                     (~isfield(edit, "CallbackOnly") || edit.CallbackOnly)
@@ -3279,6 +3359,98 @@ classdef DocumentModel < handle
             else
                 obj.publishCallbackSource(state, candidate, obj.SourceRegistry, callback.ComponentId);
             end
+        end
+
+        function [state, delta] = publishAxesSource(obj, owner, batch, delta, stateId, paths, expected)
+            % publishAxesSource Validate the affected owners and publish an indexed axes transaction.
+            arguments (Input)
+                obj (1,1) yamada.model.DocumentModel
+                owner (1,1) yamada.model.ComponentRecord
+                batch (1,1) yamada.source.SourcePatchBatch
+                delta (1,1) struct
+                stateId (1,1) string
+                paths (1,:) string
+                expected (1,1) struct = struct()
+            end
+            arguments (Output)
+                state (1,1) yamada.model.CurrentSourceState
+                delta (1,1) struct
+            end
+            registry = obj.SourceRegistry;
+            previous = obj.evaluationContext(registry);
+            [token, tracked] = previous.revisionToken();
+            if ~tracked, token = struct(); end
+            [state,settings,factoryArguments,execution] = yamada.model.IndexedSettingEdit.prepare( ...
+                obj,obj.CurrentSource,owner,batch,delta.Changes,delta.Placements,registry,delta.RemovedIds,stateId);
+            if ~isempty(delta.Placements)
+                inserted = settings(arrayfun(@(setting) ...
+                    isequal(setting.SourceSpan,delta.Placements.Statement.Span),settings));
+                assert(isscalar(inserted) && inserted.IsCertain, ...
+                    "yamada:DocumentModel:UnsafeAxesSource","The insertion must execute once in the owning initializer.");
+                delta.Placements.Setting = inserted;
+            end
+            if isfield(expected,"Path")
+                settingsForPath = settings(string({settings.Path}) == expected.Path);
+                assert(~isempty(settingsForPath) && settingsForPath(end).IsCertain && ...
+                    settingsForPath(end).ValueKind == "literal" && ...
+                    isequaln(settingsForPath(end).LiteralValue,expected.Value), ...
+                    "yamada:DocumentModel:UnsafeAxesSource","The edited setting could not be verified.");
+            end
+
+            % Prepare relocated ranges and carry forward the unaffected validation baseline.
+            projection = obj.prepareSettingProjection(batch,execution,owner.Id);
+            candidate = obj.structuralCandidate();
+            updates = yamada.model.SourceLocationUpdate.empty;
+            for component = obj.Components
+                if component.Id == owner.Id, continue, end
+                update = yamada.model.SourceLocationUpdate(component,batch, ...
+                    struct("SettingId",{},"Value",{}),execution,state.Analysis, ...
+                    obj.ownerSettingProjection(component,projection));
+                update.assertCurrent(component);
+                update.applyToCandidate(candidate.getComponent(component.Id));
+                updates(end+1) = update; %#ok<AGROW>
+            end
+            [creation, valid] = batch.mapSpan(owner.SourceSpans.Creation); assert(valid);
+            [declaration, valid] = batch.mapSpan(owner.SourceSpans.Declaration); assert(valid);
+            updated = candidate.getComponent(owner.Id);
+            updated.SourceSpans = struct("Declaration",declaration,"Creation",creation);
+            visits = find(execution.Trace.Order == state.Analysis.statementIndices(creation));
+            updated.Metadata.InitializationCreationSequence = execution.Creation(visits);
+            updated.synchronizeSourceSettings(settings,factoryArguments);
+            if isfield(expected,"Action") && expected.Action ~= "set"
+                shared = yamada.model.AxesInspectorProperties.subtitleLink(updated,expected.Path);
+                assert(shared == (expected.Action == "share"), ...
+                    "yamada:DocumentModel:UnsafeAxesSource","The Subtitle link could not be verified.");
+            end
+            [candidate.Diagnostics,candidate.UnknownRegions] = yamada.model.SourceLocationUpdate.annotations(obj,batch);
+            trace = execution.Trace;
+            candidate.Metadata.InitializationContext = struct("Order",trace.Order,"Certain",trace.Certain, ...
+                "Returns",trace.Returns,"Layout",state.Analysis.Layout);
+            if any(string({settings.Method}) == "functionCall")
+                candidate.Metadata.HasAxesSettingCalls = true;
+            end
+            candidate.publishCurrentSource(state);
+            baseline = obj.planBaseline(registry);
+            sourceWarnings = candidate.Diagnostics(string({candidate.Diagnostics.Code}) == "implicit-axes-target");
+            diagnostics = candidate.finishPlannedValidation(registry,baseline,owner.Id,batch);
+            checked = candidate.PlannedScope.Checked;
+            sourceWarnings = sourceWarnings(ismember(string({sourceWarnings.ComponentId}),checked));
+            candidate.Diagnostics = [diagnostics sourceWarnings];
+            assert(~yamada.validation.ModelValidator.hasErrors(diagnostics), ...
+                "yamada:DocumentModel:UnsafeAxesSource","%s",strjoin(string({diagnostics.Message}),newline));
+
+            % Commit the accepted setting delta and numeric position updates together.
+            obj.publishSettingProjection(projection);
+            for update = updates, update.applyValidated(obj.getComponent(update.ComponentId)); end
+            owner.SourceSpans = updated.SourceSpans;
+            owner.Metadata = updated.Metadata;
+            owner.synchronizeSourceSettings(settings,factoryArguments);
+            obj.Diagnostics = candidate.Diagnostics;
+            obj.UnknownRegions = candidate.UnknownRegions;
+            obj.Metadata = candidate.Metadata;
+            obj.publishCurrentSource(state);
+            context = yamada.model.EvaluationContext.projectSource(obj,registry,previous,updates,owner.Id,paths,token);
+            obj.adoptPlannedResult(candidate.plannedResult(),registry,context);
         end
 
         function applySourcePropertyHistory(obj, edit, forward)
@@ -3780,6 +3952,8 @@ classdef DocumentModel < handle
                         component.Name = edit.OldName;
                         obj.RenameEdits = edit.Before;
                     end
+                case "axes-inspector"
+                    % Exact source is restored by the shared history publication.
                 case "callback"
                     if forward, obj.CallbackEdits = edit.After; else, obj.CallbackEdits = edit.Before; end
                 case "insert"

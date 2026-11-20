@@ -204,7 +204,7 @@ classdef SourceAnalysis < handle
             execution.Trace = trace; execution.Counts = currentCounts;
             execution.Creation = zeros(size(last)); execution.Assignment = zeros(size(last));
             execution.Creation(creation) = last(creation) - currentCounts(creation) + 1;
-            execution.Assignment(assignment) = last(assignment);
+            execution.Assignment(assignment) = last(assignment) - currentCounts(assignment) + 1;
             sequenceMap = zeros(1, sum(previousExecution.Counts));
             for visit = surviving
                 first = max(previousExecution.Creation(visit), previousExecution.Assignment(visit));
@@ -214,7 +214,8 @@ classdef SourceAnalysis < handle
                     length = previousExecution.Counts(visit);
                     sequenceMap(first:first + length - 1) = current + (0:length - 1);
                 else
-                    sequenceMap(first) = current;
+                    length = previousExecution.Counts(visit);
+                    sequenceMap(first:first + length - 1) = current + (0:length - 1);
                 end
             end
             execution.SequenceMap = sequenceMap;

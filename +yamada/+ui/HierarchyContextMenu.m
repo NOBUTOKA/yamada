@@ -48,9 +48,9 @@ classdef HierarchyContextMenu < handle
             % Before R2023b a tree menu opens only outside nodes and reports no hit node, so
             % those releases offer the menu from Preview only.
             if ~isMATLABReleaseOlderThan("R2023b"), tree.ContextMenu = obj.Menu; end
-            for action = ["Copy", "Cut", "Paste", "Delete"]
+            for action = ["Copy", "Cut", "Paste", "Delete", "Add Colorbar"]
                 obj.EditItems(end + 1) = uimenu(obj.Menu, "Text", action, ...
-                    "Tag", "yamada-context-" + lower(action), "Enable", "off", ...
+                    "Tag", "yamada-context-" + replace(lower(action)," ","-"), "Enable", "off", ...
                     "MenuSelectedFcn", @(~, ~) obj.invokeEdit(action));
             end
         end
@@ -132,10 +132,13 @@ classdef HierarchyContextMenu < handle
             obj.TargetId = component.Id;
             obj.TargetDocument = document;
             if ~isempty(callbacks), obj.CallbackItem.Enable = "on"; end
-            actions = ["Copy", "Cut", "Paste", "Delete"];
+            actions = ["Copy", "Cut", "Paste", "Delete", "Add Colorbar"];
             for index = 1:numel(actions)
                 state = obj.AvailabilityFcn(actions(index), obj.TargetId);
                 obj.EditItems(index).Enable = state.Enabled;
+                if actions(index) == "Add Colorbar"
+                    obj.EditItems(index).Visible = any(component.Factory == yamada.model.ColorbarDefinition.targets());
+                end
                 obj.EditItems(index).UserData = state;
             end
         end

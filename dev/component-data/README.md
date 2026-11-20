@@ -20,6 +20,8 @@ Run `RegenerateReleaseCatalogs.ps1` with PowerShell 7 after changing the ledger 
 
 To move the surface to a newer release, audit the new release, express the differences of older releases as annotations, update `releases.json`, and regenerate. The catalogs of verified releases must not change unless the audit corrects them. Document sources and the reviews that cite them keep the documentation release where the ledger was audited property by property, which the schema URL pattern names; a later surface records its differences through annotations with their own evidence, and projections accept that documentation release and the target release.
 
+The surface ledger also owns `axes-setting-functions.json`. Regeneration publishes a call-form catalog beside each verified release catalog and removes the availability annotations from its runtime records. Source analysis selects the call forms from the same catalog root as the component registry. The separate axes setting function review retains research and documentation references.
+
 ## Inputs and output
 
 Each ledger component file describes one concrete factory variant. The release directory contains the schemas, reviewed property contracts, component capabilities, and parent-context rules. Keep documented API facts, observed runtime behavior, and product policy in their respective fields. Refresh presentation text with `UpdateProjectPropertyText.ps1`. Enum and multiline classification use the typed `valueContract` fields.

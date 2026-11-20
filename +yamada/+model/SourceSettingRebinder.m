@@ -71,7 +71,25 @@ classdef SourceSettingRebinder
                 setting = yamada.model.SourceSettingRebinder.scoped(setting, analysis.Layout, index);
                 settings(end + 1) = yamada.model.SourceSettingRebinder.identity(setting, component.Settings, batch); %#ok<AGROW>
             end
-            settings = document.canonicalizeSettings(settings);
+            % Read-only call records can survive local token edits outside their statement.
+            previous = component.Settings;
+            for original = previous(string({previous.Method}) == "functionCall")
+                record = original.toStruct();
+                for field = ["SourceSpan","ValueSpan","ScopeSpan"]
+                    [record.Location.(field), valid] = batch.mapSpan(record.Location.(field));
+                    assert(valid, "yamada:SourceSettingRebinder:NeedsModelParse", "Axes call ownership changed.");
+                end
+                index = analysis.statementIndices(record.Location.SourceSpan);
+                visit = find(trace.Order == index);
+                assert(isscalar(visit) && sequences.Assignment(visit) > 0, ...
+                    "yamada:SourceSettingRebinder:NeedsModelParse", "Axes call execution changed.");
+                same = previous([previous.Sequence] < original.Sequence & ...
+                    string({previous.StatementId}) == original.StatementId);
+                record.Location.Sequence = sequences.Assignment(visit) + numel(same);
+                settings(end + 1) = yamada.model.PropertySetting(record.Path, record.Value, record.Location); %#ok<AGROW>
+            end
+            [~, order] = sort([settings.Sequence]);
+            settings = document.canonicalizeSettings(settings(order));
             % New constructor arguments belong to the surviving factory occurrence group.
             constructor = settings(string({settings.Method}) == "nameValue");
             previous = component.Settings(string({component.Settings.Method}) == "nameValue");
@@ -120,6 +138,17 @@ classdef SourceSettingRebinder
                 end
             end
             trace = analysis.initialization(offsets);
+            callCounts = zeros(1, numel(analysis.Statements));
+            if isfield(document.Metadata, "HasAxesSettingCalls") && document.Metadata.HasAxesSettingCalls
+                for component = document.Components
+                    for setting = component.Settings(string({component.Settings.Method}) == "functionCall")
+                        [span, valid] = batch.mapSpan(setting.SourceSpan);
+                        if ~valid, continue, end
+                        index = analysis.statementIndices(span);
+                        if isscalar(index), callCounts(index) = callCounts(index) + 1; end
+                    end
+                end
+            end
             result = struct("Trace", trace, "Creation", zeros(size(trace.Order)), ...
                 "Assignment", zeros(size(trace.Order)), "Owners", owners, "Counts", zeros(size(trace.Order)));
             % Index unique execution visits once for every owner's position projection.
@@ -143,6 +172,12 @@ classdef SourceSettingRebinder
                     sequence = sequence + counts(owner);
                     result.Counts(visit) = 1 + counts(owner);
                     created(end + 1) = names(owner); %#ok<AGROW>
+                    continue
+                end
+                if callCounts(index) > 0
+                    result.Assignment(visit) = sequence + 1;
+                    result.Counts(visit) = callCounts(index);
+                    sequence = sequence + callCounts(index);
                     continue
                 end
                 assignment = regexp(analysis.Statements(index).Text, ...

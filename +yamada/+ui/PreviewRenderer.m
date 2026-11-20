@@ -563,6 +563,10 @@ classdef PreviewRenderer < handle
             diagnostics = yamada.model.Diagnostic.empty;
             scope = component;
             parent = document.getComponent(component.ParentId);
+            if component.Factory == "colorbar" && ~isempty(parent)
+                scope = parent;
+                parent = document.getComponent(scope.ParentId);
+            end
             if ~isempty(parent) && isKey(handles, parent.Id)
                 nativeParent = handles(parent.Id);
                 if isprop(nativeParent, "RowHeight") || isprop(nativeParent, "SelectedObject")
@@ -798,6 +802,7 @@ classdef PreviewRenderer < handle
                     continue
                 end
                 property = definition.getProperty(entry.Path);
+                if entry.Path == "TickLabelFormat" && component.Factory == "geoaxes", property = yamada.model.PropertyDefinition.empty; end
                 imageSource = ~isempty(property) && property.PreviewPolicy == "adapt" && property.Editor == "asset";
                 if ~imageSource && ~isempty(property) && ...
                         any(property.PreviewPolicy == ["skip", "notRendered"])

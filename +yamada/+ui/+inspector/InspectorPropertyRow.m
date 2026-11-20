@@ -15,11 +15,12 @@ classdef InspectorPropertyRow < handle
         Row struct = struct()
         IsComposite logical = false
         BindingGeneration uint64 = uint64(0)
+        SettingsButton
     end
 
     methods
         function obj = InspectorPropertyRow( ...
-                parent, row, componentId, definition, commitFcn, batchCommitFcn)
+                parent, row, componentId, definition, commitFcn, batchCommitFcn, settingsFcn)
             % InspectorPropertyRow Create one disposable native property-row control set.
             arguments (Input)
                 parent
@@ -28,6 +29,7 @@ classdef InspectorPropertyRow < handle
                 definition
                 commitFcn (1, 1) function_handle
                 batchCommitFcn = []
+                settingsFcn = []
             end
             arguments (Output)
                 obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
@@ -63,7 +65,7 @@ classdef InspectorPropertyRow < handle
                     commitFcn, id, changes);
             end
             obj.BatchCommitFcn = batchCommitFcn;
-            uilabel(grid, "Text", displayName, "Tooltip", tooltip, ...
+            label = uilabel(grid, "Text", displayName, "Tooltip", tooltip, ...
                 "Tag", "yamada-inspector-property-label");
             if obj.IsComposite
                 obj.Editor = yamada.ui.inspector.PropertyEditorFactory.createComposite( ...
@@ -73,6 +75,36 @@ classdef InspectorPropertyRow < handle
                     @(value) obj.commit(value), @(changes) obj.commitBatch(changes));
             end
             obj.Editor.Layout.Column = 2;
+            if ~isempty(settingsFcn) && ~obj.IsComposite && ...
+                    isfield(definition.Metadata,"axesTextMember") && definition.Metadata.axesTextMember == "String"
+                grid.ColumnWidth = {105,"1x",30};
+                buttonCell = uigridlayout(grid,[3 1],"Padding",[0 0 0 0], ...
+                    "RowSpacing",0,"RowHeight",{"1x","fit","1x"},"ColumnWidth",{"1x"});
+                buttonCell.Layout.Column = 3;
+                obj.SettingsButton = uibutton(buttonCell,"Text","⚙","Tooltip","Settings", ...
+                    "Tag","yamada-axes-text-settings");
+                obj.SettingsButton.Layout.Row = 2;
+                group = definition.Metadata.axesTextGroup;
+                obj.SettingsButton.ButtonPushedFcn = @(~,~) settingsFcn(obj.ComponentId,group);
+            end
+            if ~isempty(settingsFcn) && ~obj.IsComposite && definition.Editor == "colormapPreview"
+                grid.RowHeight = {24, "1x"};
+                grid.RowSpacing = 4;
+                grid.ColumnWidth = {"1x","fit"};
+                label.Layout.Row = 1;
+                label.Layout.Column = 1;
+                obj.Editor.Layout.Row = 2;
+                obj.Editor.Layout.Column = [1 2];
+                obj.SettingsButton = uibutton(grid,"Text","Edit...","Tooltip","Edit Axes Colormap", ...
+                    "Tag","yamada-edit-axes-colormap", ...
+                    "ButtonPushedFcn",@(~,~) settingsFcn(obj.ComponentId,"Colormap"));
+                obj.SettingsButton.Layout.Row = 1;
+                obj.SettingsButton.Layout.Column = 2;
+            end
+            if ~isempty(settingsFcn) && ~obj.IsComposite && definition.Editor == "colormap"
+                obj.SettingsButton = obj.Editor.UserData.Edit;
+                obj.SettingsButton.ButtonPushedFcn = @(~,~) settingsFcn(obj.ComponentId,"EditColormap");
+            end
             obj.captureNormalBackgroundColor();
             obj.rebind(componentId);
         end
@@ -95,6 +127,7 @@ classdef InspectorPropertyRow < handle
             controls = findall(obj.Editor);
             for index = 1:numel(controls)
                 control = controls(index);
+                if isequal(control,obj.SettingsButton), continue, end
                 for name = ["ValueChangedFcn", "ValueChangingFcn", "ButtonPushedFcn"]
                     if ~isprop(control, name), continue, end
                     callback = control.(name);
@@ -380,10 +413,13 @@ classdef InspectorPropertyRow < handle
                     isfield(definition.ValueSchema, "multiselectProperty")
                 % Reserve the List Box selection surface for its optional multi-select mode.
                 height = 84;
+            elseif any(definition.Editor == ["colormap", "colormapPreview"])
+                height = 48;
             elseif definition.Editor == "position"
                 height = 102;
             elseif definition.Editor == "multilineText"
                 height = 84;
+                if isfield(definition.Metadata,"axesTextMember"), height = 44; end
             elseif definition.Editor == "dateTime" && ...
                     isfield(definition.ValueSchema, "shape") && ...
                     string(definition.ValueSchema.shape) == "fixedLengthVector"

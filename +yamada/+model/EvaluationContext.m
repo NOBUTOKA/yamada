@@ -395,6 +395,9 @@ classdef EvaluationContext < handle
             key.OriginalText = document.CurrentText;
             key.Metadata.SourceSnapshotText = document.Metadata.SourceSnapshotText;
             key.Metadata.InitializationContext = document.Metadata.InitializationContext;
+            if isfield(document.Metadata,"HasAxesSettingCalls")
+                key.Metadata.HasAxesSettingCalls = document.Metadata.HasAxesSettingCalls;
+            end
             key.UnknownRegions = document.UnknownRegions;
             key.PendingEdits = document.PendingEdits;
             key.CallbackEdits = document.CallbackEdits;

@@ -92,8 +92,16 @@ classdef PropertyApplicationPlanner
             entries = yamada.model.PropertyEntry.empty;
             settings = component.Settings;
             [~, order] = sort([settings.Sequence]);
+            axesPaths = yamada.model.AxesInspectorProperties.paths(component.Factory);
             for setting = settings(order)
-                if setting.Method ~= "assignment" || setting.IsReleaseUnavailable, continue, end
+                if setting.IsReleaseUnavailable, continue, end
+                if any(axesPaths == setting.Path) && setting.IsCertain && setting.ValueKind == "literal" && ...
+                        any(setting.Method == ["functionCall","assignment"])
+                    % Replay reviewed axes effects as native values without executing their source.
+                    entries(end+1) = yamada.model.PropertyEntry(setting.Path,setting.LiteralValue,"parsed"); %#ok<AGROW>
+                    continue
+                end
+                if setting.Method ~= "assignment", continue, end
                 current = component.getProperty(setting.Path);
                 if isempty(current) || current.ValueKind ~= "literal" || ~current.IsEditable
                     continue

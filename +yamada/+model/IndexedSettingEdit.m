@@ -56,7 +56,7 @@ classdef IndexedSettingEdit
                 changes = spec.Changes; placements = spec.Placements; removedIds = spec.RemovedIds;
                 original = component.Settings;
                 remove = ismember([original.Id], removedIds);
-                for setting = original(remove & string({original.Method}) == "assignment")
+                for setting = original(remove & ismember(string({original.Method}), ["assignment","functionCall"]))
                     removedStatements(end + 1) = analysis.statementIndices(setting.SourceSpan); %#ok<AGROW>
                 end
                 settings = original(~remove);
@@ -72,17 +72,35 @@ classdef IndexedSettingEdit
                         [record.Location.(field), valid] = batch.mapSpan(record.Location.(field));
                         assert(valid, "yamada:SourceLiteralTransaction:WiderProof", "An edit crossed another owned token boundary.");
                     end
-                    change = find(string({changes.Path}) == settings(index).Path, 1);
-                    entry = component.getProperty(settings(index).Path);
-                    if ~isempty(change) && ~isempty(entry) && isfield(entry.Metadata, "SourceSettingId") && ...
-                            entry.Metadata.SourceSettingId == settings(index).Id
-                        record.Value = changes(change).Value;
+                    % A shared call argument can own several occurrences with distinct paths.
+                    if isfield(changes, "SettingId")
+                        change = find([changes.SettingId] == settings(index).Id, 1);
+                    else
+                        change = find(string({changes.Path}) == settings(index).Path, 1);
+                        entry = component.getProperty(settings(index).Path);
+                        if isempty(entry) || ~isfield(entry.Metadata, "SourceSettingId") || ...
+                                entry.Metadata.SourceSettingId ~= settings(index).Id
+                            change = [];
+                        end
                     end
+                    if ~isempty(change), record.Value = changes(change).Value; end
                     settings(index) = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
                 end
                 constructorDelta(creationVisit) = constructorDelta(creationVisit) - nnz(remove & string({original.Method}) == "nameValue");
                 sourceName = document.sourceComponentName(component.Id);
                 for placement = placements
+                    if isfield(placement, "Statement")
+                        % Axes commands carry the exact inserted statement and its typed occurrence.
+                        settings(end + 1) = document.canonicalizeSettings(placement.Setting); %#ok<AGROW>
+                        additions(end + 1) = placement.Statement; %#ok<AGROW>
+                        addedOwners(end + 1) = sourceName; %#ok<AGROW>
+                        [anchor, ~] = analysis.statementNeighbors(placement.Offset);
+                        assert(isscalar(anchor) && anchor > 0 && ...
+                            analysis.Layout.Owner(anchor) == placement.Setting.OwnerMethod, ...
+                            "yamada:SourceLiteralTransaction:WiderProof", "Insertion has no retained initializer anchor.");
+                        anchors(end + 1) = anchor; %#ok<AGROW>
+                        continue
+                    end
                     change = find(string({changes.Path}) == placement.Path, 1);
                     assert(isscalar(change)); value = changes(change).Value;
                     encoded = yamada.source.LiteralEncoder.encode(value);

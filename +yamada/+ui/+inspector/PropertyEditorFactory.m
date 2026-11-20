@@ -30,6 +30,8 @@ classdef PropertyEditorFactory
                 return
             end
             switch definition.Editor
+                case {"colormap","colormapPreview"}
+                    yamada.ui.inspector.ColormapEditor.bind(control,commitFcn);
                 case "position"
                     yamada.ui.inspector.PositionEditor.bind(control, commitFcn);
                 case {"logical", "onOff", "number"}
@@ -92,6 +94,8 @@ classdef PropertyEditorFactory
             end
 
             switch definition.Editor
+                case {"colormap","colormapPreview"}
+                    control = yamada.ui.inspector.ColormapEditor.create(parent,definition.Editor == "colormap",commitFcn);
                 case "position"
                     control = yamada.ui.inspector.PositionEditor.create(parent, definition, commitFcn);
                 case {"logical", "onOff"}
@@ -246,7 +250,7 @@ classdef PropertyEditorFactory
             result = any(definition.Editor == ["literal", "text", "logical", ...
                 "onOff", "enum", "number", "numericVector", "position", "color", "stringList", ...
                 "multilineText", "url", "asset", "structuredData", "dateTime", "tableData", ...
-                "itemSelection"]);
+                "itemSelection", "colormap"]);
             if definition.Editor == "enum" && ~isfield(definition.ValueSchema, "values")
                 result = false;
             end
@@ -327,6 +331,10 @@ classdef PropertyEditorFactory
                 relatedValues struct = struct()
             end
 
+            if isprop(control,"Tag") && control.Tag == "yamada-colormap-editor"
+                yamada.ui.inspector.ColormapEditor.synchronize(control,rawValue,isEditable);
+                return
+            end
             if isprop(control, "Tag") && control.Tag == "yamada-inspector-position-editor"
                 yamada.ui.inspector.PositionEditor.synchronize(control, rawValue, isEditable, relatedValues);
                 return
@@ -439,7 +447,9 @@ classdef PropertyEditorFactory
                 end
             elseif isa(control, "matlab.ui.control.TextArea")
                 if iscell(rawValue) || (isstring(rawValue) && ~isscalar(rawValue))
-                    control.Value = rawValue;
+                    control.Value = reshape(cellstr(string(rawValue)),[],1);
+                elseif ischar(rawValue) && ~isrow(rawValue) && ~isempty(rawValue)
+                    control.Value = cellstr(rawValue);
                 elseif ischar(rawValue) || (isstring(rawValue) && isscalar(rawValue))
                     control.Value = {char(rawValue)};
                 else

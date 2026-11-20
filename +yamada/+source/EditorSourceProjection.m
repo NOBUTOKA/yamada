@@ -184,7 +184,7 @@ classdef EditorSourceProjection
                     counts(visit) = 1 + creationCounts(owner); creation(visit) = sequence + 1;
                 elseif projected.OldRows(visit) > 0
                     old = projected.OldRows(visit);
-                    if previous.Assignment(old) > 0, counts(visit) = 1; assignment(visit) = sequence + 1; end
+                    if previous.Assignment(old) > 0, counts(visit) = previous.Counts(old); assignment(visit) = sequence + 1; end
                 else
                     name = regexp(after.Statements(statement).Text, '^app\.(\w+)\.[A-Za-z]\w*(?:\.\w+)*\s*=', 'tokens', 'once');
                     if ~isempty(name) && any(names == string(name{1})), counts(visit) = 1; assignment(visit) = sequence + 1; end
