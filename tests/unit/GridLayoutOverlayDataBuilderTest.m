@@ -253,6 +253,57 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
                 "AbsTol", 1);
         end
 
+        function reconstructsFitOverflowWithCollapsedFlexibleTrack(testCase)
+            % reconstructsFitOverflowWithCollapsedFlexibleTrack Follow native fit overflow below the grid interior.
+            [document, handles, panel, grid, first, second, cleanup] = ...
+                testCase.renderGrid({700, "fit", "1x"}, [60 70]);
+            testCase.addTeardown(@() delete(cleanup));
+            data = yamada.ui.GridLayoutOverlayDataBuilder().build(document, handles, panel, grid.Id, second.Id, 1);
+            testCase.assertTrue(data.geometryAvailable, data.readOnlyReason);
+            child = data.children(string({data.children.id}) == second.Id);
+            testCase.verifyEqual(data.rowTracks(2).bounds([2 4]), child.bounds([2 4]), "AbsTol", 1);
+            testCase.verifyEqual(data.rowTracks(3).bounds(4), 0, "AbsTol", 1e-8);
+            testCase.verifyLessThan(data.rowTracks(3).bounds(2), data.innerBounds(2));
+            testCase.verifyEqual(data.children(string({data.children.id}) == first.Id).bounds(4), 700, "AbsTol", 1);
+        end
+
+        function reconstructsAmbiguousFitSpans(testCase)
+            % reconstructsAmbiguousFitSpans Preserve measured spans and publish usable inferred rows.
+            registry = yamada.model.ComponentRegistry.createDefault();
+            root = fileparts(fileparts(mfilename("fullpath")));
+            for name = ["DisjointSpans", "OverlapCross"]
+                path = fullfile(root, "fixtures", "fit-spans", name + ".m");
+                document = yamada.source.AppSourceParser.parseFile(path, registry);
+                grid = document.getComponentByName("Grid");
+                figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 800 600]);
+                cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
+                panel = uipanel(figure, "Position", [1 1 760 560]);
+                [handles, diagnostics, canvas] = yamada.ui.PreviewRenderer(registry).render(document, panel);
+                testCase.verifyEmpty(diagnostics);
+                GridLayoutOverlayDataBuilderTest.waitForLayout(handles(grid.Id));
+                data = yamada.ui.GridLayoutOverlayDataBuilder().build(document, handles, canvas, grid.Id, grid.Id, 1, registry);
+                testCase.assertTrue(data.geometryAvailable, name + ": " + data.readOnlyReason);
+                testCase.verifyFalse(data.geometryPending);
+                testCase.verifyGreaterThanOrEqual(data.rowBoundaries(:, 4), 0);
+                for child = data.children
+                    top = data.rowBoundaries(child.rowStart, 2) + data.rowBoundaries(child.rowStart, 4);
+                    bottom = data.rowBoundaries(child.rowEnd, 2);
+                    testCase.verifyEqual([bottom, top-bottom], child.bounds([2 4]), "AbsTol", 1.5);
+                end
+                if name == "DisjointSpans"
+                    heights = data.rowBoundaries(:, 4);
+                    testCase.verifyEqual(heights([1 3]), heights([2 4]), "AbsTol", 1e-8);
+                end
+                if name == "OverlapCross"
+                    rows = data.rowBoundaries;
+                    testCase.verifyEqual(rows([1 5], 4), [0; 0], "AbsTol", 1e-8);
+                    gaps = rows(1:end-1, 2) - sum(rows(2:end, [2 4]), 2);
+                    testCase.verifyEqual(gaps, [0; 10; 10; 0], "AbsTol", 1e-8);
+                end
+                clear cleanup
+            end
+        end
+
         function reconstructsFlexibleTrackRatiosWithPaddingAndSpacing(testCase)
             % reconstructsFlexibleTrackRatiosWithPaddingAndSpacing Preserve measured flexible proportions.
 
