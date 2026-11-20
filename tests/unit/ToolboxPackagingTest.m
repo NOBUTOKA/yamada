@@ -71,6 +71,8 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
             package = jsondecode(fileread(fullfile(root, "fsroot", "resources", "mpackage.json")));
             testCase.verifyEqual(string(package.name), "yamada");
             testCase.verifyEqual(string(package.readme), "doc/PACKAGE_OVERVIEW.md");
+            testCase.verifyNotEmpty(package.tags);
+            testCase.verifyEqual(sort(string(package.tags(:))), sort(string(testCase.Metadata.tags(:))));
             testCase.verifyEqual(string(package.displayName), string(testCase.Metadata.name));
             testCase.verifyEqual(string(package.id), string(testCase.Metadata.identifier));
             testCase.verifySubstring(core, "<cp:version>" + testCase.Metadata.version + "</cp:version>");
@@ -95,6 +97,7 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
             expected = lower(string(reshape(dec2hex(hash, 2)', 1, [])));
             testCase.verifyEqual(string(manifest.toolboxSha256), expected);
             testCase.verifyEqual(numel(manifest.files), numel(testCase.Files));
+            testCase.verifyEqual(testCase.Artifacts.checksums, testCase.Artifacts.toolbox + ".sha256");
             checksums = strip(string(fileread(testCase.Artifacts.checksums)));
             testCase.verifyEqual(checksums, expected + "  yamada-" + testCase.Metadata.version + ".mltbx");
             testCase.verifyError(@() packageYamadaToolbox(fileparts(testCase.Artifacts.toolbox), ...

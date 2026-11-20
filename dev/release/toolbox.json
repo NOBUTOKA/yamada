@@ -8,6 +8,7 @@
   "company": "",
   "summary": "A visual editor for MATLAB handle-class GUI applications using ordinary .m source files.",
   "description": "Create or open handle-class applications with one uifigure and edit their UI components graphically. yamada preserves ordinary MATLAB source and previews supported UI without executing the input application. Launch yamada from the Apps gallery or enter yamada in the Command Window.",
+  "tags": ["app designer", "app development", "gui builder", "gui tools", "source code", "visual editor", "gui", "uifigure"],
   "readme": "doc/PACKAGE_OVERVIEW.md",
   "minimumMatlabRelease": "R2023a",
   "maximumMatlabRelease": "R2026b",
