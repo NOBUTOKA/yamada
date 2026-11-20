@@ -33,6 +33,27 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
         end
 
+        function selectsAxesCallFormsFromRegistryRelease(testCase)
+            % selectsAxesCallFormsFromRegistryRelease Retain newer calls on older catalog surfaces.
+            [fixtureDocument, registry] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "xscale(app.Control, 'log');"]);
+            catalogs = fileparts(registry.CatalogRoot);
+            for release = ["R2023a","R2023b"]
+                projected = yamada.catalog.ComponentCatalogLoader.load(fullfile(catalogs,release));
+                document = yamada.source.AppSourceParser.parseText(fixtureDocument.OriginalText,projected);
+                control = document.getComponentByName("Control");
+                settings = control.getSettings("XScale");
+                if release == "R2023a"
+                    testCase.verifyEmpty(settings);
+                else
+                    testCase.assertNumElements(settings,1);
+                    testCase.verifyEqual(settings.Method,"functionCall");
+                    testCase.verifyEqual(string(settings.LiteralValue),"log");
+                end
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(projected).generate(document),fixtureDocument.OriginalText);
+            end
+        end
+
         function readsPolarCallsAndWarnsWhenTargetIsLost(testCase)
             % readsPolarCallsAndWarnsWhenTargetIsLost Stop inference after opaque code and accept explicit targets.
             [document, registry, control] = testCase.fixture([ ...
