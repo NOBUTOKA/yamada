@@ -29,6 +29,7 @@ options.AuthorCompany = metadata.company;
 options.Summary = metadata.summary;
 options.Description = metadata.description;
 options.Readme = fullfile(toolboxRoot, metadata.readme);
+options.Tags = string(metadata.tags);
 options.MinimumMatlabRelease = metadata.minimumMatlabRelease;
 options.MaximumMatlabRelease = metadata.maximumMatlabRelease;
 
