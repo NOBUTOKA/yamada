@@ -474,15 +474,12 @@ classdef GridLayoutOverlayDataBuilder
                 values(end + 1, 1) = 0; %#ok<AGROW>
             end
 
-            % Flexible tracks consume the remaining realized interior.
-            if ~isempty(flexible)
-                equations(end + 1, :) = ones(1, count);
-                values(end + 1, 1) = available - spacing * max(count - 1, 0);
-            end
-
             % Combine same-track child rectangles before creating one fit observation.
             [observed, extents, occupied, implicit] = ...
                 yamada.ui.GridLayoutOverlayDataBuilder.measuredTrackExtents(children, count, rows);
+            kinds = string({tracks.kind});
+            fit = kinds == "fit";
+            emptyFit = ~occupied & ~implicit;
             for index = 1:count
                 if tracks(index).kind ~= "fit"
                     continue
@@ -492,11 +489,25 @@ classdef GridLayoutOverlayDataBuilder
                 if observed(index)
                     equations(end + 1, :) = equation; %#ok<AGROW>
                     values(end + 1, 1) = extents(index); %#ok<AGROW>
-                elseif ~occupied(index) && ~implicit
+                elseif emptyFit(index)
                     % An explicitly empty R2024a fit track has a collapsed extent.
                     equations(end + 1, :) = equation; %#ok<AGROW>
                     values(end + 1, 1) = 0; %#ok<AGROW>
                 end
+            end
+
+            % Fit tracks may overflow the interior, leaving no space for flexible tracks.
+            if ~isempty(flexible)
+                interior = available - spacing * max(count - 1, 0);
+                minimum = sum([tracks(kinds == "fixed").value]) + sum(extents(fit & observed));
+                equation = ones(1, count);
+                if all(observed(fit) | emptyFit(fit)) && minimum > interior
+                    equation = zeros(1, count);
+                    equation(flexible) = 1;
+                    interior = 0;
+                end
+                equations(end + 1, :) = equation;
+                values(end + 1, 1) = interior;
             end
 
             % Spanning children constrain only their aggregate measured extent.

@@ -253,6 +253,20 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
                 "AbsTol", 1);
         end
 
+        function reconstructsFitOverflowWithCollapsedFlexibleTrack(testCase)
+            % reconstructsFitOverflowWithCollapsedFlexibleTrack Follow native fit overflow below the grid interior.
+            [document, handles, panel, grid, first, second, cleanup] = ...
+                testCase.renderGrid({700, "fit", "1x"}, [60 70]);
+            testCase.addTeardown(@() delete(cleanup));
+            data = yamada.ui.GridLayoutOverlayDataBuilder().build(document, handles, panel, grid.Id, second.Id, 1);
+            testCase.assertTrue(data.geometryAvailable, data.readOnlyReason);
+            child = data.children(string({data.children.id}) == second.Id);
+            testCase.verifyEqual(data.rowTracks(2).bounds([2 4]), child.bounds([2 4]), "AbsTol", 1);
+            testCase.verifyEqual(data.rowTracks(3).bounds(4), 0, "AbsTol", 1e-8);
+            testCase.verifyLessThan(data.rowTracks(3).bounds(2), data.innerBounds(2));
+            testCase.verifyEqual(data.children(string({data.children.id}) == first.Id).bounds(4), 700, "AbsTol", 1);
+        end
+
         function reconstructsFlexibleTrackRatiosWithPaddingAndSpacing(testCase)
             % reconstructsFlexibleTrackRatiosWithPaddingAndSpacing Preserve measured flexible proportions.
 
