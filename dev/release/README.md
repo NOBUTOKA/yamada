@@ -17,10 +17,16 @@ The build produces the `.mltbx`, `.mltbx.sha256`, and a local `build-manifest.js
 
 GPG-sign the final release commit on a work branch. Integrate it through a PR while preserving the signed commit; a merge commit can have a different signature. The release tag and package manifest must identify that signed source commit. If a separate merge commit is used, verify the intended release tree and repeat affected acceptance checks after integration.
 
-Build from that signed commit in a clean checkout, complete candidate validation, and prepare its detached signature using PowerShell:
+Build from that signed commit in a clean checkout, complete candidate validation, and prepare its detached signature using either command below.
 
 ```powershell
 ./dev/release/Complete-YamadaRelease.ps1 -Artifact ./build/1.1.1/yamada-1.1.1.mltbx -SigningKey <signing-key>
+```
+
+From Command Prompt, pass the artifact path and signing key as positional arguments. The launcher uses PowerShell 7 (pwsh.exe on PATH) to run the same signing checks.
+
+```cmd
+dev\release\Complete-YamadaRelease.cmd "build\1.1.1\yamada-1.1.1.mltbx" "SIGNING-KEY"
 ```
 
 The script checks candidate identity, SHA-256, clean-build provenance, integration into `main`, and the release commit's GPG signature before invoking GnuPG. GnuPG may request a passphrase, PIN, or hardware-key confirmation. A signing error is a publication blocker. Keep the detached signature outside the Toolbox.
