@@ -126,10 +126,11 @@ classdef GridLayoutOverlayDataBuilder
             measurementChildren = yamada.ui.GridLayoutOverlayDataBuilder.outerMeasurementChildren( ...
                 data.children, snapshot);
 
+            budget = tic;
             [rowBounds, rowMessage, rowPending] = yamada.ui.GridLayoutOverlayDataBuilder.trackBounds( ...
-                rowTracks, innerBounds, double(item.RowSpacing), true, measurementChildren, expectedChildren);
+                rowTracks, innerBounds, double(item.RowSpacing), true, measurementChildren, expectedChildren, budget);
             [columnBounds, columnMessage, columnPending] = yamada.ui.GridLayoutOverlayDataBuilder.trackBounds( ...
-                columnTracks, innerBounds, double(item.ColumnSpacing), false, measurementChildren, expectedChildren);
+                columnTracks, innerBounds, double(item.ColumnSpacing), false, measurementChildren, expectedChildren, budget);
             if strlength(rowMessage) > 0 || strlength(columnMessage) > 0
                 data.readOnlyReason = yamada.ui.GridLayoutOverlayDataBuilder.joinMessages( ...
                     [rowMessage columnMessage]);
@@ -408,7 +409,7 @@ classdef GridLayoutOverlayDataBuilder
             end
         end
 
-        function [bounds, message, pending] = trackBounds(tracks, innerBounds, spacing, rows, children, expectedChildren)
+        function [bounds, message, pending] = trackBounds(tracks, innerBounds, spacing, rows, children, expectedChildren, budget)
             % trackBounds Reconstruct track rectangles from public Safe Preview measurements.
             arguments (Input)
                 tracks struct
@@ -417,6 +418,7 @@ classdef GridLayoutOverlayDataBuilder
                 rows (1, 1) logical
                 children struct
                 expectedChildren (1, 1) double
+                budget (1, 1) uint64
             end
             arguments (Output)
                 bounds double
@@ -510,7 +512,9 @@ classdef GridLayoutOverlayDataBuilder
                 values(end + 1, 1) = interior;
             end
 
-            % Spanning children constrain only their aggregate measured extent.
+            % Spanning children constrain their aggregate measured extent and occupied endpoints.
+            endpoints = zeros(0, count);
+            offsets = zeros(0, 1);
             for index = 1:numel(children)
                 child = children(index);
                 [start, finish, extent] = yamada.ui.GridLayoutOverlayDataBuilder.axisSpan( ...
@@ -521,19 +525,45 @@ classdef GridLayoutOverlayDataBuilder
                 equation = zeros(1, count);
                 equation(start:finish) = 1;
                 equations(end + 1, :) = equation; %#ok<AGROW>
-                values(end + 1, 1) = extent - spacing * (finish - start); %#ok<AGROW>
+                values(end + 1, 1) = extent - spacing * (finish - start);
+                if rows
+                    leading = innerBounds(2) + innerBounds(4) - (child.bounds(2) + extent);
+                else
+                    leading = child.bounds(1) - innerBounds(1);
+                end
+                equation = zeros(1, count);
+                equation(1:start-1) = 1;
+                endpoints(end + 1, :) = equation; %#ok<AGROW>
+                offsets(end + 1, 1) = leading - spacing * (start - 1); %#ok<AGROW>
+ %#ok<AGROW>
             end
 
-            if rank(equations) < count
-                message = "Track boundaries are unavailable because realized geometry is ambiguous.";
-                pending = numel(children) < expectedChildren;
-                return
+            if rank(equations) < count && numel(children) == expectedChildren
+                equations = [equations; endpoints];
+                values = [values; offsets];
             end
-
-            sizes = equations \ values;
             tolerance = max(1.5, 1e-8 * max([available; abs(values); 1]));
-            if any(~isfinite(sizes)) || any(sizes <= tolerance * -1) || ...
-                    norm(equations * sizes - values, inf) > tolerance
+            if rank(equations) < count
+                if numel(children) < expectedChildren
+                    message = "Track boundaries are waiting for realized child geometry.";
+                    pending = true;
+                    return
+                end
+                [sizes, resolved, timedOut] = yamada.ui.GridLayoutOverlayDataBuilder.distributeTracks( ...
+                    equations, values, tolerance, budget);
+                if ~resolved
+                    message = "Track boundaries are unavailable because realized geometry is ambiguous.";
+                    if timedOut
+                        message = "Track boundary allocation did not converge within the layout budget.";
+                    end
+                    return
+                end
+            else
+                sizes = equations \ values;
+            end
+
+            if any(~isfinite(sizes)) || any(sizes < -tolerance) || ...
+                    norm(equations * max(sizes, 0) - values, inf) > tolerance
                 message = "Track boundaries do not agree with realized grid geometry.";
                 pending = true;
                 return
@@ -542,6 +572,89 @@ classdef GridLayoutOverlayDataBuilder
 
             bounds = yamada.ui.GridLayoutOverlayDataBuilder.trackRectangles( ...
                 sizes, innerBounds, spacing, rows);
+        end
+
+        function [sizes, resolved, timedOut] = distributeTracks(equations, values, tolerance, budget)
+            % distributeTracks Split bounded ambiguous intervals while respecting measured spans.
+            arguments (Input)
+                equations double
+                values (:, 1) double
+                tolerance (1, 1) double
+                budget (1, 1) uint64
+            end
+            arguments (Output)
+                sizes (:, 1) double
+                resolved (1, 1) logical
+                timedOut (1, 1) logical
+            end
+            count = size(equations, 2);
+            sizes = zeros(count, 1);
+            resolved = false;
+            timedOut = false;
+            prefix = tril(ones(count));
+            directions = null(equations);
+            fixed = all(abs(prefix * directions) <= 1e-9 * count, 2);
+            if ~fixed(end), return, end
+
+            % Preserve every determined cumulative extent and prefer equal unknown sizes within it.
+            inverse = pinv(equations);
+            reference = inverse * values;
+            boundaries = [0; find(fixed)];
+            positions = [0; prefix(fixed, :) * reference];
+            target = zeros(count, 1);
+            for index = 2:numel(boundaries)
+                range = boundaries(index-1)+1:boundaries(index);
+                determined = all(abs(directions(range, :)) <= 1e-9 * count, 2);
+                target(range(determined)) = reference(range(determined));
+                unknown = range(~determined);
+                if ~isempty(unknown)
+                    target(unknown) = (positions(index) - positions(index-1) - ...
+                        sum(target(range(determined)))) / numel(unknown);
+                end
+            end
+            candidate = target + inverse * (values - equations * target);
+            numericTolerance = 1e-8 * max(1, norm(candidate, inf));
+            if any(~isfinite(candidate)) || norm(equations * candidate - values, inf) > tolerance
+                return
+            end
+            if all(candidate >= -numericTolerance)
+                sizes = max(candidate, 0);
+                resolved = norm(equations * sizes - values, inf) <= tolerance;
+                return
+            end
+
+            % Dykstra projection retains the equal-share objective under nonnegative bounds.
+            % Project onto the affine set represented by the measured least-squares solution.
+            fitted = equations * reference;
+            current = target;
+            affineCorrection = zeros(count, 1);
+            boundCorrection = zeros(count, 1);
+            bestDistance = inf;
+            while toc(budget) < 0.5
+                previous = current;
+                input = current + affineCorrection;
+                projected = input + inverse * (fitted - equations * input);
+                affineCorrection = input - projected;
+                input = projected + boundCorrection;
+                current = max(input, 0);
+                boundCorrection = input - current;
+                residual = norm(equations * current - values, inf);
+                if residual <= tolerance
+                    distance = norm(current - target);
+                    if distance < bestDistance
+                        sizes = current;
+                        resolved = true;
+                        bestDistance = distance;
+                    end
+                end
+                if norm(equations * current - fitted, inf) <= numericTolerance && ...
+                        norm(current - previous, inf) <= numericTolerance
+                    sizes = current;
+                    resolved = residual <= tolerance;
+                    return
+                end
+            end
+            timedOut = true;
         end
 
         function [observed, extents, occupied, implicit] = measuredTrackExtents(children, trackCount, rows)
