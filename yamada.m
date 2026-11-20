@@ -3332,6 +3332,27 @@ classdef yamada < handle
                 app.scheduleOverlayRefresh();
                 return
             end
+            if group == "GeographicLimits"
+                component = document.getComponent(id);
+                latitude = component.getSettings("RequestedLatitudeLimits");
+                longitude = component.getSettings("RequestedLongitudeLimits");
+                inputs = ["",""];
+                if ~isempty(latitude) && ~isempty(longitude)
+                    inputs = [yamada.source.LiteralEncoder.encode(latitude(end).LiteralValue), ...
+                        yamada.source.LiteralEncoder.encode(longitude(end).LiteralValue)];
+                end
+                displayed = [];
+                if isKey(app.PreviewHandles,id)
+                    native = app.PreviewHandles(id);
+                    if isvalid(native) && isa(native,"matlab.graphics.axis.GeographicAxes")
+                        [lat,lon] = geolimits(native);
+                        displayed = [lat;lon];
+                    end
+                end
+                yamada.ui.inspector.GeographicLimitsDialog.open(app.UIFigure,inputs,displayed, ...
+                    @(value) app.commitAxesSetting(document,id,"GeographicLimits",value,"set"));
+                return
+            end
             if group == "EditColormap"
                 component = document.getComponent(id);
                 settings = component.getSettings("Colormap");

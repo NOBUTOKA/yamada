@@ -87,6 +87,9 @@ classdef InspectorPropertyRow < handle
                 group = definition.Metadata.axesTextGroup;
                 obj.SettingsButton.ButtonPushedFcn = @(~,~) settingsFcn(obj.ComponentId,group);
             end
+            if ~isempty(settingsFcn) && ~obj.IsComposite && definition.Editor == "geographicLimits"
+                obj.Editor.ButtonPushedFcn = @(~,~) settingsFcn(obj.ComponentId,"GeographicLimits");
+            end
             if ~isempty(settingsFcn) && ~obj.IsComposite && definition.Editor == "colormapPreview"
                 grid.RowHeight = {24, "1x"};
                 grid.RowSpacing = 4;

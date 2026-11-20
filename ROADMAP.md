@@ -16,7 +16,6 @@ For users following planned features and contributors choosing work, this roadma
 ## Broader axes support
 
 - **Extend ruler details.** Add individual latitude and longitude ruler formats and type-specific controls for Cartesian datetime, duration, and categorical rulers when their types can be established.
-- **Edit geographic limits.** Set requested latitude and longitude together and surface the extent MATLAB displays.
 - **Recognize more axes setup calls.** Support reviewed `axis` forms, aspect ratios, and absolute camera settings. Extend coverage of compound and data-dependent calls as their effects and ownership can be established.
 
 ## More control when saving

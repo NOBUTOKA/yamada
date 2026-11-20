@@ -150,6 +150,29 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document),document.OriginalText);
         end
 
+        function editsGeographicLimitsAsOneSourceTransaction(testCase)
+            % editsGeographicLimitsAsOneSourceTransaction Save both limits and undo them together.
+            [document,registry,component] = testCase.fixture( ...
+                "app.Control = geoaxes(app.UIFigure, Basemap='none'); % keep","geoaxes");
+            original = document.CurrentText;
+            document.editAxesInspector(component.Id,"GeographicLimits",[-15 15;170 -170],"set",registry);
+            inserted = document.CurrentText;
+            testCase.verifySubstring(inserted,"geolimits(app.Control, [-15 15], [170 -170]);");
+            testCase.verifySubstring(inserted,"% keep");
+            document.editAxesInspector(component.Id,"GeographicLimits",[-10 20;170 190],"set",registry);
+            edited = document.CurrentText;
+            testCase.verifySubstring(edited,"geolimits(app.Control, [-10 20], [170 190]);");
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document),edited);
+            document.undo();
+            testCase.verifyEqual(document.CurrentText,inserted);
+            document.undo();
+            testCase.verifyEqual(document.CurrentText,original);
+            testCase.verifyEmpty(component.getSettings("RequestedLatitudeLimits"));
+            document.redo();
+            document.redo();
+            testCase.verifyEqual(document.CurrentText,edited);
+        end
+
         function readsGeographicSettingsThroughOtherEdits(testCase)
             % readsGeographicSettingsThroughOtherEdits Keep multi-effect calls through local source publication.
             [document, registry, control] = testCase.fixture([ ...

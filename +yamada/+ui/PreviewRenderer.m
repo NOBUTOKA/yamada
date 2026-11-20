@@ -98,6 +98,16 @@ classdef PreviewRenderer < handle
                     geometryChanged = geometryChanged || componentRequest.affectsGeometry(document, obj.Registry, handles);
                     continue
                 end
+                if component.Factory == "geoaxes" && any(ismember(localPaths, ...
+                        ["RequestedLatitudeLimits","RequestedLongitudeLimits"]))
+                    % Reapply ordered geographic effects within the affected axes scope.
+                    [repaired, localDiagnostics, handles] = obj.rebuildScope(document,component,handles);
+                    diagnostics = [diagnostics localDiagnostics]; %#ok<AGROW>
+                    if ~repaired, return, end
+                    geometryChanged = true;
+                    reconstructed = true;
+                    continue
+                end
                 states = document.getEffectivePropertyStates(obj.Registry, id);
                 paths = string(arrayfun(@(state) state.Definition.Path, states));
                 [found, requested] = ismember(localPaths, paths);

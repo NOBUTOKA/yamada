@@ -158,6 +158,9 @@ classdef AxesInspectorProperties
                 definitionsOut(end+1) = yamada.model.PropertyDefinition(path,seed,false,true,metadata); %#ok<AGROW>
             end
             if factory == "geoaxes"
+                metadata = struct("category","Maps","displayName","Geographic Limits", ...
+                    "editor","geographicLimits","previewPolicy","skip");
+                definitionsOut(end+1) = yamada.model.PropertyDefinition("GeographicLimits","",true,true,metadata);
                 index = find(string({definitionsOut.Path}) == "TickLabelFormat",1);
                 if ~isempty(index)
                     previous = definitionsOut(index);

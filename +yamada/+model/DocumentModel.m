@@ -1044,7 +1044,7 @@ classdef DocumentModel < handle
             before = obj.CurrentSource;
             [state, forward] = obj.publishAxesSource(component,batch,forward,"",paths, ...
                 struct("Path",path,"Value",{requested},"Action",action));
-            if ~isempty(forward.Placements), inverse.RemovedIds = forward.Placements.Setting.Id; end
+            if ~isempty(forward.Placements), inverse.RemovedIds = [forward.Placements.Setting.Id]; end
             obj.SourcePublication = true;
             cleanup = onCleanup(@() obj.endSourcePublication());
             obj.recordHistory(struct("Kind","axes-inspector","ComponentId",id,"Paths",paths, ...
@@ -3385,11 +3385,18 @@ classdef DocumentModel < handle
             if ~isempty(delta.Placements)
                 inserted = settings(arrayfun(@(setting) ...
                     isequal(setting.SourceSpan,delta.Placements.Statement.Span),settings));
-                assert(isscalar(inserted) && inserted.IsCertain, ...
+                assert(numel(inserted) == numel(delta.Placements.Setting) && all([inserted.IsCertain]), ...
                     "yamada:DocumentModel:UnsafeAxesSource","The insertion must execute once in the owning initializer.");
                 delta.Placements.Setting = inserted;
             end
-            if isfield(expected,"Path")
+            if isfield(expected,"Path") && expected.Path == "GeographicLimits"
+                for index = 1:numel(paths)
+                    records = settings(string({settings.Path}) == paths(index));
+                    assert(~isempty(records) && records(end).IsCertain && ...
+                        isequaln(records(end).LiteralValue,expected.Value(index,:)), ...
+                        "yamada:DocumentModel:UnsafeAxesSource","The geographic limits could not be verified.");
+                end
+            elseif isfield(expected,"Path")
                 settingsForPath = settings(string({settings.Path}) == expected.Path);
                 assert(~isempty(settingsForPath) && settingsForPath(end).IsCertain && ...
                     settingsForPath(end).ValueKind == "literal" && ...
