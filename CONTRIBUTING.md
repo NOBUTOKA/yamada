@@ -181,6 +181,8 @@ Use quick and area profiles while iterating. Start the runner from the executabl
 
 The quick profile contains every non-UI test except catalog-wide sweeps, plus a bounded UI smoke set. Catalog-wide sweeps, which repeat a check for every catalog variant through rendering, generation, or ledger comparison, carry the `exhaustive` tag instead of `fast`; they run in the full suite and in area profiles that select them. Area profiles add their tagged tests to the quick profile. Supported area tags are `parser`, `catalog`, `model`, `generation`, `preview`, `gridOverlay`, `inspector`, `dialog`, `editorShell`, `previewTab`, `lifecycle`, and `exhaustive`. Run the `exhaustive` area while iterating on catalog changes.
 
+Use `yamada(Visible="off")` in tests that exercise editor handles and callbacks without requiring a visible window. A test that creates a native figure or control still carries the `ui` tag, including when the figure is hidden. Keep source and model checks free of figure creation so that the R2023a non-UI CI suite can run them. The CI matrix assigns whole test classes to jobs, so group editor integration tests into focused classes that can run independently.
+
 From the repository root, run the full suite with:
 
 ```matlab
@@ -219,7 +221,7 @@ For catalog text or promotion changes, also run the PowerShell checks `tests/ver
 
 ## HTML Editing Canvas Overlay
 
-For overlay data flow, event handling, and source-update responsibilities, see the [architecture reference](doc/ARCHITECTURE.md#safe-preview-and-canvas-overlay). Overlay changes should include the relevant browser tests and `tests/unit/EditorInteractionTest.m`.
+For overlay data flow, event handling, and source-update responsibilities, see the [architecture reference](doc/ARCHITECTURE.md#safe-preview-and-canvas-overlay). Overlay changes should include the relevant browser tests and editor integration tests, such as `tests/unit/EditorGridActionTest.m`, `tests/unit/EditorGridSelectionTest.m`, and `tests/unit/EditorPreviewCanvasTest.m`.
 
 ## Pull Requests
 

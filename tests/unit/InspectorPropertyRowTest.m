@@ -27,9 +27,10 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorPropertyRowTest < matlab.unit
     methods (Test)
         function acceptedInspectorEditRetainsNativeEditor(testCase)
             % acceptedInspectorEditRetainsNativeEditor Avoid replacing rows during a value-only refresh.
-            app = yamada();
+            app = yamada(Visible="off");
             cleanup = onCleanup(@() deleteIfValid(app));
             figure = findall(0, "Tag", "yamada-editor");
+            testCase.verifyEqual(string(figure.Visible), "off");
             tables = findall(figure, "Type", "uitable");
             palette = tables(arrayfun(@(item) any(string(item.ColumnName) == "Category"), tables));
             index = find(string(palette.Data(:, 1)) == "Label", 1);
