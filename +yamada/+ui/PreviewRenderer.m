@@ -972,6 +972,15 @@ classdef PreviewRenderer < handle
                     return
                 end
             end
+            % Geographic limits are an allowlisted operation on an editor-owned axes.
+            if path == "GeographicLimits" && isa(target,"matlab.graphics.axis.GeographicAxes")
+                if iscell(value)
+                    geolimits(target,value{1},value{2});
+                else
+                    geolimits(target,value);
+                end
+                return
+            end
             parts = split(path, ".");
             if isscalar(parts)
                 target.(parts(1)) = value;

@@ -124,6 +124,32 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
         end
 
+        function retainsRequestedGeographicLimitsInSourceOrder(testCase)
+            % retainsRequestedGeographicLimitsInSourceOrder Replay one pair without inventing display values.
+            [document, registry, component] = testCase.fixture([ ...
+                "app.Control = geoaxes(app.UIFigure, Basemap='none');", ...
+                "geolimits(app.Control, [-15 15], [170 -170]); % crosses the antimeridian", ...
+                "app.Control.MapCenter = [5 180];", ...
+                "geolimits(app.Control, 'manual');", "geolimits('auto');"],"geoaxes");
+            testCase.verifyEqual(component.getSettings("RequestedLatitudeLimits").LiteralValue,[-15 15]);
+            testCase.verifyEqual(component.getSettings("RequestedLongitudeLimits").LiteralValue,[170 -170]);
+            testCase.verifyEmpty(component.getSettings("LatitudeLimits"));
+            testCase.verifyEmpty(component.getSettings("LongitudeLimits"));
+            modes = component.getSettings("GeographicLimitsMode");
+            testCase.verifyEqual(string({modes.LiteralValue}),["manual","auto"]);
+            entries = yamada.model.PropertyApplicationPlanner.forPreview(component,document,registry);
+            paths = string({entries.Path});
+            geographic = find(paths == "GeographicLimits");
+            testCase.assertNumElements(geographic,3);
+            testCase.verifyEqual(entries(geographic(1)).LiteralValue,{[-15 15],[170 -170]});
+            center = find(paths == "MapCenter");
+            testCase.assertNumElements(center,1);
+            testCase.verifyGreaterThan(center,geographic(1));
+            testCase.verifyLessThan(center,geographic(2));
+            testCase.verifyTrue(any(string({document.Diagnostics.Code}) == "implicit-axes-target"));
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document),document.OriginalText);
+        end
+
         function readsGeographicSettingsThroughOtherEdits(testCase)
             % readsGeographicSettingsThroughOtherEdits Keep multi-effect calls through local source publication.
             [document, registry, control] = testCase.fixture([ ...

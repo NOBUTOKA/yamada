@@ -19,6 +19,29 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
     end
 
     methods (Test)
+        function showsRequestedGeographicRegion(testCase)
+            % showsRequestedGeographicRegion Apply one paired geolimits call to a Safe Preview.
+            registry = yamada.model.ComponentRegistry.createDefault();
+            source = strjoin(["classdef GeographicLimitsFixture < handle", "properties", ...
+                "UIFigure matlab.ui.Figure", "Map matlab.graphics.axis.GeographicAxes", ...
+                "end", "methods", "function app = GeographicLimitsFixture", ...
+                "app.UIFigure = uifigure(Visible='off', Position=[20 20 800 600]);", ...
+                "app.Map = geoaxes(app.UIFigure, Basemap='none', Position=[20 20 600 400]);", ...
+                "geolimits(app.Map, [-15 15], [170 190]);", "end", "end", "end"], newline);
+            document = yamada.source.AppSourceParser.parseText(source,registry);
+            owner = document.getComponentByName("Map");
+            figure = uifigure(Visible="off");
+            cleanup = onCleanup(@() deleteIfValid(figure));
+            renderer = yamada.ui.PreviewRenderer(registry);
+            [handles, diagnostics] = renderer.render(document,uipanel(figure));
+            testCase.verifyFalse(any(string({diagnostics.Code}) == "preview-property-failed"));
+            [latitude,longitude] = geolimits(handles(owner.Id));
+            testCase.verifyLessThanOrEqual(latitude(1),-14.999);
+            testCase.verifyGreaterThanOrEqual(latitude(2),14.999);
+            testCase.verifyLessThanOrEqual(longitude(1),170.001);
+            testCase.verifyGreaterThanOrEqual(longitude(2),189.999);
+        end
+
         function preservesNewerControlsAsLabelsInOlderPreview(testCase)
             % preservesNewerControlsAsLabelsInOlderPreview Check source-owned grid and absolute placement.
 

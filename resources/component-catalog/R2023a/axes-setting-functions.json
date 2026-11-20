@@ -2101,6 +2101,66 @@
           "argument": "format"
         }
       ]
+    },
+    {
+      "id": "geolimits.intervals",
+      "name": "geolimits",
+      "targetFactories": [
+        "geoaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "latitude",
+          "type": "latitudeLimits"
+        },
+        {
+          "id": "longitude",
+          "type": "longitudeLimits"
+        }
+      ],
+      "effects": [
+        {
+          "path": "RequestedLatitudeLimits",
+          "argument": "latitude"
+        },
+        {
+          "path": "RequestedLongitudeLimits",
+          "argument": "longitude"
+        }
+      ]
+    },
+    {
+      "id": "geolimits.mode",
+      "name": "geolimits",
+      "targetFactories": [
+        "geoaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "mode",
+          "type": "enum",
+          "values": [
+            "auto",
+            "manual"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "path": "GeographicLimitsMode",
+          "argument": "mode"
+        }
+      ]
     }
   ]
 }
