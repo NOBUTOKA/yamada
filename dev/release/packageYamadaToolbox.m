@@ -1,7 +1,7 @@
 function artifacts = packageYamadaToolbox(outputFolder, identifySource)
 % packageYamadaToolbox Package a Toolbox candidate for a caller-identified source.
 %   ARTIFACTS = packageYamadaToolbox(OUTPUTFOLDER, IDENTIFYSOURCE) builds the
-%   .mltbx, its input manifest, and SHA256SUMS. IDENTIFYSOURCE returns a
+%   .mltbx, its input manifest, and a .mltbx.sha256 checksum file. IDENTIFYSOURCE returns a
 %   struct with a string commit and a logical dirty flag. It is called before
 %   and after packaging so a source change during the build is rejected.
 %   Release candidates must use buildYamadaToolbox, which identifies the
@@ -29,9 +29,10 @@ if ~System.IO.Path.IsPathRooted(outputFolder)
     outputFolder = fullfile(string(pwd), outputFolder);
 end
 outputFolder = string(System.IO.Path.GetFullPath(char(outputFolder)));
-artifacts = struct("toolbox", fullfile(outputFolder, "yamada-" + metadata.version + ".mltbx"), ...
+toolboxPath = fullfile(outputFolder, "yamada-" + metadata.version + ".mltbx");
+artifacts = struct("toolbox", toolboxPath, ...
     "manifest", fullfile(outputFolder, "build-manifest.json"), ...
-    "checksums", fullfile(outputFolder, "SHA256SUMS"));
+    "checksums", toolboxPath + ".sha256");
 for path = string(struct2cell(artifacts))'
     assert(~isfile(path) && ~isfolder(path), "yamada:Release:OutputExists", ...
         "Use a new output folder; refusing to replace %s.", path);

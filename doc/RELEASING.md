@@ -14,7 +14,7 @@ Use `major.minor.patch`: `1.0.0` for the first stable release, `1.0.1` for compa
 
 Use `1.0.0` in Toolbox metadata, `v1.0.0` as the Git tag, `yamada 1.0.0` as the Release title, and `yamada-1.0.0.mltbx` as the asset name. Set the Toolbox version in the release metadata and verify that the tag, release title, and asset name agree. Keep the Toolbox UUID stable across versions.
 
-The version, permanent UUID, author, public contact, description, and compatibility are defined in [`dev/release/toolbox.json`](../dev/release/toolbox.json). Use [`buildYamadaToolbox`](../dev/release/buildYamadaToolbox.m) to create a candidate, input manifest, and `SHA256SUMS`; see the [build procedure](../dev/release/README.md). The default output is ignored under `build/`. Existing candidates are not overwritten.
+The version, permanent UUID, author, public contact, description, and compatibility are defined in [`dev/release/toolbox.json`](../dev/release/toolbox.json). Use [`buildYamadaToolbox`](../dev/release/buildYamadaToolbox.m) to create a candidate, input manifest, and `.mltbx.sha256`; see the [build procedure](../dev/release/README.md). The default output is ignored under `build/`. Existing candidates are not overwritten.
 
 ## Repository Settings
 
@@ -55,7 +55,7 @@ If candidate code or packaged contents change, repeat affected checks and rebuil
 ## Publish
 
 1. GPG-sign the final release commit on a work branch and integrate it through a PR while preserving that signed commit. Build from that exact clean revision, resolve remaining blockers, and complete final artifact acceptance. Prepare the detached `.mltbx.asc` signature for the accepted artifact. If a separate merge commit is used, verify the intended release tree and repeat affected acceptance checks after integration.
-2. Prepare a draft GitHub Release with the version, source commit, `.mltbx`, `.mltbx.asc`, `SHA256SUMS`, supported environments, installation and `yamada` launch instructions, features, known limitations, and changes from the prior release. GitHub's automatic source archives are distinct from the installable Toolbox asset.
+2. Prepare a draft GitHub Release with the version, source commit, `.mltbx`, `.mltbx.asc`, `.mltbx.sha256`, supported environments, installation and `yamada` launch instructions, features, known limitations, and changes from the prior release. GitHub's automatic source archives are distinct from the installable Toolbox asset.
 3. Review the installer, detached signature, checksums, and Release text together before publishing.
 4. GPG-sign the `v<version>` tag pointing to the accepted source commit, then push the tag and publish the matching assets. Verify that source identity, Toolbox metadata, asset name, checksum, and release notes agree. Resolve any signing failure before publishing.
 5. Download the published asset and verify its checksum and public documentation links. Record completion without committing generated measurement reports to `main`.

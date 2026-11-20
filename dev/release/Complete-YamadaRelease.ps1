@@ -20,9 +20,9 @@ if ($manifest.sourceDirty) { throw 'Do not sign a build from a dirty checkout. B
 if ($manifest.sourceCommit -notmatch '^[0-9a-f]{40}$') { throw 'The manifest does not identify a valid source commit.' }
 $actualHash = (Get-FileHash -LiteralPath $artifactPath -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actualHash -ne $manifest.toolboxSha256) { throw 'The artifact differs from the build manifest.' }
-$checksumPath = Join-Path $folder 'SHA256SUMS'
+$checksumPath = $artifactPath + ".sha256"
 $expectedChecksum = $actualHash + '  ' + $expectedName
-if ((Get-Content -LiteralPath $checksumPath -Raw).Trim() -ne $expectedChecksum) { throw 'SHA256SUMS does not match the artifact.' }
+if ((Get-Content -LiteralPath $checksumPath -Raw).Trim() -ne $expectedChecksum) { throw 'The checksum file does not match the artifact.' }
 
 # Require the recorded release commit to carry a valid GPG signature.
 $repository = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path

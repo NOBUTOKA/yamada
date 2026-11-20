@@ -2,29 +2,35 @@
 
 For maintainers building and signing a Toolbox candidate, this guide describes the build inputs, output files, and signing command.
 
-Add `dev/release` to the MATLAB path and run `buildYamadaToolbox`. The build requires MATLAB R2026b, the declared maximum release, on Windows, because the packager rejects a maximum release newer than the running one. Its default output is the ignored `build/1.1.0` directory; pass a new output folder to keep multiple candidates. Existing output files are never replaced.
+Add `dev/release` to the MATLAB path and run `buildYamadaToolbox`. The build requires MATLAB R2026b, the declared maximum release, on Windows, because the packager rejects a maximum release newer than the running one. Its default output is the ignored `build/1.1.1` directory; pass a new output folder to keep multiple candidates. Existing output files are never replaced.
 
 ```matlab
 addpath(fullfile(pwd, "dev", "release"));
 artifacts = buildYamadaToolbox;
 ```
 
-`toolbox.json` is the authoritative source for version, permanent UUID, author, public email, summary, description, package README path, and release compatibility. The packager explicitly selects runtime code, resources, user documents, screenshots, and the project-owned example. Only the installed distribution root is added to the MATLAB path. The Apps gallery launches `yamada.m` directly.
+`toolbox.json` is the authoritative source for the display name, package name, version, permanent UUID, author, public email, summary, description, package README path, and release compatibility. The packager explicitly selects runtime code, resources, user documents, screenshots, and the project-owned example. Only the installed distribution root is added to the MATLAB path. The Apps gallery launches `yamada.m` directly.
 
-The build produces the `.mltbx`, `SHA256SUMS`, and a local `build-manifest.json` containing the source commit, dirty-state flag, MATLAB version, selected input hashes, and artifact SHA-256. `buildYamadaToolbox` reads the commit and dirty state from Git before and after packaging, so it requires Git. The packaging itself is `packageYamadaToolbox`, which takes the source identity from its caller; tests use it with a fixed identity so that they do not need Git. Release candidates must always be built with `buildYamadaToolbox`. A build from a dirty tree is a development candidate, not a publishable release. File timestamps and packager-generated metadata can vary between runs; reproducibility means repeatable source selection and configuration, not byte-identical archives.
+The build produces the `.mltbx`, `.mltbx.sha256`, and a local `build-manifest.json` containing the source commit, dirty-state flag, MATLAB version, selected input hashes, and artifact SHA-256. `buildYamadaToolbox` reads the commit and dirty state from Git before and after packaging, so it requires Git. The packaging itself is `packageYamadaToolbox`, which takes the source identity from its caller; tests use it with a fixed identity so that they do not need Git. Release candidates must always be built with `buildYamadaToolbox`. A build from a dirty tree is a development candidate, not a publishable release. File timestamps and packager-generated metadata can vary between runs; reproducibility means repeatable source selection and configuration, not byte-identical archives.
 
 ## Final source and signatures
 
 GPG-sign the final release commit on a work branch. Integrate it through a PR while preserving the signed commit; a merge commit can have a different signature. The release tag and package manifest must identify that signed source commit. If a separate merge commit is used, verify the intended release tree and repeat affected acceptance checks after integration.
 
-Build from that signed commit in a clean checkout, complete candidate validation, and prepare its detached signature using PowerShell:
+Build from that signed commit in a clean checkout, complete candidate validation, and prepare its detached signature using either command below.
 
 ```powershell
-./dev/release/Complete-YamadaRelease.ps1 -Artifact ./build/1.1.0/yamada-1.1.0.mltbx -SigningKey <signing-key>
+./dev/release/Complete-YamadaRelease.ps1 -Artifact ./build/1.1.1/yamada-1.1.1.mltbx -SigningKey <signing-key>
+```
+
+From Command Prompt, pass the artifact path and signing key as positional arguments. The launcher uses PowerShell 7 (pwsh.exe on PATH) to run the same signing checks.
+
+```cmd
+dev\release\Complete-YamadaRelease.cmd "build\1.1.1\yamada-1.1.1.mltbx" "SIGNING-KEY"
 ```
 
 The script checks candidate identity, SHA-256, clean-build provenance, integration into `main`, and the release commit's GPG signature before invoking GnuPG. GnuPG may request a passphrase, PIN, or hardware-key confirmation. A signing error is a publication blocker. Keep the detached signature outside the Toolbox.
 
-Publish the accepted `.mltbx`, its `.mltbx.asc`, and `SHA256SUMS` as Release assets. Keep the build manifest as local verification evidence. Sign `v1.1.0` and make it point to the same release source commit.
+Publish the accepted `.mltbx`, its `.mltbx.asc`, and `.mltbx.sha256` as Release assets. Keep the build manifest as local verification evidence. Sign `v1.1.1` and make it point to the same release source commit.
 
 See the [release procedure](../../doc/RELEASING.md) for candidate acceptance and publication.

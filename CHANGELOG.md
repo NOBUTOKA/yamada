@@ -2,6 +2,10 @@
 
 For users deciding whether to update, this log describes changes and compatibility limits by version.
 
+## 1.1.1
+
+- Set the MATLAB Package Manager package name to yamada.
+
 ## 1.1.0
 
 - Support MATLAB R2023a through R2026b. Each release offers the components and properties it provides; for example, the color picker requires R2024a and the range slider requires R2023b.
