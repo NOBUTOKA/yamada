@@ -86,8 +86,10 @@ classdef PreviewUpdatePlanner
             parts = split(path, ".");
             try
                 value = target.(parts(1));
-                if numel(parts) == 2, value = value.(parts(2)); end
-                known = numel(parts) <= 2;
+                for part = reshape(parts(2:end),1,[])
+                    value = value.(part);
+                end
+                known = true;
             catch
                 % Unavailable getters require an explicit final write or reconstruction.
             end

@@ -20,6 +20,15 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             native = findall(figure,"-isa","matlab.ui.control.UIAxes");
             testCase.assertNumElements(native,1);
             testCase.verifyEqual(string(native.XAxis.TickLabelFormat),"%.2f");
+
+            labels = findall(figure,"Tag","yamada-inspector-property-label");
+            label = labels(string({labels.Text}) == "X Secondary Label");
+            testCase.assertNumElements(label,1);
+            editor = findall(label.Parent,"Tag","yamada-inspector-property-editor");
+            editor.Value = "Units";
+            editor.ValueChangedFcn(editor,struct());
+            native = findall(figure,"-isa","matlab.ui.control.UIAxes");
+            testCase.verifyEqual(string(native.XAxis.SecondaryLabel.String),"Units");
         end
 
         function editsColorbarAndAxesColormap(testCase)

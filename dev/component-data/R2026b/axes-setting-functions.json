@@ -2224,6 +2224,117 @@
           "argument": "format"
         }
       ]
+    },
+    {
+      "id": "xsecondarylabel.text",
+      "name": "xsecondarylabel",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "label",
+          "type": "textScalar"
+        }
+      ],
+      "effects": [
+        {
+          "path": "XAxis.SecondaryLabel.String",
+          "argument": "label"
+        }
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2023b"
+        },
+        "evidence": [
+          {
+            "kind": "documentation",
+            "source": "https://www.mathworks.com/help/matlab/ref/xsecondarylabel.html",
+            "detail": "Introduced in R2023b."
+          }
+        ]
+      }
+    },
+    {
+      "id": "ysecondarylabel.text",
+      "name": "ysecondarylabel",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "label",
+          "type": "textScalar"
+        }
+      ],
+      "effects": [
+        {
+          "path": "YAxis.SecondaryLabel.String",
+          "argument": "label"
+        }
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2023b"
+        },
+        "evidence": [
+          {
+            "kind": "documentation",
+            "source": "https://www.mathworks.com/help/matlab/ref/ysecondarylabel.html",
+            "detail": "Introduced in R2023b."
+          }
+        ]
+      }
+    },
+    {
+      "id": "zsecondarylabel.text",
+      "name": "zsecondarylabel",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "label",
+          "type": "textScalar"
+        }
+      ],
+      "effects": [
+        {
+          "path": "ZAxis.SecondaryLabel.String",
+          "argument": "label"
+        }
+      ],
+      "availability": {
+        "releases": {
+          "since": "R2023b"
+        },
+        "evidence": [
+          {
+            "kind": "documentation",
+            "source": "https://www.mathworks.com/help/matlab/ref/zsecondarylabel.html",
+            "detail": "Introduced in R2023b."
+          }
+        ]
+      }
     }
   ]
 }

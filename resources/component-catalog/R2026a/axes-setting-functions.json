@@ -2188,6 +2188,81 @@
           "argument": "format"
         }
       ]
+    },
+    {
+      "id": "xsecondarylabel.text",
+      "name": "xsecondarylabel",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "label",
+          "type": "textScalar"
+        }
+      ],
+      "effects": [
+        {
+          "path": "XAxis.SecondaryLabel.String",
+          "argument": "label"
+        }
+      ]
+    },
+    {
+      "id": "ysecondarylabel.text",
+      "name": "ysecondarylabel",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "label",
+          "type": "textScalar"
+        }
+      ],
+      "effects": [
+        {
+          "path": "YAxis.SecondaryLabel.String",
+          "argument": "label"
+        }
+      ]
+    },
+    {
+      "id": "zsecondarylabel.text",
+      "name": "zsecondarylabel",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "label",
+          "type": "textScalar"
+        }
+      ],
+      "effects": [
+        {
+          "path": "ZAxis.SecondaryLabel.String",
+          "argument": "label"
+        }
+      ]
     }
   ]
 }

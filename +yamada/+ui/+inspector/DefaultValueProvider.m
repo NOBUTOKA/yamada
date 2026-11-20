@@ -209,13 +209,19 @@ end
 end
 
 function value = readPath(target, path)
-% readPath Read one direct or one-level nested property without evaluation.
-parts = split(path, ".");
-if isscalar(parts)
-    value = target.(parts);
-else
-    nested = target.(parts(1));
-    value = nested.(parts(2));
+% readPath Read a catalog-declared property path without evaluation.
+arguments (Input)
+    target
+    path (1,1) string
+end
+arguments (Output)
+    value
+end
+
+% Walk only the members named by the property definition.
+value = target;
+for part = reshape(split(path,"."),1,[])
+    value = value.(part);
 end
 end
 
