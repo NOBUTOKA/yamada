@@ -56,6 +56,435 @@
       ],
       "orderAnchor": "FontWeight",
       "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeALim",
+      "displayName": "ALim",
+      "editor": "valueMode",
+      "members": [
+        { "path": "ALim", "role": "value" },
+        { "path": "ALimMode", "role": "mode" }
+      ],
+      "orderAnchor": "ALim",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeCLim",
+      "displayName": "CLim",
+      "editor": "valueMode",
+      "members": [
+        { "path": "CLim", "role": "value" },
+        { "path": "CLimMode", "role": "mode" }
+      ],
+      "orderAnchor": "CLim",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeFontSize",
+      "displayName": "FontSize",
+      "editor": "valueMode",
+      "members": [
+        { "path": "FontSize", "role": "value" },
+        { "path": "FontSizeMode", "role": "mode" }
+      ],
+      "orderAnchor": "FontSize",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeGridAlpha",
+      "displayName": "GridAlpha",
+      "editor": "valueMode",
+      "members": [
+        { "path": "GridAlpha", "role": "value" },
+        { "path": "GridAlphaMode", "role": "mode" }
+      ],
+      "orderAnchor": "GridAlpha",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeGridColor",
+      "displayName": "GridColor",
+      "editor": "valueMode",
+      "members": [
+        { "path": "GridColor", "role": "value" },
+        { "path": "GridColorMode", "role": "mode" }
+      ],
+      "orderAnchor": "GridColor",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeMajorTickLabels",
+      "displayName": "MajorTickLabels",
+      "editor": "valueMode",
+      "members": [
+        { "path": "MajorTickLabels", "role": "value" },
+        { "path": "MajorTickLabelsMode", "role": "mode" }
+      ],
+      "orderAnchor": "MajorTickLabels",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeMajorTicks",
+      "displayName": "MajorTicks",
+      "editor": "valueMode",
+      "members": [
+        { "path": "MajorTicks", "role": "value" },
+        { "path": "MajorTicksMode", "role": "mode" }
+      ],
+      "orderAnchor": "MajorTicks",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeMapCenter",
+      "displayName": "MapCenter",
+      "editor": "valueMode",
+      "members": [
+        { "path": "MapCenter", "role": "value" },
+        { "path": "MapCenterMode", "role": "mode" }
+      ],
+      "orderAnchor": "MapCenter",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeMinorGridAlpha",
+      "displayName": "MinorGridAlpha",
+      "editor": "valueMode",
+      "members": [
+        { "path": "MinorGridAlpha", "role": "value" },
+        { "path": "MinorGridAlphaMode", "role": "mode" }
+      ],
+      "orderAnchor": "MinorGridAlpha",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeMinorGridColor",
+      "displayName": "MinorGridColor",
+      "editor": "valueMode",
+      "members": [
+        { "path": "MinorGridColor", "role": "value" },
+        { "path": "MinorGridColorMode", "role": "mode" }
+      ],
+      "orderAnchor": "MinorGridColor",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeMinorTicks",
+      "displayName": "MinorTicks",
+      "editor": "valueMode",
+      "members": [
+        { "path": "MinorTicks", "role": "value" },
+        { "path": "MinorTicksMode", "role": "mode" }
+      ],
+      "orderAnchor": "MinorTicks",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeRAxisLocation",
+      "displayName": "RAxisLocation",
+      "editor": "valueMode",
+      "members": [
+        { "path": "RAxisLocation", "role": "value" },
+        { "path": "RAxisLocationMode", "role": "mode" }
+      ],
+      "orderAnchor": "RAxisLocation",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeRColor",
+      "displayName": "RColor",
+      "editor": "valueMode",
+      "members": [
+        { "path": "RColor", "role": "value" },
+        { "path": "RColorMode", "role": "mode" }
+      ],
+      "orderAnchor": "RColor",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeRLim",
+      "displayName": "RLim",
+      "editor": "valueMode",
+      "members": [
+        { "path": "RLim", "role": "value" },
+        { "path": "RLimMode", "role": "mode" }
+      ],
+      "orderAnchor": "RLim",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeRTickLabel",
+      "displayName": "RTickLabel",
+      "editor": "valueMode",
+      "members": [
+        { "path": "RTickLabel", "role": "value" },
+        { "path": "RTickLabelMode", "role": "mode" }
+      ],
+      "orderAnchor": "RTickLabel",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeRTickLabelRotation",
+      "displayName": "RTickLabelRotation",
+      "editor": "valueMode",
+      "members": [
+        { "path": "RTickLabelRotation", "role": "value" },
+        { "path": "RTickLabelRotationMode", "role": "mode" }
+      ],
+      "orderAnchor": "RTickLabelRotation",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeRTick",
+      "displayName": "RTick",
+      "editor": "valueMode",
+      "members": [
+        { "path": "RTick", "role": "value" },
+        { "path": "RTickMode", "role": "mode" }
+      ],
+      "orderAnchor": "RTick",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeThetaColor",
+      "displayName": "ThetaColor",
+      "editor": "valueMode",
+      "members": [
+        { "path": "ThetaColor", "role": "value" },
+        { "path": "ThetaColorMode", "role": "mode" }
+      ],
+      "orderAnchor": "ThetaColor",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeThetaLim",
+      "displayName": "ThetaLim",
+      "editor": "valueMode",
+      "members": [
+        { "path": "ThetaLim", "role": "value" },
+        { "path": "ThetaLimMode", "role": "mode" }
+      ],
+      "orderAnchor": "ThetaLim",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeThetaTickLabel",
+      "displayName": "ThetaTickLabel",
+      "editor": "valueMode",
+      "members": [
+        { "path": "ThetaTickLabel", "role": "value" },
+        { "path": "ThetaTickLabelMode", "role": "mode" }
+      ],
+      "orderAnchor": "ThetaTickLabel",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeThetaTick",
+      "displayName": "ThetaTick",
+      "editor": "valueMode",
+      "members": [
+        { "path": "ThetaTick", "role": "value" },
+        { "path": "ThetaTickMode", "role": "mode" }
+      ],
+      "orderAnchor": "ThetaTick",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeTickDir",
+      "displayName": "TickDir",
+      "editor": "valueMode",
+      "members": [
+        { "path": "TickDir", "role": "value" },
+        { "path": "TickDirMode", "role": "mode" }
+      ],
+      "orderAnchor": "TickDir",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeToolbarLocation",
+      "displayName": "ToolbarLocation",
+      "editor": "valueMode",
+      "members": [
+        { "path": "ToolbarLocation", "role": "value" },
+        { "path": "ToolbarLocationMode", "role": "mode" }
+      ],
+      "orderAnchor": "ToolbarLocation",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeXColor",
+      "displayName": "XColor",
+      "editor": "valueMode",
+      "members": [
+        { "path": "XColor", "role": "value" },
+        { "path": "XColorMode", "role": "mode" }
+      ],
+      "orderAnchor": "XColor",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeXLim",
+      "displayName": "XLim",
+      "editor": "valueMode",
+      "members": [
+        { "path": "XLim", "role": "value" },
+        { "path": "XLimMode", "role": "mode" }
+      ],
+      "orderAnchor": "XLim",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeXTickLabel",
+      "displayName": "XTickLabel",
+      "editor": "valueMode",
+      "members": [
+        { "path": "XTickLabel", "role": "value" },
+        { "path": "XTickLabelMode", "role": "mode" }
+      ],
+      "orderAnchor": "XTickLabel",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeXTickLabelRotation",
+      "displayName": "XTickLabelRotation",
+      "editor": "valueMode",
+      "members": [
+        { "path": "XTickLabelRotation", "role": "value" },
+        { "path": "XTickLabelRotationMode", "role": "mode" }
+      ],
+      "orderAnchor": "XTickLabelRotation",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeXTick",
+      "displayName": "XTick",
+      "editor": "valueMode",
+      "members": [
+        { "path": "XTick", "role": "value" },
+        { "path": "XTickMode", "role": "mode" }
+      ],
+      "orderAnchor": "XTick",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeYColor",
+      "displayName": "YColor",
+      "editor": "valueMode",
+      "members": [
+        { "path": "YColor", "role": "value" },
+        { "path": "YColorMode", "role": "mode" }
+      ],
+      "orderAnchor": "YColor",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeYLim",
+      "displayName": "YLim",
+      "editor": "valueMode",
+      "members": [
+        { "path": "YLim", "role": "value" },
+        { "path": "YLimMode", "role": "mode" }
+      ],
+      "orderAnchor": "YLim",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeYTickLabel",
+      "displayName": "YTickLabel",
+      "editor": "valueMode",
+      "members": [
+        { "path": "YTickLabel", "role": "value" },
+        { "path": "YTickLabelMode", "role": "mode" }
+      ],
+      "orderAnchor": "YTickLabel",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeYTickLabelRotation",
+      "displayName": "YTickLabelRotation",
+      "editor": "valueMode",
+      "members": [
+        { "path": "YTickLabelRotation", "role": "value" },
+        { "path": "YTickLabelRotationMode", "role": "mode" }
+      ],
+      "orderAnchor": "YTickLabelRotation",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeYTick",
+      "displayName": "YTick",
+      "editor": "valueMode",
+      "members": [
+        { "path": "YTick", "role": "value" },
+        { "path": "YTickMode", "role": "mode" }
+      ],
+      "orderAnchor": "YTick",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeZColor",
+      "displayName": "ZColor",
+      "editor": "valueMode",
+      "members": [
+        { "path": "ZColor", "role": "value" },
+        { "path": "ZColorMode", "role": "mode" }
+      ],
+      "orderAnchor": "ZColor",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeZLim",
+      "displayName": "ZLim",
+      "editor": "valueMode",
+      "members": [
+        { "path": "ZLim", "role": "value" },
+        { "path": "ZLimMode", "role": "mode" }
+      ],
+      "orderAnchor": "ZLim",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeZoomLevel",
+      "displayName": "ZoomLevel",
+      "editor": "valueMode",
+      "members": [
+        { "path": "ZoomLevel", "role": "value" },
+        { "path": "ZoomLevelMode", "role": "mode" }
+      ],
+      "orderAnchor": "ZoomLevel",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeZTickLabel",
+      "displayName": "ZTickLabel",
+      "editor": "valueMode",
+      "members": [
+        { "path": "ZTickLabel", "role": "value" },
+        { "path": "ZTickLabelMode", "role": "mode" }
+      ],
+      "orderAnchor": "ZTickLabel",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeZTickLabelRotation",
+      "displayName": "ZTickLabelRotation",
+      "editor": "valueMode",
+      "members": [
+        { "path": "ZTickLabelRotation", "role": "value" },
+        { "path": "ZTickLabelRotationMode", "role": "mode" }
+      ],
+      "orderAnchor": "ZTickLabelRotation",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModeZTick",
+      "displayName": "ZTick",
+      "editor": "valueMode",
+      "members": [
+        { "path": "ZTick", "role": "value" },
+        { "path": "ZTickMode", "role": "mode" }
+      ],
+      "orderAnchor": "ZTick",
+      "match": { "componentIds": [], "parentContextIds": [] }
     }
   ]
 }

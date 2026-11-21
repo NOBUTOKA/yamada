@@ -55,6 +55,7 @@ classdef InspectorSurfaceBuilder
                 row.MemberIndices = indices;
                 row.MemberPaths = template.MemberPaths;
                 row.MemberRoles = template.MemberRoles;
+                row.MemberDefinitions = [states(indices).Definition];
                 row.IsComposite = true;
                 rows(end + 1) = row; %#ok<AGROW>
                 claimed(indices) = true;
@@ -91,7 +92,7 @@ classdef InspectorSurfaceBuilder
             row = struct("Id", "", "DisplayName", "", "Editor", "", ...
                 "Category", "", "Order", 0, "MemberIndices", zeros(1, 0), ...
                 "MemberPaths", strings(1, 0), "MemberRoles", strings(1, 0), ...
-                "IsComposite", false);
+                "MemberDefinitions", yamada.model.PropertyDefinition.empty, "IsComposite", false);
         end
 
         function rows = sortRows(rows, categoryOrder)

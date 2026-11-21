@@ -571,8 +571,8 @@ classdef PropertyStateResolver
                         states(target) = states(target).withEffective([], false, id, ...
                             "An uncertain mode may compute this value at runtime.", "uncertain-mode");
                     elseif ((ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))) && string(value) == "auto"
-                        states(target) = states(target).withEffective([], false, id, ...
-                            "Automatic mode computes this value at runtime.", "automatic");
+                        % The Inspector's Auto button presents this state, so no reason text is attached.
+                        states(target) = states(target).withEffective([], false, id, "", "automatic");
                     end
                 end
             end

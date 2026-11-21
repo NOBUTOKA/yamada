@@ -3913,8 +3913,11 @@ classdef yamada < handle
             relatedValues = struct("Paths", relatedTransaction.Paths, ...
                 "Values", {relatedTransaction.DraftValues}, ...
                 "KnownValues", relatedTransaction.KnownValues);
+            % Stored inputs and setting order let composite rows present source-held values.
             members = repmat(struct("Path", "", "Value", "", "RawValue", [], ...
-                "IsEditable", false, "IsKnown", false, "Reason", ""), 1, numel(states));
+                "IsEditable", false, "IsKnown", false, "Reason", "", ...
+                "StoredValue", [], "HasStoredValue", false, "StoredEditable", false, ...
+                "Sequence", NaN), 1, numel(states));
             for index = 1:numel(states)
                 entry = states(index).Entry;
                 value = "";
@@ -3981,6 +3984,18 @@ classdef yamada < handle
                 members(index).RawValue = rawValue;
                 members(index).IsEditable = editable;
                 members(index).IsKnown = isKnown;
+                members(index).StoredEditable = component.IsEditable && states(index).Definition.IsEditable && ...
+                    ~resolved.IsReleaseUnavailable;
+                if ~isempty(entry)
+                    members(index).StoredEditable = members(index).StoredEditable && ...
+                        entry.IsEditable && entry.ValueKind == "literal";
+                    if entry.ValueKind == "literal"
+                        members(index).StoredValue = entry.LiteralValue;
+                        members(index).HasStoredValue = true;
+                    end
+                end
+                settings = component.getSettings(path);
+                if ~isempty(settings), members(index).Sequence = settings(end).Sequence; end
             end
             for index = 1:numel(rows)
                 app.InspectorRows(index).synchronizeMembers( ...

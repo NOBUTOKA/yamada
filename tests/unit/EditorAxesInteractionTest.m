@@ -343,7 +343,91 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             clear cleanup
         end
 
+        function togglesAutoModeBesideTheStoredValue(testCase)
+            % togglesAutoModeBesideTheStoredValue Keep the stored value while Auto owns the effective limits.
+            folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture).Folder;
+            path = string(fullfile(folder, "ModeApp.m"));
+            writeModeApp(path, ["app.First.XLim = [0 10];", "app.Second.XLimMode = 'auto';", ...
+                "app.Second.XLim = [0 5];"]);
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn",@() acceptedOpenPath(path)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = editorPalette();
+            open = findall(figure,"Type","uimenu","Text","&Open...");
+            open.MenuSelectedFcn(open,[]);
+            drawnow;
+
+            % Auto locks the field without discarding the stored limits.
+            parts = modeEditor(app,figure,"First","XLim");
+            testCase.verifyEqual(string(parts.Value.Value),"[0 10]");
+            testCase.verifyFalse(parts.Auto.Value);
+            parts.Auto.Value = true;
+            parts.Auto.ValueChangedFcn(parts.Auto,struct());
+            parts = modeEditor(app,figure,"First","XLim");
+            testCase.verifyTrue(parts.Auto.Value);
+            testCase.verifyFalse(logical(parts.Value.Editable));
+            testCase.verifyEqual(string(parts.Value.Value),"[0 10]");
+            source = app.Document.CurrentText;
+            testCase.verifyLessThan(strfind(source,"app.First.XLim = [0 10];"), ...
+                strfind(source,"app.First.XLimMode = 'auto';"));
+            parts.Auto.Value = false;
+            parts.Auto.ValueChangedFcn(parts.Auto,struct());
+            testCase.verifySubstring(app.Document.CurrentText,"app.First.XLimMode = 'manual';");
+            handle = findall(figure,"-isa","matlab.ui.control.UIAxes","Tag","");
+            limits = arrayfun(@(item) mat2str(item.XLim), handle, "UniformOutput", false);
+            testCase.verifyTrue(any(string(limits) == "[0 10]"));
+
+            % A Mode setting before the value cannot be made effective in place.
+            parts = modeEditor(app,figure,"Second","XLim");
+            testCase.verifyFalse(parts.Auto.Value);
+            testCase.verifyEqual(string(parts.Auto.Enable),"off");
+            testCase.verifySubstring(string(parts.Auto.Tooltip),"XLimMode is set before XLim");
+            clear cleanup
+        end
+
     end
+end
+
+function writeModeApp(path, settings)
+% writeModeApp Write one owned two-axes source fixture with the given settings.
+arguments (Input)
+    path (1,1) string
+    settings (1,:) string
+end
+
+lines = ["classdef ModeApp < handle", "properties (Access = public)", ...
+    "UIFigure matlab.ui.Figure", "First matlab.ui.control.UIAxes", ...
+    "Second matlab.ui.control.UIAxes", "end", "methods (Access = private)", ...
+    "function createComponents(app)", "app.UIFigure = uifigure(""Visible"", ""off"");", ...
+    "app.First = uiaxes(app.UIFigure);", "app.Second = uiaxes(app.UIFigure);", settings, ...
+    "end", "end", "methods (Access = public)", "function app = ModeApp", ...
+    "createComponents(app);", "end", "end", "end"];
+yamada.source.SourceWriter.write(path, strjoin(lines, sprintf("\r\n")) + sprintf("\r\n"), "CRLF");
+end
+
+function parts = modeEditor(app, figure, name, label)
+% modeEditor Select one component and return the parts of its value-and-Auto row.
+arguments (Input)
+    app (1,1) yamada
+    figure (1,1) matlab.ui.Figure
+    name (1,1) string
+    label (1,1) string
+end
+arguments (Output)
+    parts (1,1) struct
+end
+
+tree = findall(figure,"Type","uitree");
+nodes = findall(tree,"Type","uitreenode");
+node = nodes(string({nodes.NodeData}) == app.Document.getComponentByName(name).Id);
+tree.SelectedNodes = node;
+tree.SelectionChangedFcn(tree,struct("SelectedNodes",node));
+drawnow;
+labels = findall(figure,"Tag","yamada-inspector-property-label");
+row = labels(string({labels.Text}) == label);
+editor = findall(row(1).Parent,"Tag","yamada-inspector-value-mode-editor");
+parts = editor.UserData;
 end
 
 function gesture(overlay, componentId, handle, startPoint, endPoint)
