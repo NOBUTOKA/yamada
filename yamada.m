@@ -96,6 +96,8 @@ classdef yamada < handle
         InteractionStartPoint double = [0 0]
         InteractionStartPosition double = [0 0 0 0]
         InteractionPosition double = [0 0 0 0]
+        % Affine [scaleX scaleY offsetX offsetY] from gesture pixels to non-pixel Position units.
+        InteractionUnitTransform double = []
         ResizeHandles matlab.ui.container.Panel = matlab.ui.container.Panel.empty
         ResizeTargetId string = ""
         ResizeKind string = ""
@@ -2257,8 +2259,10 @@ classdef yamada < handle
                 app.InteractionKind = "move";
             end
             app.InteractionStartPoint = point;
-            app.InteractionStartPosition = double(position.LiteralValue);
-            app.InteractionStartPosition = app.interactionInputPosition(component, position.LiteralValue);
+            % Gestures always run in parent pixels; non-pixel units convert on commit.
+            [app.InteractionStartPosition, app.InteractionUnitTransform] = ...
+                app.interactionPixelPosition(component, ...
+                app.interactionInputPosition(component, position.LiteralValue));
             app.InteractionPosition = app.InteractionStartPosition;
             if startsWith(handle, "root-")
                 app.createRootResizeGuide();
@@ -2668,7 +2672,12 @@ classdef yamada < handle
             end
             app.InteractionComponentId = "";
             app.InteractionKind = "";
+            transform = app.InteractionUnitTransform;
+            app.InteractionUnitTransform = [];
             if ~isequal(position, startPosition)
+                if ~isempty(transform)
+                    position = app.interactionUnitPosition(position, transform);
+                end
                 try
                     app.Document.setProperty(componentId, "Position", position, app.Registry);
                 catch exception
@@ -2984,6 +2993,58 @@ classdef yamada < handle
                     isKey(app.PreviewHandles, component.Id)
                 position = double(app.PreviewHandles(component.Id).Position);
             end
+        end
+
+        function [position, transform] = interactionPixelPosition(app, component, requested)
+            % interactionPixelPosition Express a non-pixel gesture start in parent-local pixels.
+            arguments (Input)
+                app (1, 1) yamada
+                component (1, 1) yamada.model.ComponentRecord
+                requested (1, 4) double
+            end
+            arguments (Output)
+                position (1, 4) double
+                transform double
+            end
+            position = requested;
+            transform = [];
+            if component.Id == app.Document.RootComponentId || app.previewHandleCount() == 0 || ...
+                    ~isKey(app.PreviewHandles, component.Id)
+                return
+            end
+            preview = app.PreviewHandles(component.Id);
+            if ~isvalid(preview) || ~isprop(preview, "Units") || string(preview.Units) == "pixels"
+                return
+            end
+
+            % Derive the native unit mapping from one native Position and its pixel rectangle.
+            try
+                native = double(preview.Position);
+                pixels = double(getpixelposition(preview));
+            catch
+                return
+            end
+            if any(~isfinite([native pixels])) || any(pixels(3:4) <= 0) || any(native(3:4) <= 0)
+                return
+            end
+            scale = native(3:4) ./ pixels(3:4);
+            transform = [scale, native(1:2) - pixels(1:2) .* scale];
+            position = round([(requested(1:2) - transform(3:4)) ./ scale, requested(3:4) ./ scale]);
+        end
+
+        function position = interactionUnitPosition(~, pixels, transform)
+            % interactionUnitPosition Convert a committed pixel rectangle back to native Position units.
+            arguments (Input)
+                ~
+                pixels (1, 4) double
+                transform (1, 4) double
+            end
+            arguments (Output)
+                position (1, 4) double
+            end
+            % Keep four decimals so normalized literals stay readable without losing pixel precision.
+            scale = transform(1:2);
+            position = round([pixels(1:2) .* scale + transform(3:4), pixels(3:4) .* scale], 4);
         end
 
         function constraint = previewResizeConstraint(app, component, definition)
