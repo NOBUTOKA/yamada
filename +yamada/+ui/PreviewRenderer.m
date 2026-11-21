@@ -167,14 +167,13 @@ classdef PreviewRenderer < handle
             applied = true;
         end
 
-        function [applied, diagnostics, handles] = synchronizeStructure(obj, document, handles, id, previous)
+        function [applied, diagnostics, handles] = synchronizeStructure(obj, document, handles, id)
             % synchronizeStructure Publish one accepted insertion or relocation on the current preview.
             arguments (Input)
                 obj (1, 1) yamada.ui.PreviewRenderer
                 document (1, 1) yamada.model.DocumentModel
                 handles (1, 1) dictionary
                 id (1, 1) string
-                previous (1, 1) struct
             end
             arguments (Output)
                 applied (1, 1) logical
@@ -184,8 +183,7 @@ classdef PreviewRenderer < handle
             applied = false;
             diagnostics = yamada.model.Diagnostic.empty;
             before = obj.RenderedInputs;
-            if isempty(fieldnames(before)) || ~isequaln(previous, obj.RenderedToken) || ...
-                    ~previous.Clock.IsTracked || obj.UsesCombinedConfiguration || ...
+            if isempty(fieldnames(before)) || obj.UsesCombinedConfiguration || ...
                     obj.RenderedRegistryRevision ~= obj.Registry.Revision || ...
                     isempty(obj.PreviewSurface) || ~isvalid(obj.PreviewSurface) || ...
                     before.RootComponentId ~= document.RootComponentId || ...

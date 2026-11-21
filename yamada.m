@@ -528,13 +528,12 @@ classdef yamada < handle
             app.refreshEditCommands();
         end
 
-        function refreshShell(app, retainHierarchy, structureId, previous)
+        function refreshShell(app, retainHierarchy, structureId)
             % refreshShell Rebuild document surfaces, optionally retaining the current tree.
             arguments (Input)
                 app (1, 1) yamada
                 retainHierarchy (1, 1) logical = false
                 structureId (1, 1) string = ""
-                previous (1, 1) struct = struct()
             end
 
             app.PreviewWriteDepth = app.PreviewWriteDepth + 1;
@@ -558,7 +557,7 @@ classdef yamada < handle
                 app.InteractionKind = "";
                 if ~isempty(app.RootResizeGuide) && isvalid(app.RootResizeGuide), delete(app.RootResizeGuide); end
                 [applied, diagnostics, app.PreviewHandles] = app.PreviewRenderer.synchronizeStructure( ...
-                    app.Document, app.PreviewHandles, structureId, previous);
+                    app.Document, app.PreviewHandles, structureId);
                 if applied
                     app.restorePreviewTabSelections();
                     if ~isempty(diagnostics)
@@ -696,7 +695,6 @@ classdef yamada < handle
                 return
             end
             try
-                previous = app.Document.evaluationContext(app.Registry).revisionToken();
                 component = app.Document.insertComponent(app.Registry, ...
                     definition.Factory, parent.Id, definition.CreationArguments);
             catch exception
@@ -705,7 +703,7 @@ classdef yamada < handle
                 return
             end
             app.SelectedComponentId = component.Id;
-            app.refreshShell(false, component.Id, previous);
+            app.refreshShell(false, component.Id);
             app.setStatus("Added " + component.Name);
             app.PreviewOwnsKeyboard = true;
             app.KeyboardFocusMoved = false;
@@ -828,10 +826,9 @@ classdef yamada < handle
                     app.SelectedComponentId = parentId;
                     app.refreshShell();
                 else
-                    previous = app.Document.evaluationContext(app.Registry).revisionToken();
                     component = app.Clipboard.paste(app.Document, id, app.Registry);
                     app.SelectedComponentId = component.Id;
-                    app.refreshShell(false, component.Id, previous);
+                    app.refreshShell(false, component.Id);
                 end
                 app.setStatus(action + " completed.");
             catch exception
@@ -2031,11 +2028,10 @@ classdef yamada < handle
                 if strlength(parentId) == 0
                     error("yamada:yamada:InvalidDrop", "No valid destination is available at this point.");
                 end
-                previous = app.Document.evaluationContext(app.Registry).revisionToken();
                 app.Document.reparentSubtree(id, parentId, app.Registry, app.clipboardPosition(id), ...
                     double(data.targetCell), double(data.targetPosition));
                 app.SelectedComponentId = id;
-                app.refreshShell(false, id, previous);
+                app.refreshShell(false, id);
                 app.setStatus("Moved component subtree.");
             catch exception
                 app.setStatus(string(exception.message));
