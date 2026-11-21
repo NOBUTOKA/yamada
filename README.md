@@ -95,9 +95,9 @@ This changes the component's name in the MATLAB code, such as `app.Button`, and 
 Select a component in **Hierarchy** or on the canvas, then use **Edit > Copy / Cut / Paste**, or **Ctrl+C / Ctrl+X / Ctrl+V**. You can also right-click a component in **Preview**. On R2023b and later, the same menu is available by right-clicking a component in **Hierarchy**.
 
 - Copying or cutting a container includes the components inside it. **Cut** removes them immediately; **Undo** restores them.
-- Select the destination container before pasting. If it cannot contain the copied component, yamada looks for a suitable enclosing container. Hover over the status line to check the destination or read why an action is unavailable.
+- Select a component or container before pasting. When you choose **Paste**, yamada looks for the nearest compatible container and checks whether it has room. If the paste cannot proceed, the status line explains why.
 - Pasted components receive names that do not conflict with existing components. You can paste the same copy more than once.
-- **Copy does not copy callbacks.** The original components and their callback code remain unchanged. Add callbacks to the pasted components separately if needed. Cut or Delete may be unavailable for components with callbacks.
+- **Copy** and **Cut** carry the component’s callback connections. Pasted components use the existing callback methods. **Delete** removes the component and its connections while keeping the methods. Components with a read-only Inspector can also be copied, cut, or deleted.
 
 The component clipboard works within the current document only. Switching documents or successfully reloading the current one clears it. Shortcuts inside text fields keep their normal text-editing behavior.
 
@@ -105,7 +105,7 @@ The component clipboard works within the current document only. Switching docume
 
 Drag a component on the canvas into a panel, tab, or other suitable container. Moving a container also moves the components inside it. A dashed guide shows the destination; red means the proposed move is unavailable. Release the mouse to finish, or press **Escape** to cancel.
 
-For a Grid Layout destination, the component snaps to cells. A move into occupied cells is rejected. You can undo a completed move with one **Undo** action. For a move blocked by recent callback changes, save and use **Reload Source** before trying again.
+For a Grid Layout destination, the component snaps to cells and can overlap existing components. Moving to a different container relocates the component’s owned initialization statements so the new parent is created first. You can undo a completed move with one **Undo** action. For a move blocked by recent callback changes, save and use **Reload Source** before trying again.
 
 ### Choose or disconnect callbacks
 

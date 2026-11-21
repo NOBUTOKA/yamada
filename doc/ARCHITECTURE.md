@@ -208,7 +208,7 @@ If the whole-root capture cannot be proved, the planner uses the previous destin
 
 **Conditions to preserve**
 
-- Static `SelectedTab` is limited to a direct child Tab; static `ContextMenu` remains bound to a valid same-document target. Internal copied references map to fresh identities, and external references retain their targets.
+- Static `SelectedTab` and `SelectedObject` refer to eligible direct children. Static `ContextMenu` refers to a context menu under the document root. Paste maps internal references to fresh identities and resolves external references to their existing targets.
 - Source-backed Copy and Cut retain callback registrations, constructor arguments, and opaque settings with the component's owned statements. Paste reuses existing callback methods. It allocates fresh setting identities when binding the inserted fragments. Delete and Cut remove the owned registration with the component and leave the existing handler method in place.
 - Reparenting may preserve owned callback source; pending callback edits on a parsed relocation target require Save + Reload Source or Undo before relocation. Arbitrary reference rewriting remains outside this boundary.
 
@@ -368,7 +368,7 @@ MATLAB exposes activation through the internal `FigureActivated` event rather th
 **Conditions to preserve**
 
 - Release availability is a source interpretation boundary. A release-unavailable source variant retains its component identity, hierarchy, settings, and spans in the document as a read-only node. Annotated properties and enum values excluded by the selected release remain source settings and are omitted from native Preview writes. A property known to be excluded by the runtime release stays source-backed and out of native Preview writes and generic unsupported-property diagnostics.
-- Deletion checks the whole subtree's source ownership, outside references, and callback bindings, including callback names from the source variant. Reparenting an enclosing container retains its unavailable descendants and their existing direct-parent relationships.
+- Delete and Cut remove the source ranges already owned by the subtree, including unavailable descendants and their callback registrations. Any existing callback methods stay in the class. A surviving direct parent’s owned child reference is repaired in the same edit. Reparenting an enclosing container retains its unavailable descendants and their existing direct-parent relationships.
 - Moving an unavailable component itself uses its source catalog for destination compatibility. A move within its existing parent requires owned, explicit placement literals and patches only their value tokens. Source rebinding uses the original variant definition for moved and restored occurrences. Source changes still pass through the existing ownership and transaction checks, and availability does not infer release-specific setter interactions.
 
 **Explanation**
