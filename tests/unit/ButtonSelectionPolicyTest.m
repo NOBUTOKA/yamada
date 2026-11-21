@@ -112,7 +112,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
         end
 
         function copiesEffectiveSelectionAfterAllSiblingCreations(testCase)
-            % copiesEffectiveSelectionAfterAllSiblingCreations Freeze implicit values and avoid a sole-child zero assignment.
+            % copiesEffectiveSelectionAfterAllSiblingCreations Preserve implicit selection and the original explicit assignment.
             [~, registry, source] = fixture("app.Second.Value = 1;");
             source = replace(source, "uibuttongroup(app.UIFigure)", "uibuttongroup(app.UIFigure, Position=[10 20 200 120])");
             document = yamada.source.AppSourceParser.parseText(source, registry);
@@ -127,8 +127,9 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             states = document.getEffectivePropertyStates(registry, second.Id);
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution.EffectiveValue, 1);
             source = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifyEmpty(first.getSettings("Value"));
             testCase.verifyLessThan(strfind(source, "app." + second.Name + " = uiradiobutton"), ...
-                strfind(source, "app." + first.Name + ".Value = 0;"));
+                strfind(source, "app." + second.Name + ".Value = 1;"));
         end
 
         function generatedLegacyConstructorValueParticipates(testCase)
