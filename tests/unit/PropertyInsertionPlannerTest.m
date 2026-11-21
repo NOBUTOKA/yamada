@@ -164,14 +164,29 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(plan.Document.Diagnostics));
         end
 
-        function aSafeLaterRangeSetterCanClampAnEarlierValue(testCase)
-            % aSafeLaterRangeSetterCanClampAnEarlierValue Do not reject a legal reverse sequence solely for canonical order.
+        function aLaterRangeSetterRestatesTheClampedValue(testCase)
+            % aLaterRangeSetterRestatesTheClampedValue Rewrite an earlier literal to the value a later setter leaves.
             [document, component] = testCase.fixture(["app.Control = uislider(app.UIFigure);", "app.Control.Value = 20;"]);
             component.setProperty("Limits", [50 100]);
             plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyGreaterThanOrEqual(plan.Placements.Offset, component.getSettings("Value").SourceSpan.EndOffset);
             states = plan.Document.getEffectivePropertyStates(testCase.Registry, plan.Component.Id);
             testCase.verifyEqual(states(arrayfun(@(state) state.Definition.Path == "Value", states)).Resolution.EffectiveValue, 50);
+            testCase.verifyEqual(plan.Component.getSettings("Value").LiteralValue, 50);
+            testCase.verifySubstring(plan.Document.OriginalText, "app.Control.Value = 50;");
+        end
+
+        function restatedDependentsUndoWithTheInsertion(testCase)
+            % restatedDependentsUndoWithTheInsertion Keep the insertion and its restatement in one history step.
+            [document, component] = testCase.fixture(["app.Control = uislider(app.UIFigure);", "app.Control.Value = 20;"]);
+            original = document.CurrentText;
+            document.setProperty(component.Id, "Limits", [50 100], testCase.Registry);
+            edited = document.CurrentText;
+            testCase.verifySubstring(edited, "app.Control.Value = 50;");
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, original);
+            document.redo();
+            testCase.verifyEqual(document.CurrentText, edited);
         end
 
         function prerequisitesPermitInsertionBeyondOpaqueBoundaries(testCase)

@@ -130,6 +130,7 @@ Because of this limitation, Safe Preview may not reproduce the input application
 - Generating an existing source file without edits does not change its original text.
 - Edits make localized changes only to declarations, creation statements, and assignments whose ownership can be determined safely.
 - Adding a setting preserves existing statement order and does not interpret unknown code. Arbitrary user-code effects remain outside the editing guarantee.
+- A new setting that other settings depend on, such as `Units` before `Position` or `Limits` before `Value`, is added before them when possible. When it must follow an existing dependent setting and changes that setting's final value, for example by clamping `Value`, the dependent literal is rewritten to the final value in the same edit.
 - Checkbox Tree supports literal `Position` edits in its original assignment or constructor argument. The Inspector edits `Position` and preserves existing writable `InnerPosition` settings.
 - The Position row shows `X`, `Y`, `W`, and `H` in MATLAB vector order. A slider dimension fixed by its orientation is displayed read-only.
 - Axes, polar axes, and geographic axes accept `Units` edits. A new `Units` setting is added before existing `Position` settings, and changing `Units` in the Inspector converts existing `Position`, `InnerPosition`, and `OuterPosition` literals so the component keeps its size and location. Canvas moves and resizes of axes in other units are written in those units.
