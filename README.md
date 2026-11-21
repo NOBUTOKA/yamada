@@ -98,8 +98,7 @@ Select a component in **Hierarchy** or on the canvas, then use **Edit > Copy / C
 - Select a component or container before pasting. When you choose **Paste**, yamada looks for the nearest compatible container and checks whether it has room. If the paste cannot proceed, the status line explains why.
 - Pasted components receive names that do not conflict with existing components. You can paste the same copy more than once.
 - **Copy** and **Cut** carry the component’s callback connections. Pasted components use the existing callback methods. **Delete** removes the component and its connections while keeping the methods. Components with a read-only Inspector can also be copied, cut, or deleted.
-
-Existing menus and context menus are kept in the source and are hidden from **Hierarchy**.
+- **Delete** and **Cut** do not update code that you wrote elsewhere in the app, such as a callback that uses `app.Button`. Update or remove such references in MATLAB.
 
 The component clipboard works within the current document only. Switching documents or successfully reloading the current one clears it. Shortcuts inside text fields keep their normal text-editing behavior.
 
@@ -107,7 +106,7 @@ The component clipboard works within the current document only. Switching docume
 
 Drag a component on the canvas into a panel, tab, or other suitable container. Moving a container also moves the components inside it. A dashed guide shows the destination; red means the proposed move is unavailable. Release the mouse to finish, or press **Escape** to cancel.
 
-For a Grid Layout destination, the component snaps to cells and can overlap existing components. Moving to a different container relocates the component’s owned initialization statements so the new parent is created first. You can undo a completed move with one **Undo** action. For a move blocked by recent callback changes, save and use **Reload Source** before trying again.
+For a Grid Layout destination, the component snaps to cells and can overlap existing components. When the component moves to a different container, yamada also moves its creation code so that the new container is created first. You can undo a completed move with one **Undo** action. For a move blocked by recent callback changes, save and use **Reload Source** before trying again.
 
 ### Choose or disconnect callbacks
 
@@ -133,7 +132,7 @@ Reload reads the saved file, so unsaved changes in MATLAB's editor are not inclu
 
 Supported apps directly inherit from `handle` and own one `uifigure`. All their UI components must be descendants of that figure. Use an ordinary `.m` class with component creation and settings that yamada can read from source. `.mlapp` files and AppBase apps are outside the supported format.
 
-The preview uses supported initialization settings. Some components and properties have limited editing or preview support, especially when their values depend on expressions or runtime code. The editor shows diagnostics when it cannot safely apply a change. On R2026b, radio and toggle buttons are supported only inside a `uibuttongroup`. R2026b also lets them be placed directly in other containers, adds their read-only `Group` property, and introduces `uiselectiongroup`; yamada does not support these yet. A button placed outside a button group is reported as an invalid parent, `uiselectiongroup` is kept in the source as an unsupported component and is not previewed, and editing apps that use them is not supported. See the [product specification](SPECIFICATION.md) for supported syntax, operations, and source-preservation limits.
+The preview uses supported initialization settings. Some components and properties have limited editing or preview support, especially when their values depend on expressions or runtime code. The editor shows diagnostics when it cannot safely apply a change. Existing menus and context menus are kept in the source but are not shown in **Hierarchy** or on the canvas, and yamada cannot edit them yet. On R2026b, radio and toggle buttons are supported only inside a `uibuttongroup`. R2026b also lets them be placed directly in other containers, adds their read-only `Group` property, and introduces `uiselectiongroup`; yamada does not support these yet. A button placed outside a button group is reported as an invalid parent, `uiselectiongroup` is kept in the source as an unsupported component and is not previewed, and editing apps that use them is not supported. See the [product specification](SPECIFICATION.md) for supported syntax, operations, and source-preservation limits.
 
 ## Documentation
 

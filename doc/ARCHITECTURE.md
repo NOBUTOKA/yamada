@@ -150,7 +150,7 @@ Model mutators implement insertion, subtree deletion and reparenting, Copy/Paste
 **Conditions to preserve**
 
 - Structural edits prepare owned source patches and history before mutating the live document. Paste and reparenting plan placement against the live destination. Delete and Cut obtain removal ranges from existing bindings and repair owned direct-parent selection in the same transaction.
-- The detached transaction candidate must not share mutable component handles with the live document. Only a successful preflight permits one history record, clipboard publication, and selection/view changes; failure preserves document state, diagnostics, generated source, history, clipboard, and selection.
+- The detached transaction candidate must not share mutable component handles with the live document. Only a candidate whose patched source binds successfully permits one history record, clipboard publication, and selection/view changes; Paste from a literal copy configuration additionally verifies the emitted configuration. Failure preserves document state, diagnostics, generated source, history, clipboard, and selection.
 - Actual commands revalidate the current document even when availability results were previously computed.
 
 **Explanation**
@@ -159,7 +159,7 @@ Subtree responsibilities are split as follows:
 
 | Owner | Responsibility |
 | --- | --- |
-| [`SubtreeSnapshot`](../+yamada/+model/SubtreeSnapshot.m) | Capture independent value data in stable parent-before-child order; reject missing links, cycles, and repeated children |
+| [`SubtreeSnapshot`](../+yamada/+model/SubtreeSnapshot.m) | Capture independent value data in stable parent-before-child order; reject missing components, cycles, and repeated children, and cross-check parent/child links unless the caller already holds the live hierarchy |
 | [`SubtreePlacementPlanner`](../+yamada/+model/SubtreePlacementPlanner.m) | Validate construction style and destination; plan root placement across absolute and Grid parents |
 | [`SubtreeReferencePolicy`](../+yamada/+model/SubtreeReferencePolicy.m) | Validate the finite set of static component references without evaluation |
 | `SubtreeSourceEdits` / `SubtreeReparentSourceEdits` | Remove or relocate owned declarations and initialization statements while preserving other source |
@@ -183,7 +183,9 @@ Shared boundaries: [Shared Document Model](#shared-document-model) and [Source p
 
 The clipboard snapshot retains independent component records and owned initialization fragments in execution order. Each fragment carries relative ranges for tokens that Paste may rewrite. Copy, Cut, and Delete use the same non-root selection rule. Paste checks clipboard ownership and selection for availability, then resolves destination, occupancy, and name allocation when invoked. Descendants retain their internal parent context and original settings.
 
-Deletion removes owned declaration and initialization spans. The catalog projects a per-property direct-child reference flag from the ledger and aggregates it on the component definition. At commit, an owned selection in the surviving direct parent is retargeted or removed with the subtree in one history entry. User-written logic and unrecognized initializer references remain the source author's responsibility.
+Copy captures source fragments whenever the document has a bound current source with no pending structural, callback, or rename intentions. Every completed editor command publishes its source through `publishCurrentSource`, which clears those intentions, so ordinary editing always reaches this path. The literal `CopyConfiguration` path remains for programmatic builder documents without bound source; it omits callback bindings and rejects expressions that have no source fragment.
+
+Deletion removes owned declaration and initialization spans. The catalog projects the per-property `metadata.referencesDirectChild` flag from the ledger and aggregates it as `ComponentDefinition.ReferencesDirectChild`. At commit, an owned selection in the surviving direct parent is retargeted or removed with the subtree in one history entry. User-written logic and unrecognized initializer references remain the source author's responsibility.
 
 #### Subtree placement
 
@@ -449,7 +451,7 @@ Preview filters skipped named arguments before invoking native factories and pro
 
 `gridTracks` selects the finite `GridLayoutStatePolicy`. The parser records a global initialization sequence and certainty for each creation, including calls without named properties. The policy merges these events with explicit track and direct-child placement writes. It retains requested track baselines, pads occupied rows/columns with `1x`, and releases implicit padding after children move out. Default placement follows the last occupied cell in row-major order. Positional grid size precedes named track overrides.
 
-Preview projects known values, and copy configuration freezes affected values for independent generation and verification. Grid overlay track data and track actions consume the same effective values. Single-property history wraps cell values as scalar record fields so track lists remain one Undo/Redo operation.
+Preview projects known values, and the literal copy configuration for unbound builder documents freezes affected values for independent generation and verification. Grid overlay track data and track actions consume the same effective values. Single-property history wraps cell values as scalar record fields so track lists remain one Undo/Redo operation.
 
 ### Button group selection
 
@@ -498,7 +500,7 @@ The allowlisted `valueMode` policy covers individually reviewed axes font, tick,
 
 **Explanation**
 
-Grid copy configuration omits ignored aliases and uses layout coordinates or supplied measured geometry when moving to an absolute parent.
+When a grid child moves to an absolute parent, the literal copy configuration omits ignored aliases and uses layout coordinates or supplied measured geometry. Source-backed Paste uses the supplied measured geometry.
 
 ## Property Inspector
 
@@ -548,7 +550,7 @@ Shared boundaries: [Insertion proof and validation scope](#insertion-proof-and-v
 **Conditions to preserve**
 
 - The editor uses stable component IDs for hierarchy selection and Preview mapping. View updates follow the accepted model change rather than reconstructing document state from UI handles.
-- Insertion eligibility is determined from catalog metadata and the selected or nearest eligible parent. Deletion is explicit and model-validated.
+- Insertion eligibility is determined from catalog metadata and the selected or nearest eligible parent. Deletion is explicit for any non-root component and removes only the source ranges the model owns; references in user-written logic do not block it.
 - `GridChildPlacementPlanner` accepts only an editable literal placement of an immediate child, rejects new overlap and out-of-range targets, and returns one change set for `DocumentModel.applyGridLayoutEdit`.
 - The model, not the Preview, owns source-coordinate geometry. The editor converts between the fitted Preview scale and source pixels and applies the catalog's component/style-specific resize constraint before committing a candidate.
 
@@ -681,6 +683,8 @@ The geographic limits call catalog captures its requested latitude and longitude
 - `PreviewRenderer.acknowledgeRenameChanges` compares complete input snapshots while allowing only component record names and RenameEdits to differ; identities, order, hierarchy, properties, source text, and the catalog revision must still match. Visual property settings remain in the strict comparison. Unrelated changes retain the full refresh fallback.
 - Preview-skipped settings do not trigger native assignments.
 - Reconstruction preserves unchanged sibling handles, native stacking/tab order, and transient tab selection; failure to restore a native child order escalates reconstruction to its enclosing scope. Unrelated source or hierarchy changes, untracked values, and registry changes retain full reconstruction. Preview reconstruction boundaries preserve the accepted model and do not introduce a reset UI or a second document-edit trial.
+- `PreviewRenderer.synchronizeStructure` updates the existing surface only after component insertion, Paste, or reparenting has been accepted. It renders the accepted root subtree under the existing parent handle and, for a move, first deletes the subtree's old handles. Delete and Cut keep full reconstruction.
+- The structural path applies only when the rendered inputs, surface, root, and registry revision are current, combined configuration and unresolved execution are absent, and the root is the last child of its parent. Menu, toolbar, colorbar, and context-menu roots, documents with a colorbar, release-unavailable, Button Group, or Tab Group parents, and Grid parents with a non-literal child `Layout.Row` or `Layout.Column` fall back to full reconstruction. Any native failure also falls back.
 
 **Explanation**
 
@@ -742,7 +746,7 @@ Preview invalidation distinguishes current source-coordinate changes from visual
 
 **Explanation**
 
-The editor follows one model-to-canvas-to-model flow. `DocumentModel` holds track values and child placements. `PreviewRenderer` draws disposable MATLAB controls from that model. `GridLayoutOverlayDataBuilder` combines model values with the controls' realized geometry into a versioned payload. The HTML overlay draws the grid UI and sends a proposed action to `yamada`, which validates it and commits one model change before rebuilding the Preview. The Inspector edits ordinary component properties alongside this canvas workflow.
+The editor follows one model-to-canvas-to-model flow. `DocumentModel` holds track values and child placements. `PreviewRenderer` draws disposable MATLAB controls from that model. `GridLayoutOverlayDataBuilder` combines model values with the controls' realized geometry into a versioned payload. The HTML overlay draws the grid UI and sends a proposed action to `yamada`, which validates it and commits one model change before updating the Preview. The Inspector edits ordinary component properties alongside this canvas workflow.
 
 #### Selection and editing context
 
