@@ -944,6 +944,7 @@ The insertion planner must reparse the complete result and match every pending l
 - Insertion validation checks values and setter order for the component and necessary hierarchy context. Catalog selection, placement, and reference policies include the parent subtree when siblings may change. Structural checks remain document-wide. Arbitrary user-code effects remain outside this proof.
 - Pending scopes cannot justify another proof until consumed; source, history, external writes, or catalog changes invalidate them. Public generation and saving retain their validation paths, and parsed checkpoints remain private value snapshots rather than shared public model handles.
 - Parent-before-child creation, deferred component references, and final root visibility remain separate generation responsibilities. Relocation retains all original setting occurrences; copies receive fresh setting IDs and ownership instead of reusing source offsets.
+- Direct, certain subtree relocations splice the emitted initialization statements into the existing lexical and execution indexes. Unmoved statements and settings retain their identities and receive positions from the patch transform. The relocation planner supplies the owners to rebind. Other relocation shapes use the general editor projection.
 - Saved output uses the separate `SavedSourceCheckpoint` described below, leaving the original edit basis and Undo/Redo intact.
 
 **Explanation**

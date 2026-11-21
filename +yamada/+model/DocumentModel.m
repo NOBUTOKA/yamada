@@ -166,7 +166,7 @@ classdef DocumentModel < handle
     end
 
     methods (Access = {?yamada.source.SubtreeReparentSourceEdits, ?yamada.source.PropertyInsertionPlanner, ?yamada.source.PropertySourcePlan})
-        function [candidate, state] = editedSourceCandidate(obj, text, edits, registry, stateId, callback)
+        function [candidate, state] = editedSourceCandidate(obj, text, edits, registry, stateId, callback, relocatedIds)
             % editedSourceCandidate Bind only changed owners against projected lexical and initialization indexes.
             arguments (Input)
                 obj (1, 1) yamada.model.DocumentModel
@@ -175,6 +175,7 @@ classdef DocumentModel < handle
                 registry (1, 1) yamada.model.ComponentRegistry
                 stateId (1, 1) string = ""
                 callback (1, 1) struct = struct()
+                relocatedIds (1, :) string = strings(1, 0)
             end
             arguments (Output)
                 candidate (1, 1) yamada.model.DocumentModel
@@ -188,51 +189,76 @@ classdef DocumentModel < handle
                 indexed.Components = indexed.Components(arrayfun(@(record) ~isempty(record.SourceSpans.Creation), indexed.Components));
             end
             yamada.model.SourceSettingRebinder.executionSequences(indexed, obj.CurrentSource, yamada.source.SourcePatchBatch(obj.CurrentText), registry);
-            analysis = before.withEditorPatches(batch, obj.Components, registry);
-            execution = analysis.executionIndex(); state = obj.CurrentSource.withBatch(batch, stateId, analysis);
-            mapping = yamada.source.EditorSourceProjection.statementMap(before, analysis, batch);
-            changed = strings(1, 0);
-            for component = obj.Components
-                if isempty(component.SourceSpans.Creation) || any(arrayfun(@(setting) isempty(setting.SourceSpan), component.Settings))
-                    changed(end + 1) = component.Id; %#ok<AGROW>
-                    continue
-                end
-                ranges = [component.SourceSpans.Declaration component.SourceSpans.Creation component.Settings.SourceSpan];
-                [~, survives] = batch.mapSpanCells(arrayfun(@(span) {span}, ranges));
-                if ~all(survives), changed(end + 1) = component.Id; continue, end %#ok<AGROW>
-                for span = ranges
-                    if any(arrayfun(@(edit) edit.Start <= span.EndOffset && edit.End >= span.StartOffset || ...
-                            edit.Start > span.StartOffset && edit.Start <= span.EndOffset, batch.Edits))
-                        changed(end + 1) = component.Id; break %#ok<AGROW>
+            projected = yamada.source.SourceAnalysis.empty;
+            if ~isempty(relocatedIds) && indexed == obj
+                owners = obj.Components(ismember(string({obj.Components.Id}), relocatedIds));
+                [projected, ~] = before.withComponentPatches(batch, string({owners.Name}), obj, registry, true);
+            end
+            if isempty(projected)
+                analysis = before.withEditorPatches(batch, obj.Components, registry);
+                mapping = yamada.source.EditorSourceProjection.statementMap(before, analysis, batch);
+                changed = strings(1, 0);
+                for component = obj.Components
+                    if isempty(component.SourceSpans.Creation) || any(arrayfun(@(setting) isempty(setting.SourceSpan), component.Settings))
+                        changed(end + 1) = component.Id; %#ok<AGROW>
+                        continue
+                    end
+                    ranges = [component.SourceSpans.Declaration component.SourceSpans.Creation component.Settings.SourceSpan];
+                    [~, survives] = batch.mapSpanCells(arrayfun(@(span) {span}, ranges));
+                    if ~all(survives), changed(end + 1) = component.Id; continue, end %#ok<AGROW>
+                    for span = ranges
+                        if any(arrayfun(@(edit) edit.Start <= span.EndOffset && edit.End >= span.StartOffset || ...
+                                edit.Start > span.StartOffset && edit.Start <= span.EndOffset, batch.Edits))
+                            changed(end + 1) = component.Id; break %#ok<AGROW>
+                        end
                     end
                 end
+                additions = setdiff(1:numel(analysis.Statements), mapping(mapping > 0));
+                for index = additions
+                    name = regexp(analysis.Statements(index).Text, '^app\.(\w+)(?:\.|\s*=)', 'tokens', 'once');
+                    if isempty(name), continue, end
+                    component = obj.getComponentByName(string(name{1}));
+                    if ~isempty(component), changed(end + 1) = component.Id; end %#ok<AGROW>
+                end
+                changed = unique(changed, "stable");
+            else
+                analysis = projected;
+                changed = relocatedIds;
             end
-            additions = setdiff(1:numel(analysis.Statements), mapping(mapping > 0));
-            for index = additions
-                name = regexp(analysis.Statements(index).Text, '^app\.(\w+)(?:\.|\s*=)', 'tokens', 'once');
-                if isempty(name), continue, end
-                component = obj.getComponentByName(string(name{1}));
-                if ~isempty(component), changed(end + 1) = component.Id; end %#ok<AGROW>
-            end
-            changed = unique(changed, "stable"); candidate = obj.structuralCandidate();
+            execution = analysis.executionIndex();
+            state = obj.CurrentSource.withBatch(batch, stateId, analysis);
+            candidate = obj.structuralCandidate();
+            [~, candidateOrder] = ismember(string({obj.Components.Id}), string({candidate.Components.Id}));
+            changedOwners = ismember(string({obj.Components.Id}), changed);
+            % Resolve creation visits in bulk from the maintained owner index.
+            [known, positions] = ismember(execution.Owners, execution.Trace.Order);
+            [~, reverse] = ismember(execution.Owners, fliplr(execution.Trace.Order));
+            lastVisits = numel(execution.Trace.Order) + 1 - reverse;
             projectionExecution = execution; projectionExecution.ScopeMethods = analysis.Layout.Methods;
             projection = obj.prepareSettingProjection(batch, projectionExecution, changed);
+            bulkSettings = false;
+            if ~isempty(projected) && isfield(projection, "Before")
+                % Publish the candidate's position columns once for all unmoved settings.
+                candidateProjection = candidate.prepareSettingProjection(batch, projectionExecution, changed);
+                bulkSettings = isfield(candidateProjection, "Before");
+                if bulkSettings, candidate.publishSettingProjection(candidateProjection); end
+            end
             rangeExecution = rmfield(execution, "Trace");
-            for component = obj.Components
-                other = candidate.getComponent(component.Id);
-                owner = find(string({obj.Components.Id}) == component.Id, 1);
+            for owner = 1:numel(obj.Components)
+                component = obj.Components(owner);
+                other = candidate.Components(candidateOrder(owner));
                 if execution.Owners(owner) == 0
                     changed(changed == component.Id) = []; continue
                 end
-                if any(changed == component.Id)
+                if changedOwners(owner)
                     [declaration, valid] = batch.mapSpan(component.SourceSpans.Declaration);
-                    if ~valid
+                    if ~valid && isempty(projected)
                         original = before.statementIndices(component.SourceSpans.Declaration);
                         if isscalar(original) && mapping(original) > 0
                             declaration = analysis.Statements(mapping(original)).Span; valid = true;
                         end
                     end
-                    if isempty(declaration)
+                    if isempty(declaration) && isempty(projected)
                         for position = additions
                             if ~isempty(regexp(analysis.Statements(position).Text, '^' + regexptranslate('escape', component.Name) + '\s+[A-Za-z]\w*(?:\.\w+)*$', 'once'))
                                 declaration = analysis.Statements(position).Span; valid = true; break
@@ -240,17 +266,24 @@ classdef DocumentModel < handle
                         end
                     end
                     assert(valid);
-                    owner = find(string({obj.Components.Id}) == component.Id, 1);
                     creation = analysis.Statements(execution.Owners(owner)).Span;
                     other.SourceSpans = struct("Declaration", declaration, "Creation", creation);
                 else
                     update = yamada.model.SourceLocationUpdate(component, batch, struct("SettingId", {}, "Value", {}), ...
                         rangeExecution, analysis, obj.ownerSettingProjection(component, projection));
-                    update.assertCurrent(component); update.applyToCandidate(other);
+                    update.assertCurrent(component);
+                    if bulkSettings
+                        update.applyValidated(other);
+                    else
+                        update.applyToCandidate(other);
+                    end
                 end
-                visits = find(execution.Trace.Order == analysis.statementIndices(other.SourceSpans.Creation));
-                assert(~isempty(visits)); other.Metadata.InitializationCreationSequence = execution.Creation(visits(end));
-                other.Metadata.InitializationCreationCertain = isscalar(visits) && execution.Trace.Certain(visits(end));
+                assert(known(owner));
+                last = lastVisits(owner);
+                metadata = other.Metadata;
+                metadata.InitializationCreationSequence = execution.Creation(last);
+                metadata.InitializationCreationCertain = positions(owner) == last && execution.Trace.Certain(last);
+                if ~isequaln(other.Metadata, metadata), other.Metadata = metadata; end
             end
             % Partial builder plans exclude generated records that were not emitted.
             for index = fliplr(find(execution.Owners == 0))
