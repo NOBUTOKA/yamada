@@ -106,9 +106,8 @@ classdef SubtreeCopyPlanner
             analysis = document.sourceAnalysis();
             statements = analysis.Statements;
             span = record.SourceSpans.Creation;
-            match = arrayfun(@(item) item.Span.StartOffset == span.StartOffset && ...
-                item.Span.EndOffset == span.EndOffset, statements);
-            if nnz(match) ~= 1
+            match = analysis.statementIndices(span);
+            if numel(match) ~= 1
                 error("yamada:DocumentModel:UnsafeSubtreeCopy", "Component creation ownership is ambiguous.");
             end
             definition = registry.get(record.Factory, record.CreationArguments);

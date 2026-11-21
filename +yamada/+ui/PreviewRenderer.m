@@ -229,10 +229,9 @@ classdef PreviewRenderer < handle
             context = document.evaluationContext(obj.Registry);
             [inputs, safe] = context.inputs();
             if ~safe, return, end
-            % Retire the moved native subtree while leaving all unrelated handles alive.
+            % The editor passes the accepted source configuration after publishing the structural edit.
+            obj.Diagnostics = yamada.model.Diagnostic.empty;
             try
-                obj.prepareConfiguration(document);
-                if obj.UsesCombinedConfiguration, return, end
                 if ~isempty(old)
                     if ~isKey(handles, id) || ~isvalid(handles(id)), return, end
                     moved = yamada.model.SubtreeSnapshot(document, id);
