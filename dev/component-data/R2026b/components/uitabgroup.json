@@ -114,6 +114,7 @@
     },
     {
       "path": "SelectedTab",
+      "referencesDirectChild": true,
       "categoryId": "tabs",
       "order": 2,
       "summary": "Tab currently displayed by the tab group.",

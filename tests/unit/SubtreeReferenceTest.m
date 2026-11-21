@@ -33,8 +33,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeReferenceTest < mat
             testCase.verifyEqual(button.getProperty("ContextMenu").SourceExpression, "app.RenamedMenu");
         end
 
-        function referenceScopeBlocksMovingOrDeletingCopiedSelectedTab(testCase)
-            % referenceScopeBlocksMovingOrDeletingCopiedSelectedTab Keep reference relationships valid on later edits.
+        function deletionRetargetsCopiedSelectedTab(testCase)
+            % deletionRetargetsCopiedSelectedTab Repair a surviving group selection in the same undoable deletion.
             [document, registry, group] = SubtreeReferenceTest.fixture();
             clipboard = yamada.model.ComponentClipboard();
             clipboard.copy(document, group.Id, registry);
@@ -43,8 +43,23 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeReferenceTest < mat
             history = document.HistoryIndex;
             testCase.verifyError(@() document.reparentSubtree(target.Id, group.Id, registry), "yamada:DocumentModel:UnsafeSubtreeEdit");
             testCase.verifyEqual(target.ParentId, copied.Id);
-            testCase.verifyError(@() document.removeSubtree(target.Id, registry), "yamada:SubtreeSourceEdits:UnsafeDeletion");
-            testCase.verifyEqual(document.HistoryIndex, history);
+            before = document.CurrentText;
+            previous = document.getComponent(copied.Children(1));
+            document.removeSubtree(target.Id, registry);
+            after = document.CurrentText;
+            testCase.verifyEqual(copied.getProperty("SelectedTab").SourceExpression, "app." + previous.Name);
+            testCase.verifyEqual(copied.getProperty("SelectedTab").Metadata.SubtreeReferenceId, previous.Id);
+            testCase.verifyEqual(document.HistoryIndex, history + 1);
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, before);
+            testCase.verifyEqual(copied.getProperty("SelectedTab").Metadata.SubtreeReferenceId, target.Id);
+            document.redo();
+            testCase.verifyEqual(document.CurrentText, after);
+            document.removeSubtree(previous.Id, registry);
+            testCase.verifyEmpty(copied.Children);
+            testCase.verifyEmpty(copied.getProperty("SelectedTab"));
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, after);
         end
 
         function parsedGroupMovesWithReferenceAfterTargetCreation(testCase)

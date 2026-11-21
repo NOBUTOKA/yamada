@@ -42,23 +42,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), after);
         end
 
-        function externalReferencesRejectWithoutMutation(testCase)
-            % externalReferencesRejectWithoutMutation Keep source preview, history and hierarchy intact.
-            [original, registry, panel] = SubtreeDeletionTest.fixture();
-            source = yamada.source.NewAppGenerator(registry).generate(original);
-            source = replace(source, "delete(app.UIFigure);", "disp(app." + panel.Name + "); delete(app.UIFigure);");
-            document = yamada.source.AppSourceParser.parseText(source, registry);
-            panel = document.getComponentByName(panel.Name);
-            before = document.Components;
-            history = document.HistoryIndex;
-            text = document.GeneratedText;
-            testCase.verifyError(@() document.removeSubtree(panel.Id, registry), ...
-                "yamada:SubtreeSourceEdits:UnsafeDeletion");
-            testCase.verifyEqual(document.Components, before);
-            testCase.verifyEqual(document.HistoryIndex, history);
-            testCase.verifyEqual(document.GeneratedText, text);
-        end
-
         function commentsAndStringsAreNotExternalReferences(testCase)
             % commentsAndStringsAreNotExternalReferences Ignore textual mentions while preserving their bytes.
             [original, registry, panel] = SubtreeDeletionTest.fixture();
@@ -82,12 +65,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
             subtree = yamada.model.SubtreeSnapshot(document, panel.Id);
             records = document.Components(ismember(string({document.Components.Id}), string({subtree.Records.Id})));
             ownership = yamada.model.SourceOwnership.snapshot(records);
-            expected = yamada.source.SubtreeSourceEdits.deletion(source, ownership);
+            expected = yamada.source.SubtreeSourceEdits.deletion(ownership);
             for record = records
                 record.Name = record.Name + "Changed";
                 record.SourceSpans = struct("Declaration", yamada.model.SourceSpan.empty, "Creation", yamada.model.SourceSpan.empty);
             end
-            actual = yamada.source.SubtreeSourceEdits.deletion(source, ownership);
+            actual = yamada.source.SubtreeSourceEdits.deletion(ownership);
             testCase.verifyEqual(actual, expected);
             result = yamada.source.SourcePatchBatch(source, actual).AfterText;
             parsed = yamada.source.AppSourceParser.parseText(result, registry);

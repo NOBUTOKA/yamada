@@ -77,11 +77,9 @@ classdef RoundTripGenerator
                 pending = document.PendingEdits{pendingIndex};
                 if isstruct(pending) && isfield(pending, "Kind") && pending.Kind == "delete-subtree"
                     try
-                        rewrittenReferences = yamada.model.SourceSpan.empty;
-                        if isfield(pending, "RewrittenReferences"), rewrittenReferences = pending.RewrittenReferences; end
                         if isfield(pending, "Records"), records = pending.Records;
                         else, records = yamada.model.SourceOwnership.snapshot(pending.Components); end
-                        removals = yamada.source.SubtreeSourceEdits.deletion(source, records, rewrittenReferences);
+                        removals = yamada.source.SubtreeSourceEdits.deletion(records);
                         edits = [edits removals]; %#ok<AGROW>
                     catch exception
                         diagnostics(end + 1) = yamada.model.Diagnostic("unsafe-subtree-deletion", ...

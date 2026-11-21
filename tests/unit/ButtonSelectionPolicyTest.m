@@ -53,6 +53,20 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             testCase.verifyEqual(values(document, registry), [0 1]);
         end
 
+        function deletionRetargetsSelectedObject(testCase)
+            % deletionRetargetsSelectedObject Keep the surviving button selection source-owned and undoable.
+            [document, registry] = fixture("app.Group.SelectedObject = app.Second;");
+            before = document.CurrentText;
+            group = document.getComponentByName("Group");
+            second = document.getComponentByName("Second");
+            document.removeSubtree(second.Id, registry);
+            testCase.verifyEqual(group.getProperty("SelectedObject").SourceExpression, "app.First");
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, before);
+            document.redo();
+            testCase.verifyEqual(group.getProperty("SelectedObject").SourceExpression, "app.First");
+        end
+
         function ownedSelectedObjectReferenceDeterminesChildValues(testCase)
             % ownedSelectedObjectReferenceDeterminesChildValues Resolve a simple reference without evaluating it.
             [document, registry] = fixture("app.Group.SelectedObject = app.Second;");

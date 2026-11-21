@@ -79,24 +79,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeWorkflowTest < matl
             testCase.verifyEqual(numel(reopened.Components), numel(document.Components));
         end
 
-        function nonParentReferenceStillBlocksDeletion(testCase)
-            % nonParentReferenceStillBlocksDeletion Do not ignore a property reference outside the rewritten parent token.
-            [original, registry, left, right, leaf] = SubtreeWorkflowTest.fixture();
-            source = replace(original.OriginalText, "app." + leaf.Name + " = uilabel(app." + left.Name + ");", ...
-                "app." + leaf.Name + " = uilabel(app." + left.Name + ");" + newline + ...
-                "            app." + leaf.Name + ".UserData = app." + left.Name + ";");
-            document = yamada.source.AppSourceParser.parseText(source, registry);
-            left = document.getComponentByName(left.Name);
-            right = document.getComponentByName(right.Name);
-            leaf = document.getComponentByName(leaf.Name);
-            document.reparentSubtree(leaf.Id, right.Id, registry);
-            history = document.HistoryIndex;
-            testCase.verifySubstring(document.GeneratedText, "app." + leaf.Name + ".UserData = app." + left.Name + ";");
-            testCase.verifyError(@() document.removeSubtree(left.Id, registry), "yamada:SubtreeSourceEdits:UnsafeDeletion");
-            testCase.verifyEqual(document.HistoryIndex, history);
-            testCase.verifyNotEmpty(document.getComponent(left.Id));
-        end
-    end
+   end
 
     methods (Static, Access = private)
         function [document, registry, left, right, leaf] = fixture()

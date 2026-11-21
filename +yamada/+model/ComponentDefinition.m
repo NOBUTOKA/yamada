@@ -50,6 +50,8 @@ classdef ComponentDefinition
         ResizeConstraintsByStyle struct = struct()
         % DefaultSize - Initial pixel width and height for a newly inserted component.
         DefaultSize double = [100 30]
+        % ReferencesDirectChild - Whether any catalog setting can reference a direct child.
+        ReferencesDirectChild logical = false
         % Metadata - Extensible component capability and editor metadata.
         Metadata struct = struct()
     end
@@ -95,6 +97,8 @@ classdef ComponentDefinition
             obj.IsRoot = isRoot;
             obj.CreationArguments = creationArguments;
             obj.Properties = propertyDefinitions;
+            obj.ReferencesDirectChild = any(arrayfun(@(item) isfield(item.Metadata, "referencesDirectChild") && ...
+                item.Metadata.referencesDirectChild, propertyDefinitions));
             obj.DisplayName = displayName;
             obj.Category = category;
             obj.IsProgrammaticOnly = isProgrammaticOnly;

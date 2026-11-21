@@ -349,6 +349,10 @@
             }
           }
         },
+        "referencesDirectChild": {
+          "type": "boolean",
+          "description": "Whether the property can contain a reference to a direct child."
+        },
         "affectsDisplay": {
           "description": "Whether changing this property can affect the visual or interactive result Safe Preview is intended to represent.",
           "type": "boolean"

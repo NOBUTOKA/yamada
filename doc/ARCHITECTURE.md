@@ -181,6 +181,10 @@ Shared boundaries: [Shared Document Model](#shared-document-model) and [Source p
 
 `ComponentClipboard` retains the prepared document-scoped snapshot. Document history restores the edited subtree independently of that snapshot, so Undo does not consume or rewind clipboard contents.
 
+The clipboard snapshot retains effective configuration and internal hierarchy as values. Paste allocates new names, identities, and source ranges, remaps internal references, and plans the root's placement against the live destination. Command availability can reuse facts for the current document and catalog revision, while the destination and its occupancy belong to the current paste request.
+
+Deletion removes owned declaration and initialization spans. The catalog projects a per-property direct-child reference flag from the ledger and aggregates it on the component definition. At commit, an owned selection in the surviving direct parent is retargeted or removed with the subtree in one history entry. User-written logic and unrecognized initializer references remain the source author's responsibility.
+
 #### Subtree placement
 
 **Conditions to preserve**

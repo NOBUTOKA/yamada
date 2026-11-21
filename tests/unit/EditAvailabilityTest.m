@@ -126,7 +126,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             document.addComponent(second, right.Id);
             states = yamada.model.DocumentEditAvailability.reparenting(document, tab.Id, registry);
             testCase.verifyFalse(states(string({states.Id}) == second.Id).Enabled);
-            testCase.verifyFalse(yamada.model.DocumentEditAvailability.deletion(document, tab.Id, registry).Enabled);
+            testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, tab.Id, registry).Enabled);
             testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, group.Id, registry).Enabled);
             testCase.verifyError(@() document.reparentSubtree(tab.Id, second.Id, registry), "yamada:DocumentModel:UnsafeSubtreeEdit");
         end

@@ -1981,24 +1981,37 @@ classdef DocumentModel < handle
                     error("yamada:DocumentModel:UnsafeSubtreeEdit", "Callback ownership prevents complete subtree deletion.");
                 end
             end
-            % The live canonical ranges already describe the exact current source.
-            rewrittenReferences = yamada.source.SubtreeSourceEdits.detachedParentReferences(obj, ids);
-            edits = yamada.source.SubtreeSourceEdits.deletion(obj.CurrentText, removed, rewrittenReferences);
-            edits = yamada.source.SourceFormatting.completeLineDeletions(obj.CurrentText, edits);
-            batch = yamada.source.SourcePatchBatch(obj.CurrentText, edits);
-            candidate = obj.structuralCandidate(); root = obj.getComponent(id); parent = obj.getComponent(root.ParentId);
+            % Repair the surviving parent's owned child references in the same history entry.
+            root = obj.getComponent(id); parent = obj.getComponent(root.ParentId);
+            before = obj.CurrentSource;
+            base = obj; parentEdit = struct([]);
+            referenceEdits = obj.childReferenceDeletionEdits(parent, root, registry);
+            if ~isempty(referenceEdits)
+                referenceBatch = yamada.source.SourcePatchBatch(obj.CurrentText, referenceEdits);
+                [base, referenceState] = obj.editedSourceCandidate(referenceBatch.AfterText, referenceBatch.Edits, registry);
+                parentEdit = struct("Forward", referenceBatch.Edits, "Inverse", referenceBatch.InverseEdits, ...
+                    "StateId", referenceState.StateId);
+            end
+            baseComponents = base.Components(ismember(string({base.Components.Id}), ids));
+            edits = yamada.source.SubtreeSourceEdits.deletion(baseComponents);
+            edits = yamada.source.SourceFormatting.completeLineDeletions(base.CurrentText, edits);
+            batch = yamada.source.SourcePatchBatch(base.CurrentText, edits);
+            candidate = base.structuralCandidate();
             beforeChildren = parent.Children; beforeOrder = string({obj.Components.Id});
             candidate.Components = candidate.Components(~ismember(string({candidate.Components.Id}), ids));
             candidateParent = candidate.getComponent(parent.Id); candidateParent.removeChild(id);
-            [candidate, state] = obj.prepareComponentPublication(candidate, batch, string({removed.Name}), registry);
-            before = obj.CurrentSource;
+            [candidate, state] = base.prepareComponentPublication(candidate, batch, string({removed.Name}), registry, "", obj);
             obj.Components = obj.Components(~ismember(string({obj.Components.Id}), ids)); parent.removeChild(id);
             obj.publishParsedSource(state, registry, candidate, true);
+            if ~isempty(parentEdit), obj.refreshChildReferenceIdentity(parent); end
+            combined = batch;
+            if ~isempty(parentEdit), combined = obj.sourceDifference(before.Text, state.Text); end
             edit = struct("Kind", "source-subtree-delete", "ParentId", parent.Id, ...
                 "Snapshot", snapshot, "InsertedComponents", removed, "BeforeChildren", beforeChildren, "AfterChildren", parent.Children, ...
                 "BeforeOrder", beforeOrder, "AfterOrder", string({obj.Components.Id}), ...
-                "SourceForward", batch.Edits, "SourceInverse", batch.InverseEdits, ...
+                "SourceForward", combined.Edits, "SourceInverse", combined.InverseEdits, ...
                 "ComponentForward", batch.Edits, "ComponentInverse", batch.InverseEdits, "StagedEdit", struct([]), ...
+                "ParentReferenceEdit", parentEdit, ...
                 "SourceBeforeId", before.StateId, "SourceAfterId", obj.CurrentSource.StateId);
             obj.SourcePublication = true; cleanup = onCleanup(@() obj.endSourcePublication());
             obj.recordHistory(edit);
@@ -3014,6 +3027,78 @@ classdef DocumentModel < handle
             staged = candidate.History{end};
         end
 
+        function edits = childReferenceDeletionEdits(obj, parent, child, registry)
+            % childReferenceDeletionEdits Retarget owned parent selections or remove their final reference.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                parent (1, 1) yamada.model.ComponentRecord
+                child (1, 1) yamada.model.ComponentRecord
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                edits (1, :) struct
+            end
+            edits = struct("Start", {}, "End", {}, "Text", {});
+            definition = registry.sourceDefinition(parent);
+            if ~definition.ReferencesDirectChild, return, end
+            paths = definition.Properties(arrayfun(@(item) isfield(item.Metadata, "referencesDirectChild") && ...
+                item.Metadata.referencesDirectChild, definition.Properties));
+
+            % Prefer the preceding selectable child, otherwise select the nearest successor.
+            siblings = parent.Children;
+            slot = find(siblings == child.Id, 1);
+            choices = [fliplr(siblings(1:slot-1)), siblings(slot+1:end)];
+            target = yamada.model.ComponentRecord.empty;
+            for id = choices
+                candidate = obj.getComponent(id);
+                if candidate.Factory == child.Factory || parent.Factory == "uibuttongroup" && ...
+                        any(candidate.Factory == ["uiradiobutton", "uitogglebutton"])
+                    target = candidate;
+                    break
+                end
+            end
+            for property = paths(:).'
+                for setting = parent.getSettings(property.Path)
+                    if setting.ValueKind ~= "expression", continue, end
+                    token = regexp(setting.SourceExpression, '^\s*app\s*\.\s*(\w+)\s*$', 'tokens', 'once');
+                    if isempty(token) || string(token{1}) ~= child.Name, continue, end
+                    assert(setting.IsCertain && setting.Method == "assignment" && ~isempty(setting.SourceSpan), ...
+                        "yamada:DocumentModel:UnsafeSubtreeEdit", "The parent selection is not an owned initialization assignment.");
+                    if isempty(target) || ~isfield(target.Metadata, "InitializationCreationSequence") || ...
+                            target.Metadata.InitializationCreationSequence >= setting.Sequence
+                        % With no earlier target, native initialization selects the first remaining child.
+                        span = setting.SourceSpan;
+                        text = "";
+                    else
+                        span = setting.ValueSpan;
+                        assert(~isempty(span), "yamada:DocumentModel:UnsafeSubtreeEdit", "The parent selection value has no source range.");
+                        text = "app." + target.Name;
+                    end
+                    edits(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, "Text", text); %#ok<AGROW>
+                end
+            end
+        end
+
+        function refreshChildReferenceIdentity(obj, parent)
+            % refreshChildReferenceIdentity Rebind the editor's stable tab reference after a source edit.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                parent (1, 1) yamada.model.ComponentRecord
+            end
+            selection = parent.getProperty("SelectedTab");
+            if isempty(selection), return, end
+            metadata = selection.Metadata;
+            if isfield(metadata, "SubtreeReferenceId"), metadata = rmfield(metadata, "SubtreeReferenceId"); end
+            token = regexp(selection.SourceExpression, '^\s*app\s*\.\s*(\w+)\s*$', 'tokens', 'once');
+            if ~isempty(token)
+                tab = obj.getComponentByName(string(token{1}));
+                if ~isempty(tab) && tab.ParentId == parent.Id
+                    metadata.SubtreeReferenceId = tab.Id;
+                end
+            end
+            selection.Metadata = metadata;
+        end
+
         function [candidate, state] = prepareComponentPublication(obj, candidate, batch, names, registry, stateId, allocator)
             % prepareComponentPublication Bind emitted statements and rebase existing records without whole-source parsing.
             arguments (Input)
@@ -3164,6 +3249,12 @@ classdef DocumentModel < handle
                 forward (1, 1) logical
             end
             base = obj;
+            parentEdit = struct([]);
+            if isfield(edit, "ParentReferenceEdit"), parentEdit = edit.ParentReferenceEdit; end
+            if forward && ~isempty(parentEdit)
+                staged = yamada.source.SourcePatchBatch(base.CurrentText, parentEdit.Forward);
+                [base, ~] = base.editedSourceCandidate(staged.AfterText, staged.Edits, obj.SourceRegistry, parentEdit.StateId);
+            end
             if forward && ~isempty(edit.StagedEdit)
                 base = obj.structuralCandidate(obj.SourceRegistry); base.applySourceBatchHistory(edit.StagedEdit, true);
             end
@@ -3180,6 +3271,7 @@ classdef DocumentModel < handle
             else
                 children = edit.BeforeChildren; edits = edit.ComponentInverse; stateId = edit.SourceBeforeId;
                 if ~isempty(edit.StagedEdit), stateId = edit.StagedEdit.SourceAfterId; end
+                if ~isempty(parentEdit), stateId = parentEdit.StateId; end
             end
             if isfield(edit, "BeforeOrder")
                 order = edit.BeforeOrder; if forward, order = edit.AfterOrder; end
@@ -3191,6 +3283,10 @@ classdef DocumentModel < handle
             [candidate, state] = base.prepareComponentPublication(candidate, batch, names, obj.SourceRegistry, stateId, obj);
             if ~forward && ~isempty(edit.StagedEdit)
                 candidate.applySourceBatchHistory(edit.StagedEdit, false); state = candidate.CurrentSource;
+            end
+            if ~forward && ~isempty(parentEdit)
+                staged = yamada.source.SourcePatchBatch(candidate.CurrentText, parentEdit.Inverse);
+                [candidate, state] = candidate.editedSourceCandidate(staged.AfterText, staged.Edits, obj.SourceRegistry, edit.SourceBeforeId);
             end
             if adding
                 obj.Components = [obj.Components edit.InsertedComponents];
@@ -3204,6 +3300,7 @@ classdef DocumentModel < handle
             for child = parent.Children, parent.removeChild(child); end
             for child = children, parent.addChild(child); end
             obj.publishParsedSource(state, obj.SourceRegistry, candidate, true);
+            if ~isempty(parentEdit), obj.refreshChildReferenceIdentity(parent); end
         end
 
         function publishIdentifierPatch(obj, batch, analysis, mappings, id, name, stateId)
