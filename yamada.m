@@ -528,11 +528,13 @@ classdef yamada < handle
             app.refreshEditCommands();
         end
 
-        function refreshShell(app, retainHierarchy)
+        function refreshShell(app, retainHierarchy, structureId, previous)
             % refreshShell Rebuild document surfaces, optionally retaining the current tree.
             arguments (Input)
                 app (1, 1) yamada
                 retainHierarchy (1, 1) logical = false
+                structureId (1, 1) string = ""
+                previous (1, 1) struct = struct()
             end
 
             app.PreviewWriteDepth = app.PreviewWriteDepth + 1;
@@ -547,7 +549,25 @@ classdef yamada < handle
             app.refreshPalette();
             app.refreshDiagnostics(app.Document.Diagnostics);
             drawnow;
-            app.refreshPreview();
+            applied = false;
+            if strlength(structureId) > 0
+                app.cancelOverlayRefresh();
+                app.PreviewGeometry = struct();
+                app.ReparentRevision = app.ReparentRevision + 1;
+                app.InteractionComponentId = "";
+                app.InteractionKind = "";
+                if ~isempty(app.RootResizeGuide) && isvalid(app.RootResizeGuide), delete(app.RootResizeGuide); end
+                [applied, diagnostics, app.PreviewHandles] = app.PreviewRenderer.synchronizeStructure( ...
+                    app.Document, app.PreviewHandles, structureId, previous);
+                if applied
+                    app.restorePreviewTabSelections();
+                    if ~isempty(diagnostics)
+                        app.Document.Diagnostics = [app.Document.Diagnostics diagnostics];
+                        app.refreshDiagnostics(app.Document.Diagnostics);
+                    end
+                end
+            end
+            if ~applied, app.refreshPreview(); end
             app.refreshInspector();
             app.refreshEditCommands();
             app.refreshTitle();
@@ -676,6 +696,7 @@ classdef yamada < handle
                 return
             end
             try
+                previous = app.Document.evaluationContext(app.Registry).revisionToken();
                 component = app.Document.insertComponent(app.Registry, ...
                     definition.Factory, parent.Id, definition.CreationArguments);
             catch exception
@@ -684,7 +705,7 @@ classdef yamada < handle
                 return
             end
             app.SelectedComponentId = component.Id;
-            app.refreshShell();
+            app.refreshShell(false, component.Id, previous);
             app.setStatus("Added " + component.Name);
             app.PreviewOwnsKeyboard = true;
             app.KeyboardFocusMoved = false;
@@ -807,9 +828,10 @@ classdef yamada < handle
                     app.SelectedComponentId = parentId;
                     app.refreshShell();
                 else
+                    previous = app.Document.evaluationContext(app.Registry).revisionToken();
                     component = app.Clipboard.paste(app.Document, id, app.Registry);
                     app.SelectedComponentId = component.Id;
-                    app.refreshShell();
+                    app.refreshShell(false, component.Id, previous);
                 end
                 app.setStatus(action + " completed.");
             catch exception
@@ -2009,10 +2031,11 @@ classdef yamada < handle
                 if strlength(parentId) == 0
                     error("yamada:yamada:InvalidDrop", "No valid destination is available at this point.");
                 end
+                previous = app.Document.evaluationContext(app.Registry).revisionToken();
                 app.Document.reparentSubtree(id, parentId, app.Registry, app.clipboardPosition(id), ...
                     double(data.targetCell), double(data.targetPosition));
                 app.SelectedComponentId = id;
-                app.refreshShell();
+                app.refreshShell(false, id, previous);
                 app.setStatus("Moved component subtree.");
             catch exception
                 app.setStatus(string(exception.message));

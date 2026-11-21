@@ -229,12 +229,16 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(pasted.ParentId, app.Document.RootComponentId);
             testCase.verifyEqual(numel(pasted.Children), 1);
             pastedId = pasted.Id;
+            previousOverlay = overlay;
             overlay = findall(figure, "Tag", "yamada-interaction-overlay");
-            originalFcn = overlay.HTMLEventReceivedFcn;
-            overlay.HTMLEventReceivedFcn = @(src, event) testCase.captureHtml(originalFcn, src, event);
             testCase.HtmlEvents = strings(1, 0);
-            overlay.HTMLSource = filePath;
-            testCase.waitForHtml("HarnessReady");
+            % Only a replacement overlay needs its HTML harness installed again.
+            if ~isequal(overlay, previousOverlay)
+                originalFcn = overlay.HTMLEventReceivedFcn;
+                overlay.HTMLEventReceivedFcn = @(src, event) testCase.captureHtml(originalFcn, src, event);
+                overlay.HTMLSource = filePath;
+                testCase.waitForHtml("HarnessReady");
+            end
             sendEventToHTMLSource(overlay, "HarnessKey", struct("key", "Delete", "editing", false, "unmodified", true));
             testCase.waitForHtml("HarnessDone");
             testCase.verifyEqual(sum(testCase.HtmlEvents == "DeleteSelection"), 1);
