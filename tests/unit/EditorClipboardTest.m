@@ -7,6 +7,29 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
     end
 
     methods (Test)
+        function hierarchyOmitsMenuBranchesButRetainsSource(testCase)
+            % hierarchyOmitsMenuBranchesButRetainsSource Keep both kinds of menu and their children out of Hierarchy.
+            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "FigureToolsApp.m");
+            lifecycle = yamada.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, path)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() delete(app)); %#ok<NASGU>
+
+            % Open the fixture through the editor and read its visible tree.
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
+            menus = findall(figure, "Type", "uimenu");
+            open = menus(erase(string({menus.Text}), "&") == "Open...");
+            open.MenuSelectedFcn(open, []);
+            nodes = findall(figure, "Type", "uitreenode");
+            visibleIds = string({nodes.NodeData});
+            for name = ["ActionContextMenu", "FileMenu", "ExportMenu", "HelpMenu"]
+                component = app.Document.getComponentByName(name);
+                testCase.assertNotEmpty(component);
+                testCase.verifyFalse(any(visibleIds == component.Id));
+            end
+            testCase.verifyTrue(any(visibleIds == app.Document.getComponentByName("PreviewLabel").Id));
+            testCase.verifyEqual(app.Document.CurrentText, app.Document.OriginalText);
+        end
+
         function clipboardMenusAcceptUnavailableComponents(testCase)
             % clipboardMenusAcceptUnavailableComponents Exercise newer source components through Edit menus.
 
@@ -229,12 +252,16 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(pasted.ParentId, app.Document.RootComponentId);
             testCase.verifyEqual(numel(pasted.Children), 1);
             pastedId = pasted.Id;
+            previousOverlay = overlay;
             overlay = findall(figure, "Tag", "yamada-interaction-overlay");
-            originalFcn = overlay.HTMLEventReceivedFcn;
-            overlay.HTMLEventReceivedFcn = @(src, event) testCase.captureHtml(originalFcn, src, event);
             testCase.HtmlEvents = strings(1, 0);
-            overlay.HTMLSource = filePath;
-            testCase.waitForHtml("HarnessReady");
+            % Only a replacement overlay needs its HTML harness installed again.
+            if ~isequal(overlay, previousOverlay)
+                originalFcn = overlay.HTMLEventReceivedFcn;
+                overlay.HTMLEventReceivedFcn = @(src, event) testCase.captureHtml(originalFcn, src, event);
+                overlay.HTMLSource = filePath;
+                testCase.waitForHtml("HarnessReady");
+            end
             sendEventToHTMLSource(overlay, "HarnessKey", struct("key", "Delete", "editing", false, "unmodified", true));
             testCase.waitForHtml("HarnessDone");
             testCase.verifyEqual(sum(testCase.HtmlEvents == "DeleteSelection"), 1);
@@ -278,7 +305,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(string(paste.Enable), "off");
             testCase.verifyEqual(numel(app.Document.Components), 1);
             status = findall(figure, "Tag", "yamada-status");
-            testCase.verifySubstring(string(status.Tooltip), "The document root cannot be copied.");
+            testCase.verifySubstring(string(status.Tooltip), "The document root cannot be removed.");
         end
     end
 
@@ -343,7 +370,8 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyNotEqual(pastedId, panelId);
             testCase.verifyEqual(pasted.ParentId, rootId);
             testCase.verifyEqual(numel(pasted.Children), 1);
-            testCase.verifyEmpty(pasted.getProperty("SizeChangedFcn"));
+            testCase.verifyEqual(pasted.getProperty("SizeChangedFcn").SourceExpression, ...
+                app.Document.getComponent(panelId).getProperty("SizeChangedFcn").SourceExpression);
             testCase.verifyEmpty(app.Document.CallbackEdits);
             testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
             testCase.invoke(figure, "Cut", route, pastedId);

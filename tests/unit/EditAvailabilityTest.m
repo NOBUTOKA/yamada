@@ -26,14 +26,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             testCase.verifyTrue(clipboard.hasContents(document));
         end
 
-        function hierarchyChangesInvalidateConditionsImmediately(testCase)
-            % hierarchyChangesInvalidateConditionsImmediately Do not retain an enabled state after direct changes.
+        function readOnlyStateOnlyRestrictsMoving(testCase)
+            % readOnlyStateOnlyRestrictsMoving Allow copying and deletion of indexed read-only components.
             [document, registry, left, right, leaf] = EditAvailabilityTest.fixture(false);
             clipboard = yamada.model.ComponentClipboard();
             testCase.verifyTrue(clipboard.availability("Copy", document, left.Id, registry).Enabled);
             leaf.IsEditable = false;
-            testCase.verifyFalse(clipboard.availability("Copy", document, left.Id, registry).Enabled);
-            testCase.verifyFalse(yamada.model.DocumentEditAvailability.deletion(document, left.Id, registry).Enabled);
+            testCase.verifyTrue(clipboard.availability("Copy", document, left.Id, registry).Enabled);
+            testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, left.Id, registry).Enabled);
             states = yamada.model.DocumentEditAvailability.reparenting(document, left.Id, registry);
             testCase.verifyFalse(any([states.Enabled]));
             leaf.IsEditable = true;
@@ -58,8 +58,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             end
         end
 
-        function placementConditionsMatchFullGridRejection(testCase)
-            % placementConditionsMatchFullGridRejection Recheck occupied cells without trying a paste.
+        function fullGridIsRejectedAtPaste(testCase)
+            % fullGridIsRejectedAtPaste Keep the command available and check available cells at execution.
             [document, registry, ~, right, leaf] = EditAvailabilityTest.fixture(false);
             grid = document.insertComponent(registry, "uigridlayout", right.Id);
             grid.setProperty("RowHeight", {"1x"});
@@ -68,7 +68,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             clipboard.copy(document, leaf.Id, registry);
             testCase.verifyTrue(clipboard.availability("Paste", document, grid.Id, registry).Enabled);
             inserted = clipboard.paste(document, grid.Id, registry);
-            testCase.verifyFalse(clipboard.availability("Paste", document, grid.Id, registry).Enabled);
+            testCase.verifyTrue(clipboard.availability("Paste", document, grid.Id, registry).Enabled);
             states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
             testCase.verifyFalse(states(string({states.Id}) == grid.Id).Enabled);
             document.removeSubtree(inserted.Id, registry);
@@ -126,13 +126,13 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             document.addComponent(second, right.Id);
             states = yamada.model.DocumentEditAvailability.reparenting(document, tab.Id, registry);
             testCase.verifyFalse(states(string({states.Id}) == second.Id).Enabled);
-            testCase.verifyFalse(yamada.model.DocumentEditAvailability.deletion(document, tab.Id, registry).Enabled);
+            testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, tab.Id, registry).Enabled);
             testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, group.Id, registry).Enabled);
             testCase.verifyError(@() document.reparentSubtree(tab.Id, second.Id, registry), "yamada:DocumentModel:UnsafeSubtreeEdit");
         end
 
-        function missingExternalReferenceDisablesStoredPaste(testCase)
-            % missingExternalReferenceDisablesStoredPaste Revalidate snapshot targets after direct model changes.
+        function missingExternalReferenceIsRejectedAtPaste(testCase)
+            % missingExternalReferenceIsRejectedAtPaste Revalidate snapshot targets after direct model changes.
             [document, registry, ~, right] = EditAvailabilityTest.fixture(false);
             definition = registry.get("uicontextmenu");
             menu = yamada.model.ComponentRecord("menu", "Menu", definition.Factory, definition.DeclaredType, "generated");
@@ -151,7 +151,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             testCase.verifyTrue(clipboard.availability("Paste", document, right.Id, registry).Enabled);
             document.Components(document.Components == menu) = [];
             document.getComponent(document.RootComponentId).removeChild(menu.Id);
-            testCase.verifyFalse(clipboard.availability("Paste", document, right.Id, registry).Enabled);
+            testCase.verifyTrue(clipboard.availability("Paste", document, right.Id, registry).Enabled);
             testCase.verifyTrue(clipboard.hasContents(document));
         end
 
@@ -169,7 +169,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
         end
 
         function constructorConditionsSurviveDiagnosticRefresh(testCase)
-            % constructorConditionsSurviveDiagnosticRefresh Base eligibility on preserved tokens rather than UI warnings.
+            % constructorConditionsSurviveDiagnosticRefresh Keep copy available with opaque constructor settings.
             [original, registry, ~, ~, leaf] = EditAvailabilityTest.fixture(true);
             source = replace(original.OriginalText, "app." + leaf.Name + " = uilabel(app.Panel);", ...
                 "app." + leaf.Name + " = uilabel(app.Panel, 'UnknownSetting', 17);");
@@ -178,8 +178,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             before = yamada.model.DocumentEditAvailability.copying(document, leaf.Id, registry);
             document.Diagnostics = yamada.model.Diagnostic.empty;
             state = yamada.model.DocumentEditAvailability.copying(document, leaf.Id, registry);
-            testCase.verifyFalse(state.Enabled);
-            testCase.verifyNotEmpty(state.Reason);
+            testCase.verifyTrue(state.Enabled);
             testCase.verifyEqual(state, before);
         end
 

@@ -67,8 +67,7 @@ classdef SubtreeReparentSourceEdits
                 [~, uniqueSpans] = unique([[own.StartOffset]' [own.EndOffset]'], 'rows', 'stable');
                 own = own(uniqueSpans);
                 for span = own
-                    matches = find(arrayfun(@(statement) statement.Span.StartOffset == span.StartOffset && ...
-                        statement.Span.EndOffset == span.EndOffset, statements));
+                    matches = analysis.statementIndices(span);
                     visits = find(ismember(order, matches));
                     if ~span.isKnown() || numel(matches) ~= 1 || ~direct(matches) || ...
                             ~isscalar(visits) || ~certain(visits)
@@ -462,7 +461,7 @@ classdef SubtreeReparentSourceEdits
             suffix = extractAfter(document.CurrentText, anchor);
             source = prefix + block + suffix;
             patches = [removals struct("Start", anchor + 1, "End", anchor, "Text", block)];
-            [candidate, ~] = document.editedSourceCandidate(source, patches, registry);
+            [candidate, ~] = document.editedSourceCandidate(source, patches, registry, "", struct(), movedIds);
             hasPending = false;
             % All candidates share one source version; only their owned insertions are combined.
             for id = movedIds

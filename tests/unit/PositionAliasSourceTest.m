@@ -78,8 +78,8 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             end
         end
 
-        function copiesCanonicalizeAliasesAndVerifyTheirOffset(testCase)
-            % copiesCanonicalizeAliasesAndVerifyTheirOffset Freeze one Position instead of letting copied aliases overwrite placement.
+        function copiesPreserveAliasesAndApplyFinalOffset(testCase)
+            % copiesPreserveAliasesAndApplyFinalOffset Keep aliases and apply placement after their original effects.
             bodies = {["app.Control = uibutton(app.Left);", "app.Control.Position = [10 20 130 35];", ...
                 "app.Control.InnerPosition = [30 40 150 45];"], ...
                 "app.Control = uibutton(app.Left, Position=[10 20 130 35], InnerPosition=[30 40 150 45]);", ...
@@ -88,12 +88,9 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
                 [document, registry, control, target] = testCase.fixture(body{1});
                 before = control.settingSnapshot();
                 snapshot = document.copySubtree(control.Id, registry);
-                values = snapshot.CopyConfiguration.Properties;
-                testCase.verifyFalse(any(ismember(string({values.Path}), ["InnerPosition", "OuterPosition"])));
-                testCase.verifyEqual(values(string({values.Path}) == "Position").LiteralValue, [30 40 150 45]);
                 copy = document.pasteSubtree(snapshot, target.Id, registry);
                 testCase.verifyEqual(copy.getProperty("Position").LiteralValue, [40 50 150 45]);
-                testCase.verifyEmpty(copy.getProperty("InnerPosition"));
+                testCase.verifyNotEmpty(copy.getProperty("InnerPosition"));
                 testCase.verifyEqual(testCase.state(document, registry, copy, "OuterPosition").EffectiveValue, [40 50 150 45]);
                 testCase.verifyEqual(SourceAssertions.retained(control.settingSnapshot(), before), SourceAssertions.semantics(before));
                 testCase.verifyEqual(document.HistoryIndex, 1);
@@ -114,7 +111,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
                 testCase.verifyFalse(state.IsKnown);
                 testCase.verifyEqual(state.ReasonCode, "position-alias");
             end
-            testCase.verifyError(@() document.copySubtree(control.Id, registry), "yamada:DocumentModel:UnsafeSubtreeCopy");
+            testCase.verifyNotEmpty(document.copySubtree(control.Id, registry));
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
             [document, registry, control] = testCase.fixture([body, "app.Control.Position = [50 60 170 55];"]);
             testCase.verifyEqual(testCase.state(document, registry, control, "InnerPosition").EffectiveValue, [50 60 170 55]);
@@ -167,7 +164,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             testCase.verifyFalse(state.IsKnown);
             testCase.verifyEqual(state.ReasonCode, "layout-managed");
             snapshot = document.copySubtree(control.Id, registry);
-            testCase.verifyFalse(any(ismember(string({snapshot.CopyConfiguration.Properties.Path}), ["Position", "InnerPosition", "OuterPosition"])));
+            testCase.verifyEmpty(snapshot.SourcePosition);
             copy = document.pasteSubtree(snapshot, target.Id, registry, [10 20 130 35]);
             testCase.verifyEqual(copy.getProperty("Position").LiteralValue, [20 30 130 35]);
         end

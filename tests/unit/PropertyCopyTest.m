@@ -1,24 +1,23 @@
 classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest < matlab.unittest.TestCase
-    % PropertyCopyTest Copy effective configurations without reusing source identities.
+    % PropertyCopyTest Copy source settings without reusing source identities.
     %   Owned fixtures exercise constructor arguments, implicit setter effects,
     %   independent clipboard data, and atomic generation preflight.
 
     methods (Test)
         function copiesClampedValueAndRetainsOriginalHistory(testCase)
-            % copiesClampedValueAndRetainsOriginalHistory Separate frozen source records from the resulting copy configuration.
+            % copiesClampedValueAndRetainsOriginalHistory Preserve original setters and their resulting clamped value.
             [document, registry, component, target] = testCase.fixture([ ...
                 "app.Control = uislider(app.Left);", "app.Control.Value = 20;", "app.Control.Limits = [50 100];"]);
             before = component.settingSnapshot();
             history = document.HistoryIndex;
             snapshot = document.copySubtree(component.Id, registry);
             testCase.verifyEqual(snapshot.Records.Properties(string({snapshot.Records.Properties.Path}) == "Value").LiteralValue, 20);
-            values = snapshot.CopyConfiguration.Properties;
-            testCase.verifyEqual(values(string({values.Path}) == "Value").LiteralValue, 50);
             testCase.verifyEqual(component.settingSnapshot(), before);
             testCase.verifyEqual(document.HistoryIndex, history);
             testCase.verifyFalse(document.IsDirty);
             pasted = document.pasteSubtree(snapshot, target.Id, registry);
-            testCase.verifyEqual(pasted.getProperty("Value").LiteralValue, 50);
+            testCase.verifyEqual(pasted.getProperty("Value").LiteralValue, 20);
+            testCase.verifyEqual(PropertyCopyTest.effectiveValue(document, registry, pasted.Id), 50);
             testCase.verifyEqual(document.HistoryIndex, history + 1);
             ids = string({pasted.Settings.Id});
             testCase.verifyFalse(any(ismember(ids, string({component.Settings.Id}))));
@@ -27,27 +26,23 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             document.undo();
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
             document.redo();
-            testCase.verifyEqual(document.getComponent(pasted.Id).getProperty("Value").LiteralValue, 50);
+            testCase.verifyEqual(PropertyCopyTest.effectiveValue(document, registry, pasted.Id), 50);
         end
 
-        function constructorValuesBecomeOneCanonicalCopySetting(testCase)
-            % constructorValuesBecomeOneCanonicalCopySetting Remove both named spellings from copied factory arguments.
+        function constructorValuesKeepTheirSpellingAndOrder(testCase)
+            % constructorValuesKeepTheirSpellingAndOrder Copy each named spelling in its original constructor argument order.
             for creation = ["app.Control = uislider(app.Left, Value=150, Limits=[120 200]);", ...
                     "app.Control = uislider(app.Left, 'Value', 150, 'Limits', [120 200]);"]
                 [document, registry, component, target] = testCase.fixture(creation);
                 snapshot = document.copySubtree(component.Id, registry);
-                testCase.verifyEmpty(snapshot.CopyConfiguration.CreationArguments);
                 pasted = document.pasteSubtree(snapshot, target.Id, registry);
                 source = document.GeneratedText;
-                testCase.verifySubstring(source, "app." + pasted.Name + " = uislider(app.Right);");
-                limits = strfind(source, "app." + pasted.Name + ".Limits = [120 200];");
-                value = strfind(source, "app." + pasted.Name + ".Value = 150;");
-                testCase.verifyLessThan(limits, value);
-                testCase.verifyNumElements(value, 1);
+                copiedCreation = replace(creation, ["app.Control", "app.Left"], ["app." + pasted.Name, "app.Right"]);
+                testCase.verifySubstring(source, copiedCreation);
                 reopened = yamada.source.AppSourceParser.parseText(source, registry);
                 copied = reopened.getComponentByName(pasted.Name);
                 testCase.verifyNumElements(copied.getSettings("Value"), 1);
-                testCase.verifyEqual(copied.getSettings("Value").Method, "assignment");
+                testCase.verifyEqual(copied.getSettings("Value").Method, "nameValue");
             end
         end
 
@@ -59,9 +54,10 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             snapshot = document.copySubtree(component.Id, registry);
             pasted = document.pasteSubtree(snapshot, target.Id, registry);
             testCase.verifyEqual(component.getProperty("Value").LiteralValue, 20);
-            testCase.verifyEqual(pasted.getProperty("Value").LiteralValue, 100);
+            testCase.verifyEqual(pasted.getProperty("Value").LiteralValue, 20);
+            testCase.verifyEqual(PropertyCopyTest.effectiveValue(document, registry, pasted.Id), 100);
             testCase.verifyEqual(pasted.getProperty("ItemsData").LiteralValue, [100 200]);
-            testCase.verifyEmpty(pasted.CreationArguments);
+            testCase.verifyEqual(pasted.CreationArguments, component.CreationArguments);
         end
 
         function numericStyleSurvivesArgumentProjection(testCase)
@@ -69,9 +65,9 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             [document, registry, component, target] = testCase.fixture( ...
                 "app.Control = uieditfield(app.Left, 'numeric', Value=3.4, RoundFractionalValues='on');");
             pasted = document.pasteSubtree(document.copySubtree(component.Id, registry), target.Id, registry);
-            testCase.verifyEqual(pasted.CreationArguments, {'numeric'});
-            testCase.verifyEqual(pasted.getProperty("Value").LiteralValue, 3);
-            testCase.verifySubstring(document.GeneratedText, "uieditfield(app.Right, 'numeric')");
+            testCase.verifyEqual(pasted.CreationArguments, component.CreationArguments);
+            testCase.verifyEqual(PropertyCopyTest.effectiveValue(document, registry, pasted.Id), 3);
+            testCase.verifySubstring(document.GeneratedText, "uieditfield(app.Right, 'numeric',");
         end
 
         function styleSpecificNamedArgumentsUseTheirConcreteSurface(testCase)
@@ -85,7 +81,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             for index = find(supported)
                 [document, registry, component, target] = testCase.fixture(cases{index, 1}, cases{index, 2});
                 pasted = document.pasteSubtree(document.copySubtree(component.Id, registry), target.Id, registry);
-                testCase.verifyEqual(pasted.CreationArguments, cases(index, 3));
+                testCase.verifyEqual(pasted.CreationArguments, component.CreationArguments);
                 testCase.verifyEqual(pasted.getProperty("Value").LiteralValue, cases{index, 4});
             end
             for index = find(~supported), assumeCatalogSupports(testCase, cases{index, 5}); end
@@ -106,16 +102,15 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             testCase.verifyEqual(other.HistoryIndex, 0);
         end
 
-        function implicitSelectionGetsFreshExplicitCopyIdentity(testCase)
-            % implicitSelectionGetsFreshExplicitCopyIdentity Materialize a copy value without adding a source occurrence to the original.
+        function implicitSelectionRemainsImplicit(testCase)
+            % implicitSelectionRemainsImplicit Preserve both effective selection and absence of an explicit Value assignment.
             [document, registry, component, target] = testCase.fixture( ...
                 "app.Control = uidropdown(app.Left, Items=[""A"" ""B""], ItemsData=[10 20]);");
             testCase.verifyEmpty(component.getSettings("Value"));
             pasted = document.pasteSubtree(document.copySubtree(component.Id, registry), target.Id, registry);
             testCase.verifyEmpty(component.getSettings("Value"));
-            testCase.verifyEqual(pasted.getProperty("Value").LiteralValue, 10);
-            testCase.verifyNumElements(pasted.getSettings("Value"), 1);
-            testCase.verifyEqual(pasted.getSettings("Value").Method, "assignment");
+            testCase.verifyEmpty(pasted.getSettings("Value"));
+            testCase.verifyEqual(PropertyCopyTest.effectiveValue(document, registry, pasted.Id), 10);
         end
 
         function clipboardConfigurationStaysFrozenAfterLaterEdits(testCase)
@@ -127,10 +122,12 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             document.setProperty(component.Id, "Limits", [0 100], registry);
             pasted = clipboard.paste(document, target.Id, registry);
             testCase.verifyEqual(pasted.getProperty("Limits").LiteralValue, [50 100]);
-            testCase.verifyEqual(pasted.getProperty("Value").LiteralValue, 50);
+            testCase.verifyEqual(pasted.getProperty("Value").LiteralValue, 20);
+            testCase.verifyEqual(PropertyCopyTest.effectiveValue(document, registry, pasted.Id), 50);
             pasted.getProperty("Value").setLiteral(75);
             second = clipboard.paste(document, target.Id, registry);
-            testCase.verifyEqual(second.getProperty("Value").LiteralValue, 50);
+            testCase.verifyEqual(second.getProperty("Value").LiteralValue, 20);
+            testCase.verifyEqual(PropertyCopyTest.effectiveValue(document, registry, second.Id), 50);
         end
 
         function automaticTicksRetainModeWithoutInventingComputedValues(testCase)
@@ -142,20 +139,19 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             pasted = document.pasteSubtree(snapshot, target.Id, registry);
             testCase.verifyEqual(pasted.getProperty("MajorTicks").LiteralValue, [0 25 100]);
             testCase.verifyEqual(pasted.getProperty("MajorTicksMode").LiteralValue, 'auto');
-            testCase.verifyFalse(any(string({snapshot.CopyConfiguration.Expected.Path}) == "MajorTicks"));
             states = document.getEffectivePropertyStates(registry, pasted.Id);
             tick = states(arrayfun(@(state) state.Definition.Path == "MajorTicks", states)).Resolution;
             testCase.verifyFalse(tick.IsKnown);
             testCase.verifyEqual(tick.ReasonCode, "automatic");
         end
 
-        function unresolvedConversionRejectsCopyWithoutChangingHistory(testCase)
-            % unresolvedConversionRejectsCopyWithoutChangingHistory Refuse unknown native adjustments without fabricating an effective value.
+        function unresolvedConversionKeepsSourceWithoutChangingHistory(testCase)
+            % unresolvedConversionKeepsSourceWithoutChangingHistory Retain input values without resolving native adjustments.
             [document, registry, component] = testCase.fixture([ ...
                 "app.Control = uieditfield(app.Left, 'numeric');", "app.Control.Limits = [0 1];", ...
                 "app.Control.Value = 0;", "app.Control.LowerLimitInclusive = 'off';"]);
             before = component.settingSnapshot();
-            testCase.verifyError(@() document.copySubtree(component.Id, registry), "yamada:DocumentModel:UnsafeSubtreeCopy");
+            testCase.verifyNotEmpty(document.copySubtree(component.Id, registry));
             testCase.verifyEqual(component.settingSnapshot(), before);
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
@@ -163,6 +159,21 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
     end
 
     methods (Static, Access = private)
+        function value = effectiveValue(document, registry, id)
+            % effectiveValue Read the Value getter without changing explicit settings.
+            arguments (Input)
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                id (1, 1) string
+            end
+            arguments (Output)
+                value
+            end
+            states = document.getEffectivePropertyStates(registry, id);
+            state = states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution;
+            value = state.EffectiveValue;
+        end
+
         function [document, registry, component, target] = fixture(body, declaredType)
             % fixture Build owned handle-based source with explicit geometry and independent destination.
             arguments (Input)

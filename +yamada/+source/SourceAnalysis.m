@@ -81,7 +81,7 @@ classdef SourceAnalysis < handle
             obj.Execution = result;
         end
 
-        function [analysis, execution] = withLiteralPatches(obj, batch, additions, anchors, removed, constructorDelta, execution, addedOwner, mappings, addedKinds, addedCounts)
+        function [analysis, execution, mapping, addedPositions] = withLiteralPatches(obj, batch, additions, anchors, removed, constructorDelta, execution, addedOwner, mappings, addedKinds, addedCounts)
             % withLiteralPatches Apply editor-owned literal patches without rescanning or rediscovering source ownership.
             arguments (Input)
                 obj (1, 1) yamada.source.SourceAnalysis
@@ -99,6 +99,8 @@ classdef SourceAnalysis < handle
             arguments (Output)
                 analysis (1, 1) yamada.source.SourceAnalysis
                 execution (1, 1) struct
+                mapping double
+                addedPositions double
             end
             batch.apply(obj.Source);
             [ranges, valid] = batch.mapSpanCells(arrayfun(@(item) {item.Span}, obj.Statements));
@@ -246,13 +248,13 @@ classdef SourceAnalysis < handle
                 facts.AnchorOffset(position) = statements(position).Span.EndOffset;
             end
             beforeNames = facts.ComponentName;
-            for mapping = mappings
-                facts.ComponentName(beforeNames == mapping.OldName) = mapping.NewName;
-                if isfield(mapping, "Kind") && mapping.Kind == "method"
-                    analysisOwner = layout.Owner == mapping.OldName;
-                    layout.Owner(analysisOwner) = mapping.NewName;
-                    for methodIndex = find(string({layout.Methods.Name}) == mapping.OldName)
-                        layout.Methods(methodIndex).Name = mapping.NewName;
+            for rename = mappings
+                facts.ComponentName(beforeNames == rename.OldName) = rename.NewName;
+                if isfield(rename, "Kind") && rename.Kind == "method"
+                    analysisOwner = layout.Owner == rename.OldName;
+                    layout.Owner(analysisOwner) = rename.NewName;
+                    for methodIndex = find(string({layout.Methods.Name}) == rename.OldName)
+                        layout.Methods(methodIndex).Name = rename.NewName;
                     end
                 end
             end
@@ -266,7 +268,7 @@ classdef SourceAnalysis < handle
             analysis.Execution = execution;
         end
 
-        function [analysis, additions] = withComponentPatches(obj, batch, names, document, registry)
+        function [analysis, additions] = withComponentPatches(obj, batch, names, document, registry, relocating)
             % withComponentPatches Splice only emitted declarations and initializer statements into maintained indexes.
             arguments (Input)
                 obj (1, 1) yamada.source.SourceAnalysis
@@ -274,18 +276,22 @@ classdef SourceAnalysis < handle
                 names (1, :) string
                 document (1, 1) yamada.model.DocumentModel
                 registry (1, 1) yamada.model.ComponentRegistry
+                relocating (1, 1) logical = false
             end
             arguments (Output)
-                analysis (1, 1) yamada.source.SourceAnalysis
+                analysis yamada.source.SourceAnalysis
                 additions yamada.source.SourceStatement
             end
             additions = yamada.source.SourceStatement.empty;
             anchors = []; owners = strings(1, 0); kinds = strings(1, 0); counts = [];
             removed = [];
-            for index = 1:numel(obj.Statements)
-                span = obj.Statements(index).Span;
-                for edit = batch.Edits
-                    if edit.End >= edit.Start && edit.Start <= span.StartOffset && edit.End >= obj.Statements(index).CodeOffsets(end)
+            % Inspect only statements intersecting each actual removal.
+            for edit = batch.Edits
+                if edit.End < edit.Start, continue, end
+                [~, first] = obj.statementNeighbors(edit.Start - 1);
+                for index = first:numel(obj.Statements)
+                    if obj.StatementStarts(index) > edit.End, break, end
+                    if edit.End >= obj.Statements(index).CodeOffsets(end)
                         assert(strlength(edit.Text) == 0, "yamada:SourceAnalysis:StructuralPatch", "Only complete emitted statements may be removed.");
                         removed(end + 1) = index; %#ok<AGROW>
                     end
@@ -315,11 +321,22 @@ classdef SourceAnalysis < handle
                         assert(any(names == owner), "yamada:SourceAnalysis:StructuralPatch", "Emitted statements must belong to inserted components.");
                     else
                         declared = regexp(code, '^([A-Za-z]\w*)\s+[A-Za-z]\w*(?:\.\w+)*$', 'tokens', 'once');
-                        assert(~isempty(declared) && any(names == string(declared{1})), ...
-                            "yamada:SourceAnalysis:StructuralPatch", "Only declared component slots may be inserted.");
+                        if isempty(declared)
+                            [~, owner, tokens, ~, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry.CatalogRoot);
+                            component = document.getComponentByName(owner);
+                            assert(any(names == owner) && ~isempty(component), "yamada:SourceAnalysis:StructuralPatch", ...
+                                "A copied axes call needs an explicit inserted target.");
+                            paths = yamada.catalog.AxesSettingFunctionCatalog.match(forms, component.Factory, tokens, false);
+                            assert(~isempty(paths), "yamada:SourceAnalysis:StructuralPatch", "Unrecognized copied axes call.");
+                            kind = "assignment";
+                        else
+                            assert(any(names == string(declared{1})), ...
+                                "yamada:SourceAnalysis:StructuralPatch", "Only declared component slots may be inserted.");
+                        end
                     end
                     additions(end + 1) = statement; anchors(end + 1) = anchor; %#ok<AGROW>
                     count = 1;
+                    if isempty(match) && kind == "assignment", count = numel(paths); end
                     if kind == "creation"
                         component = document.getComponentByName(owner);
                         definition = registry.sourceDefinition(component);
@@ -331,8 +348,36 @@ classdef SourceAnalysis < handle
                 shift = shift + strlength(edit.Text);
             end
             execution = obj.Execution;
-            [analysis, ~] = obj.withLiteralPatches(batch, additions, anchors, unique(removed), ...
+            if relocating
+                % Reuse the exact execution slot only for a direct, certain splice.
+                [direct, ~] = obj.directInitializationScope();
+                [present, visits] = ismember(anchors, execution.Trace.Order);
+                uniqueVisits = arrayfun(@(anchor) nnz(execution.Trace.Order == anchor) == 1, unique(anchors));
+                if ~all(present) || ~all(uniqueVisits) || ~all(direct(anchors)) || ~all(execution.Trace.Certain(visits))
+                    analysis = yamada.source.SourceAnalysis.empty;
+                    return
+                end
+                creationSpans = [document.Components.SourceSpans];
+                factorySpans = [creationSpans.Creation];
+                [known, oldFactories] = ismember([factorySpans.StartOffset], obj.StatementStarts);
+                if numel(oldFactories) ~= numel(document.Components) || ~all(known)
+                    analysis = yamada.source.SourceAnalysis.empty;
+                    return
+                end
+            end
+            [analysis, projected, mapping, addedPositions] = obj.withLiteralPatches(batch, additions, anchors, unique(removed), ...
                 zeros(size(execution.Counts)), execution, owners, struct("OldName", {}, "NewName", {}), kinds, counts);
+            if relocating
+                % Publication needs creation owners in the candidate's component order.
+                factories = mapping(oldFactories);
+                [found, slots] = ismember(owners(kinds == "creation"), string({document.Components.Name}));
+                assert(all(found) && all(factories(slots) == 0));
+                factories(slots) = addedPositions(kinds == "creation");
+                assert(all(factories > 0));
+                projected.Owners = factories;
+                analysis.rememberExecution(projected);
+                return
+            end
             inserted = names;
             if isempty(additions), inserted = strings(1, 0); end
             deleted = strings(1, 0);

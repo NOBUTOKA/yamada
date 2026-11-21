@@ -94,31 +94,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             testCase.verifyEqual(restored, after);
         end
 
-        function inheritedNumericAvailabilityRejectsChangedInputs(testCase)
-            % inheritedNumericAvailabilityRejectsChangedInputs Recompute after ownership, constraints or catalog changes.
-            for kind = ["readonly", "limits", "registry"]
-                document = testCase.availabilityFixture("absolute");
-                first = document.getComponentByName("First");
-                document.setProperty(first.Id, "Value", 1, testCase.Registry);
-                document.validatePropertyCommit(testCase.Registry);
-                yamada.model.DocumentEditAvailability.copying(document, first.Id, testCase.Registry);
-                document.setProperty(first.Id, "Value", 2, testCase.Registry);
-                document.validatePropertyCommit(testCase.Registry);
-                switch kind
-                    case "readonly"
-                        first.IsEditable = false;
-                    case "limits"
-                        document.setProperty(first.Id, "Limits", [-10 10], testCase.Registry);
-                    case "registry"
-                        testCase.Registry.register(testCase.Registry.get(first.Factory, first.CreationArguments));
-                end
-                actual = yamada.model.DocumentEditAvailability.copying(document, first.Id, testCase.Registry);
-                fresh = document.structuralCandidate();
-                testCase.verifyEqual(actual, yamada.model.DocumentEditAvailability.copying(fresh, first.Id, testCase.Registry));
-                if kind == "readonly", testCase.verifyFalse(actual.Enabled); end
-            end
-        end
-
         function numericEditsRetainOtherOwnerStates(testCase)
             % numericEditsRetainOtherOwnerStates Reuse logical state values while matching a fresh complete resolution.
             for layout = ["absolute", "nested"]

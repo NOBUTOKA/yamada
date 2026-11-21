@@ -1,11 +1,11 @@
 classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest < matlab.unittest.TestCase
-    % CallbackCopyTest Copy configuration while retaining callback source only on original components.
+    % CallbackCopyTest Preserve owned callback bindings and opaque settings during clipboard edits.
     %   Inert source fixtures cover parsed bindings, constructor arguments,
     %   callback bodies, independent clipboard data and source safety failures.
 
     methods (Test)
-        function parsedBindingsAreOmittedRegardlessOfEditableOwnership(testCase)
-            % parsedBindingsAreOmittedRegardlessOfEditableOwnership Preserve opaque bindings and bodies without copying or executing them.
+        function parsedBindingsShareOriginalHandlers(testCase)
+            % parsedBindingsShareOriginalHandlers Preserve opaque bindings and bodies without copying or executing them.
             for binding = ["@app.OnPushed", "@(~, event) app.OnPushed(event)", ...
                     "@(src, event) error('callback-must-not-run')", "{@app.OnPushed, 42}", ...
                     "'error(''callback-must-not-run'')'", "[]"]
@@ -24,20 +24,19 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
                 copiedButton = document.getComponent(pasted.Children(1));
                 testCase.verifyEqual(copiedButton.getProperty("Text").LiteralValue, 'Keep this text');
                 testCase.verifyEqual(copiedButton.ParentId, pasted.Id);
-                testCase.verifyEmpty(copiedButton.getProperty("ButtonPushedFcn"));
-                testCase.verifyEmpty(pasted.getProperty("SizeChangedFcn"));
+                testCase.verifyNotEmpty(copiedButton.getProperty("ButtonPushedFcn"));
+                testCase.verifyNotEmpty(pasted.getProperty("SizeChangedFcn"));
                 testCase.verifyEqual(SourceAssertions.retained(button.settingSnapshot(), settings), SourceAssertions.semantics(settings));
                 testCase.verifySubstring(source, body(2));
                 testCase.verifySubstring(source, "error('handler-must-not-run');");
                 testCase.verifyEqual(count(source, "function OnPushed(app, event)"), 1);
-                testCase.verifyEqual(count(source, ".ButtonPushedFcn ="), 1);
-                testCase.verifyEqual(count(source, ".SizeChangedFcn ="), 1);
+                testCase.verifyEqual(count(source, ".ButtonPushedFcn ="), 2);
+                testCase.verifyEqual(count(source, ".SizeChangedFcn ="), 2);
 
                 % Reopening and Undo/Redo retain one binding and one body per original.
                 reopened = yamada.source.AppSourceParser.parseText(source, registry);
                 copied = reopened.getComponentByName(copiedButton.Name);
-                states = yamada.source.CallbackSourceAnalyzer.analyze(reopened, copied.Id, registry);
-                testCase.verifyTrue(all(string({states.State}) == "absent"));
+                testCase.verifySubstring(source, "app." + copied.Name + ".ButtonPushedFcn = " + binding + ";");
                 testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(reopened), source);
                 document.undo();
                 testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), original);
@@ -46,8 +45,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
             end
         end
 
-        function constructorCallbacksAreRemovedWithBothNamedSpellings(testCase)
-            % constructorCallbacksAreRemovedWithBothNamedSpellings Retain literal settings while excluding callback arguments from output.
+        function constructorCallbacksRetainBothNamedSpellings(testCase)
+            % constructorCallbacksRetainBothNamedSpellings Keep constructor arguments verbatim when changing the owner and parent.
             for creation = ["app.Button = uibutton(app.Panel, ButtonPushedFcn=@app.OnPushed, Text='Constructor');", ...
                     "app.Button = uibutton(app.Panel, 'ButtonPushedFcn', @app.OnPushed, 'Text', 'Constructor');", ...
                     "app.Button = uibutton(app.Panel, ButtonPushedFcn=[], Text='Constructor');", ...
@@ -58,43 +57,34 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
                 testCase.verifyTrue(clipboard.availability("Copy", document, button.Id, registry).Enabled);
                 clipboard.copy(document, button.Id, registry);
                 pasted = clipboard.paste(document, document.RootComponentId, registry);
-                testCase.verifyEmpty(pasted.CreationArguments);
-                testCase.verifyEmpty(pasted.getProperty("ButtonPushedFcn"));
-                testCase.verifyEmpty(pasted.getProperty("CreateFcn"));
-                testCase.verifyEmpty(pasted.getProperty("DeleteFcn"));
                 testCase.verifyEqual(pasted.getProperty("Text").LiteralValue, 'Constructor');
                 testCase.verifySubstring(document.GeneratedText, creation);
-                testCase.verifySubstring(document.GeneratedText, "app." + pasted.Name + " = uibutton(app.UIFigure);");
+                copiedCreation = replace(creation, ["app.Button", "app.Panel"], ["app." + pasted.Name, "app.UIFigure"]);
+                testCase.verifySubstring(document.GeneratedText, copiedCreation);
                 document.undo();
                 testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
             end
         end
 
-        function otherUnsupportedValuesStillRejectCopy(testCase)
-            % otherUnsupportedValuesStillRejectCopy Limit omission to catalog callbacks and leave rejected documents unchanged.
+        function opaqueSettingsAndConstructionCallbacksAreRetained(testCase)
+            % opaqueSettingsAndConstructionCallbacksAreRetained Keep source without executing or resolving opaque values.
             for body = { ...
                     ["app.Button = uibutton(app.Panel);", "app.Button.Text = computeText(app);"], ...
                     "app.Button = uibutton(app.Panel, ButtonPushedFcn=@app.OnPushed, Text=computeText(app));", ...
-                    "app.Button = uibutton(app.Panel, ButtonPushedFcn=@app.OnPushed, UnknownFcn=[]);"}
-                [document, registry, ~, button] = CallbackCopyTest.fixture(body{1});
+                    "app.Button = uibutton(app.Panel, ButtonPushedFcn=@app.OnPushed, UnknownFcn=[]);", ...
+                    "app.Button = uibutton(app.Panel, CreateFcn=@app.OnPushed);"}
+                [document, registry, panel, button] = CallbackCopyTest.fixture(body{1});
                 clipboard = yamada.model.ComponentClipboard();
-                testCase.verifyFalse(clipboard.availability("Copy", document, button.Id, registry).Enabled);
-                testCase.verifyError(@() clipboard.copy(document, button.Id, registry), "yamada:DocumentModel:UnsafeSubtreeCopy");
-                testCase.verifyEqual(document.HistoryIndex, 0);
+                testCase.verifyTrue(clipboard.availability("Copy", document, button.Id, registry).Enabled);
+                clipboard.copy(document, button.Id, registry);
                 testCase.verifyFalse(document.IsDirty);
-                testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+                pasted = clipboard.paste(document, panel.Id, registry);
+                for statement = replace(body{1}, "app.Button", "app." + pasted.Name)
+                    testCase.verifySubstring(document.CurrentText, statement);
+                end
+                document.undo();
+                testCase.verifyEqual(document.CurrentText, document.OriginalText);
             end
-        end
-
-        function constructionEffectsStillPreventUnknownConfigurationCopy(testCase)
-            % constructionEffectsStillPreventUnknownConfigurationCopy Do not infer effective settings after an executable CreateFcn.
-            [document, registry, ~, button] = CallbackCopyTest.fixture( ...
-                "app.Button = uibutton(app.Panel, CreateFcn=@app.OnPushed);");
-            clipboard = yamada.model.ComponentClipboard();
-            testCase.verifyFalse(clipboard.availability("Copy", document, button.Id, registry).Enabled);
-            testCase.verifyError(@() document.copySubtree(button.Id, registry), "yamada:DocumentModel:UnsafeSubtreeCopy");
-            testCase.verifyEqual(document.HistoryIndex, 0);
-            testCase.verifyFalse(document.IsDirty);
         end
 
         function parsedPendingCallbackEditsRemainIndependentOfCopy(testCase)
@@ -108,10 +98,10 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
             clipboard.copy(document, panel.Id, registry);
             pasted = clipboard.paste(document, document.RootComponentId, registry);
             copied = document.getComponent(pasted.Children(1));
-            testCase.verifyEmpty(copied.getProperty("ButtonPushedFcn"));
+            testCase.verifyNotEmpty(copied.getProperty("ButtonPushedFcn"));
             testCase.verifyEmpty(pasted.getProperty("SizeChangedFcn"));
             testCase.verifyEqual(document.CallbackEdits, edits);
-            testCase.verifyEqual(count(document.GeneratedText, ".ButtonPushedFcn ="), 1);
+            testCase.verifyEqual(count(document.GeneratedText, ".ButtonPushedFcn ="), 2);
             testCase.verifyEqual(count(document.GeneratedText, ".SizeChangedFcn ="), 0);
             document.undo();
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);

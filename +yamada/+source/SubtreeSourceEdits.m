@@ -1,15 +1,11 @@
 classdef SubtreeSourceEdits
-    % SubtreeSourceEdits Prove complete-subtree deletion ownership without execution.
-    %   This utility treats child construction references as internal uses while
-    %   rejecting references outside the owned subtree statements.
+    % SubtreeSourceEdits Capture and patch owned subtree source without execution.
 
     methods (Static)
-        function edits = deletion(source, components, rewrittenReferences)
-            % deletion Return source removals only after proving complete ownership.
+        function edits = deletion(components)
+            % deletion Collect only the source spans already bound to removed components.
             arguments (Input)
-                source (1, 1) string
                 components
-                rewrittenReferences yamada.model.SourceSpan = yamada.model.SourceSpan.empty
             end
             arguments (Output)
                 edits struct
@@ -17,31 +13,20 @@ classdef SubtreeSourceEdits
 
             % Accept live API inputs at the boundary; command state retains source-only values.
             if ~isstruct(components), components = yamada.model.SourceOwnership.snapshot(components); end
-            % Collect complete owned spans before checking any references.
+            % Use only the spans the model already owns.
             spans = yamada.model.SourceSpan.empty;
-            names = strings(1, 0);
             for component = components
                 if ~yamada.model.SourceOwnership.hasSource(component), continue, end
                 own = [component.SourceSpans.Declaration component.SourceSpans.Creation];
-                if numel(own) ~= 2 || any(~arrayfun(@(span) span.isKnown(), own))
-                    error("yamada:SubtreeSourceEdits:UnsafeDeletion", "Declaration or creation ownership is unknown.");
-                end
-                creation = extractBetween(source, own(2).StartOffset, own(2).EndOffset);
-                token = regexp(creation, '^app\.(\w+)\s*=', 'tokens', 'once');
-                if isempty(token)
-                    error("yamada:SubtreeSourceEdits:UnsafeDeletion", "Creation statement identity is ambiguous.");
-                end
-                names(end + 1) = string(token{1}); %#ok<AGROW>
+                own = own(arrayfun(@(span) span.isKnown(), own));
                 for entry = component.Properties
-                    if isempty(entry.SourceSpan) || ~entry.SourceSpan.isKnown()
-                        % Generated literal assignments do not exist in original source.
-                        if isempty(entry.SourceSpan), continue, end
-                        error("yamada:SubtreeSourceEdits:UnsafeDeletion", "Property ownership is unknown.");
-                    end
+                    if isempty(entry.SourceSpan) || ~entry.SourceSpan.isKnown(), continue, end
                     own(end + 1) = entry.SourceSpan; %#ok<AGROW>
                 end
                 for setting = component.Settings
-                    if ~isempty(setting.SourceSpan), own(end + 1) = setting.SourceSpan; end %#ok<AGROW>
+                    if ~isempty(setting.SourceSpan) && setting.SourceSpan.isKnown()
+                        own(end + 1) = setting.SourceSpan;
+                    end %#ok<AGROW>
                 end
                 spans = [spans own]; %#ok<AGROW>
             end
@@ -50,60 +35,187 @@ classdef SubtreeSourceEdits
             [~, uniqueSpans] = unique([[spans.StartOffset]' [spans.EndOffset]'], "rows", "stable");
             spans = spans(uniqueSpans);
 
-            % Mask text and comments without changing offsets; reject indirect app access.
-            code = yamada.source.SubtreeSourceEdits.codeMask(source);
-            if ~isempty(regexp(code, 'app\s*\.\s*\(|\w+\s*=\s*app\s*(?:;|\n)|(?:subsref|subsasgn|eval|feval)\s*\(', 'once'))
-                error("yamada:SubtreeSourceEdits:UnsafeDeletion", "Dynamic or aliased references prevent safe subtree deletion.");
-            end
-            for name = names
-                positions = regexp(code, '(?<!\w)app\s*\.\s*' + name + '(?!\w)', 'start');
-                for position = positions
-                    allowed = [spans rewrittenReferences];
-                    if ~any([allowed.StartOffset] <= position & [allowed.EndOffset] >= position)
-                        error("yamada:SubtreeSourceEdits:UnsafeDeletion", "The subtree is referenced outside its owned statements.");
-                    end
-                end
-            end
             for span = spans
                 edits(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, "Text", ""); %#ok<AGROW>
             end
         end
 
-        function spans = detachedParentReferences(document, deletedIds)
-            % detachedParentReferences Identify only constructor parent tokens already scheduled for reparenting.
+        function fragments = capture(document, snapshot)
+            % capture Freeze owned initializer text with relative offsets for known references.
             arguments (Input)
                 document (1, 1) yamada.model.DocumentModel
-                deletedIds string
+                snapshot (1, 1) yamada.model.SubtreeSnapshot
             end
             arguments (Output)
-                spans yamada.model.SourceSpan
+                fragments (1, :) struct
             end
-            spans = yamada.model.SourceSpan.empty;
-            visited = strings(1, 0);
-            for index = 1:numel(document.PendingEdits)
-                pending = document.PendingEdits{index};
-                if ~isstruct(pending) || ~isfield(pending, "Kind") || pending.Kind ~= "reparent-subtree", continue, end
-                for record = pending.OriginalRecords
-                    if any(visited == record.Id), continue, end
-                    visited(end + 1) = record.Id; %#ok<AGROW>
-                    component = document.getComponent(record.Id);
-                    if ~yamada.model.SourceOwnership.hasSource(record) || isempty(component) || any(deletedIds == record.Id) || ...
-                            ~any(deletedIds == record.ParentId) || component.ParentId == record.ParentId
-                        continue
+            source = document.CurrentText;
+            analysis = document.sourceAnalysis();
+            fragments = struct("Offset", {}, "Owner", {}, "Text", {}, "Name", {}, ...
+                "Parent", {}, "References", {}, "Path", {}, "PlacementArguments", {}, "AxesCall", {}, "Sequence", {});
+            placement = ["Position", "InnerPosition", "OuterPosition", "Layout.Row", "Layout.Column"];
+            for record = snapshot.Records
+                % Use the statement index to deduplicate factory name-value settings.
+                current = document.getComponent(record.Id).Settings;
+                spans = [record.SourceSpans.Creation [current.SourceSpan]];
+                [~, distinct] = unique([spans.StartOffset], "stable");
+                for span = spans(distinct)
+                    indices = analysis.statementIndices(span, false);
+                    assert(isscalar(indices), "yamada:SubtreeSourceEdits:MissingStatement", "The owned statement is missing from the current index.");
+                    statement = analysis.Statements(indices(1));
+                    code = char(statement.Text);
+                    start = statement.Span.StartOffset;
+                    stop = max(statement.Span.EndOffset, statement.CodeOffsets(end));
+                    raw = extractBetween(source, start, stop);
+                    raw = strip(raw, "right");
+                    % Preserve the original delimiter and multiline comments.
+                    if stop < strlength(source) && extractBetween(source, stop + 1, stop + 1) == ";"
+                        raw = raw + ";";
                     end
-                    sourceSpan = record.SourceSpans.Creation;
-                    creation = extractBetween(document.CurrentText, sourceSpan.StartOffset, sourceSpan.EndOffset);
-                    pattern = '^app\.\w+\s*=\s*\w+\s*\(\s*(?<reference>app\s*\.\s*\w+)';
-                    token = regexp(creation, pattern, 'names', 'once');
-                    prefix = regexp(creation, pattern, 'match', 'once');
-                    if isempty(token)
-                        error("yamada:SubtreeSourceEdits:UnsafeDeletion", "The moved child's constructor parent token is ambiguous.");
+                    name = regexp(code, '^app\.(?<name>\w+)', 'names', 'once');
+                    nameRange = [];
+                    if ~isempty(name)
+                        nameRange = statement.CodeOffsets([5 4 + strlength(string(name.name))]) - start + 1;
                     end
-                    spans(end + 1) = yamada.model.SourceSpan( ...
-                        sourceSpan.StartOffset + strlength(prefix) - strlength(token.reference), ...
-                        sourceSpan.StartOffset + strlength(prefix) - 1); %#ok<AGROW>
+                    parentRange = []; path = "";
+                    references = struct("Range", {}, "Target", {});
+                    placementArguments = struct("Start", {}, "End", {}, "Text", {}, "Path", {});
+                    settings = current(arrayfun(@(item) ~isempty(item.SourceSpan) && ...
+                        item.SourceSpan.StartOffset == start, current));
+                    if isempty(nameRange)
+                        % Reviewed axes calls retain their arguments, with an explicit copied target.
+                        open = find(code == '(', 1);
+                        [first, last] = regexp(code, '(?<=\()\s*app\s*\.\s*\w+', 'once');
+                        if isempty(first)
+                            boundary = statement.CodeOffsets(open) - start + 2;
+                            nameRange = [boundary boundary - 1];
+                        else
+                            nameRange = statement.CodeOffsets([first last]) - start + 1;
+                        end
+                    elseif start == record.SourceSpans.Creation.StartOffset
+                        [first, last] = regexp(code, '(?<=\()\s*app\.\w+', 'once');
+                        if ~isempty(first)
+                            parentRange = statement.CodeOffsets([first last]) - start + 1;
+                        end
+                        if record.Id == snapshot.RootId
+                            for setting = settings(ismember(string({settings.Path}), placement))
+                                removals = yamada.source.FactoryCallEditor.remove(statement, setting);
+                                for removal = removals
+                                    placementArguments(end + 1) = struct("Start", removal.Start - start + 1, ...
+                                        "End", removal.End - start + 1, "Text", "", "Path", setting.Path); %#ok<AGROW>
+                                end
+                            end
+                        end
+                    elseif isscalar(settings)
+                        setting = settings(1);
+                        path = setting.Path;
+                    end
+                    % Only recognized component references are retargeted. Opaque RHS text stays intact.
+                    for setting = settings(ismember(string({settings.Path}), ["SelectedTab", "SelectedObject", "ContextMenu"]))
+                        if setting.ValueKind ~= "expression", continue, end
+                        target = yamada.source.SubtreeSourceEdits.referenceTarget( ...
+                            document, record.Id, setting.Path, setting.SourceExpression);
+                        if isempty(target), continue, end
+                        range = [setting.ValueSpan.StartOffset setting.ValueSpan.EndOffset] - start + 1;
+                        references(end + 1) = struct("Range", range, "Target", target.Id); %#ok<AGROW>
+                    end
+                    sequence = record.Metadata.InitializationCreationSequence;
+                    if ~isempty(settings), sequence = min([settings.Sequence]); end
+                    fragments(end + 1) = struct("Offset", start, "Owner", record.Id, "Text", raw, ...
+                        "Name", nameRange, "Parent", parentRange, "References", references, ...
+                        "Path", path, "PlacementArguments", placementArguments, ...
+                        "AxesCall", isempty(name), "Sequence", sequence); %#ok<AGROW>
                 end
             end
+            [~, order] = sortrows([[fragments.Sequence]' [fragments.Offset]']);
+            fragments = reshape(fragments(order), 1, []);
+        end
+
+        function texts = insertion(snapshot, document, names, parentId, changes)
+            % insertion Retarget the copied statements without interpreting their other expressions.
+            arguments (Input)
+                snapshot (1, 1) yamada.model.SubtreeSnapshot
+                document (1, 1) yamada.model.DocumentModel
+                names (1, :) string
+                parentId (1, 1) string
+                changes (1, :) struct
+            end
+            arguments (Output)
+                texts (1, :) string
+            end
+            ids = string({snapshot.Records.Id});
+            paths = string({changes.Path});
+            removed = string({changes([changes.Remove]).Path});
+            if any(removed == "Position"), paths = [paths "InnerPosition" "OuterPosition"]; end
+            texts = strings(1, 0);
+            for fragment = snapshot.SourceFragments
+                owner = find(ids == fragment.Owner, 1);
+                if owner == 1 && any(fragment.Path == paths), continue, end
+                name = names(owner);
+                if fragment.AxesCall
+                    name = "app." + name;
+                    if fragment.Name(2) < fragment.Name(1), name = name + ", "; end
+                end
+                edits = struct("Start", fragment.Name(1), "End", fragment.Name(2), "Text", name);
+                if ~isempty(fragment.Parent)
+                    if owner == 1
+                        parent = document.getComponent(parentId).Name;
+                    else
+                        parent = names(ids == snapshot.Records(owner).ParentId);
+                    end
+                    edits(end + 1) = struct("Start", fragment.Parent(1), "End", fragment.Parent(2), "Text", "app." + parent);
+                end
+                for reference = fragment.References
+                    mapped = find(ids == reference.Target, 1);
+                    if isempty(mapped)
+                        target = document.getComponent(reference.Target);
+                        if isempty(target)
+                            error("yamada:DocumentModel:UnsafeSubtreeCopy", "A copied reference target no longer exists.");
+                        end
+                        name = target.Name;
+                    else
+                        name = names(mapped);
+                    end
+                    edits(end + 1) = struct("Start", reference.Range(1), "End", reference.Range(2), "Text", "app." + name);
+                end
+                removals = fragment.PlacementArguments;
+                if ~isempty(removals)
+                    edits = [edits rmfield(removals(ismember(string({removals.Path}), paths)), "Path")]; %#ok<AGROW>
+                end
+                batch = yamada.source.SourcePatchBatch(fragment.Text, edits);
+                texts(end + 1) = batch.AfterText; %#ok<AGROW>
+            end
+            for change = changes
+                if change.Remove, continue, end
+                texts(end + 1) = "app." + names(1) + "." + change.Path + " = " + ...
+                    yamada.source.LiteralEncoder.encode(change.Value) + ";"; %#ok<AGROW>
+            end
+        end
+
+        function target = referenceTarget(document, ownerId, path, expression)
+            % referenceTarget Identify a recognized static component reference without evaluating its expression.
+            arguments (Input)
+                document (1, 1) yamada.model.DocumentModel
+                ownerId (1, 1) string
+                path (1, 1) string
+                expression (1, 1) string
+            end
+            arguments (Output)
+                target yamada.model.ComponentRecord
+            end
+            target = yamada.model.ComponentRecord.empty;
+            match = regexp(expression, '^app\.(\w+)$', 'tokens', 'once');
+            if isempty(match), return, end
+            candidate = document.getComponentByName(string(match{1}));
+            if isempty(candidate), return, end
+            if path == "ContextMenu"
+                compatible = candidate.Factory == "uicontextmenu" && candidate.ParentId == document.RootComponentId;
+            else
+                compatible = candidate.ParentId == ownerId && ...
+                    (path == "SelectedTab" && candidate.Factory == "uitab" || ...
+                     path == "SelectedObject" && any(candidate.Factory == ["uiradiobutton", "uitogglebutton"]));
+            end
+            if compatible, target = candidate; end
         end
 
         function code = codeMask(source)

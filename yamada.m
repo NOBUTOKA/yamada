@@ -528,11 +528,12 @@ classdef yamada < handle
             app.refreshEditCommands();
         end
 
-        function refreshShell(app, retainHierarchy)
+        function refreshShell(app, retainHierarchy, structureId)
             % refreshShell Rebuild document surfaces, optionally retaining the current tree.
             arguments (Input)
                 app (1, 1) yamada
                 retainHierarchy (1, 1) logical = false
+                structureId (1, 1) string = ""
             end
 
             app.PreviewWriteDepth = app.PreviewWriteDepth + 1;
@@ -547,7 +548,25 @@ classdef yamada < handle
             app.refreshPalette();
             app.refreshDiagnostics(app.Document.Diagnostics);
             drawnow;
-            app.refreshPreview();
+            applied = false;
+            if strlength(structureId) > 0
+                app.cancelOverlayRefresh();
+                app.PreviewGeometry = struct();
+                app.ReparentRevision = app.ReparentRevision + 1;
+                app.InteractionComponentId = "";
+                app.InteractionKind = "";
+                if ~isempty(app.RootResizeGuide) && isvalid(app.RootResizeGuide), delete(app.RootResizeGuide); end
+                [applied, diagnostics, app.PreviewHandles] = app.PreviewRenderer.synchronizeStructure( ...
+                    app.Document, app.PreviewHandles, structureId);
+                if applied
+                    app.restorePreviewTabSelections();
+                    if ~isempty(diagnostics)
+                        app.Document.Diagnostics = [app.Document.Diagnostics diagnostics];
+                        app.refreshDiagnostics(app.Document.Diagnostics);
+                    end
+                end
+            end
+            if ~applied, app.refreshPreview(); end
             app.refreshInspector();
             app.refreshEditCommands();
             app.refreshTitle();
@@ -684,7 +703,7 @@ classdef yamada < handle
                 return
             end
             app.SelectedComponentId = component.Id;
-            app.refreshShell();
+            app.refreshShell(false, component.Id);
             app.setStatus("Added " + component.Name);
             app.PreviewOwnsKeyboard = true;
             app.KeyboardFocusMoved = false;
@@ -739,7 +758,7 @@ classdef yamada < handle
             arguments (Output)
                 state (1, 1) struct
             end
-            state = struct("Enabled", false, "Reason", "No component is available.", "ParentId", "");
+            state = struct("Enabled", false, "Reason", "No component is available.");
             if action == "Add Colorbar"
                 state = struct("Enabled",false,"Reason","Select an editable axes without a ColorBar.");
                 if isempty(app.Document) || app.HierarchyRenameId ~= "" || app.IsReloading, return, end
@@ -809,7 +828,7 @@ classdef yamada < handle
                 else
                     component = app.Clipboard.paste(app.Document, id, app.Registry);
                     app.SelectedComponentId = component.Id;
-                    app.refreshShell();
+                    app.refreshShell(false, component.Id);
                 end
                 app.setStatus(action + " completed.");
             catch exception
@@ -1129,18 +1148,9 @@ classdef yamada < handle
                 app.ClipboardMenuItems(index).UserData = state;
                 descriptions(index) = actions(index) + ": " + state.Reason;
                 if state.Enabled, descriptions(index) = actions(index) + ": available"; end
-                if state.Enabled && actions(index) == "Paste"
-                    target = app.Document.getComponent(state.ParentId);
-                    descriptions(index) = "Paste into " + target.Name;
-                end
             end
             app.StatusLabel.Tooltip = strjoin(descriptions, newline);
-            canDelete = ~isempty(component) && component.Id ~= app.Document.RootComponentId && ...
-                (component.IsEditable || component.isReleaseUnavailable());
-            if canDelete
-                deletion = yamada.model.DocumentEditAvailability.deletion(app.Document, component.Id, app.Registry);
-                canDelete = deletion.Enabled;
-            end
+            canDelete = ~isempty(component) && component.Id ~= app.Document.RootComponentId;
             app.DeleteMenuItem.Enable = "off";
             if canDelete
                 app.DeleteMenuItem.Enable = "on";
@@ -1232,7 +1242,8 @@ classdef yamada < handle
             if isempty(app.Document) || strlength(app.Document.RootComponentId) == 0
                 return
             end
-            app.addHierarchyNode([], app.Document.RootComponentId);
+            root = app.Document.getComponent(app.Document.RootComponentId);
+            app.addHierarchyNode([], root);
             app.synchronizeHierarchySelection();
         end
 
@@ -1346,27 +1357,28 @@ classdef yamada < handle
             app.completePreviewUpdate(false);
         end
 
-        function node = addHierarchyNode(app, parentNode, componentId)
+        function node = addHierarchyNode(app, parentNode, component)
             % addHierarchyNode Add a component and its descendants to the tree.
             arguments (Input)
                 app (1, 1) yamada
                 parentNode
-                componentId string
+                component (1, 1) yamada.model.ComponentRecord
             end
             arguments (Output)
                 node matlab.ui.container.TreeNode
             end
 
-            % Resolve the record before exposing its name in an editor control.
-            component = app.Document.getComponent(componentId);
             label = component.Name + " (" + component.Factory + ")";
             if isempty(parentNode)
                 node = uitreenode(app.HierarchyTree, "Text", label, "NodeData", component.Id);
             else
                 node = uitreenode(parentNode, "Text", label, "NodeData", component.Id);
             end
-            for index = 1:numel(component.Children)
-                app.addHierarchyNode(node, component.Children(index));
+            % Menu branches are reserved for the dedicated menu editor.
+            for childId = component.Children
+                child = app.Document.getComponent(childId);
+                if any(child.Factory == ["uimenu", "uicontextmenu"]), continue, end
+                app.addHierarchyNode(node, child);
             end
         end
 
@@ -2012,7 +2024,7 @@ classdef yamada < handle
                 app.Document.reparentSubtree(id, parentId, app.Registry, app.clipboardPosition(id), ...
                     double(data.targetCell), double(data.targetPosition));
                 app.SelectedComponentId = id;
-                app.refreshShell();
+                app.refreshShell(false, id);
                 app.setStatus("Moved component subtree.");
             catch exception
                 app.setStatus(string(exception.message));

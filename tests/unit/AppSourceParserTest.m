@@ -185,16 +185,17 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                     document.redo();
                     testCase.verifyEqual(document.CurrentText, edited);
 
-                    % A newer callback still protects its owner's subtree.
+                    % A newer callback registration is removed with its owner.
                     callbackSource = replace(source, ...
                         "app.AccentColorPicker = uicolorpicker(app.FormGrid);", ...
                         "app.AccentColorPicker = uicolorpicker(app.FormGrid, ValueChangedFcn=@(~,~) disp(1));");
                     testCase.assertNotEqual(callbackSource, source);
                     protected = yamada.source.AppSourceParser.parseText(callbackSource, registry);
                     picker = protected.getComponentByName("AccentColorPicker");
-                    testCase.verifyFalse(yamada.model.DocumentEditAvailability.deletion(protected, picker.Id, registry).Enabled);
-                    testCase.verifyError(@() protected.removeSubtree(picker.Id, registry), ...
-                        "yamada:DocumentModel:UnsafeSubtreeEdit");
+                    testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(protected, picker.Id, registry).Enabled);
+                    protected.removeSubtree(picker.Id, registry);
+                    testCase.verifyEmpty(protected.getComponent(picker.Id));
+                    protected.undo();
                     testCase.verifyEqual(protected.CurrentText, callbackSource);
                 end
                 if minimums(index) == ""

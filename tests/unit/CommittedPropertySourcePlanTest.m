@@ -39,21 +39,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             testCase.verifyEqual(document.getComponent(label.Id).getProperty("FontSize").LiteralValue, 31);
         end
 
-        function ownershipChangesInvalidateInheritedConditions(testCase)
-            % ownershipChangesInvalidateInheritedConditions Reject stale permissions after an ownership change.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            [document, label] = CommittedPropertySourcePlanTest.fixture(registry, false);
-            document.setProperty(label.Id, "FontSize", 23, registry);
-            document.validatePropertyCommit(registry);
-            yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
-            document.setProperty(label.Id, "FontSize", 31, registry);
-            document.validatePropertyCommit(registry);
-            yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
-            label.IsEditable = false;
-            state = yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
-            testCase.verifyFalse(state.Enabled);
-        end
-
         function localCommitReusesOnlyProvenModelValidation(testCase)
             % localCommitReusesOnlyProvenModelValidation Avoid duplicate checks while retaining full save verification.
             registry = yamada.model.ComponentRegistry.createDefault();

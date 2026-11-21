@@ -11,23 +11,33 @@ classdef SubtreeSnapshot
         Records struct = struct([])
         % CopyConfiguration - Independent effective configuration prepared for fresh generated records.
         CopyConfiguration struct = struct([])
+        % SourceFragments - Frozen owned initialization statements and their editable tokens.
+        SourceFragments struct = struct([])
+        % SourceParentFactory - Original parent's factory, retained even after Cut.
+        SourceParentFactory string = ""
+        % SourcePosition - Position resolved once in the original placement context, when known.
+        SourcePosition double = []
     end
 
     methods
-        function obj = SubtreeSnapshot(document, rootId)
+        function obj = SubtreeSnapshot(document, rootId, checkHierarchy)
             % SubtreeSnapshot Validate and capture one complete component subtree.
             arguments (Input)
                 document (1, 1) yamada.model.DocumentModel
                 rootId (1, 1) string
+                checkHierarchy (1, 1) logical = true
             end
             arguments (Output)
                 obj (1, 1) yamada.model.SubtreeSnapshot
             end
 
             % Reject ambiguous document identities before resolving hierarchy links.
-            ids = string({document.Components.Id});
-            if numel(unique(ids)) ~= numel(ids) || any(strlength(ids) == 0)
-                error("yamada:SubtreeSnapshot:InvalidHierarchy", "Component identities must be nonempty and unique.");
+            if checkHierarchy
+                ids = string({document.Components.Id});
+                parentIds = string({document.Components.ParentId});
+                if numel(unique(ids)) ~= numel(ids) || any(strlength(ids) == 0)
+                    error("yamada:SubtreeSnapshot:InvalidHierarchy", "Component identities must be nonempty and unique.");
+                end
             end
             obj.RootId = rootId;
             pending = rootId;
@@ -44,19 +54,21 @@ classdef SubtreeSnapshot
                 end
                 visited(end + 1) = id; %#ok<AGROW>
 
-                % Validate both directions, including children omitted from the parent list.
-                expected = ids(string({document.Components.ParentId}) == id);
-                if numel(unique(component.Children)) ~= numel(component.Children) || ...
-                        ~isequal(sort(expected(:)), sort(component.Children(:)))
-                    error("yamada:SubtreeSnapshot:InvalidHierarchy", "Parent and child links disagree.");
-                end
-                if strlength(component.ParentId) > 0
-                    parent = document.getComponent(component.ParentId);
-                    if isempty(parent) || sum(parent.Children == id) ~= 1
-                        error("yamada:SubtreeSnapshot:InvalidHierarchy", "The component parent link is invalid.");
+                if checkHierarchy
+                    % Validate both directions, including children omitted from the parent list.
+                    expected = ids(parentIds == id);
+                    if numel(unique(component.Children)) ~= numel(component.Children) || ...
+                            ~isequal(sort(expected(:)), sort(component.Children(:)))
+                        error("yamada:SubtreeSnapshot:InvalidHierarchy", "Parent and child links disagree.");
                     end
-                elseif id ~= document.RootComponentId
-                    error("yamada:SubtreeSnapshot:InvalidHierarchy", "Only the document root may have no parent.");
+                    if strlength(component.ParentId) > 0
+                        parent = document.getComponent(component.ParentId);
+                        if isempty(parent) || sum(parent.Children == id) ~= 1
+                            error("yamada:SubtreeSnapshot:InvalidHierarchy", "The component parent link is invalid.");
+                        end
+                    elseif id ~= document.RootComponentId
+                        error("yamada:SubtreeSnapshot:InvalidHierarchy", "Only the document root may have no parent.");
+                    end
                 end
                 record = yamada.model.SubtreeSnapshot.capture(component);
                 if isempty(obj.Records), obj.Records = record; else, obj.Records(end + 1) = record; end
@@ -66,24 +78,20 @@ classdef SubtreeSnapshot
     end
 
     methods
-        function obj = withPropertyMetadata(obj, componentId, path, metadata)
-            % withPropertyMetadata Return a value snapshot with independently validated property metadata.
+        function obj = withSourceFragments(obj, fragments, parentFactory, position)
+            % withSourceFragments Attach independent sources indexed by owner and appearance.
             arguments (Input)
                 obj (1, 1) yamada.model.SubtreeSnapshot
-                componentId (1, 1) string
-                path (1, 1) string
-                metadata (1, 1) struct
+                fragments (1, :) struct
+                parentFactory (1, 1) string
+                position double
             end
             arguments (Output)
                 obj (1, 1) yamada.model.SubtreeSnapshot
             end
-            yamada.model.SubtreeSnapshot.validateValue(metadata);
-            index = find(string({obj.Records.Id}) == componentId, 1);
-            if isempty(index), error("yamada:SubtreeSnapshot:MissingComponent", "Snapshot component is missing."); end
-            property = find(string({obj.Records(index).Properties.Path}) == path, 1);
-            if isempty(property), error("yamada:SubtreeSnapshot:UnsupportedValue", "Snapshot property is missing."); end
-            obj.Records(index).Properties(property).Metadata = metadata;
-            obj.CopyConfiguration = struct([]);
+            obj.SourceFragments = fragments;
+            obj.SourceParentFactory = parentFactory;
+            obj.SourcePosition = position;
         end
 
         function obj = withCopyConfiguration(obj, configuration)

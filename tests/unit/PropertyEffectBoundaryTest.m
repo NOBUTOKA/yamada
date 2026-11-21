@@ -207,8 +207,7 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
             testCase.verifyTrue(yamada.model.PropertyStateResolver.hasUnresolvedExecution(document));
             testCase.verifyError(@() document.setProperty(label.Id, "Text", "changed", registry), ...
                 "yamada:DocumentModel:UnsafePropertyEdit");
-            testCase.verifyError(@() document.copySubtree(label.Id, registry), ...
-                "yamada:DocumentModel:UnsafeSubtreeCopy");
+            testCase.verifyNotEmpty(document.copySubtree(label.Id, registry));
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
@@ -231,8 +230,7 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
                 testCase.verifyTrue(yamada.model.PropertyStateResolver.hasUnresolvedExecution(document));
                 testCase.verifyError(@() document.setProperty(other.Id, "Value", true, registry), ...
                     "yamada:DocumentModel:UnsafePropertyEdit");
-                testCase.verifyError(@() document.copySubtree(other.Id, registry), ...
-                    "yamada:DocumentModel:UnsafeSubtreeCopy");
+                testCase.verifyNotEmpty(document.copySubtree(other.Id, registry));
                 testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
                 testCase.verifyEqual(document.HistoryIndex, 0);
                 testCase.verifyFalse(document.IsDirty);

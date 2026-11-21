@@ -943,6 +943,7 @@
     },
     {
       "path": "SelectedObject",
+      "referencesDirectChild": true,
       "categoryId": "interactivity",
       "order": 2,
       "summary": "Control currently chosen in the button group.",

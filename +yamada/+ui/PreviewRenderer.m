@@ -167,6 +167,93 @@ classdef PreviewRenderer < handle
             applied = true;
         end
 
+        function [applied, diagnostics, handles] = synchronizeStructure(obj, document, handles, id)
+            % synchronizeStructure Publish one accepted insertion or relocation on the current preview.
+            arguments (Input)
+                obj (1, 1) yamada.ui.PreviewRenderer
+                document (1, 1) yamada.model.DocumentModel
+                handles (1, 1) dictionary
+                id (1, 1) string
+            end
+            arguments (Output)
+                applied (1, 1) logical
+                diagnostics yamada.model.Diagnostic
+                handles (1, 1) dictionary
+            end
+            applied = false;
+            diagnostics = yamada.model.Diagnostic.empty;
+            before = obj.RenderedInputs;
+            if isempty(fieldnames(before)) || obj.UsesCombinedConfiguration || ...
+                    obj.RenderedRegistryRevision ~= obj.Registry.Revision || ...
+                    isempty(obj.PreviewSurface) || ~isvalid(obj.PreviewSurface) || ...
+                    before.RootComponentId ~= document.RootComponentId || ...
+                    yamada.model.PropertyStateResolver.hasUnresolvedExecution(document)
+                return
+            end
+            root = document.getComponent(id);
+            if isempty(root) || root.Id == document.RootComponentId || ...
+                    any(root.Factory == ["colorbar", "uicontextmenu", "uimenu", "uitoolbar", "uipushtool", "uitoggletool"])
+                return
+            end
+            parent = document.getComponent(root.ParentId);
+            if isempty(parent) || isempty(parent.Children) || parent.Children(end) ~= id, return, end
+            nativeParent = obj.PreviewSurface;
+            if parent.Id ~= document.RootComponentId
+                if ~isKey(handles, parent.Id), return, end
+                nativeParent = handles(parent.Id);
+                if ~isvalid(nativeParent), return, end
+            end
+
+            % Only deterministic parent scopes can retain their existing children.
+            old = before.Components(string({before.Components.Id}) == id);
+            parentIds = parent.Id;
+            if ~isempty(old), parentIds = unique([parentIds old.ParentId], "stable"); end
+            for parentId = parentIds
+                owner = document.getComponent(parentId);
+                if isempty(owner) || owner.isReleaseUnavailable() || ...
+                        any(owner.Factory == ["uibuttongroup", "uitabgroup"]) || ...
+                        any(ismember(string({document.Components.Factory}), "colorbar"))
+                    return
+                end
+                if owner.Factory ~= "uigridlayout", continue, end
+                for childId = owner.Children
+                    child = document.getComponent(childId);
+                    row = child.getProperty("Layout.Row");
+                    column = child.getProperty("Layout.Column");
+                    if isempty(row) || isempty(column) || row.ValueKind ~= "literal" || column.ValueKind ~= "literal"
+                        return
+                    end
+                end
+            end
+
+            context = document.evaluationContext(obj.Registry);
+            [inputs, safe] = context.inputs();
+            if ~safe, return, end
+            % The editor passes the accepted source configuration after publishing the structural edit.
+            obj.Diagnostics = yamada.model.Diagnostic.empty;
+            try
+                if ~isempty(old)
+                    if ~isKey(handles, id) || ~isvalid(handles(id)), return, end
+                    moved = yamada.model.SubtreeSnapshot(document, id);
+                    ids = string({moved.Records.Id});
+                    delete(handles(id));
+                    handles(ids(isKey(handles, ids))) = [];
+                end
+                handles = obj.renderComponent(document, id, nativeParent, handles);
+                if ~isKey(handles, id) || ~isvalid(handles(id)), return, end
+            catch
+                % The editor reconstructs the full surface if a native transition cannot complete.
+                return
+            end
+            diagnostics = obj.Diagnostics;
+            obj.Diagnostics = yamada.model.Diagnostic.empty;
+            obj.RenderedInputs = inputs;
+            obj.RenderedToken = context.revisionToken();
+            obj.RenderedVisualInputs = struct();
+            obj.SynchronizationCount = obj.SynchronizationCount + 1;
+            applied = true;
+        end
+
         function applied = acknowledgeCallbackChanges(obj, document)
             % acknowledgeCallbackChanges Advance source-only callback intentions without touching native controls.
             arguments (Input)

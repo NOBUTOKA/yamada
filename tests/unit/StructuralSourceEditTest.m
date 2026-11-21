@@ -104,7 +104,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             testCase.verifyEqual(pasted.ParentId, destination.Id);
             testCase.verifyEqual(pasted.getSettings("Value").LiteralValue, [0.1 0.2 0.3]);
 
-            % Callback bindings stay on the original, and a rejected Cut retains the clipboard.
+            % Cut carries the callback registration even on unsupported runtime components.
             callback = "app.Picker.ValueChangedFcn = @(~,~) disp(1);";
             source = replace(source, "app.Picker.Value = [0.1 0.2 0.3];", ...
                 "app.Picker.Value = [0.1 0.2 0.3];" + newline + callback);
@@ -112,11 +112,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             picker = document.getComponentByName("Picker");
             destination = document.getComponentByName("Destination");
             clipboard.copy(document, picker.Id, registry);
-            testCase.verifyError(@() clipboard.cut(document, picker.Id, registry), ...
-                "yamada:DocumentModel:UnsafeSubtreeEdit");
             testCase.verifyEqual(document.CurrentText, source);
+            clipboard.cut(document, picker.Id, registry);
+            testCase.verifyEmpty(document.getComponentByName("Picker"));
+            testCase.verifyFalse(contains(document.CurrentText, callback));
             pasted = clipboard.paste(document, destination.Id, registry);
-            testCase.verifyEmpty(pasted.getSettings("ValueChangedFcn"));
+            testCase.verifyEqual(pasted.getSettings("ValueChangedFcn").SourceExpression, "@(~,~) disp(1)");
             testCase.verifySubstring(document.CurrentText, callback);
         end
 

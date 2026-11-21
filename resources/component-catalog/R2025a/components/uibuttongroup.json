@@ -589,7 +589,8 @@
               "effectStatus": "modeled",
               "affectedPaths": [],
               "effectReason": "The document-level button-selection policy resolves owned child values; unsupported handle expressions remain unknown."
-            }
+            },
+            "referencesDirectChild": true
           }
         },
         {

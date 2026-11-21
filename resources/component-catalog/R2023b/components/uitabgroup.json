@@ -109,7 +109,8 @@
                 "SelectedTab"
               ],
               "effectReason": "Handle-valued selection references remain source-only; an unresolved selection may change dependent child state."
-            }
+            },
+            "referencesDirectChild": true
           }
         }
       ]

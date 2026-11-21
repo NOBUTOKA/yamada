@@ -77,11 +77,9 @@ classdef RoundTripGenerator
                 pending = document.PendingEdits{pendingIndex};
                 if isstruct(pending) && isfield(pending, "Kind") && pending.Kind == "delete-subtree"
                     try
-                        rewrittenReferences = yamada.model.SourceSpan.empty;
-                        if isfield(pending, "RewrittenReferences"), rewrittenReferences = pending.RewrittenReferences; end
                         if isfield(pending, "Records"), records = pending.Records;
                         else, records = yamada.model.SourceOwnership.snapshot(pending.Components); end
-                        removals = yamada.source.SubtreeSourceEdits.deletion(source, records, rewrittenReferences);
+                        removals = yamada.source.SubtreeSourceEdits.deletion(records);
                         edits = [edits removals]; %#ok<AGROW>
                     catch exception
                         diagnostics(end + 1) = yamada.model.Diagnostic("unsafe-subtree-deletion", ...
@@ -213,18 +211,19 @@ classdef RoundTripGenerator
     end
 
     methods (Access = ?yamada.model.DocumentModel)
-        function edits = componentInsertionEdits(obj, document, components)
+        function edits = componentInsertionEdits(obj, document, components, fragments)
             % componentInsertionEdits Emit only new component syntax using the existing generation policies.
             arguments (Input)
                 obj (1, 1) yamada.source.RoundTripGenerator
                 document (1, 1) yamada.model.DocumentModel
                 components yamada.model.ComponentRecord
+                fragments (1, :) string = strings(1, 0)
             end
             arguments (Output)
                 edits struct
             end
             source = document.CurrentText;
-            [edits, diagnostics] = obj.additionEdits(source, document, components);
+            [edits, diagnostics] = obj.additionEdits(source, document, components, 0, false, fragments);
             if yamada.validation.ModelValidator.hasErrors(diagnostics)
                 error("yamada:DocumentModel:UnsafeSubtreeEdit", "%s", strjoin(string({diagnostics.Message}), newline));
             end
@@ -332,7 +331,7 @@ classdef RoundTripGenerator
             end
         end
 
-        function [edits, diagnostic] = additionEdits(obj, source, document, components, relocationAnchor, initializationEmitted)
+        function [edits, diagnostic] = additionEdits(obj, source, document, components, relocationAnchor, initializationEmitted, fragments)
             % additionEdits Append generated declarations and initialization safely.
             arguments (Input)
                 obj (1, 1) yamada.source.RoundTripGenerator
@@ -341,6 +340,7 @@ classdef RoundTripGenerator
                 components yamada.model.ComponentRecord
                 relocationAnchor (1, 1) double {mustBeNonnegative, mustBeInteger} = 0
                 initializationEmitted (1, 1) logical = false
+                fragments (1, :) string = strings(1, 0)
             end
             arguments (Output)
                 edits struct
@@ -357,7 +357,8 @@ classdef RoundTripGenerator
             declarations = [parsed.SourceSpans];
             declarationSpans = [declarations.Declaration];
             creationSpans = [declarations.Creation];
-            if any(~arrayfun(@(span) obj.isKnownSpan(span), declarationSpans)) || ...
+            if isempty(declarationSpans) || isempty(creationSpans) || ...
+                    any(~arrayfun(@(span) obj.isKnownSpan(span), declarationSpans)) || ...
                     any(~arrayfun(@(span) obj.isKnownSpan(span), creationSpans))
                 diagnostic = yamada.model.Diagnostic("ambiguous-component-insertion", ...
                     "error", "Parsed component source spans are incomplete.");
@@ -388,7 +389,7 @@ classdef RoundTripGenerator
                 end
                 declarationsText = declarationsText + eol + obj.indent(source, declarationOffset) + ...
                     component.Name + " " + component.DeclaredType;
-                if initializationEmitted, continue, end
+                if initializationEmitted || ~isempty(fragments), continue, end
                 arguments = "app." + parent.Name;
                 for argumentIndex = 1:numel(component.CreationArguments)
                     arguments = arguments + ", " + yamada.source.LiteralEncoder.encode( ...
@@ -425,7 +426,10 @@ classdef RoundTripGenerator
                 end
             end
             creationText = creationText + deferredSelection;
-            if ~initializationEmitted
+            if ~isempty(fragments)
+                prefix = eol + obj.indent(source, creationOffset);
+                creationText = prefix + strjoin(fragments, prefix);
+            elseif ~initializationEmitted
                 try
                     references = yamada.model.SubtreeReferencePolicy.assignments(document, components, obj.Registry);
                     for reference = references

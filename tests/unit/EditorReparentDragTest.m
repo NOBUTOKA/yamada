@@ -140,18 +140,23 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             % occupiedGridDropsClipSpansAndRemainUndoable Permit overlap and fit a larger span at the chosen cell.
             [app, figure, button, left, grid] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
-            registry = yamada.model.ComponentRegistry.createDefault();
-            occupied = app.Document.insertComponent(registry, "uilabel", grid.Id);
+            testCase.select(figure, grid.Id);
+            testCase.addFromPalette(figure, "Label");
+            occupied = app.Document.getComponent(app.SelectedComponentId);
             testCase.select(figure, left.Id);
             testCase.select(figure, button.Id);
             testCase.drop(figure, button.Id, grid.Id, [1 1], []);
             testCase.verifyEqual(button.ParentId, grid.Id);
             testCase.verifyEqual(occupied.getProperty("Layout.Row").LiteralValue, 1);
-            app.Document.setProperty(button.Id, "Layout.Row", [1 2]);
-            app.Document.setProperty(button.Id, "Layout.Column", [1 2]);
-            source = app.Document.insertComponent(registry, "uigridlayout", left.Id);
-            app.Document.setProperty(source.Id, "RowHeight", {"1x"});
-            app.Document.setProperty(source.Id, "ColumnWidth", {"1x"});
+            testCase.gridAction(figure, struct("action", "resize-span", "childId", button.Id, ...
+                "rowStart", 1, "rowEnd", 2, "columnStart", 1, "columnEnd", 2));
+            testCase.select(figure, left.Id);
+            testCase.addFromPalette(figure, "Grid Layout");
+            source = app.Document.getComponent(app.SelectedComponentId);
+            for axis = ["row", "column"]
+                testCase.gridAction(figure, struct("action", "delete-track", "axis", axis, ...
+                    "index", 2, "mode", "fit", "value", 0));
+            end
             testCase.select(figure, left.Id);
             testCase.select(figure, button.Id);
             history = app.Document.HistoryIndex;
@@ -160,10 +165,12 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             testCase.verifyEqual(button.getProperty("Layout.Row").LiteralValue, 1);
             testCase.verifyEqual(button.getProperty("Layout.Column").LiteralValue, 1);
             testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
-            app.Document.undo();
+            undo = findall(figure, "Tag", "yamada-edit-undo");
+            undo.MenuSelectedFcn(undo, []);
             testCase.verifyEqual(button.ParentId, grid.Id);
             testCase.verifyEqual(button.getProperty("Layout.Row").LiteralValue, [1 2]);
-            app.Document.redo();
+            redo = findall(figure, "Tag", "yamada-edit-redo");
+            redo.MenuSelectedFcn(redo, []);
             testCase.verifyEqual(button.ParentId, source.Id);
             testCase.verifyEqual(button.getProperty("Layout.Row").LiteralValue, 1);
         end
@@ -187,7 +194,7 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             testCase.verifyEqual(button.ParentId, left.Id);
             testCase.verifyEqual(app.Document.HistoryIndex, history);
             oldRevision = overlay.Data.reparentRevision;
-            app.Document.setProperty(button.Id, "Text", "Temporary");
+            testCase.editPosition(figure, position + [1 0 0 0]);
             menus = findall(figure, "Type", "uimenu");
             undo = menus(erase(string({menus.Text}), "&") == "Undo");
             undo.MenuSelectedFcn(undo, []);
@@ -256,6 +263,48 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             tree.SelectionChangedFcn(tree, struct("SelectedNodes", node));
         end
 
+        function editPosition(testCase, figure, position)
+            % editPosition Set the selected component rectangle through its Inspector fields.
+            arguments (Input)
+                testCase (1, 1) EditorReparentDragTest %#ok<INUSA>
+                figure (1, 1) matlab.ui.Figure
+                position (1, 4) double
+            end
+            for index = 1:4
+                editor = findall(figure, "Tag", "yamada-inspector-position-editor");
+                field = editor.UserData.Fields(index);
+                if field.Value == position(index), continue, end
+                field.Value = position(index);
+                field.ValueChangedFcn(field, struct());
+            end
+        end
+
+        function addFromPalette(testCase, figure, name)
+            % addFromPalette Dispatch the normal palette insertion command.
+            arguments (Input)
+                testCase (1, 1) EditorReparentDragTest %#ok<INUSA>
+                figure (1, 1) matlab.ui.Figure
+                name (1, 1) string
+            end
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == name, 1);
+            palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
+        end
+
+        function gridAction(testCase, figure, data)
+            % gridAction Apply one grid edit through the current Overlay revision.
+            arguments (Input)
+                testCase (1, 1) EditorReparentDragTest %#ok<INUSA>
+                figure (1, 1) matlab.ui.Figure
+                data (1, 1) struct
+            end
+            overlay = findall(figure, "Tag", "yamada-interaction-overlay");
+            data.revision = overlay.Data.gridEditor.revision;
+            data.activeGridId = overlay.Data.gridEditor.activeGridId;
+            overlay.HTMLEventReceivedFcn(overlay, struct("HTMLEventName", "GridAction", "HTMLEventData", data));
+        end
+
         function [app, figure, button, left, grid] = fixture(testCase)
             % fixture Arrange two separated absolute containers with a grid destination.
             arguments (Input)
@@ -275,14 +324,14 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             panelRow = find(string(palette.Data(:, 1)) == "Panel", 1);
             palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", panelRow)));
             left = app.Document.getComponent(app.SelectedComponentId);
-            app.Document.setProperty(left.Id, "Position", [10 10 240 200]);
+            testCase.editPosition(figure, [10 10 240 200]);
             row = find(string(palette.Data(:, 1)) == "Button", 1);
             palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
             button = app.Document.getComponent(app.SelectedComponentId);
             testCase.select(figure, app.Document.RootComponentId);
             palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", panelRow)));
             right = app.Document.getComponent(app.SelectedComponentId);
-            app.Document.setProperty(right.Id, "Position", [300 10 240 200]);
+            testCase.editPosition(figure, [300 10 240 200]);
             row = find(string(palette.Data(:, 1)) == "Grid Layout", 1);
             palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
             grid = app.Document.getComponent(app.SelectedComponentId);

@@ -3,42 +3,28 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
     %   These tests exercise model and source contracts without UI entry points.
 
     methods (Test)
-        function pendingCallbacksStayOnOriginalSubtree(testCase)
-            % pendingCallbacksStayOnOriginalSubtree Omit root and child bindings without changing pending edits or history.
+        function cutCarriesBindingsAndRetainsHandlers(testCase)
+            % cutCarriesBindingsAndRetainsHandlers Move the connections while leaving callback bodies in place.
             [document, registry, left, right] = ComponentClipboardTest.fixture();
             button = document.insertComponent(registry, "uibutton", left.Id);
-            button.setProperty("Text", "Copy this text");
             document.applyCallbackAction(left.Id, "SizeChangedFcn", "Add", registry);
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-            document.markSaved();
-            original = yamada.source.RoundTripGenerator(registry).generate(document);
-            edits = document.CallbackEdits;
-            history = document.HistoryIndex;
+            before = document.CurrentText;
+            handler = regexp(before, 'function [^\r\n]*ButtonPushed[^\r\n]*', 'match', 'once');
+            testCase.assertNotEmpty(handler);
             clipboard = yamada.model.ComponentClipboard();
-            testCase.verifyTrue(clipboard.availability("Copy", document, left.Id, registry).Enabled);
-            testCase.verifyFalse(clipboard.availability("Cut", document, left.Id, registry).Enabled);
-            clipboard.copy(document, left.Id, registry);
-            testCase.verifyFalse(document.IsDirty);
-            testCase.verifyEqual(document.HistoryIndex, history);
-            testCase.verifyEqual(document.CallbackEdits, edits);
-            testCase.verifyError(@() clipboard.cut(document, left.Id, registry), "yamada:DocumentModel:UnsafeSubtreeEdit");
-            testCase.verifyEqual(document.HistoryIndex, history);
+            testCase.verifyTrue(clipboard.availability("Cut", document, left.Id, registry).Enabled);
+            clipboard.cut(document, left.Id, registry);
+            testCase.verifyEmpty(document.getComponent(button.Id));
+            testCase.verifyFalse(contains(document.CurrentText, ".ButtonPushedFcn ="));
+            testCase.verifyEqual(count(document.CurrentText, handler), 1);
             pasted = clipboard.paste(document, right.Id, registry);
-            copiedButton = document.getComponentByName(button.Name + "Copy");
-            testCase.verifyEqual(copiedButton.getProperty("Text").LiteralValue, "Copy this text");
-            for component = [pasted copiedButton]
-                states = yamada.source.CallbackSourceAnalyzer.analyze(document, component.Id, registry);
-                testCase.verifyTrue(all(string({states.State}) == "absent"));
-            end
-            testCase.verifyEqual(document.CallbackEdits, edits);
-            testCase.verifyEqual(document.HistoryIndex, history + 1);
+            testCase.verifyEqual(count(document.CurrentText, ".ButtonPushedFcn ="), 1);
+            testCase.verifyEqual(count(document.CurrentText, ".SizeChangedFcn ="), 1);
+            testCase.verifyEqual(pasted.ParentId, right.Id);
             document.undo();
-            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), original);
-            document.redo();
-            clipboard.paste(document, right.Id, registry);
-            testCase.verifyEqual(document.CallbackEdits, edits);
-            testCase.verifyEqual(count(document.GeneratedText, ".ButtonPushedFcn ="), 1);
-            testCase.verifyEqual(count(document.GeneratedText, ".SizeChangedFcn ="), 1);
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, before);
         end
 
         function copyDoesNotDirtyAndPasteUsesIndependentData(testCase)
@@ -175,14 +161,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
         end
 
         function rejectedCutPreservesPreviousClipboard(testCase)
-            % rejectedCutPreservesPreviousClipboard Keep prior copied data on read-only cut failure.
+            % rejectedCutPreservesPreviousClipboard Keep prior copied data when a root cut is rejected.
             [document, registry, left, right, leaf] = ComponentClipboardTest.fixture();
             clipboard = yamada.model.ComponentClipboard();
             clipboard.copy(document, leaf.Id, registry);
-            right.IsEditable = false;
             history = document.HistoryIndex;
-            testCase.verifyError(@() clipboard.cut(document, right.Id, registry), "yamada:DocumentModel:UnsafeSubtreeCopy");
-            right.IsEditable = true;
+            testCase.verifyError(@() clipboard.cut(document, document.RootComponentId, registry), "yamada:DocumentModel:UnsafeSubtreeCopy");
             pasted = clipboard.paste(document, left.Id, registry);
             testCase.verifyEqual(pasted.Factory, "uilabel");
             testCase.verifyEqual(document.HistoryIndex, history + 1);

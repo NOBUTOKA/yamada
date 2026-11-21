@@ -58,7 +58,7 @@ classdef SubtreePlacementPlanner
             root = snapshot.Records(1);
             % A selected tab must remain a direct child of its referencing group.
             originalParent = document.getComponent(root.ParentId);
-            if root.Factory == "uitab" && ~isempty(originalParent) && parentId ~= root.ParentId
+            if any(excludedIds == root.Id) && root.Factory == "uitab" && ~isempty(originalParent) && parentId ~= root.ParentId
                 selected = originalParent.getProperty("SelectedTab");
                 if ~isempty(selected) && isfield(selected.Metadata, "SubtreeReferenceId") && ...
                         string(selected.Metadata.SubtreeReferenceId) == root.Id
@@ -71,13 +71,16 @@ classdef SubtreePlacementPlanner
             end
             movingSourceOnly = isfield(root.Metadata, "UnavailableRelease") && any(excludedIds == root.Id);
             placementCatalog = registry;
-            if ~isempty(snapshot.CopyConfiguration)
+            if ~isempty(snapshot.CopyConfiguration) || ~isempty(snapshot.SourceFragments)
                 placementCatalog = yamada.model.SubtreeCopyPlanner.sourceCatalog(snapshot, registry);
-                if isfield(root.Metadata, "UnavailableRelease")
+                if ~isempty(snapshot.CopyConfiguration) && isfield(root.Metadata, "UnavailableRelease")
                     root.Properties = snapshot.CopyConfiguration(1).Properties;
                 end
             end
-            for record = snapshot.Records
+            sourcePaste = ~isempty(snapshot.SourceFragments);
+            placementRecords = snapshot.Records;
+            if sourcePaste, placementRecords = root; end
+            for record = placementRecords
                 % Relocating the enclosing subtree leaves a source-only child's parent intact.
                 if record.Id ~= root.Id && any(excludedIds == record.Id) && ...
                         isfield(record.Metadata, "UnavailableRelease")
@@ -85,12 +88,12 @@ classdef SubtreePlacementPlanner
                 end
                 if record.Id == root.Id && movingSourceOnly
                     [definition, placementCatalog] = registry.sourceDefinition(document.getComponent(root.Id));
-                elseif ~record.IsEditable && ~(placementCatalog ~= registry && isfield(record.Metadata, "UnavailableRelease"))
+                elseif ~sourcePaste && ~record.IsEditable && ~(placementCatalog ~= registry && isfield(record.Metadata, "UnavailableRelease"))
                     error("yamada:SubtreePlacementPlanner:ReadOnly", "The subtree contains a read-only component.");
                 else
                     definition = placementCatalog.get(record.Factory, record.CreationArguments);
                 end
-                if definition.IsProgrammaticOnly || definition.Category == "FigureTools"
+                if ~sourcePaste && (definition.IsProgrammaticOnly || definition.Category == "FigureTools")
                     error("yamada:SubtreePlacementPlanner:UnsupportedFactory", "This construction family is not supported for subtree placement.");
                 end
                 parentFactory = parent.Factory;
@@ -124,6 +127,7 @@ classdef SubtreePlacementPlanner
             paths = string({definitions.Path});
             changes = struct("Path", {}, "Value", {}, "Remove", {});
             wasGrid = ~isempty(originalParent) && originalParent.Factory == "uigridlayout";
+            if sourcePaste, wasGrid = snapshot.SourceParentFactory == "uigridlayout"; end
             hasGridPlacement = any(string({root.Properties.Path}) == "Layout.Row");
 
             % Preserve span dimensions while finding an unoccupied destination rectangle.
@@ -199,16 +203,31 @@ classdef SubtreePlacementPlanner
                     yamada.model.SubtreePlacementPlanner.span(row, height), false);
                 changes(end + 1) = yamada.model.SubtreePlacementPlanner.change("Layout.Column", ...
                     yamada.model.SubtreePlacementPlanner.span(column, width), false);
-                changes = yamada.model.SubtreePlacementPlanner.removeIfPresent(changes, root.Properties, "Position");
+                changes = yamada.model.SubtreePlacementPlanner.removeIfPresent(changes, root.Properties, "Position", sourcePaste);
             elseif parent.Factory ~= "uigridlayout"
-                changes = yamada.model.SubtreePlacementPlanner.removeIfPresent(changes, root.Properties, "Layout.Row");
-                changes = yamada.model.SubtreePlacementPlanner.removeIfPresent(changes, root.Properties, "Layout.Column");
+                changes = yamada.model.SubtreePlacementPlanner.removeIfPresent(changes, root.Properties, "Layout.Row", sourcePaste);
+                changes = yamada.model.SubtreePlacementPlanner.removeIfPresent(changes, root.Properties, "Layout.Column", sourcePaste);
                 if any(paths == "Position") && definitions(find(paths == "Position", 1)).IsEditable
-                    position = yamada.model.SubtreePlacementPlanner.literal(root.Properties, "Position", []);
+                    positionEntry = root.Properties(string({root.Properties.Path}) == "Position");
+                    geometry = root.Properties(ismember(string({root.Properties.Path}), ...
+                        ["Position", "InnerPosition", "OuterPosition"]));
+                    if sourcePaste && isempty(snapshot.SourcePosition) && ...
+                            any(string({geometry.ValueKind}) == "expression") && ~wasGrid && ~hasGridPlacement
+                        plan = struct("ParentId", parentId, "Changes", changes);
+                        return
+                    end
+                    if sourcePaste
+                        position = snapshot.SourcePosition;
+                        if isempty(position) && isscalar(positionEntry) && positionEntry.ValueKind == "literal"
+                            position = positionEntry.LiteralValue;
+                        end
+                    else
+                        position = yamada.model.SubtreePlacementPlanner.literal(root.Properties, "Position", []);
+                    end
                     if (yamada.model.PositionAliasPolicy.applies(definitions(find(paths == "Position", 1))) || ...
                             any(definitions(find(paths == "Position", 1)).Application.EffectPolicy == ...
                             ["positionInput", "sliderPosition", "squarePosition", "switchPosition", "semicircularPosition", "linearPosition"])) && ...
-                            ~movingSourceOnly && ~wasGrid && ~hasGridPlacement && isempty(targetPosition)
+                            ~sourcePaste && ~movingSourceOnly && ~wasGrid && ~hasGridPlacement && isempty(targetPosition)
                         if ~isempty(snapshot.CopyConfiguration)
                             position = yamada.model.SubtreePlacementPlanner.literal( ...
                                 snapshot.CopyConfiguration(1).Properties, "Position", []);
@@ -223,6 +242,11 @@ classdef SubtreePlacementPlanner
                     end
                     if wasGrid || hasGridPlacement
                         if ~isempty(measuredPosition), position = measuredPosition; end
+                    end
+                    if sourcePaste && isempty(position) && ~isempty(measuredPosition), position = measuredPosition; end
+                    if sourcePaste && isempty(position) && ~wasGrid && ~hasGridPlacement
+                        plan = struct("ParentId", parentId, "Changes", changes);
+                        return
                     end
                     if ~isempty(targetPosition), position = targetPosition; end
                     zeroAllowed = yamada.model.PositionAliasPolicy.applies(definitions(find(paths == "Position", 1)));
@@ -347,19 +371,20 @@ classdef SubtreePlacementPlanner
             end
         end
 
-        function changes = removeIfPresent(changes, properties, path)
-            % removeIfPresent Explicitly remove only safely understood layout properties.
+        function changes = removeIfPresent(changes, properties, path, sourcePaste)
+            % removeIfPresent Remove an owned layout property that does not apply to the new placement.
             arguments (Input)
                 changes struct
                 properties struct
                 path (1, 1) string
+                sourcePaste (1, 1) logical
             end
             arguments (Output)
                 changes struct
             end
             entry = properties(string({properties.Path}) == path);
             if isempty(entry), return, end
-            yamada.model.SubtreePlacementPlanner.literal(properties, path, []);
+            if ~sourcePaste, yamada.model.SubtreePlacementPlanner.literal(properties, path, []); end
             changes(end + 1) = yamada.model.SubtreePlacementPlanner.change(path, [], true);
         end
 
