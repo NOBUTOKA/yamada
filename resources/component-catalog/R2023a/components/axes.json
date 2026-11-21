@@ -4559,19 +4559,28 @@
             "category": "Position",
             "order": 6,
             "groupId": "local.axes.position",
-            "editor": "readOnly",
-            "previewPolicy": "skip",
-            "gridGeometryImpact": "none",
-            "absoluteGeometryImpact": false,
-            "auditDisposition": "readOnly",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "opaque",
+              "kind": "enum",
               "matlabClasses": [
-                "unknown"
+                "char",
+                "string"
               ],
-              "shape": "any",
+              "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normalized",
+                "inches",
+                "centimeters",
+                "points",
+                "pixels",
+                "characters"
+              ]
             },
             "application": {
               "applyAfter": [],

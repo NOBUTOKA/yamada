@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2026b",
-  "inputSha256": "46195a75917d8fd5f380de44cc3040a286a2e0bc39ec136dbac073a717ba653e",
+  "inputSha256": "a497bab150c9c352fe45ded0d0b4f51ce3f268f6c50e9486069f35de164c4656",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -2830,6 +2830,243 @@
       "memberVariantIds": [
         "uibuttongroup",
         "uipanel"
+      ]
+    },
+    {
+      "id": "exact.position.7d3cbb62a1c8",
+      "kind": "exactCategory",
+      "categoryId": "position",
+      "capabilities": [
+        {
+          "path": "OuterPosition",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": [],
+            "fixedLength": 4
+          },
+          "affectsDisplay": true,
+          "gridGeometryImpact": "required",
+          "absoluteGeometryImpact": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "effectPolicy": "none",
+            "effectStatus": "unsupported",
+            "affectedPaths": [
+              "InnerPosition",
+              "OuterPosition",
+              "Position"
+            ],
+            "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+          }
+        },
+        {
+          "path": "InnerPosition",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "vector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "gridGeometryImpact": "none",
+          "absoluteGeometryImpact": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "effectPolicy": "none",
+            "effectStatus": "unsupported",
+            "affectedPaths": [
+              "InnerPosition",
+              "OuterPosition",
+              "Position"
+            ],
+            "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
+          }
+        },
+        {
+          "path": "Position",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "gridGeometryImpact": "required",
+          "absoluteGeometryImpact": true,
+          "previewPolicy": "adapt",
+          "requiredEditor": "position",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [
+              "Units"
+            ],
+            "effectPolicy": "layout",
+            "effectStatus": "modeled",
+            "affectedPaths": [],
+            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+          }
+        },
+        {
+          "path": "TightInset",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "gridGeometryImpact": "none",
+          "absoluteGeometryImpact": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "omitted",
+            "reasonCodes": [
+              "documentedReadOnly"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
+        },
+        {
+          "path": "PositionConstraint",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "gridGeometryImpact": "none",
+          "absoluteGeometryImpact": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "effectPolicy": "none",
+            "effectStatus": "independent",
+            "affectedPaths": [],
+            "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
+          }
+        },
+        {
+          "path": "Units",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "normalized",
+              "inches",
+              "centimeters",
+              "points",
+              "pixels",
+              "characters"
+            ]
+          },
+          "affectsDisplay": true,
+          "gridGeometryImpact": "required",
+          "absoluteGeometryImpact": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          },
+          "application": {
+            "applyAfter": [],
+            "effectPolicy": "none",
+            "defaultLiteral": "'normalized'",
+            "effectStatus": "modeled",
+            "affectedPaths": [],
+            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
+          }
+        },
+        {
+          "path": "Layout",
+          "valueContract": {
+            "kind": "graphicsObject",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "gridGeometryImpact": "none",
+          "absoluteGeometryImpact": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "omitted",
+            "reasonCodes": [
+              "handleReference",
+              "hierarchyManaged"
+            ]
+          },
+          "application": {
+            "applyAfter": [],
+            "effectPolicy": "none",
+            "effectStatus": "unknown",
+            "affectedPaths": [],
+            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          }
+        }
+      ],
+      "memberVariantIds": [
+        "geoaxes",
+        "polaraxes"
       ]
     },
     {
@@ -7330,24 +7567,31 @@
         {
           "path": "Units",
           "valueContract": {
-            "kind": "opaque",
+            "kind": "enum",
             "matlabClasses": [
-              "unknown"
+              "char",
+              "string"
             ],
-            "shape": "any",
+            "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "lowDesignTimeValue"
+            "constraints": [],
+            "values": [
+              "normalized",
+              "inches",
+              "centimeters",
+              "points",
+              "pixels",
+              "characters"
             ]
+          },
+          "affectsDisplay": true,
+          "gridGeometryImpact": "required",
+          "absoluteGeometryImpact": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
           },
           "application": {
             "applyAfter": [],
@@ -9120,242 +9364,6 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-          }
-        }
-      ],
-      "memberVariantIds": [
-        "geoaxes"
-      ]
-    },
-    {
-      "id": "local.geoaxes.position",
-      "kind": "variantLocal",
-      "categoryId": "position",
-      "capabilities": [
-        {
-          "path": "OuterPosition",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": [],
-            "fixedLength": 4
-          },
-          "affectsDisplay": true,
-          "gridGeometryImpact": "required",
-          "absoluteGeometryImpact": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          },
-          "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
-            "affectedPaths": [
-              "InnerPosition",
-              "OuterPosition",
-              "Position"
-            ],
-            "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
-          }
-        },
-        {
-          "path": "InnerPosition",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          },
-          "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
-            "affectedPaths": [
-              "InnerPosition",
-              "OuterPosition",
-              "Position"
-            ],
-            "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
-          }
-        },
-        {
-          "path": "Position",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "gridGeometryImpact": "required",
-          "absoluteGeometryImpact": true,
-          "previewPolicy": "adapt",
-          "requiredEditor": "position",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          },
-          "application": {
-            "applyAfter": [
-              "Units"
-            ],
-            "effectPolicy": "layout",
-            "effectStatus": "modeled",
-            "affectedPaths": [],
-            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
-          }
-        },
-        {
-          "path": "TightInset",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "documentedReadOnly"
-            ]
-          },
-          "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unknown",
-            "affectedPaths": [],
-            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
-          }
-        },
-        {
-          "path": "PositionConstraint",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          },
-          "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "independent",
-            "affectedPaths": [],
-            "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-          }
-        },
-        {
-          "path": "Units",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [],
-            "values": [
-              "normalized",
-              "inches",
-              "centimeters",
-              "points",
-              "pixels",
-              "characters"
-            ]
-          },
-          "affectsDisplay": true,
-          "gridGeometryImpact": "required",
-          "absoluteGeometryImpact": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          },
-          "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "defaultLiteral": "'normalized'",
-            "effectStatus": "modeled",
-            "affectedPaths": [],
-            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
-          }
-        },
-        {
-          "path": "Layout",
-          "valueContract": {
-            "kind": "graphicsObject",
-            "matlabClasses": [
-              "handle"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "handleReference",
-              "hierarchyManaged"
-            ]
-          },
-          "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unknown",
-            "affectedPaths": [],
-            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -11627,235 +11635,6 @@
             "effectStatus": "independent",
             "affectedPaths": [],
             "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-          }
-        }
-      ],
-      "memberVariantIds": [
-        "polaraxes"
-      ]
-    },
-    {
-      "id": "local.polaraxes.position",
-      "kind": "variantLocal",
-      "categoryId": "position",
-      "capabilities": [
-        {
-          "path": "OuterPosition",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": [],
-            "fixedLength": 4
-          },
-          "affectsDisplay": true,
-          "gridGeometryImpact": "required",
-          "absoluteGeometryImpact": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          },
-          "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
-            "affectedPaths": [
-              "InnerPosition",
-              "OuterPosition",
-              "Position"
-            ],
-            "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
-          }
-        },
-        {
-          "path": "InnerPosition",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          },
-          "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
-            "affectedPaths": [
-              "InnerPosition",
-              "OuterPosition",
-              "Position"
-            ],
-            "effectReason": "Native container, decorated-control, or axes geometry is not covered by the reviewed simple position-alias policy."
-          }
-        },
-        {
-          "path": "Position",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "gridGeometryImpact": "required",
-          "absoluteGeometryImpact": true,
-          "previewPolicy": "adapt",
-          "requiredEditor": "position",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          },
-          "application": {
-            "applyAfter": [
-              "Units"
-            ],
-            "effectPolicy": "layout",
-            "effectStatus": "modeled",
-            "affectedPaths": [],
-            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
-          }
-        },
-        {
-          "path": "TightInset",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "documentedReadOnly"
-            ]
-          },
-          "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unknown",
-            "affectedPaths": [],
-            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
-          }
-        },
-        {
-          "path": "PositionConstraint",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          },
-          "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "independent",
-            "affectedPaths": [],
-            "effectReason": "The documented setter retains this stored input within the supported value contract. Callback registration and rendering choices do not execute callbacks or synthesize derived geometry in the editor."
-          }
-        },
-        {
-          "path": "Units",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          },
-          "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "defaultLiteral": "'normalized'",
-            "effectStatus": "modeled",
-            "affectedPaths": [],
-            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
-          }
-        },
-        {
-          "path": "Layout",
-          "valueContract": {
-            "kind": "graphicsObject",
-            "matlabClasses": [
-              "handle"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "handleReference",
-              "hierarchyManaged"
-            ]
-          },
-          "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unknown",
-            "affectedPaths": [],
-            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
           }
         }
       ],
@@ -47654,37 +47433,37 @@
       "propertyOwners": [
         {
           "path": "OuterPosition",
-          "groupId": "local.geoaxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public"
         },
         {
           "path": "InnerPosition",
-          "groupId": "local.geoaxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Position",
-          "groupId": "local.geoaxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TightInset",
-          "groupId": "local.geoaxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "restricted"
         },
         {
           "path": "PositionConstraint",
-          "groupId": "local.geoaxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Units",
-          "groupId": "local.geoaxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Layout",
-          "groupId": "local.geoaxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public"
         }
       ]
@@ -48446,37 +48225,37 @@
       "propertyOwners": [
         {
           "path": "OuterPosition",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public"
         },
         {
           "path": "InnerPosition",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Position",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public"
         },
         {
           "path": "TightInset",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "restricted"
         },
         {
           "path": "PositionConstraint",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Units",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public"
         },
         {
           "path": "Layout",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public"
         }
       ]

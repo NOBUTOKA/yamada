@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2026b",
-  "inputSha256": "811e7fd3952c02fc4110965e85948b4818eddee54cca24e5803df0891e78a388",
+  "inputSha256": "a48050127668c7875e4f412e2cbad7ceb5a979c0bef8fa07beef6d1e6547a216",
   "clusters": [
     {
       "candidateId": "candidate.boxstyling.5d70f413af73",
@@ -4041,10 +4041,12 @@
         "4c312d9c4113011420b9220e08eb139f3a198fb218152be71e4178ae95a0f14f"
       ],
       "memberVariantIds": [
-        "geoaxes"
+        "geoaxes",
+        "polaraxes"
       ],
-      "reuseCount": 1,
+      "reuseCount": 2,
       "documentedCategoryOrders": [
+        9,
         10
       ]
     },
@@ -4159,47 +4161,6 @@
       ]
     },
     {
-      "candidateId": "candidate.position.b7e81f444fcd",
-      "categoryId": "position",
-      "categoryDisplayName": "Position",
-      "sharingScope": "familyScoped",
-      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "b7e81f444fcd2f97f073d2c5c0f9261d7c82d4c65a2b3df2092fd9ebab7df001",
-      "propertyPaths": [
-        "OuterPosition",
-        "InnerPosition",
-        "Position",
-        "TightInset",
-        "PositionConstraint",
-        "Units",
-        "DataAspectRatio",
-        "DataAspectRatioMode",
-        "PlotBoxAspectRatio",
-        "PlotBoxAspectRatioMode",
-        "Layout"
-      ],
-      "propertyCapabilitySha256": [
-        "68ec5f14c85e50ef9c899dc51b06c551d2701a3353545cfff9300f2937a4aa05",
-        "2ddd42489e0f284d88dd2c717587283d30af388d87d3518e5894d39256a4f4b6",
-        "7cba8bb132bee67ae02d7e70b3857cc493be48699956be9e10da8f1052c9c789",
-        "fbc788d93797b33e27ee5710caee989459a1754e42212c0a528ed6ce8d33acc5",
-        "19120b1ff5f2058ad93ec4f9510a687591a8fc97a3fcc7faaad0187113abdafb",
-        "5151f2ebd1f0e066afc7be6592c26cbe29ed8790d2f08ad65fffeaf70c58572c",
-        "63c9b311381bb8a01926069a46dfaf9368dbe89e56b0a1fbf87e7824f79a81cd",
-        "8d0c625454c7a53f97614b7b3fa8e64aa9b7d5876db989d6b84217cea1e41723",
-        "273c333c33a6109989cfbd9425db15868f2027cd57749888598ae2560e07a513",
-        "0e93a4d989aef66d0e2eda94e6b17b7d7bbc6b42e26ca1a650c329fdaeeb2ea0",
-        "4c312d9c4113011420b9220e08eb139f3a198fb218152be71e4178ae95a0f14f"
-      ],
-      "memberVariantIds": [
-        "axes"
-      ],
-      "reuseCount": 1,
-      "documentedCategoryOrders": [
-        9
-      ]
-    },
-    {
       "candidateId": "candidate.position.bcafca50bdf9",
       "categoryId": "position",
       "categoryDisplayName": "Position",
@@ -4255,12 +4216,12 @@
       ]
     },
     {
-      "candidateId": "candidate.position.cd5be95f31a5",
+      "candidateId": "candidate.position.c7f97547dbc1",
       "categoryId": "position",
       "categoryDisplayName": "Position",
       "sharingScope": "familyScoped",
       "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-      "capabilitySha256": "cd5be95f31a50dc182c6bbcbbb14f7a0b2f998a01eaff73bf7cd9d5e4548fdae",
+      "capabilitySha256": "c7f97547dbc14c83e3dacbb1d9d60464572de804bdf4f03d808dae97632f0aed",
       "propertyPaths": [
         "OuterPosition",
         "InnerPosition",
@@ -4268,6 +4229,10 @@
         "TightInset",
         "PositionConstraint",
         "Units",
+        "DataAspectRatio",
+        "DataAspectRatioMode",
+        "PlotBoxAspectRatio",
+        "PlotBoxAspectRatioMode",
         "Layout"
       ],
       "propertyCapabilitySha256": [
@@ -4276,11 +4241,15 @@
         "7cba8bb132bee67ae02d7e70b3857cc493be48699956be9e10da8f1052c9c789",
         "fbc788d93797b33e27ee5710caee989459a1754e42212c0a528ed6ce8d33acc5",
         "19120b1ff5f2058ad93ec4f9510a687591a8fc97a3fcc7faaad0187113abdafb",
-        "5151f2ebd1f0e066afc7be6592c26cbe29ed8790d2f08ad65fffeaf70c58572c",
+        "42b2b2b35b9f8029715b3becdbb7f304ebad28b4e207e74093d24fa7ed7018a0",
+        "63c9b311381bb8a01926069a46dfaf9368dbe89e56b0a1fbf87e7824f79a81cd",
+        "8d0c625454c7a53f97614b7b3fa8e64aa9b7d5876db989d6b84217cea1e41723",
+        "273c333c33a6109989cfbd9425db15868f2027cd57749888598ae2560e07a513",
+        "0e93a4d989aef66d0e2eda94e6b17b7d7bbc6b42e26ca1a650c329fdaeeb2ea0",
         "4c312d9c4113011420b9220e08eb139f3a198fb218152be71e4178ae95a0f14f"
       ],
       "memberVariantIds": [
-        "polaraxes"
+        "axes"
       ],
       "reuseCount": 1,
       "documentedCategoryOrders": [

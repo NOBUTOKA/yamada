@@ -3166,7 +3166,7 @@
       "entries": [
         {
           "path": "OuterPosition",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "OuterPosition",
@@ -3174,7 +3174,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 1,
-            "groupId": "local.polaraxes.position",
+            "groupId": "exact.position.7d3cbb62a1c8",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -3205,7 +3205,7 @@
         },
         {
           "path": "InnerPosition",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "InnerPosition",
@@ -3213,7 +3213,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 2,
-            "groupId": "local.polaraxes.position",
+            "groupId": "exact.position.7d3cbb62a1c8",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -3243,7 +3243,7 @@
         },
         {
           "path": "Position",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Position",
@@ -3251,7 +3251,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 3,
-            "groupId": "local.polaraxes.position",
+            "groupId": "exact.position.7d3cbb62a1c8",
             "editor": "position",
             "previewPolicy": "adapt",
             "gridGeometryImpact": "required",
@@ -3279,7 +3279,7 @@
         },
         {
           "path": "TightInset",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "TightInset",
@@ -3287,7 +3287,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 4,
-            "groupId": "local.polaraxes.position",
+            "groupId": "exact.position.7d3cbb62a1c8",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -3313,7 +3313,7 @@
         },
         {
           "path": "PositionConstraint",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "PositionConstraint",
@@ -3321,7 +3321,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 5,
-            "groupId": "local.polaraxes.position",
+            "groupId": "exact.position.7d3cbb62a1c8",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -3347,7 +3347,7 @@
         },
         {
           "path": "Units",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Units",
@@ -3355,20 +3355,29 @@
             "categoryId": "position",
             "category": "Position",
             "order": 6,
-            "groupId": "local.polaraxes.position",
-            "editor": "readOnly",
-            "previewPolicy": "skip",
-            "gridGeometryImpact": "none",
-            "absoluteGeometryImpact": false,
-            "auditDisposition": "readOnly",
+            "groupId": "exact.position.7d3cbb62a1c8",
+            "editor": "enum",
+            "previewPolicy": "apply",
+            "gridGeometryImpact": "required",
+            "absoluteGeometryImpact": true,
+            "auditDisposition": "editable",
             "valueSchema": {
-              "kind": "opaque",
+              "kind": "enum",
               "matlabClasses": [
-                "unknown"
+                "char",
+                "string"
               ],
-              "shape": "any",
+              "shape": "scalar",
               "allowsEmpty": false,
-              "constraints": []
+              "constraints": [],
+              "values": [
+                "normalized",
+                "inches",
+                "centimeters",
+                "points",
+                "pixels",
+                "characters"
+              ]
             },
             "application": {
               "applyAfter": [],
@@ -3382,7 +3391,7 @@
         },
         {
           "path": "Layout",
-          "groupId": "local.polaraxes.position",
+          "groupId": "exact.position.7d3cbb62a1c8",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "Layout",
@@ -3390,7 +3399,7 @@
             "categoryId": "position",
             "category": "Position",
             "order": 7,
-            "groupId": "local.polaraxes.position",
+            "groupId": "exact.position.7d3cbb62a1c8",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
