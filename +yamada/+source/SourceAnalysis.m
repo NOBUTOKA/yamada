@@ -282,10 +282,13 @@ classdef SourceAnalysis < handle
             additions = yamada.source.SourceStatement.empty;
             anchors = []; owners = strings(1, 0); kinds = strings(1, 0); counts = [];
             removed = [];
-            for index = 1:numel(obj.Statements)
-                span = obj.Statements(index).Span;
-                for edit = batch.Edits
-                    if edit.End >= edit.Start && edit.Start <= span.StartOffset && edit.End >= obj.Statements(index).CodeOffsets(end)
+            % Inspect only statements intersecting each actual removal.
+            for edit = batch.Edits
+                if edit.End < edit.Start, continue, end
+                [~, first] = obj.statementNeighbors(edit.Start - 1);
+                for index = first:numel(obj.Statements)
+                    if obj.StatementStarts(index) > edit.End, break, end
+                    if edit.End >= obj.Statements(index).CodeOffsets(end)
                         assert(strlength(edit.Text) == 0, "yamada:SourceAnalysis:StructuralPatch", "Only complete emitted statements may be removed.");
                         removed(end + 1) = index; %#ok<AGROW>
                     end
@@ -315,11 +318,22 @@ classdef SourceAnalysis < handle
                         assert(any(names == owner), "yamada:SourceAnalysis:StructuralPatch", "Emitted statements must belong to inserted components.");
                     else
                         declared = regexp(code, '^([A-Za-z]\w*)\s+[A-Za-z]\w*(?:\.\w+)*$', 'tokens', 'once');
-                        assert(~isempty(declared) && any(names == string(declared{1})), ...
-                            "yamada:SourceAnalysis:StructuralPatch", "Only declared component slots may be inserted.");
+                        if isempty(declared)
+                            [~, owner, tokens, ~, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry.CatalogRoot);
+                            component = document.getComponentByName(owner);
+                            assert(any(names == owner) && ~isempty(component), "yamada:SourceAnalysis:StructuralPatch", ...
+                                "A copied axes call needs an explicit inserted target.");
+                            paths = yamada.catalog.AxesSettingFunctionCatalog.match(forms, component.Factory, tokens, false);
+                            assert(~isempty(paths), "yamada:SourceAnalysis:StructuralPatch", "Unrecognized copied axes call.");
+                            kind = "assignment";
+                        else
+                            assert(any(names == string(declared{1})), ...
+                                "yamada:SourceAnalysis:StructuralPatch", "Only declared component slots may be inserted.");
+                        end
                     end
                     additions(end + 1) = statement; anchors(end + 1) = anchor; %#ok<AGROW>
                     count = 1;
+                    if isempty(match) && kind == "assignment", count = numel(paths); end
                     if kind == "creation"
                         component = document.getComponentByName(owner);
                         definition = registry.sourceDefinition(component);

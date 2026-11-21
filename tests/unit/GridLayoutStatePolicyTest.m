@@ -460,17 +460,17 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyEmpty(first.getProperty("Layout.Row"));
         end
 
-        function copyFreezesImplicitPlacementsAndPaddedTracks(testCase)
-            % copyFreezesImplicitPlacementsAndPaddedTracks Reproduce effective layout without changing the original occurrences.
+        function copyRetainsImplicitPlacementsAndPaddedTracks(testCase)
+            % copyRetainsImplicitPlacementsAndPaddedTracks Retain the source inputs that produced the effective grid layout.
             body = ["app.Grid = uigridlayout(app.UIFigure, RowHeight={100}, ColumnWidth={100});", ...
                 "app.First = uibutton(app.Grid);", "app.Second = uibutton(app.Grid);"];
             [document, registry, grid] = testCase.fixture(body);
             before = grid.settingSnapshot();
             snapshot = document.copySubtree(grid.Id, registry);
-            configuration = snapshot.CopyConfiguration;
-            first = configuration(string({configuration.ComponentId}) == "parsed-First");
-            testCase.verifyEqual(first.Properties(string({first.Properties.Path}) == "Layout.Row").LiteralValue, 1);
             copied = document.pasteSubtree(snapshot, document.RootComponentId, registry);
+            child = document.getComponent(copied.Children(1));
+            testCase.verifyEmpty(child.getSettings("Layout.Row"));
+            testCase.verifyEqual(testCase.state(document, registry, child, "Layout.Row").EffectiveValue, 1);
             testCase.verifyEqual(testCase.state(document, registry, copied, "RowHeight").EffectiveValue, {100, "1x"});
             testCase.verifyEqual(SourceAssertions.retained(grid.settingSnapshot(), before), SourceAssertions.semantics(before));
             testCase.verifyEqual(document.HistoryIndex, 1);
@@ -488,11 +488,11 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             document.applyGridLayoutEdit(grid.Id, changes, registry);
             before = grid.settingSnapshot();
             snapshot = document.copySubtree(grid.Id, registry);
-            configuration = snapshot.CopyConfiguration;
-            copiedGrid = configuration(string({configuration.ComponentId}) == grid.Id);
-            copiedChild = configuration(string({configuration.ComponentId}) == first.Id);
-            testCase.verifyEqual(copiedGrid.Properties(string({copiedGrid.Properties.Path}) == "RowHeight").LiteralValue, {50, 60});
-            testCase.verifyEqual(copiedChild.Properties(string({copiedChild.Properties.Path}) == "Layout.Row").LiteralValue, 2);
+            copiedGrid = document.pasteSubtree(snapshot, document.RootComponentId, registry);
+            copiedChild = document.getComponentByName(first.Name + "Copy");
+            testCase.verifyEqual(testCase.state(document, registry, copiedGrid, "RowHeight").EffectiveValue, {50, 60});
+            testCase.verifyEqual(testCase.state(document, registry, copiedChild, "Layout.Row").EffectiveValue, 2);
+            document.undo();
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
             [handles, diagnostics] = yamada.ui.PreviewRenderer(registry).render(document, figure);

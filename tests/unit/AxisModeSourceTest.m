@@ -33,6 +33,20 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
         end
 
+        function copyRetargetsRecognizedAxesCalls(testCase)
+            % copyRetargetsRecognizedAxesCalls Keep a recognized call with its copied component.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "xlabel(app.Control, 'original');"]);
+            copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
+            testCase.verifySubstring(document.CurrentText, "xlabel(app." + copy.Name + ", 'original');");
+            testCase.verifyEqual(copy.getSettings("XLabel.String").LiteralValue, 'original');
+            source = document.CurrentText;
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, document.OriginalText);
+            document.redo();
+            testCase.verifyEqual(document.CurrentText, source);
+        end
+
         function selectsAxesCallFormsFromRegistryRelease(testCase)
             % selectsAxesCallFormsFromRegistryRelease Retain newer calls on older catalog surfaces.
             [fixtureDocument, registry] = testCase.fixture([ ...
@@ -396,7 +410,8 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             checkpoint = yamada.model.SavedSourceCheckpoint(document, source, "AxisModeFixture.m", registry);
             document.confirmSavedSource(checkpoint, registry);
             copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
-            testCase.verifyEqual(copy.getProperty("MinorGridLineWidth").LiteralValue, 6);
+            states = document.getEffectivePropertyStates(registry, copy.Id);
+            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 6);
             testCase.verifyEqual([control.Settings.Id], arrayfun(@(record) record.Location.Id, original));
             testCase.verifyEqual(control.getSettings("GridLineWidth").LiteralValue, 6);
             testCase.verifyEqual(control.getSettings("MinorGridLineWidth").LiteralValue, 3);
@@ -422,7 +437,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             [document, registry, control] = testCase.fixture( ...
                 "app.Control = uiaxes(app.UIFigure, Units='pixels', Position=[10 20 200 100], GridLineWidth=4, MinorGridLineWidthMode='manual');");
             copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
-            testCase.verifyEqual(copy.getProperty("MinorGridLineWidth").LiteralValue, 0.5);
+            testCase.verifyEmpty(copy.getProperty("MinorGridLineWidth"));
             states = document.getEffectivePropertyStates(registry, copy.Id);
             testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 0.5);
             testCase.verifyEqual(string(testCase.state(states, "MinorGridLineWidthMode").EffectiveValue), "manual");

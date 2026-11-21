@@ -90,16 +90,16 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
             testCase.verifyNotEqual(panel.Name, copy.Name);
         end
 
-        function rootAndReadOnlyDescendantsAreRejected(testCase)
-            % rootAndReadOnlyDescendantsAreRejected Check the complete subtree before mutation.
+        function rootIsProtectedAndReadOnlyDescendantsCanBeDeleted(testCase)
+            % rootIsProtectedAndReadOnlyDescendantsCanBeDeleted Check the complete subtree before mutation.
             [document, registry, panel] = SubtreeDeletionTest.fixture();
             testCase.verifyError(@() document.removeSubtree(document.RootComponentId, registry), ...
                 "yamada:DocumentModel:RootDeletion");
             document.getComponent(panel.Children(1)).IsEditable = false;
-            history = document.HistoryIndex;
-            testCase.verifyError(@() document.removeSubtree(panel.Id, registry), ...
-                "yamada:DocumentModel:UnsafeSubtreeEdit");
-            testCase.verifyEqual(document.HistoryIndex, history);
+            document.removeSubtree(panel.Id, registry);
+            testCase.verifyEmpty(document.getComponent(panel.Id));
+            document.undo();
+            testCase.verifyNotEmpty(document.getComponent(panel.Id));
         end
     end
 

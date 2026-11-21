@@ -1002,7 +1002,7 @@ classdef DocumentModel < handle
             edits = yamada.source.RoundTripGenerator(registry).componentInsertionEdits(candidate, component);
             batch = yamada.source.SourcePatchBatch(base.CurrentText, edits);
             [candidate, state] = base.prepareComponentPublication(candidate, batch, component.Name, registry, "", obj);
-            frozen = yamada.model.SubtreeSnapshot(candidate, component.Id);
+            frozen = yamada.model.SubtreeSnapshot(candidate, component.Id, false);
             inserted = frozen.materialize(); component = inserted(1);
             before = obj.CurrentSource; beforeChildren = parent.Children;
             obj.addComponentAt(component, parentId, numel(obj.Components) + 1);
@@ -1969,18 +1969,9 @@ classdef DocumentModel < handle
             if id == obj.RootComponentId
                 error("yamada:DocumentModel:RootDeletion", "The root component cannot be deleted.");
             end
-            snapshot = yamada.model.SubtreeSnapshot(obj, id);
+            snapshot = yamada.model.SubtreeSnapshot(obj, id, false);
             ids = string({snapshot.Records.Id});
             removed = obj.Components(ismember(string({obj.Components.Id}), ids));
-            for component = removed
-                if ~component.IsEditable && ~component.isReleaseUnavailable()
-                    error("yamada:DocumentModel:UnsafeSubtreeEdit", "The subtree contains a read-only component.");
-                end
-                callbacks = yamada.source.CallbackSourceAnalyzer.analyze(obj, component.Id, registry, false, true);
-                if any(string({callbacks.State}) ~= "absent")
-                    error("yamada:DocumentModel:UnsafeSubtreeEdit", "Callback ownership prevents complete subtree deletion.");
-                end
-            end
             % Repair the surviving parent's owned child references in the same history entry.
             root = obj.getComponent(id); parent = obj.getComponent(root.ParentId);
             before = obj.CurrentSource;
@@ -2137,7 +2128,7 @@ classdef DocumentModel < handle
         end
 
         function snapshot = copySubtree(obj, id, registry)
-            % copySubtree Freeze supported subtree configuration while leaving callbacks on the original.
+            % copySubtree Freeze the owned source and component values for independent pastes.
             arguments (Input)
                 obj (1, 1) yamada.model.DocumentModel
                 id (1, 1) string
@@ -2149,65 +2140,48 @@ classdef DocumentModel < handle
             if id == obj.RootComponentId
                 error("yamada:DocumentModel:UnsafeSubtreeCopy", "The document root cannot be copied.");
             end
-            snapshot = yamada.model.SubtreeSnapshot(obj, id);
-            if any(arrayfun(@(record) isfield(record.Metadata, "UnavailableRelease"), snapshot.Records))
-                if ~obj.currentModelIsBound()
-                    error("yamada:DocumentModel:UnsafeSubtreeCopy", "The subtree requires a bound source snapshot.");
-                end
-                catalog = yamada.model.SubtreeCopyPlanner.sourceCatalog(snapshot, registry);
-                snapshot = yamada.model.SubtreeCopyPlanner.prepareUnavailable(obj, snapshot, catalog);
-                return
-            end
-            analysis = obj.sourceAnalysis();
-            direct = false(1, 0);
-            if any(arrayfun(@yamada.model.SourceOwnership.hasSource, snapshot.Records)), [direct, ~] = analysis.directInitializationScope(); end
-            for record = snapshot.Records
-                if ~record.IsEditable
-                    error("yamada:DocumentModel:UnsafeSubtreeCopy", "A subtree component is read-only.");
-                end
-                definition = registry.get(record.Factory, record.CreationArguments);
-                if definition.IsProgrammaticOnly || definition.Category == "FigureTools"
-                    error("yamada:DocumentModel:UnsafeSubtreeCopy", "This construction family is not supported for copying.");
-                end
-                callbackPaths = yamada.model.SubtreeCopyPlanner.callbackPaths(obj, record.Id, registry);
-                for property = record.Properties
-                    if any(callbackPaths == property.Path), continue, end
-                    if property.ValueKind == "expression"
-                        try
-                            owner = obj.getComponent(record.Id);
-                            if isfield(property.Metadata, "SubtreeReferenceId")
-                                target = obj.getComponent(string(property.Metadata.SubtreeReferenceId));
-                                if isempty(target), error("yamada:DocumentModel:UnsafeSubtreeCopy", "Reference target is missing."); end
-                                yamada.model.SubtreeReferencePolicy.validate(obj, owner, property.Path, target, registry);
-                                targetId = target.Id;
-                            else
-                                targetId = yamada.model.SubtreeReferencePolicy.resolve(obj, owner, property.Path, property.SourceExpression, registry);
-                            end
-                            metadata = property.Metadata;
-                            metadata.SubtreeReferenceId = targetId;
-                            snapshot = snapshot.withPropertyMetadata(record.Id, property.Path, metadata);
-                        catch exception
-                            error("yamada:DocumentModel:UnsafeSubtreeCopy", "%s", string(exception.message));
+            snapshot = yamada.model.SubtreeSnapshot(obj, id, false);
+            if ~isempty(obj.CurrentSource) && isempty(obj.PendingEdits) && ...
+                    isempty(obj.CallbackEdits) && isempty(obj.RenameEdits)
+                bound = true;
+                for record = snapshot.Records
+                    current = obj.getComponent(record.Id).Settings;
+                    if isempty(record.SourceSpans.Creation) || any(string({current.Method}) == "generated")
+                        bound = false;
+                        break
+                    end
+                    for entry = record.Properties
+                        if ~isfield(entry.Metadata, "SourceSettingId"), bound = false; break, end
+                        settings = current([current.Id] == entry.Metadata.SourceSettingId);
+                        if isscalar(settings) && settings.IsEditable && ...
+                                (settings.ValueKind ~= entry.ValueKind || ~isequaln(settings.LiteralValue, entry.LiteralValue) || ...
+                                 settings.SourceExpression ~= entry.SourceExpression)
+                            bound = false;
+                            break
                         end
-                        continue
                     end
-                    if property.ValueKind ~= "literal" || ...
-                            registry.isReadOnlyProperty(record.Factory, property.Path, record.CreationArguments)
-                        error("yamada:DocumentModel:UnsafeSubtreeCopy", "A property cannot be copied without losing source behavior.");
-                    end
-                    yamada.source.LiteralEncoder.encode(property.LiteralValue);
+                    if ~bound, break, end
                 end
-                if yamada.model.SourceOwnership.hasSource(record)
-                    if isempty(record.SourceSpans.Creation) || ~record.SourceSpans.Creation.isKnown() || ...
-                            isempty(record.SourceSpans.Declaration) || ~record.SourceSpans.Declaration.isKnown()
-                        error("yamada:DocumentModel:UnsafeSubtreeCopy", "Creation or declaration ownership is missing.");
+                if bound
+                    root = obj.getComponent(id);
+                    parent = obj.getComponent(root.ParentId);
+                    position = [];
+                    if parent.Factory ~= "uigridlayout" && ~root.isReleaseUnavailable()
+                        states = obj.getEffectivePropertyStates(registry, id);
+                        state = states(arrayfun(@(item) item.Definition.Path == "Position", states));
+                        if isscalar(state) && state.Resolution.IsKnown, position = state.Resolution.EffectiveValue; end
                     end
-                    span = record.SourceSpans.Creation;
-                    matches = analysis.statementIndices(span);
-                    if numel(matches) ~= 1 || ~direct(matches)
-                        error("yamada:DocumentModel:UnsafeSubtreeCopy", "Component creation ownership is ambiguous.");
+                    snapshot = snapshot.withSourceFragments( ...
+                        yamada.source.SubtreeSourceEdits.capture(obj, snapshot), parent.Factory, position);
+                    return
+                end
+            end
+            % Programmatic model builders may still stage values without source spans.
+            for record = snapshot.Records
+                for entry = record.Properties
+                    if entry.ValueKind == "expression" && ~isfield(entry.Metadata, "SubtreeReferenceId")
+                        error("yamada:DocumentModel:UnsafeSubtreeCopy", "An unbound expression has no source fragment to copy.");
                     end
-                    yamada.model.SubtreeCopyPlanner.validateConstructor(obj, record, registry, callbackPaths);
                 end
             end
             snapshot = snapshot.withCopyConfiguration(yamada.model.SubtreeCopyPlanner.prepare(obj, snapshot, registry));
@@ -2230,10 +2204,11 @@ classdef DocumentModel < handle
             obj.ensureCurrentSource(registry);
             [base, staged] = obj.prepareStagedLiterals(registry);
             configuration = snapshot.CopyConfiguration;
-            if isempty(configuration)
+            sourceBacked = ~isempty(snapshot.SourceFragments);
+            if isempty(configuration) && ~sourceBacked
                 configuration = yamada.model.SubtreeCopyPlanner.prepare(obj, snapshot, registry);
             end
-            snapshot = snapshot.withCopyConfiguration(configuration);
+            if ~sourceBacked, snapshot = snapshot.withCopyConfiguration(configuration); end
             catalog = yamada.model.SubtreeCopyPlanner.sourceCatalog(snapshot, registry);
             plan = yamada.model.SubtreePlacementPlanner.prepare(base, snapshot, parentId, registry, ...
                 strings(1, 0), measuredPosition, offset);
@@ -2250,14 +2225,15 @@ classdef DocumentModel < handle
                 if ~preserveNames, usedNames = [usedNames string({mappings.NewName})]; end
             end
             % Reserve identifiers in the effective source after pending deletions.
-            namingSource = base.CurrentText;
+            naming = base.sourceAnalysis().nameIndex();
+            usedNames = [usedNames, naming.Members(:)'];
             if preserveNames
-                namingSource = base.CurrentText;
-                sourceMembers = yamada.source.ComponentNameRewriter.memberNames(namingSource);
-                sourceReferences = string(regexp(yamada.source.ComponentNameRewriter.codeMask(namingSource), ...
-                    '(?<=app\.)[A-Za-z]\w*', 'match'));
-                usedNames = [usedNames, sourceMembers(:)', sourceReferences(:)'];
+                pattern = '(?<=app\.)[A-Za-z]\w*';
+            else
+                pattern = '\w+';
             end
+            existingIdentifiers = string(regexp(naming.Code, pattern, 'match'));
+            usedNames = [usedNames, unique(existingIdentifiers(:)')];
             usedIds = string({obj.Components.Id});
             for index = 1:numel(oldIds)
                 newIds(index) = obj.newComponentId();
@@ -2267,8 +2243,7 @@ classdef DocumentModel < handle
                 if ~preserveNames, stem = stem + "Copy"; end
                 name = extractBefore(stem, min(strlength(stem), namelengthmax) + 1);
                 suffix = 1;
-                while any(usedNames == name) || (~preserveNames && ...
-                        ~isempty(regexp(namingSource, '(?<!\w)' + name + '(?!\w)', 'once')))
+                while any(usedNames == name)
                     suffix = suffix + 1;
                     suffixText = string(suffix);
                     name = extractBefore(stem, min(strlength(stem), namelengthmax - strlength(suffixText)) + 1) + suffixText;
@@ -2282,10 +2257,17 @@ classdef DocumentModel < handle
             for index = 1:numel(oldIds)
                 record = snapshot.Records(index);
                 fresh = yamada.model.ComponentRecord(newIds(index), newNames(index), record.Factory, record.DeclaredType, "generated");
-                fresh.CreationArguments = configuration(index).CreationArguments;
+                % Source-backed components recover their settings from the inserted statements.
+                if sourceBacked
+                    fresh.CreationArguments = record.CreationArguments;
+                    entries = record.Properties([]);
+                else
+                    fresh.CreationArguments = configuration(index).CreationArguments;
+                    entries = configuration(index).Properties;
+                end
                 fresh.Metadata = record.Metadata;
                 fresh.IsEditable = record.IsEditable;
-                for property = configuration(index).Properties
+                for property = entries
                     if property.ValueKind == "expression" && isfield(property.Metadata, "SubtreeReferenceId")
                         targetId = string(property.Metadata.SubtreeReferenceId);
                         mapped = find(oldIds == targetId, 1);
@@ -2319,18 +2301,24 @@ classdef DocumentModel < handle
             end
             % Emit and recognize only the newly inserted component block.
             obj.ensureCurrentSource(registry);
-            edits = yamada.source.RoundTripGenerator(catalog).componentInsertionEdits(candidate, inserted);
+            fragments = strings(1, 0);
+            if sourceBacked
+                fragments = yamada.source.SubtreeSourceEdits.insertion(snapshot, candidate, newNames, parentId, plan.Changes);
+            end
+            edits = yamada.source.RoundTripGenerator(catalog).componentInsertionEdits(candidate, inserted, fragments);
             batch = yamada.source.SourcePatchBatch(base.CurrentText, edits);
             [candidate, state] = base.prepareComponentPublication(candidate, batch, newNames, registry, "", obj);
-            if catalog ~= registry
-                [verification, diagnostics] = yamada.source.AppSourceParser.parseText(state.Text, catalog, obj.FilePath);
-                if yamada.validation.ModelValidator.hasErrors(diagnostics)
-                    error("yamada:DocumentModel:UnsafeSubtreeEdit", "The pasted source could not be verified with its catalog.");
+            if ~sourceBacked
+                if catalog ~= registry
+                    [verification, diagnostics] = yamada.source.AppSourceParser.parseText(state.Text, catalog, obj.FilePath);
+                    if yamada.validation.ModelValidator.hasErrors(diagnostics)
+                        error("yamada:DocumentModel:UnsafeSubtreeEdit", "The pasted source could not be verified with its catalog.");
+                    end
+                else
+                    verification = candidate;
                 end
-            else
-                verification = candidate;
+                yamada.model.SubtreeCopyPlanner.verify(verification, configuration, inserted, plan.Changes, catalog);
             end
-            yamada.model.SubtreeCopyPlanner.verify(verification, configuration, inserted, plan.Changes, catalog);
             frozen = yamada.model.SubtreeSnapshot(candidate, component.Id);
             inserted = frozen.materialize(); component = inserted(1);
             parent = obj.getComponent(parentId); beforeChildren = parent.Children;
@@ -3192,9 +3180,31 @@ classdef DocumentModel < handle
                 for statement = statements
                     code = statement.Text;
                     if startsWith(code, name + " "), declaration = statement.Span; continue, end
-                    if isempty(regexp(code, '^app\.' + regexptranslate('escape',name) + '(?:\.|\s*=)', 'once')), continue, end
+                    direct = ~isempty(regexp(code, '^app\.' + regexptranslate('escape',name) + '(?:\.|\s*=)', 'once'));
+                    if ~direct
+                        if startsWith(code, "app."), continue, end
+                        [~, target, tokens, spans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry.CatalogRoot);
+                        if target ~= name, continue, end
+                        [paths, values, argumentIndices] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
+                            forms, component.Factory, tokens, false);
+                    end
                     index = analysis.statementIndices(statement.Span); visit = find(execution.Trace.Order == index);
                     assert(isscalar(visit), "yamada:DocumentModel:UnsafeSubtreeEdit", "An emitted statement requires one initialization visit.");
+                    if ~direct
+                        owner = analysis.Layout.Owner(index); scopes = analysis.Layout.Methods;
+                        scope = scopes(string({scopes.Name}) == owner); assert(isscalar(scope));
+                        for effect = 1:numel(paths)
+                            location = struct("Method", "functionCall", "Syntax", "call", ...
+                                "SourceSpan", statement.Span, "ValueSpan", spans(argumentIndices(effect)), ...
+                                "SourceSnapshotId", state.StateId, "Sequence", execution.Assignment(visit) + effect - 1, ...
+                                "IsEditable", false);
+                            setting = yamada.model.PropertySetting(paths(effect), values{effect}, location).withScope(owner, scope.Span);
+                            old = previous(string({previous.Path}) == setting.Path & string({previous.Method}) == setting.Method);
+                            if isscalar(old), setting = setting.withIdentity(old.Id, old.SourceSnapshotId); end
+                            settings(end + 1) = allocator.canonicalizeSettings(setting); %#ok<AGROW>
+                        end
+                        continue
+                    end
                     if ~isempty(regexp(code, '^app\.' + regexptranslate('escape',name) + '\s*=', 'once'))
                         creation = statement.Span;
                         [parentName, arguments, factorySettings, ~, supported] = yamada.source.PropertySettingSyntax.factory(statement, definition, state.StateId);
@@ -3234,10 +3244,18 @@ classdef DocumentModel < handle
                     setting = allocator.canonicalizeSettings(setting);
                     settings(end + 1) = setting; %#ok<AGROW>
                 end
-                assert(~isempty(declaration) && ~isempty(creation), ...
-                    "yamada:DocumentModel:UnsafeSubtreeEdit", "Every inserted component needs its declaration and factory.");
+                restoringUndeclared = component.Origin == "parsed" && isempty(component.SourceSpans.Declaration);
+                assert(~isempty(creation) && (~isempty(declaration) || restoringUndeclared), ...
+                    "yamada:DocumentModel:UnsafeSubtreeEdit", "Every new component needs its declaration and factory.");
                 component.SourceSpans = struct("Declaration", declaration, "Creation", creation);
                 component.synchronizeSourceSettings(settings, arguments);
+                % Keep static reference identities on initialized entries for later structural edits.
+                for path = ["SelectedTab", "SelectedObject", "ContextMenu"]
+                    entry = component.getProperty(path);
+                    if isempty(entry) || entry.ValueKind ~= "expression", continue, end
+                    target = yamada.source.SubtreeSourceEdits.referenceTarget(obj, component.Id, path, entry.SourceExpression);
+                    if ~isempty(target), entry.Metadata.SubtreeReferenceId = target.Id; end
+                end
             end
         end
 

@@ -282,7 +282,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(string(paste.Enable), "off");
             testCase.verifyEqual(numel(app.Document.Components), 1);
             status = findall(figure, "Tag", "yamada-status");
-            testCase.verifySubstring(string(status.Tooltip), "The document root cannot be copied.");
+            testCase.verifySubstring(string(status.Tooltip), "The document root cannot be removed.");
         end
     end
 
@@ -347,7 +347,8 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyNotEqual(pastedId, panelId);
             testCase.verifyEqual(pasted.ParentId, rootId);
             testCase.verifyEqual(numel(pasted.Children), 1);
-            testCase.verifyEmpty(pasted.getProperty("SizeChangedFcn"));
+            testCase.verifyEqual(pasted.getProperty("SizeChangedFcn").SourceExpression, ...
+                app.Document.getComponent(panelId).getProperty("SizeChangedFcn").SourceExpression);
             testCase.verifyEmpty(app.Document.CallbackEdits);
             testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
             testCase.invoke(figure, "Cut", route, pastedId);

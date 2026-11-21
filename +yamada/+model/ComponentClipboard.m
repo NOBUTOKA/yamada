@@ -70,7 +70,7 @@ classdef ComponentClipboard < handle
         end
 
         function state = availability(obj, action, document, id, registry)
-            % availability Inspect command conditions without copying, deleting or pasting a candidate.
+            % availability Check selection and clipboard contents without resolving a destination.
             arguments (Input)
                 obj (1, 1) yamada.model.ComponentClipboard
                 action (1, 1) string {mustBeMember(action, ["Copy", "Cut", "Paste"])}
@@ -81,12 +81,9 @@ classdef ComponentClipboard < handle
             arguments (Output)
                 state (1, 1) struct
             end
-            state = struct("Enabled", false, "Reason", "", "ParentId", "");
+            state = struct("Enabled", false, "Reason", "");
             if any(action == ["Copy", "Cut"])
                 result = yamada.model.DocumentEditAvailability.copying(document, id, registry);
-                if result.Enabled && action == "Cut"
-                    result = yamada.model.DocumentEditAvailability.deletion(document, id, registry);
-                end
                 state.Enabled = result.Enabled;
                 state.Reason = result.Reason;
                 return
@@ -95,15 +92,8 @@ classdef ComponentClipboard < handle
                 state.Reason = "No subtree is available for this document.";
                 return
             end
-            try
-                state.ParentId = obj.destination(document, id, registry);
-                result = yamada.model.DocumentEditAvailability.pasting(document, obj.Snapshot, state.ParentId, ...
-                    registry, obj.MeasuredPosition, [10 10] * (obj.PasteCount + 1));
-                state.Enabled = result.Enabled;
-                state.Reason = result.Reason;
-            catch exception
-                state.Reason = string(exception.message);
-            end
+            state.Enabled = ~isempty(document.getComponent(id));
+            if ~state.Enabled, state.Reason = "No component is selected."; end
         end
 
         function parentId = destination(obj, document, targetId, registry)

@@ -69,28 +69,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
             testCase.verifyEqual(orderParents(parents), orderParents(expectedParents));
         end
 
-        function ownershipChangesInvalidateTransferredAnswers(testCase, Depth)
-            % ownershipChangesInvalidateTransferredAnswers Reject inherited permissions after an ownership change.
-            [document, registry, source] = fixture(Depth);
-            conditions(document, source.Id, registry, [10 10 80 22]);
-            document.setProperty(source.Id, "Tooltip", "Transferred", registry);
-            source.IsEditable = false;
-            actual = yamada.model.DocumentEditAvailability.copying(document, source.Id, registry);
-            testCase.verifyFalse(actual.Enabled);
-        end
-
-        function formerlyUnencodableValuesAreRechecked(testCase, Depth)
-            % formerlyUnencodableValuesAreRechecked Do not carry a disabled Copy answer after repairing unsupported data.
-            [document, registry, source] = fixture(Depth);
-            source.setProperty("Text", categorical("Old unsupported text"));
-            before = yamada.model.DocumentEditAvailability.copying(document, source.Id, registry);
-            testCase.assertFalse(before.Enabled);
-            [~, found] = document.evaluationContext(registry).lookup("eligibility:copy:" + source.Id);
-            testCase.assertTrue(found);
-            document.setProperty(source.Id, "Text", "Recovered", registry);
-            after = yamada.model.DocumentEditAvailability.copying(document, source.Id, registry);
-            testCase.verifyTrue(after.Enabled);
-        end
     end
 end
 

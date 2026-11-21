@@ -149,7 +149,7 @@ Model mutators implement insertion, subtree deletion and reparenting, Copy/Paste
 
 **Conditions to preserve**
 
-- Deletion, reparenting, Cut, and Paste share complete-subtree validation, placement planning, detached source preflight, and atomic history. The transaction prepares identities, names, parent/child order, placement, references, and owned source edits before mutating the live document.
+- Structural edits prepare owned source patches and history before mutating the live document. Paste and reparenting plan placement against the live destination. Delete and Cut obtain removal ranges from existing bindings and repair owned direct-parent selection in the same transaction.
 - The detached transaction candidate must not share mutable component handles with the live document. Only a successful preflight permits one history record, clipboard publication, and selection/view changes; failure preserves document state, diagnostics, generated source, history, clipboard, and selection.
 - Actual commands revalidate the current document even when availability results were previously computed.
 
@@ -181,7 +181,7 @@ Shared boundaries: [Shared Document Model](#shared-document-model) and [Source p
 
 `ComponentClipboard` retains the prepared document-scoped snapshot. Document history restores the edited subtree independently of that snapshot, so Undo does not consume or rewind clipboard contents.
 
-The clipboard snapshot retains effective configuration and internal hierarchy as values. Paste allocates new names, identities, and source ranges, remaps internal references, and plans the root's placement against the live destination. Command availability can reuse facts for the current document and catalog revision, while the destination and its occupancy belong to the current paste request.
+The clipboard snapshot retains independent component records and owned initialization fragments in execution order. Each fragment carries relative ranges for tokens that Paste may rewrite. Copy, Cut, and Delete use the same non-root selection rule. Paste checks clipboard ownership and selection for availability, then resolves destination, occupancy, and name allocation when invoked. Descendants retain their internal parent context and original settings.
 
 Deletion removes owned declaration and initialization spans. The catalog projects a per-property direct-child reference flag from the ledger and aggregates it on the component definition. At commit, an owned selection in the surviving direct parent is retargeted or removed with the subtree in one history entry. User-written logic and unrecognized initializer references remain the source author's responsibility.
 
@@ -209,13 +209,12 @@ If the whole-root capture cannot be proved, the planner uses the previous destin
 **Conditions to preserve**
 
 - Static `SelectedTab` is limited to a direct child Tab; static `ContextMenu` remains bound to a valid same-document target. Internal copied references map to fresh identities, and external references retain their targets.
-- `SubtreeCopyPlanner` excludes effective catalog callback properties from copied configuration and constructor arguments while retaining original snapshot records, bindings, pending callback edits, and handler bodies. Copy does not require editable callback ownership and never duplicates handlers.
-- Other unsupported expressions, handle payloads, and unknown effective configuration still block Copy. Callback bindings and unsafe incoming references continue to block Delete/Cut.
+- Source-backed Copy and Cut retain callback registrations, constructor arguments, and opaque settings with the component's owned statements. Paste reuses existing callback methods. It allocates fresh setting identities when binding the inserted fragments. Delete and Cut remove the owned registration with the component and leave the existing handler method in place.
 - Reparenting may preserve owned callback source; pending callback edits on a parsed relocation target require Save + Reload Source or Undo before relocation. Arbitrary reference rewriting remains outside this boundary.
 
 **Explanation**
 
-Reference analysis distinguishes internal references, outgoing external references, and incoming references from outside the subtree. Copy-only value resolution excludes effective catalog callback definitions while retaining source-execution guards for construction effects.
+Reference analysis distinguishes internal, outgoing external, and incoming references. Source-backed Paste rewrites recognized references using clipboard identities. Unknown expressions remain source text and Safe Preview does not evaluate them.
 
 #### Subtree command dispatch
 
@@ -380,11 +379,11 @@ A runtime catalog can use the bundled surface catalog to identify a source varia
 
 **Conditions to preserve**
 
-- Pasting an unavailable component verifies the emitted configuration against the bundled source catalog before publication and retains the runtime catalog for the live model and Preview. Cut replaces the clipboard only after both the source-catalog copy proof and source-owned deletion succeed.
+- Pasting an unavailable component uses the bundled source catalog for destination compatibility and source binding. The live model and Preview retain the runtime catalog. Cut replaces the clipboard after the source-owned deletion succeeds.
 
 **Explanation**
 
-Copying a subtree with an unavailable component resolves its configuration against the bundled source catalog in a detached source model, excluding callback bindings through the usual clipboard policy.
+Copying a subtree with an unavailable component reads the same owned source spans and preserves its source-catalog identity.
 
 #### Source release inference
 
@@ -481,7 +480,7 @@ New subtree creation shares an execution-order anchor with grid event replay.
 - `PropertyStateResolver` keeps original explicit values, replacement requests, and effective values separate.
 - For new initialization, the canonical application graph applies an explicitly requested final mode after its corresponding value, while parsed settings retain their original order and token ownership. Copy retains audited automatic-mode inputs and their mode without claiming a computed getter value. The `valueMode` rule is not generalized to color modes, coupled aspect ratios, grid-width followers, or unreviewed geographic behavior.
 - Held defaults carry their determining mode occurrence without becoming explicit source writes. The insertion planner preserves existing manual hold points before new upstream assignments and validated constructor additions.
-- Copy omits implicit automatic width setters that would otherwise select manual mode, and checks the derived getters after reparsing. A manually held constructor default is materialized in the copied configuration before emitting assignments. The source snapshot retains its original history and getter inputs.
+- Source-backed Paste retains the order of explicit width and mode setters. The copied component derives implicit width values from its retained source inputs.
 
 **Explanation**
 
@@ -731,7 +730,7 @@ Preview geometry may change after an initial Open or Tab switch. The editor publ
 
 **Explanation**
 
-`PropertyCheckpoint` and its second editable source model have been removed. `PropertySetting` stores the current explicit source value and stable occurrence/statement/scope IDs; `PropertyEntry` projects that setting and resolver results supply effective values. `Origin` records provenance, while `SourceOwnership` tests actual current factory ownership. Copy reuses the current source analysis, direct-initializer proof and indexed statement ranges for its subtree ownership checks.
+`PropertyCheckpoint` and its second editable source model have been removed. `PropertySetting` stores the current explicit source value and stable occurrence/statement/scope IDs; `PropertyEntry` projects that setting and resolver results supply effective values. `Origin` records provenance, while `SourceOwnership` tests actual current factory ownership. Copy reuses current indexed statement ranges to capture the selected subtree’s owned initializer fragments.
 
 Preview invalidation distinguishes current source-coordinate changes from visual model changes.
 
@@ -1013,7 +1012,7 @@ Parent relocation compiles final root placement into the moved initialization bl
 
 Loading source records class member names and inert code/help masks in `SourceAnalysis`. Literal patches project these masks without interpreting the unchanged body. Current settings, scopes, source expressions, opaque regions and positions are projected through the primary token patches; unchanged literal values and execution events retain their validation. Invalid names are rejected before publication and use the existing red rename field and explanatory Tooltip.
 
-Paste uses the existing component emission policies for declarations, factory arguments, dependency-ordered assignments, deferred selection and supported subtree references. Only the emitted fragments are lexed and their factory/assignment tokens bound. The existing method layout, initialization trace, execution sequence and source-position indexes are spliced and projected; unaffected application statements are not parsed again.
+Source-backed Paste emits new declarations and the copied initializer fragments in execution order. It rewrites only bound owner, parent, recognized reference and placement tokens. The inserted fragments are lexed and rebound locally. The existing method layout, initialization trace, execution sequence and source-position indexes are spliced and projected.
 
 Paste history retains the primary forward/inverse source patches, an independent subtree value snapshot, and the detached live component handles needed to restore handle identity. Rename history retains primary identifier patches and semantic name mappings.
 

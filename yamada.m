@@ -758,7 +758,7 @@ classdef yamada < handle
             arguments (Output)
                 state (1, 1) struct
             end
-            state = struct("Enabled", false, "Reason", "No component is available.", "ParentId", "");
+            state = struct("Enabled", false, "Reason", "No component is available.");
             if action == "Add Colorbar"
                 state = struct("Enabled",false,"Reason","Select an editable axes without a ColorBar.");
                 if isempty(app.Document) || app.HierarchyRenameId ~= "" || app.IsReloading, return, end
@@ -1148,18 +1148,9 @@ classdef yamada < handle
                 app.ClipboardMenuItems(index).UserData = state;
                 descriptions(index) = actions(index) + ": " + state.Reason;
                 if state.Enabled, descriptions(index) = actions(index) + ": available"; end
-                if state.Enabled && actions(index) == "Paste"
-                    target = app.Document.getComponent(state.ParentId);
-                    descriptions(index) = "Paste into " + target.Name;
-                end
             end
             app.StatusLabel.Tooltip = strjoin(descriptions, newline);
-            canDelete = ~isempty(component) && component.Id ~= app.Document.RootComponentId && ...
-                (component.IsEditable || component.isReleaseUnavailable());
-            if canDelete
-                deletion = yamada.model.DocumentEditAvailability.deletion(app.Document, component.Id, app.Registry);
-                canDelete = deletion.Enabled;
-            end
+            canDelete = ~isempty(component) && component.Id ~= app.Document.RootComponentId;
             app.DeleteMenuItem.Enable = "off";
             if canDelete
                 app.DeleteMenuItem.Enable = "on";
