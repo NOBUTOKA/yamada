@@ -355,7 +355,14 @@ classdef PropertyInsertionPlanner
                         if any(prerequisites == constructor(argument).Path) || ...
                                 any([protectors.Id] == constructor(argument).Id), lower = argument; end
                     end
-                    for slot = lower:numel(constructor)
+                    % Prefer slots before existing constructor dependents, then the later slots.
+                    dependents = paths(reaches(paths == entry.Path, :));
+                    upper = numel(constructor);
+                    for argument = numel(constructor):-1:1
+                        if any(dependents == constructor(argument).Path), upper = argument - 1; end
+                    end
+                    upper = max(upper, lower);
+                    for slot = [lower:upper, upper + 1:numel(constructor)]
                         before = yamada.model.PropertySetting.empty;
                         if slot < numel(constructor), before = constructor(slot + 1); end
                         edit = yamada.source.FactoryCallEditor.insert(source, statements(creation), entry, constructor(1), before);
@@ -394,7 +401,18 @@ classdef PropertyInsertionPlanner
                 end
                 upper = boundary(find(boundary > lower, 1));
                 if isempty(upper), upper = inf; end
-                for anchor = anchors
+                % Prefer slots before existing dependents; later valid slots remain fallbacks.
+                dependents = paths(reaches(paths == entry.Path, :));
+                preferred = inf;
+                for setting = sourceSettings
+                    if any(dependents == setting.Path)
+                        visits = find(arrayfun(@(statement) statement.Span.StartOffset, statements(order)) == ...
+                            setting.SourceSpan.StartOffset);
+                        if ~isempty(visits), preferred = min(preferred, min(visits)); end
+                    end
+                end
+                early = [anchors.Visit] < preferred;
+                for anchor = [anchors(early) anchors(~early)]
                     if anchor.Visit < lower || anchor.Visit >= upper, continue, end
                     text = yamada.source.PropertyInsertionPlanner.assignment(source, document, name, entry, anchor);
                     edit = struct("Start", anchor.Offset + 1, "End", anchor.Offset, "Text", text);
