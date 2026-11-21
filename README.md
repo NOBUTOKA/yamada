@@ -99,6 +99,8 @@ Select a component in **Hierarchy** or on the canvas, then use **Edit > Copy / C
 - Pasted components receive names that do not conflict with existing components. You can paste the same copy more than once.
 - **Copy** and **Cut** carry the component’s callback connections. Pasted components use the existing callback methods. **Delete** removes the component and its connections while keeping the methods. Components with a read-only Inspector can also be copied, cut, or deleted.
 
+Existing menus and context menus are kept in the source and are hidden from **Hierarchy**.
+
 The component clipboard works within the current document only. Switching documents or successfully reloading the current one clears it. Shortcuts inside text fields keep their normal text-editing behavior.
 
 ### Move components into another container

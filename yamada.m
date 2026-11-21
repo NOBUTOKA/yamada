@@ -1242,7 +1242,8 @@ classdef yamada < handle
             if isempty(app.Document) || strlength(app.Document.RootComponentId) == 0
                 return
             end
-            app.addHierarchyNode([], app.Document.RootComponentId);
+            root = app.Document.getComponent(app.Document.RootComponentId);
+            app.addHierarchyNode([], root);
             app.synchronizeHierarchySelection();
         end
 
@@ -1356,27 +1357,28 @@ classdef yamada < handle
             app.completePreviewUpdate(false);
         end
 
-        function node = addHierarchyNode(app, parentNode, componentId)
+        function node = addHierarchyNode(app, parentNode, component)
             % addHierarchyNode Add a component and its descendants to the tree.
             arguments (Input)
                 app (1, 1) yamada
                 parentNode
-                componentId string
+                component (1, 1) yamada.model.ComponentRecord
             end
             arguments (Output)
                 node matlab.ui.container.TreeNode
             end
 
-            % Resolve the record before exposing its name in an editor control.
-            component = app.Document.getComponent(componentId);
             label = component.Name + " (" + component.Factory + ")";
             if isempty(parentNode)
                 node = uitreenode(app.HierarchyTree, "Text", label, "NodeData", component.Id);
             else
                 node = uitreenode(parentNode, "Text", label, "NodeData", component.Id);
             end
-            for index = 1:numel(component.Children)
-                app.addHierarchyNode(node, component.Children(index));
+            % Menu branches are reserved for the dedicated menu editor.
+            for childId = component.Children
+                child = app.Document.getComponent(childId);
+                if any(child.Factory == ["uimenu", "uicontextmenu"]), continue, end
+                app.addHierarchyNode(node, child);
             end
         end
 

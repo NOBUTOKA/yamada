@@ -7,6 +7,29 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
     end
 
     methods (Test)
+        function hierarchyOmitsMenuBranchesButRetainsSource(testCase)
+            % hierarchyOmitsMenuBranchesButRetainsSource Keep both kinds of menu and their children out of Hierarchy.
+            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "FigureToolsApp.m");
+            lifecycle = yamada.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, path)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() delete(app)); %#ok<NASGU>
+
+            % Open the fixture through the editor and read its visible tree.
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
+            menus = findall(figure, "Type", "uimenu");
+            open = menus(erase(string({menus.Text}), "&") == "Open...");
+            open.MenuSelectedFcn(open, []);
+            nodes = findall(figure, "Type", "uitreenode");
+            visibleIds = string({nodes.NodeData});
+            for name = ["ActionContextMenu", "FileMenu", "ExportMenu", "HelpMenu"]
+                component = app.Document.getComponentByName(name);
+                testCase.assertNotEmpty(component);
+                testCase.verifyFalse(any(visibleIds == component.Id));
+            end
+            testCase.verifyTrue(any(visibleIds == app.Document.getComponentByName("PreviewLabel").Id));
+            testCase.verifyEqual(app.Document.CurrentText, app.Document.OriginalText);
+        end
+
         function clipboardMenusAcceptUnavailableComponents(testCase)
             % clipboardMenusAcceptUnavailableComponents Exercise newer source components through Edit menus.
 

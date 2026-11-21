@@ -93,6 +93,8 @@ The catalog includes the following persistent MATLAB UI components and creation 
 
 R2026b changes that the catalog does not support yet: R2026b lets radio and toggle buttons be placed directly in containers other than a button group, adds their read-only `Group` property, and introduces `uiselectiongroup`, while `uibuttongroup` becomes not recommended. In every release, yamada accepts `uiradiobutton` and `uitogglebutton` only as children of `uibuttongroup`. A button placed elsewhere is reported as an invalid parent, `uiselectiongroup` is retained as unsupported source and is not previewed, and editing apps that use these R2026b features is outside the supported contract. R2026b also places new radio and toggle buttons at a different default position.
 
+Menu and context-menu branches are preserved in loaded source and omitted from the component Hierarchy.
+
 Catalog inclusion does not mean that every creation variant supports insertion, Preview, layout, and property editing to the same extent. The parent component, creation variant, or property value may limit available operations. A Tab Group accepts only Tabs as direct children. To place controls within the group, add them to a Tab. Unsupported state remains read-only where possible and is reported through diagnostics.
 
 Transient operations such as `uialert`, `uiconfirm`, `uiprogressdlg`, `uisetcolor`, and file-selection dialogs are out of scope because they are not persistent components in the document.
