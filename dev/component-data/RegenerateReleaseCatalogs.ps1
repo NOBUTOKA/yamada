@@ -90,9 +90,15 @@ try {
             }
             $record
         })
+        # A setting group is published only where its main call form is available.
+        $formIds = @($forms | ForEach-Object { $_.id })
+        $groups = @(foreach ($group in $axesSettings.settingGroups) {
+            if ($formIds -contains $group.form) { $group }
+        })
         Write-Json (Join-Path $catalog 'axes-setting-functions.json') ([ordered]@{
             schemaVersion = $axesSettings.schemaVersion
             matlabRelease = $name
+            settingGroups = $groups
             forms = $forms
         })
         Copy-Item -LiteralPath (Join-Path $projection 'PROJECTION.md') -Destination (Join-Path $reports "$name.md") -Force

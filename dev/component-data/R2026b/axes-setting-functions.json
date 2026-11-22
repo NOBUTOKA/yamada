@@ -1,6 +1,28 @@
 {
   "schemaVersion": 1,
   "matlabRelease": "R2026b",
+  "settingGroups": [
+    {
+      "main": "Title.String",
+      "form": "title.text"
+    },
+    {
+      "main": "Subtitle.String",
+      "form": "subtitle.text"
+    },
+    {
+      "main": "XLabel.String",
+      "form": "xlabel.text"
+    },
+    {
+      "main": "YLabel.String",
+      "form": "ylabel.text"
+    },
+    {
+      "main": "ZLabel.String",
+      "form": "zlabel.text"
+    }
+  ],
   "forms": [
     {
       "id": "title.text",
@@ -16,6 +38,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "text",
@@ -107,6 +130,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "text",
@@ -196,6 +220,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "text",
@@ -285,6 +310,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "text",
@@ -374,6 +400,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "text",
@@ -575,6 +602,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "limits",
@@ -604,6 +632,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -633,6 +662,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "limits",
@@ -662,6 +692,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -691,6 +722,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "limits",
@@ -720,6 +752,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -748,6 +781,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "limits",
@@ -776,6 +810,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -804,6 +839,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "limits",
@@ -832,6 +868,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -863,6 +900,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "limits",
@@ -894,6 +932,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -1087,6 +1126,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "scale",
@@ -1128,6 +1168,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "scale",
@@ -1169,6 +1210,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "scale",
@@ -1210,6 +1252,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "ticks",
@@ -1240,6 +1283,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -1269,6 +1313,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "ticks",
@@ -1299,6 +1344,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -1328,6 +1374,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "ticks",
@@ -1358,6 +1405,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -1386,6 +1434,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "ticks",
@@ -1415,6 +1464,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -1443,6 +1493,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "ticks",
@@ -1472,6 +1523,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -1535,6 +1587,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -1598,6 +1651,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -1661,6 +1715,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -1722,6 +1777,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -1783,6 +1839,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "mode",
@@ -1812,6 +1869,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "angle",
@@ -1841,6 +1899,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "angle",
@@ -1870,6 +1929,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "angle",
@@ -1898,6 +1958,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "angle",
@@ -2026,6 +2087,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "state",
@@ -2081,6 +2143,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2114,6 +2177,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2139,6 +2203,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2164,6 +2229,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2188,6 +2254,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2212,6 +2279,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2237,6 +2305,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "label",
@@ -2274,6 +2343,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "label",
@@ -2311,6 +2381,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "insertion": true,
       "arguments": [
         {
           "id": "label",

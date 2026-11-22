@@ -14,18 +14,128 @@ classdef AxesSettingFunctionCatalog
                 forms cell
             end
 
-            persistent byName
-            persistent catalogRoot
-            if isempty(byName) || catalogRoot ~= root
-                byName = yamada.catalog.AxesSettingFunctionCatalog.load(root);
-                catalogRoot = root;
-            end
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
             forms = {};
-            if isKey(byName, name), forms = byName{name}; end
+            if isKey(catalog.ByName, name), forms = catalog.ByName{name}; end
         end
 
-        function [paths, values, argumentsUsed] = match(forms, factory, tokens, implicit)
+        function form = formById(id, root)
+            % formById Return one packaged call form, or an empty struct when the release lacks it.
+            arguments (Input)
+                id (1, 1) string
+                root (1, 1) string
+            end
+            arguments (Output)
+                form struct
+            end
+
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            form = struct([]);
+            if isKey(catalog.ById, id), form = catalog.ById{id}; end
+        end
+
+        function form = insertionForm(factory, path, value, root)
+            % insertionForm Select the reviewed call form that writes one new value for a property.
+            %   Only forms whose single argument owns the path and whose implied effects
+            %   match a plain assignment are reviewed for insertion.
+            arguments (Input)
+                factory (1, 1) string
+                path (1, 1) string
+                value
+                root (1, 1) string
+            end
+            arguments (Output)
+                form struct
+            end
+
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            form = struct([]);
+            key = factory + " " + path;
+            if ~isKey(catalog.Insertion, key), return, end
+            candidate = catalog.ById{catalog.Insertion(key)};
+            args = yamada.catalog.AxesSettingFunctionCatalog.records(candidate.arguments);
+            if yamada.catalog.AxesSettingFunctionCatalog.accepts(args{1}, value), form = candidate; end
+        end
+
+        function [main, form] = settingGroup(factory, path, root)
+            % settingGroup Return the main path and call form whose option owns a dependent path.
+            %   A group exists only where the dependent setting is meaningless without its main path.
+            arguments (Input)
+                factory (1, 1) string
+                path (1, 1) string
+                root (1, 1) string
+            end
+            arguments (Output)
+                main string
+                form struct
+            end
+
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            main = strings(1, 0);
+            form = struct([]);
+            for group = catalog.Groups
+                candidate = catalog.ById{group.Form};
+                if ~any(string(candidate.targetFactories) == factory), continue, end
+                if strlength(yamada.catalog.AxesSettingFunctionCatalog.optionName(candidate, path)) > 0
+                    main = group.Main;
+                    form = candidate;
+                    return
+                end
+            end
+        end
+
+        function name = optionName(form, path)
+            % optionName Return the declared option that writes exactly this one path.
+            arguments (Input)
+                form (1, 1) struct
+                path (1, 1) string
+            end
+            arguments (Output)
+                name (1, 1) string
+            end
+
+            name = "";
+            if ~isfield(form, "options"), return, end
+            for item = yamada.catalog.AxesSettingFunctionCatalog.records(form.options)
+                option = item{1};
+                if isequal(reshape(string(option.paths), 1, []), path)
+                    name = string(option.name);
+                    return
+                end
+            end
+        end
+
+        function [paths, values, owned] = effects(form, value)
+            % effects Expand one inserted argument into its owned and implied property values.
+            arguments (Input)
+                form (1, 1) struct
+                value
+            end
+            arguments (Output)
+                paths (1, :) string
+                values cell
+                owned (1, :) logical
+            end
+
+            paths = strings(1, 0); values = {}; owned = false(1, 0);
+            for item = yamada.catalog.AxesSettingFunctionCatalog.records(form.effects)
+                effect = item{1};
+                paths(end + 1) = string(effect.path); %#ok<AGROW>
+                owned(end + 1) = isfield(effect, "argument"); %#ok<AGROW>
+                if owned(end)
+                    values{end + 1} = value; %#ok<AGROW>
+                else
+                    literal = effect.literal;
+                    if ischar(literal), literal = string(literal); end
+                    values{end + 1} = literal; %#ok<AGROW>
+                end
+            end
+        end
+
+        function [paths, values, argumentsUsed, owned] = match(forms, factory, tokens, implicit)
             % match Resolve a unique literal form and its affected property paths.
+            %   owned marks effects whose value belongs to their argument token; implied
+            %   literal effects have no token of their own.
             arguments (Input)
                 forms cell
                 factory (1, 1) string
@@ -36,9 +146,10 @@ classdef AxesSettingFunctionCatalog
                 paths (1, :) string
                 values cell
                 argumentsUsed (1, :) double
+                owned (1, :) logical
             end
 
-            paths = strings(1,0); values = {}; argumentsUsed = [];
+            paths = strings(1,0); values = {}; argumentsUsed = []; owned = false(1,0);
             matched = false;
             for item = forms
                 form = item{1};
@@ -46,59 +157,103 @@ classdef AxesSettingFunctionCatalog
                         (implicit && string(form.target.implicit) ~= "inferWithWarning")
                     continue
                 end
-                [p, v, indices] = yamada.catalog.AxesSettingFunctionCatalog.decode(form,tokens);
+                [p, v, indices, o] = yamada.catalog.AxesSettingFunctionCatalog.decode(form,tokens);
                 if isempty(p), continue, end
                 if matched
-                    paths = strings(1,0); values = {}; argumentsUsed = [];
+                    paths = strings(1,0); values = {}; argumentsUsed = []; owned = false(1,0);
                     return
                 end
-                paths = p; values = v; argumentsUsed = indices;
+                paths = p; values = v; argumentsUsed = indices; owned = o;
                 matched = true;
             end
         end
     end
 
     methods (Static, Access = private)
-        function byName = load(root)
-            % load Index packaged call forms and check source argument references.
+        function catalog = index(root)
+            % index Load each packaged catalog root once and reuse its lookup tables.
             arguments (Input)
                 root (1, 1) string
             end
             arguments (Output)
-                byName dictionary
+                catalog (1, 1) struct
+            end
+
+            persistent cached
+            persistent catalogRoot
+            if isempty(cached) || catalogRoot ~= root
+                cached = yamada.catalog.AxesSettingFunctionCatalog.load(root);
+                catalogRoot = root;
+            end
+            catalog = cached;
+        end
+
+        function catalog = load(root)
+            % load Index packaged call forms and check argument, insertion and group references.
+            arguments (Input)
+                root (1, 1) string
+            end
+            arguments (Output)
+                catalog (1, 1) struct
             end
 
             [~, release] = fileparts(root);
-            byName = dictionary(string([]), {});
+            catalog = struct("ByName", dictionary(string([]), {}), "ById", dictionary(string([]), {}), ...
+                "Insertion", dictionary(string([]), string([])), "Groups", struct("Main", {}, "Form", {}));
             path = fullfile(root,"axes-setting-functions.json");
             if root == "" || ~isfile(path), return, end
             data = jsondecode(fileread(path));
             assert(data.schemaVersion == 1 && string(data.matlabRelease) == release, ...
                 "yamada:AxesSettingFunctionCatalog:Version", "Invalid axes setting function catalog version.");
-            ids = strings(1,0);
             for item = yamada.catalog.AxesSettingFunctionCatalog.records(data.forms)
                 form = item{1};
                 args = yamada.catalog.AxesSettingFunctionCatalog.records(form.arguments);
                 names = string(cellfun(@(argument) argument.id,args,"UniformOutput",false));
-                assert(~any(ids == string(form.id)) && numel(unique(names)) == numel(names) && ...
+                assert(~isKey(catalog.ById,string(form.id)) && numel(unique(names)) == numel(names) && ...
                     form.target.position == 1 && form.outputs == 0 && ~isempty(form.effects), ...
                     "yamada:AxesSettingFunctionCatalog:Form", "Invalid axes setting form %s.",form.id);
-                ids(end+1) = string(form.id); %#ok<AGROW>
+                ownedPaths = strings(1,0);
                 for effect = yamada.catalog.AxesSettingFunctionCatalog.records(form.effects)
                     effect = effect{1};
                     fromArgument = isfield(effect,"argument");
                     assert(xor(fromArgument,isfield(effect,"literal")) && ...
                         (~fromArgument || any(names == string(effect.argument))), ...
                         "yamada:AxesSettingFunctionCatalog:Effect", "Invalid effect in axes setting form %s.",form.id);
+                    if fromArgument, ownedPaths(end+1) = string(effect.path); end %#ok<AGROW>
                 end
+                % An insertion form writes exactly one owned path from its only argument.
+                if isfield(form,"insertion") && form.insertion
+                    assert(isscalar(args) && isscalar(ownedPaths), ...
+                        "yamada:AxesSettingFunctionCatalog:Insertion", "Insertion form %s must own one path.",form.id);
+                    for factory = reshape(string(form.targetFactories),1,[])
+                        key = factory + " " + ownedPaths;
+                        assert(~isKey(catalog.Insertion,key), "yamada:AxesSettingFunctionCatalog:Insertion", ...
+                            "Several insertion forms write %s.",key);
+                        catalog.Insertion(key) = string(form.id);
+                    end
+                end
+                catalog.ById(string(form.id)) = {form};
                 name = string(form.name);
                 existing = {};
-                if isKey(byName,name), existing = byName{name}; end
-                byName(name) = {[existing {form}]};
+                if isKey(catalog.ByName,name), existing = catalog.ByName{name}; end
+                catalog.ByName(name) = {[existing {form}]};
+            end
+            % Each group's main path is the owned argument of a form that declares options.
+            if ~isfield(data,"settingGroups"), return, end
+            for item = yamada.catalog.AxesSettingFunctionCatalog.records(data.settingGroups)
+                group = item{1};
+                main = string(group.main); id = string(group.form);
+                assert(isKey(catalog.ById,id), "yamada:AxesSettingFunctionCatalog:Group", ...
+                    "Setting group %s names an unknown form.",main);
+                form = catalog.ById{id};
+                [paths, ~, owned] = yamada.catalog.AxesSettingFunctionCatalog.effects(form,[]);
+                assert(isequal(paths(owned),main) && isfield(form,"options"), ...
+                    "yamada:AxesSettingFunctionCatalog:Group", "Setting group %s must own its main path.",main);
+                catalog.Groups(end+1) = struct("Main",main,"Form",id);
             end
         end
 
-        function [paths, values, indices] = decode(form,tokens)
+        function [paths, values, indices, owned] = decode(form,tokens)
             % decode Match positional literals and optional name-value arguments.
             arguments (Input)
                 form (1, 1) struct
@@ -108,9 +263,10 @@ classdef AxesSettingFunctionCatalog
                 paths (1, :) string
                 values cell
                 indices (1, :) double
+                owned (1, :) logical
             end
 
-            paths = strings(1,0); values = {}; indices = [];
+            paths = strings(1,0); values = {}; indices = []; owned = false(1,0);
             args = yamada.catalog.AxesSettingFunctionCatalog.records(form.arguments);
             count = numel(args);
             if numel(tokens) < count || (numel(tokens) > count && ~isfield(form,"options")), return, end
@@ -127,11 +283,12 @@ classdef AxesSettingFunctionCatalog
                 yamada.catalog.AxesSettingFunctionCatalog.decodeOptions(form,tokens,count);
             if ~valid, return, end
 
-            % Fixed effects point to the triggering input and stay read-only.
+            % Implied literal effects point to the triggering input but own no token.
             for item = yamada.catalog.AxesSettingFunctionCatalog.records(form.effects)
                 effect = item{1};
                 paths(end+1) = string(effect.path); %#ok<AGROW>
-                if isfield(effect,"argument")
+                owned(end+1) = isfield(effect,"argument"); %#ok<AGROW>
+                if owned(end)
                     index = find(names == string(effect.argument),1);
                     values{end+1} = decoded{index}; %#ok<AGROW>
                     indices(end+1) = index; %#ok<AGROW>
@@ -143,6 +300,7 @@ classdef AxesSettingFunctionCatalog
                 end
             end
             paths = [paths optionPaths]; values = [values optionValues]; indices = [indices optionIndices];
+            owned = [owned true(size(optionPaths))];
         end
 
         function [paths, values, indices, valid] = decodeOptions(form,tokens,count)
