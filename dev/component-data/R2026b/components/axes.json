@@ -6704,22 +6704,29 @@
         "\"characters\""
       ],
       "valueContract": {
-        "kind": "opaque",
-        "shape": "any",
+        "kind": "enum",
+        "shape": "scalar",
         "allowsEmpty": false,
         "constraints": [],
         "matlabClasses": [
-          "unknown"
+          "char",
+          "string"
+        ],
+        "values": [
+          "normalized",
+          "inches",
+          "centimeters",
+          "points",
+          "pixels",
+          "characters"
         ]
       },
-      "affectsDisplay": false,
-      "previewPolicy": "skip",
-      "requiredEditor": "none",
+      "affectsDisplay": true,
+      "previewPolicy": "apply",
+      "requiredEditor": "enum",
       "disposition": {
-        "kind": "readOnly",
-        "reasonCodes": [
-          "lowDesignTimeValue"
-        ]
+        "kind": "editable",
+        "reasonCodes": []
       },
       "runtimeSetAccess": "public",
       "applicationEvidence": [
@@ -6742,13 +6749,13 @@
         "affectedPaths": [],
         "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator."
       },
-      "gridGeometryImpact": "none",
-      "absoluteGeometryImpact": false,
+      "gridGeometryImpact": "required",
+      "absoluteGeometryImpact": true,
       "geometryEvidence": [
         {
           "kind": "inference",
           "source": "PROPERTY_AUDIT_GUIDELINES.md#geometry-impact",
-          "detail": "Safe Preview does not apply this property; it cannot change native preview geometry."
+          "detail": "Unproven geometry or interaction effect: retain full refresh."
         }
       ]
     },

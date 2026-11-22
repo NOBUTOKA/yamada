@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2025a",
-  "inputSha256": "9285ecafec83503283e481f74122d949e93ebabcb2b1d75473f464134810a1c5",
+  "inputSha256": "7219144fe0f3e697ab1d0121e87276ae669ba64ae908d25fce20d9ded5438d84",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -2049,6 +2049,179 @@
           "disposition": {
             "kind": "editable",
             "reasonCodes": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "exact.position.7d3cbb62a1c8",
+      "kind": "exactCategory",
+      "categoryId": "position",
+      "entries": [
+        {
+          "path": "OuterPosition",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": [],
+            "fixedLength": 4
+          },
+          "affectsDisplay": true,
+          "gridGeometryImpact": "required",
+          "absoluteGeometryImpact": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "numericVector",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "InnerPosition",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "vector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "gridGeometryImpact": "none",
+          "absoluteGeometryImpact": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "omitted",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          }
+        },
+        {
+          "path": "Position",
+          "valueContract": {
+            "kind": "numericArray",
+            "matlabClasses": [
+              "double"
+            ],
+            "shape": "fixedLengthVector",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": true,
+          "gridGeometryImpact": "required",
+          "absoluteGeometryImpact": true,
+          "previewPolicy": "adapt",
+          "requiredEditor": "position",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "TightInset",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "gridGeometryImpact": "none",
+          "absoluteGeometryImpact": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "omitted",
+            "reasonCodes": [
+              "documentedReadOnly"
+            ]
+          }
+        },
+        {
+          "path": "PositionConstraint",
+          "valueContract": {
+            "kind": "opaque",
+            "matlabClasses": [
+              "unknown"
+            ],
+            "shape": "any",
+            "allowsEmpty": false,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "gridGeometryImpact": "none",
+          "absoluteGeometryImpact": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "readOnly",
+            "reasonCodes": [
+              "lowDesignTimeValue"
+            ]
+          }
+        },
+        {
+          "path": "Units",
+          "valueContract": {
+            "kind": "enum",
+            "matlabClasses": [
+              "char",
+              "string"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": false,
+            "constraints": [],
+            "values": [
+              "normalized",
+              "inches",
+              "centimeters",
+              "points",
+              "pixels",
+              "characters"
+            ]
+          },
+          "affectsDisplay": true,
+          "gridGeometryImpact": "required",
+          "absoluteGeometryImpact": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
+          }
+        },
+        {
+          "path": "Layout",
+          "valueContract": {
+            "kind": "graphicsObject",
+            "matlabClasses": [
+              "handle"
+            ],
+            "shape": "scalar",
+            "allowsEmpty": true,
+            "constraints": []
+          },
+          "affectsDisplay": false,
+          "gridGeometryImpact": "none",
+          "absoluteGeometryImpact": false,
+          "previewPolicy": "skip",
+          "requiredEditor": "none",
+          "disposition": {
+            "kind": "omitted",
+            "reasonCodes": [
+              "handleReference",
+              "hierarchyManaged"
+            ]
           }
         }
       ]
@@ -4612,24 +4785,31 @@
         {
           "path": "Units",
           "valueContract": {
-            "kind": "opaque",
+            "kind": "enum",
             "matlabClasses": [
-              "unknown"
+              "char",
+              "string"
             ],
-            "shape": "any",
+            "shape": "scalar",
             "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "lowDesignTimeValue"
+            "constraints": [],
+            "values": [
+              "normalized",
+              "inches",
+              "centimeters",
+              "points",
+              "pixels",
+              "characters"
             ]
+          },
+          "affectsDisplay": true,
+          "gridGeometryImpact": "required",
+          "absoluteGeometryImpact": true,
+          "previewPolicy": "apply",
+          "requiredEditor": "enum",
+          "disposition": {
+            "kind": "editable",
+            "reasonCodes": []
           }
         },
         {
@@ -6550,179 +6730,6 @@
       ]
     },
     {
-      "id": "local.geoaxes.position",
-      "kind": "variantLocal",
-      "categoryId": "position",
-      "entries": [
-        {
-          "path": "OuterPosition",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": [],
-            "fixedLength": 4
-          },
-          "affectsDisplay": true,
-          "gridGeometryImpact": "required",
-          "absoluteGeometryImpact": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "InnerPosition",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          }
-        },
-        {
-          "path": "Position",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "gridGeometryImpact": "required",
-          "absoluteGeometryImpact": true,
-          "previewPolicy": "adapt",
-          "requiredEditor": "position",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "TightInset",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "documentedReadOnly"
-            ]
-          }
-        },
-        {
-          "path": "PositionConstraint",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          }
-        },
-        {
-          "path": "Units",
-          "valueContract": {
-            "kind": "enum",
-            "matlabClasses": [
-              "char",
-              "string"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": false,
-            "constraints": [],
-            "values": [
-              "normalized",
-              "inches",
-              "centimeters",
-              "points",
-              "pixels",
-              "characters"
-            ]
-          },
-          "affectsDisplay": true,
-          "gridGeometryImpact": "required",
-          "absoluteGeometryImpact": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "enum",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "Layout",
-          "valueContract": {
-            "kind": "graphicsObject",
-            "matlabClasses": [
-              "handle"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "handleReference",
-              "hierarchyManaged"
-            ]
-          }
-        }
-      ]
-    },
-    {
       "id": "local.geoaxes.rulers",
       "kind": "variantLocal",
       "categoryId": "rulers",
@@ -8396,172 +8403,6 @@
             "kind": "omitted",
             "reasonCodes": [
               "lowDesignTimeValue"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "local.polaraxes.position",
-      "kind": "variantLocal",
-      "categoryId": "position",
-      "entries": [
-        {
-          "path": "OuterPosition",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": [],
-            "fixedLength": 4
-          },
-          "affectsDisplay": true,
-          "gridGeometryImpact": "required",
-          "absoluteGeometryImpact": true,
-          "previewPolicy": "apply",
-          "requiredEditor": "numericVector",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "InnerPosition",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "vector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          }
-        },
-        {
-          "path": "Position",
-          "valueContract": {
-            "kind": "numericArray",
-            "matlabClasses": [
-              "double"
-            ],
-            "shape": "fixedLengthVector",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": true,
-          "gridGeometryImpact": "required",
-          "absoluteGeometryImpact": true,
-          "previewPolicy": "adapt",
-          "requiredEditor": "position",
-          "disposition": {
-            "kind": "editable",
-            "reasonCodes": []
-          }
-        },
-        {
-          "path": "TightInset",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "documentedReadOnly"
-            ]
-          }
-        },
-        {
-          "path": "PositionConstraint",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          }
-        },
-        {
-          "path": "Units",
-          "valueContract": {
-            "kind": "opaque",
-            "matlabClasses": [
-              "unknown"
-            ],
-            "shape": "any",
-            "allowsEmpty": false,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "readOnly",
-            "reasonCodes": [
-              "lowDesignTimeValue"
-            ]
-          }
-        },
-        {
-          "path": "Layout",
-          "valueContract": {
-            "kind": "graphicsObject",
-            "matlabClasses": [
-              "handle"
-            ],
-            "shape": "scalar",
-            "allowsEmpty": true,
-            "constraints": []
-          },
-          "affectsDisplay": false,
-          "gridGeometryImpact": "none",
-          "absoluteGeometryImpact": false,
-          "previewPolicy": "skip",
-          "requiredEditor": "none",
-          "disposition": {
-            "kind": "omitted",
-            "reasonCodes": [
-              "handleReference",
-              "hierarchyManaged"
             ]
           }
         }

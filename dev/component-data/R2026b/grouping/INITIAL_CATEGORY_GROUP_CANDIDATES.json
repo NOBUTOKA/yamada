@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2026b",
-  "inputSha256": "811e7fd3952c02fc4110965e85948b4818eddee54cca24e5803df0891e78a388",
+  "inputSha256": "a48050127668c7875e4f412e2cbad7ceb5a979c0bef8fa07beef6d1e6547a216",
   "selectionRule": "Complete exact category surfaces with reuseCount >= 2. Candidate IDs are temporary until Step 9 assigns reviewed stable identifiers.",
   "candidates": [
     {
@@ -1292,6 +1292,41 @@
       "documentedCategoryOrders": [
         3,
         4
+      ]
+    },
+    {
+      "candidateId": "candidate.position.7d3cbb62a1c8",
+      "categoryId": "position",
+      "categoryDisplayName": "Position",
+      "sharingScope": "familyScoped",
+      "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+      "capabilitySha256": "7d3cbb62a1c8469a7c5f0df3a8b89bae57edefcd85bc971d634d032230f2fb38",
+      "propertyPaths": [
+        "OuterPosition",
+        "InnerPosition",
+        "Position",
+        "TightInset",
+        "PositionConstraint",
+        "Units",
+        "Layout"
+      ],
+      "propertyCapabilitySha256": [
+        "68ec5f14c85e50ef9c899dc51b06c551d2701a3353545cfff9300f2937a4aa05",
+        "2ddd42489e0f284d88dd2c717587283d30af388d87d3518e5894d39256a4f4b6",
+        "7cba8bb132bee67ae02d7e70b3857cc493be48699956be9e10da8f1052c9c789",
+        "fbc788d93797b33e27ee5710caee989459a1754e42212c0a528ed6ce8d33acc5",
+        "19120b1ff5f2058ad93ec4f9510a687591a8fc97a3fcc7faaad0187113abdafb",
+        "42b2b2b35b9f8029715b3becdbb7f304ebad28b4e207e74093d24fa7ed7018a0",
+        "4c312d9c4113011420b9220e08eb139f3a198fb218152be71e4178ae95a0f14f"
+      ],
+      "memberVariantIds": [
+        "geoaxes",
+        "polaraxes"
+      ],
+      "reuseCount": 2,
+      "documentedCategoryOrders": [
+        9,
+        10
       ]
     },
     {

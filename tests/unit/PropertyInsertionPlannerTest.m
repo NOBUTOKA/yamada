@@ -90,6 +90,26 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyFalse(contains(document.OriginalText, "app.Control.Value ="));
         end
 
+        function prerequisitesPrecedeExistingDependentAssignments(testCase)
+            % prerequisitesPrecedeExistingDependentAssignments Insert Units before an existing Position setter.
+            [document, component] = testCase.fixture(["app.Control = geoaxes(app.UIFigure);", ...
+                "app.Control.Position = [400 20 340 180];", "app.Control.Tag = ""map"";"]);
+            document.setProperty(component.Id, "Units", "pixels", testCase.Registry);
+            source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyLessThan(strfind(source, "app.Control.Units ="), ...
+                strfind(source, "app.Control.Position = [400 20 340 180];"));
+            testCase.verifySubstring(source, "app.Control.Position = [400 20 340 180];");
+        end
+
+        function prerequisitesPrecedeExistingDependentArguments(testCase)
+            % prerequisitesPrecedeExistingDependentArguments Insert a Units argument before an existing Position argument.
+            [document, component] = testCase.fixture( ...
+                "app.Control = polaraxes(app.UIFigure, Position=[20 20 340 180]);");
+            document.setProperty(component.Id, "Units", "pixels", testCase.Registry);
+            source = yamada.source.RoundTripGenerator(testCase.Registry).generate(document);
+            testCase.verifyLessThan(strfind(source, "Units="), strfind(source, "Position=[20 20 340 180]"));
+        end
+
         function constructorStylesReceiveDocumentedNameValueArguments(testCase)
             % constructorStylesReceiveDocumentedNameValueArguments Preserve both original name-value spellings.
             cases = ["app.Control = uidropdown(app.UIFigure, Items=[""A"" ""B""], ItemsData=[10 20]);", ...

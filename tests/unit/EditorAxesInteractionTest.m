@@ -294,7 +294,90 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             testCase.verifyEqual(handles.Title.FontSize,19);
         end
 
+        function editsNonPixelAxesGeometryInTheirOwnUnits(testCase)
+            % editsNonPixelAxesGeometryInTheirOwnUnits Convert overlay gestures and keep Units before Position.
+            fixture = string(fullfile(fileparts(fileparts(mfilename("fullpath"))), ...
+                "fixtures","AxesExplorerApp.m"));
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn",@() acceptedOpenPath(fixture)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = editorPalette();
+            open = findall(figure,"Type","uimenu","Text","&Open...");
+            open.MenuSelectedFcn(open,[]);
+            drawnow;
+            overlay = findall(figure,"Type","uihtml","Tag","yamada-interaction-overlay");
+            axesId = app.Document.getComponentByName("StandardAxes").Id;
+
+            % A 760-by-440 parent maps 38 and 22 pixels to 0.05 normalized units.
+            gesture(overlay,axesId,"",[500 300],[538 322]);
+            position = app.Document.getComponent(axesId).getProperty("Position").LiteralValue;
+            testCase.verifyEqual(position,[0.6 0.6 0.35 0.35],"AbsTol",1e-4);
+            gesture(overlay,axesId,"e",[0 0],[76 0]);
+            position = app.Document.getComponent(axesId).getProperty("Position").LiteralValue;
+            testCase.verifyEqual(position,[0.6 0.6 0.45 0.35],"AbsTol",1e-4);
+
+            % Units is editable and lands before the existing Position setter.
+            geographic = app.Document.getComponentByName("GeographicAxes");
+            tree = findall(figure,"Type","uitree");
+            nodes = findall(tree,"Type","uitreenode");
+            node = nodes(string({nodes.NodeData}) == geographic.Id);
+            tree.SelectedNodes = node;
+            tree.SelectionChangedFcn(tree,struct("SelectedNodes",node));
+            labels = findall(figure,"Tag","yamada-inspector-property-label");
+            row = labels(string({labels.Text}) == "Units");
+            testCase.assertNumElements(row,1);
+            editor = findall(row.Parent,"Tag","yamada-inspector-property-editor");
+            handle = findall(figure,"-isa","matlab.graphics.axis.GeographicAxes");
+            before = getpixelposition(handle);
+            editor.Value = "pixels";
+            editor.ValueChangedFcn(editor,struct());
+            source = app.Document.CurrentText;
+            testCase.verifyLessThan(strfind(source,"app.GeographicAxes.Units ="), ...
+                strfind(source,"app.GeographicAxes.Position = "));
+            testCase.verifyEmpty(strfind(source,"app.GeographicAxes.Position = [400 20 340 180];"));
+            % The stored Position is converted so the rectangle keeps its extent.
+            handle = findall(figure,"-isa","matlab.graphics.axis.GeographicAxes");
+            testCase.verifyEqual(string(handle.Units),"pixels");
+            testCase.verifyEqual(getpixelposition(handle),before,"AbsTol",1);
+            clear cleanup
+        end
+
     end
+end
+
+function gesture(overlay, componentId, handle, startPoint, endPoint)
+% gesture Send one complete overlay pointer gesture.
+arguments (Input)
+    overlay (1,1) matlab.ui.control.HTML
+    componentId (1,1) string
+    handle (1,1) string
+    startPoint (1,2) double
+    endPoint (1,2) double
+end
+
+% Pointer phases share the gesture handle, matching the overlay page.
+phases = ["pointerdown","pointermove","pointerup"];
+points = [startPoint; endPoint; endPoint];
+for index = 1:numel(phases)
+    overlay.HTMLEventReceivedFcn(overlay,struct("HTMLEventName","Pointer", ...
+        "HTMLEventData",struct("phase",phases(index),"componentId",componentId, ...
+        "handle",handle,"x",points(index,1),"y",points(index,2))));
+end
+drawnow;
+end
+
+function [accepted, filePath] = acceptedOpenPath(filePath)
+% acceptedOpenPath Return one accepted source fixture path for lifecycle testing.
+arguments (Input)
+    filePath (1,1) string
+end
+arguments (Output)
+    accepted (1,1) logical
+    filePath (1,1) string
+end
+
+accepted = true;
 end
 
 function [figure, palette] = editorPalette()
