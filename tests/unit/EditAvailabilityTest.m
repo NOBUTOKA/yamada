@@ -5,6 +5,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
     methods (Test)
         function queriesDoNotGenerateOrReparseCandidateSource(testCase)
             % queriesDoNotGenerateOrReparseCandidateSource Preserve query results, source, history, and clipboard contents.
+            % Guarantee: availability queries are side-effect free and cheap.
+            % Failure mode: menu refreshes generate candidate source or alter history and clipboard.
             [document, registry, left, right, leaf] = EditAvailabilityTest.fixture(true);
             clipboard = yamada.model.ComponentClipboard();
             clipboard.copy(document, leaf.Id, registry);
@@ -26,6 +28,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             testCase.verifyTrue(clipboard.hasContents(document));
         end
 
+        % Guarantee: each command is enabled exactly when its catalog and model conditions hold, with a reason otherwise.
+        % Failure mode: a valid command is disabled, such as Copy for read-only or opaque components, or an invalid one is enabled and fails.
         function readOnlyStateOnlyRestrictsMoving(testCase)
             % readOnlyStateOnlyRestrictsMoving Allow copying and deletion of indexed read-only components.
             [document, registry, left, right, leaf] = EditAvailabilityTest.fixture(false);
@@ -58,6 +62,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             end
         end
 
+        % Guarantee: commands recheck their conditions at execution and remain atomic.
+        % Failure mode: a command enabled from an earlier query runs after the model changed and breaks a reference or overfills a grid.
         function fullGridIsRejectedAtPaste(testCase)
             % fullGridIsRejectedAtPaste Keep the command available and check available cells at execution.
             [document, registry, ~, right, leaf] = EditAvailabilityTest.fixture(false);
@@ -77,6 +83,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
 
         function tabGroupsAcceptOnlyTabs(testCase)
             % tabGroupsAcceptOnlyTabs Check catalog, insertion, paste, and reparenting for tab groups.
+            % Guarantee and failure mode: shared with readOnlyStateOnlyRestrictsMoving.
             [document, registry, ~, right, leaf] = EditAvailabilityTest.fixture(false);
             for id = registry.listVariantIds()
                 definition = registry.getById(id);
@@ -108,6 +115,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
 
         function generatedSelectedTabReferencesConstrainLaterEdits(testCase)
             % generatedSelectedTabReferencesConstrainLaterEdits Keep editor-generated internal links valid.
+            % Guarantee and failure mode: shared with fullGridIsRejectedAtPaste.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("GeneratedReferenceFixture", registry);
             right = yamada.model.ComponentRecord("right", "Right", "uipanel", "matlab.ui.container.Panel", "generated");
@@ -157,6 +165,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
 
         function measuredGeometryParticipatesInReparentConditions(testCase)
             % measuredGeometryParticipatesInReparentConditions Do not reuse a missing-geometry result for measured bounds.
+            % Guarantee and failure mode: shared with readOnlyStateOnlyRestrictsMoving.
             [document, registry, ~, right, leaf] = EditAvailabilityTest.fixture(false);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             document.reparentSubtree(leaf.Id, grid.Id, registry);
@@ -184,6 +193,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
 
         function chosenCommandsRemainAtomicAndUndoable(testCase)
             % chosenCommandsRemainAtomicAndUndoable Execute permitted edits only after the query returns.
+            % Guarantee and failure mode: shared with fullGridIsRejectedAtPaste.
             [document, registry, ~, right, leaf] = EditAvailabilityTest.fixture(true);
             before = document.OriginalText;
             history = document.HistoryIndex;

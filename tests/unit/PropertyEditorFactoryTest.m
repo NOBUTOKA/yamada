@@ -4,6 +4,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
     %   remain visible but cannot become accidentally editable.
 
     methods (Test, TestTags = {'fast'})
+        % Guarantee: each catalog capability gets the editor that matches its value type and commit contract.
+        % Failure mode: a capability is routed to a generic text editor, so values are parsed as source or lose their type.
         function createsTypedEditorsFromCapabilities(testCase)
             % createsTypedEditorsFromCapabilities Route distinct capabilities and preserve their typed display values.
             figure = uifigure("Visible", "off");
@@ -109,6 +111,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             clear cleanup
         end
 
+        % Guarantee: unsupported kinds and values are shown read-only.
+        % Failure mode: an unsupported value is editable and an edit replaces it with a simpler literal.
         function defersUnsupportedEditorAsReadOnly(testCase)
             % defersUnsupportedEditorAsReadOnly Keep unimplemented kinds non-editable.
 
@@ -126,6 +130,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
         function normalizesMultilineTextAreaLinesToSourceSafeRowCells(testCase)
             % normalizesMultilineTextAreaLinesToSourceSafeRowCells Preserve multiline text in a literal form.
+            % Guarantee: multiline text is committed in a literal form that round-trips.
+            % Failure mode: lines are joined, or stored in a form that generation cannot encode.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
@@ -150,6 +156,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
     methods (Test, TestTags = {'fast'})
         function createsNativeDateTimeEditors(testCase)
             % createsNativeDateTimeEditors Route scalar, bounds, and date lists by schema shape.
+            % Guarantee and failure mode: shared with createsTypedEditorsFromCapabilities.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
@@ -216,6 +223,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
         function defersUnsupportedStructuredData(testCase)
             % defersUnsupportedStructuredData Keep unsupported arbitrary values source-preserved.
+            % Guarantee and failure mode: shared with defersUnsupportedEditorAsReadOnly.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
@@ -232,6 +240,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
         function createsPlainTextEditorWithoutLiteralParsing(testCase)
             % createsPlainTextEditorWithoutLiteralParsing Commit plain text as a text value rather than source syntax.
+            % Guarantee and failure mode: shared with createsTypedEditorsFromCapabilities.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
@@ -251,6 +260,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
     end
 
     methods (Test, TestTags = {'fast'})
+        % Guarantee: editors for dependent properties stay synchronized with related values.
+        % Failure mode: a dropdown keeps old labels, a list box loses multiselect, or a date picker ignores related limits.
         function itemSelectionDropDownMapsItemsDataAndRefreshesItems(testCase)
             % itemSelectionDropDownMapsItemsDataAndRefreshesItems Keep labels synchronized with paired values.
 
@@ -310,6 +321,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
         function weekdayDialogUsesTheBatchCommitContract(testCase)
             % weekdayDialogUsesTheBatchCommitContract Return validation messages through the dialog batch path.
+            % Guarantee and failure mode: shared with createsTypedEditorsFromCapabilities.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
@@ -374,6 +386,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
     methods (Test)
         function synchronizesDatePickerRestrictionsFromRelatedValues(testCase)
             % synchronizesDatePickerRestrictionsFromRelatedValues Apply the effective date contracts to the native picker.
+            % Guarantee and failure mode: shared with itemSelectionDropDownMapsItemsDataAndRefreshesItems.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));

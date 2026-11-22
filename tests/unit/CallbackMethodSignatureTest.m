@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'parser'}) CallbackMethodSignatureTest < matlab.un
     %   Tests cover forwarding forms, validation text and unsupported declarations.
 
     methods (Test)
+        % Guarantee: only methods whose signatures safely accept callback inputs are offered, with the binding form their arity needs.
+        % Failure mode: a static, accessor, varargin, or misread continued declaration is bound and fails when the callback fires.
         function fixedInputsChooseDocumentedForwarders(testCase)
             % fixedInputsChooseDocumentedForwarders Use declared arity rather than argument spelling.
             cases = {"function run(app)", "@(~, ~) app.run()"; ...
@@ -66,6 +68,8 @@ classdef (TestTags = {'fast', 'parser'}) CallbackMethodSignatureTest < matlab.un
 
         function validationIsRecordedWithoutEvaluation(testCase)
             % validationIsRecordedWithoutEvaluation Retain class names and annotate arbitrary validators.
+            % Guarantee: argument validation is recorded as text and never evaluated.
+            % Failure mode: signature analysis runs a user validator function during parsing.
             analysis = CallbackMethodSignatureTest.compile(["function run(app, src, event)"; ...
                 "arguments (Input)"; "app Example"; "src matlab.ui.control.Button"; ...
                 "event (1, 1) matlab.ui.eventdata.ButtonPushedData {dangerousValidator}"; "end"; "end"]);
@@ -77,6 +81,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackMethodSignatureTest < matlab.un
 
         function accessorsAndNestedFunctionsDoNotHideEligibleMethods(testCase)
             % accessorsAndNestedFunctionsDoNotHideEligibleMethods Keep class layout valid while excluding accessor signatures.
+            % Guarantee and failure mode: shared with fixedInputsChooseDocumentedForwarders.
             analysis = CallbackMethodSignatureTest.compile(["function output = get.Value(app)"; "output = 1"; "end"; ...
                 "function run(app)"; "function nested(x)"; "end"; "end"]);
             testCase.verifyTrue(analysis.Layout.Valid);
@@ -87,6 +92,8 @@ classdef (TestTags = {'fast', 'parser'}) CallbackMethodSignatureTest < matlab.un
 
         function editorBodyEditsPreserveCachedSignature(testCase)
             % editorBodyEditsPreserveCachedSignature Project existing signatures without rescanning method bodies.
+            % Guarantee: body-only edits keep the cached signature without a full rescan.
+            % Failure mode: every keystroke rescans the class, or a body edit invalidates the signature index.
             analysis = CallbackMethodSignatureTest.compile(["function run(app, event)"; "value = 12345"; "end"]);
             source = strjoin(["classdef Example < handle"; "methods (Access = private)"; ...
                 "function run(app, event)"; "value = 12345"; "end"; "end"; "end"], newline);

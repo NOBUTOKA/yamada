@@ -2,6 +2,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
     % EvaluationContextTest Verify exact-input caching without shared mutable results.
     %   Direct changes and history branching must not reuse an obsolete evaluation.
     methods (Test)
+        % Guarantee: cached resolutions are reused only within exactly equal dependency scopes.
+        % Failure mode: scope equality treats NaN or empty shapes incorrectly, or reuse spreads to unrelated groups.
         function manyChildrenShareExactNestedDependencyScopes(testCase)
             % manyChildrenShareExactNestedDependencyScopes Bound repeated traversals while preserving fresh resolver results.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -47,6 +49,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             end
         end
 
+        % Guarantee: every input that can affect a resolution invalidates it.
+        % Failure mode: a coupled sibling, ancestor, source, registry, or history change leaves a cached value in use.
         function invalidIdentityGraphsKeepConservativeScopeBehavior(testCase)
             % invalidIdentityGraphsKeepConservativeScopeBehavior Preserve cycle invalidation and duplicate-id fallback.
             for kind = ["cycle", "duplicate"]
@@ -76,6 +80,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function nestedGridInheritanceKeepsUnrelatedScopes(testCase)
             % nestedGridInheritanceKeepsUnrelatedScopes Invalidate coupled descendants while retaining separate groups.
+            % Guarantee and failure mode: shared with manyChildrenShareExactNestedDependencyScopes.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("NestedInheritanceFixture", registry);
             outer = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
@@ -170,6 +175,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function candidateGridChangesDiscardCoupledStates(testCase)
             % candidateGridChangesDiscardCoupledStates Preserve the existing conservative grid dependency scope.
+            % Guarantee and failure mode: shared with invalidIdentityGraphsKeepConservativeScopeBehavior.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("CandidateGridFixture", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
@@ -189,6 +195,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function liveDefinitionDataCannotBorrowAnIndependentProof(testCase)
             % liveDefinitionDataCannotBorrowAnIndependentProof Reject live metadata behind the same property path.
+            % Guarantee: live definition metadata cannot reuse a proof for the same path.
+            % Failure mode: changed metadata behind an unchanged path is certified by an old proof.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             context = document.evaluationContext(registry);
@@ -212,6 +220,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.verifyFalse(safe);
         end
 
+        % Guarantee: revisions observe every write, including direct, nested, and restored writes, and only for their owner.
+        % Failure mode: a write outside document commands goes unnoticed, or a candidate write invalidates the original.
         function writesInvalidateAnAccidentallyHeldReadScope(testCase)
             % writesInvalidateAnAccidentallyHeldReadScope Do not hide tracked writes behind a read lease.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -225,6 +235,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function buttonGroupSiblingChangesDiscardResolverValues(testCase)
             % buttonGroupSiblingChangesDiscardResolverValues Preserve the exclusive-selection dependency scope.
+            % Guarantee and failure mode: shared with invalidIdentityGraphsKeepConservativeScopeBehavior.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             group = document.insertComponent(registry, "uibuttongroup", document.RootComponentId);
@@ -255,6 +266,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function unchangedAbsoluteSiblingRetainsResolverValues(testCase)
             % unchangedAbsoluteSiblingRetainsResolverValues Reuse an unchanged dependency scope after a local write.
+            % Guarantee and failure mode: shared with manyChildrenShareExactNestedDependencyScopes.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             first = document.insertComponent(registry, "uilabel", document.RootComponentId);
@@ -274,6 +286,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function ancestorAndCoupledSiblingChangesDiscardResolverValues(testCase)
             % ancestorAndCoupledSiblingChangesDiscardResolverValues Include geometry and grid members in invalidation.
+            % Guarantee and failure mode: shared with invalidIdentityGraphsKeepConservativeScopeBehavior.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
@@ -294,6 +307,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function changedThenRestoredValueStillInvalidatesRevision(testCase)
             % changedThenRestoredValueStillInvalidatesRevision Observe writes without rescanning equal final values.
+            % Guarantee and failure mode: shared with writesInvalidateAnAccidentallyHeldReadScope.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             context = document.evaluationContext(registry);
@@ -405,6 +419,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function derivedOutputsDoNotInvalidateInputs(testCase)
             % derivedOutputsDoNotInvalidateInputs Exclude generated text and display diagnostics.
+            % Guarantee: generated text and diagnostics are not inputs.
+            % Failure mode: regenerating text invalidates every cache on each edit.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             context = document.evaluationContext(registry);
@@ -415,6 +431,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.verifyFalse(context.matches(document, registry));
         end
 
+        % Guarantee: tokens and projections are accepted only for current, owned inputs.
+        % Failure mode: a stale or foreign token certifies a projection of another document or revision.
         function revisionTokensFollowWritesAndCatalogWithoutOwningRecords(testCase)
             % revisionTokensFollowWritesAndCatalogWithoutOwningRecords Reject stale revisions and untracked live data.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -518,6 +536,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             end
         end
 
+        % Guarantee: callers never receive mutable shared cache state.
+        % Failure mode: a caller modifies a returned plan and corrupts later results.
         function doesNotExposeSharedConfigurationHandles(testCase)
             % doesNotExposeSharedConfigurationHandles Copy a cached plan for each mutable caller.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -559,6 +579,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function configurationStatesRejectStaleInputsAndForeignRecords(testCase)
             % configurationStatesRejectStaleInputsAndForeignRecords Require current document ownership and catalog revision.
+            % Guarantee and failure mode: shared with revisionTokensFollowWritesAndCatalogWithoutOwningRecords.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("StaleReadFixture", registry);
             root = document.getComponent(document.RootComponentId);
@@ -579,6 +600,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.verifyFalse(found);
         end
 
+        % Guarantee: unrecognized mutable metadata bypasses the cache without retaining it.
+        % Failure mode: mutable metadata is snapshotted as immutable, or a cyclic reference recurses forever.
         function liveMetadataBypassesCache(testCase)
             % liveMetadataBypassesCache Do not assume unrecognized mutable metadata is immutable.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -593,6 +616,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function registryChangesInvalidateContext(testCase)
             % registryChangesInvalidateContext Detect registration even when its values are equal.
+            % Guarantee and failure mode: shared with invalidIdentityGraphsKeepConservativeScopeBehavior.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             context = document.evaluationContext(registry);
@@ -602,6 +626,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function cyclicLiveMetadataBypassesWithoutRetainingHandles(testCase)
             % cyclicLiveMetadataBypassesWithoutRetainingHandles Do not recursively snapshot arbitrary model references.
+            % Guarantee and failure mode: shared with liveMetadataBypassesCache.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             root = document.getComponent(document.RootComponentId);
@@ -616,6 +641,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function historyBranchAndSourceConventionsInvalidateContext(testCase)
             % historyBranchAndSourceConventionsInvalidateContext Never identify input by history index alone.
+            % Guarantee and failure mode: shared with invalidIdentityGraphsKeepConservativeScopeBehavior.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             label = document.insertComponent(registry, "uilabel", document.RootComponentId);

@@ -8,6 +8,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
     end
 
     methods (Test)
+        % Guarantee: after structural commands, Save, and replay, every binding equals an independent source load.
+        % Failure mode: a moved or pasted block keeps stale positions, so later edits patch the wrong text.
         function editsSubtreeWithUnavailableChild(testCase)
             % editsSubtreeWithUnavailableChild Keep a newer child through structural and clipboard edits.
 
@@ -163,6 +165,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
 
         function deletionRefreshesExecutionEffectFlags(testCase)
             % deletionRefreshesExecutionEffectFlags Remove a source-only setter without leaving stale document restrictions.
+            % Guarantee: deleting a source-only setter clears its document restrictions.
+            % Failure mode: stale effect flags keep blocking edits after the cause is removed.
             [document, registry] = fixture();
             source = replace(document.CurrentText, "app.TopLeftLabel.Text = ""Top left"";", ...
                 "app.TopLeftLabel.Text = ""Top left"";" + newline + "app.TopLeftLabel.UnrecognizedSetting = 1;");
@@ -177,6 +181,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
 
         function pastedSubtreeAndDistinctEditsRetainSourceBindings(testCase)
             % pastedSubtreeAndDistinctEditsRetainSourceBindings Compare nested copies and their later edits with independent parsing.
+            % Guarantee and failure mode: shared with editsSubtreeWithUnavailableChild.
             [document, registry] = fixture();
             parent = document.getComponentByName("CenterPanel");
             before = document.CurrentText;
@@ -200,6 +205,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             for index = 1:3, document.redo(); verifyBindings(testCase, document, registry); end
         end
 
+        % Guarantee: name reservations and class identity follow history, without altering literals.
+        % Failure mode: Undo frees a name still used in source, or Save As changes restored values.
         function renameReservationsFollowHistoryAndKeepLiteralText(testCase)
             % renameReservationsFollowHistoryAndKeepLiteralText Reserve user members and pasted slots while leaving strings untouched.
             [document, registry] = fixture();
@@ -245,6 +252,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
 
         function directBuilderValuesRemainPresentWhenPasting(testCase)
             % directBuilderValuesRemainPresentWhenPasting Preserve staged literal configuration and independent copied values.
+            % Guarantee and failure mode: shared with editsSubtreeWithUnavailableChild.
             [document, registry] = fixture();
             owner = document.getComponentByName("TopLeftLabel");
             owner.setProperty("Text", "Captured copy");
@@ -261,6 +269,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
         end
         function stagedRenameAndSaveRestoreEarlierHistory(testCase)
             % stagedRenameAndSaveRestoreEarlierHistory Keep direct builder writes in the command that publishes them.
+            % Guarantee and failure mode: shared with renameReservationsFollowHistoryAndKeepLiteralText.
             [document, registry] = fixture();
             owner = document.insertComponent(registry, "uilabel", document.RootComponentId);
             originalId = owner.Id; before = document.CurrentText;

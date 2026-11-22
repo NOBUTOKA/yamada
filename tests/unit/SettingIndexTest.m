@@ -1,6 +1,8 @@
 classdef (TestTags = {'fast', 'model', 'generation'}) SettingIndexTest < matlab.unittest.TestCase
     % SettingIndexTest Verify canonical value ownership, maintained indexes and primary-only property history.
     methods (Test)
+        % Guarantee: maintained setting indexes stay ordered, independent of callers, and equal to a full parse through edits and history.
+        % Failure mode: an index update misses an owner, exposes a mutable view, or diverges after Paste and Undo.
         function sourceViewsAreIndependentAndRemainOrdered(testCase)
             % sourceViewsAreIndependentAndRemainOrdered Keep source order distinct from component membership and caller copies.
             [document, registry] = fixture();
@@ -56,6 +58,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SettingIndexTest < matlab.
 
         function historyRetainsPrimaryPatchesAndOnlyNewOccurrenceIdentities(testCase)
             % historyRetainsPrimaryPatchesAndOnlyNewOccurrenceIdentities Exclude derived positions and whole setting snapshots.
+            % Guarantee: history stores only primary patches and new identities, not derived snapshots.
+            % Failure mode: history stores whole setting snapshots that become stale, or memory grows with document size per edit.
             [document, registry] = fixture();
             initial = document.CurrentText;
             owner = document.getComponentByName("TopLeftLabel");
@@ -87,6 +91,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SettingIndexTest < matlab.
 
         function distinctEditsAndHistoryMatchFullParse(testCase)
             % distinctEditsAndHistoryMatchFullParse Preserve current values and every range after different owner edits.
+            % Guarantee and failure mode: shared with sourceViewsAreIndependentAndRemainOrdered.
             [document, registry] = fixture();
             operations = {"TopLeftLabel", "Text", "Long replacement"; "CenterLabel", "Tooltip", "New tooltip"; ...
                 "BottomRightButton", "FontSize", 23; "TopLeftLabel", "FontColor", [0.1 0.2 0.3]};
@@ -99,6 +104,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SettingIndexTest < matlab.
             for index = 1:4, document.redo(); verifyIndexes(testCase, document, registry); end
         end
 
+        % Guarantee: recycled storage slots never affect order or expose deleted values.
+        % Failure mode: a reused slot reorders constructor arguments or returns a deleted setting's value.
         function constructorOrderDoesNotFollowRecycledSlotNumbers(testCase)
             % constructorOrderDoesNotFollowRecycledSlotNumbers Derive constructor ordinals from physical pair order.
             store = yamada.model.SourceSettingStore();

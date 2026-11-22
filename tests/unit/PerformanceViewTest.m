@@ -4,6 +4,8 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
     methods (Test)
         function multilineTextCommitsPlainScalarAndMultipleLines(testCase)
             % multilineTextCommitsPlainScalarAndMultipleLines Preserve char/string text through real Inspector commits.
+            % Guarantee: reused text editors commit char, string, and multiline text correctly.
+            % Failure mode: view reuse converts multiline text to one line, or a scalar string to a cell array.
             folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
             fixture = string(fullfile(folder.Folder, "TextInputFixture.m"));
             forms = ["'Initial'", yamada.source.LiteralEncoder.encode("Initial")];
@@ -63,6 +65,8 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
             end
         end
 
+        % Guarantee: reused views reject delayed events from earlier geometry or bindings.
+        % Failure mode: a queued click or edit applies to the component that now occupies the old position or row.
         function obsoletePointerCannotSelectFromReplacedGeometry(testCase)
             % obsoletePointerCannotSelectFromReplacedGeometry Reject delayed coordinates after native reconstruction.
             app = yamada();
@@ -88,6 +92,8 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
 
         function preservedNavigationHandlesNonvisualTreeNodes(testCase)
             % preservedNavigationHandlesNonvisualTreeNodes Exclude records without pixel bounds from geometry.
+            % Guarantee: navigation reuse ignores records without pixel bounds.
+            % Failure mode: a nonvisual node such as a menu breaks hit testing.
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
             fixture = string(fullfile(root, "tests", "fixtures", "NavigationDataApp.m"));
             lifecycle = yamada.ui.DocumentLifecycleService(struct("RequestOpenPathFcn", @() deal(true, fixture)));
@@ -114,6 +120,8 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
 
         function fitGridGrowthMatchesIndependentFullRender(testCase)
             % fitGridGrowthMatchesIndependentFullRender Let native fit tracks settle after an incremental setter.
+            % Guarantee: an incremental setter in a fit grid settles to the same layout as a full render.
+            % Failure mode: the fast path reads geometry before native fit tracks settle.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("FitFixture", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
@@ -146,6 +154,7 @@ classdef (TestTags = {'preview', 'inspector', 'ui'}) PerformanceViewTest < matla
 
         function rebindRetainsEditorAndRejectsQueuedEvent(testCase)
             % rebindRetainsEditorAndRejectsQueuedEvent Keep the old callback tied to its old target.
+            % Guarantee and failure mode: shared with obsoletePointerCannotSelectFromReplacedGeometry.
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
             setappdata(figure, "commits", strings(1, 0));

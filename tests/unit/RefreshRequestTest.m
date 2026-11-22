@@ -2,6 +2,8 @@ classdef (TestTags = {'fast', 'catalog'}) RefreshRequestTest < matlab.unittest.T
     % RefreshRequestTest Verify catalog-controlled placement and fit invalidation.
     %   Unknown capabilities and unavailable native inputs retain full refresh.
     methods (Test)
+        % Guarantee: geometry invalidation follows the layout mechanism, ancestor fit tracks, and catalog overrides.
+        % Failure mode: a refresh skips geometry when a fit ancestor depends on the change, or relies on property-name heuristics instead of catalog data.
         function separatesFreeFixedAndFitGeometry(testCase)
             % separatesFreeFixedAndFitGeometry Retain geometry only when the layout mechanism requires it.
             registry = yamada.model.ComponentRegistry.createDefault();

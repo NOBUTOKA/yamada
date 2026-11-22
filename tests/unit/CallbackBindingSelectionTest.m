@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
     %   Tests cover binding replacement, retained method bodies and atomic history.
 
     methods (Test)
+        % Guarantee: binding edits change only binding assignments and are single undo steps; method bodies are never removed.
+        % Failure mode: the first callback rewrites root values, or Disconnect deletes a body that another binding or the user still needs.
         function firstCallbackCreationPreservesRootAndHistory(testCase)
             % firstCallbackCreationPreservesRootAndHistory Preserve root values, identity and clean Undo on the first callback creation.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -18,6 +20,8 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
             testCase.verifyEqual(document.HistoryIndex, 1);
         end
 
+        % Guarantee: listed method choices are compatible and follow the current source and history.
+        % Failure mode: a method with an extra required input is offered, or the list is stale after edits and Undo.
         function candidatesUseCachedSignaturesAndFixedArity(testCase)
             % candidatesUseCachedSignaturesAndFixedArity Exclude optional fourth inputs and retain unknown constraints.
             [document, registry, button] = CallbackBindingSelectionTest.fixture();
@@ -67,6 +71,8 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
             testCase.verifyEqual(selected.HandlerName, "CreatedByChoice");
         end
 
+        % Guarantee: later edits after a callback binding keep the binding and setting identities through Save As and replay.
+        % Failure mode: a subsequent literal edit or Save As reattaches the binding to a stale occurrence.
         function callbackThenLiteralEditSurvivesSaveAndHistory(testCase)
             % callbackThenLiteralEditSurvivesSaveAndHistory Preserve current callback and value bindings through Save As and replay.
             [document, registry, button] = CallbackBindingSelectionTest.fixture();
@@ -115,6 +121,7 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
 
         function replaceAndDisconnectKeepEveryMethodBody(testCase)
             % replaceAndDisconnectKeepEveryMethodBody Edit only assignments even when another callback shares the target.
+            % Guarantee and failure mode: shared with firstCallbackCreationPreservesRootAndHistory.
             [document, registry, button] = CallbackBindingSelectionTest.fixture();
             other = document.insertComponent(registry, "uibutton", document.RootComponentId);
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Connect", registry, "run0");

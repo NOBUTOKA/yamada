@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
     %   These tests exercise model and source contracts without UI entry points.
 
     methods (Test)
+        % Guarantee: Copy is read-only, and Paste creates independent components with their bindings and descendants.
+        % Failure mode: Copy dirties the document, Paste shares data with the original, or generated descendants are lost.
         function cutCarriesBindingsAndRetainsHandlers(testCase)
             % cutCarriesBindingsAndRetainsHandlers Move the connections while leaving callback bodies in place.
             [document, registry, left, right] = ComponentClipboardTest.fixture();
@@ -52,6 +54,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
             testCase.verifyEqual(document.getComponent(pasted.Id), pasted);
         end
 
+        % Guarantee: pasted names and ids are valid, unique, and stable for Cut.
+        % Failure mode: repeated Paste produces duplicate or too-long names, or Cut then Paste renames components unnecessarily.
         function repeatedPastesAvoidNameAndIdCollisions(testCase)
             % repeatedPastesAvoidNameAndIdCollisions Retain clipboard contents and vary absolute offsets.
             [document, registry, left, right] = ComponentClipboardTest.fixture();
@@ -80,6 +84,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
             testCase.verifyNotEqual(first.Name, second.Name);
         end
 
+        % Guarantee: clipboard commands are atomic, and a rejection keeps both the document and the clipboard.
+        % Failure mode: a rejected Cut clears the clipboard, or Copy silently drops expression-backed behavior.
         function cutAndPasteEachHaveOneUndoStep(testCase)
             % cutAndPasteEachHaveOneUndoStep Restore deleted subtree and pasted clone independently.
             [document, registry, left, right] = ComponentClipboardTest.fixture();
@@ -100,6 +106,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
 
         function cutReusesNamesAndNumbersRepeatedPastes(testCase)
             % cutReusesNamesAndNumbersRepeatedPastes Preserve subtree names while avoiding later collisions.
+            % Guarantee and failure mode: shared with repeatedPastesAvoidNameAndIdCollisions.
             [document, registry, left, right, leaf] = ComponentClipboardTest.fixture();
             clipboard = yamada.model.ComponentClipboard();
             clipboard.cut(document, left.Id, registry);
@@ -162,6 +169,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
 
         function rejectedCutPreservesPreviousClipboard(testCase)
             % rejectedCutPreservesPreviousClipboard Keep prior copied data when a root cut is rejected.
+            % Guarantee and failure mode: shared with cutAndPasteEachHaveOneUndoStep.
             [document, registry, left, right, leaf] = ComponentClipboardTest.fixture();
             clipboard = yamada.model.ComponentClipboard();
             clipboard.copy(document, leaf.Id, registry);
@@ -174,6 +182,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
 
         function differentDocumentAndClearInvalidateClipboard(testCase)
             % differentDocumentAndClearInvalidateClipboard Restrict clipboard to its owning document.
+            % Guarantee: clipboard contents apply only to their owning document.
+            % Failure mode: Paste into another document uses ids and references from the first one.
             [document, registry, left] = ComponentClipboardTest.fixture();
             other = yamada.model.NewAppFactory.createEmpty("OtherApp", registry);
             clipboard = yamada.model.ComponentClipboard();
@@ -186,6 +196,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
 
         function sourceInsertionIncludesGeneratedDescendants(testCase)
             % sourceInsertionIncludesGeneratedDescendants Reopen a copied parsed subtree under another parent.
+            % Guarantee and failure mode: shared with cutCarriesBindingsAndRetainsHandlers.
             [original, registry, left, right] = ComponentClipboardTest.fixture();
             source = yamada.source.NewAppGenerator(registry).generate(original);
             document = yamada.source.AppSourceParser.parseText(source, registry);
@@ -204,6 +215,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
 
         function expressionCopyFailsWithoutDiscardingContents(testCase)
             % expressionCopyFailsWithoutDiscardingContents Refuse expressions instead of silently dropping behavior.
+            % Guarantee and failure mode: shared with cutAndPasteEachHaveOneUndoStep.
             [document, registry, left, right, leaf] = ComponentClipboardTest.fixture();
             clipboard = yamada.model.ComponentClipboard();
             clipboard.copy(document, leaf.Id, registry);

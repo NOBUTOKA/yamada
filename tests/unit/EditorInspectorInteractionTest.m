@@ -2,6 +2,8 @@ classdef EditorInspectorInteractionTest < matlab.unittest.TestCase
     % EditorInspectorInteractionTest Verify Inspector defaults and incremental edits.
 
     methods (Test, TestTags = {'inspector', 'ui'})
+        % Guarantee: the Inspector shows effective values and defaults without writing source.
+        % Failure mode: showing a clamped value or runtime default adds or rewrites a source setting.
         function inspectorShowsEffectiveValueWithoutOverwritingSource(testCase)
             % inspectorShowsEffectiveValueWithoutOverwritingSource Keep clamped display and fixed-slot edits consistent.
             source = strjoin(["classdef StateUIApp < handle", "properties", ...
@@ -80,6 +82,8 @@ classdef EditorInspectorInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'inspector', 'ui'})
+        % Guarantee: repeated numeric edits through real callbacks reuse Preview correctly and record history.
+        % Failure mode: reuse keeps stale grid measurements, or repeated edits skip history steps.
         function numericGridEditsReuseMeasuredTracksWithoutChangingGeometry(testCase)
             % numericGridEditsReuseMeasuredTracksWithoutChangingGeometry Reuse grid payloads only with matching native inputs.
             source = strjoin(["classdef GridCacheUI < handle", "properties", ...
@@ -209,6 +213,8 @@ classdef EditorInspectorInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'inspector', 'fast', 'ui'})
+        % Guarantee: each live Inspector editor commits the value its native control represents.
+        % Failure mode: a native control's event is mapped to the wrong value, such as a label instead of ItemsData or one line of a text area.
         function fontStyleButtonCommitsCatalogChoice(testCase)
             % fontStyleButtonCommitsCatalogChoice Commit a typographic style toggle through the live inspector.
 

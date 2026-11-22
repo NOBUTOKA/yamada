@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
     %   method-body deletion and atomic preflight failure without running apps.
 
     methods (Test)
+        % Guarantee: generated handlers use documented event types, and malformed type data falls back safely.
+        % Failure mode: a handler declares an incorrect event class, or bad catalog data breaks generation.
         function documentedEventTypesSurviveCallbackHistory(testCase)
             % documentedEventTypesSurviveCallbackHistory Generate typed handlers and preserve their source through callback history.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -42,6 +44,8 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
             testCase.verifyError(@() yamada.model.CallbackSignature(contract), "yamada:CallbackSignature:InvalidContract");
         end
 
+        % Guarantee: empty Items are encoded correctly and survive unrelated callback edits.
+        % Failure mode: callback preflight rewrites {} or empty strings into a different empty form.
         function generatesNewAndEditedEmptyItems(testCase)
             % generatesNewAndEditedEmptyItems Encode empty list contents for new and parsed documents.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -99,6 +103,8 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
             testCase.verifyEqual(generator.generate(parsed), source);
         end
 
+        % Guarantee: callback add and delete change exactly the binding and owned method text, and reopen consistently.
+        % Failure mode: deletion leaves part of a method, removes unrelated text, or executes the method body.
         function newCallbacksRoundTripAndDeleteEntireMethod(testCase)
             % newCallbacksRoundTripAndDeleteEntireMethod Keep generated bindings and bodies consistent after reopening.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -262,6 +268,8 @@ classdef (TestTags = {'fast', 'generation'}) CallbackGenerationTest < matlab.uni
 
         function failedGenerationRollsBackEveryTemporaryModelChange(testCase)
             % failedGenerationRollsBackEveryTemporaryModelChange Reject an invalid sibling value without recording history.
+            % Guarantee: failed callback generation leaves no temporary model change or history.
+            % Failure mode: an invalid sibling value aborts generation after partial mutation.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("CallbackApp", registry);
             root = document.getComponent(document.RootComponentId);

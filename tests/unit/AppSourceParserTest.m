@@ -5,6 +5,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
     %   and source-span retention.
 
     methods (Test)
+        % Guarantee: source using features outside the running release is preserved with a warning and stays editable elsewhere.
+        % Failure mode: a newer property or style is dropped, replayed on an older release, or blocks unrelated edits.
         function retainsReleaseWarningWhenEditingRangeSlider(testCase)
             % retainsReleaseWarningWhenEditingRangeSlider Keep newer Step settings out of runtime diagnostics.
 
@@ -208,6 +210,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             end
         end
 
+        % Guarantee: supported source forms parse into the shared model.
+        % Failure mode: a supported fixture, continuation, or large real source no longer parses.
         function parsesSimpleCalculatorFixtureIntoSharedModel(testCase)
             % parsesSimpleCalculatorFixtureIntoSharedModel Parse supported fixture.
 
@@ -268,6 +272,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
                 region.Span.StartOffset == callback.SourceSpan.StartOffset, regions)));
         end
 
+        % Guarantee: expression warnings appear exactly for source outside proven callback syntax.
+        % Failure mode: every callback binding warns, or an uncertain expression is silently accepted.
         function recognizedCallbackBindingsDoNotProduceExpressionWarnings(testCase)
             % recognizedCallbackBindingsDoNotProduceExpressionWarnings Distinguish known registrations from data expressions.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -328,6 +334,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
 
         function parsesContinuationSeparatedCreationArguments(testCase)
             % parsesContinuationSeparatedCreationArguments Parse multiline safe factory values.
+            % Guarantee and failure mode: shared with parsesSimpleCalculatorFixtureIntoSharedModel.
 
             % Keep the continuation inside parentheses to match normal handle-based formatting.
             source = strjoin([ ...
@@ -354,6 +361,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
+        % Guarantee: ambiguous or unknown source is retained without dropping its component.
+        % Failure mode: a conditional or unknown constructor pair overwrites an expression or removes the component.
         function retainsConditionalAssignmentsWithoutOverwritingExpressions(testCase)
             % retainsConditionalAssignmentsWithoutOverwritingExpressions Preserve branch ambiguity.
 
@@ -432,6 +441,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
 
         function parsesExtendedComponentFixtures(testCase)
             % parsesExtendedComponentFixtures Parse representative component sets.
+            % Guarantee and failure mode: shared with parsesSimpleCalculatorFixtureIntoSharedModel.
 
             % Keep each registry category covered by a non-executing source fixture.
             fixtureNames = ["ControlGalleryApp.m", "NavigationDataApp.m", ...
@@ -455,6 +465,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
 
         function retainsUnknownCreationPairsWithoutDroppingComponent(testCase)
             % retainsUnknownCreationPairsWithoutDroppingComponent Preserve unknown callbacks.
+            % Guarantee and failure mode: shared with retainsConditionalAssignmentsWithoutOverwritingExpressions.
 
             % Unknown factory properties must not discard an otherwise supported control.
             source = strjoin([ ...
@@ -485,6 +496,7 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             %   yamada does not edit its own source: the editor creates its figure
             %   through yamada.ui.createEditorFigure, which is not a component
             %   factory, so the only error is the missing registered root.
+            % Guarantee and failure mode: shared with parsesSimpleCalculatorFixtureIntoSharedModel.
 
             % Use the production source as a regression fixture without executing it.
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
@@ -501,6 +513,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
 
         function parserNeverExecutesInputSource(testCase)
             % parserNeverExecutesInputSource Check parsing remains read-only.
+            % Guarantee: parsing never executes input source.
+            % Failure mode: a parser change evaluates user code, breaking the core safety invariant.
 
             % Include a constructor error that would fail immediately if executed.
             source = [ ...
@@ -525,6 +539,8 @@ classdef (TestTags = {'fast', 'parser'}) AppSourceParserTest < matlab.unittest.T
             testCase.verifyNotEmpty(document.getComponentByName("UIFigure"));
         end
 
+        % Guarantee: file input is validated and decoded losslessly.
+        % Failure mode: invalid UTF-8 is decoded lossily and saved back, or LF files are converted on save.
         function parseFileRejectsMissingPathsAndDirectories(testCase)
             % parseFileRejectsMissingPathsAndDirectories Validate file inputs early.
 

@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'generation'}) PropertyApplica
     %   are isolated in PropertyApplicationRuntimeTest.
 
     methods (Test)
+        % Guarantee: a subset of entries is ordered by the transitive dependency graph, with independent order unchanged, and ambiguous input is rejected.
+        % Failure mode: projection drops an edge through an omitted property, reorders independent entries, or accepts duplicates.
         function projectsTransitiveEdgesWithoutChangingIndependentEntryOrder(testCase)
             % projectsTransitiveEdgesWithoutChangingIndependentEntryOrder Use graph closure without Inspector sorting.
             definitions = [ ...
@@ -25,6 +27,8 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'generation'}) PropertyApplica
 
         function previewFiltersLegacyExecutableConstructorPairs(testCase)
             % previewFiltersLegacyExecutableConstructorPairs Apply skip policy without occurrence metadata.
+            % Guarantee: Preview skips executable constructor pairs according to policy.
+            % Failure mode: Preview passes an expression-backed constructor argument to a native control.
             registry = yamada.model.ComponentRegistry.createDefault();
             for factory = ["uilabel", "uibutton"]
                 member = yamada.model.ComponentRecord("owned", "Owned", factory, "matlab.ui.control.Label");
@@ -39,6 +43,7 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'generation'}) PropertyApplica
 
         function handlesEmptySubsetAndConservativeLegacyMetadata(testCase)
             % handlesEmptySubsetAndConservativeLegacyMetadata Retain original order without declared dependencies.
+            % Guarantee and failure mode: shared with projectsTransitiveEdgesWithoutChangingIndependentEntryOrder.
             definitions = [yamada.model.PropertyDefinition("A"), yamada.model.PropertyDefinition("B")];
             entries = [yamada.model.PropertyEntry("B", 2), yamada.model.PropertyEntry("A", 1)];
             testCase.verifyEqual(yamada.model.PropertyApplicationPlanner.order(entries, definitions), entries);
@@ -56,6 +61,8 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'generation'}) PropertyApplica
                 "yamada:ComponentCatalogLoader:InvalidCatalog");
         end
 
+        % Guarantee: generated source sets Limits before Value where the control requires it, and only there.
+        % Failure mode: Value is assigned outside default Limits and MATLAB errors, or gauge values are wrongly clamped like slider values.
         function generatedNumericControlsEstablishRangeBeforeValue(testCase)
             % generatedNumericControlsEstablishRangeBeforeValue Use the promoted policy in canonical output.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -89,6 +96,8 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'generation'}) PropertyApplica
 
         function preservesNoEditParsedSourceDespiteCanonicalPolicy(testCase)
             % preservesNoEditParsedSourceDespiteCanonicalPolicy Do not reorder original legal setter histories.
+            % Guarantee: unchanged parsed source is emitted byte for byte despite canonical ordering.
+            % Failure mode: generation reorders a legal user setter sequence without an edit.
             ending = string(newline);
             source = strjoin(["classdef ParsedPolicyApp < handle", ...
                 "properties (Access=public)", "UIFigure matlab.ui.Figure", ...

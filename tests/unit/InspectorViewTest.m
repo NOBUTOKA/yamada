@@ -6,6 +6,8 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorViewTest < matlab.unittest.Te
     methods (Test, TestTags = {'fast'})
         function createsScrollableNativeGrid(testCase)
             % createsScrollableNativeGrid Construct a view with public scrolling enabled.
+            % Guarantee: the inspector content can scroll when it exceeds the viewport.
+            % Failure mode: the native grid loses Scrollable or sizes content to the viewport, hiding rows.
 
             % Use a hidden ordinary figure to exercise the programmatic UI path.
             figure = uifigure("Visible", "off");
@@ -27,6 +29,8 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorViewTest < matlab.unittest.Te
     methods (Test)
         function unreachableViewReleasesOwnedControls(testCase)
             % unreachableViewReleasesOwnedControls Exercise implicit destructor dispatch.
+            % Guarantee: dropping the view deletes its own controls but not the host figure.
+            % Failure mode: the destructor is not dispatched or deletes the shared figure, leaking or destroying UI.
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
             view = yamada.ui.inspector.InspectorView(figure);

@@ -5,6 +5,8 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
     methods (Test)
         function capturesParentFirstInChildOrder(testCase)
             % capturesParentFirstInChildOrder Preserve tree order regardless of collection order.
+            % Guarantee: snapshots list parents before children in sibling order.
+            % Failure mode: records follow collection order, so Paste recreates children before their parents.
             [document, panel, nested, leaf] = SubtreeSnapshotTest.fixture();
             sibling = document.insertComponent(yamada.model.ComponentRegistry.createDefault(), ...
                 "uilabel", panel.Id);
@@ -15,6 +17,8 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
 
         function remainsIndependentAfterOriginalEdits(testCase)
             % remainsIndependentAfterOriginalEdits Keep nested values and source expressions frozen.
+            % Guarantee: a snapshot is a deep copy of names, nested metadata, and source expressions.
+            % Failure mode: edits to the original after Copy change what Paste produces.
             [document, panel, ~, leaf] = SubtreeSnapshotTest.fixture();
             leaf.setProperty("Text", "Before");
             expression = leaf.setProperty("UserData", []);
@@ -32,6 +36,8 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
             testCase.verifyEqual(record.Properties(end - 1).LiteralValue, "Before");
         end
 
+        % Guarantee: capture fails, without changing the document, on an inconsistent hierarchy or an aliasing payload.
+        % Failure mode: a missing child, cycle, duplicate id, or nested handle produces a partial, nonterminating, or shared snapshot.
         function rejectsMissingAndUnlinkedChildren(testCase)
             % rejectsMissingAndUnlinkedChildren Detect incomplete parent-child relationships.
             [document, panel, nested] = SubtreeSnapshotTest.fixture();
@@ -68,6 +74,8 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
 
         function snapshotReadsDoNotDirtyDocument(testCase)
             % snapshotReadsDoNotDirtyDocument Leave saved state and history unchanged.
+            % Guarantee: capturing a snapshot is read-only.
+            % Failure mode: Copy marks the document dirty or adds a history step.
             [document, panel] = SubtreeSnapshotTest.fixture();
             document.markSaved();
             history = document.HistoryIndex;

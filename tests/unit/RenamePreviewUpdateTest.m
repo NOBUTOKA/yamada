@@ -11,6 +11,8 @@ classdef (TestTags = {'ui', 'preview', 'rename'}) RenamePreviewUpdateTest < matl
     methods (Test)
         function hierarchyAndHistoryRetainGeometry(testCase, Layout)
             % hierarchyAndHistoryRetainGeometry Exercise child and container renames through the real editor.
+            % Guarantee: renaming components and Undo change source names only, never Preview geometry or native callbacks.
+            % Failure mode: a rename triggers a full rebuild that moves controls, or leaves Preview titles with the old name.
             folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
             path = fullfile(folder.Folder, "RenamePreviewFixture.m");
             source = renameFixture(Layout);
@@ -79,6 +81,8 @@ classdef (TestTags = {'ui', 'preview', 'rename'}) RenamePreviewUpdateTest < matl
 
         function acknowledgementRejectsUnrelatedInputs(testCase)
             % acknowledgementRejectsUnrelatedInputs Refuse visual, structural, source, and catalog changes.
+            % Guarantee: the rename-only fast path is refused when any visual, structural, source, or catalog input also changed.
+            % Failure mode: a combined edit is acknowledged as a rename and Preview stays stale.
             for change = ["property", "structure", "source", "catalog"]
                 registry = yamada.model.ComponentRegistry.createDefault();
                 document = yamada.source.AppSourceParser.parseText(renameFixture("absolute"), registry);

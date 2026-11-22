@@ -8,6 +8,8 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
         Depth = {1, 3}
     end
     methods (Test)
+        % Guarantee: shared grid coordinate reads are reused across destinations but recomputed after live or catalog changes.
+        % Failure mode: placement planning uses stale cached coordinates after a write and places a child on an occupied cell.
         function destinationsShareOneValidatedHierarchy(testCase, Depth)
             % destinationsShareOneValidatedHierarchy Bound subtree captures across all candidate parents.
             [document, registry, source, destinations] = fixture(Depth);
@@ -47,6 +49,8 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
             testCase.verifyEqual(refreshed, changed);
         end
 
+        % Guarantee: corruption elsewhere does not block placement, while invalid destination children still fail.
+        % Failure mode: one unrelated bad record rejects all placement, or sharing weakens destination checks.
         function unrelatedInvalidRecordsKeepLegacyPlacementResults(testCase)
             % unrelatedInvalidRecordsKeepLegacyPlacementResults Fall back locally instead of rejecting unrelated corruption.
             for kind = ["hierarchy", "live-data"]

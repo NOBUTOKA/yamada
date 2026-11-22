@@ -16,6 +16,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
     methods (Test)
         function newLiteralSettingsKeepCachedConditions(testCase, Scenario)
             % newLiteralSettingsKeepCachedConditions Avoid source inspection and placement preparation for safe additions.
+            % Guarantee: safe literal additions reuse cached command conditions.
+            % Failure mode: every literal edit reinspects source and prepares placement, slowing editing.
             [document, registry, source] = fixture(Scenario.Depth);
             Setting = Scenario.Setting;
             document.validatePropertyCommit(registry);
@@ -38,6 +40,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEligibilityCarryTe
             testCase.verifyEqual(orderParents(actualParents), orderParents(expectedParents));
         end
 
+        % Guarantee: cached conditions are recomputed when geometry or placement inputs change.
+        % Failure mode: a carried answer enables a reparent based on an outdated rectangle or placement.
         function geometryStillGuardsReparentAnswers(testCase, Depth)
             % geometryStillGuardsReparentAnswers Recompute placement if the current measured source rectangle changes.
             [document, registry, source] = fixture(Depth);

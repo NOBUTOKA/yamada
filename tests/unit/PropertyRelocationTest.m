@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
     %   execute their constructor expressions or callbacks.
 
     methods (Test)
+        % Guarantee: moving a parsed subtree keeps its setting history, spelling, comments, statement order, and opaque tokens.
+        % Failure mode: relocation regenerates settings from projections, losing past assignments, comments, or expressions.
         function mixedHistoryAndBoundTokenSurviveMove(testCase)
             % mixedHistoryAndBoundTokenSurviveMove Keep constructor and past assignments rather than regenerating projections.
             [document, registry, component, target] = testCase.fixture([ ...
@@ -53,6 +55,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
 
         function repeatedInitializerCannotBeRelocated(testCase)
             % repeatedInitializerCannotBeRelocated Reject repeated source ownership without changing hierarchy or history.
+            % Guarantee: subtrees with repeated source ownership are not relocated.
+            % Failure mode: a move duplicates or drops initialization that runs more than once.
             [original, registry] = testCase.fixture("app.Control = uidropdown(app.Left, Position=[10 20 100 22]);");
             source = replace(original.OriginalText, "createComponents(app);", ...
                 "createComponents(app);" + sprintf("\r\n") + "createComponents(app);");
@@ -69,6 +73,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
             testCase.verifyEqual(document.HistoryIndex, 0);
         end
 
+        % Guarantee: pending dependent edits are placed correctly in the relocated initialization.
+        % Failure mode: a pending Value is emitted before its relocated ItemsData or Limits and fails at run time.
         function pendingSelectionUsesMovedDomainAndSharedState(testCase)
             % pendingSelectionUsesMovedDomainAndSharedState Place a pending Value after the relocated ItemsData write.
             [document, registry, component, target] = testCase.fixture([ ...
@@ -116,6 +122,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
 
         function gridMoveRemovesConstructorPositionAndKeepsTrivia(testCase)
             % gridMoveRemovesConstructorPositionAndKeepsTrivia Remove obsolete argument code while retaining continuation comments.
+            % Guarantee and failure mode: shared with mixedHistoryAndBoundTokenSurviveMove.
             [document, registry, component] = testCase.fixture([ ...
                 "app.Control = uidropdown(app.Left, ... % creation", ...
                 "    Position=[10 20 100 22], ... % old position", ...
@@ -154,6 +161,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
 
         function rootVisibilityRemainsAfterRelocatedInitialization(testCase)
             % rootVisibilityRemainsAfterRelocatedInitialization Keep the existing final figure visibility stage last.
+            % Guarantee: the final figure visibility statement stays last after relocation.
+            % Failure mode: relocated initialization is emitted after the figure becomes visible, causing visible flicker.
             [original, registry] = testCase.fixture("app.Control = uidropdown(app.Left, Position=[10 20 100 22]);");
             source = replace(original.OriginalText, "app.Grid = uigridlayout(app.Right);", ...
                 "app.Grid = uigridlayout(app.Right);" + sprintf("\r\n") + "app.UIFigure.Visible = 'on';");
@@ -167,6 +176,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
 
         function opaqueConstructorTokensArePreservedWithoutExecution(testCase)
             % opaqueConstructorTokensArePreservedWithoutExecution Keep expressions rather than emitting only literal projections.
+            % Guarantee and failure mode: shared with mixedHistoryAndBoundTokenSurviveMove.
             [document, registry, component, target] = testCase.fixture( ...
                 "app.Control = uidropdown(app.Left, Items=[""A"" ""B""], Tooltip=""Opaque"" + ""Hint"");");
             document.reparentSubtree(component.Id, target.Id, registry, [], [], [10 20 100 22]);

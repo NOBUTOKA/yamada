@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
     %   independent clipboard data, and atomic generation preflight.
 
     methods (Test)
+        % Guarantee: copied settings reproduce the original's effective state without inventing values native code computes.
+        % Failure mode: Paste copies a stale explicit Value instead of the clamped or fallback value, or writes computed ticks as literals.
         function copiesClampedValueAndRetainsOriginalHistory(testCase)
             % copiesClampedValueAndRetainsOriginalHistory Preserve original setters and their resulting clamped value.
             [document, registry, component, target] = testCase.fixture([ ...
@@ -29,6 +31,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             testCase.verifyEqual(PropertyCopyTest.effectiveValue(document, registry, pasted.Id), 50);
         end
 
+        % Guarantee: copied constructor arguments keep their spelling, order, and style-specific names.
+        % Failure mode: Paste normalizes constructor arguments or uses names that the concrete style does not accept.
         function constructorValuesKeepTheirSpellingAndOrder(testCase)
             % constructorValuesKeepTheirSpellingAndOrder Copy each named spelling in its original constructor argument order.
             for creation = ["app.Control = uislider(app.Left, Value=150, Limits=[120 200]);", ...
@@ -48,6 +52,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
 
         function mixedItemDomainCopiesFallbackSelection(testCase)
             % mixedItemDomainCopiesFallbackSelection Copy the selected data after a domain change rather than the old explicit Value.
+            % Guarantee and failure mode: shared with copiesClampedValueAndRetainsOriginalHistory.
             [document, registry, component, target] = testCase.fixture([ ...
                 "app.Control = uidropdown(app.Left, Items=[""A"" ""B""], ItemsData=[10 20], Value=20);", ...
                 "app.Control.ItemsData = [100 200];"]);
@@ -72,6 +77,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
 
         function styleSpecificNamedArgumentsUseTheirConcreteSurface(testCase)
             % styleSpecificNamedArgumentsUseTheirConcreteSurface Preserve state, discrete, and range factory styles through copying.
+            % Guarantee and failure mode: shared with constructorValuesKeepTheirSpellingAndOrder.
             cases = {"app.Control = uibutton(app.Left, 'state', Value=true);", "matlab.ui.control.StateButton", 'state', true, "uibutton-state"; ...
                 "app.Control = uiknob(app.Left, 'discrete', Items={'A','B'}, Value='B');", "matlab.ui.control.DiscreteKnob", 'discrete', 'B', "uiknob-discrete"; ...
                 "app.Control = uislider(app.Left, 'range', Value=[10 20], Limits=[5 25]);", "matlab.ui.control.RangeSlider", 'range', [10 20], "uislider-range"};
@@ -87,6 +93,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             for index = find(~supported), assumeCatalogSupports(testCase, cases{index, 5}); end
         end
 
+        % Guarantee: Paste uses the configuration frozen at Copy and never changes history while preparing.
+        % Failure mode: edits after Copy leak into Paste, or an unresolved conversion mutates the source document.
         function rawSnapshotPreparationUsesFrozenRecords(testCase)
             % rawSnapshotPreparationUsesFrozenRecords Resolve a source snapshot rather than later changes to its live component.
             [document, registry, component, target] = testCase.fixture([ ...
@@ -104,6 +112,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
 
         function implicitSelectionRemainsImplicit(testCase)
             % implicitSelectionRemainsImplicit Preserve both effective selection and absence of an explicit Value assignment.
+            % Guarantee and failure mode: shared with copiesClampedValueAndRetainsOriginalHistory.
             [document, registry, component, target] = testCase.fixture( ...
                 "app.Control = uidropdown(app.Left, Items=[""A"" ""B""], ItemsData=[10 20]);");
             testCase.verifyEmpty(component.getSettings("Value"));
@@ -115,6 +124,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
 
         function clipboardConfigurationStaysFrozenAfterLaterEdits(testCase)
             % clipboardConfigurationStaysFrozenAfterLaterEdits Keep copied effective values independent of live settings and handles.
+            % Guarantee and failure mode: shared with rawSnapshotPreparationUsesFrozenRecords.
             [document, registry, component, target] = testCase.fixture([ ...
                 "app.Control = uislider(app.Left);", "app.Control.Value = 20;", "app.Control.Limits = [50 100];"]);
             clipboard = yamada.model.ComponentClipboard();
@@ -132,6 +142,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
 
         function automaticTicksRetainModeWithoutInventingComputedValues(testCase)
             % automaticTicksRetainModeWithoutInventingComputedValues Retain the last input and mode without asserting a computed array.
+            % Guarantee and failure mode: shared with copiesClampedValueAndRetainsOriginalHistory.
             [document, registry, component, target] = testCase.fixture([ ...
                 "app.Control = uislider(app.Left);", "app.Control.MajorTicks = [0 25 100];", ...
                 "app.Control.MajorTicksMode = 'auto';"]);
@@ -147,6 +158,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
 
         function unresolvedConversionKeepsSourceWithoutChangingHistory(testCase)
             % unresolvedConversionKeepsSourceWithoutChangingHistory Retain input values without resolving native adjustments.
+            % Guarantee and failure mode: shared with rawSnapshotPreparationUsesFrozenRecords.
             [document, registry, component] = testCase.fixture([ ...
                 "app.Control = uieditfield(app.Left, 'numeric');", "app.Control.Limits = [0 1];", ...
                 "app.Control.Value = 0;", "app.Control.LowerLimitInclusive = 'off';"]);

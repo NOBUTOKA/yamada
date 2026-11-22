@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
     %   values even when the audited effective value is runtime-computed.
 
     methods (Test)
+        % Guarantee: recognized axes function calls are read in execution order for the right target.
+        % Failure mode: a call after opaque code is attributed to the wrong axes, or a shared call's options get the wrong ranges.
         function readsAxesCallsInInitializationOrder(testCase)
             % readsAxesCallsInInitializationOrder Preserve function source and resolve literal effects in order.
             [document, registry, control] = testCase.fixture([ ...
@@ -33,6 +35,8 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
         end
 
+        % Guarantee: axes edits keep the existing function-call form and edit paired values together.
+        % Failure mode: an edit replaces a function call with assignments, splits geolimits into two steps, or a copy keeps the original target.
         function copyRetargetsRecognizedAxesCalls(testCase)
             % copyRetargetsRecognizedAxesCalls Keep a recognized call with its copied component.
             [document, registry, control] = testCase.fixture([ ...
@@ -49,6 +53,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function selectsAxesCallFormsFromRegistryRelease(testCase)
             % selectsAxesCallFormsFromRegistryRelease Retain newer calls on older catalog surfaces.
+            % Guarantee and failure mode: shared with readsAxesCallsInInitializationOrder.
             [fixtureDocument, registry] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", "xscale(app.Control, 'log');"]);
             catalogs = fileparts(registry.CatalogRoot);
@@ -70,6 +75,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function editsNumericRulerTickFormats(testCase)
             % editsNumericRulerTickFormats Preserve function syntax and emit direct new assignments.
+            % Guarantee and failure mode: shared with copyRetargetsRecognizedAxesCalls.
             [document, registry, component] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", "xtickformat(app.Control, '%.1f'); % keep"]);
             testCase.verifyEqual(string(component.getSettings("XAxis.TickLabelFormat").LiteralValue),"%.1f");
@@ -132,6 +138,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function readsPolarCallsAndWarnsWhenTargetIsLost(testCase)
             % readsPolarCallsAndWarnsWhenTargetIsLost Stop inference after opaque code and accept explicit targets.
+            % Guarantee and failure mode: shared with readsAxesCallsInInitializationOrder.
             [document, registry, control] = testCase.fixture([ ...
                 "app.Control = polaraxes(app.UIFigure);", "rlim([0 5]);", ...
                 "opaque();", "thetalim([0 90]);", "thetaticks(app.Control, [0 90]);", ...
@@ -146,6 +153,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function retainsRequestedGeographicLimitsInSourceOrder(testCase)
             % retainsRequestedGeographicLimitsInSourceOrder Replay one pair without inventing display values.
+            % Guarantee and failure mode: shared with copyRetargetsRecognizedAxesCalls.
             [document, registry, component] = testCase.fixture([ ...
                 "app.Control = geoaxes(app.UIFigure, Basemap='none');", ...
                 "geolimits(app.Control, [-15 15], [170 -170]); % crosses the antimeridian", ...
@@ -195,6 +203,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function readsGeographicSettingsThroughOtherEdits(testCase)
             % readsGeographicSettingsThroughOtherEdits Keep multi-effect calls through local source publication.
+            % Guarantee and failure mode: shared with readsAxesCallsInInitializationOrder.
             [document, registry, control] = testCase.fixture([ ...
                 "app.Control = geoaxes(app.UIFigure, Basemap='none');", ...
                 "geotickformat(app.Control, 'dd');", "grid(app.Control, 'off');", ...
@@ -243,6 +252,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function editsAxesTextAndSubtitleLink(testCase)
             % editsAxesTextAndSubtitleLink Preserve a shared call and undo independent Subtitle settings.
+            % Guarantee and failure mode: shared with copyRetargetsRecognizedAxesCalls.
             [document, registry, control] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", ...
                 "title('Before', 'Sub', Color=[1 0 0]);"]);
@@ -290,6 +300,8 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(string(control.getSettings("TickLabelFormat").LiteralValue),"-dm");
         end
 
+        % Guarantee: mode and value edits produce the requested final mode without inventing computed values.
+        % Failure mode: an added value silently switches a final auto mode to manual, or computed ticks are written as literals.
         function pendingModeIsAddedAfterExistingConstructorValue(testCase)
             % pendingModeIsAddedAfterExistingConstructorValue Prefer the reviewed call after constructor values while preserving a requested final auto mode.
             for factory = ["uiaxes", "axes"]
@@ -440,6 +452,8 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(control.getSettings("XTick").LiteralValue, [0 1]);
         end
 
+        % Guarantee: width follower and hold semantics survive insertion, Copy, and Save.
+        % Failure mode: inserting or copying a width setter changes which value a manual hold keeps.
         function insertedWidthFollowsAnExistingManualHoldPoint(testCase)
             % insertedWidthFollowsAnExistingManualHoldPoint Keep a previously held default minor width during assignment insertion.
             [document, registry, control] = testCase.fixture([ ...
@@ -525,6 +539,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             %   A constructor that restores auto last keeps the stored color
             %   only under a plain mode flag; other catalog policies leave it
             %   to the runtime, so the edit cannot be confirmed.
+            % Guarantee and failure mode: shared with pendingModeIsAddedAfterExistingConstructorValue.
             for factory = ["uiaxes", "axes"]
                 [document, registry, control] = testCase.fixture("app.Control = " + factory + ...
                     "(app.UIFigure, GridColor=[0.3 0.5 0.7], GridColorMode='auto');", factory);

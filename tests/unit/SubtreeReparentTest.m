@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
     %   Tests cover layout conversion, source relocation and history restoration.
 
     methods (Test)
+        % Guarantee: a reparent is one undoable step that keeps identities and restores exact parent, order, and placement fields.
+        % Failure mode: Undo restores the parent but not Position or Layout, reorders siblings, or loses source ownership after repeated moves.
         function movesNestedSubtreeAndRestoresExactOrder(testCase)
             % movesNestedSubtreeAndRestoresExactOrder Keep handles and identities across one undoable move.
             [document, registry, left, right, nested, leaf] = SubtreeReparentTest.fixture();
@@ -47,6 +49,8 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
             testCase.verifyEmpty(leaf.getProperty("Position"));
         end
 
+        % Guarantee: moving parsed components relocates their initialization correctly and keeps callbacks, and the saved source reopens the same.
+        % Failure mode: initialization stays before its new parent, a handler is rewritten, or an obsolete Position remains under a grid.
         function parsedMoveUnderLaterParentRoundTrips(testCase)
             % parsedMoveUnderLaterParentRoundTrips Relocate initialization after a later destination safely.
             [original, registry, ~, right, nested, leaf] = SubtreeReparentTest.fixture();
@@ -80,6 +84,8 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
             testCase.verifySubstring(document.GeneratedText, ".ButtonPushedFcn = @app.");
         end
 
+        % Guarantee: relocation that would change dependencies or conditional scope is rejected without mutation.
+        % Failure mode: statements are moved out of an if block or before code they depend on, changing app behavior.
         function dependentInitializationRejectsWithoutMutation(testCase)
             % dependentInitializationRejectsWithoutMutation Keep all live state intact when relocation changes dependencies.
             [original, registry, ~, right, nested] = SubtreeReparentTest.fixture();
@@ -101,6 +107,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
 
         function gridTransferPreservesSpanAndIsAtomic(testCase)
             % gridTransferPreservesSpanAndIsAtomic Move explicit spans between independent grid parents.
+            % Guarantee and failure mode: shared with movesNestedSubtreeAndRestoresExactOrder.
             [document, registry, left, right] = SubtreeReparentTest.fixture();
             first = document.insertComponent(registry, "uigridlayout", left.Id);
             second = document.insertComponent(registry, "uigridlayout", right.Id);
@@ -118,6 +125,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
 
         function parsedLayoutConversionRemovesOwnedPosition(testCase)
             % parsedLayoutConversionRemovesOwnedPosition Remove obsolete source assignments and reopen new placement.
+            % Guarantee and failure mode: shared with parsedMoveUnderLaterParentRoundTrips.
             [original, registry, ~, right, ~, leaf] = SubtreeReparentTest.fixture();
             grid = original.insertComponent(registry, "uigridlayout", right.Id);
             source = yamada.source.NewAppGenerator(registry).generate(original);
@@ -136,6 +144,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
 
         function conditionalInitializationIsRejected(testCase)
             % conditionalInitializationIsRejected Do not relocate statements out of conditional scope.
+            % Guarantee and failure mode: shared with dependentInitializationRejectsWithoutMutation.
             [original, registry, ~, right, nested] = SubtreeReparentTest.fixture();
             source = yamada.source.NewAppGenerator(registry).generate(original);
             marker = "app." + nested.Name + " = uipanel(app.Panel);";
@@ -152,6 +161,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
 
         function repeatedMovesRemainUndoable(testCase)
             % repeatedMovesRemainUndoable Retain original source ownership through repeated parent changes.
+            % Guarantee and failure mode: shared with movesNestedSubtreeAndRestoresExactOrder.
             [original, registry, left, right, nested] = SubtreeReparentTest.fixture();
             source = yamada.source.NewAppGenerator(registry).generate(original);
             document = yamada.source.AppSourceParser.parseText(source, registry);

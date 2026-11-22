@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
     %   callback bodies, independent clipboard data and source safety failures.
 
     methods (Test)
+        % Guarantee: Copy and Paste keep callback bindings and opaque settings verbatim, sharing the original handler and never running it.
+        % Failure mode: Paste duplicates or rewrites the handler method, drops an opaque setting, or evaluates callback code.
         function parsedBindingsShareOriginalHandlers(testCase)
             % parsedBindingsShareOriginalHandlers Preserve opaque bindings and bodies without copying or executing them.
             for binding = ["@app.OnPushed", "@(~, event) app.OnPushed(event)", ...
@@ -89,6 +91,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
 
         function parsedPendingCallbackEditsRemainIndependentOfCopy(testCase)
             % parsedPendingCallbackEditsRemainIndependentOfCopy Retain original Add and Delete intentions across paste and undo.
+            % Guarantee: pending callback Add and Delete edits are not altered by Paste or its Undo.
+            % Failure mode: pasting a component copies or cancels pending callback intentions.
             [document, registry, panel, button] = CallbackCopyTest.fixture("app.Button = uibutton(app.Panel);");
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             document.applyCallbackAction(panel.Id, "SizeChangedFcn", "Delete", registry);

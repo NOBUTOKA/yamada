@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
     %   exact output bytes, class renaming, structural edits, and stale save plans.
 
     methods (Test)
+        % Guarantee: Save records exact positions without changing history, so Undo and Redo work across saves.
+        % Failure mode: Save rebases history incorrectly, so a later Undo patches the wrong offsets or loses ownership.
         function savedPositionsAndHistoriesAreIndependent(testCase)
             % savedPositionsAndHistoriesAreIndependent Capture every occurrence and update only the final bound value.
             for creation = ["app.Control = uidropdown(app.Left, Items=[""A"" ""B""], Value='A');", ...
@@ -78,6 +80,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             testCase.verifyFalse(document.IsDirty);
         end
 
+        % Guarantee: saved offsets match the written bytes after line-ending normalization and Save As renaming.
+        % Failure mode: offsets count characters differently from saved bytes, or Save As consumes another component's ranges.
         function exactSavedBytesOwnNormalizedUnicodePositions(testCase)
             % exactSavedBytesOwnNormalizedUnicodePositions Match saved offsets after mixed line endings and Save As renaming.
             [document, registry, control] = testCase.fixture("app.Control = uidropdown(app.Left, Items=[""A"" ""B""]); ");
@@ -149,6 +153,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             testCase.verifyEqual(control.getProperty("Value").LiteralValue, 'B');
         end
 
+        % Guarantee: a save plan is rejected when it no longer represents the model.
+        % Failure mode: equal history counters let a stale plan write outdated source.
         function changedKnownStateAndStalePlansAreRejected(testCase)
             % changedKnownStateAndStalePlansAreRejected Preserve metadata and history when a save plan no longer represents the model.
             [document, registry, control] = testCase.fixture("app.Control = uidropdown(app.Left, Items=[""A"" ""B""], Value='A');");
@@ -177,6 +183,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
 
         function subtreeOperationsRemainUndoableAcrossSavedPositions(testCase)
             % subtreeOperationsRemainUndoableAcrossSavedPositions Preserve move, copy, and deletion intentions through successive saves.
+            % Guarantee and failure mode: shared with savedPositionsAndHistoriesAreIndependent.
             [document, registry, control, target] = testCase.fixture([ ...
                 "app.Control = uidropdown(app.Left, Items=[""A"" ""B""], Value='A');", "app.Control.Value = 'B';"]);
             original = document.OriginalText;
@@ -205,6 +212,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             testCase.verifyEqual(document.SavedSource.SourceText, deleted.SourceText);
         end
 
+        % Guarantee: Save keeps implicit effects, unknowns, and opaque history.
+        % Failure mode: Save writes computed values as literals or drops earlier expressions.
         function implicitEffectsAndAutomaticUnknownsSurviveSave(testCase)
             % implicitEffectsAndAutomaticUnknownsSurviveSave Compare effective state while retaining explicit inputs and unknown computed arrays.
             [document, registry, control] = testCase.fixture([ ...

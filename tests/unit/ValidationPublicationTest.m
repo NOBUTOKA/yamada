@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) ValidationPublic
     %   Independent parsing checks observable values and diagnostic locations;
     %   no parser, cache or validation-call strategy is prescribed by these tests.
     methods (Test)
+        % Guarantee: after any source publication, history step, save, or external change, semantic states bind to the current records as a fresh parse would.
+        % Failure mode: a published state keeps a pointer to a replaced setting or stale catalog value, so later edits modify the wrong span or show outdated values.
         function structuralAndCallbackEditsRetainIndependentBindings(testCase)
             % structuralAndCallbackEditsRetainIndependentBindings Follow each source transition with a distinct ordinary setting edit.
             registry = yamada.model.ComponentRegistry.createDefault();

@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'parser'}) LexicalParsingTest < matlab.unittest.Te
     %   continuations, and the conservative literal subset used by source parsing.
 
     methods (Test)
+        % Guarantee: encoded literals parse back to equal values of the same class and shape.
+        % Failure mode: an edit writes source that reparses differently, such as cell(0,2) as {}, strings as char, Inf as a name, or dates with time.
         function literalEncoderRoundTripsEmptyCells(testCase)
             % literalEncoderRoundTripsEmptyCells Preserve canonical empty cells and nested cell elements.
             original = {};
@@ -21,6 +23,8 @@ classdef (TestTags = {'fast', 'parser'}) LexicalParsingTest < matlab.unittest.Te
                 "yamada:LiteralEncoder:UnsupportedValue");
         end
 
+        % Guarantee: statement scanning respects quotes, comments, and continuations.
+        % Failure mode: a semicolon in a string or a continued line splits a statement, so later spans and edits target the wrong text.
         function scannerIgnoresQuotedDelimitersAndComments(testCase)
             % scannerIgnoresQuotedDelimitersAndComments Check lexical boundaries.
 
@@ -52,6 +56,8 @@ classdef (TestTags = {'fast', 'parser'}) LexicalParsingTest < matlab.unittest.Te
             testCase.verifyFalse(contains(statements.Text, "..."));
         end
 
+        % Guarantee: only allowlisted literal forms are parsed as values; everything else stays opaque.
+        % Failure mode: the parser evaluates or accepts a function call, breaking the no-arbitrary-code invariant, or rejects a documented literal.
         function literalParserAcceptsSafeValuesWithoutEvaluation(testCase)
             % literalParserAcceptsSafeValuesWithoutEvaluation Check safe literals.
 
@@ -113,6 +119,7 @@ classdef (TestTags = {'fast', 'parser'}) LexicalParsingTest < matlab.unittest.Te
 
         function literalEncoderRoundTripsStringArrays(testCase)
             % literalEncoderRoundTripsStringArrays Preserve typed string vectors used by ItemsData.
+            % Guarantee and failure mode: shared with literalEncoderRoundTripsEmptyCells.
 
             original = ["Low", "High"];
             source = yamada.source.LiteralEncoder.encode(original);

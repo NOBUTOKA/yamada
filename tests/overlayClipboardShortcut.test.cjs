@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // This file is part of yamada. See LICENSE for the license text.
 
+// Guarantee: Preview keyboard shortcuts and right-click reach the shared editor commands for the intended target.
+// Failure mode: focus handling lets text keys trigger component commands, F2 leaves the hierarchy, or a right-click acts on the selection.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');

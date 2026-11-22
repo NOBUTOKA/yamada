@@ -8,6 +8,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
         Layout = {"absolute", "nested"}
     end
     methods (Test)
+        % Guarantee: scoped and chained validation give the same diagnostics as full validation.
+        % Failure mode: a scoped check misses an affected field, or a pending scope is reused after another document or catalog write.
         function freshSettingsDoNotRevalidateUnrelatedFields(testCase, Layout)
             % freshSettingsDoNotRevalidateUnrelatedFields Compare scoped results with full validation after each insertion.
             registry = yamada.model.ComponentRegistry.createDefault();

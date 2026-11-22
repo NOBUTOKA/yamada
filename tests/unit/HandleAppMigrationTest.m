@@ -4,6 +4,8 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTe
     %   preserve source without constructing the app or invoking its callbacks.
 
     methods (Test, TestTags = {'fast'})
+        % Guarantee: opened apps follow the handle app contract, including the close fallback and callback signature.
+        % Failure mode: unsupported class shapes are accepted, or edits break the shutdown fallback or callback convention.
         function cleanupRethrowPreservesCertainInitialization(testCase)
             % cleanupRethrowPreservesCertainInitialization Trace the successful constructor path only when proven.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -93,6 +95,8 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTe
             clear cleanup
         end
 
+        % Guarantee: a generated app's owner lives exactly as long as its figure.
+        % Failure mode: an outputless app is destroyed at once, a closed or failed app leaks its figure, or the user DeleteFcn is overwritten.
         function closeAndExplicitDeleteDestroyOwnerAndFigure(testCase)
             % closeAndExplicitDeleteDestroyOwnerAndFigure Cover normal close and programmatic owner deletion.
             for action = ["close", "delete"]
@@ -177,6 +181,8 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTe
             end
         end
 
+        % Guarantee: the editor follows the same owner lifetime contract.
+        % Failure mode: an outputless editor closes immediately, or deleting its figure leaks editor state.
         function editorFigureDeletionReleasesOwner(testCase)
             % editorFigureDeletionReleasesOwner Dispose editor state when its figure is directly deleted.
             app = yamada();

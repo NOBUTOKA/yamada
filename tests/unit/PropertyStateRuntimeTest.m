@@ -4,6 +4,8 @@ classdef (TestTags = {'model', 'preview', 'ui'}) PropertyStateRuntimeTest < matl
     %   the resolver never calls the factory or executes represented source.
 
     methods (Test)
+        % Guarantee: audited state resolution and default seeds match native controls of the running release.
+        % Failure mode: a MATLAB release or catalog change alters constructor or setter interaction, and the Inspector shows wrong effective values.
         function resolutionAgreesWithOwnedInteractionObservations(testCase)
             % resolutionAgreesWithOwnedInteractionObservations Check constructor groups and setter effects independently.
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));

@@ -5,6 +5,8 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
     methods (Test)
         function valueUpdatesMatchFullRenderingAcrossFitLayouts(testCase)
             % valueUpdatesMatchFullRenderingAcrossFitLayouts Reuse each owned native field while republishing geometry.
+            % Guarantee: reusing native numeric controls for Value edits gives the same result as a full rebuild.
+            % Failure mode: reuse skips a geometry republish or clamps Value differently from a fresh control.
             for layout = ["absolute", "flat", "nested"]
                 [document, registry, first] = numericPreviewFixture(layout);
                 figure = yamada.ui.createEditorFigure(Visible="off", Position=[100 100 1100 650]);
@@ -39,6 +41,8 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
             end
         end
 
+        % Guarantee: reuse applies only when the control was configured from identical inputs and is still alive.
+        % Failure mode: a Limits, format, parent, or catalog change, or a deleted handle, is reused and Preview shows a wrongly configured or invalid control.
         function constraintFormatParentAndCatalogChangesFallBack(testCase)
             % constraintFormatParentAndCatalogChangesFallBack Never reuse a widget configured from different inputs.
             for kind = ["limits", "format", "parent", "registry"]

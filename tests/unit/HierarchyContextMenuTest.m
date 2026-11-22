@@ -9,6 +9,8 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
     end
 
     methods (Test)
+        % Guarantee: the context menu acts on the clicked node without changing selection, from the tree or Preview and after rebuilds.
+        % Failure mode: right-clicking changes the selection and Inspector, or a rebuild loses the menu wiring.
         function nativeRightClickRoutesUnselectedNode(testCase)
             % nativeRightClickRoutesUnselectedNode Exercise native hit data and unchanged selection.
             [figure, tree, menu, root, button] = testCase.fixture();
@@ -49,6 +51,8 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             testCase.verifyEqual(string(item.Enable), "off");
         end
 
+        % Guarantee: commands are disabled or rejected once their target is gone or not applicable.
+        % Failure mode: a menu prepared for a deleted or replaced node runs on another component.
         function emptySpaceAndReplacementCannotReuseTarget(testCase)
             % emptySpaceAndReplacementCannotReuseTarget Reject stale targets after native menu preparation.
             [figure, tree, menu, ~, button] = testCase.fixture();
@@ -97,6 +101,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
 
         function editorMenuSurvivesRebuildWithoutChangingInspector(testCase)
             % editorMenuSurvivesRebuildWithoutChangingInspector Exercise real editor command wiring and rebuilds.
+            % Guarantee and failure mode: shared with nativeRightClickRoutesUnselectedNode.
             app = yamada();
             cleanup = onCleanup(@() delete(app));
             figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
@@ -130,6 +135,8 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
 
         function popupActionsCommitAndUndoCompleteCallbacks(testCase)
             % popupActionsCommitAndUndoCompleteCallbacks Exercise binding-only dropdown edits and editor history callbacks.
+            % Guarantee: menu callback actions commit as complete, undoable edits.
+            % Failure mode: a menu action bypasses editor history.
             app = yamada();
             cleanup = onCleanup(@() delete(app));
             registry = yamada.model.ComponentRegistry.createDefault();

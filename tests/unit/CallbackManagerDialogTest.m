@@ -16,6 +16,8 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
     methods (Test)
         function showsOrderedMutuallyExclusiveStates(testCase)
             % showsOrderedMutuallyExclusiveStates Display absent, existing and unsafe rows in order.
+            % Guarantee: each callback row shows exactly one of absent, bound, or unsupported state.
+            % Failure mode: an unsupported expression is offered for editing and its replacement discards user code.
             dialog = testCase.fixture();
             cleanup = onCleanup(@() delete(dialog));
             figure = findall(0, "Tag", "yamada-callback-manager");
@@ -31,6 +33,8 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             testCase.verifyEqual(string(control.Tooltip), "Unsupported expression");
         end
 
+        % Guarantee: the dialog shows the authoritative binding after success, failure, or cancellation.
+        % Failure mode: a rejected or cancelled command leaves the dropdown on a choice the document did not apply.
         function refreshesAfterSuccessAndReportsFailure(testCase)
             % refreshesAfterSuccessAndReportsFailure Avoid optimistic state changes on rejected commands.
             dialog = testCase.fixture();
@@ -64,6 +68,8 @@ classdef (TestTags = {'ui', 'dialog'}) CallbackManagerDialogTest < matlab.unitte
             testCase.verifyEqual(string(control.Value), "<Disconnect>");
         end
 
+        % Guarantee: commands are dispatched only against the document revision the dialog shows.
+        % Failure mode: a choice from an earlier revision, or one confirmed after the document changed, edits the wrong binding.
         function staleChoicesRefreshWithoutDispatch(testCase)
             % staleChoicesRefreshWithoutDispatch Reject choices populated from an earlier document revision.
             dialog = testCase.fixture();

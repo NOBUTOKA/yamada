@@ -2,6 +2,8 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
     % GridLayoutOverlayDataBuilderTest Verify public-geometry grid overlay payloads.
 
     methods (Test, TestTags = {'fast', 'ui'})
+        % Guarantee: overlay track bounds align with the native child bounds for every track kind, span, and nesting.
+        % Failure mode: reconstructed tracks drift from the rendered cells, so overlay clicks and drops land in the wrong cell.
         function publishesFixedTrackBoundsAndImmediateChildren(testCase)
             % publishesFixedTrackBoundsAndImmediateChildren Match fixed tracks to realized child bounds.
 
@@ -30,6 +32,8 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
     end
 
     methods (Test, TestTags = {'ui'})
+        % Guarantee: overlay data is cached only while its logical and native inputs are unchanged.
+        % Failure mode: a cached payload survives fit growth, an ancestor change, or a catalog update, and the overlay shows stale tracks.
         function sharedSnapshotRemainsIndependentOfLaterNativeGeometry(testCase)
             % sharedSnapshotRemainsIndependentOfLaterNativeGeometry Use one observation for all grid consumers.
             [document, handles, panel, grid, first, ~, cleanup, registry] = ...
@@ -115,6 +119,8 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
             testCase.verifyEqual(document.HistoryIndex, history);
         end
 
+        % Guarantee: the overlay separates native geometry that has not settled from tracks that source makes uneditable.
+        % Failure mode: a transient layout state locks the overlay, or an expression-backed track becomes editable.
         function distinguishesPendingNativeGeometryFromSourceAmbiguity(testCase)
             % distinguishesPendingNativeGeometryFromSourceAmbiguity Retry inconsistent realized spans without hiding source limits.
             [document, handles, panel, grid, first, ~, cleanup, registry] = ...
@@ -141,6 +147,7 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
 
         function nativeInputsFollowMultilineFitGrowthAndShrink(testCase)
             % nativeInputsFollowMultilineFitGrowthAndShrink Keep realized fit observations fresh without source edits.
+            % Guarantee and failure mode: shared with sharedSnapshotRemainsIndependentOfLaterNativeGeometry.
             [document, handles, panel, grid, first, ~, cleanup, registry] = ...
                 testCase.renderGrid({"fit", "1x"}, [60 70]);
             testCase.addTeardown(@() delete(cleanup));
@@ -165,6 +172,7 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
 
         function sharesAxisStatesWhilePreservingOpaqueTrackRejection(testCase)
             % sharesAxisStatesWhilePreservingOpaqueTrackRejection Read each grid once and keep expression-backed axes locked.
+            % Guarantee and failure mode: shared with distinguishesPendingNativeGeometryFromSourceAmbiguity.
             [document, handles, panel, grid, ~, second, cleanup, registry] = ...
                 testCase.renderGrid([40 50], [60 70]);
             testCase.addTeardown(@() delete(cleanup));
@@ -188,6 +196,7 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
 
         function alignsNestedFitTracksInAnOffsetParentCell(testCase)
             % alignsNestedFitTracksInAnOffsetParentCell Avoid adding nested grid coordinates twice.
+            % Guarantee and failure mode: shared with publishesFixedTrackBoundsAndImmediateChildren.
 
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("NestedFitGridApp", registry);
@@ -428,42 +437,10 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
             clear cleanup
         end
 
-        function publishesCollapsedEmptyFitTrack(testCase)
-            % publishesCollapsedEmptyFitTrack Keep an explicitly empty fit row addressable at zero height.
-
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("CollapsedFitGridApp", registry);
-            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
-            document.setProperty(grid.Id, "RowHeight", {"fit", "1x"});
-            document.setProperty(grid.Id, "ColumnWidth", {"1x"});
-            child = document.insertComponent(registry, "uilabel", grid.Id);
-            document.setProperty(child.Id, "Layout.Row", 2);
-            document.setProperty(child.Id, "Layout.Column", 1);
-
-            figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 800 600]);
-            cleanup = onCleanup(@() GridLayoutOverlayDataBuilderTest.deleteIfValid(figure));
-            panel = uipanel(figure, "Position", [1 1 760 560]);
-            renderer = yamada.ui.PreviewRenderer(registry);
-            [handles, diagnostics] = renderer.render(document, panel);
-            testCase.verifyEmpty(diagnostics);
-            GridLayoutOverlayDataBuilderTest.waitForLayout(handles(grid.Id));
-
-            builder = yamada.ui.GridLayoutOverlayDataBuilder();
-            data = builder.build(document, handles, panel, grid.Id, child.Id, 11);
-
-            testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
-            testCase.verifyEqual(data.rowTracks(1).bounds(4), 0, "AbsTol", 1);
-            testCase.verifyEqual(data.rowTracks(1).bounds(2), ...
-                data.innerBounds(2) + data.innerBounds(4), "AbsTol", 1);
-            changes = yamada.model.GridChildPlacementPlanner.move( ...
-                document, grid.Id, child.Id, 1, 1, 2, 1);
-            document.applyGridLayoutEdit(grid.Id, changes);
-            testCase.verifyEqual(child.getProperty("Layout.Row").LiteralValue, 1);
-            clear cleanup
-        end
-
         function publishesAdjacentCollapsedFitTracks(testCase)
             % publishesAdjacentCollapsedFitTracks Keep every adjacent empty fit track addressable.
+            % Guarantee: empty fit tracks, alone or adjacent, stay addressable at zero size and in the correct position.
+            % Failure mode: collapsed tracks get no bounds or overlap, so children cannot be moved into them.
 
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("AdjacentCollapsedFitGridApp", registry);
@@ -488,6 +465,8 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
             testCase.verifyTrue(data.geometryAvailable, data.readOnlyReason);
             testCase.verifyEqual(data.rowTracks(1).bounds(4), 0, "AbsTol", 1);
             testCase.verifyEqual(data.rowTracks(2).bounds(4), 0, "AbsTol", 1);
+            testCase.verifyEqual(data.rowTracks(1).bounds(2), ...
+                data.innerBounds(2) + data.innerBounds(4), "AbsTol", 1);
             testCase.verifyEqual(data.columnTracks(1).bounds(3), 0, "AbsTol", 1);
             testCase.verifyEqual(data.columnTracks(2).bounds(3), 0, "AbsTol", 1);
             changes = yamada.model.GridChildPlacementPlanner.move( ...
@@ -502,6 +481,7 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
     methods (Test, TestTags = {'fast'})
         function cacheInputsRejectLiveDataAndFollowCatalogRevision(testCase)
             % cacheInputsRejectLiveDataAndFollowCatalogRevision Keep unresolved mutable inputs on the full path.
+            % Guarantee and failure mode: shared with sharedSnapshotRemainsIndependentOfLaterNativeGeometry.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("GridOverlayApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);

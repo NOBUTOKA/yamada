@@ -3,6 +3,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
     %   Every registered variant participates; specific cases exercise policies
     %   with state transitions that cannot be represented by one plain setter.
     methods (Test)
+        % Guarantee: incremental Preview updates give the same native values as a fresh render, only for the changed paths.
+        % Failure mode: a native diff misses a variant's property or masks an unrelated write.
         function immediateValuesUpdateAndRejectUnrelatedChanges(testCase)
             % immediateValuesUpdateAndRejectUnrelatedChanges Apply source additions and replacements through native diffs.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -120,6 +122,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
     end
 
     methods (Test)
+        % Guarantee: coupled native properties update as one resolved batch.
+        % Failure mode: applying Limits and Value one at a time passes through an invalid native state and errors or clamps.
         function movesDisjointRangesAndItemsAsResolvedBatches(testCase)
             % movesDisjointRangesAndItemsAsResolvedBatches Preserve final values through otherwise invalid intermediate states.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -170,6 +174,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
 
         function keepsHeterogeneousBatchOwnershipExact(testCase)
             % keepsHeterogeneousBatchOwnershipExact Synchronize different paths without masking unrelated writes.
+            % Guarantee and failure mode: shared with immediateValuesUpdateAndRejectUnrelatedChanges.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("BatchPreviewFixture", registry);
             first = fixtureComponent(document, registry.get("uilabel"), document.RootComponentId, "First");
@@ -190,6 +195,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
 
         function reconstructsUncertainScopesToAcceptedValues(testCase)
             % reconstructsUncertainScopesToAcceptedValues Preserve accepted values and sibling ordering through reconstruction.
+            % Guarantee and failure mode: shared with movesDisjointRangesAndItemsAsResolvedBatches.
             registry = yamada.model.ComponentRegistry.createDefault();
             definition = registry.get("uilabel"); properties = definition.Properties;
             index = find(string({properties.Path}) == "FontSize", 1);
@@ -211,6 +217,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewSynchronizationTest < matlab.unit
             clear cleanup
         end
 
+        % Guarantee: incremental updates handle assets, reflow, grid placement, and root size like a fresh render.
+        % Failure mode: old native content stays, or child geometry compounds earlier native resizing.
         function adaptsAssetsAndClearsExistingNativeContent(testCase)
             % adaptsAssetsAndClearsExistingNativeContent Share catalog adaptation between full and incremental rendering.
             registry = yamada.model.ComponentRegistry.createDefault();

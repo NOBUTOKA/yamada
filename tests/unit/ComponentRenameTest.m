@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
     %   references, and rejection of unresolved or conflicting names.
 
     methods (Test)
+        % Guarantee: only handlers proven to be default names follow a rename.
+        % Failure mode: a custom or shared handler is renamed, breaking other bindings.
         function legacyGeneratedNamesMigrateOnlyDuringExplicitRename(testCase)
             % legacyGeneratedNamesMigrateOnlyDuringExplicitRename Preserve legacy source until a proven default method follows its owner.
             [document, button, registry] = ComponentRenameTest.newButton();
@@ -21,6 +23,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             testCase.verifySubstring(parsed.CurrentText, "@app.HogeButtonPushed");
         end
 
+        % Guarantee: a rename updates every static reference and default handler atomically, without touching literals.
+        % Failure mode: a parent reference or help example keeps the old name, or a string literal containing the name is rewritten.
         function generatedCallbacksAndHistoryFollowTheName(testCase)
             % generatedCallbacksAndHistoryFollowTheName Rename the property and default handler atomically.
             [document, button, registry] = ComponentRenameTest.newButton();
@@ -93,6 +97,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
 
         function customAndSharedCallbackNamesRemainUnchanged(testCase)
             % customAndSharedCallbackNamesRemainUnchanged Preserve intentional handler identities.
+            % Guarantee and failure mode: shared with legacyGeneratedNamesMigrateOnlyDuringExplicitRename.
             [document, button, registry] = ComponentRenameTest.newButton();
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             source = yamada.source.NewAppGenerator(registry).generate(document);
@@ -118,6 +123,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
             testCase.verifySubstring(parsed.GeneratedText, "ButtonPushed = 1; data = who('ButtonPushed');");
         end
 
+        % Guarantee: renames that would collide or that cannot be resolved statically are rejected without change.
+        % Failure mode: a rename shadows a user member, misses a dynamic reference, or reuses a name still mapped in history.
         function rejectionLeavesAllStateUnchanged(testCase)
             % rejectionLeavesAllStateUnchanged Reject invalid, inherited and duplicate member names atomically.
             [document, button, registry] = ComponentRenameTest.newButton();
@@ -154,6 +161,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
 
         function repeatedRenamesAndCallbackEditsKeepTheirOriginalAnchors(testCase)
             % repeatedRenamesAndCallbackEditsKeepTheirOriginalAnchors Compose renames with parsed callback deletion and replacement.
+            % Guarantee and failure mode: shared with generatedCallbacksAndHistoryFollowTheName.
             [document, button, registry] = ComponentRenameTest.newButton();
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             source = yamada.source.NewAppGenerator(registry).generate(document);
@@ -193,6 +201,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
 
         function existingUserMembersAndHandlerCollisionsAreRespected(testCase)
             % existingUserMembersAndHandlerCollisionsAreRespected Reserve other class members and suffix generated handlers.
+            % Guarantee and failure mode: shared with rejectionLeavesAllStateUnchanged.
             [document, button, registry] = ComponentRenameTest.newButton();
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             source = yamada.source.NewAppGenerator(registry).generate(document);
@@ -227,6 +236,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentRenameTest < matl
 
         function defaultHandlerCallsAndHelpExamplesFollowTheRename(testCase)
             % defaultHandlerCallsAndHelpExamplesFollowTheRename Rename static method calls alongside an exclusive default binding.
+            % Guarantee and failure mode: shared with generatedCallbacksAndHistoryFollowTheName.
             [document, button, registry] = ComponentRenameTest.newButton();
             document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
             source = yamada.source.NewAppGenerator(registry).generate(document);

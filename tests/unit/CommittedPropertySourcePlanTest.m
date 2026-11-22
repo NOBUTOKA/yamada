@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
     %   consumers while direct writes and catalog changes invalidate that input.
 
     methods (Test)
+        % Guarantee: committed edits reuse proven source and validation instead of reparsing.
+        % Failure mode: each commit reparses the whole source, or reuse freezes command or placement data that should change.
         function independentFontEditsRetainConditionResults(testCase)
             % independentFontEditsRetainConditionResults Reuse conditions without freezing native placement or command data.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -73,6 +75,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             end
         end
 
+        % Guarantee: reused proofs are discarded after any semantic, catalog, or history change, and invalid values change nothing.
+        % Failure mode: a stale plan or cached track list certifies a later edit, or an out-of-range value reaches the model.
         function commitValidationRejectsStaleProofs(testCase)
             % commitValidationRejectsStaleProofs Revalidate semantic, catalog, history, and unpreflighted changes.
             for kind = ["metadata", "entry", "registry", "history", "unproven", "structure"]
@@ -101,6 +105,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function repeatedNumericEditsAvoidWholeSourcePreflight(testCase)
             % repeatedNumericEditsAvoidWholeSourcePreflight Reuse proven placement for saved and unsaved settings.
+            % Guarantee and failure mode: shared with independentFontEditsRetainConditionResults.
             registry = yamada.model.ComponentRegistry.createDefault();
             for inGrid = [false true]
                 for sourceBacked = [false true]
@@ -154,6 +159,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function localNumericEditsRejectInvalidValuesAtomically(testCase)
             % localNumericEditsRejectInvalidValuesAtomically Keep range failures outside the live model and history.
+            % Guarantee and failure mode: shared with commitValidationRejectsStaleProofs.
             registry = yamada.model.ComponentRegistry.createDefault();
             [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
             document.setProperty(label.Id, "FontSize", 23, registry);
@@ -170,6 +176,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function siblingLayoutReadsMatchIndependentSource(testCase)
             % siblingLayoutReadsMatchIndependentSource Compare sibling layout values and setting identities with independent source.
+            % Guarantee: sibling layout reads match independent source.
+            % Failure mode: shared plans return a sibling's stale layout values or setting identities.
             registry = yamada.model.ComponentRegistry.createDefault();
             for count = 3
                 [document, grid, children] = CommittedPropertySourcePlanTest.gridFixture(registry, count);
@@ -211,6 +219,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function gridValuesInvalidateAcrossWritesAndHistory(testCase)
             % gridValuesInvalidateAcrossWritesAndHistory Keep cached tracks and coordinates tied to current input.
+            % Guarantee and failure mode: shared with commitValidationRejectsStaleProofs.
             registry = yamada.model.ComponentRegistry.createDefault();
             [document, grid, children] = CommittedPropertySourcePlanTest.gridFixture(registry, 2);
             document.setPropertyBatch(children(1).Id, ...
@@ -254,6 +263,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function committedEditsDoNotReparseForStateConsumers(testCase)
             % committedEditsDoNotReparseForStateConsumers Reuse complete source for single and batch edits.
+            % Guarantee and failure mode: shared with independentFontEditsRetainConditionResults.
             registry = yamada.model.ComponentRegistry.createDefault();
             for inGrid = [false true]
                 for batch = [false true]
@@ -283,6 +293,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function committedPlansRemainIndependentAndInvalidateOnWrites(testCase)
             % committedPlansRemainIndependentAndInvalidateOnWrites Never borrow stale values or caller mutations.
+            % Guarantee and failure mode: shared with commitValidationRejectsStaleProofs.
             registry = yamada.model.ComponentRegistry.createDefault();
             [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
             document.setPropertyBatch(label.Id, ...

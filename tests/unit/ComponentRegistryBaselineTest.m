@@ -7,6 +7,8 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
     methods (Test, TestTags = {'fast'})
         function cachedParentProjectionIsInvalidatedByRulesAndRegistration(testCase)
             % cachedParentProjectionIsInvalidatedByRulesAndRegistration Observe changes after a cache hit.
+            % Guarantee: the parent projection cache is invalidated by rule and registration changes.
+            % Failure mode: a cached projection offers parents that are no longer allowed.
             registry = yamada.model.ComponentRegistry.createDefault();
             first = registry.getEffectiveProperties("uilabel", "uigridlayout");
             testCase.verifyTrue(any(string({first.Path}) == "Layout.Row"));
@@ -28,6 +30,8 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
             %   Only the surface release has a ledger transcript; catalogs of
             %   other releases are checked against their projections by
             %   tests/verifyReleaseProjection.ps1.
+            % Guarantee: the loaded registry matches the audited ledger for every variant.
+            % Failure mode: catalog promotion or loading drifts from the reviewed ledger.
 
             % Compare only when the running release serves the surface catalog.
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
@@ -99,6 +103,8 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
     end
 
     methods (Test, TestTags = {'fast'})
+        % Guarantee: every editable catalog property has a usable, unique Inspector projection.
+        % Failure mode: a catalog change adds an editable property without an editor, choices, or with a duplicate path.
         function editablePropertiesProjectToSupportedInspectorEditors(testCase)
             % editablePropertiesProjectToSupportedInspectorEditors Verify every editable capability has a row adapter.
 

@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
     %   Cached lexical and initialization data must retain the independent
     %   compiler's results, including unsafe input and source-version changes.
     methods (Test)
+        % Guarantee: incremental analysis gives the same statements, lookups, traces, and anchors as a full independent scan.
+        % Failure mode: a bounded rescan misses a lexical change, such as an opened string or comment, and later edits use wrong offsets.
         function localPatchesMatchIndependentLexing(testCase)
             % localPatchesMatchIndependentLexing Rescan bounded windows while preserving all current code offsets.
             lines = "app.Field" + (1:50) + ".Value = 9;";
@@ -123,6 +125,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SourceAnalysisTest < matla
             end
         end
 
+        % Guarantee: shared analysis never shares mutable values, never applies to changed source, and keeps opaque values read-only.
+        % Failure mode: a cache lets one candidate mutate another, survives a source change, or upgrades an opaque value to editable.
         function candidatesShareDerivedInputButNotComponentValues(testCase)
             % candidatesShareDerivedInputButNotComponentValues Keep shared analysis independent of mutable records.
             registry = yamada.model.ComponentRegistry.createDefault();

@@ -2,6 +2,8 @@ classdef EditorGridActionTest < matlab.unittest.TestCase
     % EditorGridActionTest Verify Grid Layout overlay edits and action validation.
 
     methods (Test, TestTags = {'gridOverlay', 'ui'})
+        % Guarantee: overlay actions edit only the intended grid or selected child, as one validated change.
+        % Failure mode: a nested grid action edits the outer grid, or an overlapping gesture moves an unselected child.
         function gridOverlayUsesOnlyTheNearestNestedGrid(testCase)
             % gridOverlayUsesOnlyTheNearestNestedGrid Keep nested grid contexts separate on canvas.
 
@@ -95,6 +97,8 @@ classdef EditorGridActionTest < matlab.unittest.TestCase
     methods (Test, TestTags = {'gridOverlay', 'ui'})
         function staleGridOverlayActionsDoNotMutateTheDocument(testCase)
             % staleGridOverlayActionsDoNotMutateTheDocument Reject canvas events from obsolete preview data.
+            % Guarantee: overlay events from obsolete Preview data are rejected.
+            % Failure mode: a delayed browser event applies to a rebuilt grid with different tracks.
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
@@ -125,6 +129,7 @@ classdef EditorGridActionTest < matlab.unittest.TestCase
 
         function gridOverlayChildActionsCommitOnlyForTheSelectedChild(testCase)
             % gridOverlayChildActionsCommitOnlyForTheSelectedChild Commit overlapping gestures for the selected child.
+            % Guarantee and failure mode: shared with gridOverlayUsesOnlyTheNearestNestedGrid.
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));

@@ -14,6 +14,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
     end
 
     methods (Test)
+        % Guarantee: local numeric edits reuse a checkpoint and give the same results as a complete resolution.
+        % Failure mode: reuse returns a different owner's state or command availability than a fresh plan would.
         function reusesACompleteCheckpointAcrossNumericOwners(testCase)
             % reusesACompleteCheckpointAcrossNumericOwners Avoid parsing for owned re-edits across grid layouts.
             for layout = ["absolute", "nested"]
@@ -72,6 +74,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             end
         end
 
+        % Guarantee: checkpoints are discarded after nonlocal changes and old versions stay unchanged.
+        % Failure mode: a checkpoint survives Undo, a grid change, or a catalog change and certifies stale state.
         function inheritedNumericAvailabilityRechecksGeometryAndHistory(testCase)
             % inheritedNumericAvailabilityRechecksGeometryAndHistory Retain measured-rectangle guards and invalidate on undo.
             document = testCase.availabilityFixture("flat");
@@ -96,6 +100,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function numericEditsRetainOtherOwnerStates(testCase)
             % numericEditsRetainOtherOwnerStates Reuse logical state values while matching a fresh complete resolution.
+            % Guarantee and failure mode: shared with reusesACompleteCheckpointAcrossNumericOwners.
             for layout = ["absolute", "nested"]
                 document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
@@ -127,6 +132,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function numericStateReuseInvalidatesAfterHistoryAndGridChanges(testCase)
             % numericStateReuseInvalidatesAfterHistoryAndGridChanges Discard inherited logical states on nonlocal input changes.
+            % Guarantee and failure mode: shared with inheritedNumericAvailabilityRechecksGeometryAndHistory.
             for kind = ["history", "tracks", "registry"]
                 document = testCase.fixture("flat", "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
@@ -160,6 +166,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function ownedCheckpointReadsAvoidDocumentMaterialization(testCase)
             % ownedCheckpointReadsAvoidDocumentMaterialization Keep local reads private and public copies independent.
+            % Guarantee and failure mode: shared with reusesACompleteCheckpointAcrossNumericOwners.
             for layout = ["absolute", "nested"]
                 document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
@@ -188,6 +195,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function ownedSnapshotsKeepEarlierVersionsAfterLaterEdits(testCase)
             % ownedSnapshotsKeepEarlierVersionsAfterLaterEdits Preserve old source plans even when their checkpoint is reused.
+            % Guarantee and failure mode: shared with inheritedNumericAvailabilityRechecksGeometryAndHistory.
             document = testCase.fixture("absolute", ...
                 ["app.First = uieditfield(PARENT,'numeric');", "app.First.Value = 1;"]);
             first = document.getComponentByName("First");
@@ -211,6 +219,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             testCase.verifyEqual(first.getProperty("Value").LiteralValue, 4);
         end
 
+        % Guarantee: the local path rejects every value that full validation rejects, without publishing partial state.
+        % Failure mode: final bounds hide an invalid earlier assignment, or a rejected edit leaves mutated reads.
         function rejectedOwnedEditsDoNotPublishMutatedCandidateValues(testCase)
             % rejectedOwnedEditsDoNotPublishMutatedCandidateValues Restore old reads after a failed source-order replay.
             document = testCase.fixture("absolute", ...
@@ -236,6 +246,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function checkpointStateReadsMatchIndependentPlans(testCase)
             % checkpointStateReadsMatchIndependentPlans Preserve pending identities and values while avoiding read-only copies.
+            % Guarantee and failure mode: shared with reusesACompleteCheckpointAcrossNumericOwners.
             for layout = ["absolute", "nested"]
                 document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
@@ -262,6 +273,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function laterConstraintsDoNotHideAnEarlierInvalidAssignment(testCase)
             % laterConstraintsDoNotHideAnEarlierInvalidAssignment Validate every occurrence rather than final bounds alone.
+            % Guarantee and failure mode: shared with rejectedOwnedEditsDoNotPublishMutatedCandidateValues.
             document = testCase.fixture("absolute", ...
                 ["app.First = uieditfield(PARENT,'numeric');", "app.First.Limits = [0 10];", ...
                 "app.First.Value = 1;", "app.First.Limits = [0 100];"]);
@@ -306,6 +318,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function changedConstraintsAndCatalogInvalidateTheCheckpoint(testCase)
             % changedConstraintsAndCatalogInvalidateTheCheckpoint Re-enter full source validation after semantic changes.
+            % Guarantee and failure mode: shared with inheritedNumericAvailabilityRechecksGeometryAndHistory.
             for kind = ["limits", "registry"]
                 document = testCase.fixture("absolute", ...
                     ["app.First = uieditfield(PARENT,'numeric');", "app.First.Limits = [0 10];", "app.First.Value = 1;"]);
@@ -327,6 +340,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             end
         end
 
+        % Guarantee: local commits rewrite only the latest occurrence, and Save still validates by reparsing.
+        % Failure mode: the local path rewrites the constructor form, or Save trusts the checkpoint without checking.
         function constructorAndRepeatedAssignmentsKeepTheirSourceForm(testCase)
             % constructorAndRepeatedAssignmentsKeepTheirSourceForm Rewrite only the latest original Value occurrence.
             cases = {"app.First = uieditfield(PARENT,'numeric',Limits=[0 10],Value=1);", ...
@@ -354,6 +369,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function emptyValuesUseTheFullAllowedEmptyPath(testCase)
             % emptyValuesUseTheFullAllowedEmptyPath Keep non-scalar requests outside finite scalar local validation.
+            % Guarantee and failure mode: shared with rejectedOwnedEditsDoNotPublishMutatedCandidateValues.
             assumeCatalogSupports(testCase, "uieditfield-numeric", "AllowEmpty");
             document = testCase.fixture("absolute", ...
                 ["app.First = uieditfield(PARENT,'numeric');", "app.First.AllowEmpty = 'on';", "app.First.Value = 1;"]);
@@ -366,6 +382,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function fullSaveValidationStillGeneratesAndReparses(testCase)
             % fullSaveValidationStillGeneratesAndReparses Retain source and checkpoint checks after a local commit.
+            % Guarantee and failure mode: shared with constructorAndRepeatedAssignmentsKeepTheirSourceForm.
             document = testCase.fixture("absolute", "app.First = uieditfield(PARENT,'numeric');");
             first = document.getComponentByName("First");
             document.setProperty(first.Id, "Value", 2, testCase.Registry);

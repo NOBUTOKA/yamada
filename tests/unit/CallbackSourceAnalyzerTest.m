@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
     %   while ensuring analysis does not change document source or history.
 
     methods (Test)
+        % Guarantee: callback ownership results are per owner and per source version.
+        % Failure mode: a cached result from changed source or another owner enables an unsafe edit.
         function queriesKeepParsedOwnersIndependent(testCase)
             % queriesKeepParsedOwnersIndependent Resolve callbacks across distinct owners and repeated queries.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -22,6 +24,8 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
             end
         end
 
+        % Guarantee: callback edits are refused whenever ownership is uncertain.
+        % Failure mode: a dynamic reference, shared handler, capturing wrapper, or unbalanced scope is treated as owned and edited.
         function candidateFilteringRejectsIndirectAndDynamicReferences(testCase)
             % candidateFilteringRejectsIndirectAndDynamicReferences Reject unsafe references independently of statement order.
             indirect = "alias.ButtonPushedFcn = @app.Pressed;";
@@ -44,6 +48,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
 
         function changedSourceReplacesCandidateIndicesIndependently(testCase)
             % changedSourceReplacesCandidateIndicesIndependently Recompile changed text without poisoning another source owner.
+            % Guarantee and failure mode: shared with queriesKeepParsedOwnersIndependent.
             source = CallbackSourceAnalyzerTest.fixture("", "");
             [state, document] = CallbackSourceAnalyzerTest.inspect(source);
             testCase.assertEqual(state.State, "absent");
@@ -62,6 +67,8 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
             testCase.verifyTrue(all(string({states.State}) == "unsupported"));
         end
 
+        % Guarantee: supported binding and method forms are recognized with complete spans.
+        % Failure mode: a method end inside nested blocks, a continuation, or a forwarding wrapper is misread, so edits cut the method or binding.
         function recognizesOwnedMethodIncludingNestedBlocks(testCase)
             % recognizesOwnedMethodIncludingNestedBlocks Locate complete method help and body.
             evalin("base", "clear yamadaCallbackAnalyzerSentinel");
@@ -98,6 +105,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
 
         function rejectsAmbiguousAssignmentsAndReferences(testCase)
             % rejectsAmbiguousAssignmentsAndReferences Block both actions when source ownership is uncertain.
+            % Guarantee and failure mode: shared with candidateFilteringRejectsIndirectAndDynamicReferences.
             binding = "app.Button.ButtonPushedFcn = @app.Pressed;";
             sources = [ ...
                 CallbackSourceAnalyzerTest.fixture(["if true"; binding; "end"], ""); ...
@@ -118,6 +126,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
 
         function recognizesDirectMethodHandlesAndMultilineBindings(testCase)
             % recognizesDirectMethodHandlesAndMultilineBindings Cover direct handles and continuation syntax.
+            % Guarantee and failure mode: shared with recognizesOwnedMethodIncludingNestedBlocks.
             bindings = {"app.Button.ButtonPushedFcn = @app.Pressed;", ...
                 ["app.Button.ButtonPushedFcn = ..."; "@app.Pressed;"]};
             for index = 1:numel(bindings)
@@ -173,6 +182,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
 
         function rejectsNonForwardingAnonymousBodies(testCase)
             % rejectsNonForwardingAnonymousBodies Reject captures, computed arguments, shadowing and compound calls.
+            % Guarantee and failure mode: shared with candidateFilteringRejectsIndirectAndDynamicReferences.
             expressions = ["@(~,event) app.Pressed(other)", "@(~,event) app.Pressed(event.Value)", ...
                 "@(~,event) app.Pressed(transform(event))", "@(~,event) app.Pressed(event) + 1", ...
                 "@(app,event) app.Pressed(event)", "@(source,app) app.Pressed(source)", ...
@@ -216,6 +226,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
 
         function generatedInsertionRechecksChangedParsedAnchors(testCase)
             % generatedInsertionRechecksChangedParsedAnchors Share source analysis without sharing mutable eligibility.
+            % Guarantee and failure mode: shared with queriesKeepParsedOwnersIndependent.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.source.AppSourceParser.parseText( ...
                 CallbackSourceAnalyzerTest.fixture("", ""), registry);
@@ -253,6 +264,7 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
 
         function newComponentCallbacksAreAbsentAndMissingHandlersAreUnsupported(testCase)
             % newComponentCallbacksAreAbsentAndMissingHandlersAreUnsupported Cover generated and unresolved records.
+            % Guarantee and failure mode: shared with recognizesOwnedMethodIncludingNestedBlocks.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.DocumentModel("NewCallbackApp");
             component = yamada.model.ComponentRecord("button", "Button", "uibutton", ...

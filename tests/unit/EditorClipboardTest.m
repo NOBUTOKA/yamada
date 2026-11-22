@@ -7,6 +7,8 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
     end
 
     methods (Test)
+        % Guarantee: components hidden from or unavailable in the hierarchy keep their source and still work with clipboard commands.
+        % Failure mode: menus or newer-release components are dropped from source, or block Copy.
         function hierarchyOmitsMenuBranchesButRetainsSource(testCase)
             % hierarchyOmitsMenuBranchesButRetainsSource Keep both kinds of menu and their children out of Hierarchy.
             path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "FigureToolsApp.m");
@@ -69,6 +71,8 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             clear cleanup
         end
 
+        % Guarantee: menus, keys, context menus, and Preview reach the same atomic clipboard commands on the intended target.
+        % Failure mode: one entry point bypasses the shared command, acts on the selection instead of the clicked target, or the iframe bridge breaks.
         function editMenuUsesAtomicSubtreeCommands(testCase)
             % editMenuUsesAtomicSubtreeCommands Exercise Copy, Paste and Cut through Edit menus.
             testCase.exerciseRoute("menu");
@@ -84,6 +88,8 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.exerciseRoute("context");
         end
 
+        % Guarantee: shortcuts reach component commands only when components own focus, and no accelerator is ambiguous.
+        % Failure mode: Ctrl+C in a text field copies a component, or two menus claim the same shortcut.
         function textAndTabFocusDoNotTriggerComponentCommands(testCase)
             % textAndTabFocusDoNotTriggerComponentCommands Preserve text ownership and invalidate stale focus.
             [app, figure, panelId] = testCase.fixture();
@@ -127,6 +133,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
 
         function previewContextTargetsAndShortcutsShareCommands(testCase)
             % previewContextTargetsAndShortcutsShareCommands Keep right-click identity and reject stale keys.
+            % Guarantee and failure mode: shared with editMenuUsesAtomicSubtreeCommands.
             [app, figure, panelId] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             selected = app.SelectedComponentId;
@@ -158,6 +165,8 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(app.Document.HistoryIndex, history);
         end
 
+        % Guarantee: each command runs once on its explicit target and current revision.
+        % Failure mode: native and overlay key handlers both run, deleting two subtrees, or a stale event pastes twice.
         function nativeDeleteAfterAddAndPreviewClickDoesNotNeedCurrentObject(testCase)
             % nativeDeleteAfterAddAndPreviewClickDoesNotNeedCurrentObject Match actual palette and empty uihtml hit state.
             [app, figure, panelId] = testCase.fixture();
@@ -211,6 +220,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
 
         function embeddedPreviewCtrlVPastesSubtree(testCase)
             % embeddedPreviewCtrlVPastesSubtree Exercise actual iframe key handlers and the MATLAB bridge.
+            % Guarantee and failure mode: shared with editMenuUsesAtomicSubtreeCommands.
             [app, figure, panelId] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             testCase.select(figure, panelId);
@@ -271,6 +281,7 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
 
         function previewClipboardEventChecksSelectionAndRevision(testCase)
             % previewClipboardEventChecksSelectionAndRevision Reject stale Preview commands and paste once.
+            % Guarantee and failure mode: shared with nativeDeleteAfterAddAndPreviewClickDoesNotNeedCurrentObject.
             [app, figure, panelId] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             testCase.select(figure, panelId);
@@ -292,6 +303,8 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
 
         function documentReplacementClearsClipboard(testCase)
             % documentReplacementClearsClipboard Do not offer prior-document content after successful New.
+            % Guarantee: New clears the clipboard.
+            % Failure mode: content from the previous document is pasted into the new one.
             [app, figure, panelId] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             testCase.select(figure, panelId);

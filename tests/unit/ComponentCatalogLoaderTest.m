@@ -8,6 +8,8 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
     methods (Test)
         function selectsNewestCatalogNotNewerThanRunningRelease(testCase)
             % selectsNewestCatalogNotNewerThanRunningRelease Reuse older catalogs on newer releases and reject older ones.
+            % Guarantee: the loader picks the newest catalog not newer than the running release.
+            % Failure mode: a newer release loads no catalog, or an older release loads a catalog with components it lacks.
             available = ["R2024a", "R2023a"];
             select = @(running) yamada.catalog.ComponentCatalogLoader.selectRelease(available, running);
             testCase.verifyEqual(select("R2023a"), "R2023a");
@@ -22,6 +24,8 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
             testCase.verifyEqual(string(folder), release);
         end
 
+        % Guarantee: malformed catalog data fails at load time with its file and field.
+        % Failure mode: a typo, cycle, or duplicate is accepted and causes wrong behavior later, far from its cause.
         function rejectsMalformedManifestRelease(testCase)
             % rejectsMalformedManifestRelease Require a release name in the manifest.
             root = testCase.createCatalog();
@@ -42,6 +46,8 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
             testCase.verifySubstring(string(exception.message), "Callback signatures require a callback property");
         end
 
+        % Guarantee: valid catalog data loads into the typed definitions the application uses.
+        % Failure mode: a field is dropped or mapped incorrectly, or application order changes Inspector order.
         function loadsAndValidatesGeometryMetadata(testCase)
             % loadsAndValidatesGeometryMetadata Reject unsafe classification data and default old catalogs conservatively.
             root = testCase.createCatalog();
@@ -63,6 +69,8 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
             testCase.verifyCatalogFailure(root);
         end
 
+        % Guarantee: cached loads are independent and revalidated when files change.
+        % Failure mode: a caller mutation leaks into later loads, or an invalid edit is hidden by the cache.
         function reusedLoadsReturnIndependentRegistries(testCase)
             % reusedLoadsReturnIndependentRegistries Keep caller mutations out of later loads of unchanged files.
             root = testCase.createCatalog();
@@ -114,6 +122,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
 
         function loadsApplicationPolicyWithoutChangingInspectorOrder(testCase)
             % loadsApplicationPolicyWithoutChangingInspectorOrder Keep execution and presentation distinct.
+            % Guarantee and failure mode: shared with loadsAndValidatesGeometryMetadata.
 
             root = testCase.createCatalog();
             component = testCase.readJson(root, "components/uilabel.json");
@@ -130,6 +139,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
 
         function rejectsMissingAndCyclicApplicationDependencies(testCase)
             % rejectsMissingAndCyclicApplicationDependencies Validate references across expanded groups.
+            % Guarantee and failure mode: shared with rejectsMalformedManifestRelease.
 
             root = testCase.createCatalog();
             component = testCase.readJson(root, "components/uilabel.json");
@@ -175,6 +185,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
 
         function loadsOrderedGroupsAndStyleOverrides(testCase)
             % loadsOrderedGroupsAndStyleOverrides Build typed definitions from a valid fixture catalog.
+            % Guarantee and failure mode: shared with loadsAndValidatesGeometryMetadata.
 
             % Load one component whose property sequence mixes group and local entries.
             root = testCase.createCatalog();
@@ -192,6 +203,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
 
         function rejectsUnknownFieldsWithCatalogContext(testCase)
             % rejectsUnknownFieldsWithCatalogContext Reject a manifest typo with its file path.
+            % Guarantee and failure mode: shared with rejectsMalformedManifestRelease.
 
             % Mutate only the manifest after creating a known-valid temporary catalog.
             root = testCase.createCatalog();
@@ -221,6 +233,8 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
 
         function rejectsUnknownBehaviorIdentifiers(testCase)
             % rejectsUnknownBehaviorIdentifiers Reject symbolic names outside the MATLAB allowlist.
+            % Guarantee: catalog behavior names are limited to the MATLAB allowlist.
+            % Failure mode: catalog data names an arbitrary function that the application would call.
 
             % Preserve valid shape while replacing one property editor token.
             root = testCase.createCatalog();
@@ -233,6 +247,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
 
         function loadsTypedInspectorPresentationMetadata(testCase)
             % loadsTypedInspectorPresentationMetadata Project JSON presentation metadata into definitions.
+            % Guarantee and failure mode: shared with loadsAndValidatesGeometryMetadata.
 
             % Annotate one fixture property with the metadata consumed by native rows.
             root = testCase.createCatalog();
@@ -255,6 +270,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
 
         function rejectsInvalidInspectorPresentationMetadata(testCase)
             % rejectsInvalidInspectorPresentationMetadata Fail closed for invalid presentation shapes.
+            % Guarantee and failure mode: shared with rejectsMalformedManifestRelease.
 
             % A display order must remain a scalar finite number in catalog JSON.
             root = testCase.createCatalog();

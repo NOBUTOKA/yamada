@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
     %   and preserve original method text for later localized source generation.
 
     methods (Test)
+        % Guarantee: callback add and delete are single undoable steps that restore exact source, including parsed method bodies.
+        % Failure mode: Undo leaves pending callback edits or dirty state, or deleting and re-adding loses the original body.
         function additionDeletionAndHistoryAreAtomic(testCase)
             % additionDeletionAndHistoryAreAtomic Restore pending methods and saved checkpoints exactly.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -31,6 +33,8 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
             testCase.verifyEmpty(document.CallbackEdits);
         end
 
+        % Guarantee: invalid, stale, or unsafe callback requests fail before any mutation.
+        % Failure mode: deleting a shared method breaks other bindings, or a rejected request still changes history.
         function rejectsRepeatedAndInvalidRequestsWithoutChangingState(testCase)
             % rejectsRepeatedAndInvalidRequestsWithoutChangingState Reject stale and unknown action targets before mutation.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -73,6 +77,8 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
 
         function generatedNamesAvoidSourceAndPendingCollisions(testCase)
             % generatedNamesAvoidSourceAndPendingCollisions Generate distinct valid names for multiple callback additions.
+            % Guarantee: new handler names are valid and unique against source and pending edits.
+            % Failure mode: two pending additions, or an addition and the class name, collide and generate invalid source.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("UIFigureSizeChanged", registry);
             root = document.RootComponentId;
@@ -86,6 +92,7 @@ classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.Test
 
         function parsedDeletionPreservesOriginalBodyAndCanBeReplaced(testCase)
             % parsedDeletionPreservesOriginalBodyAndCanBeReplaced Retain original spans through delete/add and history.
+            % Guarantee and failure mode: shared with additionDeletionAndHistoryAreAtomic.
             registry = yamada.model.ComponentRegistry.createDefault();
             path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
             document = yamada.source.AppSourceParser.parseFile(path, registry);
