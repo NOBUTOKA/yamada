@@ -328,14 +328,18 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             row = labels(string({labels.Text}) == "Units");
             testCase.assertNumElements(row,1);
             editor = findall(row.Parent,"Tag","yamada-inspector-property-editor");
+            handle = findall(figure,"-isa","matlab.graphics.axis.GeographicAxes");
+            before = getpixelposition(handle);
             editor.Value = "pixels";
             editor.ValueChangedFcn(editor,struct());
             source = app.Document.CurrentText;
             testCase.verifyLessThan(strfind(source,"app.GeographicAxes.Units ="), ...
-                strfind(source,"app.GeographicAxes.Position = [400 20 340 180];"));
+                strfind(source,"app.GeographicAxes.Position = "));
+            testCase.verifyEmpty(strfind(source,"app.GeographicAxes.Position = [400 20 340 180];"));
+            % The stored Position is converted so the rectangle keeps its extent.
             handle = findall(figure,"-isa","matlab.graphics.axis.GeographicAxes");
             testCase.verifyEqual(string(handle.Units),"pixels");
-            testCase.verifyEqual(handle.Position,[400 20 340 180],"AbsTol",1e-6);
+            testCase.verifyEqual(getpixelposition(handle),before,"AbsTol",1);
             clear cleanup
         end
 

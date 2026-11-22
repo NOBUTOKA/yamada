@@ -3332,8 +3332,10 @@ classdef yamada < handle
                 app.setStatus(message);
                 return
             end
+            % Carry physical geometry across Units changes.
+            batch = app.unitsGeometryChanges(component, transaction.changes());
             try
-                app.Document.setPropertyBatch(component.Id, transaction.changes(), app.Registry);
+                app.Document.setPropertyBatch(component.Id, batch, app.Registry);
             catch exception
                 message = string(exception.message);
                 app.setStatus(message);
@@ -3341,7 +3343,50 @@ classdef yamada < handle
             end
             % Revalidate and dispatch the accepted property impact without rebuilding the shell.
             app.Document.validatePropertyCommit(app.Registry);
-            app.refreshViews(yamada.ui.RefreshRequest("properties", component.Id, string({changes.Path})));
+            app.refreshViews(yamada.ui.RefreshRequest("properties", component.Id, string({batch.Path})));
+        end
+
+        function changes = unitsGeometryChanges(app, component, changes)
+            % unitsGeometryChanges Convert stored geometry literals so a Units change keeps their extent.
+            %   MATLAB reinterprets Position after Units in source order, so a new
+            %   Units value is paired with the Preview's same rectangle measured in
+            %   those units. Non-literal or unavailable geometry is left unchanged.
+            arguments (Input)
+                app (1, 1) yamada
+                component (1, 1) yamada.model.ComponentRecord
+                changes (1, :) struct
+            end
+            arguments (Output)
+                changes (1, :) struct
+            end
+            paths = string({changes.Path});
+            if ~any(paths == "Units") || app.previewHandleCount() == 0 || ~isKey(app.PreviewHandles, component.Id)
+                return
+            end
+            preview = app.PreviewHandles(component.Id);
+            if ~isvalid(preview) || ~isprop(preview, "Units"), return, end
+            units = string(changes(paths == "Units").Value);
+            original = preview.Units;
+
+            % Measure each stored geometry literal in the new units, then restore the Preview.
+            for path = ["Position", "InnerPosition", "OuterPosition"]
+                entry = component.getProperty(path);
+                if any(paths == path) || isempty(entry) || ~entry.IsEditable || entry.ValueKind ~= "literal" || ...
+                        ~isprop(preview, path)
+                    continue
+                end
+                try
+                    preview.Units = units;
+                    converted = round(double(preview.(path)), 4);
+                    preview.Units = original;
+                catch
+                    preview.Units = original;
+                    continue
+                end
+                if isequal(size(converted), [1 4]) && all(isfinite(converted))
+                    changes(end + 1) = struct("Path", path, "Value", {converted}); %#ok<AGROW>
+                end
+            end
         end
 
         function message = commitAxesSetting(app,document,id,path,value,action)
