@@ -4,7 +4,7 @@ For users following planned features and contributors choosing work, this roadma
 
 ## Easier property editing
 
-- **Reset properties from the Inspector.** Show when a property can be reset and let users undo the reset. Explain when an existing source expression prevents the change.
+- **Reset properties from the Inspector.** Show when a property can be reset and let users undo the reset. Explain when an existing source expression prevents the change. Include settings that were already in the opened file, and offer Reset to auto value on rows with an Auto button, which turns Auto back on and removes the value setting.
 - **Choose related components from the Inspector.** Add selectors for supported references such as `ContextMenu` and `SelectedTab`, with choices limited to valid targets in the same application.
 - **Choose component styles in the palette.** Offer a distinct creation choice for each supported style, with the correct initial settings and allowed parents.
 
