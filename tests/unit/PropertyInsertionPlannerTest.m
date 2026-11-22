@@ -207,6 +207,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
 
         function widenedPrerequisitesKeepAnUnstoredBoundedValue(testCase)
             % widenedPrerequisitesKeepAnUnstoredBoundedValue Store a clamped default before widening its range.
+            testCase.assumeFalse(isMATLABReleaseOlderThan("R2023b"), "Range sliders require R2023b or later.");
             [document, component] = testCase.fixture("app.Control = uislider(app.UIFigure, ""range"");");
             document.setProperty(component.Id, "Limits", [20 100], testCase.Registry);
             testCase.verifyEmpty(strfind(document.CurrentText, "app.Control.Value"));
