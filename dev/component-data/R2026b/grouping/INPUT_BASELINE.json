@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2026b",
-  "ledgerBaselineGitCommit": "5af9b89d8f235526c695b2b166220c4f328d4589",
+  "ledgerBaselineGitCommit": "f6e8aaf5cdd978b4ea475e6cd26c5d0b7735cee5",
   "inputSha256": "a48050127668c7875e4f412e2cbad7ceb5a979c0bef8fa07beef6d1e6547a216",
   "componentDocumentCount": 48,
   "componentVariantIds": [

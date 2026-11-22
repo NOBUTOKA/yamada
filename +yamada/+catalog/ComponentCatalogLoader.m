@@ -480,7 +480,7 @@ classdef ComponentCatalogLoader
                     displayName = yamada.catalog.ComponentCatalogLoader.scalarString( ...
                         row.displayName, rowContext + ".displayName");
                     editor = yamada.catalog.ComponentCatalogLoader.scalarString(row.editor, rowContext + ".editor");
-                    if ~any(editor == ["tableData", "columnSettings", "items", "fontStyle"])
+                    if ~any(editor == ["tableData", "columnSettings", "items", "fontStyle", "valueMode"])
                         yamada.catalog.ComponentCatalogLoader.fail(rowContext + ".editor", ...
                             "Unknown composite Inspector editor.");
                     end

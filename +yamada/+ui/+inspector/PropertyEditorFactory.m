@@ -26,6 +26,13 @@ classdef PropertyEditorFactory
                         control.ButtonPushedFcn = @(source, ~) yamada.ui.inspector.PropertyEditorFactory.openColumnSettingsEditor(source, batchCommitFcn);
                     case "tableData"
                         control.ButtonPushedFcn = @(source, ~) yamada.ui.inspector.PropertyEditorFactory.openTableDataEditor(source, batchCommitFcn);
+                    case "valueMode"
+                        parts = control.UserData;
+                        yamada.ui.inspector.PropertyEditorFactory.bind(parts.Value, parts.Definition, ...
+                            @(value) yamada.ui.inspector.PropertyEditorFactory.commitModeValue(control, value, batchCommitFcn), ...
+                            batchCommitFcn);
+                        parts.Auto.ValueChangedFcn = @(source, ~) ...
+                            yamada.ui.inspector.PropertyEditorFactory.commitAutoMode(control, source, batchCommitFcn);
                 end
                 return
             end
@@ -234,6 +241,21 @@ classdef PropertyEditorFactory
                         yamada.ui.inspector.PropertyEditorFactory.commitFontStyle( ...
                         source, "FontAngle", "italic", "normal", batchCommitFcn));
                     control.UserData = struct("Weight", weight, "Angle", angle);
+                case "valueMode"
+                    % Reuse the value property's own editor beside one Auto state button.
+                    definition = row.MemberDefinitions(row.MemberRoles == "value");
+                    control = uipanel(parent, "BorderType", "none", ...
+                        "Tag", "yamada-inspector-value-mode-editor");
+                    grid = uigridlayout(control, [1 2], "Padding", [0 0 0 0], ...
+                        "ColumnWidth", {"1x", 46}, "ColumnSpacing", 3);
+                    value = yamada.ui.inspector.PropertyEditorFactory.create(grid, definition, ...
+                        @(~) [], batchCommitFcn);
+                    auto = uibutton(grid, "state", "Text", "Auto", ...
+                        "Tag", "yamada-inspector-auto-mode-button");
+                    control.UserData = struct("Value", value, "Auto", auto, ...
+                        "Definition", definition, "ValuePath", definition.Path, ...
+                        "ModePath", row.MemberPaths(row.MemberRoles == "mode"), "ValueEditable", false);
+                    yamada.ui.inspector.PropertyEditorFactory.bind(control, row, @(~) [], batchCommitFcn);
                 otherwise
                     error("yamada:PropertyEditorFactory:UnknownCompositeEditor", ...
                         "Unknown composite Inspector editor.");
@@ -317,6 +339,9 @@ classdef PropertyEditorFactory
                     controls.Angle.Enable = yamada.ui.inspector.PropertyEditorFactory.onOff( ...
                         yamada.ui.inspector.PropertyEditorFactory.memberEditable(members, "FontAngle"));
                     control.UserData = controls;
+                case "valueMode"
+                    yamada.ui.inspector.PropertyEditorFactory.synchronizeValueMode( ...
+                        control, members, relatedValues);
                 otherwise
                     error("yamada:PropertyEditorFactory:UnknownCompositeEditor", ...
                         "Unknown composite Inspector editor.");
@@ -986,6 +1011,109 @@ classdef PropertyEditorFactory
             result = isstring(value) || iscell(value) || (ischar(value) && isrow(value));
             if iscell(value)
                 result = all(cellfun(@(item) ischar(item) && isrow(item), value));
+            end
+        end
+
+        function synchronizeValueMode(control, members, relatedValues)
+            % synchronizeValueMode Show the source-held value beside the effective Auto state.
+            arguments (Input)
+                control (1, 1) matlab.ui.container.Panel
+                members (1, :) struct
+                relatedValues struct = struct()
+            end
+            parts = control.UserData;
+            paths = string({members.Path});
+            value = members(paths == parts.ValuePath);
+            mode = members(paths == parts.ModePath);
+            autoOn = mode.IsKnown && (ischar(mode.RawValue) || isstring(mode.RawValue)) && ...
+                string(mode.RawValue) == "auto";
+
+            % The field keeps the stored input so turning Auto off restores it.
+            raw = value.RawValue;
+            if value.HasStoredValue, raw = value.StoredValue; end
+            text = "";
+            if value.HasStoredValue || value.IsKnown
+                text = yamada.ui.InspectorValueFormatter.format(yamada.model.PropertyEntry(parts.ValuePath, raw));
+            end
+            parts.ValueEditable = value.StoredEditable;
+            yamada.ui.inspector.PropertyEditorFactory.synchronize(parts.Value, text, ...
+                parts.ValueEditable && ~autoOn, raw, relatedValues);
+
+            % A Mode setting before the value setting cannot be made effective in place.
+            modeEditable = mode.StoredEditable && mode.IsKnown;
+            reason = "";
+            if ~mode.IsKnown
+                reason = mode.Reason;
+            elseif ~mode.StoredEditable
+                reason = mode.Reason;
+                if strlength(reason) == 0, reason = parts.ModePath + " is set in source that cannot be edited."; end
+            elseif mode.HasStoredValue && value.HasStoredValue && mode.Sequence < value.Sequence
+                modeEditable = false;
+                reason = parts.ModePath + " is set before " + parts.ValuePath + ...
+                    ", so changing it would not take effect without moving source settings.";
+            end
+            parts.Auto.Value = autoOn;
+            parts.Auto.Enable = yamada.ui.inspector.PropertyEditorFactory.onOff(modeEditable);
+            parts.Auto.Tooltip = reason;
+            control.UserData = parts;
+        end
+
+        function commitModeValue(control, value, batchCommitFcn)
+            % commitModeValue Parse and submit one value edited beside an Auto button.
+            arguments (Input)
+                control (1, 1) matlab.ui.container.Panel
+                value
+                batchCommitFcn (1, 1) function_handle
+            end
+            parts = control.UserData;
+            if (ischar(value) || (isstring(value) && isscalar(value))) && ...
+                    ~any(parts.Definition.Editor == ["text", "multilineText"])
+                [value, isLiteral] = yamada.source.MatlabLiteralParser.parse(string(value));
+                if ~isLiteral
+                    control.Tooltip = "Enter a supported MATLAB literal.";
+                    return
+                end
+            end
+            message = batchCommitFcn(yamada.model.PropertyTransaction.singleChange(parts.ValuePath, value));
+            if strlength(message) > 0, control.Tooltip = message; end
+        end
+
+        function commitAutoMode(control, source, batchCommitFcn)
+            % commitAutoMode Lock or unlock the value editor, then submit the Mode change.
+            arguments (Input)
+                control (1, 1) matlab.ui.container.Panel
+                source (1, 1) matlab.ui.control.StateButton
+                batchCommitFcn (1, 1) function_handle
+            end
+            parts = control.UserData;
+            % Lock before turning Auto on; unlock only after leaving Auto has been accepted.
+            yamada.ui.inspector.PropertyEditorFactory.setValueEditable(parts.Value, false);
+            mode = 'manual';
+            if source.Value, mode = 'auto'; end
+            message = batchCommitFcn(yamada.model.PropertyTransaction.singleChange(parts.ModePath, mode));
+            if strlength(message) == 0 && ~source.Value && isvalid(parts.Value)
+                yamada.ui.inspector.PropertyEditorFactory.setValueEditable(parts.Value, parts.ValueEditable);
+            end
+            if strlength(message) > 0
+                % Restore the previous presentation when the edit is rejected.
+                source.Value = ~source.Value;
+                yamada.ui.inspector.PropertyEditorFactory.setValueEditable(parts.Value, ...
+                    parts.ValueEditable && ~source.Value);
+                source.Tooltip = message;
+            end
+        end
+
+        function setValueEditable(control, editable)
+            % setValueEditable Toggle input on a reused singleton value editor.
+            arguments (Input)
+                control
+                editable (1, 1) logical
+            end
+            if isa(control, "matlab.ui.control.DropDown") || isa(control, "matlab.ui.control.Button") || ...
+                    ~isprop(control, "Editable")
+                control.Enable = yamada.ui.inspector.PropertyEditorFactory.onOff(editable);
+            else
+                control.Editable = editable;
             end
         end
 

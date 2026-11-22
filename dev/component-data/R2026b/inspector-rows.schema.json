@@ -17,7 +17,7 @@
         "properties": {
           "id": { "type": "string", "minLength": 1 },
           "displayName": { "type": "string", "minLength": 1 },
-          "editor": { "enum": ["tableData", "columnSettings", "items", "fontStyle"] },
+          "editor": { "enum": ["tableData", "columnSettings", "items", "fontStyle", "valueMode"] },
           "categoryId": { "type": "string" },
           "orderAnchor": { "type": "string", "minLength": 1 },
           "members": {
