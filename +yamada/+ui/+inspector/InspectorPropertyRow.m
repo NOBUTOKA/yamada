@@ -391,8 +391,9 @@ classdef InspectorPropertyRow < handle
             figure = ancestor(obj.Editor, "figure");
             if ~isempty(figure) && isvalid(figure) && isprop(figure, "CurrentObject")
                 current = figure.CurrentObject;
-                while ~isempty(current)
-                    if isequal(current, obj.Editor), result = true; return, end
+                % Compare handle identity; isequal would read every figure property, including JavaFrame.
+                while ~isempty(current) && ~isa(current, "matlab.ui.Figure")
+                    if current == obj.Editor, result = true; return, end
                     if ~isprop(current, "Parent"), break, end
                     current = current.Parent;
                 end
