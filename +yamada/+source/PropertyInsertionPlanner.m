@@ -418,8 +418,24 @@ classdef PropertyInsertionPlanner
                     edit = struct("Start", anchor.Offset + 1, "End", anchor.Offset, "Text", text);
                     [accepted, candidate, found, failure] = yamada.source.PropertyInsertionPlanner.candidate( ...
                         source, [base plan.Edits edit], name, requested, registry, deferValidation, document);
+                    % A later slot must restate existing dependents whose final values it changes.
+                    if accepted && ~deferValidation && anchor.Visit >= preferred
+                        [rewrites, restated, rewritable] = yamada.source.PropertyInsertionPlanner.dependentRewrites( ...
+                            candidate, found, sourceSettings, dependents, registry);
+                        if ~rewritable
+                            accepted = false;
+                            failure = "An existing dependent setting would change without an owned literal to restate it.";
+                            continue
+                        end
+                        if ~isempty(rewrites)
+                            [accepted, candidate, found, failure] = yamada.source.PropertyInsertionPlanner.candidate( ...
+                                source, [base plan.Edits edit rewrites], name, [requested restated], registry, false, document);
+                            if ~accepted, continue, end
+                            edit = [edit rewrites]; %#ok<AGROW>
+                        end
+                    end
                     if accepted
-                        plan.Edits(end + 1) = edit;
+                        plan.Edits = [plan.Edits edit];
                         plan.Placements(end + 1) = struct("Path", entry.Path, "Method", "assignment", ...
                             "Offset", anchor.Offset, "OwnerMethod", anchor.OwnerMethod);
                         plan.Document = candidate;
@@ -451,6 +467,50 @@ classdef PropertyInsertionPlanner
             reaches = false(count, count);
             for index = 1:count, reaches(ismember(paths, definitions(index).Application.ApplyAfter), index) = true; end
             for index = 1:count, reaches = reaches | (reaches(:, index) & reaches(index, :)); end
+        end
+
+        function [edits, restated, rewritable] = dependentRewrites(candidate, found, sourceSettings, dependents, registry)
+            % dependentRewrites Replace diverged dependent literals with their candidate final values.
+            arguments (Input)
+                candidate (1, 1) yamada.model.DocumentModel
+                found (1, 1) yamada.model.ComponentRecord
+                sourceSettings yamada.model.PropertySetting
+                dependents (1, :) string
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                edits struct
+                restated yamada.model.PropertyEntry
+                rewritable (1, 1) logical
+            end
+            edits = struct("Start", {}, "End", {}, "Text", {});
+            restated = yamada.model.PropertyEntry.empty;
+            rewritable = true;
+            if isempty(dependents), return, end
+            states = candidate.getEffectivePropertyStates(registry, found.Id);
+
+            % Only the final source occurrence of each dependent determines its stored input.
+            for path = dependents
+                settings = sourceSettings(string({sourceSettings.Path}) == path);
+                if isempty(settings), continue, end
+                setting = settings(end);
+                state = states(arrayfun(@(item) item.Definition.Path == path, states));
+                if isempty(state) || ~state.Resolution.IsKnown, continue, end
+                if setting.ValueKind == "literal" && ...
+                        yamada.model.PropertyStateResolver.matchesRequested(state.Resolution, setting.LiteralValue)
+                    continue
+                end
+                span = setting.ValueSpan;
+                if setting.ValueKind ~= "literal" || ~setting.IsEditable || ~setting.IsCertain || ...
+                        setting.Method == "functionCall" || isempty(span) || ~span.isKnown()
+                    rewritable = false;
+                    return
+                end
+                value = state.Resolution.EffectiveValue;
+                edits(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, ...
+                    "Text", yamada.source.LiteralEncoder.encode(value)); %#ok<AGROW>
+                restated(end + 1) = yamada.model.PropertyEntry(path, value); %#ok<AGROW>
+            end
         end
 
         function settings = protectedWidths(component, definition, path)

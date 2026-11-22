@@ -164,14 +164,86 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(plan.Document.Diagnostics));
         end
 
-        function aSafeLaterRangeSetterCanClampAnEarlierValue(testCase)
-            % aSafeLaterRangeSetterCanClampAnEarlierValue Do not reject a legal reverse sequence solely for canonical order.
+        function aLaterRangeSetterRestatesTheClampedValue(testCase)
+            % aLaterRangeSetterRestatesTheClampedValue Rewrite an earlier literal to the value a later setter leaves.
             [document, component] = testCase.fixture(["app.Control = uislider(app.UIFigure);", "app.Control.Value = 20;"]);
             component.setProperty("Limits", [50 100]);
             plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);
             testCase.verifyGreaterThanOrEqual(plan.Placements.Offset, component.getSettings("Value").SourceSpan.EndOffset);
             states = plan.Document.getEffectivePropertyStates(testCase.Registry, plan.Component.Id);
             testCase.verifyEqual(states(arrayfun(@(state) state.Definition.Path == "Value", states)).Resolution.EffectiveValue, 50);
+            testCase.verifyEqual(plan.Component.getSettings("Value").LiteralValue, 50);
+            testCase.verifySubstring(plan.Document.OriginalText, "app.Control.Value = 50;");
+        end
+
+        function restatedDependentsUndoWithTheInsertion(testCase)
+            % restatedDependentsUndoWithTheInsertion Keep the insertion and its restatement in one history step.
+            [document, component] = testCase.fixture(["app.Control = uislider(app.UIFigure);", "app.Control.Value = 20;"]);
+            original = document.CurrentText;
+            document.setProperty(component.Id, "Limits", [50 100], testCase.Registry);
+            edited = document.CurrentText;
+            testCase.verifySubstring(edited, "app.Control.Value = 50;");
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, original);
+            document.redo();
+            testCase.verifyEqual(document.CurrentText, edited);
+        end
+
+        function widenedPrerequisitesKeepTheClampedDependent(testCase)
+            % widenedPrerequisitesKeepTheClampedDependent Keep a restated value when its range widens again.
+            [document, component] = testCase.fixture(["app.Control = uislider(app.UIFigure);", "app.Control.Value = 20;"]);
+            document.setProperty(component.Id, "Limits", [50 100], testCase.Registry);
+            testCase.verifySubstring(document.CurrentText, "app.Control.Value = 50;");
+            component = document.getComponentByName("Control");
+            changes = yamada.model.PropertyTransaction.singleChange("Limits", [10 100]);
+            changes = document.restateDependentChanges(component.Id, changes, testCase.Registry);
+            document.setPropertyBatch(component.Id, changes, testCase.Registry);
+            testCase.verifySubstring(document.CurrentText, "app.Control.Value = 50;");
+            testCase.verifySubstring(document.CurrentText, "app.Control.Limits = [10 100];");
+            component = document.getComponentByName("Control");
+            states = document.getEffectivePropertyStates(testCase.Registry, component.Id);
+            testCase.verifyEqual(states(arrayfun(@(state) state.Definition.Path == "Value", states)).Resolution.EffectiveValue, 50);
+        end
+
+        function widenedPrerequisitesKeepAnUnstoredBoundedValue(testCase)
+            % widenedPrerequisitesKeepAnUnstoredBoundedValue Store a clamped default before widening its range.
+            testCase.assumeFalse(isMATLABReleaseOlderThan("R2023b"), "Range sliders require R2023b or later.");
+            [document, component] = testCase.fixture("app.Control = uislider(app.UIFigure, ""range"");");
+            document.setProperty(component.Id, "Limits", [20 100], testCase.Registry);
+            testCase.verifyEmpty(strfind(document.CurrentText, "app.Control.Value"));
+            component = document.getComponentByName("Control");
+            changes = yamada.model.PropertyTransaction.singleChange("Limits", [10 100]);
+            changes = document.restateDependentChanges(component.Id, changes, testCase.Registry);
+            document.setPropertyBatch(component.Id, changes, testCase.Registry);
+            testCase.verifySubstring(document.CurrentText, "app.Control.Value = [20 100];");
+            component = document.getComponentByName("Control");
+            states = document.getEffectivePropertyStates(testCase.Registry, component.Id);
+            testCase.verifyEqual(states(arrayfun(@(state) state.Definition.Path == "Value", states)).Resolution.EffectiveValue, [20 100]);
+        end
+
+        function widenedLimitsKeepAnUnstoredNumericValue(testCase)
+            % widenedLimitsKeepAnUnstoredNumericValue Store a clamped spinner default before widening its range.
+            [document, component] = testCase.fixture("app.Control = uispinner(app.UIFigure);");
+            document.setProperty(component.Id, "Limits", [5 10], testCase.Registry);
+            component = document.getComponentByName("Control");
+            changes = yamada.model.PropertyTransaction.singleChange("Limits", [0 10]);
+            changes = document.restateDependentChanges(component.Id, changes, testCase.Registry);
+            document.setPropertyBatch(component.Id, changes, testCase.Registry);
+            testCase.verifySubstring(document.CurrentText, "app.Control.Value = 5;");
+            component = document.getComponentByName("Control");
+            states = document.getEffectivePropertyStates(testCase.Registry, component.Id);
+            testCase.verifyEqual(states(arrayfun(@(state) state.Definition.Path == "Value", states)).Resolution.EffectiveValue, 5);
+        end
+
+        function narrowedLimitsClampALaterStoredValue(testCase)
+            % narrowedLimitsClampALaterStoredValue Restate a later Value that new Limits would reject.
+            [document, component] = testCase.fixture(["app.Control = uislider(app.UIFigure);", ...
+                "app.Control.Limits = [10 100];", "app.Control.Value = 50;"]);
+            changes = yamada.model.PropertyTransaction.singleChange("Limits", [60 100]);
+            changes = document.restateDependentChanges(component.Id, changes, testCase.Registry);
+            document.setPropertyBatch(component.Id, changes, testCase.Registry);
+            testCase.verifySubstring(document.CurrentText, "app.Control.Limits = [60 100];");
+            testCase.verifySubstring(document.CurrentText, "app.Control.Value = 60;");
         end
 
         function prerequisitesPermitInsertionBeyondOpaqueBoundaries(testCase)
