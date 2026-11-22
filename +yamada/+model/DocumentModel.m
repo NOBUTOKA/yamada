@@ -1230,6 +1230,106 @@ classdef DocumentModel < handle
             end
         end
 
+        function changes = restateDependentChanges(obj, componentId, changes, registry)
+            % restateDependentChanges Add restatements for dependent literals that a batch would make diverge.
+            %   A dependent is any transitive applyAfter target of a changed path.
+            %   A bounded dependent keeps its current effective value when the new
+            %   domain still accepts it, as a running component would. Any other
+            %   stored literal that the candidate leaves at a different effective
+            %   value is restated so later edits cannot revive a discarded value.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                componentId (1, 1) string
+                changes (1, :) struct
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                changes (1, :) struct
+            end
+
+            component = obj.getComponent(componentId);
+            if isempty(component) || isempty(changes), return, end
+            parentFactory = "";
+            if strlength(component.ParentId) > 0
+                parent = obj.getComponent(component.ParentId);
+                if ~isempty(parent), parentFactory = parent.Factory; end
+            end
+            definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
+            if isempty(definitions), return, end
+
+            % Collect transitive dependents of the changed paths.
+            paths = string({definitions.Path});
+            reaches = false(numel(paths));
+            for index = 1:numel(paths)
+                reaches(ismember(paths, definitions(index).Application.ApplyAfter), index) = true;
+            end
+            for index = 1:numel(paths), reaches = reaches | (reaches(:, index) & reaches(index, :)); end
+            changed = string({changes.Path});
+            dependents = paths(any(reaches(ismember(paths, changed), :), 1));
+            dependents = dependents(~ismember(dependents, changed));
+            candidates = strings(1, 0);
+            for path = dependents
+                entry = component.getProperty(path);
+                definition = definitions(paths == path);
+                if (isempty(entry) && definition(1).IsEditable) || ...
+                        (~isempty(entry) && entry.IsEditable && entry.ValueKind == "literal")
+                    candidates(end + 1) = path; %#ok<AGROW>
+                end
+            end
+            if isempty(candidates), return, end
+
+            % Resolve the current and candidate initialization states.
+            before = obj.getEffectivePropertyStates(registry, componentId);
+            try
+                parsed = obj.preflightPropertyChanges(componentId, changes, registry);
+            catch
+                % A later stored value outside new Limits is clamped as a running component would.
+                parsed = yamada.model.DocumentModel.empty;
+                clamped = yamada.model.DocumentModel.clampedChanges(changes, candidates, before);
+                if numel(clamped) > numel(changes)
+                    try
+                        parsed = obj.preflightPropertyChanges(componentId, clamped, registry);
+                        changes = clamped;
+                    catch
+                    end
+                end
+                if isempty(parsed), return, end
+            end
+            reparsed = parsed.getComponentByName(component.Name);
+            after = parsed.getEffectivePropertyStates(registry, reparsed.Id);
+
+            % Bounded and numeric values keep their current value whenever the new domain still accepts it.
+            for path = candidates
+                old = yamada.model.DocumentModel.pathState(before, path);
+                new = yamada.model.DocumentModel.pathState(after, path);
+                if isempty(old) || isempty(new) || ~old.IsKnown || ~new.IsKnown || ...
+                        ~any(old.EffectPolicy == ["boundedValue", "numericValue"]) || isequaln(old.EffectiveValue, new.EffectiveValue)
+                    continue
+                end
+                kept = [changes struct("Path", path, "Value", {old.EffectiveValue})];
+                try
+                    parsed = obj.preflightPropertyChanges(componentId, kept, registry);
+                catch
+                    continue
+                end
+                changes = kept;
+                reparsed = parsed.getComponentByName(component.Name);
+                after = parsed.getEffectivePropertyStates(registry, reparsed.Id);
+            end
+
+            % Remaining stored literals are restated to their final effective values.
+            staged = string({changes.Path});
+            for path = candidates(~ismember(candidates, staged))
+                entry = component.getProperty(path);
+                new = yamada.model.DocumentModel.pathState(after, path);
+                if isempty(entry) || isempty(new) || ~new.IsKnown || ...
+                        yamada.model.PropertyStateResolver.matchesRequested(new, entry.LiteralValue)
+                    continue
+                end
+                changes(end + 1) = struct("Path", path, "Value", {new.EffectiveValue}); %#ok<AGROW>
+            end
+        end
+
         function diagnostics = validatePropertyCommit(obj, registry)
             % validatePropertyCommit Publish full diagnostics or reuse proof of a bounded independent edit.
             arguments (Input)
@@ -4275,6 +4375,47 @@ classdef DocumentModel < handle
             position = [20 20 defaultSize];
             count = numel(parent.Children);
             position(1:2) = position(1:2) + [20 20] * count;
+        end
+    end
+
+    methods (Static, Access = private)
+        function changes = clampedChanges(changes, candidates, states)
+            % clampedChanges Append current bounded values clamped into newly requested Limits.
+            arguments (Input)
+                changes (1, :) struct
+                candidates (1, :) string
+                states (1, :) struct
+            end
+            arguments (Output)
+                changes (1, :) struct
+            end
+            paths = string({changes.Path});
+            if ~any(paths == "Limits"), return, end
+            limits = changes(paths == "Limits").Value;
+            if ~isnumeric(limits) || numel(limits) ~= 2, return, end
+            for path = candidates(candidates == "Value")
+                state = yamada.model.DocumentModel.pathState(states, path);
+                if isempty(state) || ~state.IsKnown || ~isnumeric(state.EffectiveValue) || ...
+                        ~any(state.EffectPolicy == ["boundedValue", "numericValue"])
+                    continue
+                end
+                value = min(max(double(state.EffectiveValue), double(limits(1))), double(limits(2)));
+                changes(end + 1) = struct("Path", path, "Value", {value}); %#ok<AGROW>
+            end
+        end
+
+        function state = pathState(states, path)
+            % pathState Return one property's resolution from Inspector states, or empty.
+            arguments (Input)
+                states (1, :) struct
+                path (1, 1) string
+            end
+            arguments (Output)
+                state yamada.model.PropertyState
+            end
+            state = yamada.model.PropertyState.empty;
+            match = find(arrayfun(@(item) item.Definition.Path == path, states), 1);
+            if ~isempty(match), state = states(match).Resolution; end
         end
     end
 end

@@ -3332,9 +3332,10 @@ classdef yamada < handle
                 app.setStatus(message);
                 return
             end
-            % Carry physical geometry across Units changes.
+            % Carry physical geometry across Units changes, then restate diverged dependents.
             batch = app.unitsGeometryChanges(component, transaction.changes());
             try
+                batch = app.Document.restateDependentChanges(component.Id, batch, app.Registry);
                 app.Document.setPropertyBatch(component.Id, batch, app.Registry);
             catch exception
                 message = string(exception.message);
