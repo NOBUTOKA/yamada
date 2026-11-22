@@ -386,6 +386,36 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             clear cleanup
         end
 
+        function leavingAutoWithoutStoredValueFreezesTheEffectiveValue(testCase)
+            % leavingAutoWithoutStoredValueFreezesTheEffectiveValue Write the effective value with the manual Mode.
+            folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture).Folder;
+            path = string(fullfile(folder, "ModeApp.m"));
+            writeModeApp(path, "app.First.YLim = [0 4];");
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn",@() acceptedOpenPath(path)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = editorPalette();
+            open = findall(figure,"Type","uimenu","Text","&Open...");
+            open.MenuSelectedFcn(open,[]);
+            drawnow;
+
+            % Leaving Auto stores the limits MATLAB derives from the explicit settings.
+            parts = modeEditor(app,figure,"First","XLim");
+            testCase.verifyTrue(parts.Auto.Value);
+            handles = findall(figure,"-isa","matlab.ui.control.UIAxes");
+            limits = arrayfun(@(item) string(mat2str(item.XLim)), handles);
+            shown = limits(1);
+            testCase.assertTrue(all(limits == shown));
+            parts.Auto.Value = false;
+            parts.Auto.ValueChangedFcn(parts.Auto,struct());
+            source = app.Document.CurrentText;
+            testCase.verifySubstring(source,"app.First.XLim = " + shown + ";");
+            testCase.verifySubstring(source,"app.First.XLimMode = 'manual';");
+            testCase.verifyLessThan(strfind(source,"app.First.XLim = "), strfind(source,"app.First.XLimMode = "));
+            clear cleanup
+        end
+
     end
 end
 

@@ -3334,6 +3334,7 @@ classdef yamada < handle
             end
             % Carry physical geometry across Units changes, then restate diverged dependents.
             batch = app.unitsGeometryChanges(component, transaction.changes());
+            batch = app.manualModeValueChanges(component, batch);
             try
                 batch = app.Document.restateDependentChanges(component.Id, batch, app.Registry);
                 app.Document.setPropertyBatch(component.Id, batch, app.Registry);
@@ -3345,6 +3346,41 @@ classdef yamada < handle
             % Revalidate and dispatch the accepted property impact without rebuilding the shell.
             app.Document.validatePropertyCommit(app.Registry);
             app.refreshViews(yamada.ui.RefreshRequest("properties", component.Id, string({batch.Path})));
+        end
+
+        function changes = manualModeValueChanges(app, component, changes)
+            % manualModeValueChanges Store the MATLAB-computed value when a Mode leaves auto without one.
+            %   The Preview applies only the explicit source settings, so its live
+            %   value is what MATLAB derives from them at this moment. Writing it
+            %   beside 'manual' makes reopening the app show the same value.
+            arguments (Input)
+                app (1, 1) yamada
+                component (1, 1) yamada.model.ComponentRecord
+                changes (1, :) struct
+            end
+            arguments (Output)
+                changes (1, :) struct
+            end
+            if app.previewHandleCount() == 0 || ~isKey(app.PreviewHandles, component.Id), return, end
+            preview = app.PreviewHandles(component.Id);
+            if ~isvalid(preview), return, end
+            paths = string({changes.Path});
+            for index = find(endsWith(paths, "Mode"))
+                value = changes(index).Value;
+                base = extractBefore(paths(index), strlength(paths(index)) - 3);
+                if ~(ischar(value) || isstring(value)) || string(value) ~= "manual" || any(paths == base) || ...
+                        ~isempty(component.getProperty(base)) || ~isprop(preview, base)
+                    continue
+                end
+                % Read the live value only after pending automatic layout has settled.
+                try
+                    drawnow;
+                    current = preview.(base);
+                catch
+                    continue
+                end
+                changes(end + 1) = struct("Path", base, "Value", {current}); %#ok<AGROW>
+            end
         end
 
         function changes = unitsGeometryChanges(app, component, changes)
