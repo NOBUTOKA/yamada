@@ -49,17 +49,24 @@ classdef IndexedSettingEdit
             additions = yamada.source.SourceStatement.empty;
             anchors = zeros(1, 0); removedStatements = zeros(1, 0);
             constructorDelta = zeros(size(execution.Trace.Order));
-            addedOwners = strings(1, 0);
+            addedOwners = strings(1, 0); addedCounts = zeros(1, 0);
             bindings = struct("ComponentId", {}, "Settings", {}, "FactoryArguments", {});
             for spec = specs
                 component = document.getComponent(spec.ComponentId);
                 changes = spec.Changes; placements = spec.Placements; removedIds = spec.RemovedIds;
                 original = component.Settings;
                 remove = ismember([original.Id], removedIds);
-                for setting = original(remove & ismember(string({original.Method}), ["assignment","functionCall"]))
-                    removedStatements = union(removedStatements,analysis.statementIndices(setting.SourceSpan),"stable"); %#ok<AGROW>
-                end
                 settings = original(~remove);
+                % A call statement stays while another of its options or effects survives.
+                for setting = original(remove & ismember(string({original.Method}), ["assignment","functionCall"]))
+                    statement = analysis.statementIndices(setting.SourceSpan);
+                    if any(arrayfun(@(item) isequal(item.SourceSpan, setting.SourceSpan), settings))
+                        visit = find(execution.Trace.Order == statement);
+                        constructorDelta(visit) = constructorDelta(visit) - 1;
+                        continue
+                    end
+                    removedStatements = union(removedStatements,statement,"stable"); %#ok<AGROW>
+                end
                 creationIndex = analysis.statementIndices(component.SourceSpans.Creation);
                 creationVisit = find(execution.Trace.Order == creationIndex);
                 assert(isscalar(creationVisit), "yamada:SourceLiteralTransaction:WiderProof", "Creation needs one owned execution visit.");
@@ -92,8 +99,17 @@ classdef IndexedSettingEdit
                     if isfield(placement, "Statement")
                         % Axes commands carry the exact inserted statement and its typed occurrence.
                         settings = [settings document.canonicalizeSettings(placement.Setting)]; %#ok<AGROW>
+                        % An option added to an existing call extends that statement's events in place.
+                        if isempty(placement.Statement)
+                            [call, ~] = analysis.statementNeighbors(placement.Offset);
+                            visit = find(execution.Trace.Order == call);
+                            assert(isscalar(visit), "yamada:SourceLiteralTransaction:WiderProof", "The extended call needs one execution visit.");
+                            constructorDelta(visit) = constructorDelta(visit) + numel(placement.Setting);
+                            continue
+                        end
                         additions(end + 1) = placement.Statement; %#ok<AGROW>
                         addedOwners(end + 1) = sourceName; %#ok<AGROW>
+                        addedCounts(end + 1) = numel(placement.Setting); %#ok<AGROW>
                         [anchor, ~] = analysis.statementNeighbors(placement.Offset);
                         assert(isscalar(anchor) && anchor > 0 && ...
                             analysis.Layout.Owner(anchor) == placement.Setting(1).OwnerMethod, ...
@@ -119,10 +135,34 @@ classdef IndexedSettingEdit
                         location.NameSpan = yamada.model.SourceSpan(nameStart, nameStart + strlength(placement.Path) - 1);
                         location.ValueSpan = yamada.model.SourceSpan(first + strlength(prefix), first + strlength(raw) - 1);
                         addedOwners(end + 1) = sourceName; %#ok<AGROW>
+                        addedCounts(end + 1) = 1; %#ok<AGROW>
                         additions(end + 1) = yamada.source.SourceStatement(raw, location.SourceSpan, first + (0:strlength(raw) - 1)); %#ok<AGROW>
                         [anchor, ~] = analysis.statementNeighbors(placement.Offset);
                         assert(isscalar(anchor), "yamada:SourceLiteralTransaction:WiderProof", "Insertion has no retained statement anchor.");
                         anchors(end + 1) = anchor; %#ok<AGROW>
+                    elseif placement.Method == "functionCall"
+                        % A reviewed call form owns its argument and records its implied effects.
+                        form = yamada.catalog.AxesSettingFunctionCatalog.formById(placement.Form, registry.CatalogRoot);
+                        assert(isscalar(form), "yamada:SourceLiteralTransaction:WiderProof", "The call form is unavailable.");
+                        [prefix, suffix] = yamada.source.AxesSettingPlacement.callText(form, "app." + sourceName);
+                        raw = prefix + encoded + suffix;
+                        first = yamada.model.IndexedSettingEdit.insertedOffset(batch, raw + ";");
+                        sourceSpan = yamada.model.SourceSpan(first, first + strlength(raw));
+                        valueFirst = first + strlength(prefix);
+                        valueSpan = yamada.model.SourceSpan(valueFirst, valueFirst + strlength(encoded) - 1);
+                        created = yamada.source.AxesSettingPlacement.callSettings(component.Factory, form, value, ...
+                            placement.Path, sourceSpan, valueSpan, source.StateId);
+                        for setting = created
+                            settings(end + 1) = document.canonicalizeSettings( ...
+                                setting.withScope(placement.OwnerMethod, location.ScopeSpan)); %#ok<AGROW>
+                        end
+                        addedOwners(end + 1) = sourceName; %#ok<AGROW>
+                        addedCounts(end + 1) = numel(created); %#ok<AGROW>
+                        additions(end + 1) = yamada.source.SourceStatement(raw, sourceSpan, first + (0:strlength(raw) - 1)); %#ok<AGROW>
+                        [anchor, ~] = analysis.statementNeighbors(placement.Offset);
+                        assert(isscalar(anchor), "yamada:SourceLiteralTransaction:WiderProof", "Insertion has no retained statement anchor.");
+                        anchors(end + 1) = anchor; %#ok<AGROW>
+                        continue
                     else
                         constructor = original(string({original.Method}) == "nameValue");
                         assert(~isempty(constructor)); style = constructor(1);
@@ -151,23 +191,27 @@ classdef IndexedSettingEdit
                 bindings(end + 1) = struct("ComponentId", component.Id, "Settings", settings, ...
                     "FactoryArguments", {component.CreationArguments}); %#ok<AGROW>
             end
-            [analysis, execution] = analysis.withLiteralPatches(batch, additions, anchors, removedStatements, constructorDelta, execution, addedOwners);
+            [analysis, execution] = analysis.withLiteralPatches(batch, additions, anchors, removedStatements, constructorDelta, execution, addedOwners, ...
+                struct("OldName", {}, "NewName", {}), repmat("assignment", 1, numel(additions)), addedCounts);
             state = source.withBatch(batch, restoredStateId, analysis);
             for ownerIndex = 1:numel(bindings)
                 component = document.getComponent(bindings(ownerIndex).ComponentId);
                 original = component.Settings; settings = bindings(ownerIndex).Settings;
                 % Project execution order numerically, retaining constructor argument order separately.
                 starts = arrayfun(@(item) item.SourceSpan.StartOffset, settings);
-                values = arrayfun(@(item) item.ValueSpan.StartOffset, settings);
+                % Implied call effects own no token and follow the call's owned values.
+                values = arrayfun(@(item) yamada.model.IndexedSettingEdit.valueOrder(item), settings);
                 [~, order] = sortrows([starts(:) values(:)], [1 2]); settings = settings(order);
                 constructor = string({settings.Method}) == "nameValue";
                 oldConstructor = original([original.FactoryArgumentIndex] > 0);
                 factoryArguments = component.CreationArguments;
                 if ~isempty(oldConstructor), factoryArguments = factoryArguments(1:min([oldConstructor.FactoryArgumentIndex]) - 2); end
                 ordinal = 0;
+                statements = zeros(1, numel(settings));
                 for index = 1:numel(settings)
                     record = settings(index).toStruct();
                     statement = analysis.statementIndices(settings(index).SourceSpan);
+                    if isscalar(statement), statements(index) = statement; end
                     visit = find(execution.Trace.Order == statement);
                     previous = find([original.Id] == settings(index).Id, 1);
                     if ~isempty(previous) && ~constructor(index) && isfield(execution, "SequenceMap")
@@ -186,7 +230,9 @@ classdef IndexedSettingEdit
                             factoryArguments(end + 1:end + 2) = {record.Path, record.Value};
                         end
                     else
-                        record.Location.Sequence = execution.Assignment(visit);
+                        % Effects of one call follow the earlier events of that statement.
+                        record.Location.Sequence = execution.Assignment(visit) + ...
+                            nnz(statements(1:index - 1) == statement);
                     end
                     settings(index) = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
                 end
@@ -197,6 +243,22 @@ classdef IndexedSettingEdit
         end
     end
     methods (Static, Access = private)
+        function key = valueOrder(setting)
+            % valueOrder Order a setting within its statement by its value token.
+            %   An implied call effect has no token and follows the call's owned values.
+            arguments (Input)
+                setting (1, 1) yamada.model.PropertySetting
+            end
+            arguments (Output)
+                key (1, 1) double
+            end
+            if isempty(setting.ValueSpan)
+                key = setting.SourceSpan.EndOffset;
+            else
+                key = setting.ValueSpan.StartOffset;
+            end
+        end
+
         function offset = insertedOffset(batch, text)
             % insertedOffset Locate editor-emitted syntax within its own patch, never in the application body.
             arguments (Input)

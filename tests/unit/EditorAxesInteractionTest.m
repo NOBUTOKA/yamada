@@ -289,7 +289,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             field = findall(dialog,"Tag","yamada-axes-detail-FontSize");
             field.Value = 19;
             field.ValueChangedFcn(field,struct());
-            testCase.verifyEqual(component.getProperty("Title.FontSize").LiteralValue,19);
+            testCase.verifyEqual(component.getSettings("Title.FontSize").LiteralValue,19);
+            testCase.verifySubstring(app.Document.CurrentText,"""FontSize"", 19)");
             handles = findall(figure,"-isa","matlab.ui.control.UIAxes");
             testCase.verifyEqual(handles.Title.FontSize,19);
         end
@@ -370,10 +371,10 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             testCase.verifyEqual(string(parts.Value.Value),"[0 10]");
             source = app.Document.CurrentText;
             testCase.verifyLessThan(strfind(source,"app.First.XLim = [0 10];"), ...
-                strfind(source,"app.First.XLimMode = 'auto';"));
+                regexp(source,"xlim\(app\.First, [""']auto[""']\);"));
             parts.Auto.Value = false;
             parts.Auto.ValueChangedFcn(parts.Auto,struct());
-            testCase.verifySubstring(app.Document.CurrentText,"app.First.XLimMode = 'manual';");
+            testCase.verifyMatches(app.Document.CurrentText,"xlim\(app\.First, [""']manual[""']\);");
             handle = findall(figure,"-isa","matlab.ui.control.UIAxes","Tag","");
             limits = arrayfun(@(item) mat2str(item.XLim), handle, "UniformOutput", false);
             testCase.verifyTrue(any(string(limits) == "[0 10]"));
@@ -410,9 +411,9 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             parts.Auto.Value = false;
             parts.Auto.ValueChangedFcn(parts.Auto,struct());
             source = app.Document.CurrentText;
-            testCase.verifySubstring(source,"app.First.XLim = " + shown + ";");
-            testCase.verifySubstring(source,"app.First.XLimMode = 'manual';");
-            testCase.verifyLessThan(strfind(source,"app.First.XLim = "), strfind(source,"app.First.XLimMode = "));
+            % The reviewed call already implies the manual Mode.
+            testCase.verifySubstring(source,"xlim(app.First, " + shown + ");");
+            testCase.verifyFalse(contains(source,"XLimMode"));
             clear cleanup
         end
 

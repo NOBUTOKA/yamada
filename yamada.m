@@ -3319,7 +3319,7 @@ classdef yamada < handle
             end
             for index = 1:numel(changes)
                 entry = component.getProperty(string(changes(index).Path));
-                if ~isempty(entry) && ~entry.IsEditable
+                if ~isempty(entry) && ~entry.IsEditable && ~yamada.source.AxesSettingPlacement.isImplied(entry)
                     message = "This source-backed property is read-only.";
                     app.setStatus(message);
                     return
@@ -4022,7 +4022,8 @@ classdef yamada < handle
                 members(index).IsKnown = isKnown;
                 members(index).StoredEditable = component.IsEditable && states(index).Definition.IsEditable && ...
                     ~resolved.IsReleaseUnavailable;
-                if ~isempty(entry)
+                % A call-implied value can be superseded by a new setting after its call.
+                if ~isempty(entry) && ~yamada.source.AxesSettingPlacement.isImplied(entry)
                     members(index).StoredEditable = members(index).StoredEditable && ...
                         entry.IsEditable && entry.ValueKind == "literal";
                     if entry.ValueKind == "literal"

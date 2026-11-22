@@ -17,7 +17,7 @@ classdef SourceLiteralTransaction
         % Changes - Requested literal values retained for UI invalidation and history.
         Changes struct
         % Placements - Primary insertion recipes retained for exact history replay.
-        Placements struct = struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {})
+        Placements struct = struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {}, "Form", {})
         % CanReuseStates - Whether the finite proof excludes semantic effects on other component owners.
         CanReuseStates logical = true
         % CanReuseEligibility - Whether placement and source-edit conditions retain their previous meaning.
@@ -201,7 +201,7 @@ classdef SourceLiteralTransaction
                 result (1, 1) struct
             end
             needsDocumentValidation = false; canReuseStates = true; canReuseEligibility = true;
-            placements = struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {});
+            placements = struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {}, "Form", {});
             component = document.getComponent(id);
             assert(~isempty(component) && component.IsEditable);
             assert(document.sourceAnalysis().matches(source.Text), ...
@@ -247,6 +247,17 @@ classdef SourceLiteralTransaction
                 assert(literal && isequaln(decoded, change.Value), ...
                     "yamada:SourceLiteralTransaction:WiderProof", "Literal encoding needs complete syntax validation.");
                 entry = component.getProperty(path);
+                % A value implied by a recognized call is superseded by a new setting after that call.
+                if yamada.source.AxesSettingPlacement.isImplied(entry)
+                    settings = component.getSettings(path);
+                    current = settings(end).LiteralValue;
+                    if isequaln(current, change.Value) || ((ischar(current) || isstring(current)) && ...
+                            (ischar(change.Value) || isstring(change.Value)) && string(current) == string(change.Value))
+                        continue
+                    end
+                    candidate.removeProperty(path);
+                    entry = yamada.model.PropertyEntry.empty;
+                end
                 if ~isempty(entry) && ~isequaln(entry.LiteralValue, change.Value)
                     assert(entry.IsEditable && entry.ValueKind == "literal" && isfield(entry.Metadata, "ValueSpan"), ...
                         "yamada:SourceLiteralTransaction:WiderProof", "Existing value ownership is not proven.");

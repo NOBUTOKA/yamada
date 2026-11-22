@@ -263,7 +263,7 @@ classdef PropertyInsertionPlanner
                 plan (1, 1) struct
             end
             plan = struct("Edits", struct("Start", {}, "End", {}, "Text", {}), ...
-                "Placements", struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {}), ...
+                "Placements", struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {}, "Form", {}), ...
                 "Document", yamada.model.DocumentModel.empty, "Component", yamada.model.ComponentRecord.empty);
             entries = component.Properties([component.Properties.Origin] == "generated");
             entries = entries(arrayfun(@(entry) isempty(entry.SourceSpan) && entry.ValueKind == "literal" && ...
@@ -284,8 +284,11 @@ classdef PropertyInsertionPlanner
             if isempty(entries), return, end
             entries = yamada.model.PropertyApplicationPlanner.order(entries, definitions);
             sourceSettings = component.Settings(string({component.Settings.Method}) ~= "generated");
-            if any(ismember(string({entries.Path}), string({sourceSettings.Path})))
-                error("yamada:PropertyInsertionPlanner:UnsafePlacement", "A new setting would duplicate an existing source occurrence.");
+            % Only a value implied by a recognized call, which owns no token, is superseded by a later setting.
+            for setting = sourceSettings(ismember(string({sourceSettings.Path}), string({entries.Path})))
+                if setting.Method ~= "functionCall" || ~isempty(setting.ValueSpan)
+                    error("yamada:PropertyInsertionPlanner:UnsafePlacement", "A new setting would duplicate an existing source occurrence.");
+                end
             end
 
             % Acquire the same constructor-reachable trace used by the parser.
@@ -321,11 +324,21 @@ classdef PropertyInsertionPlanner
                 all([constructor.IsCertain]) && isscalar(unique(string({constructor.Syntax}))) && ...
                 ~any(string({constructor.Path}) == "CreateFcn");
             nv = false(1, numel(entries));
+            % A reviewed axes call form precedes constructor arguments and assignments.
+            forms = cell(1, numel(entries));
+            methodNames = string({layout.Methods.Name});
+            for index = 1:numel(entries)
+                form = yamada.source.AxesSettingPlacement.callForm(component.Factory, entries(index).Path, ...
+                    entries(index).LiteralValue, registry.CatalogRoot);
+                if ~isempty(form) && any(methodNames == string(form.name)), form = struct([]); end
+                forms{index} = form;
+            end
             for index = 1:numel(entries)
                 definition = definitions(paths == entries(index).Path);
+                superseded = any(string({sourceSettings.Path}) == entries(index).Path);
                 nv(index) = nvOnly && ~isempty(definition) && definition.IsEditable && ...
                     definition.AuditDisposition == "editable" && ...
-                    ~contains(entries(index).Path, ".");
+                    ~contains(entries(index).Path, ".") && isempty(forms{index}) && ~superseded;
             end
             for index = 1:numel(entries)
                 dependencies = reaches(:, paths == entries(index).Path);
@@ -335,113 +348,138 @@ classdef PropertyInsertionPlanner
             end
             name = document.sourceComponentName(component.Id);
             requested = yamada.model.PropertyEntry.empty;
+            implied = struct("Path", {}, "Value", {});
             for index = 1:numel(entries)
                 entry = entries(index);
                 requested(end + 1) = entry; %#ok<AGROW>
+                % A value already implied by an earlier inserted call needs no statement of its own.
+                if any(arrayfun(@(item) item.Path == entry.Path && ...
+                        yamada.source.PropertyInsertionPlanner.sameValue(item.Value, entry.LiteralValue), implied))
+                    continue
+                end
                 accepted = false;
                 failure = "No safe interval is available before an initialization boundary.";
                 prerequisites = paths(reaches(:, paths == entry.Path));
                 protectors = yamada.source.PropertyInsertionPlanner.protectedWidths( ...
                     component, definitions(paths == entry.Path), entry.Path);
                 for placement = plan.Placements
-                    if any(prerequisites == placement.Path) && placement.Method == "assignment", nv(index) = false; end
+                    if any(prerequisites == placement.Path) && placement.Method ~= "nameValue", nv(index) = false; end
                 end
+                % Try a reviewed call, then constructor arguments, then an assignment.
+                attempts = strings(1, 0);
+                if ~isempty(forms{index}), attempts = "functionCall"; end
+                if nv(index), attempts(end + 1) = "nameValue"; end
+                attempts(end + 1) = "assignment"; %#ok<AGROW>
+                for kind = attempts
+                    % Prefer the existing constructor style only for verified arguments.
+                    if kind == "nameValue"
+                        lower = 0;
+                        prerequisites = paths(reaches(:, paths == entry.Path));
+                        for argument = 1:numel(constructor)
+                            if any(prerequisites == constructor(argument).Path) || ...
+                                    any([protectors.Id] == constructor(argument).Id), lower = argument; end
+                        end
+                        % Prefer slots before existing constructor dependents, then the later slots.
+                        dependents = paths(reaches(paths == entry.Path, :));
+                        upper = numel(constructor);
+                        for argument = numel(constructor):-1:1
+                            if any(dependents == constructor(argument).Path), upper = argument - 1; end
+                        end
+                        upper = max(upper, lower);
+                        for slot = [lower:upper, upper + 1:numel(constructor)]
+                            before = yamada.model.PropertySetting.empty;
+                            if slot < numel(constructor), before = constructor(slot + 1); end
+                            edit = yamada.source.FactoryCallEditor.insert(source, statements(creation), entry, constructor(1), before);
+                            earlier = plan.Placements(ismember(string({plan.Placements.Path}), prerequisites));
+                            if any([earlier.Offset] > edit.End), continue, end
+                            [accepted, candidate, found, failure] = yamada.source.PropertyInsertionPlanner.candidate( ...
+                                source, [base plan.Edits edit], name, requested, registry, deferValidation, document);
+                            if accepted
+                                plan.Edits(end + 1) = edit;
+                                plan.Placements(end + 1) = struct("Path", entry.Path, "Method", "nameValue", ...
+                                    "Offset", edit.End, "OwnerMethod", layout.Owner(creation), "Form", "");
+                                plan.Document = candidate;
+                                plan.Component = found;
+                                break
+                            end
+                        end
+                        if accepted, break, end
+                        continue
+                    end
 
-                % Prefer the existing constructor style only for verified arguments.
-                if nv(index)
-                    lower = 0;
+                    % Dependencies set the earliest visit; native-valid later slots remain candidates.
                     prerequisites = paths(reaches(:, paths == entry.Path));
-                    for argument = 1:numel(constructor)
-                        if any(prerequisites == constructor(argument).Path) || ...
-                                any([protectors.Id] == constructor(argument).Id), lower = argument; end
+                    lower = created;
+                    for setting = sourceSettings
+                        % A superseded implied value is written after the call that implies it.
+                        if any(prerequisites == setting.Path) || setting.Path == entry.Path || any([protectors.Id] == setting.Id)
+                            visits = find(arrayfun(@(statement) statement.Span.StartOffset, statements(order)) == ...
+                                setting.SourceSpan.StartOffset);
+                            if ~isempty(visits), lower = max(lower, max(visits)); end
+                        end
                     end
-                    % Prefer slots before existing constructor dependents, then the later slots.
+                    for placement = plan.Placements
+                        if any(prerequisites == placement.Path) && placement.Method ~= "nameValue"
+                            match = find([anchors.Offset] == placement.Offset, 1);
+                            if ~isempty(match), lower = max(lower, anchors(match).Visit); end
+                        end
+                    end
+                    upper = boundary(find(boundary > lower, 1));
+                    if isempty(upper), upper = inf; end
+                    % Prefer slots before existing dependents; later valid slots remain fallbacks.
                     dependents = paths(reaches(paths == entry.Path, :));
-                    upper = numel(constructor);
-                    for argument = numel(constructor):-1:1
-                        if any(dependents == constructor(argument).Path), upper = argument - 1; end
+                    preferred = inf;
+                    for setting = sourceSettings
+                        if any(dependents == setting.Path)
+                            visits = find(arrayfun(@(statement) statement.Span.StartOffset, statements(order)) == ...
+                                setting.SourceSpan.StartOffset);
+                            if ~isempty(visits), preferred = min(preferred, min(visits)); end
+                        end
                     end
-                    upper = max(upper, lower);
-                    for slot = [lower:upper, upper + 1:numel(constructor)]
-                        before = yamada.model.PropertySetting.empty;
-                        if slot < numel(constructor), before = constructor(slot + 1); end
-                        edit = yamada.source.FactoryCallEditor.insert(source, statements(creation), entry, constructor(1), before);
-                        earlier = plan.Placements(ismember(string({plan.Placements.Path}), prerequisites));
-                        if any([earlier.Offset] > edit.End), continue, end
+                    early = [anchors.Visit] < preferred;
+                    for anchor = [anchors(early) anchors(~early)]
+                        if anchor.Visit < lower || anchor.Visit >= upper, continue, end
+                        if kind == "functionCall"
+                            text = yamada.source.PropertyInsertionPlanner.call(document, name, entry, anchor, forms{index});
+                        else
+                            text = yamada.source.PropertyInsertionPlanner.assignment(source, document, name, entry, anchor);
+                        end
+                        edit = struct("Start", anchor.Offset + 1, "End", anchor.Offset, "Text", text);
                         [accepted, candidate, found, failure] = yamada.source.PropertyInsertionPlanner.candidate( ...
                             source, [base plan.Edits edit], name, requested, registry, deferValidation, document);
+                        % A later slot must restate existing dependents whose final values it changes.
+                        if accepted && ~deferValidation && anchor.Visit >= preferred
+                            [rewrites, restated, rewritable] = yamada.source.PropertyInsertionPlanner.dependentRewrites( ...
+                                candidate, found, sourceSettings, dependents, registry);
+                            if ~rewritable
+                                accepted = false;
+                                failure = "An existing dependent setting would change without an owned literal to restate it.";
+                                continue
+                            end
+                            if ~isempty(rewrites)
+                                [accepted, candidate, found, failure] = yamada.source.PropertyInsertionPlanner.candidate( ...
+                                    source, [base plan.Edits edit rewrites], name, [requested restated], registry, false, document);
+                                if ~accepted, continue, end
+                                edit = [edit rewrites]; %#ok<AGROW>
+                            end
+                        end
                         if accepted
-                            plan.Edits(end + 1) = edit;
-                            plan.Placements(end + 1) = struct("Path", entry.Path, "Method", "nameValue", ...
-                                "Offset", edit.End, "OwnerMethod", layout.Owner(creation));
+                            plan.Edits = [plan.Edits edit];
+                            formId = "";
+                            if kind == "functionCall"
+                                formId = string(forms{index}.id);
+                                [effectPaths, effectValues, owned] = yamada.catalog.AxesSettingFunctionCatalog.effects( ...
+                                    forms{index}, entry.LiteralValue);
+                                implied = [implied struct("Path", num2cell(effectPaths(~owned)), "Value", effectValues(~owned))]; %#ok<AGROW>
+                            end
+                            plan.Placements(end + 1) = struct("Path", entry.Path, "Method", kind, ...
+                                "Offset", anchor.Offset, "OwnerMethod", anchor.OwnerMethod, "Form", formId);
                             plan.Document = candidate;
                             plan.Component = found;
                             break
                         end
                     end
-                end
-                if accepted, continue, end
-                nv(index) = false;
-
-                % Dependencies set the earliest visit; native-valid later slots remain candidates.
-                prerequisites = paths(reaches(:, paths == entry.Path));
-                lower = created;
-                for setting = sourceSettings
-                    if any(prerequisites == setting.Path) || any([protectors.Id] == setting.Id)
-                        visits = find(arrayfun(@(statement) statement.Span.StartOffset, statements(order)) == ...
-                            setting.SourceSpan.StartOffset);
-                        if ~isempty(visits), lower = max(lower, max(visits)); end
-                    end
-                end
-                for placement = plan.Placements
-                    if any(prerequisites == placement.Path) && placement.Method == "assignment"
-                        match = find([anchors.Offset] == placement.Offset, 1);
-                        if ~isempty(match), lower = max(lower, anchors(match).Visit); end
-                    end
-                end
-                upper = boundary(find(boundary > lower, 1));
-                if isempty(upper), upper = inf; end
-                % Prefer slots before existing dependents; later valid slots remain fallbacks.
-                dependents = paths(reaches(paths == entry.Path, :));
-                preferred = inf;
-                for setting = sourceSettings
-                    if any(dependents == setting.Path)
-                        visits = find(arrayfun(@(statement) statement.Span.StartOffset, statements(order)) == ...
-                            setting.SourceSpan.StartOffset);
-                        if ~isempty(visits), preferred = min(preferred, min(visits)); end
-                    end
-                end
-                early = [anchors.Visit] < preferred;
-                for anchor = [anchors(early) anchors(~early)]
-                    if anchor.Visit < lower || anchor.Visit >= upper, continue, end
-                    text = yamada.source.PropertyInsertionPlanner.assignment(source, document, name, entry, anchor);
-                    edit = struct("Start", anchor.Offset + 1, "End", anchor.Offset, "Text", text);
-                    [accepted, candidate, found, failure] = yamada.source.PropertyInsertionPlanner.candidate( ...
-                        source, [base plan.Edits edit], name, requested, registry, deferValidation, document);
-                    % A later slot must restate existing dependents whose final values it changes.
-                    if accepted && ~deferValidation && anchor.Visit >= preferred
-                        [rewrites, restated, rewritable] = yamada.source.PropertyInsertionPlanner.dependentRewrites( ...
-                            candidate, found, sourceSettings, dependents, registry);
-                        if ~rewritable
-                            accepted = false;
-                            failure = "An existing dependent setting would change without an owned literal to restate it.";
-                            continue
-                        end
-                        if ~isempty(rewrites)
-                            [accepted, candidate, found, failure] = yamada.source.PropertyInsertionPlanner.candidate( ...
-                                source, [base plan.Edits edit rewrites], name, [requested restated], registry, false, document);
-                            if ~accepted, continue, end
-                            edit = [edit rewrites]; %#ok<AGROW>
-                        end
-                    end
-                    if accepted
-                        plan.Edits = [plan.Edits edit];
-                        plan.Placements(end + 1) = struct("Path", entry.Path, "Method", "assignment", ...
-                            "Offset", anchor.Offset, "OwnerMethod", anchor.OwnerMethod);
-                        plan.Document = candidate;
-                        plan.Component = found;
-                        break
-                    end
+                    if accepted, break, end
                 end
                 if ~accepted
                     error("yamada:PropertyInsertionPlanner:UnsafePlacement", ...
@@ -593,6 +631,41 @@ classdef PropertyInsertionPlanner
             preferred = anchors([anchors.Owned]);
             [~, sorted] = sort([preferred.Visit], "descend");
             anchors = [preferred(sorted) anchors(~[anchors.Owned])];
+        end
+
+        function result = sameValue(left, right)
+            % sameValue Compare literal values, treating character vectors and strings alike.
+            arguments (Input)
+                left
+                right
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            textual = @(value) ischar(value) || (isstring(value) && isscalar(value));
+            if textual(left) && textual(right)
+                result = string(left) == string(right);
+            else
+                result = isequaln(left, right);
+            end
+        end
+
+        function text = call(document, name, entry, anchor, form)
+            % call Emit one reviewed axes setting call after a source-preserving trailing-trivia anchor.
+            arguments (Input)
+                document (1, 1) yamada.model.DocumentModel
+                name (1, 1) string
+                entry (1, 1) yamada.model.PropertyEntry
+                anchor (1, 1) struct
+                form (1, 1) struct
+            end
+            arguments (Output)
+                text (1, 1) string
+            end
+            ending = string(newline);
+            if document.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
+            [prefix, suffix] = yamada.source.AxesSettingPlacement.callText(form, "app." + name);
+            text = ending + anchor.Indent + prefix + yamada.source.LiteralEncoder.encode(entry.LiteralValue) + suffix + ";";
         end
 
         function text = assignment(~, document, name, entry, anchor)

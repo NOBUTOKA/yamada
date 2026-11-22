@@ -17,7 +17,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             limits = control.getSettings("XLim");
             testCase.verifyEqual([limits.Method], ["assignment","functionCall"]);
             testCase.verifyEqual(limits(2).LiteralValue, [1 4]);
-            testCase.verifyFalse(limits(2).IsEditable);
+            testCase.verifyTrue(limits(2).IsEditable);
             testCase.verifyEqual(control.getSettings("XLabel.String").LiteralValue, 'a,b');
             testCase.verifyEqual(other.getSettings("XTick").LiteralValue, [1 2]);
             testCase.verifyEmpty(control.getSettings("XTick"));
@@ -69,7 +69,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
         end
 
         function editsNumericRulerTickFormats(testCase)
-            % editsNumericRulerTickFormats Preserve function syntax and emit direct new assignments.
+            % editsNumericRulerTickFormats Preserve function syntax and emit reviewed calls for new formats.
             [document, registry, component] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", "xtickformat(app.Control, '%.1f'); % keep"]);
             testCase.verifyEqual(string(component.getSettings("XAxis.TickLabelFormat").LiteralValue),"%.1f");
@@ -77,7 +77,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             document.editAxesInspector(component.Id,"YAxis.TickLabelFormat","%.3f","set",registry);
             source = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifySubstring(source,"xtickformat(app.Control, '%.2f'); % keep");
-            testCase.verifySubstring(source,'app.Control.YAxis.TickLabelFormat = "%.3f";');
+            testCase.verifySubstring(source,'ytickformat(app.Control, "%.3f");');
             reloaded = yamada.source.AppSourceParser.parseText(source,registry);
             owner = reloaded.getComponentByName("Control");
             testCase.verifyEqual(string(owner.getSettings("YAxis.TickLabelFormat").LiteralValue),"%.3f");
@@ -106,12 +106,16 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
         end
 
         function editsSecondaryLabelWithTheAvailableSourceForm(testCase)
-            % editsSecondaryLabelWithTheAvailableSourceForm Keep new assignments and existing calls distinct.
+            % editsSecondaryLabelWithTheAvailableSourceForm Use the release's call form when one exists.
             [document, registry, component] = testCase.fixture("app.Control = uiaxes(app.UIFigure);");
             path = "XAxis.SecondaryLabel.String";
             document.editAxesInspector(component.Id,path,"units","set",registry);
             source = yamada.source.RoundTripGenerator(registry).generate(document);
-            testCase.verifySubstring(source,'app.Control.XAxis.SecondaryLabel.String = "units";');
+            if isempty(yamada.catalog.AxesSettingFunctionCatalog.forName("xsecondarylabel",registry.CatalogRoot))
+                testCase.verifySubstring(source,'app.Control.XAxis.SecondaryLabel.String = "units";');
+            else
+                testCase.verifySubstring(source,'xsecondarylabel(app.Control, "units");');
+            end
             [calls, registry, component] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", "xsecondarylabel(app.Control, 'units');"]);
             if isempty(yamada.catalog.AxesSettingFunctionCatalog.forName("xsecondarylabel",registry.CatalogRoot))
@@ -285,7 +289,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
         end
 
         function pendingModeIsAddedAfterExistingConstructorValue(testCase)
-            % pendingModeIsAddedAfterExistingConstructorValue Keep the constructor syntax while preserving a requested final auto mode.
+            % pendingModeIsAddedAfterExistingConstructorValue Prefer the reviewed call after constructor values while preserving a requested final auto mode.
             for factory = ["uiaxes", "axes"]
                 for syntax = ["equals", "quoted"]
                     if syntax == "equals"
@@ -301,7 +305,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
                     other = saved.getComponentByName("Control");
                     setting = other.getSettings("XTickMode");
                     testCase.verifyNumElements(setting, 1);
-                    testCase.verifyEqual(setting.Method, "nameValue");
+                    testCase.verifyEqual(setting.Method, "functionCall");
                     testCase.verifyGreaterThan(setting.ValueSpan.StartOffset, other.getSettings("XTick").ValueSpan.StartOffset);
                     states = saved.getEffectivePropertyStates(registry, other.Id);
                     testCase.verifyEqual(testCase.state(states, "XTickMode").EffectiveValue, "auto");
@@ -317,8 +321,45 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             end
         end
 
+        % A value implied by a call owns no token. Rewriting the call to change it would
+        % discard the call's own argument, and a miscounted call statement would shift the
+        % execution order of every later setting.
+        function impliedModeIsSupersededAfterItsCall(testCase)
+            % impliedModeIsSupersededAfterItsCall Keep the implying call and order the new mode after it.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "xlim(app.Control, [1 4]);", ...
+                "app.Control.YLim = [0 2];"]);
+            document.setPropertyBatch(control.Id, struct("Path", "XLimMode", "Value", "auto"), registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifySubstring(source, "xlim(app.Control, [1 4]);");
+            testCase.verifyLessThan(strfind(source, "xlim(app.Control, [1 4]);"), ...
+                regexp(source, "xlim\(app\.Control, [""']auto[""']\);"));
+            states = document.getEffectivePropertyStates(registry, control.Id);
+            testCase.verifyEqual(string(testCase.state(states, "XLimMode").EffectiveValue), "auto");
+            testCase.verifyEqual(testCase.state(states, "YLim").EffectiveValue, [0 2]);
+            reloaded = yamada.source.AppSourceParser.parseText(source, registry);
+            testCase.verifyEqual([control.Settings.Sequence], [reloaded.getComponentByName("Control").Settings.Sequence]);
+            document.undo();
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+        end
+
+        % An option added to an existing call shares that call's statement. Undoing it must
+        % remove only the option; dropping the statement would also delete the main text.
+        function undoingAnAddedOptionKeepsItsCall(testCase)
+            % undoingAnAddedOptionKeepsItsCall Restore the original call and its main value.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "title(app.Control, 'A');"]);
+            document.editAxesInspector(control.Id, "Title.Color", [1 0 0], "set", registry);
+            testCase.verifySubstring(document.CurrentText, "title(app.Control, 'A', ""Color"", [1 0 0]);");
+            document.undo();
+            testCase.verifyEqual(document.CurrentText, document.OriginalText);
+            testCase.verifyEqual(control.getSettings("Title.String").LiteralValue, 'A');
+            document.editAxesInspector(control.Id, "Title.FontSize", 14, "set", registry);
+            testCase.verifySubstring(document.CurrentText, "title(app.Control, 'A', ""FontSize"", 14);");
+        end
+
         function assignmentModePreservesInputAndSavedPositions(testCase)
-            % assignmentModePreservesInputAndSavedPositions Save a new assignment without inventing computed tick values.
+            % assignmentModePreservesInputAndSavedPositions Save a new mode call without inventing computed tick values.
             [document, registry, control] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", "app.Control.XTick = [0 1];"]);
             original = document.OriginalText;
@@ -330,7 +371,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             tick = record.Settings(string({record.Settings.Path}) == "XTick");
             mode = record.Settings(string({record.Settings.Path}) == "XTickMode");
             testCase.verifyEqual(tick.Value, [0 1]);
-            testCase.verifyEqual(mode.Location.Method, "assignment");
+            testCase.verifyEqual(mode.Location.Method, "functionCall");
             testCase.verifyGreaterThan(mode.Location.Sequence, tick.Location.Sequence);
             testCase.verifyFalse(document.IsDirty);
             testCase.verifyEqual(document.OriginalText, original);

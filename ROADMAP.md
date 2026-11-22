@@ -16,7 +16,7 @@ For users following planned features and contributors choosing work, this roadma
 ## Broader axes support
 
 - **Extend ruler details.** Add individual latitude and longitude ruler formats and type-specific controls for Cartesian datetime, duration, and categorical rulers when their types can be established.
-- **Recognize more axes setup calls.** Support reviewed `axis` forms, aspect ratios, and absolute camera settings. Extend coverage of compound and data-dependent calls as their effects and ownership can be established.
+- **Recognize more axes setup calls.** Support reviewed `axis` forms, aspect ratios, and absolute camera settings. Extend coverage of compound and data-dependent calls as their effects and ownership can be established. Recognized single-property calls such as `xlim`, `xticks`, and `box` are already editable in place and used for new settings.
 
 ## More control when saving
 
