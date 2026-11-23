@@ -164,6 +164,15 @@ Add a test when it protects a behavior that matters to the specification, an inv
 
 Begin each new test with a brief comment that states the property it guarantees and the concrete failure mode that could break it. Tests that check the same failure mode may share one comment. The comment explains why the test is needed, not how the implementation works.
 
+### Test Admission
+
+Apply these rules when adding a test and when reviewing existing tests. A test that fails one of them is not added, or is removed.
+
+- **Reachable failure modes only.** The failure mode must be reachable from a public editor command or from input source. Do not add a test whose failure requires private state, a direct assignment that no command performs, or registry or catalog changes after first use, because such a test protects code that users cannot exercise. When a test needs such a state, review the code that handles it: remove that code, or make the state unrepresentable through access restrictions or documented preconditions, as the `ComponentRegistry.register` help does.
+- **No mirrored implementation or data.** Do not compare fixed source text, catalog data, or internal routing verbatim, because such a test fails on every intentional edit and detects nothing else. When fixed text is part of a contract, keep it in a reviewed artifact, such as `resources/NewAppTemplate.txt`, and test properties of the result, such as reparsing or safe execution. Reviewed golden data, such as the component ledger comparison, is a contract and remains allowed.
+- **No duplicate guarantees.** Do not add a test whose failure mode an existing test already detects. Before adding a test, search `tests` for the public entry point it exercises, such as the editor command, `DocumentModel` method, or parser or generator function. If a test exercises the same entry point, extend it with a case or state in the new comment what the new test detects that it does not. If no test exercises it, no reference is needed.
+- **Scratch checks stay local.** Checks written to observe behavior while developing are not regression tests. Commit a test only when it satisfies the rules above.
+
 Before submitting a pull request, run the tests relevant to your changes and include the results. If you could not run a test, name it and explain why in the pull request.
 
 ### Pull Request Validation
