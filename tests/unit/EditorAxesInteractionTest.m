@@ -298,6 +298,12 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             testCase.verifySubstring(app.Document.CurrentText,"""FontSize"", 19)");
             handles = findall(figure,"-isa","matlab.ui.control.UIAxes");
             testCase.verifyEqual(handles.Title.FontSize,19);
+            % The Font Style toggle writes the text value it presents.
+            bold = findall(dialog,"Tag","yamada-axes-detail-FontWeight");
+            bold.Value = true;
+            bold.ValueChangedFcn(bold,struct());
+            testCase.verifyEqual(string(component.getSettings("Title.FontWeight").LiteralValue),"bold");
+            testCase.verifyTrue(findall(dialog,"Tag","yamada-axes-detail-FontWeight").Value);
         end
 
         function editsNonPixelAxesGeometryInTheirOwnUnits(testCase)
