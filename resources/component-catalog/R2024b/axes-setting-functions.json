@@ -240,6 +240,10 @@
           "argument": "text"
         }
       ],
+      "automaticPaths": [
+        "XLabel.FontSize",
+        "XLabel.FontWeight"
+      ],
       "options": [
         {
           "name": "Color",
@@ -330,6 +334,10 @@
           "argument": "text"
         }
       ],
+      "automaticPaths": [
+        "YLabel.FontSize",
+        "YLabel.FontWeight"
+      ],
       "options": [
         {
           "name": "Color",
@@ -419,6 +427,10 @@
           "path": "ZLabel.String",
           "argument": "text"
         }
+      ],
+      "automaticPaths": [
+        "ZLabel.FontSize",
+        "ZLabel.FontWeight"
       ],
       "options": [
         {

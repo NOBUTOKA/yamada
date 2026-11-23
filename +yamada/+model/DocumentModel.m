@@ -4320,8 +4320,8 @@ classdef DocumentModel < handle
             end
         end
 
-        function [value, known] = effectiveValue(obj, registry, id, path)
-            % effectiveValue Resolve one effective property value of a component.
+        function [value, known, code] = effectiveValue(obj, registry, id, path)
+            % effectiveValue Resolve one effective property value of a component and its reason code.
             arguments (Input)
                 obj (1, 1) yamada.model.DocumentModel
                 registry (1, 1) yamada.model.ComponentRegistry
@@ -4331,12 +4331,15 @@ classdef DocumentModel < handle
             arguments (Output)
                 value
                 known (1, 1) logical
+                code (1, 1) string
             end
 
-            value = []; known = false;
+            value = []; known = false; code = "";
             states = obj.getEffectivePropertyStates(registry, id);
             state = states(arrayfun(@(item) item.Definition.Path == path, states));
-            if isscalar(state) && state.Resolution.IsKnown
+            if ~isscalar(state), return, end
+            code = state.Resolution.ReasonCode;
+            if state.Resolution.IsKnown
                 value = state.Resolution.EffectiveValue; known = true;
             end
         end
@@ -4367,10 +4370,12 @@ classdef DocumentModel < handle
             for path = paths
                 definition = definitions(definitionPaths == path);
                 if ~isscalar(definition) || definition.Application.EffectPolicy ~= "autoParameter", continue, end
+                % Text sizes and weights have no public Mode; their parameters become read-only instead.
                 affected = definition.Application.AffectedPaths;
-                assert(isscalar(affected) && any(definitionPaths == affected + "Mode"), ...
-                    "yamada:DocumentModel:InvalidPropertyBatch", "An automatic parameter needs one reviewed Mode.");
-                if ~any(paths == affected + "Mode"), modes(end + 1) = affected + "Mode"; end %#ok<AGROW>
+                affected = affected(ismember(affected + "Mode", definitionPaths));
+                for target = affected
+                    if ~any(paths == target + "Mode"), modes(end + 1) = target + "Mode"; end %#ok<AGROW>
+                end
             end
             if isempty(modes), return, end
             % Only a Mode that is not already known to be automatic needs a setting.

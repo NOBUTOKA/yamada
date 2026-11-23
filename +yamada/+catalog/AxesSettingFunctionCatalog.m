@@ -105,6 +105,24 @@ classdef AxesSettingFunctionCatalog
             if yamada.catalog.AxesSettingFunctionCatalog.accepts(args{1}, value), form = candidate; end
         end
 
+        function paths = automaticPaths(factory, path, root)
+            % automaticPaths Return the explicit values a call owning a path returns to automatic.
+            arguments (Input)
+                factory (1, 1) string
+                path (1, 1) string
+                root (1, 1) string
+            end
+            arguments (Output)
+                paths (1, :) string
+            end
+
+            paths = strings(1, 0);
+            if strlength(root) == 0, return, end
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            key = factory + " " + path;
+            if isKey(catalog.Automatic, key), paths = catalog.Automatic{key}; end
+        end
+
         function forms = formsWritingPath(factory, path, root)
             % formsWritingPath Return the call forms for a factory whose argument owns a path.
             arguments (Input)
@@ -288,7 +306,7 @@ classdef AxesSettingFunctionCatalog
             [~, release] = fileparts(root);
             catalog = struct("ByName", dictionary(string([]), {}), "ById", dictionary(string([]), {}), ...
                 "Insertion", dictionary(string([]), string([])), "Companion", dictionary(string([]), string([])), ...
-                "Groups", struct("Main", {}, "Form", {}));
+                "Automatic", dictionary(string([]), {}), "Groups", struct("Main", {}, "Form", {}));
             path = fullfile(root,"axes-setting-functions.json");
             if root == "" || ~isfile(path), return, end
             data = jsondecode(fileread(path));
@@ -328,6 +346,15 @@ classdef AxesSettingFunctionCatalog
                             "yamada:AxesSettingFunctionCatalog:Insertion", "Several insertion forms write %s.",key);
                         if kind == "insertion", catalog.Insertion(key) = string(form.id);
                         else, catalog.Companion(key) = string(form.id); end
+                    end
+                end
+                % A call can return other explicit values, such as a label's FontSize, to automatic.
+                if isfield(form,"automaticPaths")
+                    automatic = reshape(string(form.automaticPaths),1,[]);
+                    assert(~isempty(automatic) && isscalar(ownedPaths) && ~any(ismember(automatic,ownedPaths)), ...
+                        "yamada:AxesSettingFunctionCatalog:Form", "Invalid automatic paths in axes setting form %s.",form.id);
+                    for factory = reshape(string(form.targetFactories),1,[])
+                        catalog.Automatic(factory + " " + ownedPaths) = {automatic};
                     end
                 end
                 catalog.ById(string(form.id)) = {form};

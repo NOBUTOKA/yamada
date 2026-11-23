@@ -240,6 +240,28 @@
           "argument": "text"
         }
       ],
+      "automaticPaths": [
+        "XLabel.FontSize",
+        "XLabel.FontWeight"
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2024b"
+          },
+          "patch": {
+            "automaticPaths": [
+              "XLabel.FontSize"
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "observation",
+              "detail": "Native R2023a through R2026b: the call returns an explicit label FontSize to automatic. Through R2024a it keeps an explicit FontWeight; from R2024b it also returns FontWeight to automatic."
+            }
+          ]
+        }
+      ],
       "options": [
         {
           "name": "Color",
@@ -330,6 +352,28 @@
           "argument": "text"
         }
       ],
+      "automaticPaths": [
+        "YLabel.FontSize",
+        "YLabel.FontWeight"
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2024b"
+          },
+          "patch": {
+            "automaticPaths": [
+              "YLabel.FontSize"
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "observation",
+              "detail": "Native R2023a through R2026b: the call returns an explicit label FontSize to automatic. Through R2024a it keeps an explicit FontWeight; from R2024b it also returns FontWeight to automatic."
+            }
+          ]
+        }
+      ],
       "options": [
         {
           "name": "Color",
@@ -418,6 +462,28 @@
         {
           "path": "ZLabel.String",
           "argument": "text"
+        }
+      ],
+      "automaticPaths": [
+        "ZLabel.FontSize",
+        "ZLabel.FontWeight"
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2024b"
+          },
+          "patch": {
+            "automaticPaths": [
+              "ZLabel.FontSize"
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "observation",
+              "detail": "Native R2023a through R2026b: the call returns an explicit label FontSize to automatic. Through R2024a it keeps an explicit FontWeight; from R2024b it also returns FontWeight to automatic."
+            }
+          ]
         }
       ],
       "options": [

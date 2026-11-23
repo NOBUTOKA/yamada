@@ -407,6 +407,29 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(string(testCase.state(states, "XLimMode").EffectiveValue), "manual");
         end
 
+        % Guarantee: An explicit text size that a later axes FontSize or label call returns to automatic is not reported as effective, a new size is written after that setting, and a title weight parameter is read-only while the Title weight is explicit.
+        % Failure mode: The resolver keeps the earlier explicit size, an in-place edit stays overridden by the later FontSize, or TitleFontWeight accepts edits that cannot change the displayed weight.
+        function explicitTextValuesFollowTheirAutomaticRules(testCase)
+            % explicitTextValuesFollowTheirAutomaticRules Resolve text resets and ineffective weight edits.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "title(app.Control, 'T', 'FontWeight', 'bold');", ...
+                "app.Control.Title.FontSize = 9;", "app.Control.XLabel.FontSize = 7;", ...
+                "app.Control.FontSize = 20;", "app.Control.YLabel.FontSize = 7;", "ylabel(app.Control, 'Y');"]);
+            states = document.getEffectivePropertyStates(registry, control.Id);
+            testCase.verifyEqual(testCase.state(states, "Title.FontSize").ReasonCode, "automatic-text");
+            testCase.verifyEqual(testCase.state(states, "XLabel.FontSize").ReasonCode, "automatic-text");
+            testCase.verifyEqual(testCase.state(states, "YLabel.FontSize").ReasonCode, "automatic-text");
+            weight = testCase.state(states, "TitleFontWeight");
+            testCase.verifyFalse(weight.IsEditable);
+            testCase.verifySubstring(weight.ReadOnlyReason, "Title.FontWeight");
+            document.editAxesInspector(control.Id, "Title.FontSize", 14, "set", registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifyLessThan(strfind(source, "app.Control.FontSize = 20;"), ...
+                strfind(source, "app.Control.Title.FontSize = 14;"));
+            states = document.getEffectivePropertyStates(registry, control.Id);
+            testCase.verifyEqual(testCase.state(states, "Title.FontSize").EffectiveValue, 14);
+        end
+
         % Guarantee: Undoing an option added to an existing call removes only that option.
         % Failure mode: The option shares the call's statement, so dropping the statement also deletes the main text.
         function undoingAnAddedOptionKeepsItsCall(testCase)

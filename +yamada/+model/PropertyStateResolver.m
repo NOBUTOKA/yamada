@@ -169,6 +169,15 @@ classdef PropertyStateResolver
                     end
                     [states, message] = yamada.model.PropertyStateResolver.apply( ...
                         states, definitions, setting.Path, value, known, setting.Id, setting.Method == "nameValue");
+                    % A call such as xlabel(ax, "X") returns catalogued explicit values to automatic;
+                    % its own FontSize option follows as a later occurrence of the same call.
+                    if setting.Method == "functionCall" && ~isempty(registry) && ~isempty(setting.ValueSpan)
+                        for target = yamada.catalog.AxesSettingFunctionCatalog.automaticPaths( ...
+                                component.Factory, setting.Path, registry.CatalogRoot)
+                            states = setUnknown(states, target, setting.Id, ...
+                                "The call returns this value to automatic.", "automatic-text");
+                        end
+                    end
                     if strlength(message) > 0
                         diagnostics(end + 1) = yamada.model.Diagnostic("invalid-property-sequence", "error", ...
                             setting.Path + ": " + message, component.Id, setting.SourceSpan); %#ok<AGROW>
@@ -210,6 +219,47 @@ classdef PropertyStateResolver
                 end
             end
             states = yamada.model.PropertyStateResolver.retainUnreviewedEffects(states, definitions, component, registry);
+            states = yamada.model.PropertyStateResolver.ineffectiveParameters(states, component.Factory);
+        end
+
+        function states = ineffectiveParameters(states, factory)
+            % ineffectiveParameters Make an automatic text parameter read-only while it has no effect.
+            %   A text size or weight has no public Mode, so a parameter such as
+            %   TitleFontSizeMultiplier cannot select automatic text. While every text it
+            %   shapes holds an explicit value, editing it would change nothing visible.
+            arguments (Input)
+                states yamada.model.PropertyState
+                factory (1, 1) string
+            end
+            arguments (Output)
+                states yamada.model.PropertyState
+            end
+
+            paths = string({states.Path});
+            for index = 1:numel(states)
+                affected = yamada.model.AxesInspectorProperties.automaticTexts(factory, paths(index));
+                if isempty(affected) || ~states(index).IsEditable, continue, end
+                targets = states(ismember(paths, affected));
+                explicit = arrayfun(@(state) state.ExplicitKind ~= "absent" && ...
+                    state.ReasonCode ~= "automatic-text", targets);
+                if all(explicit) && numel(targets) == numel(affected)
+                    states(index) = states(index).withReadOnly("This setting has no effect while " + ...
+                        strjoin(affected, ", ") + " " + yamada.model.PropertyStateResolver.verb(numel(affected)) + ...
+                        " set explicitly.");
+                end
+            end
+        end
+
+        function text = verb(count)
+            % verb Agree the reason text with the number of named settings.
+            arguments (Input)
+                count (1, 1) double
+            end
+            arguments (Output)
+                text (1, 1) string
+            end
+            text = "is";
+            if count > 1, text = "are"; end
         end
 
     end
@@ -544,6 +594,16 @@ classdef PropertyStateResolver
                 [states, message] = yamada.model.PropertyStateResolver.items(states, previous, path, id);
             elseif family == "textValue" && any(path == ["Value", "CharacterLimits"])
                 [states, message] = yamada.model.PropertyStateResolver.text(states, path, id);
+            end
+
+            % Setting the axes FontSize returns every axes text size to automatic, as native
+            % R2023a through R2026b observations confirm, even after an explicit text size.
+            if path == "FontSize"
+                textSizes = paths(ismember(paths, ["Title", "Subtitle", "XLabel", "YLabel", "ZLabel"] + ".FontSize"));
+                for target = textSizes
+                    states = setUnknown(states, target, id, ...
+                        "Setting the axes FontSize returns this size to automatic.", "automatic-text");
+                end
             end
 
             % Width followers hold manual values or derive them through known auto modes.
