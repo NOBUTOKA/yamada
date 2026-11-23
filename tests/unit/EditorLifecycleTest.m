@@ -4,6 +4,8 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
     %   only native dialogs and filesystem decisions through the lifecycle service.
 
     methods (Test)
+        % Guarantee: source from a newer release round-trips through the editor on an older release.
+        % Failure mode: an unavailable enum or control is replaced or dropped on Save.
         function inspectorShowsProtectedEnumFromSource(testCase)
             % inspectorShowsProtectedEnumFromSource Show an unavailable literal in a disabled enum row.
 
@@ -102,6 +104,8 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
 
         function diffPreviewReceivesOriginalAndCommittedSource(testCase)
             % diffPreviewReceivesOriginalAndCommittedSource Open the comparison from the Tools menu.
+            % Guarantee: the diff view compares original and current source.
+            % Failure mode: the diff shows generated text from a different state.
             [target, ~] = reloadFixture();
             fileCleanup = onCleanup(@() deleteTemporaryFile(target));
             app = yamada(lifecycleForTest(struct("OpenPath", target)), Visible="off");
@@ -123,6 +127,8 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifyEqual(preview.Data.Generated, generated);
         end
 
+        % Guarantee: external changes are detected and reloaded only after the user resolves unsaved edits.
+        % Failure mode: reload discards edits, keeps stale history, or Save As overwrites the externally changed file.
         function activationRemembersOnlyDismissedRevision(testCase)
             % activationRemembersOnlyDismissedRevision Suppress repeats while retaining manual reload and resets.
             [target, source] = reloadFixture();
@@ -331,6 +337,8 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             end
         end
 
+        % Guarantee: Save and Save As follow their target and replacement policies.
+        % Failure mode: Save writes to a removed path, prompts twice for replacement, or accepts an invalid class file name.
         function saveNewDocumentRequestsTarget(testCase)
             % saveNewDocumentRequestsTarget Offer Save As through ordinary Save for a new document.
             target = string(tempname) + ".m";
@@ -454,6 +462,8 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             clear appCleanup
         end
 
+        % Guarantee: Save As renames the class consistently, and later saves and history keep that identity.
+        % Failure mode: a later Save reverts the class name, or history breaks after Save As.
         function saveAsRenamesOpenedClassAndLaterSaveKeepsItsIdentity(testCase)
             % saveAsRenamesOpenedClassAndLaterSaveKeepsItsIdentity Preserve parsed source edits across saves.
             fixture = string(fullfile(fileparts(fileparts(mfilename("fullpath"))), ...
@@ -535,6 +545,8 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             testCase.verifySubstring(string(fileread(target)), "app.Choice.Value = 'B';");
         end
 
+        % Guarantee: a failed or cancelled save keeps the document dirty with its last confirmed checkpoint.
+        % Failure mode: the editor marks the document clean after a failed write, and changes are lost on close.
         function failedSecondWriteKeepsConfirmedCheckpoint(testCase)
             % failedSecondWriteKeepsConfirmedCheckpoint Retain saved source, dirty intentions, and history on write failure.
             target = string(tempname) + ".m";
@@ -632,6 +644,7 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
 
         function invalidSaveAsFilenameDoesNotChangeDocument(testCase)
             % invalidSaveAsFilenameDoesNotChangeDocument Require a valid MATLAB class file name.
+            % Guarantee and failure mode: shared with saveNewDocumentRequestsTarget.
             target = string(tempname) + " invalid.m";
             service = lifecycleForTest(struct("SavePath", target));
             app = yamada(service, Visible="off");
@@ -645,6 +658,8 @@ classdef (TestTags = {'lifecycle', 'ui'}) EditorLifecycleTest < matlab.unittest.
             clear cleanup
         end
 
+        % Guarantee: New, Open, and Close act only after the user's choice about unsaved changes.
+        % Failure mode: the document is replaced or closed before the user chooses, losing edits.
         function newAndOpenUseOneDiscardOrCancelGuard(testCase)
             % newAndOpenUseOneDiscardOrCancelGuard Preserve or replace only after the selected answer.
 

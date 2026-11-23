@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
     %   Independent parsing checks semantic values, lexical positions and execution
     %   order without requiring any particular implementation or call count.
     methods (Test)
+        % Guarantee: occurrence ids stay stable across removal and restore and are never reissued.
+        % Failure mode: a new setting reuses an id held by history, so Undo or Redo patches the wrong occurrence.
         function canonicalAddressesAreStableAcrossRemovalAndRestore(testCase)
             % canonicalAddressesAreStableAcrossRemovalAndRestore Reserve tombstones for the same historical occurrence.
             store = yamada.model.SourceSettingStore();
@@ -23,6 +25,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
             testCase.verifyEqual(store.get(ids), records);
         end
 
+        % Guarantee: indexed edits, including multi-owner grid edits, leave every derived position equal to an independent parse, or change nothing.
+        % Failure mode: offsets drift after a structural change or one owner of a multi-owner edit is applied when another is rejected.
         function distinctEditsAndHistoryMatchIndependentParsing(testCase)
             % distinctEditsAndHistoryMatchIndependentParsing Preserve comments, literal code and all derived positions.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -117,6 +121,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) IndexedSettingEd
 
         function historyBranchNeverReusesAnIssuedOccurrence(testCase)
             % historyBranchNeverReusesAnIssuedOccurrence Keep old identities distinct after an insertion is undone.
+            % Guarantee and failure mode: shared with canonicalAddressesAreStableAcrossRemovalAndRestore.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("IntegerBranch", registry);
             label = document.insertComponent(registry, "uilabel", document.RootComponentId);

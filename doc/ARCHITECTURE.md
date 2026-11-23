@@ -619,7 +619,7 @@ Typed callback publication and Undo/Redo use the maintained source patch/index p
 - Only directly declared fixed positional instance methods with one to three inputs are eligible. Two-input methods receive event data by convention; receiver-only methods receive no forwarded arguments. Ignored positional inputs (`~`) are retained in both method declarations and arguments blocks and count toward the same forwarding convention. Proven source/event type mismatches are excluded, while unresolved constraints remain marked unchecked.
 - Callback binding safety is a separate query from exclusive method-body ownership. Connect and replacement modify only the assignment; Disconnect retains every method body, including newly generated methods.
 - New validates an explicit name and creates its method plus assignment as one history step. Canceling the name popup does not dispatch a model command.
-- Legacy body-deleting commands remain internal compatibility operations and are not exposed in the manager.
+- Callback commands never delete method bodies; the model accepts only New, Connect, and Disconnect.
 
 **Explanation**
 
@@ -634,7 +634,7 @@ All commands retain local patch publication and Undo/Redo without AppSourceParse
 **Conditions to preserve**
 
 - A successful callback command publishes the exact resulting source and current bindings, clears its preparation records, and stores forward/inverse source patches with history. Every accepted command advances CurrentText and source positions together, so later commands do not replay pending changes from the opened snapshot.
-- Original binding and method ownership remains available for Delete/Add, Undo/Redo and stale-source rejection. Callback command preparation uses the maintained lexical/scope indexes and model validation; editor-owned publication rejects a missing proof rather than invoking the whole-source parser.
+- Original binding ownership remains available for Undo/Redo and stale-source rejection. Callback command preparation uses the maintained lexical/scope indexes and model validation; editor-owned publication rejects a missing proof rather than invoking the whole-source parser.
 - The original input is never run; preserved expressions do not reach Safe Preview.
 
 **Explanation**
@@ -650,7 +650,6 @@ Shared boundaries: [Source publication and history](#source-publication-and-hist
 **Conditions to preserve**
 
 - Name reservation includes inherited `handle` members, actual generated members, and existing user members. Callback dropdown commands retain the listed model/source/catalog revision and refresh instead of dispatching if it changes, including while the name prompt is open. Commit reuses the listed ownership and target values; newly supplied method names still require identifier and member-collision checks.
-- The model retains legacy Add/Delete actions for compatibility and tests; legacy body deletion remains subject to exclusive ownership checks and is not exposed by that UI.
 - Source publication and Undo/Redo refresh the edited owner's states and carry unrelated states and diagnostics forward; they preserve the existing independent-value publication boundary. Catalog/template correctness and retention of unrelated method bodies are implementation contracts, not whole-document checks repeated at each command.
 
 **Explanation**
@@ -707,7 +706,7 @@ The geographic limits call catalog captures its requested latitude and longitude
 
 `PreviewUpdatePlanner` derives a local dependency closure from the catalog and resolved implicit effects, compares public native values only in that closure, and orders final writes. Range and selection policies supply valid intermediate states for disjoint old/new domains; automatic modes, group selection, grid-child placement, and final child geometry reuse existing model resolution. Figure-root size/color use the existing panel-based Preview surface adapter; figure window chrome is not represented by that surface.
 
-Callback Add/Delete and their history operations use a source-only update path. The editor refreshes Inspector/diagnostics/save/history/availability and existing overlay command revisions without reconstructing controls, measuring rectangles, solving boundaries, or rerendering HTML regions.
+Callback commands and their history operations use a source-only update path. The editor refreshes Inspector/diagnostics/save/history/availability and existing overlay command revisions without reconstructing controls, measuring rectangles, solving boundaries, or rerendering HTML regions.
 
 Validated component-member renames use the same source-only view refresh. The shell updates hierarchy labels, the root preview panel title, and existing drop-target names without replacing native controls or geometry. Rename Undo/Redo replays the primary identifier patches and projects existing positions before refreshing these views.
 
@@ -885,7 +884,6 @@ Component insertion, deletion/Cut, callbacks and reparenting also publish their 
 - Unchanged source text, statement-local code offsets, method membership, and source provenance remain independent values.
 - Numeric IDs alone do not identify a setting across documents or Reload: snapshot reuse and raw subtree copy also check source provenance, and candidate resolutions explicitly map their references back to the owning document. Imported canonical IDs are reserved before detached additions receive new addresses, including when materializing a structural candidate.
 - Paste publishes independent value materializations of validated candidate records; a candidate-owned component or property handle must never be registered as a second live document owner.
-- Deletion intentions retain only value ownership records (names, identities and source ranges), not component/property handles or unrelated literal payloads. The source layer rechecks those frozen ranges and references; clearing a completed intention must not leave a formerly shared input clock behind.
 - Ordinary source-property history does not retain complete Settings arrays, source-position updates, execution sequence updates, or derived indexes. Position shifts, statement membership and execution numbering are derived from primary source patches, rather than stored as independent Undo operations.
 
 **Explanation**
@@ -1065,7 +1063,7 @@ Shared boundaries: [Source publication and history](#source-publication-and-hist
 
 **Explanation**
 
-`NewAppGenerator` owns generated class documentation, and `CallbackSourceEdits` owns callback method templates. Newly generated templates omit extensive property help and routine implementation comments; their concise English documentation serves application users rather than documenting yamada internals.
+`NewAppGenerator` owns generated class documentation through `resources/NewAppTemplate.txt`, and `CallbackSourceEdits` owns callback method templates. Newly generated templates omit extensive property help and routine implementation comments; their concise English documentation serves application users rather than documenting yamada internals.
 
 ### Figure lifetime
 
@@ -1150,6 +1148,7 @@ Runtime code resolves resources relative to the project root:
 
 - the registry loads the newest catalog projection that is available to the running release. The sibling `availability.json` supplies release bounds for annotated variants, properties, and values. Source parsing also loads the bundled surface projection when it encounters a factory with a variant absent from the runtime catalog;
 - `resources/EditorInteractionOverlay.html`, `resources/RootResizeGuide.html`, and `resources/SourceDiffPreview.html` are loaded by `yamada`;
+- `resources/NewAppTemplate.txt` is the fixed new-app skeleton that `NewAppGenerator` fills; its leading `#` lines, including the project license notice, never reach generated source;
 - `+yamada/+ui/+layoutwait/waitForFigureLayout.js` is loaded by the bundled `waitForFigureLayout` and executed only in the editor-owned figure window; and
 - development ledgers and generation scripts under `dev/component-data` are not runtime dependencies.
 
@@ -1157,7 +1156,7 @@ The development ledger is the review surface for catalog research and audit deci
 
 Property descriptions are project-authored presentation text composed from API identifiers and reviewed contracts by `dev/component-data/ProjectPropertyText.ps1`. The ledger mirrors these descriptions, while promotion calls the same definitions directly so imported or stale reference headings cannot become runtime help text.
 
-`dev/release/yamadaToolboxFiles.m` implements this inclusion contract with a bounded user-document list, project-owned example, runtime MATLAB files, and JSON/HTML/JavaScript resources. The shared `toolbox.json` supplies the version and permanent Toolbox identity. The Apps gallery registers `yamada.m` directly, and only the root is added to the MATLAB path. `buildYamadaToolbox` captures input/configuration hashes and source identity, builds through the documented packager, and checks that inputs did not change during packaging.
+`dev/release/yamadaToolboxFiles.m` implements this inclusion contract with a bounded user-document list, project-owned example, runtime MATLAB files, and JSON/HTML/JavaScript/text resources. The shared `toolbox.json` supplies the version and permanent Toolbox identity. The Apps gallery registers `yamada.m` directly, and only the root is added to the MATLAB path. `buildYamadaToolbox` captures input/configuration hashes and source identity, builds through the documented packager, and checks that inputs did not change during packaging.
 
 ### Runtime and release boundaries
 

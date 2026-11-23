@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
     %   the represented application and check immutable occurrence ownership.
 
     methods (Test)
+        % Guarantee: an edit replaces only the effective occurrence of a property and keeps all earlier occurrences and their spelling.
+        % Failure mode: an edit collapses repeated assignments, rewrites the constructor syntax, or drops an earlier opaque setting.
         function repeatedNumericEditsRetainEverySourceOccurrence(testCase)
             % repeatedNumericEditsRetainEverySourceOccurrence Replace only the final owned value in either syntax.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -38,6 +40,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
 
         function subtreeDeletionRemovesAllHistoricalAssignments(testCase)
             % subtreeDeletionRemovesAllHistoricalAssignments Avoid leaving shadowed settings after deletion.
+            % Guarantee: deleting a component removes every assignment to it.
+            % Failure mode: a shadowed earlier assignment survives deletion and the saved app errors.
 
             source = testCase.fixture([ ...
                 "app.StatusLabel = uilabel(app.UIFigure, Text=""First"");", ...
@@ -56,6 +60,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
 
         function retainsConstructorAndAllLaterAssignments(testCase)
             % retainsConstructorAndAllLaterAssignments Keep the last explicit setting as the editable projection.
+            % Guarantee and failure mode: shared with repeatedNumericEditsRetainEverySourceOccurrence.
 
             source = testCase.fixture([ ...
                 "app.StatusLabel = uilabel(app.UIFigure, Text=""First"");", ...
@@ -125,6 +130,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
 
         function noEditPreservesCommentsInsideAssignmentValues(testCase)
             % noEditPreservesCommentsInsideAssignmentValues Compare parsed originals instead of reparsing raw trivia.
+            % Guarantee: unchanged source round-trips with comments inside values.
+            % Failure mode: comparison against a reparse treats trivia as a change and rewrites the value.
 
             source = testCase.fixture([ ...
                 "app.StatusLabel = uilabel(app.UIFigure);", ...
@@ -137,6 +144,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertySettingH
 
         function subtreeSnapshotsRetainHistoryAndIndependentRequestedValues(testCase)
             % subtreeSnapshotsRetainHistoryAndIndependentRequestedValues Copy source occurrences without live handles.
+            % Guarantee: snapshots copy every setting occurrence with its identity, without live handles.
+            % Failure mode: Paste keeps only the last occurrence or aliases a live setting.
 
             source = testCase.fixture([ ...
                 "app.StatusLabel = uilabel(app.UIFigure, Text=""First"");", ...

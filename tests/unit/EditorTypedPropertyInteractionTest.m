@@ -2,6 +2,8 @@ classdef EditorTypedPropertyInteractionTest < matlab.unittest.TestCase
     % EditorTypedPropertyInteractionTest Verify typed edits through the Inspector.
 
     methods (Test, TestTags = {'inspector', 'ui'})
+        % Guarantee: typed Inspector editors commit native values unchanged, as one atomic change per property group.
+        % Failure mode: a datetime or table value is round-tripped through text and loses its type, or one Limits bound commits alone.
         function datePickerValueCommitPreservesTypedDate(testCase)
             % datePickerValueCommitPreservesTypedDate Keep native datetime data out of text parsing.
 
@@ -65,6 +67,8 @@ classdef EditorTypedPropertyInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        % Guarantee: the date picker rows stay complete and reflect related restrictions after edits.
+        % Failure mode: the calendar keeps stale disabled dates, or an audited row is missing from the Inspector.
         function datePickerValueEditorSynchronizesEffectiveRestrictions(testCase)
             % datePickerValueEditorSynchronizesEffectiveRestrictions Refresh the native calendar after a related inspector edit.
 
@@ -154,6 +158,7 @@ classdef EditorTypedPropertyInteractionTest < matlab.unittest.TestCase
 
         function tableDataDialogCommitsTypedDataFromTheInspector(testCase)
             % tableDataDialogCommitsTypedDataFromTheInspector Apply one typed table draft through the real row binding.
+            % Guarantee and failure mode: shared with datePickerValueCommitPreservesTypedDate.
 
             app = yamada(Visible="off");
             cleanup = onCleanup(@() deleteIfValid(app));

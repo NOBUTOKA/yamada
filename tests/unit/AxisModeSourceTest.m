@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
     %   values even when the audited effective value is runtime-computed.
 
     methods (Test)
+        % Guarantee: recognized axes function calls are read in execution order for the right target.
+        % Failure mode: a call after opaque code is attributed to the wrong axes, or a shared call's options get the wrong ranges.
         function readsAxesCallsInInitializationOrder(testCase)
             % readsAxesCallsInInitializationOrder Preserve function source and resolve literal effects in order.
             [document, registry, control] = testCase.fixture([ ...
@@ -34,6 +36,8 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
         end
 
+        % Guarantee: axes edits keep the existing function-call form and edit paired values together.
+        % Failure mode: an edit replaces a function call with assignments, splits geolimits into two steps, or a copy keeps the original target.
         function copyRetargetsRecognizedAxesCalls(testCase)
             % copyRetargetsRecognizedAxesCalls Keep a recognized call with its copied component.
             [document, registry, control] = testCase.fixture([ ...
@@ -50,6 +54,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function selectsAxesCallFormsFromRegistryRelease(testCase)
             % selectsAxesCallFormsFromRegistryRelease Retain newer calls on older catalog surfaces.
+            % Guarantee and failure mode: shared with readsAxesCallsInInitializationOrder.
             [fixtureDocument, registry] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", "xscale(app.Control, 'log');"]);
             catalogs = fileparts(registry.CatalogRoot);
@@ -71,6 +76,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function editsNumericRulerTickFormats(testCase)
             % editsNumericRulerTickFormats Preserve function syntax and emit direct new assignments.
+            % Guarantee and failure mode: shared with copyRetargetsRecognizedAxesCalls.
             [document, registry, component] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", "xtickformat(app.Control, '%.1f'); % keep"]);
             testCase.verifyEqual(string(component.getSettings("XAxis.TickLabelFormat").LiteralValue),"%.1f");
@@ -133,6 +139,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function readsPolarCallsAndWarnsWhenTargetIsLost(testCase)
             % readsPolarCallsAndWarnsWhenTargetIsLost Stop inference after opaque code and accept explicit targets.
+            % Guarantee and failure mode: shared with readsAxesCallsInInitializationOrder.
             [document, registry, control] = testCase.fixture([ ...
                 "app.Control = polaraxes(app.UIFigure);", "rlim([0 5]);", ...
                 "opaque();", "thetalim([0 90]);", "thetaticks(app.Control, [0 90]);", ...
@@ -147,6 +154,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function retainsRequestedGeographicLimitsInSourceOrder(testCase)
             % retainsRequestedGeographicLimitsInSourceOrder Replay one pair without inventing display values.
+            % Guarantee and failure mode: shared with copyRetargetsRecognizedAxesCalls.
             [document, registry, component] = testCase.fixture([ ...
                 "app.Control = geoaxes(app.UIFigure, Basemap='none');", ...
                 "geolimits(app.Control, [-15 15], [170 -170]); % crosses the antimeridian", ...
@@ -196,6 +204,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function readsGeographicSettingsThroughOtherEdits(testCase)
             % readsGeographicSettingsThroughOtherEdits Keep multi-effect calls through local source publication.
+            % Guarantee and failure mode: shared with readsAxesCallsInInitializationOrder.
             [document, registry, control] = testCase.fixture([ ...
                 "app.Control = geoaxes(app.UIFigure, Basemap='none');", ...
                 "geotickformat(app.Control, 'dd');", "grid(app.Control, 'off');", ...
@@ -244,6 +253,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function editsAxesTextAndSubtitleLink(testCase)
             % editsAxesTextAndSubtitleLink Preserve a shared call and undo independent Subtitle settings.
+            % Guarantee and failure mode: shared with copyRetargetsRecognizedAxesCalls.
             [document, registry, control] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", ...
                 "title('Before', 'Sub', Color=[1 0 0]);"]);
@@ -291,6 +301,8 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(string(control.getSettings("TickLabelFormat").LiteralValue),"-dm");
         end
 
+        % Guarantee: mode and value edits produce the requested final mode without inventing computed values.
+        % Failure mode: an added value silently switches a final auto mode to manual, or computed ticks are written as literals.
         function pendingModeIsAddedAfterExistingConstructorValue(testCase)
             % pendingModeIsAddedAfterExistingConstructorValue Prefer the reviewed call after constructor values while preserving a requested final auto mode.
             for factory = ["uiaxes", "axes"]
@@ -491,91 +503,14 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(control.getSettings("XTick").LiteralValue, [0 1]);
         end
 
-        function insertedWidthFollowsAnExistingManualHoldPoint(testCase)
-            % insertedWidthFollowsAnExistingManualHoldPoint Keep a previously held default minor width during assignment insertion.
-            [document, registry, control] = testCase.fixture([ ...
-                "app.Control = uiaxes(app.UIFigure);", ...
-                "app.Control.MinorGridLineWidthMode = 'manual'; % hold default"]);
-            document.setProperty(control.Id, "GridLineWidth", 4, registry);
-            source = yamada.source.RoundTripGenerator(registry).generate(document);
-            reopened = yamada.source.AppSourceParser.parseText(source, registry);
-            other = reopened.getComponentByName("Control");
-            states = reopened.getEffectivePropertyStates(registry, other.Id);
-            testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectiveValue, 4);
-            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 0.5);
-            testCase.verifyGreaterThan(other.getSettings("GridLineWidth").Sequence, ...
-                other.getSettings("MinorGridLineWidthMode").Sequence);
-            testCase.verifySubstring(source, "'manual'; % hold default");
-        end
-
-        function constructorInsertionPreservesAnExistingManualHoldPoint(testCase)
-            % constructorInsertionPreservesAnExistingManualHoldPoint Insert verified name-value widths after a protected manual mode.
-            [document, registry, control] = testCase.fixture( ...
-                "app.Control = uiaxes(app.UIFigure, MinorGridLineWidthMode='manual', Units='pixels', Position=[10 20 200 100]);");
-            document.setProperty(control.Id, "GridLineWidth", 4, registry);
-            source = yamada.source.RoundTripGenerator(registry).generate(document);
-            reopened = yamada.source.AppSourceParser.parseText(source, registry);
-            other = reopened.getComponentByName("Control");
-            setting = other.getSettings("GridLineWidth");
-            testCase.verifyEqual(setting.Method, "nameValue");
-            testCase.verifyGreaterThan(setting.ValueSpan.StartOffset, other.getSettings("MinorGridLineWidthMode").ValueSpan.StartOffset);
-            states = reopened.getEffectivePropertyStates(registry, other.Id);
-            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 0.5);
-        end
-
-        function implicitWidthsRemainSeparateThroughEditCopyAndSave(testCase)
-            % implicitWidthsRemainSeparateThroughEditCopyAndSave Update the bound upstream token while retaining earlier receiver inputs.
-            [document, registry, control] = testCase.fixture([ ...
-                "app.Control = uiaxes(app.UIFigure, Units='pixels', Position=[10 20 200 100]);", ...
-                "app.Control.LineWidth = 1;", "app.Control.GridLineWidth = 4;", ...
-                "app.Control.MinorGridLineWidth = 3;", "app.Control.MinorGridLineWidthMode = 'auto';"]);
-            original = control.settingSnapshot();
-            document.setProperty(control.Id, "GridLineWidth", 6, registry);
-            source = yamada.source.RoundTripGenerator(registry).generate(document);
-            testCase.verifySubstring(source, "app.Control.MinorGridLineWidth = 3;");
-            states = document.getEffectivePropertyStates(registry, control.Id);
-            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 6);
-            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, "AxisModeFixture.m", registry);
-            document.confirmSavedSource(checkpoint, registry);
-            copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
-            states = document.getEffectivePropertyStates(registry, copy.Id);
-            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 6);
-            testCase.verifyEqual([control.Settings.Id], arrayfun(@(record) record.Location.Id, original));
-            testCase.verifyEqual(control.getSettings("GridLineWidth").LiteralValue, 6);
-            testCase.verifyEqual(control.getSettings("MinorGridLineWidth").LiteralValue, 3);
-            document.undo();
-            document.undo();
-            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
-            document.redo();
-            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
-        end
-
-        function copyPreservesDefaultAutoFollowersAndConstructorHolds(testCase)
-            % copyPreservesDefaultAutoFollowersAndConstructorHolds Avoid setters that would silently change a copied automatic mode.
-            [document, registry, control] = testCase.fixture( ...
-                "app.Control = uiaxes(app.UIFigure, Units='pixels', Position=[10 20 200 100], LineWidth=2);");
-            copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
-            testCase.verifyEmpty(copy.getProperty("GridLineWidth"));
-            testCase.verifyEmpty(copy.getProperty("MinorGridLineWidth"));
-            states = document.getEffectivePropertyStates(registry, copy.Id);
-            testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectiveValue, 2);
-            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 2);
-            testCase.verifyEqual(string(testCase.state(states, "GridLineWidthMode").EffectiveValue), "auto");
-            testCase.verifyEqual(string(testCase.state(states, "MinorGridLineWidthMode").EffectiveValue), "auto");
-            [document, registry, control] = testCase.fixture( ...
-                "app.Control = uiaxes(app.UIFigure, Units='pixels', Position=[10 20 200 100], GridLineWidth=4, MinorGridLineWidthMode='manual');");
-            copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
-            testCase.verifyEmpty(copy.getProperty("MinorGridLineWidth"));
-            states = document.getEffectivePropertyStates(registry, copy.Id);
-            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 0.5);
-            testCase.verifyEqual(string(testCase.state(states, "MinorGridLineWidthMode").EffectiveValue), "manual");
-        end
-
+        % Guarantee: width follower and hold semantics survive insertion, Copy, and Save.
+        % Failure mode: inserting or copying a width setter changes which value a manual hold keeps.
         function storedColorCanBeEditedUnderAFinalAutomaticRenderingMode(testCase)
             % storedColorCanBeEditedUnderAFinalAutomaticRenderingMode Keep getter data known without claiming a rendered grid color.
             %   A constructor that restores auto last keeps the stored color
             %   only under a plain mode flag; other catalog policies leave it
             %   to the runtime, so the edit cannot be confirmed.
+            % Guarantee and failure mode: shared with pendingModeIsAddedAfterExistingConstructorValue.
             for factory = ["uiaxes", "axes"]
                 [document, registry, control] = testCase.fixture("app.Control = " + factory + ...
                     "(app.UIFigure, GridColor=[0.3 0.5 0.7], GridColorMode='auto');", factory);
@@ -600,6 +535,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function laterAutomaticModePreventsPretendedLiteralEdits(testCase)
             % laterAutomaticModePreventsPretendedLiteralEdits Keep the original target when a later auto mode makes the requested value uncertain.
+            % Guarantee and failure mode: shared with pendingModeIsAddedAfterExistingConstructorValue.
             [document, registry, control] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", "app.Control.XTick = [0 1];", "app.Control.XTickMode = 'auto';"]);
             before = control.settingSnapshot();

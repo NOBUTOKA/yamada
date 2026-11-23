@@ -6,6 +6,8 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
     methods (Test)
         function managerActionsAndHistoryRetainAllPreviewGeometry(testCase)
             % managerActionsAndHistoryRetainAllPreviewGeometry Exercise target selection, disconnection and callback history.
+            % Guarantee: callback manager actions and their history change only source bindings, never Preview geometry or native callbacks.
+            % Failure mode: a callback edit triggers a structural rebuild that moves controls, or attaches a real callback to a Preview control.
             for layout = ["absolute", "nested"]
                 folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
                 path = fullfile(folder.Folder, "CallbackPreviewFixture.m");
@@ -81,12 +83,14 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
 
         function callbackAcknowledgementCannotMaskVisualChanges(testCase)
             % callbackAcknowledgementCannotMaskVisualChanges Carry callback input versions without hiding property edits.
+            % Guarantee: acknowledging callback-only changes never hides a pending property change.
+            % Failure mode: the renderer treats a combined callback and Text edit as callback-only and leaves Preview stale.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.source.AppSourceParser.parseText(callbackFixture("absolute"), registry);
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
             renderer = yamada.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             subject = document.getComponentByName("Subject");
-            document.applyCallbackAction(subject.Id, "ButtonPushedFcn", "Add", registry);
+            document.applyCallbackAction(subject.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, subject.Id, "ButtonPushedFcn", registry));
             testCase.verifyTrue(renderer.acknowledgeCallbackChanges(document));
             subject.setProperty("Text", "After callback");
             testCase.verifyFalse(renderer.acknowledgeCallbackChanges(document));

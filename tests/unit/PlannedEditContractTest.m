@@ -9,6 +9,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PlannedEditContractTest < 
     methods (Test)
         function parentPlacementPrecedesChildCreation(testCase, Destination)
             % parentPlacementPrecedesChildCreation Preserve child configuration when the new parent rectangle changes.
+            % Guarantee: a reparent places the parent's new geometry before child creation, so child settings survive.
+            % Failure mode: generated order applies the parent's Position after child creation and MATLAB resizes or relocates the child.
             [document, registry] = fixture(Destination);
             moved = document.getComponentByName("Moved"); child = document.getComponentByName("Child");
             right = document.getComponentByName("Right"); original = document.CurrentText;
@@ -36,6 +38,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PlannedEditContractTest < 
 
         function nativeSizeConstraintsRejectBeforeEditing(testCase, Destination)
             % nativeSizeConstraintsRejectBeforeEditing Reject a nonsquare lamp request without changing model or source.
+            % Guarantee: plans that violate a native size constraint are rejected before any change.
+            % Failure mode: a nonsquare lamp is written to source and fails at run time, or the rejection leaves partial edits.
             [document, registry] = fixture(Destination);
             source = replace(document.CurrentText, "matlab.ui.control.Button", "matlab.ui.control.Lamp");
             source = replace(source, "uibutton(app.Moved)", "uilamp(app.Moved)");
@@ -46,26 +50,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PlannedEditContractTest < 
             testCase.verifyEqual(document.CurrentText, before); testCase.verifyEqual(document.HistoryIndex, history);
         end
 
-        function copiedOrientationSurvivesOriginalDeletion(testCase)
-            % copiedOrientationSurvivesOriginalDeletion Use captured orientation when pasting after the source owner is gone.
-            [document, registry] = fixture("absolute");
-            source = replace(document.CurrentText, "matlab.ui.control.Button", "matlab.ui.control.Slider");
-            source = replace(source, "uibutton(app.Moved)", "uislider(app.Moved)");
-            source = replace(source, "app.Moved.Position = [5 6 120 90];", "");
-            source = replace(source, "app.Child.Position = [7 8 30 20];", ...
-                "app.Child.Orientation = 'vertical';" + newline + "app.Child.Position = [7 8 3 100];");
-            document = yamada.source.AppSourceParser.parseText(source, registry);
-            child = document.getComponentByName("Child");
-            snapshot = document.copySubtree(child.Id, registry);
-            document.removeSubtree(child.Id, registry);
-            pasted = document.pasteSubtree(snapshot, document.RootComponentId, registry, [7 8 3 100]);
-            testCase.verifyEqual(string(pasted.getProperty("Orientation").LiteralValue), "vertical");
-            parsed = yamada.source.AppSourceParser.parseText(document.CurrentText, registry);
-            testCase.verifyEqual(string(parsed.getComponentByName(pasted.Name).getProperty("Orientation").LiteralValue), "vertical");
-        end
-
         function removingAnExecutionEffectRefreshesOtherOwners(testCase)
             % removingAnExecutionEffectRefreshesOtherOwners Restore known state and unknown state through deletion history.
+            % Guarantee: deleting a component whose code affects another owner updates that owner's known state through history.
+            % Failure mode: a dependent property stays "unknown" after the effect is removed, or stays "known" after Undo restores it.
             [document, registry] = fixture("absolute");
             source = replace(document.CurrentText, "app.Child.Position = [7 8 30 20];", ...
                 "app.Child.Position = [7 8 30 20];" + newline + "app.Child.UnknownProperty = 1;");

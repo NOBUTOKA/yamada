@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // This file is part of yamada. See LICENSE for the license text.
 
+// Guarantee: incremental overlay updates keep live controls and reject older publications.
+// Failure mode: a redraw destroys an active control, or an older payload replaces newer data.
 // Preserve live controls and event revisions while rejecting older publications.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');

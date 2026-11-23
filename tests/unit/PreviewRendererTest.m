@@ -6,6 +6,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
     %   It never permits the editor to execute arbitrary opened source.
 
     methods (Test, TestTags = {'fast'})
+        % Guarantee: Safe Preview reproduces the native properties of trusted fixture apps without running their code.
+        % Failure mode: a property is dropped or applied in an order that native controls reject or adjust.
         function safePreviewMatchesTrustedFixtureProperties(testCase)
             % safePreviewMatchesTrustedFixtureProperties Compare every trusted fixture.
 
@@ -42,6 +44,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             testCase.verifyGreaterThanOrEqual(longitude(2),189.999);
         end
 
+        % Guarantee: Preview degrades unsupported controls to placeholders and resolves app-relative assets.
+        % Failure mode: a newer control fails the whole Preview, or a relative image resolves against the wrong folder.
         function preservesNewerControlsAsLabelsInOlderPreview(testCase)
             % preservesNewerControlsAsLabelsInOlderPreview Check source-owned grid and absolute placement.
 
@@ -102,6 +106,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             clear cleanup
         end
 
+        % Guarantee: Preview geometry matches actual size without warnings.
+        % Failure mode: Preview scales the canvas, or writes Position values that native controls warn about and change.
         function actualSizeFixturesKeepCanvasAndEdgeControlsUnscaled(testCase)
             % actualSizeFixturesKeepCanvasAndEdgeControlsUnscaled Cover fit and overflow.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -146,6 +152,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
 
         function safePreviewRendersExtendedFixtureSemantics(testCase)
             % safePreviewRendersExtendedFixtureSemantics Cover string lists, axes, and tools.
+            % Guarantee and failure mode: shared with safePreviewMatchesTrustedFixtureProperties.
 
             % Render the source-derived models without executing any of these fixtures.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -220,6 +227,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
 
         function constrainedControlsRenderWithoutPositionWarnings(testCase)
             % constrainedControlsRenderWithoutPositionWarnings Verify safe Position writes.
+            % Guarantee and failure mode: shared with actualSizeFixturesKeepCanvasAndEdgeControlsUnscaled.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("ConstraintApp", registry);
             document.insertComponent(registry, "uislider", document.RootComponentId);
@@ -265,6 +273,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
 
         function itemSelectionDependenciesRenderBeforeValue(testCase)
             % itemSelectionDependenciesRenderBeforeValue Render mapped and multiselect values.
+            % Guarantee and failure mode: shared with safePreviewMatchesTrustedFixtureProperties.
 
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("ItemSelectionApp", registry);
@@ -294,6 +303,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
 
         function imageSourceRendersFromOpenedAppFolder(testCase)
             % imageSourceRendersFromOpenedAppFolder Resolve a relative image beside the app source.
+            % Guarantee and failure mode: shared with preservesNewerControlsAsLabelsInOlderPreview.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("ImagePreviewApp", registry);
             imageComponent = document.insertComponent(registry, "uiimage", ...

@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
     %   assignment values, and immutable setting data without running an app.
 
     methods (Test)
+        % Guarantee: settings that are not plain literals, or whose meaning is uncertain, stay read-only and unevaluated.
+        % Failure mode: the parser treats "a" + "b" as one literal, drops arguments after an expression, or assumes last-key-wins for duplicate names.
         function quotedConcatenationRemainsAnUnevaluatedExpression(testCase)
             % quotedConcatenationRemainsAnUnevaluatedExpression Avoid mistaking outer quotes for one literal.
 
@@ -19,6 +21,8 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
             end
         end
 
+        % Guarantee: every setting records exact name and value spans across mixed syntax, continuations, and delimiters inside literals.
+        % Failure mode: a comma or parenthesis inside a quoted value, or a continuation comment, shifts spans and edits overwrite the wrong text.
         function mapsMixedConstructorSyntaxAcrossCommentsAndContinuations(testCase)
             % mapsMixedConstructorSyntaxAcrossCommentsAndContinuations Retain exact original value tokens.
 
@@ -44,6 +48,7 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
 
         function capturesExpressionWithoutLosingFollowingArguments(testCase)
             % capturesExpressionWithoutLosingFollowingArguments Preserve opaque values without execution.
+            % Guarantee and failure mode: shared with quotedConcatenationRemainsAnUnevaluatedExpression.
 
             source = "app.DropDown = uidropdown(app.UIFigure, Value=chooseValue(), Items=[""A"", ""B""]);";
             statement = yamada.source.MatlabLexicalScanner.splitStatements(source);
@@ -60,6 +65,7 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
 
         function retainsQuotedDelimitersAndNestedLiteralRanges(testCase)
             % retainsQuotedDelimitersAndNestedLiteralRanges Keep commas and parentheses inside values.
+            % Guarantee and failure mode: shared with mapsMixedConstructorSyntaxAcrossCommentsAndContinuations.
 
             source = "app.DropDown = uidropdown(app.UIFigure, 'Items', {'A,B','C)D'}, 'Value', 'C)D');";
             statement = yamada.source.MatlabLexicalScanner.splitStatements(source);
@@ -86,6 +92,7 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
 
         function duplicateConstructorKeysRemainUncertain(testCase)
             % duplicateConstructorKeysRemainUncertain Avoid assuming last-key-wins constructor semantics.
+            % Guarantee and failure mode: shared with quotedConcatenationRemainsAnUnevaluatedExpression.
 
             source = "app.DropDown = uidropdown(app.UIFigure, 'Value', 'A', Value='B');";
             statement = yamada.source.MatlabLexicalScanner.splitStatements(source);
@@ -97,6 +104,8 @@ classdef (TestTags = {'fast', 'parser', 'model'}) PropertySettingSyntaxTest < ma
 
         function snapshotRecordIsIndependentAndRestorable(testCase)
             % snapshotRecordIsIndependentAndRestorable Preserve immutable source data across value snapshots.
+            % Guarantee: setting snapshots are independent and restore the same identity.
+            % Failure mode: editing a value after a snapshot also changes the snapshot, so Undo cannot restore it.
 
             setting = yamada.model.PropertySetting("Value", [10 20], ...
                 struct("SourceSnapshotId", "one", "Sequence", 3));

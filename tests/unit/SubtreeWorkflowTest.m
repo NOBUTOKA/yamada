@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeWorkflowTest < matl
     %   Tests combine parsed and generated nodes without executing opened apps.
 
     methods (Test)
+        % Guarantee: composed move, cut, and copy edits keep source ownership, and each Undo restores the exact earlier source.
+        % Failure mode: a step loses original property ownership, deletes a moved child with its old parent, or shares clipboard data.
         function moveThenCutRestoresEachSourceState(testCase)
             % moveThenCutRestoresEachSourceState Preserve old property ownership after grid conversion.
             [document, registry, left, right, leaf] = SubtreeWorkflowTest.fixture();
@@ -55,6 +57,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeWorkflowTest < matl
             testCase.verifyTrue(clipboard.hasContents(document));
         end
 
+        % Guarantee: generated source creates each parent before initializing its relocated or pasted children.
+        % Failure mode: a child is initialized before its new parent exists, so the saved app fails or reparses with the wrong parent.
         function parsedChildCanMoveUnderGeneratedParent(testCase)
             % parsedChildCanMoveUnderGeneratedParent Generate the new parent before relocated parsed initialization.
             [document, registry, ~, right, leaf] = SubtreeWorkflowTest.fixture();

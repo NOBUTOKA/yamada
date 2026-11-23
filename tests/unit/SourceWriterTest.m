@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'generation', 'lifecycle'}) SourceWriterTest < mat
     %   Real Windows locks and attributes exercise failure without replacing the writer.
 
     methods (Test)
+        % Guarantee: Save writes exactly the requested bytes to the intended file and keeps its native metadata, without leftover staging files.
+        % Failure mode: a relative or Unicode path resolves to the wrong folder, encoding or line endings change, or replacement resets creation time and ACLs.
         function relativeUnicodePathAndEmptyOutputUseMatlabFolder(testCase)
             % relativeUnicodePathAndEmptyOutputUseMatlabFolder Resolve relative names using MATLAB's folder.
             fixture = testCase.applyFixture(matlab.unittest.fixtures.WorkingFolderFixture);
@@ -72,6 +74,8 @@ classdef (TestTags = {'fast', 'generation', 'lifecycle'}) SourceWriterTest < mat
             end
         end
 
+        % Guarantee: a failed Save leaves the existing file byte-identical and no staged file behind.
+        % Failure mode: a lock, read-only flag, invalid argument, or bad target truncates the user's source or leaves .yamada-* files.
         function lockedDestinationRetainsEveryOriginalByte(testCase)
             % lockedDestinationRetainsEveryOriginalByte Refuse replacement while another reader denies deletion.
             folder = string(tempname);

@@ -2,6 +2,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
     % ColumnSettingsEditorDialogTest Verify staged UITable column-setting edits.
 
     methods (Test)
+        % Guarantee: column settings commit as one validated batch on Apply, with width keywords round-tripping as typed.
+        % Failure mode: each cell commits separately, malformed width text reaches the model, or "auto" is shown quoted and rewritten.
         function stagesPerColumnSettingsAsOneBatch(testCase)
             % stagesPerColumnSettingsAsOneBatch Preserve the complete candidate until Apply.
 

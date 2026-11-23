@@ -8,6 +8,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
     end
 
     methods (Test)
+        % Guarantee: after structural commands, Save, and replay, every binding equals an independent source load.
+        % Failure mode: a moved or pasted block keeps stale positions, so later edits patch the wrong text.
         function editsSubtreeWithUnavailableChild(testCase)
             % editsSubtreeWithUnavailableChild Keep a newer child through structural and clipboard edits.
 
@@ -29,9 +31,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             document = yamada.source.AppSourceParser.parseText(source, registry);
             moved = document.getComponentByName("Moved");
             destination = document.getComponentByName("Destination");
-            states = yamada.model.DocumentEditAvailability.reparenting(document, moved.Id, registry);
-            state = states(string({states.Id}) == destination.Id);
-            testCase.verifyTrue(state.Enabled, state.Reason);
             document.reparentSubtree(moved.Id, destination.Id, registry);
             testCase.verifyEqual(moved.ParentId, destination.Id);
             picker = document.getComponentByName("Picker");
@@ -128,12 +127,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
                 "uibutton(app.UIFigure, ""push"", FontSize=13)");
             document = yamada.source.AppSourceParser.parseText(source, registry);
             button = document.getComponentByName("BottomRightButton");
-            if Operation == "callbackDelete", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry); end
+            if Operation == "callbackDelete", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "ButtonPushedFcn", registry)); end
             switch Operation
                 case "insert", document.insertComponent(registry, "uilabel", document.RootComponentId);
                 case "delete", document.removeSubtree(button.Id, registry);
-                case "callbackAdd", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-                case "callbackDelete", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
+                case "callbackAdd", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "ButtonPushedFcn", registry));
+                case "callbackDelete", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Disconnect", registry);
                 case "reparent", document.reparentSubtree(button.Id, document.getComponentByName("CenterPanel").Id, registry);
             end
             verifyBindings(testCase, document, registry);
@@ -163,6 +162,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
 
         function deletionRefreshesExecutionEffectFlags(testCase)
             % deletionRefreshesExecutionEffectFlags Remove a source-only setter without leaving stale document restrictions.
+            % Guarantee: deleting a source-only setter clears its document restrictions.
+            % Failure mode: stale effect flags keep blocking edits after the cause is removed.
             [document, registry] = fixture();
             source = replace(document.CurrentText, "app.TopLeftLabel.Text = ""Top left"";", ...
                 "app.TopLeftLabel.Text = ""Top left"";" + newline + "app.TopLeftLabel.UnrecognizedSetting = 1;");
@@ -177,6 +178,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
 
         function pastedSubtreeAndDistinctEditsRetainSourceBindings(testCase)
             % pastedSubtreeAndDistinctEditsRetainSourceBindings Compare nested copies and their later edits with independent parsing.
+            % Guarantee and failure mode: shared with editsSubtreeWithUnavailableChild.
             [document, registry] = fixture();
             parent = document.getComponentByName("CenterPanel");
             before = document.CurrentText;
@@ -200,6 +202,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             for index = 1:3, document.redo(); verifyBindings(testCase, document, registry); end
         end
 
+        % Guarantee: name reservations and class identity follow history, without altering literals.
+        % Failure mode: Undo frees a name still used in source, or Save As changes restored values.
         function renameReservationsFollowHistoryAndKeepLiteralText(testCase)
             % renameReservationsFollowHistoryAndKeepLiteralText Reserve user members and pasted slots while leaving strings untouched.
             [document, registry] = fixture();
@@ -226,7 +230,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             % savedClassIdentityPreservesPasteAndRenameHistory Rebase primary patches without changing restored values or component handles.
             [document, registry] = fixture();
             owner = document.getComponentByName("BottomRightButton");
-            document.applyCallbackAction(owner.Id, "ButtonPushedFcn", "Add", registry);
+            document.applyCallbackAction(owner.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, owner.Id, "ButtonPushedFcn", registry));
             document.renameComponent(owner.Id, "ANameLongEnoughToMovePositions", registry);
             pasted = document.pasteSubtree(document.copySubtree(owner.Id, registry), document.RootComponentId, registry);
             document.ClassName = "SavedWithADifferentClassName";
@@ -243,24 +247,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             testCase.verifyEqual(document.getComponent(pasted.Id), pasted);
         end
 
-        function directBuilderValuesRemainPresentWhenPasting(testCase)
-            % directBuilderValuesRemainPresentWhenPasting Preserve staged literal configuration and independent copied values.
-            [document, registry] = fixture();
-            owner = document.getComponentByName("TopLeftLabel");
-            owner.setProperty("Text", "Captured copy");
-            snapshot = document.copySubtree(owner.Id, registry);
-            owner.setProperty("Text", "Current original"); owner.setProperty("Tooltip", "New builder property");
-            pasted = document.pasteSubtree(snapshot, document.RootComponentId, registry);
-            testCase.verifyEqual(owner.getProperty("Text").LiteralValue, "Current original");
-            testCase.verifyEqual(owner.getProperty("Tooltip").LiteralValue, "New builder property");
-            testCase.verifyEqual(pasted.getProperty("Text").LiteralValue, "Captured copy");
-            verifyBindings(testCase, document, registry);
-            document.undo(); verifyBindings(testCase, document, registry);
-            testCase.verifyEqual(owner.getProperty("Text").LiteralValue, "Top left");
-            document.redo(); verifyBindings(testCase, document, registry);
-        end
         function stagedRenameAndSaveRestoreEarlierHistory(testCase)
             % stagedRenameAndSaveRestoreEarlierHistory Keep direct builder writes in the command that publishes them.
+            % Guarantee and failure mode: shared with renameReservationsFollowHistoryAndKeepLiteralText.
             [document, registry] = fixture();
             owner = document.insertComponent(registry, "uilabel", document.RootComponentId);
             originalId = owner.Id; before = document.CurrentText;

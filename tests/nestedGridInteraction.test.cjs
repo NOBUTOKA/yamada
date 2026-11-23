@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // This file is part of yamada. See LICENSE for the license text.
 
+// Guarantee: nested grid hit targets select the innermost grid.
+// Failure mode: an outer grid's hit area covers a nested grid, so its tracks and children cannot be edited.
 // Check the shipped nested grid hit targets without opening a MATLAB window.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');

@@ -18,7 +18,7 @@ classdef CallbackSourceEdits
             ending = string(newline);
             if document.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
 
-            % Validate snapshots and preserve removed handler bodies outside component spans.
+            % Validate snapshots; handler method bodies are never removed.
             for edit = document.CallbackEdits(:)'
                 if edit.OriginalSource ~= document.CurrentText
                     diagnostics(end + 1) = yamada.model.Diagnostic("stale-callback-source", "error", ...
@@ -26,16 +26,12 @@ classdef CallbackSourceEdits
                     return
                 end
                 component = document.getComponent(edit.ComponentId);
-                if ~isempty(edit.MethodSpan) && any(edit.Action == ["Add", "Delete"])
-                    edits(end + 1) = struct("Start", edit.MethodSpan.StartOffset, ...
-                        "End", edit.MethodSpan.EndOffset, "Text", ""); %#ok<AGROW>
-                end
                 if isempty(component), continue, end
                 binding = "";
-                if any(edit.Action == ["Add", "New", "Connect"])
+                if any(edit.Action == ["New", "Connect"])
                     binding = yamada.source.CallbackSourceEdits.bindingText(component.Name, edit.Name, edit.HandlerName, edit.BindingExpression);
                 end
-                if any(edit.Action == ["Add", "New"])
+                if edit.Action == "New"
                     if edit.MethodAnchor <= 0
                         diagnostics(end + 1) = yamada.model.Diagnostic("unsafe-callback-anchor", "error", ...
                             "The callback method insertion anchor is unavailable."); %#ok<AGROW>
@@ -44,13 +40,13 @@ classdef CallbackSourceEdits
                     edits(end + 1) = struct("Start", edit.MethodAnchor + 1, "End", edit.MethodAnchor, ...
                         "Text", ending + yamada.source.CallbackSourceEdits.methodText(edit, document.ClassName) + ending); %#ok<AGROW>
                 end
-                if any(edit.Action == ["Delete", "Disconnect"]) && component.Factory == "uifigure" && edit.Name == "CloseRequestFcn"
+                if edit.Action == "Disconnect" && component.Factory == "uifigure" && edit.Name == "CloseRequestFcn"
                     binding = yamada.source.CallbackSourceEdits.defaultClose(component.Name);
                 end
                 if ~isempty(edit.BindingSpan)
                     edits(end + 1) = struct("Start", edit.BindingSpan.StartOffset, ...
                         "End", edit.BindingSpan.EndOffset, "Text", binding); %#ok<AGROW>
-                elseif any(edit.Action == ["Add", "New", "Connect"]) && yamada.model.SourceOwnership.hasSource(component)
+                elseif any(edit.Action == ["New", "Connect"]) && yamada.model.SourceOwnership.hasSource(component)
                     if edit.BindingAnchor <= 0
                         diagnostics(end + 1) = yamada.model.Diagnostic("unsafe-callback-anchor", "error", ...
                             "The callback binding insertion anchor is unavailable."); %#ok<AGROW>
@@ -179,4 +175,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with yamada. If not, see <https://www.gnu.org/licenses/>.
+
+Additional permission: text that this file writes into generated application
+source may be used under any terms; see "Additional permission for generated
+application source" in README.md.
 %}

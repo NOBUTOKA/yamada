@@ -2,7 +2,7 @@ classdef CallbackSourceAnalyzer
     % CallbackSourceAnalyzer Prove callback assignment and method ownership without execution.
     %   The analyzer recognizes direct initialization assignments and whole instance
     %   methods. Binding-only discovery proves assignment ownership independently
-    %   of shared method bodies. Legacy body edits require exclusive ownership;
+    %   of shared method bodies. Handler renames require exclusive method ownership;
     %   unsupported scopes, expressions and dynamic references remain protected.
 
     methods (Static, Access = ?yamada.source.SourceAnalysis)
@@ -129,11 +129,12 @@ classdef CallbackSourceAnalyzer
                 if ~isempty(pending)
                     edit = pending(end);
                     state = "absent";
-                    if any(edit.Action == ["Add", "New", "Connect"]), state = "editable"; end
+                    if any(edit.Action == ["New", "Connect"]), state = "editable"; end
                     reason = "";
                     handler = edit.HandlerName;
                     bindingSpan = edit.BindingSpan;
-                    methodSpan = edit.MethodSpan;
+                    % A pending intention owns no original method body.
+                    methodSpan = yamada.model.SourceSpan.empty;
                     bindingAnchor = edit.BindingAnchor;
                     methodAnchor = edit.MethodAnchor;
                     if edit.OriginalSource ~= source

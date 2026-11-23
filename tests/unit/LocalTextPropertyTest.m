@@ -14,6 +14,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
     end
 
     methods (Test)
+        % Guarantee: proven text edits reuse their proof across layouts and text properties.
+        % Failure mode: every text edit falls back to a whole-document preflight, making typing slow.
         function repeatedTextAvoidsWholeDocumentWork(testCase)
             % repeatedTextAvoidsWholeDocumentWork Reuse a fully checked insertion across all layouts.
             for layout = ["absolute", "nested"]
@@ -33,6 +35,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
             end
         end
 
+        % Guarantee: the local text path writes exact literal forms to the effective occurrence and keeps history independent.
+        % Failure mode: quotes, char matrices, or cell rows change form, or an old plan is modified by a later edit.
         function textRepresentationsRetainExactLiteralValues(testCase)
             % textRepresentationsRetainExactLiteralValues Preserve quotes, arrays, char matrices, and row cells.
             [document, first] = testCase.fixture("absolute");
@@ -80,9 +84,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
             end
         end
 
+        % Guarantee: the local path is used only when its proof still holds.
+        % Failure mode: a stale proof after a metadata or source change accepts an edit that full preflight would reject.
         function changedInputsReturnToFullPreflight(testCase)
             % changedInputsReturnToFullPreflight Reuse validated owner changes but discard stale metadata, catalog, or source proofs.
-            for kind = ["other-owner", "metadata", "registry", "source"]
+            for kind = ["other-owner", "metadata", "source"]
                 [document, first] = testCase.fixture("flat");
                 registry = yamada.model.ComponentRegistry.createDefault();
                 document.setProperty(first.Id, "Text", "Warm", registry);
@@ -94,8 +100,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                         document.validatePropertyCommit(registry);
                     case "metadata"
                         document.Metadata.RecheckText = true;
-                    case "registry"
-                        registry.register(registry.get("uilabel"));
                     case "source"
                         document.OriginalText = document.OriginalText + string(newline) + "% changed source";
                 end
@@ -116,6 +120,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
 
         function oldPlansAndHistoryRemainIndependent(testCase)
             % oldPlansAndHistoryRemainIndependent Keep previous versions and public copies stable after text edits.
+            % Guarantee and failure mode: shared with textRepresentationsRetainExactLiteralValues.
             [document, first] = testCase.fixture("nested");
             document.setProperty(first.Id, "Text", "One", testCase.Registry);
             document.validatePropertyCommit(testCase.Registry);
@@ -141,6 +146,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
 
         function unprovenSyntaxKeepsTheFullPath(testCase)
             % unprovenSyntaxKeepsTheFullPath Match full-preflight acceptance and retain fallback for unrepresentable syntax.
+            % Guarantee and failure mode: shared with changedInputsReturnToFullPreflight.
             values = {"first" + string(newline) + "second", string(missing), categorical("one"), {{'nested'}}};
             cases = ["physical-newline", "missing-string", "categorical", "exact-nested-cell"];
             for index = 1:numel(values)
@@ -168,6 +174,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
 
         function otherIndependentTextPropertiesReuseTheirProof(testCase)
             % otherIndependentTextPropertiesReuseTheirProof Share the literal path for plain and multiline text contracts.
+            % Guarantee and failure mode: shared with repeatedTextAvoidsWholeDocumentWork.
             for path = ["Title", "Tooltip"]
                 registry = testCase.Registry;
                 document = yamada.model.NewAppFactory.createEmpty("TextDomainsFixture", registry);

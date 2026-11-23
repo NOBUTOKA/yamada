@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'inspector'}) InspectorSurfaceBuilderTest < matlab
     methods (Test)
         function omitsDedicatedGridTrackEditors(testCase)
             % omitsDedicatedGridTrackEditors Keep grid track edits off the component Inspector.
+            % Guarantee: grid track properties are edited only through their dedicated editors.
+            % Failure mode: generic Inspector rows also appear for track lists, creating two competing edit paths.
 
             track = yamada.model.PropertyDefinition("RowHeight", [], false, true, ...
                 struct("editor", "gridTrackList", "auditDisposition", "editable"));
@@ -16,6 +18,8 @@ classdef (TestTags = {'fast', 'inspector'}) InspectorSurfaceBuilderTest < matlab
             testCase.verifyEqual(string({rows.MemberPaths}), "RowSpacing");
         end
 
+        % Guarantee: composite rows replace only complete member sets, never overlap, and keep catalog category order.
+        % Failure mode: a partial or overlapping template hides or duplicates a property, or template order reshuffles categories.
         function projectsCompleteCompositeAndSingletonFallback(testCase)
             % projectsCompleteCompositeAndSingletonFallback Replace only complete member sets.
 

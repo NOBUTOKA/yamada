@@ -9,6 +9,8 @@ classdef (TestTags = {'ui', 'model', 'generation', 'exhaustive'}) CatalogLocalPr
     methods (Test)
         function provesIndependentLiteralsAcrossAllVariants(testCase, Variant)
             % provesIndependentLiteralsAcrossAllVariants Exercise every eligible source-owned independent contract.
+            % Guarantee: generic local literal edits match a full parse for every eligible catalog contract.
+            % Failure mode: a catalog variant marks a property independent although editing it changes other state.
             registry = yamada.model.ComponentRegistry.createDefault();
             variants = string(Variant);
             total = 0; exercisedVariants = 0;

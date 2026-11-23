@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // This file is part of yamada. See LICENSE for the license text.
 
+// Guarantee: grid track resize handles start and commit from both sides and from gaps between tracks.
+// Failure mode: a hit-area change makes a handle unreachable or commits a resize to the wrong track.
 // Exercise the shipped overlay functions without requiring a MATLAB window.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');

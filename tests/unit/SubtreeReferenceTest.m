@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeReferenceTest < mat
     %   References are emitted after target creation without evaluating expressions.
 
     methods (Test)
+        % Guarantee: references inside a copied subtree point to the copied targets, and deletion repairs them in the same undo step.
+        % Failure mode: a copied group selects the original tab, or deleting its selected tab leaves a dangling reference.
         function selectedTabMapsToCopiedChildAndReopens(testCase)
             % selectedTabMapsToCopiedChildAndReopens Bind the copied group to its own copied tab.
             [document, registry, group] = SubtreeReferenceTest.fixture();
@@ -23,6 +25,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeReferenceTest < mat
 
         function externalContextMenuSurvivesTargetRename(testCase)
             % externalContextMenuSurvivesTargetRename Keep external identity while resolving its current name.
+            % Guarantee: references outside the subtree follow the target's identity through renames.
+            % Failure mode: Paste emits the old name of a renamed context menu and the source no longer runs.
             [document, registry, ~, button, menu] = SubtreeReferenceTest.fixture();
             clipboard = yamada.model.ComponentClipboard();
             clipboard.copy(document, button.Id, registry);
@@ -35,6 +39,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeReferenceTest < mat
 
         function deletionRetargetsCopiedSelectedTab(testCase)
             % deletionRetargetsCopiedSelectedTab Repair a surviving group selection in the same undoable deletion.
+            % Guarantee and failure mode: shared with selectedTabMapsToCopiedChildAndReopens.
             [document, registry, group] = SubtreeReferenceTest.fixture();
             clipboard = yamada.model.ComponentClipboard();
             clipboard.copy(document, group.Id, registry);
@@ -62,6 +67,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeReferenceTest < mat
             testCase.verifyEqual(document.CurrentText, after);
         end
 
+        % Guarantee: relocation and Paste emit references only after their targets exist, and otherwise reject without change.
+        % Failure mode: a move emits a forward reference, or Paste references a deleted external target.
         function parsedGroupMovesWithReferenceAfterTargetCreation(testCase)
             % parsedGroupMovesWithReferenceAfterTargetCreation Preserve initialization dependency order when relocating a group.
             [document, registry, group] = SubtreeReferenceTest.fixture();

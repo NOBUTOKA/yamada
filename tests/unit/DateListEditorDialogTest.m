@@ -4,6 +4,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DateListEditorDialogTest < m
     %   without opening a visible application window.
 
     methods (Test)
+        % Guarantee: date-list edits stay a draft until Apply commits exactly one change; Cancel commits nothing.
+        % Failure mode: row edits commit individually, producing several undo steps, or Cancel leaks the draft.
         function addDeleteClearAndApplyUseOneDraftCommit(testCase)
             % addDeleteClearAndApplyUseOneDraftCommit Keep date-list edits local until Apply.
 

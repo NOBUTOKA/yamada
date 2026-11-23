@@ -87,15 +87,6 @@ classdef RoundTripGenerator
                     end
                 end
             end
-            deleted = obj.deletedComponents(document);
-            for index = 1:numel(deleted)
-                [componentEdits, diagnostic] = obj.deletionEdits(source, deleted(index));
-                if ~isempty(diagnostic)
-                    diagnostics(end + 1) = diagnostic; %#ok<AGROW>
-                else
-                    edits = [edits componentEdits]; %#ok<AGROW>
-                end
-            end
             if yamada.validation.ModelValidator.hasErrors(diagnostics)
                 document.Diagnostics = diagnostics;
                 return
@@ -274,63 +265,6 @@ classdef RoundTripGenerator
     end
 
     methods (Access = private)
-        function result = deletedComponents(~, document)
-            % deletedComponents Return component records captured by explicit deletion.
-            result = struct([]);
-            for index = 1:numel(document.PendingEdits)
-                pending = document.PendingEdits{index};
-                if isstruct(pending) && isfield(pending, "Kind") && ...
-                        pending.Kind == "delete-component"
-                    if isfield(pending, "Record"), record = pending.Record;
-                    else, record = yamada.model.SourceOwnership.snapshot(pending.Component); end
-                    if isempty(result), result = record; else, result(end + 1) = record; end %#ok<AGROW>
-                end
-            end
-        end
-
-        function [edits, diagnostic] = deletionEdits(obj, source, component)
-            % deletionEdits Remove a component only when all direct uses are owned.
-            edits = struct("Start", {}, "End", {}, "Text", {});
-            diagnostic = yamada.model.Diagnostic.empty;
-            spans = [component.SourceSpans.Declaration component.SourceSpans.Creation];
-            if any(~arrayfun(@(span) obj.isKnownSpan(span), spans))
-                diagnostic = obj.error("ambiguous-component-deletion", component, ...
-                    "Component declaration or creation ownership is unknown.");
-                return
-            end
-            for index = 1:numel(component.Properties)
-                entry = component.Properties(index);
-                if ~obj.isKnownSpan(entry.SourceSpan)
-                    diagnostic = obj.error("ambiguous-component-deletion", component, ...
-                        "Component property ownership is unknown.");
-                    return
-                end
-                spans(end + 1) = entry.SourceSpan; %#ok<AGROW>
-            end
-            for setting = component.Settings
-                if ~isempty(setting.SourceSpan), spans(end + 1) = setting.SourceSpan; end %#ok<AGROW>
-            end
-            [~, uniqueSpans] = unique([[spans.StartOffset]' [spans.EndOffset]'], "rows", "stable");
-            spans = spans(uniqueSpans);
-            statements = yamada.source.MatlabLexicalScanner.splitStatements(source);
-            creationText = extractBetween(source, component.SourceSpans.Creation.StartOffset, component.SourceSpans.Creation.EndOffset);
-            originalName = regexp(creationText, 'app\.(\w+)\s*=', 'tokens', 'once');
-            sourceName = component.Name;
-            if ~isempty(originalName), sourceName = string(originalName{1}); end
-            for index = 1:numel(statements)
-                statement = statements(index);
-                if ~isempty(regexp(statement.Text, 'app\s*\.\s*' + sourceName + '(?!\w)', 'once')) && ...
-                        ~obj.spanContained(statement.Span, spans)
-                    diagnostic = obj.error("ambiguous-component-deletion", component, ...
-                        "Component is referenced outside editor-owned statements.");
-                    return
-                end
-            end
-            for index = 1:numel(spans)
-                edits(end + 1) = obj.edit(spans(index), ""); %#ok<AGROW>
-            end
-        end
-
         function [edits, diagnostic] = additionEdits(obj, source, document, components, relocationAnchor, initializationEmitted, fragments)
             % additionEdits Append generated declarations and initialization safely.
             arguments (Input)
@@ -399,7 +333,7 @@ classdef RoundTripGenerator
                     "app." + component.Name + " = " + component.Factory + "(" + arguments + ");";
                 pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id);
                 for callback = pending(:)'
-                    if any(callback.Action == ["Add", "New", "Connect"])
+                    if any(callback.Action == ["New", "Connect"])
                         creationText = creationText + eol + obj.indent(source, creationOffset) + yamada.source.CallbackSourceEdits.bindingText(component.Name, callback.Name, callback.HandlerName, callback.BindingExpression);
                     end
                 end
@@ -503,19 +437,6 @@ classdef RoundTripGenerator
                         result = false;
                         return
                     end
-                end
-            end
-        end
-
-        function result = spanContained(~, span, containers)
-            % spanContained Return true when an owned span fully contains a statement.
-            result = false;
-            for index = 1:numel(containers)
-                container = containers(index);
-                if span.StartOffset >= container.StartOffset && ...
-                        span.EndOffset <= container.EndOffset
-                    result = true;
-                    return
                 end
             end
         end

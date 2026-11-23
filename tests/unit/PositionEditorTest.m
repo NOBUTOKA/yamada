@@ -3,6 +3,8 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
     %   Fixtures own all native controls and never open or evaluate user source.
 
     methods (Test, TestTags = {'fast'})
+        % Guarantee: linked or fixed Position fields commit both dimensions as one change and one undo step.
+        % Failure mode: width and height commit separately, so Undo restores an aspect ratio the control never had, or a fixed side becomes editable.
         function linkedSizesCommitOnce(testCase)
             % linkedSizesCommitOnce Preserve Position order and commit linked dimensions together.
             figure = uifigure("Visible", "off", "Position", [100 100 270 160]);
@@ -50,6 +52,8 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
 
         function rowRebindingRejectsStaleNumericEvents(testCase)
             % rowRebindingRejectsStaleNumericEvents Do not send a queued field change to a newly selected component.
+            % Guarantee: a queued field event never applies to a newly selected component.
+            % Failure mode: a late ValueChanged event writes the previous selection's value to the new component.
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() delete(figure));
             grid = uigridlayout(figure, [1 1]);
@@ -74,6 +78,7 @@ classdef (TestTags = {'inspector', 'ui'}) PositionEditorTest < matlab.unittest.T
     methods (Test)
         function liveInspectorUsesOneUndoForBothLinkedSizes(testCase)
             % liveInspectorUsesOneUndoForBothLinkedSizes Verify palette, Inspector, model, and Preview agreement.
+            % Guarantee and failure mode: shared with linkedSizesCommitOnce.
             app = yamada(Visible="off");
             cleanup = onCleanup(@() delete(app));
             figure = findall(0, "Type", "figure", "Tag", "yamada-editor");

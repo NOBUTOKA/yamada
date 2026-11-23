@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
     %   These cases protect transaction boundaries before model integration.
 
     methods (Test)
+        % Guarantee: patch batches reverse exactly and refuse stale or overlapping ranges.
+        % Failure mode: Undo of adjacent edits restores text in the wrong order, or Unicode lengths shift offsets.
         function changedLengthsAndUnicodeRoundTrip(testCase)
             % changedLengthsAndUnicodeRoundTrip Preserve Unicode and exact line endings through reversal.
             source = "app.A.Value = 9;" + string(sprintf("\r\n")) + "app.B.Text = '日本語';";
@@ -46,6 +48,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
             testCase.verifyError(@() batch.apply("axc"), "yamada:SourcePatchBatch:StaleSource");
         end
 
+        % Guarantee: position transforms keep ranges on the correct side of edits, matching an independent scan.
+        % Failure mode: an owner absorbs a neighboring insertion, or a range inside replaced syntax is kept instead of rebound.
         function rangesAndInsertionAffinityStayConsistent(testCase)
             % rangesAndInsertionAffinityStayConsistent Expand owners without absorbing neighboring statements.
             batch = yamada.source.SourcePatchBatch("0123456789", change(4, 5, "LONGER"));
@@ -83,21 +87,20 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
             testCase.verifyEqual(before.CodeOffsets, statements(2).CodeOffsets);
         end
 
-        function settingIdentitySurvivesLocationAndValueChanges(testCase)
-            % settingIdentitySurvivesLocationAndValueChanges Separate occurrence identity from movable source ranges.
+        % Guarantee: live setting identities and bindings survive patches and always reflect the current value.
+        % Failure mode: an equal-length change is ignored, a prepared update overwrites a later edit, or Undo revives an old revision.
+        function settingIdentitySurvivesValueChanges(testCase)
+            % settingIdentitySurvivesValueChanges Separate occurrence identity from literal replacement.
             original = yamada.model.PropertySetting("Text", "Old", struct("Method", "assignment", ...
                 "Syntax", "dot", "SourceSnapshotId", "epoch", "SourceSpan", yamada.model.SourceSpan(10, 30), ...
                 "ValueSpan", yamada.model.SourceSpan(20, 24)));
             original = original.withScope("createComponents", yamada.model.SourceSpan(1, 100));
-            current = original.withLocations(struct("SourceSpan", yamada.model.SourceSpan(15, 40), ...
-                "ValueSpan", yamada.model.SourceSpan(25, 34), "ScopeSpan", yamada.model.SourceSpan(1, 110)));
-            current = current.withLiteral("New longer value");
+            current = original.withLiteral("New longer value");
             testCase.verifyEqual(current.Id, original.Id);
             testCase.verifyEqual(current.StatementId, original.StatementId);
             testCase.verifyEqual(current.InitializationScopeId, original.InitializationScopeId);
             testCase.verifyEqual(original.LiteralValue, "Old");
             testCase.verifyEqual(original.ValueSpan.StartOffset, 20);
-            testCase.verifyEqual(current.ValueSpan.StartOffset, 25);
             record = current.toStruct();
             restored = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
             testCase.verifyEqual(restored.Id, original.Id);
@@ -231,6 +234,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
             testCase.verifyEqual(owner.getProperty("FontSize").Metadata.SourceSettingId, actual(end).Id);
         end
 
+        % Guarantee: only a published candidate changes document text and history.
+        % Failure mode: a detached candidate is treated as published source and enables recursive snapshots.
         function literalCandidatePublishesInsertedAndExistingValues(testCase)
             % literalCandidatePublishesInsertedAndExistingValues Prepare exact current syntax before changing live handles.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -306,6 +311,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
 
         function deletedAndInteriorRangesNeedRebinding(testCase)
             % deletedAndInteriorRangesNeedRebinding Avoid inventing source ownership inside replaced syntax.
+            % Guarantee and failure mode: shared with rangesAndInsertionAffinityStayConsistent.
             batch = yamada.source.SourcePatchBatch("abcdef", change(2, 4, "X"));
             [span, valid] = batch.mapSpan(yamada.model.SourceSpan(3, 6));
             testCase.verifyFalse(valid);

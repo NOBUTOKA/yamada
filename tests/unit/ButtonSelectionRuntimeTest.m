@@ -6,6 +6,8 @@ classdef (TestTags = {'ui', 'model', 'generation', 'preview'}) ButtonSelectionRu
 
         function pastedPanelRetainsPositionAfterParentInitialization(testCase)
             % pastedPanelRetainsPositionAfterParentInitialization Execute only an owned copied-container fixture.
+            % Guarantee: a pasted container's Position survives native parent initialization at run time.
+            % Failure mode: generated assignments run before the parent finishes layout, so MATLAB overwrites the copied Position.
             registry = yamada.model.ComponentRegistry.createDefault();
             className = "OwnedAncestor" + erase(string(java.util.UUID.randomUUID()), "-");
             original = yamada.model.NewAppFactory.createEmpty(className, registry);

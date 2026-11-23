@@ -5,6 +5,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DialogTransactionTest < matl
     %   visible application window or execute generated app source.
 
     methods (Test)
+        % Guarantee: modal editors commit one typed batch on Apply, with paired properties together, and nothing on Cancel.
+        % Failure mode: Items and ItemsData commit separately and fail validation in between, or a cancelled draft is committed.
         function itemsDataClearStagesUntilApply(testCase)
             % itemsDataClearStagesUntilApply Keep Clear local until the user applies it.
 

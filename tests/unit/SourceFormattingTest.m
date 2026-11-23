@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
     %   Text fixtures cover indentation, owned deletions, and grouped settings.
 
     methods (Test)
+        % Guarantee: inserted source follows local indentation and stays in its owner's block.
+        % Failure mode: insertions use fixed spaces in a tab-indented file, scatter settings away from their owner, or reformat partial statements.
         function addedComponentsInheritSpacesAndTabs(testCase)
             % addedComponentsInheritSpacesAndTabs Preserve local indentation and newline conventions.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -23,6 +25,8 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
             end
         end
 
+        % Guarantee: deletion removes only owned lines and their adjacent separators.
+        % Failure mode: deletion leaves empty lines behind, or removes neighboring comments, inline code, or restricted setter lines.
         function removedSubtreeDoesNotLeaveVacatedLines(testCase)
             % removedSubtreeDoesNotLeaveVacatedLines Remove full owned lines and retain neighboring blocks.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -57,6 +61,7 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
 
         function newPropertiesFollowTheOwnersExistingSettings(testCase)
             % newPropertiesFollowTheOwnersExistingSettings Keep edits in their component block through history and reopen.
+            % Guarantee and failure mode: shared with addedComponentsInheritSpacesAndTabs.
             registry = yamada.model.ComponentRegistry.createDefault();
             ending = string(sprintf("\r\n"));
             original = SourceFormattingTest.fixture(ending, "            ");
@@ -146,6 +151,7 @@ classdef (TestTags = {'fast', 'generation', 'parser', 'model'}) SourceFormatting
 
         function deletionKeepsCommentsAndInlineNeighbors(testCase)
             % deletionKeepsCommentsAndInlineNeighbors Preserve all source outside vacated lines.
+            % Guarantee and failure mode: shared with removedSubtreeDoesNotLeaveVacatedLines.
             for ending = [string(newline), string(sprintf("\r\n"))]
                 for line = ["    gone; % retained comment", "    gone; kept;"]
                     source = "before;" + ending + line + ending + "after;" + ending;

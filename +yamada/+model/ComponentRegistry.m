@@ -20,7 +20,6 @@ classdef ComponentRegistry < handle
         Definitions dictionary = dictionary(string([]), yamada.model.ComponentDefinition.empty)
         FactoryVariantIds dictionary = dictionary(string([]), {})
         EffectiveProperties dictionary = dictionary(string([]), {})
-        IndependentDefinitions dictionary = dictionary(string([]), {})
         UnavailableSourceProperties string = strings(1, 0)
         UnavailableSourceValues string = strings(1, 0)
         StructuralCatalogs dictionary = dictionary(string([]), {})
@@ -28,34 +27,6 @@ classdef ComponentRegistry < handle
         ParentContextRules yamada.model.ParentContextRule = yamada.model.ParentContextRule.empty
         InspectorRowDefinitions yamada.model.InspectorRowDefinition = ...
             yamada.model.InspectorRowDefinition.empty
-    end
-
-    methods (Access = ?yamada.model.EvaluationContext)
-        function result = areIndependentDefinitions(obj, definitions)
-            % areIndependentDefinitions Reuse bounded proofs for equal immutable catalog values.
-            arguments (Input)
-                obj (1, 1) yamada.model.ComponentRegistry
-                definitions yamada.model.PropertyDefinition
-            end
-            arguments (Output)
-                result (1, 1) logical
-            end
-            result = true;
-            if isempty(definitions), return, end
-            definitions = reshape(definitions, 1, []);
-            key = "definitions:" + strjoin(string({definitions.Path}), "|");
-            if isKey(obj.IndependentDefinitions, key)
-                previous = obj.IndependentDefinitions{key};
-                if isequaln(previous, definitions), return, end
-            end
-            % Only independent values enter this map; rejected live data is never retained.
-            result = yamada.model.InputChangeClock.isValueData(definitions);
-            if ~result, return, end
-            if numEntries(obj.IndependentDefinitions) >= 128 && ~isKey(obj.IndependentDefinitions, key)
-                obj.IndependentDefinitions = dictionary(string([]), {});
-            end
-            obj.IndependentDefinitions{key} = definitions;
-        end
     end
 
     methods (Access = ?yamada.catalog.ComponentCatalogLoader)
@@ -195,6 +166,10 @@ classdef ComponentRegistry < handle
 
         function register(obj, definition)
             % register Add or replace one complete component definition.
+            %   Call register only while building a registry, before it is first passed to a
+            %   DocumentModel, NewAppFactory, parser, generator, Preview renderer, or editor.
+            %   Calling register after that first use is prohibited, because those consumers
+            %   and their caches assume a fixed definition set for the lifetime of the registry.
             arguments (Input)
                 obj (1, 1) yamada.model.ComponentRegistry
                 definition (1, 1) yamada.model.ComponentDefinition
@@ -221,7 +196,6 @@ classdef ComponentRegistry < handle
             obj.Definitions(variantKey) = definition;
             obj.Revision = obj.Revision + 1;
             obj.EffectiveProperties = dictionary(string([]), {});
-            obj.IndependentDefinitions = dictionary(string([]), {});
             if ~isKey(obj.FactoryVariantIds, factoryKey)
                 obj.FactoryVariantIds{factoryKey} = variantKey;
             else
@@ -269,19 +243,6 @@ classdef ComponentRegistry < handle
             end
             candidates = obj.Definitions(obj.FactoryVariantIds{factory});
             definition = obj.selectVariant(candidates, creationArguments, factory);
-        end
-
-        function factories = listFactories(obj)
-            % listFactories Return registered factory names in stable order.
-            arguments (Input)
-                obj (1, 1) yamada.model.ComponentRegistry
-            end
-            arguments (Output)
-                factories string
-            end
-
-            % Sorting makes palettes, tests, and generated output deterministic.
-            factories = sort(keys(obj.FactoryVariantIds))';
         end
 
         function ids = listVariantIds(obj)
@@ -336,7 +297,6 @@ classdef ComponentRegistry < handle
             obj.ParentContextRules = rules(:);
             obj.Revision = obj.Revision + 1;
             obj.EffectiveProperties = dictionary(string([]), {});
-            obj.IndependentDefinitions = dictionary(string([]), {});
         end
 
         function setInspectorRowDefinitions(obj, definitions)
@@ -354,7 +314,6 @@ classdef ComponentRegistry < handle
             obj.InspectorRowDefinitions = definitions(:);
             obj.Revision = obj.Revision + 1;
             obj.EffectiveProperties = dictionary(string([]), {});
-            obj.IndependentDefinitions = dictionary(string([]), {});
         end
 
         function definitions = inspectorRows(obj)

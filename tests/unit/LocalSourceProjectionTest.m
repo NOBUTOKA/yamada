@@ -1,6 +1,8 @@
 classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) LocalSourceProjectionTest < matlab.unittest.TestCase
     % LocalSourceProjectionTest Compare local execution and range projections with independent reference paths.
     methods (Test)
+        % Guarantee: projected source ranges equal an independent reference for every edit shape and history step.
+        % Failure mode: insertion affinity, overlap, or deletion moves a range to the wrong side of an edit.
         function batchedRangesMatchScalarReference(testCase)
             % batchedRangesMatchScalarReference Cover insertion affinity, overlap, deletion, unknown and empty ranges.
             source = "abcdefghijklmnopqrstuvwx";
@@ -20,6 +22,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) LocalSourceProje
             end
         end
 
+        % Guarantee: the prior execution trace is reused only for owned literal replacements; other changes require reanalysis.
+        % Failure mode: a structural or helper change reuses an outdated trace and misattributes settings to components.
         function helperTraceAndDiagnosticsSurviveLiteralChanges(testCase)
             % helperTraceAndDiagnosticsSurviveLiteralChanges Preserve calls, return boundaries and opaque diagnostics.
             source = traceSource();
@@ -69,6 +73,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) LocalSourceProje
 
         function publishedRangesAndHistoryMatchIndependentParsing(testCase)
             % publishedRangesAndHistoryMatchIndependentParsing Check all owners after distinct insertions, replacements and history.
+            % Guarantee and failure mode: shared with batchedRangesMatchScalarReference.
             registry = yamada.model.ComponentRegistry.createDefault();
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
             document = yamada.source.AppSourceParser.parseText(string(fileread(fullfile(root, ...

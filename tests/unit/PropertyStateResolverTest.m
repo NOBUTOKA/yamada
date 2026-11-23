@@ -15,6 +15,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
     end
 
     methods (Test)
+        % Guarantee: unknown effects stay unknown until a later write determines the value.
+        % Failure mode: the resolver falls back to an earlier literal or invents data-dependent values.
         function unsupportedAspectKeepsLimitsUnknown(testCase)
             % unsupportedAspectKeepsLimitsUnknown Retain the identified unsupported aspect interaction across later limits.
             for writes = {{"DataAspectRatio", [1 1 1]; "XLim", [1 10]; "FontName", "Helvetica"}}
@@ -29,6 +31,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             end
         end
 
+        % Guarantee: native adjustments are modeled as effects without rewriting explicit source values.
+        % Failure mode: the resolver stores a clamped, rounded, or cleared value as if the user had written it.
         function clampingDoesNotRewriteExplicitOrRequestedValues(testCase)
             % clampingDoesNotRewriteExplicitOrRequestedValues Retain the Value slot while Limits changes its effect.
             [component, definitions] = testCase.fixture("uislider-slider", {"Value", 20; "Limits", [50 100]});
@@ -46,6 +50,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             testCase.verifyEqual(component.getProperty("Value").LiteralValue, 20);
         end
 
+        % Guarantee: constructor arguments are resolved with native constructor semantics, not as sequential assignments.
+        % Failure mode: constructor Value is validated against default Limits, or argument order effects such as Units are ignored.
         function constructorUsesFinalDomainInsteadOfTextualSetterValidation(testCase)
             % constructorUsesFinalDomainInsteadOfTextualSetterValidation Admit a constructor value above default limits.
             [component, definitions] = testCase.fixture("uislider-slider", ...
@@ -73,6 +79,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function numericRoundingIsAnEffectRatherThanAnExplicitWrite(testCase)
             % numericRoundingIsAnEffectRatherThanAnExplicitWrite Model programmatic rounding without altering source history.
+            % Guarantee and failure mode: shared with clampingDoesNotRewriteExplicitOrRequestedValues.
             [component, definitions] = testCase.fixture("uieditfield-numeric", ...
                 {"Value", 2.4; "RoundFractionalValues", "on"});
             states = yamada.model.PropertyStateResolver.resolve(component, definitions);
@@ -127,6 +134,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function unresolvedEffectsStayUnknownAndLaterWritesCanRestoreKnowledge(testCase)
             % unresolvedEffectsStayUnknownAndLaterWritesCanRestoreKnowledge Never fall back to an earlier literal.
+            % Guarantee and failure mode: shared with unsupportedAspectKeepsLimitsUnknown.
             [component, definitions] = testCase.fixture("uislider-slider", {"Value", 20});
             location = testCase.setting("Limits", [], 2).toStruct().Location;
             location.SourceExpression = "readLimits()";
@@ -140,6 +148,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             testCase.verifyEqual(testCase.state(states, "Value").EffectiveValue, 75);
         end
 
+        % Guarantee: mode properties follow native auto and manual semantics in execution order.
+        % Failure mode: setting a value does not switch its mode to manual, or a manual mode is overwritten by an upstream write.
         function axesValuesSelectManualModeWithoutAddingExplicitSettings(testCase)
             % axesValuesSelectManualModeWithoutAddingExplicitSettings Preserve original histories while resolving known mode side effects.
             for id = ["axes", "uiaxes", "polaraxes", "geoaxes"]
@@ -175,6 +185,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function automaticLimitEndpointsAreNotPretendedToBeResolved(testCase)
             % automaticLimitEndpointsAreNotPretendedToBeResolved Retain the input but mark data-dependent output as unknown.
+            % Guarantee and failure mode: shared with unsupportedAspectKeepsLimitsUnknown.
             [component, definitions] = testCase.fixture("uiaxes", {"XLim", [-Inf 10]});
             states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEqual(testCase.state(states, "XLim").ExplicitValue, [-Inf 10]);
@@ -185,6 +196,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function automaticWidthFollowersRetainExplicitHistory(testCase)
             % automaticWidthFollowersRetainExplicitHistory Resolve chained getters without replacing earlier explicit inputs.
+            % Guarantee and failure mode: shared with axesValuesSelectManualModeWithoutAddingExplicitSettings.
             [component, definitions] = testCase.fixture("uiaxes", {"LineWidth", 2; ...
                 "GridLineWidth", 4; "MinorGridLineWidth", 3; "MinorGridLineWidthMode", "auto"});
             before = component.settingSnapshot();
@@ -219,6 +231,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function uncertainWidthModesPropagateUntilAnExplicitReceiverWrite(testCase)
             % uncertainWidthModesPropagateUntilAnExplicitReceiverWrite Never invent a held or followed getter when the mode is unknown.
+            % Guarantee and failure mode: shared with unsupportedAspectKeepsLimitsUnknown.
             [component, definitions] = testCase.fixture("axes", {"GridLineWidth", 4});
             location = testCase.setting("GridLineWidthMode", [], 2).toStruct().Location;
             location.SourceExpression = "chooseMode()";
@@ -234,6 +247,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function constructorWidthsSynchronizeAfterAllArguments(testCase)
             % constructorWidthsSynchronizeAfterAllArguments Keep held defaults distinct from immediate assignment followers.
+            % Guarantee and failure mode: shared with constructorUsesFinalDomainInsteadOfTextualSetterValidation.
             for id = ["axes", "uiaxes"]
                 for writes = {{"GridLineWidth", 4; "MinorGridLineWidthMode", "manual"}, ...
                         {"MinorGridLineWidthMode", "manual"; "GridLineWidth", 4}}
@@ -257,6 +271,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function renderingModesKeepStoredColorAndAlphaValues(testCase)
             % renderingModesKeepStoredColorAndAlphaValues Separate rendering decisions from stored getter values.
+            % Guarantee and failure mode: shared with axesValuesSelectManualModeWithoutAddingExplicitSettings.
             for id = ["axes", "uiaxes", "polaraxes", "geoaxes"]
                 [component, definitions] = testCase.fixture(id, {"GridColor", [0.3 0.5 0.7]; ...
                     "GridColorMode", "auto"; "GridAlphaMode", "auto"; "GridAlpha", 0.4});
@@ -279,6 +294,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function setterModeFlagsDeriveConstructorAutoValues(testCase)
             % setterModeFlagsDeriveConstructorAutoValues Distinguish assignments from constructors that restore auto last.
+            % Guarantee and failure mode: shared with constructorUsesFinalDomainInsteadOfTextualSetterValidation.
             definition = testCase.Registry.getById("uiaxes");
             alpha = definition.Properties([definition.Properties.Path] == "GridAlpha");
             testCase.assumeEqual(alpha.Application.EffectPolicy, "setterModeFlag", ...
@@ -306,6 +322,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function invalidWidthIsAnInitializationError(testCase)
             % invalidWidthIsAnInitializationError Reject a nonpositive scalar before claiming an effective width.
+            % Guarantee: invalid widths are reported as initialization errors.
+            % Failure mode: a nonpositive width is shown as a known effective value.
             [component, definitions] = testCase.fixture("uiaxes", {"GridLineWidth", 0});
             [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyNotEmpty(diagnostics);
@@ -314,6 +332,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function constructorUnitConversionsAreNotReplacedByRawNumbers(testCase)
             % constructorUnitConversionsAreNotReplacedByRawNumbers Respect source argument order for position units.
+            % Guarantee and failure mode: shared with constructorUsesFinalDomainInsteadOfTextualSetterValidation.
             [component, definitions] = testCase.fixture("uipanel", ...
                 {"Position", [1 1 200 100]; "Units", "normalized"}, "nameValue");
             states = yamada.model.PropertyStateResolver.resolve(component, definitions);
@@ -329,6 +348,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
             testCase.verifyEqual(testCase.state(states, "Position").EffectiveValue, [0.1 0.1 0.5 0.5]);
         end
 
+        % Guarantee: selection follows reviewed Items and ItemsData rules.
+        % Failure mode: switching to ItemsData loses the selected index, or an unlabeled data entry is selectable.
         function itemDataTransitionsUseReviewedValueAndIndexRules(testCase)
             % itemDataTransitionsUseReviewedValueAndIndexRules Preserve an index when switching between labels and data.
             [component, definitions] = testCase.fixture("uidropdown", ...
@@ -350,6 +371,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function defaultsAndStateCopiesNeverMaterializeSourceSettings(testCase)
             % defaultsAndStateCopiesNeverMaterializeSourceSettings Keep derived state independent from editable records.
+            % Guarantee: resolved state is independent of editable records.
+            % Failure mode: reading a default adds a source setting.
             [component, definitions] = testCase.fixture("uislider-slider", cell(0, 2));
             states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             value = testCase.state(states, "Value");

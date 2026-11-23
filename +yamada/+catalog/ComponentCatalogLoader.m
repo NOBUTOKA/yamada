@@ -60,7 +60,9 @@ classdef ComponentCatalogLoader
                 yamada.catalog.ComponentCatalogLoader.availableReleases( ...
                 yamada.catalog.ComponentCatalogLoader.catalogsFolder()), string(matlabRelease().Release));
         end
+    end
 
+    methods (Static, Access = ?matlab.unittest.TestCase)
         function release = selectRelease(available, running)
             % selectRelease Choose the newest catalog release that is not newer than the running release.
             %   Newer MATLAB releases reuse the newest older catalog, relying on

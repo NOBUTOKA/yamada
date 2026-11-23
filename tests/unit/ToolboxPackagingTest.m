@@ -43,6 +43,8 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
     methods (Test)
         function payloadMatchesSelectedSourceExactly(testCase)
             % payloadMatchesSelectedSourceExactly Reject undeclared or changed archive payload files.
+            % Guarantee: the Toolbox contains exactly the declared source files, unmodified.
+            % Failure mode: tests, development files, or local changes are shipped, or a required file is missing.
             entries = dir(fullfile(testCase.ExtractedRoot, "fsroot", "**", "*"));
             entries = entries(~[entries.isdir]);
             payloadRoot = fullfile(testCase.ExtractedRoot, "fsroot");
@@ -67,6 +69,8 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
 
         function metadataAndGalleryDescribeTheSupportedRelease(testCase)
             % metadataAndGalleryDescribeTheSupportedRelease Check installed identity and no-output launch metadata.
+            % Guarantee: packaged metadata and gallery entries match the project metadata and supported release range.
+            % Failure mode: a stale version, release range, or local path is shipped in the Toolbox.
             root = testCase.ExtractedRoot;
             core = string(fileread(fullfile(root, "metadata", "coreProperties.xml")));
             addon = string(fileread(fullfile(root, "metadata", "addonProperties.xml")));
@@ -92,6 +96,8 @@ classdef (TestTags = {'packaging', 'lifecycle', 'ui'}) ToolboxPackagingTest < ma
 
         function manifestAndChecksumMatchActualArtifact(testCase)
             % manifestAndChecksumMatchActualArtifact Check independent SHA-256 and immutable candidate output.
+            % Guarantee: the manifest and checksum describe the actual artifact, and existing output is never overwritten.
+            % Failure mode: a release publishes a checksum or source commit that does not match the built Toolbox.
             manifest = jsondecode(fileread(testCase.Artifacts.manifest));
             testCase.verifyEqual(string(manifest.sourceCommit), testCase.SourceCommit);
             testCase.verifyFalse(manifest.sourceDirty);

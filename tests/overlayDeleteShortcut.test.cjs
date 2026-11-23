@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // This file is part of yamada. See LICENSE for the license text.
 
+// Guarantee: Delete removes components only from Preview selection.
+// Failure mode: pressing Delete in a native HTML editor or draft deletes the selected component.
 // Keep Delete local to Preview selection, excluding native HTML editors and drafts.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');

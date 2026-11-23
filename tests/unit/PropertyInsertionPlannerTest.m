@@ -15,6 +15,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
     end
 
     methods (Test)
+        % Guarantee: insertion plans are private, place source where the model assumes, and leave nothing on rejection.
+        % Failure mode: generated source and modeled state use different slots, or a rejected insertion leaves history.
         function cachedPlansRemainIndependentAndInvalidateOnDirectChange(testCase)
             % cachedPlansRemainIndependentAndInvalidateOnDirectChange Keep shared proofs private and exact.
             [document, component] = testCase.fixture("app.Control = uidropdown(app.UIFigure);");
@@ -78,6 +80,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyFalse(document.IsDirty);
         end
 
+        % Guarantee: new settings are inserted after their prerequisites and before their dependents.
+        % Failure mode: Value is inserted before ItemsData, or Units after Position, changing run-time results.
         function positionalInitializationAddsAfterTheLastPrerequisite(testCase)
             % positionalInitializationAddsAfterTheLastPrerequisite Place Value after both item-domain settings.
             [document, component] = testCase.fixture(["app.Control = uidropdown(app.UIFigure);", ...
@@ -110,6 +114,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyLessThan(strfind(source, "Units="), strfind(source, "Position=[20 20 340 180]"));
         end
 
+        % Guarantee: insertions follow the existing source style and change only inserted text.
+        % Failure mode: insertion rebuilds a constructor, moves a trailing comment, or drops opaque arguments.
         function constructorStylesReceiveDocumentedNameValueArguments(testCase)
             % constructorStylesReceiveDocumentedNameValueArguments Preserve both original name-value spellings.
             cases = ["app.Control = uidropdown(app.UIFigure, Items=[""A"" ""B""], ItemsData=[10 20]);", ...
@@ -146,6 +152,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
 
         function simultaneousAdditionsUseOneStableDependencyOrder(testCase)
             % simultaneousAdditionsUseOneStableDependencyOrder Keep same-offset insertions from reversing their order.
+            % Guarantee and failure mode: shared with positionalInitializationAddsAfterTheLastPrerequisite.
             [document, component] = testCase.fixture("app.Control = uidropdown(app.UIFigure, FontSize=14);");
             component.setProperty("Value", 20);
             component.setProperty("ItemsData", [10 20]);
@@ -155,6 +162,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifyEqual(string({plan.Component.Settings.Path}), ["Items", "ItemsData", "Value", "FontSize"]);
         end
 
+        % Guarantee: inserting a range keeps dependent values as they were, restating them in the same undo step when needed.
+        % Failure mode: a new Limits clamps or invalidates an existing Value, or a widened range releases a value the native control had clamped.
         function aNewRangeCanRepairAnEarlierOutOfDefaultValue(testCase)
             % aNewRangeCanRepairAnEarlierOutOfDefaultValue Validate the candidate sequence rather than pending-at-end fiction.
             [document, component] = testCase.fixture(["app.Control = uislider(app.UIFigure);", "app.Control.Value = 150;"]);
@@ -246,6 +255,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
             testCase.verifySubstring(document.CurrentText, "app.Control.Value = 60;");
         end
 
+        % Guarantee: insertion slots follow execution order across helpers and opaque calls.
+        % Failure mode: a slot chosen by file offset runs before its prerequisite or in a helper that runs several times.
         function prerequisitesPermitInsertionBeyondOpaqueBoundaries(testCase)
             % prerequisitesPermitInsertionBeyondOpaqueBoundaries Preserve unknown code while following later prerequisites.
             [document, component] = testCase.fixture(["app.Control = uidropdown(app.UIFigure);", ...
@@ -307,6 +318,7 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyInsertio
 
         function trailingFactoryCommentsKeepTheirOriginalLine(testCase)
             % trailingFactoryCommentsKeepTheirOriginalLine Do not attach an existing trailing comment to a new assignment.
+            % Guarantee and failure mode: shared with constructorStylesReceiveDocumentedNameValueArguments.
             [document, component] = testCase.fixture("app.Control = uislider(app.UIFigure); % creation note");
             component.setProperty("Value", 75);
             plan = yamada.source.PropertyInsertionPlanner.plan(document, component, testCase.Registry);

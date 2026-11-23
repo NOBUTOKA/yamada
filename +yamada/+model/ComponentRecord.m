@@ -163,14 +163,13 @@ classdef ComponentRecord < handle
     end
 
     methods (Access = private)
-        function noteInput(obj, value)
+        function noteInput(obj)
             % noteInput Notify the token only after evaluation has attached it to a complete object.
             arguments (Input)
                 obj (1, 1) yamada.model.ComponentRecord
-                value
             end
             % Construction and materialization run without an attached token.
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            if ~isempty(obj.InputClock), obj.InputClock.touch(); end
         end
 
         function noteInputCollection(obj, value)
@@ -181,7 +180,7 @@ classdef ComponentRecord < handle
             end
             if isempty(obj.InputClock), return, end
             for item = reshape(value, 1, []), item.bindInputClock(obj.InputClock); end
-            obj.InputClock.touch([]);
+            obj.InputClock.touch();
         end
     end
 
@@ -205,7 +204,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Id = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.Factory(obj, value)
@@ -215,7 +214,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Factory = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.DeclaredType(obj, value)
@@ -225,7 +224,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.DeclaredType = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.Origin(obj, value)
@@ -235,7 +234,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Origin = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.Children(obj, value)
@@ -245,7 +244,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Children = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.Properties(obj, value)
@@ -290,7 +289,7 @@ classdef ComponentRecord < handle
                 obj.SettingSlots = obj.SettingStore.replace(obj.Id, obj.SettingSlots, value);
                 obj.rebindSettingReferences(value, obj.SettingStore.get(obj.SettingSlots));
             end
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.Name(obj, value)
@@ -300,7 +299,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Name = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.ParentId(obj, value)
@@ -310,7 +309,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.ParentId = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.IsEditable(obj, value)
@@ -320,7 +319,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.IsEditable = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.SourceSpans(obj, value)
@@ -330,7 +329,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.SourceSpans = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.Metadata(obj, value)
@@ -340,7 +339,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.Metadata = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.CreationArgumentData(obj, value)
@@ -350,7 +349,7 @@ classdef ComponentRecord < handle
                 value
             end
             obj.CreationArgumentData = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function records = settingSnapshot(obj)

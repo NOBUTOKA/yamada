@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'testInfrastructure'}) ProjectConventionsTest < ma
     %   project-owned MATLAB source and test files. It does not inspect user output.
 
     methods (Test)
+        % Guarantee: every project-owned MATLAB file has the required encoding, line endings, and license notice.
+        % Failure mode: a new file is saved with LF or a BOM, or without the GPL block, and ships in the Toolbox.
         function matlabFilesUseRequiredEncodingAndLineEndings(testCase)
             % matlabFilesUseRequiredEncodingAndLineEndings Check project bytes.
 
@@ -21,6 +23,8 @@ classdef (TestTags = {'fast', 'testInfrastructure'}) ProjectConventionsTest < ma
 
         function excludesGeneratedRecordsWithoutExcludingSiblingSources(testCase)
             % excludesGeneratedRecordsWithoutExcludingSiblingSources Keep output and preserved input outside ownership.
+            % Guarantee: the convention scan excludes generated and fixture files but nothing else.
+            % Failure mode: an exclusion rule also hides sibling project sources, so violations go unchecked.
             fixture = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
             projectRoot = string(fixture.Folder);
             owned = ["Owned.m", fullfile("+yamada", "Owned.m"), ...
@@ -52,6 +56,7 @@ classdef (TestTags = {'fast', 'testInfrastructure'}) ProjectConventionsTest < ma
 
         function projectMatlabFilesCarryGplNotice(testCase)
             % projectMatlabFilesCarryGplNotice Check trailing license blocks.
+            % Guarantee and failure mode: shared with matlabFilesUseRequiredEncodingAndLineEndings.
 
             % Verify invariant text and MRST-style placement in every owned file.
             files = ProjectConventionsTest.projectMatlabFiles();

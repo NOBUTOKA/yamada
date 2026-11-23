@@ -3,6 +3,8 @@ classdef (TestTags = {'model', 'catalog', 'preview', 'ui'}) PositionGeometryRunt
     %   These fixtures execute only test-authored factories and literal setters.
 
     methods (Test)
+        % Guarantee: modeled geometry constraints match native controls for every orientation, boundary, and setting order.
+        % Failure mode: the catalog assumes an aspect lock or size exchange that the release does not apply, so Preview and run time disagree.
         function linearGaugePreviewKeepsWidthAndHeightIndependent(testCase)
             % linearGaugePreviewKeepsWidthAndHeightIndependent Preserve narrow, tall, and height-only Preview edits.
             registry = yamada.model.ComponentRegistry.createDefault();

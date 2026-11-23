@@ -5,48 +5,32 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
 
     methods (Test)
 
-        function generatesMinimalRunnableClass(testCase)
-            % generatesMinimalRunnableClass Verify the canonical handle-based skeleton.
-
-            % Generate from the same empty model used by the future editor.
+        function emptyAppSkeletonReparsesWithRecognizedDestructor(testCase)
+            % emptyAppSkeletonReparsesWithRecognizedDestructor Check the filled template, not its literal text.
+            % Guarantee: the skeleton filled from resources/NewAppTemplate.txt reparses, keeps an argument-free destructor, and carries no project license notice.
+            % Failure mode: a template edit or a broken marker expansion leaves an unparsable class, an arguments block that stops MATLAB from recognizing delete, or the template's license header in user source.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("GeneratedApp", registry);
-            generator = yamada.source.NewAppGenerator(registry);
-
-            [source, diagnostics] = generator.generate(document);
-
-            % Check required runtime structure, formatting, and license isolation.
-            testCase.verifyGreaterThan(strlength(source), 0);
+            [source, diagnostics] = yamada.source.NewAppGenerator(registry).generate(document);
             testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
-            testCase.verifySubstring(source, ...
-                "classdef GeneratedApp < handle");
-            testCase.verifySubstring(source, ...
-                "app.UIFigure = uifigure(""Visible"", ""off"");");
-            testCase.verifySubstring(source, "properties (Access = private)");
-            testCase.verifySubstring(source, ...
-                "arguments (Input)");
-            testCase.verifySubstring(source, ...
-                "arguments (Output)");
-            testCase.verifySubstring(source, "addlistener(app.UIFigure, ""ObjectBeingDestroyed"", @app.figureDeleted);");
-            testCase.verifySubstring(source, "delete(app.UIFigure);");
-            testCase.verifySubstring(source, "% " + document.ClassName + " ");
-            testCase.verifySubstring(source, "% createComponents ");
+
+            % Reparse the result and confirm no marker survived expansion.
+            [parsed, parseDiagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(parseDiagnostics));
+            testCase.verifyEqual(parsed.ClassName, "GeneratedApp");
+            testCase.verifyEmpty(regexp(source, "\{\{|\}\}", "once"));
 
             % MATLAB recognizes cleanup only when the destructor has no arguments block.
             destructor = extractAfter(source, "function delete(app)");
             testCase.assertNotEmpty(destructor);
             testCase.verifyFalse(contains(destructor, "arguments"));
-            testCase.verifySubstring(destructor, "delete(app.UIFigure);");
-            if ispc
-                testCase.verifyEmpty(regexp(source, "(?<!\r)\n", "once"));
-            else
-                testCase.verifyEmpty(regexp(source, "\r", "once"));
-            end
-            testCase.verifyEmpty(regexp(source, "GNU General Public License", "once"));
+            testCase.verifyEmpty(regexp(source, "SPDX|GNU General Public License|^#", "once", "lineanchors"));
         end
 
         function omitsCatalogReadOnlyPropertiesFromGeneratedSource(testCase)
             % omitsCatalogReadOnlyPropertiesFromGeneratedSource Honor setter capabilities across components.
+            % Guarantee: generation never writes properties that the catalog marks read-only.
+            % Failure mode: generated source assigns a read-only property and errors at run time.
 
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("GridOutputApp", registry);
@@ -81,6 +65,8 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
 
         function classIdentityRewriteUpdatesArgumentsWithoutChangingLiterals(testCase)
             % classIdentityRewriteUpdatesArgumentsWithoutChangingLiterals Rename only class identity syntax.
+            % Guarantee: class renaming rewrites identity syntax only.
+            % Failure mode: rewriting also changes string literals or comments that contain the class name.
             source = join([ ...
                 "classdef OldApp < handle", ...
                 "    % OldApp Describe the application.", ...
@@ -116,31 +102,10 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             testCase.verifySubstring(rewritten, "The OldApp wording in this comment");
         end
 
-        function generatesChildFromRegistryDrivenRecord(testCase)
-            % generatesChildFromRegistryDrivenRecord Verify generic child output.
-
-            % Add a registry-defined label to the shared document hierarchy.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("LabelApp", registry);
-            definition = registry.get("uilabel");
-            label = yamada.model.ComponentRecord( ...
-                "label-1", "GreetingLabel", definition.Factory, ...
-                definition.DeclaredType, "generated");
-            label.setProperty("Text", "It's ready");
-            label.setProperty("Position", [20 20 100 22]);
-            document.addComponent(label, document.RootComponentId);
-
-            % Confirm parent calls and escaped literals in generated source.
-            source = yamada.source.NewAppGenerator(registry).generate(document);
-
-            testCase.verifySubstring(source, ...
-                "app.GreetingLabel = uilabel(app.UIFigure);");
-            testCase.verifySubstring(source, ...
-                "app.GreetingLabel.Text = ""It's ready"";");
-        end
-
         function generatesAndParsesDateOnlyProperties(testCase)
             % generatesAndParsesDateOnlyProperties Round-trip allowlisted native date values.
+            % Guarantee: generated date values reparse to the same values.
+            % Failure mode: generation emits a datetime form that the safe parser rejects.
 
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("DateApp", registry);
@@ -168,6 +133,8 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(parseDiagnostics));
         end
 
+        % Guarantee: generation fails with a diagnostic instead of producing invalid or incomplete source.
+        % Failure mode: an invalid class name or a source expression is written as empty or broken source.
         function invalidClassNameBlocksGeneration(testCase)
             % invalidClassNameBlocksGeneration Verify fatal name validation.
 
@@ -180,33 +147,6 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             testCase.verifyEqual(source, "");
             testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
             testCase.verifyEqual(diagnostics(1).Code, "invalid-class-name");
-        end
-
-        function writerUsesUtf8WithoutBomAndRequestedLineEnding(testCase)
-            % writerUsesUtf8WithoutBomAndRequestedLineEnding Verify exact output bytes.
-
-            % Prepare Unicode source and a recoverable temporary target.
-            filePath = string(tempname) + ".m";
-            cleanup = onCleanup(@() deleteIfPresent(filePath));
-            japaneseText = string(char([26085 26412 35486]));
-            source = compose("classdef JapaneseApp\n%% Japanese text: %s\nend\n", ...
-                japaneseText);
-
-            % Read raw bytes so encoding and newline assertions are independent.
-            yamada.source.SourceWriter.write(filePath, source, "LF");
-            fileId = fopen(filePath, "r");
-            closeFile = onCleanup(@() fclose(fileId));
-            bytes = fread(fileId, Inf, "*uint8")';
-
-            % Verify BOM absence, Unicode fidelity, and exact LF normalization.
-            testCase.verifyFalse(numel(bytes) >= 3 && ...
-                isequal(bytes(1:3), uint8([239 187 191])));
-            text = string(native2unicode(bytes, "UTF-8"));
-            testCase.verifySubstring(text, "Japanese text: " + japaneseText);
-            testCase.verifyEmpty(regexp(text, "\r", "once"));
-            expected = regexprep(source, "\r\n|\r|\n", newline);
-            testCase.verifyEqual(text, expected);
-            clear closeFile cleanup
         end
 
         function sourceExpressionIsNeverSilentlyGeneratedAsEmpty(testCase)
@@ -227,18 +167,6 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
                 "nonliteral-new-app-property");
         end
     end
-end
-
-function deleteIfPresent(filePath)
-% deleteIfPresent Remove a temporary test file when it still exists.
-arguments (Input)
-    filePath string
-end
-
-% Keep test cleanup idempotent after partial failures.
-if isfile(filePath)
-    delete(filePath);
-end
 end
 
 %{

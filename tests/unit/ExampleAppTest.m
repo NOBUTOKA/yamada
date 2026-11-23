@@ -16,6 +16,8 @@ classdef (TestTags = {'lifecycle'}) ExampleAppTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'ui'})
+        % Guarantee: the shipped examples run, respond to their callbacks, and close cleanly.
+        % Failure mode: an example in the documentation breaks or leaves its figure open.
         function includedExampleRunsAndCloses(testCase)
             % includedExampleRunsAndCloses Exercise the tutorial's real callback and owner cleanup.
             testCase.applyFixture(matlab.unittest.fixtures.PathFixture(fullfile(testCase.ProjectRoot, "examples")));
@@ -65,6 +67,8 @@ classdef (TestTags = {'lifecycle'}) ExampleAppTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'fast', 'parser'})
+        % Guarantee: the shipped examples open in the editor without diagnostics and without executing app code.
+        % Failure mode: parsing creates the app window or reports errors on a project-owned example.
         function includedExampleIsEditableWithoutExecution(testCase)
             % includedExampleIsEditableWithoutExecution Parse the owned tutorial app without creating its window.
             registry = yamada.model.ComponentRegistry.createDefault();

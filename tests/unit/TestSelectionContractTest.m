@@ -6,6 +6,8 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
     %   profiles only.
 
     methods (Test)
+        % Guarantee: test tags and runner arguments implement the documented profiles.
+        % Failure mode: a new test lacks a profile tag and silently never runs, or a mistyped area runs nothing without an error.
         function quickTagCoversNonUiTestsAndABoundedUiSmoke(testCase)
             % quickTagCoversNonUiTestsAndABoundedUiSmoke Verify fast coverage.
 
@@ -62,6 +64,8 @@ classdef (TestTags = {'selectionContract'}) TestSelectionContractTest < matlab.u
 
         function workerRunsEachClaimedClassOnce(testCase)
             % workerRunsEachClaimedClassOnce Verify queue claims, saved results, and repeat safety.
+            % Guarantee: parallel workers run each claimed class exactly once and keep results.
+            % Failure mode: queue races run a class twice or drop its results, misreporting the suite.
 
             % Expose the developer runner folder for the worker entry point.
             originalPath = path;
