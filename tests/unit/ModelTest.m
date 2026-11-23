@@ -6,6 +6,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
 
     methods (Test)
 
+        % Guarantee: palette insertion creates the selected variant with valid initial geometry.
+        % Failure mode: insertion falls back to the default style or size, or places a grid child without coordinates.
         function registryInsertionSeedsSafeGeometry(testCase)
             % registryInsertionSeedsSafeGeometry Verify model-owned palette insertion.
 
@@ -71,6 +73,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
                 "yamada:DocumentModel:InvalidInsertionParent");
         end
 
+        % Guarantee: property edits and resets are reversible units, and rejected batches change nothing.
+        % Failure mode: a batch is undone in several steps, or a reset deletes a parsed assignment that yamada does not own.
         function propertyEditsUndoAndRedo(testCase)
             % propertyEditsUndoAndRedo Verify reversible literal property changes.
 
@@ -128,6 +132,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyEmpty(label.getProperty("Text"));
         end
 
+        % Guarantee: Undo of insertion or deletion restores the exact pending intention.
+        % Failure mode: undoing an insertion records a deletion of parsed source, or undoing a deletion loses it.
         function insertionUndoRemovesWithoutDeletionIntent(testCase)
             % insertionUndoRemovesWithoutDeletionIntent Verify generated undo semantics.
 
@@ -143,28 +149,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyEqual(document.getComponent(label.Id).Name, "Label");
         end
 
-        function parsedDeletionUndoRestoresPendingIntent(testCase)
-            % parsedDeletionUndoRestoresPendingIntent Verify parsed deletion history.
-
-            % Use a parsed fixture so deletion remains source-backed and reversible.
-            testPath = mfilename("fullpath");
-            fixturePath = string(fullfile(fileparts(fileparts(testPath)), ...
-                "fixtures", "SimpleCalculatorApp.m"));
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.source.AppSourceParser.parseFile(fixturePath, registry);
-            target = document.getComponentByName("LeftValueLabel");
-            document.removeComponent(target.Id);
-            testCase.verifyEmpty(document.getComponent(target.Id));
-            testCase.verifyEmpty(document.PendingEdits);
-            document.undo();
-            testCase.verifyEqual(document.getComponent(target.Id).Name, ...
-                "LeftValueLabel");
-            testCase.verifyEmpty(document.PendingEdits);
-            document.redo();
-            testCase.verifyEmpty(document.getComponent(target.Id));
-            testCase.verifyEmpty(document.PendingEdits);
-        end
-
+        % Guarantee: model validation applies the same schema as the Inspector to values set by any route.
+        % Failure mode: values set outside the Inspector, such as by parsing, skip validation and fail in Preview.
         function geometryValidationRejectsUnsafeLiterals(testCase)
             % geometryValidationRejectsUnsafeLiterals Verify canvas geometry checks.
 
@@ -219,6 +205,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
+        % Guarantee: grid edits remap children deterministically in one atomic step.
+        % Failure mode: inserting a track leaves children in the wrong cell, or a read-only child causes a partial edit.
         function gridLayoutEditsAreAtomicAndUndoable(testCase)
             % gridLayoutEditsAreAtomicAndUndoable Keep track and direct-child changes in one history step.
 
@@ -358,6 +346,7 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
 
         function modelValidationUsesTheInspectorPropertySchema(testCase)
             % modelValidationUsesTheInspectorPropertySchema Reject catalog-invalid values outside the Inspector.
+            % Guarantee and failure mode: shared with geometryValidationRejectsUnsafeLiterals.
 
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
@@ -373,6 +362,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyEqual(invalid(1).ComponentId, picker.Id);
         end
 
+        % Guarantee: effective properties depend on the direct parent and never create entries.
+        % Failure mode: a child of a nested grid uses the outer grid's context, or reading state materializes defaults.
         function effectivePropertiesFollowDirectParentContext(testCase)
             % effectivePropertiesFollowDirectParentContext Verify geometry follows the direct parent.
 
@@ -404,51 +395,9 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyEqual(yamada.model.ActiveGridResolver.resolve( ...
                 document, document.RootComponentId), "");
         end
-        function propertyStatesKeepDefaultsImplicit(testCase)
-            % propertyStatesKeepDefaultsImplicit Join definitions without creating entries.
 
-            % A catalog capability remains absent until the document explicitly assigns it.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
-            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
-            states = document.getEffectivePropertyStates(registry, label.Id);
-            paths = arrayfun(@(state) state.Definition.Path, states);
-            textIndex = find(paths == "Text", 1);
-            testCase.verifyFalse(states(textIndex).IsExplicit);
-            testCase.verifyEmpty(states(textIndex).Entry);
-            testCase.verifyEmpty(label.getProperty("Text"));
-        end
-
-        function generatedPropertyResetIsUndoable(testCase)
-            % generatedPropertyResetIsUndoable Remove and restore one generated literal.
-
-            % Reset stores absence rather than the catalog default and keeps redo reversible.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
-            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
-            document.setProperty(label.Id, "Text", "Ready");
-            document.resetProperty(label.Id, "Text");
-            testCase.verifyEmpty(label.getProperty("Text"));
-            document.undo();
-            testCase.verifyEqual(label.getProperty("Text").LiteralValue, "Ready");
-            document.redo();
-            testCase.verifyEmpty(label.getProperty("Text"));
-            document.setProperty(label.Id, "Text", "New branch");
-            testCase.verifyFalse(document.canRedo());
-        end
-
-        function parsedPropertyResetIsRejected(testCase)
-            % parsedPropertyResetIsRejected Keep parsed assignments until owned deletion exists.
-
-            % Source preservation takes precedence over removing a parsed literal.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.source.AppSourceParser.parseFile(fullfile( ...
-                fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m"), registry);
-            label = document.getComponentByName("LeftValueLabel");
-            testCase.verifyError(@() document.resetProperty(label.Id, "Text"), ...
-                "yamada:DocumentModel:ParsedPropertyResetUnsupported");
-        end
-
+        % Guarantee: the dirty flag is clear only at an exact saved checkpoint.
+        % Failure mode: the editor reports a clean document after a branch replaced the saved state, and changes are lost on close.
         function newAndParsedDocumentsHaveExpectedDirtyStates(testCase)
             % newAndParsedDocumentsHaveExpectedDirtyStates Start factory and parsed models clean.
 

@@ -2,6 +2,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) GridTrackListTest < matla
     % GridTrackListTest Verify literal validation for R2024a GridLayout tracks.
 
     methods (Test)
+        % Guarantee: only documented GridLayout track literals reach Preview, through the same validator editor commits use.
+        % Failure mode: an invalid token or container shape is accepted and fails in native GridLayout, or commits bypass the model validator.
         function acceptsDocumentedLiteralContainers(testCase)
             % acceptsDocumentedLiteralContainers Accept fixed, fit, and weighted tracks.
 
@@ -45,6 +47,8 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) GridTrackListTest < matla
                 "Track values must be nonnegative numbers, fit, or nonnegative x weights.");
         end
 
+        % Guarantee: track editing reads and replaces tokens without changing the literal container needlessly.
+        % Failure mode: a single-track edit rewrites numeric arrays as cell arrays or misclassifies fit and weighted tracks.
         function describesTrackTokensWithoutChangingTheirLiteralContainer(testCase)
             % describesTrackTokens Normalize tokens for a canvas without source evaluation.
 

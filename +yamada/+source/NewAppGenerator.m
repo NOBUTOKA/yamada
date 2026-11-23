@@ -97,7 +97,7 @@ classdef NewAppGenerator
                 % Keep the default close path unless a user-owned close handler replaces it.
                 pendingClose = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id & ...
                     string({document.CallbackEdits.Name}) == "CloseRequestFcn" & ...
-                    ismember(string({document.CallbackEdits.Action}), ["Add", "New", "Connect"]));
+                    ismember(string({document.CallbackEdits.Action}), ["New", "Connect"]));
                 if component.Factory == "uifigure" && isempty(pendingClose)
                     lines(end + 1) = "            " + yamada.source.CallbackSourceEdits.defaultClose(component.Name); %#ok<AGROW>
                 end
@@ -148,7 +148,7 @@ classdef NewAppGenerator
                 % Emit managed callbacks without exposing executable expressions to Safe Preview.
                 pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id);
                 for callback = pending(:)'
-                    if any(callback.Action == ["Add", "New", "Connect"])
+                    if any(callback.Action == ["New", "Connect"])
                         lines(end + 1) = "            " + yamada.source.CallbackSourceEdits.bindingText(component.Name, callback.Name, callback.HandlerName, callback.BindingExpression); %#ok<AGROW>
                     end
                 end
@@ -177,7 +177,7 @@ classdef NewAppGenerator
             pending = document.CallbackEdits;
             methods = strings(1, 0);
             for callback = pending(:)'
-                if any(callback.Action == ["Add", "New"]) && ~isempty(document.getComponent(callback.ComponentId))
+                if callback.Action == "New" && ~isempty(document.getComponent(callback.ComponentId))
                     methods(end + 1) = yamada.source.CallbackSourceEdits.methodText(callback, document.ClassName); %#ok<AGROW>
                 end
             end

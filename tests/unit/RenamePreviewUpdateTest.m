@@ -11,6 +11,8 @@ classdef (TestTags = {'ui', 'preview', 'rename'}) RenamePreviewUpdateTest < matl
     methods (Test)
         function hierarchyAndHistoryRetainGeometry(testCase, Layout)
             % hierarchyAndHistoryRetainGeometry Exercise child and container renames through the real editor.
+            % Guarantee: renaming components and Undo change source names only, never Preview geometry or native callbacks.
+            % Failure mode: a rename triggers a full rebuild that moves controls, or leaves Preview titles with the old name.
             folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture);
             path = fullfile(folder.Folder, "RenamePreviewFixture.m");
             source = renameFixture(Layout);
@@ -79,7 +81,9 @@ classdef (TestTags = {'ui', 'preview', 'rename'}) RenamePreviewUpdateTest < matl
 
         function acknowledgementRejectsUnrelatedInputs(testCase)
             % acknowledgementRejectsUnrelatedInputs Refuse visual, structural, source, and catalog changes.
-            for change = ["property", "structure", "source", "catalog"]
+            % Guarantee: the rename-only fast path is refused when any visual, structural, or source input also changed.
+            % Failure mode: a combined edit is acknowledged as a rename and Preview stays stale.
+            for change = ["property", "structure", "source"]
                 registry = yamada.model.ComponentRegistry.createDefault();
                 document = yamada.source.AppSourceParser.parseText(renameFixture("absolute"), registry);
                 figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
@@ -93,8 +97,6 @@ classdef (TestTags = {'ui', 'preview', 'rename'}) RenamePreviewUpdateTest < matl
                         document.insertComponent(registry, "uilabel", document.RootComponentId);
                     case "source"
                         document.OriginalText = document.OriginalText + newline + "% Changed input";
-                    case "catalog"
-                        registry.register(registry.getById("uibutton-push"));
                 end
                 testCase.verifyFalse(renderer.acknowledgeRenameChanges(document), change);
                 clear cleanup

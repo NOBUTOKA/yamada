@@ -2,6 +2,8 @@ classdef EditorPreviewCanvasTest < matlab.unittest.TestCase
     % EditorPreviewCanvasTest Verify Preview tab, scroll, and resize interactions.
 
     methods (Test, TestTags = {'editorShell', 'previewTab', 'ui'})
+        % Guarantee: Preview tab changes update the shown tab and hide tools for hidden content.
+        % Failure mode: grid tools for a hidden tab stay active and edit invisible components.
         function tabSwitchClearsHiddenGridEditor(testCase)
             % tabSwitchClearsHiddenGridEditor Hide grid tools immediately and restore them on return.
             app = yamada();
@@ -134,6 +136,8 @@ classdef EditorPreviewCanvasTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'editorShell', 'ui'})
+        % Guarantee: Preview scrolls to all content and root resize is undoable.
+        % Failure mode: components outside a shrunken root become unreachable, or resize bypasses history.
         function largeActualSizeFixtureScrollsAndRootResizeIsUndoable(testCase)
             % largeActualSizeFixtureScrollsAndRootResizeIsUndoable Exercise real editor geometry.
             testPath = mfilename("fullpath");

@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) InitializationScopeTest <
     %   that constructor-reachable assignments own editable initial values.
 
     methods (Test)
+        % Guarantee: return statements limit initialization ownership exactly to reachable code.
+        % Failure mode: settings after a return are treated as initial values, or a guarded return makes the caller's later calls uncertain.
         function aConditionalCallDoesNotMakeItsDefiniteReturnFallThrough(testCase)
             % aConditionalCallDoesNotMakeItsDefiniteReturnFallThrough Distinguish call certainty from local control flow.
             source = testCase.returnFixture(["if app.UIFigure.Visible == ""on""", "configure(app);", ...
@@ -49,6 +51,8 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) InitializationScopeTest <
             testCase.verifyEqual(component.getProperty("Tooltip").LiteralValue, "Final");
         end
 
+        % Guarantee: only initialization writes define model values; callback writes are runtime behavior.
+        % Failure mode: a literal written in a callback replaces the initial value and its span, so edits rewrite callback code.
         function callbackExpressionsDoNotLockInitialValues(testCase)
             % callbackExpressionsDoNotLockInitialValues Ignore runtime writes in either method order and nested functions.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -119,6 +123,8 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) InitializationScopeTest <
             testCase.verifyEqual(options.getProperty("Items").LiteralValue, ["First", "Second"]);
         end
 
+        % Guarantee: initialization is found by tracing calls from the constructor, not by method names or file order.
+        % Failure mode: an unreachable createComponents is treated as initialization, or a renamed helper is missed.
         function followsRenamedHelpersInCallOrderAndPreservesCallbacks(testCase)
             % followsRenamedHelpersInCallOrderAndPreservesCallbacks Trace multiple levels independently of file order.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -175,6 +181,8 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) InitializationScopeTest <
             end
         end
 
+        % Guarantee: tracing terminates and reports unresolved execution without running code.
+        % Failure mode: recursion hangs the parser, or registering a callback is treated as executing it.
         function repeatedCallsAndRecursionAreBounded(testCase)
             % repeatedCallsAndRecursionAreBounded Preserve repeated visits and diagnose cycles without executing code.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -209,6 +217,7 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) InitializationScopeTest <
 
         function directCallsMayReceiveHandlesWithoutInvokingThem(testCase)
             % directCallsMayReceiveHandlesWithoutInvokingThem Execute the outer initializer, not its callback argument.
+            % Guarantee and failure mode: shared with followsRenamedHelpersInCallOrderAndPreservesCallbacks.
             registry = yamada.model.ComponentRegistry.createDefault();
             [source, ~] = InitializationScopeTest.fixture("after", false);
             source = replace(source, "function createComponents(app)", "function buildWidgets(app, varargin)");

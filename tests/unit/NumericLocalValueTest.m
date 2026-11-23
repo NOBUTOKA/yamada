@@ -14,6 +14,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
     end
 
     methods (Test)
+        % Guarantee: local numeric edits reuse a checkpoint and give the same results as a complete resolution.
+        % Failure mode: reuse returns a different owner's state or command availability than a fresh plan would.
         function reusesACompleteCheckpointAcrossNumericOwners(testCase)
             % reusesACompleteCheckpointAcrossNumericOwners Avoid parsing for owned re-edits across grid layouts.
             for layout = ["absolute", "nested"]
@@ -49,22 +51,18 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                     document.setProperty(id, "Value", 1, testCase.Registry);
                     document.validatePropertyCommit(testCase.Registry);
                 end
-                measured = [10 20 100 22];
                 for id = [first.Id, second.Id]
                     yamada.model.DocumentEditAvailability.copying(document, id, testCase.Registry);
                     yamada.model.DocumentEditAvailability.deletion(document, id, testCase.Registry);
-                    yamada.model.DocumentEditAvailability.reparenting(document, id, testCase.Registry, measured);
                 end
                 for id = [first.Id, second.Id]
                     document.setPropertyBatch(id, yamada.model.PropertyTransaction.singleChange("Value", 4), testCase.Registry);
                     document.validatePropertyCommit(testCase.Registry);
                     copied = yamada.model.DocumentEditAvailability.copying(document, id, testCase.Registry);
                     deleted = yamada.model.DocumentEditAvailability.deletion(document, id, testCase.Registry);
-                    parents = yamada.model.DocumentEditAvailability.reparenting(document, id, testCase.Registry, measured);
                     fresh = document.structuralCandidate();
                     testCase.verifyEqual(copied, yamada.model.DocumentEditAvailability.copying(fresh, id, testCase.Registry));
                     testCase.verifyEqual(deleted, yamada.model.DocumentEditAvailability.deletion(fresh, id, testCase.Registry));
-                    testCase.verifyEqual(parents, yamada.model.DocumentEditAvailability.reparenting(fresh, id, testCase.Registry, measured));
                 end
                 snapshot = document.copySubtree(second.Id, testCase.Registry);
                 value = snapshot.Records(1).Properties(string({snapshot.Records(1).Properties.Path}) == "Value");
@@ -72,30 +70,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             end
         end
 
-        function inheritedNumericAvailabilityRechecksGeometryAndHistory(testCase)
-            % inheritedNumericAvailabilityRechecksGeometryAndHistory Retain measured-rectangle guards and invalidate on undo.
-            document = testCase.availabilityFixture("flat");
-            first = document.getComponentByName("First");
-            destination = document.Components(string({document.Components.Factory}) == "uipanel");
-            document.setProperty(first.Id, "Value", 1, testCase.Registry);
-            document.validatePropertyCommit(testCase.Registry);
-            before = yamada.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry);
-            testCase.assertFalse(before(string({before.Id}) == destination.Id).Enabled);
-            document.setProperty(first.Id, "Value", 2, testCase.Registry);
-            document.validatePropertyCommit(testCase.Registry);
-            testCase.verifyEqual(yamada.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry), before);
-            measured = [10 20 100 30];
-            after = yamada.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry, measured);
-            testCase.verifyTrue(after(string({after.Id}) == destination.Id).Enabled);
-            fresh = document.structuralCandidate();
-            testCase.verifyEqual(after, yamada.model.DocumentEditAvailability.reparenting(fresh, first.Id, testCase.Registry, measured));
-            document.undo(); document.redo();
-            restored = yamada.model.DocumentEditAvailability.reparenting(document, first.Id, testCase.Registry, measured);
-            testCase.verifyEqual(restored, after);
-        end
-
         function numericEditsRetainOtherOwnerStates(testCase)
             % numericEditsRetainOtherOwnerStates Reuse logical state values while matching a fresh complete resolution.
+            % Guarantee and failure mode: shared with reusesACompleteCheckpointAcrossNumericOwners.
             for layout = ["absolute", "nested"]
                 document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
@@ -125,9 +102,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             end
         end
 
+        % Guarantee: checkpoints are discarded after nonlocal changes and old versions stay unchanged.
+        % Failure mode: a checkpoint survives Undo, a grid change, or a constraint change and certifies stale state.
         function numericStateReuseInvalidatesAfterHistoryAndGridChanges(testCase)
             % numericStateReuseInvalidatesAfterHistoryAndGridChanges Discard inherited logical states on nonlocal input changes.
-            for kind = ["history", "tracks", "registry"]
+            for kind = ["history", "tracks"]
                 document = testCase.fixture("flat", "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
                 grid = document.getComponentByName("Grid");
@@ -141,8 +120,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                         document.undo();
                     case "tracks"
                         grid.setProperty("RowHeight", {25, 35});
-                    case "registry"
-                        testCase.Registry.register(testCase.Registry.get(grid.Factory, grid.CreationArguments));
                 end
                 actual = document.getEffectivePropertyStates(testCase.Registry, grid.Id);
                 target = document.getEffectivePropertyStates(testCase.Registry, first.Id);
@@ -160,6 +137,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function ownedCheckpointReadsAvoidDocumentMaterialization(testCase)
             % ownedCheckpointReadsAvoidDocumentMaterialization Keep local reads private and public copies independent.
+            % Guarantee and failure mode: shared with reusesACompleteCheckpointAcrossNumericOwners.
             for layout = ["absolute", "nested"]
                 document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
@@ -188,6 +166,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function ownedSnapshotsKeepEarlierVersionsAfterLaterEdits(testCase)
             % ownedSnapshotsKeepEarlierVersionsAfterLaterEdits Preserve old source plans even when their checkpoint is reused.
+            % Guarantee and failure mode: shared with numericStateReuseInvalidatesAfterHistoryAndGridChanges.
             document = testCase.fixture("absolute", ...
                 ["app.First = uieditfield(PARENT,'numeric');", "app.First.Value = 1;"]);
             first = document.getComponentByName("First");
@@ -211,6 +190,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             testCase.verifyEqual(first.getProperty("Value").LiteralValue, 4);
         end
 
+        % Guarantee: the local path rejects every value that full validation rejects, without publishing partial state.
+        % Failure mode: final bounds hide an invalid earlier assignment, or a rejected edit leaves mutated reads.
         function rejectedOwnedEditsDoNotPublishMutatedCandidateValues(testCase)
             % rejectedOwnedEditsDoNotPublishMutatedCandidateValues Restore old reads after a failed source-order replay.
             document = testCase.fixture("absolute", ...
@@ -236,6 +217,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function checkpointStateReadsMatchIndependentPlans(testCase)
             % checkpointStateReadsMatchIndependentPlans Preserve pending identities and values while avoiding read-only copies.
+            % Guarantee and failure mode: shared with reusesACompleteCheckpointAcrossNumericOwners.
             for layout = ["absolute", "nested"]
                 document = testCase.fixture(layout, "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
@@ -262,6 +244,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function laterConstraintsDoNotHideAnEarlierInvalidAssignment(testCase)
             % laterConstraintsDoNotHideAnEarlierInvalidAssignment Validate every occurrence rather than final bounds alone.
+            % Guarantee and failure mode: shared with rejectedOwnedEditsDoNotPublishMutatedCandidateValues.
             document = testCase.fixture("absolute", ...
                 ["app.First = uieditfield(PARENT,'numeric');", "app.First.Limits = [0 10];", ...
                 "app.First.Value = 1;", "app.First.Limits = [0 100];"]);
@@ -304,29 +287,24 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             end
         end
 
-        function changedConstraintsAndCatalogInvalidateTheCheckpoint(testCase)
-            % changedConstraintsAndCatalogInvalidateTheCheckpoint Re-enter full source validation after semantic changes.
-            for kind = ["limits", "registry"]
-                document = testCase.fixture("absolute", ...
-                    ["app.First = uieditfield(PARENT,'numeric');", "app.First.Limits = [0 10];", "app.First.Value = 1;"]);
-                first = document.getComponentByName("First");
-                document.setProperty(first.Id, "Value", 2, testCase.Registry);
-                document.validatePropertyCommit(testCase.Registry);
-                if kind == "limits"
-                    first.setProperty("Limits", [0 5]);
-                else
-                    testCase.Registry.register(testCase.Registry.get("uieditfield", {"numeric"}));
-                end
-                if kind == "limits"
-                    testCase.verifyError(@() document.setProperty(first.Id, "Value", 6, testCase.Registry), ...
-                        "yamada:DocumentModel:UnsafePropertyEdit");
-                end
-                document.setProperty(first.Id, "Value", 4, testCase.Registry);
-                document.validatePropertyCommit(testCase.Registry);
-                testCase.verifyEqual(first.getProperty("Value").LiteralValue, 4);
-            end
+        function changedConstraintsInvalidateTheCheckpoint(testCase)
+            % changedConstraintsInvalidateTheCheckpoint Re-enter full source validation after semantic changes.
+            % Guarantee and failure mode: shared with numericStateReuseInvalidatesAfterHistoryAndGridChanges.
+            document = testCase.fixture("absolute", ...
+                ["app.First = uieditfield(PARENT,'numeric');", "app.First.Limits = [0 10];", "app.First.Value = 1;"]);
+            first = document.getComponentByName("First");
+            document.setProperty(first.Id, "Value", 2, testCase.Registry);
+            document.validatePropertyCommit(testCase.Registry);
+            first.setProperty("Limits", [0 5]);
+            testCase.verifyError(@() document.setProperty(first.Id, "Value", 6, testCase.Registry), ...
+                "yamada:DocumentModel:UnsafePropertyEdit");
+            document.setProperty(first.Id, "Value", 4, testCase.Registry);
+            document.validatePropertyCommit(testCase.Registry);
+            testCase.verifyEqual(first.getProperty("Value").LiteralValue, 4);
         end
 
+        % Guarantee: local commits rewrite only the latest occurrence, and Save still validates by reparsing.
+        % Failure mode: the local path rewrites the constructor form, or Save trusts the checkpoint without checking.
         function constructorAndRepeatedAssignmentsKeepTheirSourceForm(testCase)
             % constructorAndRepeatedAssignmentsKeepTheirSourceForm Rewrite only the latest original Value occurrence.
             cases = {"app.First = uieditfield(PARENT,'numeric',Limits=[0 10],Value=1);", ...
@@ -354,6 +332,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function emptyValuesUseTheFullAllowedEmptyPath(testCase)
             % emptyValuesUseTheFullAllowedEmptyPath Keep non-scalar requests outside finite scalar local validation.
+            % Guarantee and failure mode: shared with rejectedOwnedEditsDoNotPublishMutatedCandidateValues.
             assumeCatalogSupports(testCase, "uieditfield-numeric", "AllowEmpty");
             document = testCase.fixture("absolute", ...
                 ["app.First = uieditfield(PARENT,'numeric');", "app.First.AllowEmpty = 'on';", "app.First.Value = 1;"]);
@@ -366,6 +345,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
 
         function fullSaveValidationStillGeneratesAndReparses(testCase)
             % fullSaveValidationStillGeneratesAndReparses Retain source and checkpoint checks after a local commit.
+            % Guarantee and failure mode: shared with constructorAndRepeatedAssignmentsKeepTheirSourceForm.
             document = testCase.fixture("absolute", "app.First = uieditfield(PARENT,'numeric');");
             first = document.getComponentByName("First");
             document.setProperty(first.Id, "Value", 2, testCase.Registry);

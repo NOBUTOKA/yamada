@@ -160,6 +160,10 @@ When adding or changing a standard component or property, start with the [catalo
 
 Prefer small tests of behavior and meaningful state transitions; avoid assertions that merely repeat fixed presentation settings or constrain replaceable implementation details.
 
+Add a test when it protects a behavior that matters to the specification, an invariant, or a fixed defect against a concrete failure mode that existing tests do not adequately detect. Do not add tests that only confirm the code just written or duplicate existing coverage.
+
+Begin each new test with a brief comment that states the property it guarantees and the concrete failure mode that could break it. Tests that check the same failure mode may share one comment. The comment explains why the test is needed, not how the implementation works.
+
 Before submitting a pull request, run the tests relevant to your changes and include the results. If you could not run a test, name it and explain why in the pull request.
 
 ### Pull Request Validation

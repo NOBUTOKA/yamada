@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'model', 'generation', 'parser'}) PositionGeometry
     %   Owned source is parsed as data; native agreement is checked separately.
 
     methods (Test)
+        % Guarantee: Position edits and resizes follow catalog geometry constraints exactly, without rounding.
+        % Failure mode: a linked or fixed dimension drifts, an anchor edge moves, or ratios round to integers.
         function linkedFieldsAndFixedDimensionsUseOneConstraint(testCase)
             % linkedFieldsAndFixedDimensionsUseOneConstraint Preserve the edited dimension and update its partner.
             spec = yamada.model.PositionGeometry.constraint("switchPosition", "vertical", true);
@@ -32,6 +34,8 @@ classdef (TestTags = {'fast', 'model', 'generation', 'parser'}) PositionGeometry
 
         function editingCopyAndSavePreservePositionHistory(testCase)
             % editingCopyAndSavePreservePositionHistory Keep original source ownership and one undo unit.
+            % Guarantee: editing Position keeps source ownership, comments, and one undo step through Copy and Save.
+            % Failure mode: an edit appends a duplicate setting, drops the user comment, or splits history.
             registry = yamada.model.ComponentRegistry.createDefault();
             for id = ["uiswitch-rocker", "uiswitch-slider", "uiswitch-toggle", "uigauge-semicircular", "uigauge-linear"]
                 definition = registry.getById(id);

@@ -5,6 +5,8 @@ classdef (TestTags = {'preview', 'ui'}) TextPreviewReuseTest < matlab.unittest.T
     methods (Test)
         function localTextGrowthMatchesFreshRendering(testCase)
             % localTextGrowthMatchesFreshRendering Compare retained controls with complete native reconstruction.
+            % Guarantee: reusing a native text control after a local commit gives the same geometry as a full rebuild.
+            % Failure mode: reuse skips fit relayout, leaving stale heights that differ from a fresh Preview.
             registry = yamada.model.ComponentRegistry.createDefault();
             for layout = ["absolute", "flat", "nested"]
                 [document, label] = TextPreviewReuseTest.fixture(registry, layout);

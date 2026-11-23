@@ -4,6 +4,8 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorPropertyRowTest < matlab.unit
     %   editor while the model callback reports an inline error.
 
     methods (Test, TestTags = {'fast'})
+        % Guarantee: rejected text stays visible with its error and never reaches the model, even when the row is rebuilt.
+        % Failure mode: an invalid draft is committed, silently reverted, or lost when a refresh replaces the row.
         function retainsRejectedTextAndShowsInlineError(testCase)
             % retainsRejectedTextAndShowsInlineError Keep an invalid draft out of the model callback.
 
@@ -27,6 +29,8 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorPropertyRowTest < matlab.unit
     methods (Test)
         function acceptedInspectorEditRetainsNativeEditor(testCase)
             % acceptedInspectorEditRetainsNativeEditor Avoid replacing rows during a value-only refresh.
+            % Guarantee: a value-only refresh after an accepted edit reuses the native editor.
+            % Failure mode: the row is recreated on each commit, losing focus and flashing the hidden figure.
             app = yamada(Visible="off");
             cleanup = onCleanup(@() deleteIfValid(app));
             figure = findall(0, "Tag", "yamada-editor");
@@ -46,6 +50,7 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorPropertyRowTest < matlab.unit
 
         function restoresRejectedDraftAcrossRowReplacement(testCase)
             % restoresRejectedDraftAcrossRowReplacement Restore view-only invalid text.
+            % Guarantee and failure mode: shared with retainsRejectedTextAndShowsInlineError.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));

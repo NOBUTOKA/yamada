@@ -2,6 +2,8 @@ classdef EditorShellInteractionTest < matlab.unittest.TestCase
     % EditorShellInteractionTest Verify hierarchy, palette, and shell editing callbacks.
 
     methods (Test, TestTags = {'editorShell', 'fast', 'ui'})
+        % Guarantee: the editor shell offers every editing surface and every catalog style.
+        % Failure mode: a palette entry for a catalog variant or a main pane is missing after a shell change.
         function editorBuildsEditingSurfaces(testCase)
             % editorBuildsEditingSurfaces Verify palette, right pane, and toolbar.
 
@@ -54,6 +56,8 @@ classdef EditorShellInteractionTest < matlab.unittest.TestCase
     end
 
     methods (Test, TestTags = {'editorShell', 'ui'})
+        % Guarantee: inline rename commits or cancels atomically, and keeps rejected text for correction.
+        % Failure mode: rename keys trigger other commands, or an invalid name is lost or partly applied.
         function hierarchyRenameOwnsTextKeysAndPreservesNodes(testCase)
             % hierarchyRenameOwnsTextKeysAndPreservesNodes Commit and cancel inline names with atomic history.
             app = yamada();
@@ -131,6 +135,8 @@ classdef EditorShellInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        % Guarantee: selection and deletion update the hierarchy without collapsing open branches.
+        % Failure mode: each selection or deletion rebuilds the tree and loses the user's expanded state.
         function previewSelectionSynchronizesHierarchyWithoutRebuildingBranches(testCase)
             % previewSelectionSynchronizesHierarchyWithoutRebuildingBranches Reveal nested Preview selections.
 
@@ -177,6 +183,8 @@ classdef EditorShellInteractionTest < matlab.unittest.TestCase
 
         function deleteShortcutIgnoresInspectorEditingAndKeyboardNavigation(testCase)
             % deleteShortcutIgnoresInspectorEditingAndKeyboardNavigation Delete only from owned selection contexts.
+            % Guarantee: the Delete key removes components only from component selection contexts.
+            % Failure mode: pressing Delete while editing a value or navigating deletes the selected component.
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
@@ -233,6 +241,7 @@ classdef EditorShellInteractionTest < matlab.unittest.TestCase
 
         function paletteListsConcreteStyleVariants(testCase)
             % paletteListsConcreteStyleVariants Expose every catalog-defined style.
+            % Guarantee and failure mode: shared with editorBuildsEditingSurfaces.
 
             % Inspect the live palette to ensure variants are not collapsed by factory.
             app = yamada();
@@ -261,6 +270,8 @@ classdef EditorShellInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        % Guarantee: nested controls stay selectable and editable above their parent on the canvas.
+        % Failure mode: the parent's hit area or grid gestures hide nested buttons.
         function buttonInsideButtonGroupCanBeSelectedMovedAndResized(testCase)
             % buttonInsideButtonGroupCanBeSelectedMovedAndResized Keep nested controls above their parent on the canvas.
             app = yamada();
@@ -388,6 +399,7 @@ classdef EditorShellInteractionTest < matlab.unittest.TestCase
 
         function deletingTreeLeafSelectsParentWithoutRebuildingBranches(testCase)
             % deletingTreeLeafSelectsParentWithoutRebuildingBranches Preserve the open hierarchy after deletion.
+            % Guarantee and failure mode: shared with previewSelectionSynchronizesHierarchyWithoutRebuildingBranches.
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             drawnow;

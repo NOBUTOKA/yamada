@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // This file is part of yamada. See LICENSE for the license text.
 
+// Guarantee: absolute controls offer only usable resize directions, and gestures send root-canvas coordinates.
+// Failure mode: fixed dimensions show resize handles, or enlarged canvases send offset coordinates.
 // Check that absolute controls expose only usable resize directions to the overlay.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');

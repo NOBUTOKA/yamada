@@ -6,6 +6,8 @@ classdef (TestTags = {'ui', 'parser'}) SourceParseProgressTest < matlab.unittest
         StartedCount double = 0
     end
     methods (Test)
+        % Guarantee: every parse closes its progress notification, including on diagnostics and errors, and registrations stay per editor.
+        % Failure mode: an exception path leaves a modal notification open or one editor's registration is reused by another.
         function centralParserShowsAndClosesNotification(testCase)
             % centralParserShowsAndClosesNotification Cover valid and diagnostic-producing source loads.
             registry = yamada.model.ComponentRegistry.createDefault();

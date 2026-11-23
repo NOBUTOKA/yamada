@@ -2,6 +2,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
     % EditorAxesInteractionTest Verify axes settings through the Inspector and native controls.
 
     methods (Test, TestTags = {'inspector', 'editorShell', 'ui'})
+        % Guarantee: axes settings edited in the live Inspector commit correct source and refresh Preview without executing app code.
+        % Failure mode: an Inspector route edits only one of a pair, or Preview stays stale after an axes edit.
         function editsGeographicLimitsTogetherThroughInspector(testCase)
             % editsGeographicLimitsTogetherThroughInspector Save one paired edit and refresh the map preview.
             path = string(tempname()) + ".m";
@@ -232,6 +234,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
 
         function reopensCustomColormapWithOriginalStops(testCase)
             % reopensCustomColormapWithOriginalStops Preserve off-grid corners through source literal round-trip.
+            % Guarantee: custom colormaps round-trip with their original stops.
+            % Failure mode: the colormap is resampled to the editor grid and loses off-grid stops.
             owner = uifigure("Visible","off");
             cleanup = onCleanup(@() deleteIfValid(owner));
             yamada.ui.inspector.CustomColormapDialog.open(owner,autumn(256),@(~) "");
@@ -263,6 +267,7 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
 
         function editsAxesTitleThroughItsInspector(testCase)
             % editsAxesTitleThroughItsInspector Commit body and popup values through native callbacks.
+            % Guarantee and failure mode: shared with editsGeographicLimitsTogetherThroughInspector.
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
             [figure,palette] = editorPalette();
@@ -297,6 +302,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
 
         function editsNonPixelAxesGeometryInTheirOwnUnits(testCase)
             % editsNonPixelAxesGeometryInTheirOwnUnits Convert overlay gestures and keep Units before Position.
+            % Guarantee: overlay gestures on non-pixel axes are written in the axes' own units, with Units before Position.
+            % Failure mode: pixel values are written to normalized axes, or Position is set before Units.
             fixture = string(fullfile(fileparts(fileparts(mfilename("fullpath"))), ...
                 "fixtures","AxesExplorerApp.m"));
             lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
@@ -344,6 +351,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             clear cleanup
         end
 
+        % Guarantee: Auto toggles keep the stored value and freeze the effective value when leaving Auto.
+        % Failure mode: switching to manual without a stored value jumps to a default, or Auto discards the stored value.
         function togglesAutoModeBesideTheStoredValue(testCase)
             % togglesAutoModeBesideTheStoredValue Keep the stored value while Auto owns the effective limits.
             folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture).Folder;

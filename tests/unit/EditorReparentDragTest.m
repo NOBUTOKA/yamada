@@ -7,6 +7,8 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
     end
 
     methods (Test)
+        % Guarantee: a drop commits the exact requested placement as one undo step.
+        % Failure mode: the drop picks another cell, keeps obsolete grid placement, or needs several Undo steps.
         function absoluteToGridAndBetweenGrids(testCase)
             % absoluteToGridAndBetweenGrids Commit exact destination cells with one history step each.
             [app, figure, button, left, grid] = testCase.fixture();
@@ -56,6 +58,8 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
 
         function embeddedBrowserDragTransfersBetweenGrids(testCase)
             % embeddedBrowserDragTransfersBetweenGrids Exercise actual iframe DOM handlers and the MATLAB event bridge.
+            % Guarantee: real overlay DOM drags reach MATLAB as reparent commits.
+            % Failure mode: the iframe event bridge changes and drags no longer commit.
             [app, figure, button, left, rightGrid] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             testCase.select(figure, left.Id);
@@ -118,6 +122,8 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
             testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
         end
 
+        % Guarantee: rejected, cancelled, or stale drops leave the model and history unchanged.
+        % Failure mode: a stale drop applies to a rebuilt Preview, or hover planning mutates the document.
         function displayDoesNotPlanDestinationsAndRejectsAtDrop(testCase)
             % displayDoesNotPlanDestinationsAndRejectsAtDrop Defer destination checks without changing rejected edits.
             [app, figure, button, left, grid] = testCase.fixture();
@@ -138,6 +144,7 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
 
         function occupiedGridDropsClipSpansAndRemainUndoable(testCase)
             % occupiedGridDropsClipSpansAndRemainUndoable Permit overlap and fit a larger span at the chosen cell.
+            % Guarantee and failure mode: shared with absoluteToGridAndBetweenGrids.
             [app, figure, button, left, grid] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             testCase.select(figure, grid.Id);
@@ -177,6 +184,7 @@ classdef (TestTags = {'ui', 'editorShell', 'gridOverlay'}) EditorReparentDragTes
 
         function cancelInvalidAndStaleDropsDoNotEdit(testCase)
             % cancelInvalidAndStaleDropsDoNotEdit Keep model and history intact across rejected gestures.
+            % Guarantee and failure mode: shared with displayDoesNotPlanDestinationsAndRejectsAtDrop.
             [app, figure, button, left, grid] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             overlay = findall(figure, "Tag", "yamada-interaction-overlay");

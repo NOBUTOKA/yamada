@@ -4,6 +4,8 @@ classdef (TestTags = {'model', 'generation', 'preview', 'ui'}) PropertyInsertion
     %   same planned source. Arbitrary opened application text is never run.
 
     methods (Test)
+        % Guarantee: inserted, relocated, and copied settings compile and produce the native state that Preview and the model predict.
+        % Failure mode: source that looks correct as text fails in MATLAB, or a native setter adjusts values the model did not predict.
         function generatedOwnedClassesExecuteAllSixStyleCases(testCase)
             % generatedOwnedClassesExecuteAllSixStyleCases Check three existing styles with constructor and assignment additions.
             registry = yamada.model.ComponentRegistry.createDefault();

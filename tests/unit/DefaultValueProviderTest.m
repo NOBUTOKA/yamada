@@ -2,6 +2,8 @@ classdef (TestTags = {'inspector', 'ui'}) DefaultValueProviderTest < matlab.unit
     % DefaultValueProviderTest Verify runtime default probes remain model-free.
 
     methods (Test)
+        % Guarantee: runtime default probes are repeatable and never write to the document model.
+        % Failure mode: a probe stores its native result as a model property or reports unknown properties as found.
         function resolvesGridDefaultsWithoutMutation(testCase)
             % resolvesGridDefaultsWithoutMutation Probe one Grid child without document mutation.
 

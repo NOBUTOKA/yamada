@@ -89,14 +89,13 @@ classdef PropertyEntry < handle
     end
 
     methods (Access = private)
-        function noteInput(obj, value)
+        function noteInput(obj)
             % noteInput Notify the token only after evaluation has attached it to a complete object.
             arguments (Input)
                 obj (1, 1) yamada.model.PropertyEntry
-                value
             end
             % Construction and materialization run without an attached token.
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            if ~isempty(obj.InputClock), obj.InputClock.touch(); end
         end
     end
 
@@ -108,7 +107,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.Path = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.ValueKind(obj, value)
@@ -118,7 +117,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.ValueKind = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.LiteralValue(obj, value)
@@ -128,7 +127,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.LiteralValue = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.SourceExpression(obj, value)
@@ -138,7 +137,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.SourceExpression = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.IsEditable(obj, value)
@@ -148,7 +147,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.IsEditable = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.Origin(obj, value)
@@ -158,7 +157,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.Origin = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.SourceSpan(obj, value)
@@ -168,7 +167,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.SourceSpan = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.Metadata(obj, value)
@@ -178,7 +177,7 @@ classdef PropertyEntry < handle
                 value
             end
             obj.Metadata = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function record = toStruct(obj)

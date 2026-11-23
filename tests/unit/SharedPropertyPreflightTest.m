@@ -12,6 +12,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
         end
     end
     methods (Test)
+        % Guarantee: reused preflight proofs give the same document as a full reparse for every owner, path, and literal kind.
+        % Failure mode: a shared proof leaks one edit into an older plan, or the fast path misses a registered numeric family.
         function reusesCompleteConfigurationAfterInsertion(testCase)
             % reusesCompleteConfigurationAfterInsertion Avoid reparsing an already validated complete plan.
             for layout = ["absolute", "flat", "nested"]
@@ -81,6 +83,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SharedPropertyPreflightTes
             end
         end
 
+        % Guarantee: a preflight proof is discarded when inputs change and cannot be modified from outside.
+        % Failure mode: a stale or externally mutated proof certifies an edit, or layout-changing container inputs skip full validation.
         function changedInputsDiscardSharedPreflight(testCase)
             % changedInputsDiscardSharedPreflight Reject a complete plan from a different semantic input version.
             document = testCase.fixture("flat");

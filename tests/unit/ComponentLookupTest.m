@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
     %   Lookup preserves mutable record visibility and independent documents
     %   without retaining stale matches or misses.
     methods (Test)
+        % Guarantee: cached component lookups always return the current record, and reads never count as semantic mutations.
+        % Failure mode: the lookup index survives append, replacement, removal, rename, or Undo and returns a stale record or another document's component, or reads bump the input revision.
         function repeatedReadsKeepIdentityAndInputRevision(testCase)
             % repeatedReadsKeepIdentityAndInputRevision Return current records without semantic mutations.
             document = yamada.model.DocumentModel("LookupFixture");
@@ -13,16 +15,14 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
             document.Components = records;
             registry = yamada.model.ComponentRegistry.createDefault();
             context = document.evaluationContext(registry);
-            [before, safe] = context.inputs();
-            testCase.assertTrue(safe);
+            before = context.inputs();
             for repeat = 1:2
                 for index = 3:-1:1
                     testCase.verifyEqual(document.getComponent("id" + index), records(index));
                 end
             end
             testCase.verifyEqual(document.evaluationContext(registry), context);
-            [after, safe] = context.inputs();
-            testCase.verifyTrue(safe);
+            after = context.inputs();
             testCase.verifyEqual(after, before);
         end
 

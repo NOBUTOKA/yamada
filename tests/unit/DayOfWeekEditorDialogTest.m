@@ -2,6 +2,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DayOfWeekEditorDialogTest < 
     % DayOfWeekEditorDialogTest Verify weekday drafts are readable and delayed until Apply.
 
     methods (Test)
+        % Guarantee: weekday edits stay a draft until Apply commits exactly one change; Cancel commits nothing.
+        % Failure mode: each toggle commits immediately, or Cancel leaks the draft into the document.
         function usesEnglishStateButtonsAndOneApplyCommit(testCase)
             % usesEnglishStateButtonsAndOneApplyCommit Keep state edits local until Apply.
 

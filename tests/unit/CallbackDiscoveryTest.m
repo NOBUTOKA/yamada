@@ -4,32 +4,10 @@ classdef (TestTags = {'fast', 'catalog'}) CallbackDiscoveryTest < matlab.unittes
     %   discovery does not change property editability or Safe Preview policy.
 
     methods (Test)
-        function reviewedSuffixesAvoidComponentWordsWithoutMouseEventGuessing(testCase)
-            % reviewedSuffixesAvoidComponentWordsWithoutMouseEventGuessing Use explicit suffixes and preserve legacy catalog behavior.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            cases = {"uibutton", {}, "ButtonPushedFcn", "HogeButton", "HogeButtonPushed"; ...
-                "uibutton", {'state'}, "ValueChangedFcn", "HogeButton", "HogeButtonValueChanged"; ...
-                "uimenu", {}, "MenuSelectedFcn", "FileMenu", "FileMenuSelected"; ...
-                "uifigure", {}, "WindowButtonDownFcn", "MainFigure", "MainFigureWindowButtonDown"; ...
-                "uiaxes", {}, "ButtonDownFcn", "PlotAxes", "PlotAxesButtonDown"};
-            for index = 1:size(cases, 1)
-                definitions = registry.getEffectiveCallbacks(cases{index, 1}, "", cases{index, 2});
-                definition = definitions(string({definitions.Path}) == cases{index, 3});
-                testCase.verifyEqual(yamada.source.ComponentNameRewriter.defaultHandler( ...
-                    cases{index, 4}, cases{index, 3}, definition.HandlerSuffix), cases{index, 5});
-            end
-            testCase.verifyEqual(yamada.source.ComponentNameRewriter.defaultHandler("HogeButton", "ButtonPushedFcn"), ...
-                "HogeButtonButtonPushed");
-            metadata = struct("valueSchema", struct("kind", "callback"), "handlerSuffix", "");
-            testCase.verifyError(@() yamada.model.PropertyDefinition("ButtonPushedFcn", [], false, false, metadata), ...
-                "yamada:ComponentCatalogLoader:InvalidCatalog");
-            metadata.handlerSuffix = "Pushed();delete(app)";
-            testCase.verifyError(@() yamada.model.PropertyDefinition("ButtonPushedFcn", [], false, false, metadata), ...
-                "yamada:ComponentCatalogLoader:InvalidCatalog");
-        end
-
         function discoversEveryVariantInCatalogOrder(testCase)
             % discoversEveryVariantInCatalogOrder Compare discovery with each concrete catalog surface.
+            % Guarantee: discovered callbacks match each catalog variant's callback surface in catalog order.
+            % Failure mode: discovery hard-codes callbacks or reorders them, so the editor offers missing or nonexistent callbacks.
             registry = yamada.model.ComponentRegistry.createDefault();
             ids = registry.listVariantIds();
 
@@ -65,6 +43,8 @@ classdef (TestTags = {'fast', 'catalog'}) CallbackDiscoveryTest < matlab.unittes
 
         function distinguishesButtonConstructionStyles(testCase)
             % distinguishesButtonConstructionStyles Resolve binding names from the concrete button style.
+            % Guarantee: push and state buttons expose only the callback that their construction style supports.
+            % Failure mode: the binding resolves by class alone and offers ButtonPushedFcn on a state button, generating invalid source.
             registry = yamada.model.ComponentRegistry.createDefault();
             push = registry.getEffectiveCallbacks("uibutton", "uifigure", {});
             state = registry.getEffectiveCallbacks("uibutton", "uifigure", {'state'});

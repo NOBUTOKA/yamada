@@ -133,24 +133,6 @@ classdef PropertySetting
             record = struct("Path", obj.Path, "Value", {obj.LiteralValue}, "Location", location);
         end
 
-        function obj = withLocations(obj, locations)
-            % withLocations Rebind current ranges without changing stable setting, statement or scope identities.
-            arguments (Input)
-                obj (1, 1) yamada.model.PropertySetting
-                locations (1, 1) struct
-            end
-            arguments (Output)
-                obj (1, 1) yamada.model.PropertySetting
-            end
-            allowed = ["SourceSpan", "ValueSpan", "NameSpan", "PairSpan", "ScopeSpan"];
-            for field = reshape(string(fieldnames(locations)), 1, [])
-                assert(any(allowed == field) && isa(locations.(field), "yamada.model.SourceSpan") && ...
-                    numel(locations.(field)) <= 1, "yamada:PropertySetting:InvalidLocation", ...
-                    "Only source ranges may change through withLocations.");
-                obj.(field) = locations.(field);
-            end
-        end
-
         function obj = withLiteral(obj, value)
             % withLiteral Replace a caller-validated literal while preserving its occurrence identity.
             arguments (Input)

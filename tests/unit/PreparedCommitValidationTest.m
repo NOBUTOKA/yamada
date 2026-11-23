@@ -1,6 +1,8 @@
 classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PreparedCommitValidationTest < matlab.unittest.TestCase
     % PreparedCommitValidationTest Verify complete pre-commit results against independent parsing and full validation.
     methods (Test)
+        % Guarantee: prepared commit results equal those of independent parsing and full validation.
+        % Failure mode: a reused proof turns implicit grid values explicit, trusts a partial parse, or skips revalidation after a layout change or external write.
         function implicitGridValuesSurviveDistinctPreparedChanges(testCase)
             % implicitGridValuesSurviveDistinctPreparedChanges Preserve absent source settings without repeating grid resolution.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -48,6 +50,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PreparedCommitVa
 
         function cachedFormattingMatchesReferenceAtEveryNeighbor(testCase)
             % cachedFormattingMatchesReferenceAtEveryNeighbor Preserve lexical boundaries, comments and multiline constructors.
+            % Guarantee: cached formatting separates components at the same boundaries as a fresh analysis.
+            % Failure mode: a stale cache splits comments or multiline constructors, or is used for changed source.
             ending = string(sprintf("\r\n"));
             source = strjoin(["app.A = uilabel(app.UIFigure, ...", "    'Text', 'A'); % comment", ...
                 "app.A.Tooltip = 'hint';", "app.B = uibutton(app.UIFigure);"], ending);

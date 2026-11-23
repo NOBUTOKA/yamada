@@ -8,6 +8,8 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
         Depth = {1, 3}
     end
     methods (Test)
+        % Guarantee: shared grid coordinate reads are reused across destinations but recomputed after live writes.
+        % Failure mode: placement planning uses stale cached coordinates after a write and places a child on an occupied cell.
         function destinationsShareOneValidatedHierarchy(testCase, Depth)
             % destinationsShareOneValidatedHierarchy Bound subtree captures across all candidate parents.
             [document, registry, source, destinations] = fixture(Depth);
@@ -31,8 +33,8 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
             testCase.verifyEqual(again, expected);
         end
 
-        function coordinateAndCatalogChangesInvalidateSharedValues(testCase, Depth)
-            % coordinateAndCatalogChangesInvalidateSharedValues Recompute coordinates after live writes and catalog updates.
+        function coordinateChangesInvalidateSharedValues(testCase, Depth)
+            % coordinateChangesInvalidateSharedValues Recompute coordinates after live writes.
             [document, registry, source, destinations] = fixture(Depth);
             snapshot = yamada.model.SubtreeSnapshot(document, source.Id);
             parent = destinations(1);
@@ -42,11 +44,10 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
             changed = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, parent.Id, registry, source.Id);
             column = changed.Changes(string({changed.Changes.Path}) == "Layout.Column");
             testCase.verifyEqual(column.Value, 1);
-            registry.register(registry.get("uilabel"));
-            refreshed = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, parent.Id, registry, source.Id);
-            testCase.verifyEqual(refreshed, changed);
         end
 
+        % Guarantee: corruption elsewhere does not block placement, while invalid destination children still fail.
+        % Failure mode: one unrelated bad record rejects all placement, or sharing weakens destination checks.
         function unrelatedInvalidRecordsKeepLegacyPlacementResults(testCase)
             % unrelatedInvalidRecordsKeepLegacyPlacementResults Fall back locally instead of rejecting unrelated corruption.
             for kind = ["hierarchy", "live-data"]

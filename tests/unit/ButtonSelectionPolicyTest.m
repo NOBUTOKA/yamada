@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
     %   Fixtures are parsed as data; native contracts live in the separate UI test.
 
     methods (Test)
+        % Guarantee: group selection reports proven errors and unknown states, without hiding or inventing them.
+        % Failure mode: a later valid Value masks an earlier error, or an unresolved reference falls back to a stale literal.
         function unreviewedLiteralDoesNotInvalidateGroupSelection(testCase)
             % unreviewedLiteralDoesNotInvalidateGroupSelection Allow unaudited stored literals without poisoning modeled selection.
             [document, registry] = fixture("app.Group.ContextMenu = [];");
@@ -29,6 +31,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             testCase.verifyTrue(any(string({diagnostics.Code}) == "invalid-property-sequence"));
         end
 
+        % Guarantee: the modeled selection follows MATLAB button-group semantics for creation order, later settings, zero values, and references.
+        % Failure mode: the model uses Children order or ignores a later sibling setting, so the Inspector shows a different selection from run time.
         function firstCreatedChildIsSelectedWithoutExplicitValue(testCase)
             % firstCreatedChildIsSelectedWithoutExplicitValue Use creation order instead of Children order.
             [document, registry] = fixture("");
@@ -53,6 +57,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
             testCase.verifyEqual(values(document, registry), [0 1]);
         end
 
+        % Guarantee: edits that change group selection emit source where it gives the modeled selection.
+        % Failure mode: a new assignment is placed before the sibling it needs, or Paste emits the selection before all buttons exist.
         function deletionRetargetsSelectedObject(testCase)
             % deletionRetargetsSelectedObject Keep the surviving button selection source-owned and undoable.
             [document, registry] = fixture("app.Group.SelectedObject = app.Second;");
@@ -69,6 +75,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
 
         function ownedSelectedObjectReferenceDeterminesChildValues(testCase)
             % ownedSelectedObjectReferenceDeterminesChildValues Resolve a simple reference without evaluating it.
+            % Guarantee and failure mode: shared with firstCreatedChildIsSelectedWithoutExplicitValue.
             [document, registry] = fixture("app.Group.SelectedObject = app.Second;");
             testCase.verifyEqual(values(document, registry), [0 1]);
             group = document.getComponentByName("Group");
@@ -77,6 +84,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
 
         function unresolvedReferenceInvalidatesChildrenUntilDefiniteSelection(testCase)
             % unresolvedReferenceInvalidatesChildrenUntilDefiniteSelection Never fall back to stale literals.
+            % Guarantee and failure mode: shared with unreviewedLiteralDoesNotInvalidateGroupSelection.
             [document, registry] = fixture("app.Group.SelectedObject = [app.First];");
             first = document.getComponentByName("First");
             states = document.getEffectivePropertyStates(registry, first.Id);
@@ -87,6 +95,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
 
         function pendingSelectionUsesTheWholeEmittedCandidate(testCase)
             % pendingSelectionUsesTheWholeEmittedCandidate Share placement with generation and saved checkpoints.
+            % Guarantee and failure mode: shared with deletionRetargetsSelectedObject.
             [document, registry] = fixture("");
             second = document.getComponentByName("Second");
             document.setProperty(second.Id, "Value", 1, registry);
@@ -134,6 +143,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation', 'lifecycle'}) But
 
         function generatedLegacyConstructorValueParticipates(testCase)
             % generatedLegacyConstructorValueParticipates Replay raw constructor pairs before final assignments.
+            % Guarantee and failure mode: shared with firstCreatedChildIsSelectedWithoutExplicitValue.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("LegacySelection", registry);
             group = document.insertComponent(registry, "uibuttongroup", document.RootComponentId);

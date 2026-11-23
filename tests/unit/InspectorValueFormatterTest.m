@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'inspector'}) InspectorValueFormatterTest < matlab
     %   evaluated or passed through the source generator's literal subset.
 
     methods (Test)
+        % Guarantee: inspector text shows literals as MATLAB source and expressions verbatim.
+        % Failure mode: formatting evaluates a source expression or drops literal quoting, executing or misrepresenting user code.
         function encodesSupportedLiteral(testCase)
             % encodesSupportedLiteral Render a supported scalar through LiteralEncoder.
 

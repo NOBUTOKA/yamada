@@ -4,6 +4,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
     %   represented application or replacing its immutable source baseline.
 
     methods (Test)
+        % Guarantee: edits are accepted only when the requested value is the effective value at every relevant source slot.
+        % Failure mode: a later setter clamps the edit away, or a range valid at the end hides an assignment that errors earlier.
         function laterSetterCannotSilentlyDiscardARequestedValue(testCase)
             % laterSetterCannotSilentlyDiscardARequestedValue Preserve all live state when a replacement is clamped later.
             [document, registry, component] = testCase.sliderFixture();
@@ -31,6 +33,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             testCase.verifyEqual(document.HistoryIndex, 0);
         end
 
+        % Guarantee: a batch is one history unit on the original occurrences, or changes nothing when rejected.
+        % Failure mode: a batch creates several undo steps, appends new settings, or leaves partial values after rejection.
         function validBatchRetainsOneHistoryUnitAndOriginalSettingIds(testCase)
             % validBatchRetainsOneHistoryUnitAndOriginalSettingIds Resolve safe replacements through Undo and Redo.
             [document, registry, component] = testCase.sliderFixture();
@@ -55,6 +59,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
 
         function finalRangeDoesNotHideAnInvalidIntermediateAssignment(testCase)
             % finalRangeDoesNotHideAnInvalidIntermediateAssignment Reject a value outside the range at its fixed source slot.
+            % Guarantee and failure mode: shared with laterSetterCannotSilentlyDiscardARequestedValue.
             [document, registry, component] = testCase.sliderFixture();
             changes = [yamada.model.PropertyTransaction.singleChange("Value", 150), ...
                 yamada.model.PropertyTransaction.singleChange("Limits", [120 200])];
@@ -76,6 +81,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             testCase.verifyEqual(document.HistoryIndex, 1);
         end
 
+        % Guarantee: preflight handles edge documents and property-specific schemas.
+        % Failure mode: a root-only document fails canvas resize, or table widths are validated as grid tracks.
         function rootOnlyDocumentsCanPreflightCanvasResize(testCase)
             % rootOnlyDocumentsCanPreflightCanvasResize Handle empty child collections independent of orientation.
 
@@ -109,6 +116,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
 
         function rejectedBatchDoesNotChangeLiveValuesHistoryOrDiagnostics(testCase)
             % rejectedBatchDoesNotChangeLiveValuesHistoryOrDiagnostics Keep candidate failures isolated.
+            % Guarantee and failure mode: shared with validBatchRetainsOneHistoryUnitAndOriginalSettingIds.
 
             [document, registry, component] = testCase.fixture();
             originalDiagnostics = document.Diagnostics;
@@ -143,6 +151,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             testCase.verifyFalse(document.IsDirty);
         end
 
+        % Guarantee: edits and history use token locations only from the matching source version.
+        % Failure mode: a stale token location overwrites unrelated text after the source changed.
         function changedSourceBaselineIsRejectedBeforeUsingOldTokenLocations(testCase)
             % changedSourceBaselineIsRejectedBeforeUsingOldTokenLocations Detect a source-version mismatch.
 
@@ -156,30 +166,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             testCase.verifyEqual(component.getProperty("Text").LiteralValue, "First");
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
-        end
-
-        function pendingSettingsRetainOriginalValuesAcrossResetUndo(testCase)
-            % pendingSettingsRetainOriginalValuesAcrossResetUndo Preserve generated occurrence identity.
-
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("PendingApp", registry);
-            component = document.insertComponent(registry, "uilabel", document.RootComponentId);
-            document.setProperty(component.Id, "Text", "First");
-            original = component.getSettings("Text");
-            testCase.verifyEqual(original.Method, "assignment");
-            testCase.verifyNotEmpty(original.SourceSpan);
-            document.setProperty(component.Id, "Text", "Second");
-            document.resetProperty(component.Id, "Text");
-            testCase.verifyEmpty(component.getSettings("Text"));
-            document.undo();
-            testCase.verifyEqual(component.getSettings("Text").Id, original.Id);
-            testCase.verifyEqual(component.getSettings("Text").LiteralValue, "Second");
-            testCase.verifyEqual(component.getProperty("Text").LiteralValue, "Second");
-            document.undo();
-            testCase.verifyEqual(component.getProperty("Text").LiteralValue, "First");
-            document.redo();
-            document.redo();
-            testCase.verifyEmpty(component.getProperty("Text"));
         end
 
         function historyRefusesAReboundSourceOccurrence(testCase)

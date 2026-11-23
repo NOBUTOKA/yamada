@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
     %   Owned records and source fixtures exercise atomic refusal and exact preservation.
 
     methods (Test)
+        % Guarantee: unaudited properties remain editable literals without being claimed independent.
+        % Failure mode: missing audit data blocks editing, or is read as proof that the edit has no effects.
         function missingPolicyAllowsStoredLiteralWithoutClaimingIndependence(testCase)
             % missingPolicyAllowsStoredLiteralWithoutClaimingIndependence Retain legacy editability while keeping its audit status unknown.
             component = yamada.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label", "parsed");
@@ -62,6 +64,8 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
             testCase.verifySubstring(updated, "app.Date.DisabledDaysOfWeek = [2 6];");
         end
 
+        % Guarantee: unknown effects invalidate exactly the declared affected state.
+        % Failure mode: an unsupported setter invalidates everything, or a later literal hides an unknown upstream effect.
         function unsupportedSetterInvalidatesOnlyDeclaredAffectedPaths(testCase)
             % unsupportedSetterInvalidatesOnlyDeclaredAffectedPaths Preserve independent unaffected stored inputs.
             component = yamada.model.ComponentRecord("owned", "Owned", "uilabel", "matlab.ui.control.Label", "parsed");
@@ -98,6 +102,8 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
             testCase.verifyEqual(states(3).EffectiveValue, "restored");
         end
 
+        % Guarantee: unknown calls are preserved as user code without blocking unrelated owned edits.
+        % Failure mode: an unknown call blocks all editing, or its effects are assumed to be modeled.
         function unresolvedInitializerPreservesSourceAndPermitsOwnedEdits(testCase)
             % unresolvedInitializerPreservesSourceAndPermitsOwnedEdits Leave unknown-call effects to the source author.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -124,6 +130,8 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
             testCase.verifyTrue(document.IsDirty);
         end
 
+        % Guarantee: code that can run arbitrary effects leaves affected values unknown and blocks edits that depend on them.
+        % Failure mode: the model claims known values after a callback, external code, a throwing call, or conditional creation that could change them.
         function constructionCallbackKeepsEarlierComponentsUnknown(testCase)
             % constructionCallbackKeepsEarlierComponentsUnknown Preserve source and refuse unproven callback effects.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -179,6 +187,7 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function unknownStatementsAndPropertyExpressionsHaveSeparateContracts(testCase)
             % unknownStatementsAndPropertyExpressionsHaveSeparateContracts Keep expression-backed setter limits explicit.
+            % Guarantee and failure mode: shared with unresolvedInitializerPreservesSourceAndPermitsOwnedEdits.
             registry = yamada.model.ComponentRegistry.createDefault();
             for tail = ["app.Extra = externalSetup(app.Label);", ...
                     "app.Label.Text = externalText(app.UIFigure);"]
@@ -199,6 +208,7 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function throwingConstructorCallsAreNotHiddenByLaterLiterals(testCase)
             % throwingConstructorCallsAreNotHiddenByLaterLiterals Preserve source while refusing unverified execution atomically.
+            % Guarantee and failure mode: shared with constructionCallbackKeepsEarlierComponentsUnknown.
             registry = yamada.model.ComponentRegistry.createDefault();
             source = replace(PropertyEffectBoundaryTest.fixture(""), "app.Label = uilabel(app.UIFigure);", ...
                 "app.Label = uilabel(app.UIFigure, Text=error('must not execute'));");
@@ -256,6 +266,7 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function unknownCallsWithoutAppArgumentsAreUserOwned(testCase)
             % unknownCallsWithoutAppArgumentsAreUserOwned Preserve calls without claiming their effects are modeled.
+            % Guarantee and failure mode: shared with unresolvedInitializerPreservesSourceAndPermitsOwnedEdits.
             registry = yamada.model.ComponentRegistry.createDefault();
             for tail = ["externalSetup();", "app.Label.Text = externalText();", "drawnow;"]
                 document = yamada.source.AppSourceParser.parseText(PropertyEffectBoundaryTest.fixture(tail), registry);
@@ -273,6 +284,7 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function ancestorResizeInvalidatesOnlyGeometry(testCase)
             % ancestorResizeInvalidatesOnlyGeometry Do not equate a stored child input with reflowed layout.
+            % Guarantee and failure mode: shared with unsupportedSetterInvalidatesOnlyDeclaredAffectedPaths.
             registry = yamada.model.ComponentRegistry.createDefault();
             source = PropertyEffectBoundaryTest.fixture(["app.Label.Position = [10 20 100 30];"; ...
                 "app.UIFigure.Position = [50 50 800 600];"]);
@@ -295,6 +307,8 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'parser', 'generation'}) Prope
 
         function deferredCallbackRegistrationIsNotAnExecutionBarrier(testCase)
             % deferredCallbackRegistrationIsNotAnExecutionBarrier Keep anonymous callback bodies unexecuted.
+            % Guarantee: registering a callback is not treated as executing it.
+            % Failure mode: every callback registration makes later values unknown.
             registry = yamada.model.ComponentRegistry.createDefault();
             source = PropertyEffectBoundaryTest.fixture("callback = @(~,~) externalSetup(app);");
             document = yamada.source.AppSourceParser.parseText(source, registry);
