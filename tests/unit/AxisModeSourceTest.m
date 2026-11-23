@@ -69,15 +69,17 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
         end
 
         function editsNumericRulerTickFormats(testCase)
-            % editsNumericRulerTickFormats Preserve function syntax and emit reviewed calls for new formats.
+            % editsNumericRulerTickFormats Preserve function syntax and emit direct new assignments.
             [document, registry, component] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", "xtickformat(app.Control, '%.1f'); % keep"]);
             testCase.verifyEqual(string(component.getSettings("XAxis.TickLabelFormat").LiteralValue),"%.1f");
+            % xtickformat also returns manual tick labels to automatic labels.
+            testCase.verifyEqual(string(component.getSettings("XTickLabelMode").LiteralValue),"auto");
             document.editAxesInspector(component.Id,"XAxis.TickLabelFormat","%.2f","set",registry);
             document.editAxesInspector(component.Id,"YAxis.TickLabelFormat","%.3f","set",registry);
             source = yamada.source.RoundTripGenerator(registry).generate(document);
             testCase.verifySubstring(source,"xtickformat(app.Control, '%.2f'); % keep");
-            testCase.verifySubstring(source,'ytickformat(app.Control, "%.3f");');
+            testCase.verifySubstring(source,'app.Control.YAxis.TickLabelFormat = "%.3f";');
             reloaded = yamada.source.AppSourceParser.parseText(source,registry);
             owner = reloaded.getComponentByName("Control");
             testCase.verifyEqual(string(owner.getSettings("YAxis.TickLabelFormat").LiteralValue),"%.3f");

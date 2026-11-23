@@ -2464,7 +2464,6 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
-      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2475,6 +2474,10 @@
         {
           "path": "XAxis.TickLabelFormat",
           "argument": "format"
+        },
+        {
+          "path": "XTickLabelMode",
+          "literal": "auto"
         }
       ]
     },
@@ -2490,7 +2493,6 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
-      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2501,6 +2503,10 @@
         {
           "path": "YAxis.TickLabelFormat",
           "argument": "format"
+        },
+        {
+          "path": "YTickLabelMode",
+          "literal": "auto"
         }
       ]
     },
@@ -2516,7 +2522,6 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
-      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2527,6 +2532,10 @@
         {
           "path": "ZAxis.TickLabelFormat",
           "argument": "format"
+        },
+        {
+          "path": "ZTickLabelMode",
+          "literal": "auto"
         }
       ]
     },
@@ -2541,7 +2550,6 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
-      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2552,6 +2560,10 @@
         {
           "path": "RAxis.TickLabelFormat",
           "argument": "format"
+        },
+        {
+          "path": "RTickLabelMode",
+          "literal": "auto"
         }
       ]
     },
@@ -2566,7 +2578,6 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
-      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2577,6 +2588,10 @@
         {
           "path": "ThetaAxis.TickLabelFormat",
           "argument": "format"
+        },
+        {
+          "path": "ThetaTickLabelMode",
+          "literal": "auto"
         }
       ]
     },
