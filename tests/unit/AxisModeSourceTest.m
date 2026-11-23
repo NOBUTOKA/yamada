@@ -321,9 +321,8 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             end
         end
 
-        % A value implied by a call owns no token. Rewriting the call to change it would
-        % discard the call's own argument, and a miscounted call statement would shift the
-        % execution order of every later setting.
+        % Guarantee: A value implied by a call, which owns no token, is changed by a new setting after that call.
+        % Failure mode: Rewriting the call discards its own argument, or a miscounted call statement shifts the execution order of every later setting.
         function impliedModeIsSupersededAfterItsCall(testCase)
             % impliedModeIsSupersededAfterItsCall Keep the implying call and order the new mode after it.
             [document, registry, control] = testCase.fixture([ ...
@@ -343,8 +342,8 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
         end
 
-        % An option added to an existing call shares that call's statement. Undoing it must
-        % remove only the option; dropping the statement would also delete the main text.
+        % Guarantee: Undoing an option added to an existing call removes only that option.
+        % Failure mode: The option shares the call's statement, so dropping the statement also deletes the main text.
         function undoingAnAddedOptionKeepsItsCall(testCase)
             % undoingAnAddedOptionKeepsItsCall Restore the original call and its main value.
             [document, registry, control] = testCase.fixture([ ...
