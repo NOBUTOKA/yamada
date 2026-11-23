@@ -688,7 +688,7 @@ Related interaction tests are in `tests/unit/EditorInteractionTest.m`.
 
 Shared boundaries: [Geometry invalidation](#geometry-invalidation) and [Preview Layout Completion](#preview-layout-completion).
 
-The geographic limits call catalog captures its requested latitude and longitude as separate source arguments of the same call. Safe Preview pairs those arguments by their source occurrence and invokes the allowlisted geographic limits operation in initialization order. Automatic and manual calls are separate operations. MATLAB computes the displayed limits from the preview geometry; the displayed values are never treated as source arguments.
+The geographic limits call catalog captures its requested latitude and longitude as separate source arguments of the same call. Safe Preview pairs those arguments by their source occurrence and invokes the allowlisted geographic limits operation in initialization order. Automatic and manual calls are separate operations. MATLAB computes the displayed limits from the preview geometry; the displayed values are never treated as source arguments. The Inspector edits both requested intervals inline and shows the displayed extent read from the Preview axes under each field. An edit to either field writes both arguments of one call; when no call exists yet, the fields start from the displayed extent, so the untouched interval keeps what Preview currently shows.
 
 ### Preview synchronization
 
@@ -853,7 +853,7 @@ In the installed Windows MATLAB releases R2025a through R2026b, both `uifigure` 
 
 In R2025a and R2025b, the CEF window constructor has no isolation argument, so an isolated desktop figure uses the same CEF creation implementation as a normal `uifigure` that selects CEF under `-batch`. In R2026a and R2026b, isolation is also considered inside the CEF host. An isolated figure creates its CEF web window directly. A non-isolated CEF figure can use the popup/proxy path when the release-specific feature and runtime conditions allow it.
 
-The host owns docking, focus and activation, and close handling for the editor window.
+The host owns docking, focus and activation, and close handling for the editor window. Native pickers such as `uisetcolor` can activate the MATLAB desktop when they close, so every caller returns focus through `yamada.ui.DialogFocus.restore`, which raises the editor before the dialog that opened the picker; focusing a modal dialog alone leaves the editor behind other applications.
 
 ## Source Transactions and Incremental Evaluation
 

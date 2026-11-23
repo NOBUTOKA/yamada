@@ -37,6 +37,8 @@ classdef PropertyEditorFactory
                 return
             end
             switch definition.Editor
+                case "geographicLimits"
+                    yamada.ui.inspector.GeographicLimitsEditor.bind(control,commitFcn);
                 case {"colormap","colormapPreview"}
                     yamada.ui.inspector.ColormapEditor.bind(control,commitFcn);
                 case "position"
@@ -102,7 +104,7 @@ classdef PropertyEditorFactory
 
             switch definition.Editor
                 case "geographicLimits"
-                    control = uibutton(parent,"Text","Edit...","Tag","yamada-edit-geographic-limits");
+                    control = yamada.ui.inspector.GeographicLimitsEditor.create(parent,commitFcn);
                 case {"colormap","colormapPreview"}
                     control = yamada.ui.inspector.ColormapEditor.create(parent,definition.Editor == "colormap",commitFcn);
                 case "position"
@@ -358,8 +360,8 @@ classdef PropertyEditorFactory
                 relatedValues struct = struct()
             end
 
-            if isprop(control,"Tag") && control.Tag == "yamada-edit-geographic-limits"
-                control.Enable = yamada.ui.inspector.PropertyEditorFactory.onOff(isEditable);
+            if isprop(control,"Tag") && control.Tag == "yamada-geographic-limits-editor"
+                yamada.ui.inspector.GeographicLimitsEditor.synchronize(control,rawValue,isEditable);
                 return
             end
             if isprop(control,"Tag") && control.Tag == "yamada-colormap-editor"
@@ -526,7 +528,9 @@ classdef PropertyEditorFactory
                 control
             end
 
-            if isprop(control, "Tag") && control.Tag == "yamada-inspector-position-editor"
+            if isprop(control, "Tag") && control.Tag == "yamada-geographic-limits-editor"
+                value = yamada.ui.inspector.GeographicLimitsEditor.value(control);
+            elseif isprop(control, "Tag") && control.Tag == "yamada-inspector-position-editor"
                 value = yamada.ui.inspector.PositionEditor.value(control);
             elseif isprop(control, "Tag") && control.Tag == "yamada-inspector-date-picker-editor"
                 value = control.Value;
@@ -558,7 +562,9 @@ classdef PropertyEditorFactory
                 value
             end
 
-            if isprop(control, "Tag") && control.Tag == "yamada-inspector-position-editor"
+            if isprop(control, "Tag") && control.Tag == "yamada-geographic-limits-editor"
+                yamada.ui.inspector.GeographicLimitsEditor.restore(control, value);
+            elseif isprop(control, "Tag") && control.Tag == "yamada-inspector-position-editor"
                 yamada.ui.inspector.PositionEditor.restore(control, value);
             elseif isprop(control, "Tag") && control.Tag == "yamada-inspector-date-picker-editor"
                 if isdatetime(value) && isscalar(value)
@@ -1503,10 +1509,7 @@ classdef PropertyEditorFactory
                     all(isfinite(selected)) && all(selected >= 0) && all(selected <= 1)
                 commitFcn(selected);
             end
-            owner = ancestor(control, "figure");
-            if ~isempty(owner) && isvalid(owner)
-                focus(owner);
-            end
+            yamada.ui.DialogFocus.restore(ancestor(control, "figure"));
         end
 
         function text = listSummary(value)

@@ -149,10 +149,7 @@ classdef CustomColormapDialog
                 value = uisetcolor(target);
                 clear cleanup
                 % The desktop picker can activate MATLAB instead of its caller on dismissal.
-                if isvalid(dialog) && dialog.Visible == "on"
-                    if isvalid(owner) && owner.Visible == "on", focus(owner); end
-                    focus(dialog);
-                end
+                yamada.ui.DialogFocus.restore(owner,dialog);
             end
 
             function restoreFigure(target,previousFigure)
