@@ -240,6 +240,9 @@
           "argument": "text"
         }
       ],
+      "automaticPaths": [
+        "XLabel.FontSize"
+      ],
       "options": [
         {
           "name": "Color",
@@ -330,6 +333,9 @@
           "argument": "text"
         }
       ],
+      "automaticPaths": [
+        "YLabel.FontSize"
+      ],
       "options": [
         {
           "name": "Color",
@@ -419,6 +425,9 @@
           "path": "ZLabel.String",
           "argument": "text"
         }
+      ],
+      "automaticPaths": [
+        "ZLabel.FontSize"
       ],
       "options": [
         {
@@ -1024,6 +1033,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "companionInsertion": true,
       "arguments": [
         {
           "id": "method",
@@ -1058,6 +1068,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "companionInsertion": true,
       "arguments": [
         {
           "id": "method",
@@ -1092,6 +1103,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "companionInsertion": true,
       "arguments": [
         {
           "id": "method",
@@ -2374,6 +2386,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "companionInsertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2403,6 +2416,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "companionInsertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2432,6 +2446,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "companionInsertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2460,6 +2475,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "companionInsertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2488,6 +2504,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "companionInsertion": true,
       "arguments": [
         {
           "id": "format",

@@ -86,7 +86,21 @@ try {
             }
             $record = [ordered]@{}
             foreach ($key in $form.Keys) {
-                if ($key -cne 'availability') { $record[$key] = $form[$key] }
+                if ($key -cnotin @('availability', 'overrides')) { $record[$key] = $form[$key] }
+            }
+            # An override replaces top-level form fields for the releases before its bound.
+            if ($form.Contains('overrides')) {
+                foreach ($override in $form.overrides) {
+                    $before = [array]::IndexOf($releaseNames, $override.releases.before)
+                    if ($before -lt 0 -or $override.releases.Contains('since') -or $override.evidence.Count -eq 0) {
+                        throw "Invalid axes setting override for $($form.id)."
+                    }
+                    if ([array]::IndexOf($releaseNames, $name) -ge $before) { continue }
+                    foreach ($field in $override.patch.Keys) {
+                        if ($field -cin @('id', 'name', 'availability', 'overrides')) { throw "Axes setting override for $($form.id) patches $field." }
+                        $record[$field] = $override.patch[$field]
+                    }
+                }
             }
             $record
         })

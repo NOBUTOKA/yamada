@@ -327,11 +327,26 @@ classdef PropertyInsertionPlanner
             % A reviewed axes call form precedes constructor arguments and assignments.
             forms = cell(1, numel(entries));
             methodNames = string({layout.Methods.Name});
+            pending = struct("Path", {}, "Value", {});
+            for index = 1:numel(entries)
+                pending(end + 1) = struct("Path", entries(index).Path, "Value", {entries(index).LiteralValue}); %#ok<AGROW>
+            end
             for index = 1:numel(entries)
                 form = yamada.source.AxesSettingPlacement.callForm(component.Factory, entries(index).Path, ...
-                    entries(index).LiteralValue, registry.CatalogRoot);
+                    entries(index).LiteralValue, registry.CatalogRoot, pending([1:index - 1, index + 1:end]));
                 if ~isempty(form) && any(methodNames == string(form.name)), form = struct([]); end
                 forms{index} = form;
+            end
+            % A call that also writes pending values, such as xlim(ax,"padded") for XLimMode,
+            % takes the place of the first of them so that those values need no own statement.
+            for index = 1:numel(entries)
+                if isempty(forms{index}), continue, end
+                [written, ~, owned] = yamada.catalog.AxesSettingFunctionCatalog.effects(forms{index}, entries(index).LiteralValue);
+                first = find(ismember(string({entries.Path}), written(~owned)), 1);
+                if isempty(first) || first > index, continue, end
+                moved = [1:first - 1, index, first:index - 1, index + 1:numel(entries)];
+                entries = entries(moved);
+                forms = forms(moved);
             end
             for index = 1:numel(entries)
                 definition = definitions(paths == entries(index).Path);
@@ -410,9 +425,15 @@ classdef PropertyInsertionPlanner
                     % Dependencies set the earliest visit; native-valid later slots remain candidates.
                     prerequisites = paths(reaches(:, paths == entry.Path));
                     lower = created;
+                    % A call also writes its implied values, so it follows every setting they supersede.
+                    written = entry.Path;
+                    if kind == "functionCall"
+                        [written, ~] = yamada.catalog.AxesSettingFunctionCatalog.effects(forms{index}, entry.LiteralValue);
+                        prerequisites = unique([prerequisites, paths(any(reaches(:, ismember(paths, written)), 2))]);
+                    end
                     for setting = sourceSettings
                         % A superseded implied value is written after the call that implies it.
-                        if any(prerequisites == setting.Path) || setting.Path == entry.Path || any([protectors.Id] == setting.Id)
+                        if any(prerequisites == setting.Path) || any(written == setting.Path) || any([protectors.Id] == setting.Id)
                             visits = find(arrayfun(@(statement) statement.Span.StartOffset, statements(order)) == ...
                                 setting.SourceSpan.StartOffset);
                             if ~isempty(visits), lower = max(lower, max(visits)); end

@@ -1389,7 +1389,7 @@
       "entries": [
         {
           "path": "XLim",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLim",
@@ -1397,7 +1397,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 1,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1423,7 +1423,7 @@
         },
         {
           "path": "YLim",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLim",
@@ -1431,7 +1431,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 2,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1457,7 +1457,7 @@
         },
         {
           "path": "ZLim",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLim",
@@ -1465,7 +1465,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 3,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "numericVector",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1492,7 +1492,7 @@
         },
         {
           "path": "XLimMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLimMode",
@@ -1500,7 +1500,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 4,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1534,7 +1534,7 @@
         },
         {
           "path": "YLimMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLimMode",
@@ -1542,7 +1542,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 5,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1576,7 +1576,7 @@
         },
         {
           "path": "ZLimMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLimMode",
@@ -1584,7 +1584,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 6,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1618,7 +1618,7 @@
         },
         {
           "path": "XLimitMethod",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XLimitMethod",
@@ -1626,7 +1626,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 7,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1649,16 +1649,18 @@
             },
             "application": {
               "applyAfter": [],
-              "effectPolicy": "none",
-              "effectStatus": "unknown",
-              "affectedPaths": [],
-              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+              "effectPolicy": "autoParameter",
+              "effectStatus": "modeled",
+              "affectedPaths": [
+                "XLim"
+              ],
+              "effectReason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic XLim, which remains runtime-derived, and has no effect while XLimMode is manual. Native R2023a and R2026b observations confirm both."
             }
           }
         },
         {
           "path": "YLimitMethod",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YLimitMethod",
@@ -1666,7 +1668,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 8,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1689,16 +1691,18 @@
             },
             "application": {
               "applyAfter": [],
-              "effectPolicy": "none",
-              "effectStatus": "unknown",
-              "affectedPaths": [],
-              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+              "effectPolicy": "autoParameter",
+              "effectStatus": "modeled",
+              "affectedPaths": [
+                "YLim"
+              ],
+              "effectReason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic YLim, which remains runtime-derived, and has no effect while YLimMode is manual. Native R2023a and R2026b observations confirm both."
             }
           }
         },
         {
           "path": "ZLimitMethod",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZLimitMethod",
@@ -1706,7 +1710,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 9,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1729,16 +1733,18 @@
             },
             "application": {
               "applyAfter": [],
-              "effectPolicy": "none",
-              "effectStatus": "unknown",
-              "affectedPaths": [],
-              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+              "effectPolicy": "autoParameter",
+              "effectStatus": "modeled",
+              "affectedPaths": [
+                "ZLim"
+              ],
+              "effectReason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic ZLim, which remains runtime-derived, and has no effect while ZLimMode is manual. Native R2023a and R2026b observations confirm both."
             }
           }
         },
         {
           "path": "XAxis",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XAxis",
@@ -1746,7 +1752,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 10,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -1772,7 +1778,7 @@
         },
         {
           "path": "YAxis",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "restricted",
           "metadata": {
             "displayName": "YAxis",
@@ -1780,7 +1786,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 11,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -1806,7 +1812,7 @@
         },
         {
           "path": "ZAxis",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZAxis",
@@ -1814,7 +1820,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 12,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "readOnly",
             "previewPolicy": "skip",
             "gridGeometryImpact": "none",
@@ -1840,7 +1846,7 @@
         },
         {
           "path": "XAxisLocation",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XAxisLocation",
@@ -1848,7 +1854,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 13,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1880,7 +1886,7 @@
         },
         {
           "path": "YAxisLocation",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YAxisLocation",
@@ -1888,7 +1894,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 14,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -1920,7 +1926,7 @@
         },
         {
           "path": "XColor",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XColor",
@@ -1928,7 +1934,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 15,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -1956,7 +1962,7 @@
         },
         {
           "path": "YColor",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YColor",
@@ -1964,7 +1970,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 16,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -1992,7 +1998,7 @@
         },
         {
           "path": "ZColor",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZColor",
@@ -2000,7 +2006,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 17,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "color",
             "previewPolicy": "apply",
             "gridGeometryImpact": "none",
@@ -2028,7 +2034,7 @@
         },
         {
           "path": "XColorMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XColorMode",
@@ -2036,7 +2042,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 18,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2070,7 +2076,7 @@
         },
         {
           "path": "YColorMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YColorMode",
@@ -2078,7 +2084,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 19,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2112,7 +2118,7 @@
         },
         {
           "path": "ZColorMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZColorMode",
@@ -2120,7 +2126,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 20,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2154,7 +2160,7 @@
         },
         {
           "path": "XDir",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XDir",
@@ -2162,7 +2168,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 21,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2193,7 +2199,7 @@
         },
         {
           "path": "YDir",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YDir",
@@ -2201,7 +2207,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 22,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2232,7 +2238,7 @@
         },
         {
           "path": "ZDir",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZDir",
@@ -2240,7 +2246,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 23,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2271,7 +2277,7 @@
         },
         {
           "path": "XScale",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "XScale",
@@ -2279,7 +2285,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 24,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2310,7 +2316,7 @@
         },
         {
           "path": "YScale",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "YScale",
@@ -2318,7 +2324,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 25,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",
@@ -2349,7 +2355,7 @@
         },
         {
           "path": "ZScale",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public",
           "metadata": {
             "displayName": "ZScale",
@@ -2357,7 +2363,7 @@
             "categoryId": "rulers",
             "category": "Rulers",
             "order": 26,
-            "groupId": "exact.rulers.cb4ea02a63b1",
+            "groupId": "exact.rulers.5bb446a8b5e0",
             "editor": "enum",
             "previewPolicy": "apply",
             "gridGeometryImpact": "required",

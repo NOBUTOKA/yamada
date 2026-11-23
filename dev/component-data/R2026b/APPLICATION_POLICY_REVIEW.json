@@ -751,6 +751,39 @@
     },
     {
       "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "XLimitMethod",
+      "applyAfter": [],
+      "effectPolicy": "autoParameter",
+      "kind": "inference",
+      "detail": "The method selects how automatic XLim is computed and is ignored while XLimMode is manual. Editing it therefore also selects automatic XLim, as the xlim method syntax does. This is an editor policy; the setter itself does not change the mode."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "YLimitMethod",
+      "applyAfter": [],
+      "effectPolicy": "autoParameter",
+      "kind": "inference",
+      "detail": "The method selects how automatic YLim is computed and is ignored while YLimMode is manual. Editing it therefore also selects automatic YLim, as the ylim method syntax does. This is an editor policy; the setter itself does not change the mode."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "ZLimitMethod",
+      "applyAfter": [],
+      "effectPolicy": "autoParameter",
+      "kind": "inference",
+      "detail": "The method selects how automatic ZLim is computed and is ignored while ZLimMode is manual. Editing it therefore also selects automatic ZLim, as the zlim method syntax does. This is an editor policy; the setter itself does not change the mode."
+    },
+    {
+      "variants": [
         "polaraxes"
       ],
       "path": "RTick",

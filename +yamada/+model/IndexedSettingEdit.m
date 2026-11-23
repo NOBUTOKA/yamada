@@ -90,6 +90,9 @@ classdef IndexedSettingEdit
                             change = [];
                         end
                     end
+                    % A value implied by a call owns no token, so the call keeps implying it
+                    % while a new setting supersedes it.
+                    if settings(index).Method == "functionCall" && isempty(settings(index).ValueSpan), change = []; end
                     if ~isempty(change), record.Value = changes(change).Value; end
                     settings(index) = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
                 end

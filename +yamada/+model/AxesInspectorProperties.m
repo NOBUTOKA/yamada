@@ -72,6 +72,34 @@ classdef AxesInspectorProperties
             if any(factory == yamada.model.ColorbarDefinition.targets()), result(end+1) = "Colormap"; end
         end
 
+        function texts = automaticTexts(factory, path)
+            % automaticTexts Return the text values whose automatic value an axes setting shapes.
+            %   TitleFontSizeMultiplier, for example, scales the automatic Title and Subtitle
+            %   sizes and is ignored by a text with an explicit FontSize. The text Modes are
+            %   not public, so these settings cannot select automatic text.
+            arguments (Input)
+                factory (1,1) string
+                path (1,1) string
+            end
+            arguments (Output)
+                texts (1,:) string
+            end
+
+            texts = strings(1,0);
+            groups = yamada.model.AxesInspectorProperties.groups(factory);
+            if ~any(groups == "Title"), return, end
+            switch path
+                case "TitleFontSizeMultiplier"
+                    texts = ["Title","Subtitle"] + ".FontSize";
+                case "LabelFontSizeMultiplier"
+                    texts = groups(endsWith(groups,"Label")) + ".FontSize";
+                case "TitleFontWeight"
+                    texts = "Title.FontWeight";
+                case "SubtitleFontWeight"
+                    texts = "Subtitle.FontWeight";
+            end
+        end
+
         function definitionsOut = extend(factory, definitions)
             % extend Supply definitions for text members and geographic tick format.
             arguments (Input)
@@ -116,6 +144,10 @@ classdef AxesInspectorProperties
                         case "FontSize"
                             metadata.editor = "number";
                             metadata.valueSchema = struct("minimum",0,"exclusiveMinimum",true);
+                            % Setting the axes FontSize returns axes text sizes to automatic.
+                            if group ~= "Label"
+                                metadata.application = struct("applyAfter","FontSize");
+                            end
                         case "FontWeight"
                             metadata.editor = "enum";
                             metadata.valueSchema = struct("values",["normal","bold"]);

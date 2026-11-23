@@ -261,21 +261,27 @@
         },
         {
           "path": "XLimitMethod",
-          "status": "unknown",
-          "affectedPaths": [],
-          "reason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          "status": "modeled",
+          "affectedPaths": [
+            "XLim"
+          ],
+          "reason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic XLim, which remains runtime-derived, and has no effect while XLimMode is manual. Native R2023a and R2026b observations confirm both."
         },
         {
           "path": "YLimitMethod",
-          "status": "unknown",
-          "affectedPaths": [],
-          "reason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          "status": "modeled",
+          "affectedPaths": [
+            "YLim"
+          ],
+          "reason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic YLim, which remains runtime-derived, and has no effect while YLimMode is manual. Native R2023a and R2026b observations confirm both."
         },
         {
           "path": "ZLimitMethod",
-          "status": "unknown",
-          "affectedPaths": [],
-          "reason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          "status": "modeled",
+          "affectedPaths": [
+            "ZLim"
+          ],
+          "reason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic ZLim, which remains runtime-derived, and has no effect while ZLimMode is manual. Native R2023a and R2026b observations confirm both."
         },
         {
           "path": "XAxis",
@@ -2751,21 +2757,27 @@
         },
         {
           "path": "XLimitMethod",
-          "status": "unknown",
-          "affectedPaths": [],
-          "reason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          "status": "modeled",
+          "affectedPaths": [
+            "XLim"
+          ],
+          "reason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic XLim, which remains runtime-derived, and has no effect while XLimMode is manual. Native R2023a and R2026b observations confirm both."
         },
         {
           "path": "YLimitMethod",
-          "status": "unknown",
-          "affectedPaths": [],
-          "reason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          "status": "modeled",
+          "affectedPaths": [
+            "YLim"
+          ],
+          "reason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic YLim, which remains runtime-derived, and has no effect while YLimMode is manual. Native R2023a and R2026b observations confirm both."
         },
         {
           "path": "ZLimitMethod",
-          "status": "unknown",
-          "affectedPaths": [],
-          "reason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+          "status": "modeled",
+          "affectedPaths": [
+            "ZLim"
+          ],
+          "reason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic ZLim, which remains runtime-derived, and has no effect while ZLimMode is manual. Native R2023a and R2026b observations confirm both."
         },
         {
           "path": "XAxis",

@@ -3,8 +3,9 @@ classdef AxesInspectorEdits
     %   Each patch carries typed occurrence changes for indexed publication and history.
 
     methods (Static)
-        function [batch, requested, forward, inverse, paths] = plan(document, component, path, value, action, root)
+        function [batch, requested, forward, inverse, paths] = plan(document, component, path, value, action, root, effective)
             % plan Build a reversible patch against one exact source snapshot.
+            %   effective(modePath) returns the effective value of a Mode and whether it is known.
             arguments (Input)
                 document (1,1) yamada.model.DocumentModel
                 component (1,1) yamada.model.ComponentRecord
@@ -12,6 +13,7 @@ classdef AxesInspectorEdits
                 value
                 action (1,1) string {mustBeMember(action,["set","override","share"])}
                 root (1,1) string = ""
+                effective = []
             end
             arguments (Output)
                 batch (1,1) yamada.source.SourcePatchBatch
@@ -59,7 +61,32 @@ classdef AxesInspectorEdits
                 end
                 requested = yamada.source.AxesInspectorEdits.checkedValue(path,value,original);
                 encoded = yamada.source.LiteralEncoder.encode(requested);
-                if isempty(original) || action == "override"
+                % A format only shapes automatic tick labels, so editing it under manual labels
+                % adds a call such as xtickformat that also selects automatic labels.
+                companion = struct([]);
+                if action == "set"
+                    companion = yamada.source.AxesInspectorEdits.automaticCompanion(component,path,requested,root,effective);
+                end
+                % An explicit size that a later FontSize or label call returns to automatic has
+                % no effect, so a new value is written after every certain setting instead.
+                if isempty(companion) && ~isempty(original) && action == "set" && isa(effective,"function_handle")
+                    [~, ~, code] = effective(path);
+                    if code == "automatic-text"
+                        [edits, placement] = yamada.source.AxesInspectorEdits.insert( ...
+                            document,component,path,encoded,requested,yamada.model.PropertySetting.empty,root, ...
+                            struct([]),true);
+                        forward.Placements = placement;
+                        batch = yamada.source.SourcePatchBatch(source,edits);
+                        return
+                    end
+                end
+                if ~isempty(companion)
+                    [edits, placement] = yamada.source.AxesInspectorEdits.insert( ...
+                        document,component,path,encoded,requested,yamada.model.PropertySetting.empty,root,companion);
+                    forward.Placements = placement;
+                    [modePaths, ~, owned] = yamada.catalog.AxesSettingFunctionCatalog.effects(companion,requested);
+                    paths = [path modePaths(~owned)];
+                elseif isempty(original) || action == "override"
                     [edits, placement] = yamada.source.AxesInspectorEdits.insert( ...
                         document,component,path,encoded,requested,original,root);
                     forward.Placements = placement;
@@ -224,8 +251,53 @@ classdef AxesInspectorEdits
             result = value;
         end
 
-        function [edit, placement] = insert(document,component,path,encoded,value,original,root)
+        function form = automaticCompanion(component,path,value,root,effective)
+            % automaticCompanion Return the call that also selects a manual value's automatic Mode.
+            %   The catalog companion form names the Mode it implies; the form is returned only
+            %   while that Mode's effective value differs from it or is unknown.
+            arguments (Input)
+                component (1,1) yamada.model.ComponentRecord
+                path (1,1) string
+                value
+                root (1,1) string
+                effective = []
+            end
+            arguments (Output)
+                form struct
+            end
+
+            form = struct([]);
+            if strlength(root) == 0, return, end
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.formsWritingPath(component.Factory,path,root);
+            for item = catalog
+                candidate = item{1};
+                if ~isfield(candidate,"companionInsertion") || ~candidate.companionInsertion, continue, end
+                [paths, values, owned] = yamada.catalog.AxesSettingFunctionCatalog.effects(candidate,value);
+                selected = false;
+                for effect = find(~owned)
+                    if isa(effective,"function_handle")
+                        [current, known] = effective(paths(effect));
+                    else
+                        settings = component.getSettings(paths(effect));
+                        known = true; current = values{effect};
+                        if ~isempty(settings), current = settings(end).LiteralValue; end
+                    end
+                    selected = selected || ~known || ...
+                        ~yamada.catalog.AxesSettingFunctionCatalog.sameLiteral(current,values{effect});
+                end
+                if selected
+                    form = yamada.catalog.AxesSettingFunctionCatalog.insertionForm(component.Factory,path,value,root, ...
+                        struct("Path",num2cell(paths(~owned)),"Value",values(~owned)));
+                    return
+                end
+            end
+        end
+
+        function [edit, placement] = insert(document,component,path,encoded,value,original,root,companion,afterAll)
             % insert Emit one setting beside a proven initialization statement.
+            %   A companion form is written after every certain setting, which includes the
+            %   manual values that it returns to automatic. afterAll writes an assignment
+            %   there, after the settings that would otherwise override it.
             arguments (Input)
                 document (1,1) yamada.model.DocumentModel
                 component (1,1) yamada.model.ComponentRecord
@@ -234,6 +306,8 @@ classdef AxesInspectorEdits
                 value
                 original yamada.model.PropertySetting
                 root (1,1) string
+                companion struct = struct([])
+                afterAll (1,1) logical = false
             end
             arguments (Output)
                 edit (1,1) struct
@@ -257,8 +331,8 @@ classdef AxesInspectorEdits
             if isfield(document.Metadata,"SourceSnapshotId"), snapshot = document.Metadata.SourceSnapshotId; end
 
             % A dependent setting follows its main path: an option joins the main call.
-            form = struct([]);
-            if isempty(original) && path ~= "GeographicLimits"
+            form = companion;
+            if isempty(form) && isempty(original) && path ~= "GeographicLimits" && ~afterAll
                 [main, groupForm] = yamada.catalog.AxesSettingFunctionCatalog.settingGroup(component.Factory,path,root);
                 mainSettings = yamada.model.PropertySetting.empty;
                 if ~isempty(main), mainSettings = component.getSettings(main); end

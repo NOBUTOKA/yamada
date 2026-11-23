@@ -11,7 +11,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             [document, registry, control] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", ...
                 "app.Control.XLim = [0 3];", "xlim(app.Control, [1 4]);", ...
-                "app.Other = uiaxes(app.UIFigure);", "xticks([1 2]);", ...
+                "app.Other = uiaxes(app.UIFigure);", "xticks([1 2]);", "box on", ...
                 "grid(app.Control, 'off');", "xlabel(app.Control, 'a,b');", ...
                 "xticklabels(app.Control, {'A','B'});", ...
                 "app.Control.XLimMode = 'auto';"]);
@@ -27,8 +27,9 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             states = document.getEffectivePropertyStates(registry, control.Id);
             testCase.verifyFalse(testCase.state(states,"XLim").IsKnown);
             testCase.verifyEqual(string(testCase.state(states,"ZGrid").EffectiveValue), "off");
+            % Both the implicit function call and the command-syntax call are reported.
             codes = string({document.Diagnostics.Code});
-            testCase.verifyEqual(nnz(codes == "implicit-axes-target"), 1);
+            testCase.verifyEqual(nnz(codes == "implicit-axes-target"), 2);
             document.insertComponent(registry, "uibutton", document.RootComponentId);
             testCase.verifyEqual(other.getSettings("XTick").LiteralValue, [1 2]);
             document.undo();
@@ -336,7 +337,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
         end
 
         % Guarantee: A value implied by a call, which owns no token, is changed by a new setting after that call.
-        % Failure mode: Rewriting the call discards its own argument, or a miscounted call statement shifts the execution order of every later setting.
+        % Failure mode: Rewriting the call discards its own argument, a miscounted call statement shifts the execution order of every later setting, or the edit overwrites the call's implied value so Undo keeps the new mode.
         function impliedModeIsSupersededAfterItsCall(testCase)
             % impliedModeIsSupersededAfterItsCall Keep the implying call and order the new mode after it.
             [document, registry, control] = testCase.fixture([ ...
@@ -354,6 +355,9 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual([control.Settings.Sequence], [reloaded.getComponentByName("Control").Settings.Sequence]);
             document.undo();
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+            % The implying call keeps its implied value, so Undo restores the manual mode.
+            states = document.getEffectivePropertyStates(registry, control.Id);
+            testCase.verifyEqual(string(testCase.state(states, "XLimMode").EffectiveValue), "manual");
         end
 
         % Guarantee: Editing one axis limit of an axis limits vector rewrites only its elements, and slice edits in one batch compose.
@@ -389,6 +393,55 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyFalse(control.getProperty("XLimitMethod").IsEditable);
             document.redo();
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), edited);
+        end
+
+        % Guarantee: Editing a setting that only shapes an automatic value, such as XLimitMethod or a tick label format, also turns that value's Auto on with one call placed after the manual setting, and Undo restores both.
+        % Failure mode: The edit keeps the manual Mode so the choice has no visible effect, writes a separate Mode statement or a call before the manual setting that the setting then overrides, or Undo leaves the Mode changed.
+        % pendingModeIsAddedAfterExistingConstructorValue edits a Mode directly; this test detects a parameter edit that must request the Mode itself.
+        function automaticParametersSelectAutomaticValues(testCase)
+            % automaticParametersSelectAutomaticValues Write one companion call after manual limits and labels.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "xlim(app.Control, [0 4]);", ...
+                "app.Control.XTickLabel = {'a','b'};"]);
+            document.setPropertyBatch(control.Id, struct("Path", "XLimitMethod", "Value", "padded"), registry);
+            document.editAxesInspector(control.Id, "XAxis.TickLabelFormat", "%.2f", "set", registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            ending = sprintf('\r\n');
+            testCase.verifySubstring(source, "xlim(app.Control, [0 4]);" + ending + ...
+                "app.Control.XTickLabel = {'a','b'};" + ending + "xlim(app.Control, ""padded"");" + ending + ...
+                "xtickformat(app.Control, ""%.2f"");");
+            testCase.verifyEqual(count(source, "XLimMode"), 0);
+            states = document.getEffectivePropertyStates(registry, control.Id);
+            testCase.verifyEqual(string(testCase.state(states, "XLimMode").EffectiveValue), "auto");
+            testCase.verifyEqual(string(testCase.state(states, "XTickLabelMode").EffectiveValue), "auto");
+            document.undo(); document.undo();
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+            states = document.getEffectivePropertyStates(registry, control.Id);
+            testCase.verifyEqual(string(testCase.state(states, "XLimMode").EffectiveValue), "manual");
+        end
+
+        % Guarantee: An explicit text size that a later axes FontSize or label call returns to automatic is not reported as effective, a new size is written after that setting, and a title weight parameter is read-only while the Title weight is explicit.
+        % Failure mode: The resolver keeps the earlier explicit size, an in-place edit stays overridden by the later FontSize, or TitleFontWeight accepts edits that cannot change the displayed weight.
+        % editsAxesTextAndSubtitleLink edits text that no later setting overrides; this test detects text values that later settings return to automatic.
+        function explicitTextValuesFollowTheirAutomaticRules(testCase)
+            % explicitTextValuesFollowTheirAutomaticRules Resolve text resets and ineffective weight edits.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "title(app.Control, 'T', 'FontWeight', 'bold');", ...
+                "app.Control.Title.FontSize = 9;", "app.Control.XLabel.FontSize = 7;", ...
+                "app.Control.FontSize = 20;", "app.Control.YLabel.FontSize = 7;", "ylabel(app.Control, 'Y');"]);
+            states = document.getEffectivePropertyStates(registry, control.Id);
+            testCase.verifyEqual(testCase.state(states, "Title.FontSize").ReasonCode, "automatic-text");
+            testCase.verifyEqual(testCase.state(states, "XLabel.FontSize").ReasonCode, "automatic-text");
+            testCase.verifyEqual(testCase.state(states, "YLabel.FontSize").ReasonCode, "automatic-text");
+            weight = testCase.state(states, "TitleFontWeight");
+            testCase.verifyFalse(weight.IsEditable);
+            testCase.verifySubstring(weight.ReadOnlyReason, "Title.FontWeight");
+            document.editAxesInspector(control.Id, "Title.FontSize", 14, "set", registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifyLessThan(strfind(source, "app.Control.FontSize = 20;"), ...
+                strfind(source, "app.Control.Title.FontSize = 14;"));
+            states = document.getEffectivePropertyStates(registry, control.Id);
+            testCase.verifyEqual(testCase.state(states, "Title.FontSize").EffectiveValue, 14);
         end
 
         % Guarantee: Undoing an option added to an existing call removes only that option.

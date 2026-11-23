@@ -66,15 +66,17 @@ classdef AxesSettingFunctionCatalog
             end
         end
 
-        function form = insertionForm(factory, path, value, root)
+        function form = insertionForm(factory, path, value, root, requested)
             % insertionForm Select the reviewed call form that writes one new value for a property.
-            %   Only forms whose single argument owns the path and whose implied effects
-            %   match a plain assignment are reviewed for insertion.
+            %   An insertion form's implied effects match a plain assignment. A companion
+            %   form, such as xlim(ax,"padded"), is used only when every value it implies,
+            %   here XLimMode "auto", is requested in the same edit.
             arguments (Input)
                 factory (1, 1) string
                 path (1, 1) string
                 value
                 root (1, 1) string
+                requested struct = struct("Path", {}, "Value", {})
             end
             arguments (Output)
                 form struct
@@ -83,10 +85,78 @@ classdef AxesSettingFunctionCatalog
             catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
             form = struct([]);
             key = factory + " " + path;
-            if ~isKey(catalog.Insertion, key), return, end
-            candidate = catalog.ById{catalog.Insertion(key)};
+            if isKey(catalog.Insertion, key)
+                candidate = catalog.ById{catalog.Insertion(key)};
+            elseif isKey(catalog.Companion, key)
+                candidate = catalog.ById{catalog.Companion(key)};
+                [paths, values, owned] = yamada.catalog.AxesSettingFunctionCatalog.effects(candidate, value);
+                requestedPaths = string({requested.Path});
+                for effect = find(~owned)
+                    match = find(requestedPaths == paths(effect), 1);
+                    if isempty(match) || ~yamada.catalog.AxesSettingFunctionCatalog.sameLiteral( ...
+                            requested(match).Value, values{effect})
+                        return
+                    end
+                end
+            else
+                return
+            end
             args = yamada.catalog.AxesSettingFunctionCatalog.records(candidate.arguments);
             if yamada.catalog.AxesSettingFunctionCatalog.accepts(args{1}, value), form = candidate; end
+        end
+
+        function paths = automaticPaths(factory, path, root)
+            % automaticPaths Return the explicit values a call owning a path returns to automatic.
+            arguments (Input)
+                factory (1, 1) string
+                path (1, 1) string
+                root (1, 1) string
+            end
+            arguments (Output)
+                paths (1, :) string
+            end
+
+            paths = strings(1, 0);
+            if strlength(root) == 0, return, end
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            key = factory + " " + path;
+            if isKey(catalog.Automatic, key), paths = catalog.Automatic{key}; end
+        end
+
+        function forms = formsWritingPath(factory, path, root)
+            % formsWritingPath Return the call forms for a factory whose argument owns a path.
+            arguments (Input)
+                factory (1, 1) string
+                path (1, 1) string
+                root (1, 1) string
+            end
+            arguments (Output)
+                forms cell
+            end
+
+            forms = {};
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            key = factory + " " + path;
+            if isKey(catalog.Companion, key), forms{end + 1} = catalog.ById{catalog.Companion(key)}; end
+            if isKey(catalog.Insertion, key), forms{end + 1} = catalog.ById{catalog.Insertion(key)}; end
+        end
+
+        function result = sameLiteral(left, right)
+            % sameLiteral Compare decoded literals, treating character vectors and strings alike.
+            arguments (Input)
+                left
+                right
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            text = @(value) (ischar(value) && (isrow(value) || isempty(value))) || (isstring(value) && isscalar(value));
+            if text(left) && text(right)
+                result = string(left) == string(right);
+            else
+                result = isequaln(left, right);
+            end
         end
 
         function [main, form] = settingGroup(factory, path, root)
@@ -235,7 +305,8 @@ classdef AxesSettingFunctionCatalog
 
             [~, release] = fileparts(root);
             catalog = struct("ByName", dictionary(string([]), {}), "ById", dictionary(string([]), {}), ...
-                "Insertion", dictionary(string([]), string([])), "Groups", struct("Main", {}, "Form", {}));
+                "Insertion", dictionary(string([]), string([])), "Companion", dictionary(string([]), string([])), ...
+                "Automatic", dictionary(string([]), {}), "Groups", struct("Main", {}, "Form", {}));
             path = fullfile(root,"axes-setting-functions.json");
             if root == "" || ~isfile(path), return, end
             data = jsondecode(fileread(path));
@@ -263,15 +334,27 @@ classdef AxesSettingFunctionCatalog
                             "yamada:AxesSettingFunctionCatalog:Effect", "Invalid element effect in axes setting form %s.",form.id);
                     end
                 end
-                % An insertion form writes exactly one owned path from its only argument.
-                if isfield(form,"insertion") && form.insertion
-                    assert(isscalar(args) && isscalar(ownedPaths), ...
+                % An insertion or companion form writes exactly one owned path from its only argument.
+                for kind = ["insertion", "companionInsertion"]
+                    if ~isfield(form,kind) || ~form.(kind), continue, end
+                    assert(isscalar(args) && isscalar(ownedPaths) && ...
+                        ~(isfield(form,"insertion") && isfield(form,"companionInsertion")), ...
                         "yamada:AxesSettingFunctionCatalog:Insertion", "Insertion form %s must own one path.",form.id);
                     for factory = reshape(string(form.targetFactories),1,[])
                         key = factory + " " + ownedPaths;
-                        assert(~isKey(catalog.Insertion,key), "yamada:AxesSettingFunctionCatalog:Insertion", ...
-                            "Several insertion forms write %s.",key);
-                        catalog.Insertion(key) = string(form.id);
+                        assert(~isKey(catalog.Insertion,key) && ~isKey(catalog.Companion,key), ...
+                            "yamada:AxesSettingFunctionCatalog:Insertion", "Several insertion forms write %s.",key);
+                        if kind == "insertion", catalog.Insertion(key) = string(form.id);
+                        else, catalog.Companion(key) = string(form.id); end
+                    end
+                end
+                % A call can return other explicit values, such as a label's FontSize, to automatic.
+                if isfield(form,"automaticPaths")
+                    automatic = reshape(string(form.automaticPaths),1,[]);
+                    assert(~isempty(automatic) && isscalar(ownedPaths) && ~any(ismember(automatic,ownedPaths)), ...
+                        "yamada:AxesSettingFunctionCatalog:Form", "Invalid automatic paths in axes setting form %s.",form.id);
+                    for factory = reshape(string(form.targetFactories),1,[])
+                        catalog.Automatic(factory + " " + ownedPaths) = {automatic};
                     end
                 end
                 catalog.ById(string(form.id)) = {form};
