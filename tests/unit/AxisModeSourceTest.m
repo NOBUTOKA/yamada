@@ -397,6 +397,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         % Guarantee: Editing a setting that only shapes an automatic value, such as XLimitMethod or a tick label format, also turns that value's Auto on with one call placed after the manual setting, and Undo restores both.
         % Failure mode: The edit keeps the manual Mode so the choice has no visible effect, writes a separate Mode statement or a call before the manual setting that the setting then overrides, or Undo leaves the Mode changed.
+        % pendingModeIsAddedAfterExistingConstructorValue edits a Mode directly; this test detects a parameter edit that must request the Mode itself.
         function automaticParametersSelectAutomaticValues(testCase)
             % automaticParametersSelectAutomaticValues Write one companion call after manual limits and labels.
             [document, registry, control] = testCase.fixture([ ...
@@ -421,6 +422,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         % Guarantee: An explicit text size that a later axes FontSize or label call returns to automatic is not reported as effective, a new size is written after that setting, and a title weight parameter is read-only while the Title weight is explicit.
         % Failure mode: The resolver keeps the earlier explicit size, an in-place edit stays overridden by the later FontSize, or TitleFontWeight accepts edits that cannot change the displayed weight.
+        % editsAxesTextAndSubtitleLink edits text that no later setting overrides; this test detects text values that later settings return to automatic.
         function explicitTextValuesFollowTheirAutomaticRules(testCase)
             % explicitTextValuesFollowTheirAutomaticRules Resolve text resets and ineffective weight edits.
             [document, registry, control] = testCase.fixture([ ...
