@@ -1,121 +1,42 @@
 classdef (TestTags = {'fast', 'model'}) CallbackModelTest < matlab.unittest.TestCase
-    % CallbackModelTest Verify atomic callback intentions, history and safety rejection.
-    %   These tests inspect authoritative model snapshots independently of the UI
-    %   and preserve original method text for later localized source generation.
+    % CallbackModelTest Verify callback command rejection and default handler naming.
+    %   These tests inspect authoritative model snapshots independently of the UI.
 
     methods (Test)
-        % Guarantee: callback add and delete are single undoable steps that restore exact source, including parsed method bodies.
-        % Failure mode: Undo leaves pending callback edits or dirty state, or deleting and re-adding loses the original body.
-        function additionDeletionAndHistoryAreAtomic(testCase)
-            % additionDeletionAndHistoryAreAtomic Restore pending methods and saved checkpoints exactly.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("CallbackApp", registry);
-            button = document.insertComponent(registry, "uibutton", document.RootComponentId);
-            document.markSaved();
-            checkpoint = document.HistoryIndex;
-            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-            testCase.verifyEqual(document.HistoryIndex, checkpoint + 1);
-            added = document.History{end}.After;
-            addedText = document.CurrentText;
-            testCase.verifyEqual(numel(added), 1);
-            testCase.verifySubstring(added.MethodText, "function " + added.HandlerName + "(app, source, event)");
-            testCase.verifySubstring(added.MethodText, "% " + added.HandlerName);
-            document.undo();
-            testCase.verifyEmpty(document.CallbackEdits);
-            testCase.verifyFalse(document.IsDirty);
-            document.redo();
-            testCase.verifyEqual(document.CurrentText, addedText);
-            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
-            testCase.verifyEmpty(document.CallbackEdits);
-            document.undo();
-            testCase.verifyEqual(document.CurrentText, addedText);
-            document.redo();
-            testCase.verifyEmpty(document.CallbackEdits);
-        end
-
         % Guarantee: invalid, stale, or unsafe callback requests fail before any mutation.
-        % Failure mode: deleting a shared method breaks other bindings, or a rejected request still changes history.
+        % Failure mode: a request for a missing component or callback or a repeated handler name is applied, or a rejected request still changes history.
         function rejectsRepeatedAndInvalidRequestsWithoutChangingState(testCase)
             % rejectsRepeatedAndInvalidRequestsWithoutChangingState Reject stale and unknown action targets before mutation.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("CallbackApp", registry);
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
-            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "ButtonPushedFcn", registry));
             before = document.CallbackEdits;
             history = document.History;
-            testCase.verifyError(@() document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry), ...
+            handler = document.History{end}.After(1).HandlerName;
+            testCase.verifyError(@() document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, handler), ...
+                "yamada:DocumentModel:CallbackNameCollision");
+            testCase.verifyError(@() document.applyCallbackAction("missing", "ButtonPushedFcn", "Disconnect", registry), ...
                 "yamada:DocumentModel:UnsafeCallbackEdit");
-            testCase.verifyError(@() document.applyCallbackAction("missing", "ButtonPushedFcn", "Delete", registry), ...
-                "yamada:DocumentModel:UnsafeCallbackEdit");
-            testCase.verifyError(@() document.applyCallbackAction(button.Id, "UnknownFcn", "Add", registry), ...
+            testCase.verifyError(@() document.applyCallbackAction(button.Id, "UnknownFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "UnknownFcn", registry)), ...
                 "yamada:DocumentModel:UnsafeCallbackEdit");
             testCase.verifyEqual(document.CallbackEdits, before);
             testCase.verifyEqual(document.History, history);
         end
 
-        function rejectsSharedMethodsAndGeneratesPendingCallbacks(testCase)
-            % rejectsSharedMethodsAndGeneratesPendingCallbacks Protect unsafe source while generating validated operations.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
-            source = string(fileread(path));
-            source = replace(source, "app.CalculateButton = uibutton(app.GridLayout, 'push');", ...
-                "app.CalculateButton = uibutton(app.GridLayout, 'push');" + newline + ...
-                "app.UIFigure.CloseRequestFcn = @app.CalculateButtonPushed;");
-            document = yamada.source.AppSourceParser.parseText(source, registry);
-            component = document.getComponentByName("CalculateButton");
-            testCase.verifyError(@() document.applyCallbackAction(component.Id, "ButtonPushedFcn", "Delete", registry), ...
-                "yamada:DocumentModel:UnsafeCallbackEdit");
-            testCase.verifyError(@() document.applyCallbackAction(component.Id, "ButtonPushedFcn", "Add", registry), ...
-                "yamada:DocumentModel:UnsafeCallbackEdit");
-            testCase.verifyFalse(document.IsDirty);
-            testCase.verifyEmpty(document.History);
-            fresh = yamada.model.NewAppFactory.createEmpty("CallbackApp", registry);
-            fresh.applyCallbackAction(fresh.RootComponentId, "SizeChangedFcn", "Add", registry);
-            [~, diagnostics] = yamada.source.NewAppGenerator(registry).generate(fresh);
-            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
-        end
-
         function generatedNamesAvoidSourceAndPendingCollisions(testCase)
             % generatedNamesAvoidSourceAndPendingCollisions Generate distinct valid names for multiple callback additions.
-            % Guarantee: new handler names are valid and unique against source and pending edits.
-            % Failure mode: two pending additions, or an addition and the class name, collide and generate invalid source.
+            % Guarantee: default handler names offered for New are valid and unique against source members and the class name.
+            % Failure mode: a default name equals the class name or an existing handler, so accepting the prompt generates invalid source.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("UIFigureSizeChanged", registry);
             root = document.RootComponentId;
-            document.applyCallbackAction(root, "SizeChangedFcn", "Add", registry);
+            document.applyCallbackAction(root, "SizeChangedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, root, "SizeChangedFcn", registry));
             first = document.History{end}.After(1);
             testCase.verifyNotEqual(first.HandlerName, document.ClassName);
             testCase.verifyTrue(isvarname(first.HandlerName));
-            document.applyCallbackAction(root, "CloseRequestFcn", "Add", registry);
+            document.applyCallbackAction(root, "CloseRequestFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, root, "CloseRequestFcn", registry));
             testCase.verifyNotEqual(document.History{end}.After(1).HandlerName, first.HandlerName);
-        end
-
-        function parsedDeletionPreservesOriginalBodyAndCanBeReplaced(testCase)
-            % parsedDeletionPreservesOriginalBodyAndCanBeReplaced Retain original spans through delete/add and history.
-            % Guarantee and failure mode: shared with additionDeletionAndHistoryAreAtomic.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            path = fullfile(fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m");
-            document = yamada.source.AppSourceParser.parseFile(path, registry);
-            component = document.getComponentByName("CalculateButton");
-            original = document.OriginalText;
-            document.applyCallbackAction(component.Id, "ButtonPushedFcn", "Delete", registry);
-            removed = document.History{end}.After;
-            deletedText = document.CurrentText;
-            testCase.verifyTrue(removed.MethodSpan.isKnown());
-            testCase.verifyTrue(removed.BindingSpan.isKnown());
-            testCase.verifyEqual(document.OriginalText, original);
-            document.applyCallbackAction(component.Id, "ButtonPushedFcn", "Add", registry);
-            testCase.verifySubstring(document.CurrentText, document.History{end}.After.HandlerName + "(app");
-            testCase.verifyNotEqual(document.History{end}.After.HandlerName, "CalculateButtonPushed");
-            stale = document.structuralCandidate();
-            stale.OriginalText = original + newline;
-            testCase.verifyError(@() stale.applyCallbackAction(component.Id, "ButtonPushedFcn", "Delete", registry), ...
-                "yamada:DocumentModel:UnsafeCallbackEdit");
-            document.undo();
-            testCase.verifyEqual(document.CurrentText, deletedText);
-            document.undo();
-            testCase.verifyEmpty(document.CallbackEdits);
-            testCase.verifyFalse(document.IsDirty);
         end
     end
 end

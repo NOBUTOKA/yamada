@@ -90,7 +90,7 @@ classdef (TestTags = {'ui', 'preview', 'callback'}) CallbackPreviewUpdateTest < 
             figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
             renderer = yamada.ui.PreviewRenderer(registry); handles = renderer.render(document, figure);
             subject = document.getComponentByName("Subject");
-            document.applyCallbackAction(subject.Id, "ButtonPushedFcn", "Add", registry);
+            document.applyCallbackAction(subject.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, subject.Id, "ButtonPushedFcn", registry));
             testCase.verifyTrue(renderer.acknowledgeCallbackChanges(document));
             subject.setProperty("Text", "After callback");
             testCase.verifyFalse(renderer.acknowledgeCallbackChanges(document));

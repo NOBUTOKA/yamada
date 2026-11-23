@@ -218,12 +218,6 @@ classdef SubtreeReparentSourceEdits
                 argumentsText = argumentsText + ", " + yamada.source.LiteralEncoder.encode(component.CreationArguments{index});
             end
             text = ending + "            app." + component.Name + " = " + component.Factory + "(" + argumentsText + ");";
-            pending = document.CallbackEdits(string({document.CallbackEdits.ComponentId}) == component.Id);
-            for callback = pending(:)'
-                if callback.Action == "Add"
-                    text = text + ending + "            " + yamada.source.CallbackSourceEdits.bindingText(component.Name, callback.Name, callback.HandlerName);
-                end
-            end
             entries = yamada.model.PropertyApplicationPlanner.forComponent(component, document, registry);
             for entry = entries
                 if registry.isReadOnlyProperty(component.Factory, entry.Path, component.CreationArguments), continue, end

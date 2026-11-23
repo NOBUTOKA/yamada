@@ -89,21 +89,18 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) SourcePatchBatch
 
         % Guarantee: live setting identities and bindings survive patches and always reflect the current value.
         % Failure mode: an equal-length change is ignored, a prepared update overwrites a later edit, or Undo revives an old revision.
-        function settingIdentitySurvivesLocationAndValueChanges(testCase)
-            % settingIdentitySurvivesLocationAndValueChanges Separate occurrence identity from movable source ranges.
+        function settingIdentitySurvivesValueChanges(testCase)
+            % settingIdentitySurvivesValueChanges Separate occurrence identity from literal replacement.
             original = yamada.model.PropertySetting("Text", "Old", struct("Method", "assignment", ...
                 "Syntax", "dot", "SourceSnapshotId", "epoch", "SourceSpan", yamada.model.SourceSpan(10, 30), ...
                 "ValueSpan", yamada.model.SourceSpan(20, 24)));
             original = original.withScope("createComponents", yamada.model.SourceSpan(1, 100));
-            current = original.withLocations(struct("SourceSpan", yamada.model.SourceSpan(15, 40), ...
-                "ValueSpan", yamada.model.SourceSpan(25, 34), "ScopeSpan", yamada.model.SourceSpan(1, 110)));
-            current = current.withLiteral("New longer value");
+            current = original.withLiteral("New longer value");
             testCase.verifyEqual(current.Id, original.Id);
             testCase.verifyEqual(current.StatementId, original.StatementId);
             testCase.verifyEqual(current.InitializationScopeId, original.InitializationScopeId);
             testCase.verifyEqual(original.LiteralValue, "Old");
             testCase.verifyEqual(original.ValueSpan.StartOffset, 20);
-            testCase.verifyEqual(current.ValueSpan.StartOffset, 25);
             record = current.toStruct();
             restored = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
             testCase.verifyEqual(restored.Id, original.Id);

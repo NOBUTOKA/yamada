@@ -15,10 +15,10 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) ValidationPublic
                 switch operation
                     case "insert", document.insertComponent(registry, "uilabel", document.RootComponentId);
                     case "rename", document.renameComponent(label.Id, "RenamedLabel", registry);
-                    case "callback-add", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+                    case "callback-add", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "ButtonPushedFcn", registry));
                     case "callback-delete"
-                        document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-                        document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
+                        document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "ButtonPushedFcn", registry));
+                        document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Disconnect", registry);
                     case "grid"
                         document.applyGridLayoutEdit(grid.Id, [struct("ComponentId", grid.Id, "Path", "RowHeight", "Value", {{20,30}}), ...
                             struct("ComponentId", child.Id, "Path", "Layout.Row", "Value", 2)], registry);

@@ -31,9 +31,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             document = yamada.source.AppSourceParser.parseText(source, registry);
             moved = document.getComponentByName("Moved");
             destination = document.getComponentByName("Destination");
-            states = yamada.model.DocumentEditAvailability.reparenting(document, moved.Id, registry);
-            state = states(string({states.Id}) == destination.Id);
-            testCase.verifyTrue(state.Enabled, state.Reason);
             document.reparentSubtree(moved.Id, destination.Id, registry);
             testCase.verifyEqual(moved.ParentId, destination.Id);
             picker = document.getComponentByName("Picker");
@@ -130,12 +127,12 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
                 "uibutton(app.UIFigure, ""push"", FontSize=13)");
             document = yamada.source.AppSourceParser.parseText(source, registry);
             button = document.getComponentByName("BottomRightButton");
-            if Operation == "callbackDelete", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry); end
+            if Operation == "callbackDelete", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "ButtonPushedFcn", registry)); end
             switch Operation
                 case "insert", document.insertComponent(registry, "uilabel", document.RootComponentId);
                 case "delete", document.removeSubtree(button.Id, registry);
-                case "callbackAdd", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-                case "callbackDelete", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
+                case "callbackAdd", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "ButtonPushedFcn", registry));
+                case "callbackDelete", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Disconnect", registry);
                 case "reparent", document.reparentSubtree(button.Id, document.getComponentByName("CenterPanel").Id, registry);
             end
             verifyBindings(testCase, document, registry);
@@ -233,7 +230,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             % savedClassIdentityPreservesPasteAndRenameHistory Rebase primary patches without changing restored values or component handles.
             [document, registry] = fixture();
             owner = document.getComponentByName("BottomRightButton");
-            document.applyCallbackAction(owner.Id, "ButtonPushedFcn", "Add", registry);
+            document.applyCallbackAction(owner.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, owner.Id, "ButtonPushedFcn", registry));
             document.renameComponent(owner.Id, "ANameLongEnoughToMovePositions", registry);
             pasted = document.pasteSubtree(document.copySubtree(owner.Id, registry), document.RootComponentId, registry);
             document.ClassName = "SavedWithADifferentClassName";

@@ -161,32 +161,17 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
                         "app.UIFigure.Name = ""After"";");
                     testCase.verifyEqual(source, expected);
 
-                    % Explicit callback deletion remains available and undo restores its exact source.
+                    % Disconnect removes only the binding, and undo restores its exact source.
                     field = document.getComponentByName("Field");
-                    document.applyCallbackAction(field.Id, "ValueChangedFcn", "Delete", registry);
+                    document.applyCallbackAction(field.Id, "ValueChangedFcn", "Disconnect", registry);
                     [source, diagnostics] = generator.generate(document);
                     testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
                     testCase.verifyFalse(contains(source, "app.Field.ValueChangedFcn ="));
-                    testCase.verifyFalse(contains(source, "function FieldValueChanged("));
+                    testCase.verifySubstring(source, "function FieldValueChanged(");
                     document.undo();
                     testCase.verifyEqual(generator.generate(document), expected);
                 end
             end
-        end
-
-        % Guarantee: deletion removes only owned source and is blocked by external references.
-        % Failure mode: deletion leaves dangling uses of the component, or removes user code.
-        function deletionRejectsExternalReference(testCase)
-            % deletionRejectsExternalReference Block deletion when source uses the component.
-
-            [document, generator] = RoundTripGeneratorTest.parsedFixture();
-            source = document.OriginalText + newline + "app.LeftValueLabel.Visible = 'on';";
-            document = yamada.source.AppSourceParser.parseText(source, ...
-                yamada.model.ComponentRegistry.createDefault());
-            testCase.verifyError(@() document.removeComponent("parsed-LeftValueLabel"), ...
-                "yamada:DocumentModel:UnsafeSourceCommit");
-            testCase.verifyNotEmpty(document.getComponent("parsed-LeftValueLabel"));
-            testCase.verifyEqual(generator.generate(document), source);
         end
 
         function checkboxTreePreservesWritableGeometrySettings(testCase)
@@ -222,19 +207,6 @@ classdef (TestTags = {'fast', 'generation'}) RoundTripGeneratorTest < matlab.uni
                 testCase.verifyEqual(other.getSettings("Position").Method, target.Method);
                 testCase.verifyNumElements(other.getSettings("InnerPosition"), 1);
             end
-        end
-
-        function ownedLeafDeletionRemovesOnlyOwnedSource(testCase)
-            % ownedLeafDeletionRemovesOnlyOwnedSource Remove an unreferenced leaf.
-            % Guarantee and failure mode: shared with deletionRejectsExternalReference.
-
-            [document, generator] = RoundTripGeneratorTest.parsedFixture();
-            document.removeComponent("parsed-LeftValueLabel");
-            [source, diagnostics] = generator.generate(document);
-
-            testCase.verifyFalse(contains(source, "app.LeftValueLabel"));
-            testCase.verifyFalse(contains(source, "LeftValueLabel  matlab.ui.control.Label"));
-            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
         function documentEditRewritesPositionAndGridAssignment(testCase)

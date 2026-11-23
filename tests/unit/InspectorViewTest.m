@@ -5,7 +5,7 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorViewTest < matlab.unittest.Te
 
     methods (Test, TestTags = {'fast'})
         function createsScrollableNativeGrid(testCase)
-            % createsScrollableNativeGrid Construct a view with public scrolling enabled.
+            % createsScrollableNativeGrid Construct a view whose native host scrolls tall content.
             % Guarantee: the inspector content can scroll when it exceeds the viewport.
             % Failure mode: the native grid loses Scrollable or sizes content to the viewport, hiding rows.
 
@@ -17,11 +17,15 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorViewTest < matlab.unittest.Te
 
             grid = view.contentGrid();
             testCase.verifyTrue(isvalid(grid));
-            testCase.verifyTrue(view.isScrollable());
+            % Read the native scroll host and content panel that own the grid.
+            content = grid.Parent;
+            host = content.Parent;
+            testCase.verifyEqual(string(host.Scrollable), "on");
             view.setContentHeight(800);
             drawnow;
-            testCase.verifyGreaterThan(view.contentPixelHeight(), 100);
-            testCase.verifyLessThan(view.contentPixelWidth(), view.viewportPixelWidth());
+            testCase.verifyGreaterThan(content.Position(4), 100);
+            viewport = getpixelposition(host, true);
+            testCase.verifyLessThan(content.Position(3), viewport(3));
             clear cleanup
         end
     end

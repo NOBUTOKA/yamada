@@ -149,28 +149,6 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyEqual(document.getComponent(label.Id).Name, "Label");
         end
 
-        function parsedDeletionUndoRestoresPendingIntent(testCase)
-            % parsedDeletionUndoRestoresPendingIntent Verify parsed deletion history.
-
-            % Use a parsed fixture so deletion remains source-backed and reversible.
-            testPath = mfilename("fullpath");
-            fixturePath = string(fullfile(fileparts(fileparts(testPath)), ...
-                "fixtures", "SimpleCalculatorApp.m"));
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.source.AppSourceParser.parseFile(fixturePath, registry);
-            target = document.getComponentByName("LeftValueLabel");
-            document.removeComponent(target.Id);
-            testCase.verifyEmpty(document.getComponent(target.Id));
-            testCase.verifyEmpty(document.PendingEdits);
-            document.undo();
-            testCase.verifyEqual(document.getComponent(target.Id).Name, ...
-                "LeftValueLabel");
-            testCase.verifyEmpty(document.PendingEdits);
-            document.redo();
-            testCase.verifyEmpty(document.getComponent(target.Id));
-            testCase.verifyEmpty(document.PendingEdits);
-        end
-
         % Guarantee: model validation applies the same schema as the Inspector to values set by any route.
         % Failure mode: values set outside the Inspector, such as by parsing, skip validation and fail in Preview.
         function geometryValidationRejectsUnsafeLiterals(testCase)
@@ -416,51 +394,6 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyEqual(yamada.model.ActiveGridResolver.resolve(document, label.Id), inner.Id);
             testCase.verifyEqual(yamada.model.ActiveGridResolver.resolve( ...
                 document, document.RootComponentId), "");
-        end
-        function propertyStatesKeepDefaultsImplicit(testCase)
-            % propertyStatesKeepDefaultsImplicit Join definitions without creating entries.
-
-            % A catalog capability remains absent until the document explicitly assigns it.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
-            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
-            states = document.getEffectivePropertyStates(registry, label.Id);
-            paths = arrayfun(@(state) state.Definition.Path, states);
-            textIndex = find(paths == "Text", 1);
-            testCase.verifyFalse(states(textIndex).IsExplicit);
-            testCase.verifyEmpty(states(textIndex).Entry);
-            testCase.verifyEmpty(label.getProperty("Text"));
-        end
-
-        function generatedPropertyResetIsUndoable(testCase)
-            % generatedPropertyResetIsUndoable Remove and restore one generated literal.
-            % Guarantee and failure mode: shared with propertyEditsUndoAndRedo.
-
-            % Reset stores absence rather than the catalog default and keeps redo reversible.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
-            label = document.insertComponent(registry, "uilabel", document.RootComponentId);
-            document.setProperty(label.Id, "Text", "Ready");
-            document.resetProperty(label.Id, "Text");
-            testCase.verifyEmpty(label.getProperty("Text"));
-            document.undo();
-            testCase.verifyEqual(label.getProperty("Text").LiteralValue, "Ready");
-            document.redo();
-            testCase.verifyEmpty(label.getProperty("Text"));
-            document.setProperty(label.Id, "Text", "New branch");
-            testCase.verifyFalse(document.canRedo());
-        end
-
-        function parsedPropertyResetIsRejected(testCase)
-            % parsedPropertyResetIsRejected Keep parsed assignments until owned deletion exists.
-
-            % Source preservation takes precedence over removing a parsed literal.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.source.AppSourceParser.parseFile(fullfile( ...
-                fileparts(fileparts(mfilename("fullpath"))), "fixtures", "SimpleCalculatorApp.m"), registry);
-            label = document.getComponentByName("LeftValueLabel");
-            testCase.verifyError(@() document.resetProperty(label.Id, "Text"), ...
-                "yamada:DocumentModel:ParsedPropertyResetUnsupported");
         end
 
         % Guarantee: the dirty flag is clear only at an exact saved checkpoint.

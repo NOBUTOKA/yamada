@@ -7,32 +7,27 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
         % Guarantee: committed edits reuse proven source and validation instead of reparsing.
         % Failure mode: each commit reparses the whole source, or reuse freezes command or placement data that should change.
         function independentFontEditsRetainConditionResults(testCase)
-            % independentFontEditsRetainConditionResults Reuse conditions without freezing native placement or command data.
+            % independentFontEditsRetainConditionResults Reuse conditions without freezing command data.
             registry = yamada.model.ComponentRegistry.createDefault();
             [document, ~, children] = CommittedPropertySourcePlanTest.gridFixture(registry, 2);
             label = children(1);
             document.setProperty(label.Id, "FontSize", 23, registry);
             document.validatePropertyCommit(registry);
-            measured = [20 20 100 22];
             beforeCopy = yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
             beforeDelete = yamada.model.DocumentEditAvailability.deletion(document, label.Id, registry);
-            beforeParents = yamada.model.DocumentEditAvailability.reparenting(document, label.Id, registry, measured);
             testCase.assertTrue(beforeCopy.Enabled);
             testCase.assertTrue(beforeDelete.Enabled);
             document.setPropertyBatch(label.Id, ...
                 yamada.model.PropertyTransaction.singleChange("FontSize", 31), registry);
             document.validatePropertyCommit(registry);
 
-            % Condition reads must use immutable prior answers for the same measured rectangle.
+            % Condition reads must use immutable prior answers.
             afterCopy = yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
             afterDelete = yamada.model.DocumentEditAvailability.deletion(document, label.Id, registry);
-            afterParents = yamada.model.DocumentEditAvailability.reparenting(document, label.Id, registry, measured);
             testCase.verifyEqual(afterCopy, beforeCopy);
             testCase.verifyEqual(afterDelete, beforeDelete);
-            testCase.verifyEqual(afterParents, beforeParents);
 
-            % Changed fit geometry must still recompute destination conditions.
-            yamada.model.DocumentEditAvailability.reparenting(document, label.Id, registry, [20 20 100 40]);
+            % Copy and Undo must observe the committed value rather than a frozen plan.
             snapshot = document.copySubtree(label.Id, registry);
             font = snapshot.Records(1).Properties(string({snapshot.Records(1).Properties.Path}) == "FontSize");
             testCase.verifyEqual(font.LiteralValue, 31);

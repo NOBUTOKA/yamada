@@ -5,9 +5,9 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
     %   deterministic across the complete audited release catalog.
 
     methods (Test, TestTags = {'fast'})
-        function cachedParentProjectionIsInvalidatedByRulesAndRegistration(testCase)
-            % cachedParentProjectionIsInvalidatedByRulesAndRegistration Observe changes after a cache hit.
-            % Guarantee: the parent projection cache is invalidated by rule and registration changes.
+        function cachedParentProjectionIsInvalidatedByRules(testCase)
+            % cachedParentProjectionIsInvalidatedByRules Observe parent context rule changes after a cache hit.
+            % Guarantee: the parent projection cache is invalidated by parent context rule changes.
             % Failure mode: a cached projection offers parents that are no longer allowed.
             registry = yamada.model.ComponentRegistry.createDefault();
             first = registry.getEffectiveProperties("uilabel", "uigridlayout");
@@ -16,11 +16,6 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
             registry.setParentContextRules(yamada.model.ParentContextRule.empty);
             plain = registry.getEffectiveProperties("uilabel", "uigridlayout");
             testCase.verifyFalse(any(string({plain.Path}) == "Layout.Row"));
-            replacement = yamada.model.ComponentDefinition("uilabel", "matlab.ui.control.Label", ...
-                "uifigure", false, {}, yamada.model.PropertyDefinition("Custom", 7, true, true));
-            registry.register(replacement);
-            replaced = registry.getEffectiveProperties("uilabel", "uigridlayout");
-            testCase.verifyEqual(string({replaced.Path}), "Custom");
         end
     end
 
@@ -31,7 +26,7 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
             %   other releases are checked against their projections by
             %   tests/verifyReleaseProjection.ps1.
             % Guarantee: the loaded registry matches the audited ledger for every variant.
-            % Failure mode: catalog promotion or loading drifts from the reviewed ledger.
+            % Failure mode: a catalog edit or release promotion changes a variant without the review that updates the ledger.
 
             % Compare only when the running release serves the surface catalog.
             projectRoot = fileparts(fileparts(fileparts(mfilename("fullpath"))));
@@ -45,8 +40,6 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
             documents = ComponentRegistryBaselineTest.ledgerDocuments();
             expectedIds = sort(string(cellfun(@(document) document.id, documents, "UniformOutput", false)));
             testCase.verifyEqual(registry.listVariantIds(), expectedIds);
-            expectedFactories = string(cellfun(@(document) document.factory, documents, "UniformOutput", false));
-            testCase.verifyEqual(registry.listFactories(), sort(unique(expectedFactories)));
             for documentIndex = 1:numel(documents)
                 document = documents{documentIndex};
                 definition = registry.getById(string(document.id));

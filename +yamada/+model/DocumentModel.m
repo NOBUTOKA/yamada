@@ -520,7 +520,7 @@ classdef DocumentModel < handle
         end
     end
 
-    methods
+    methods (Access = ?matlab.unittest.TestCase)
         function [settings, owners] = settingsInSourceOrder(obj)
             % settingsInSourceOrder Return independent canonical values in maintained physical source order.
             arguments (Input)
@@ -1534,59 +1534,6 @@ classdef DocumentModel < handle
             end
         end
 
-        function resetProperty(obj, componentId, path)
-            % resetProperty Remove one generated literal assignment with reversible history.
-            arguments (Input)
-                obj (1, 1) yamada.model.DocumentModel
-                componentId string
-                path string
-            end
-
-            % Refuse source-backed and parsed assignments until deletion ownership exists.
-            component = obj.getComponent(componentId);
-            if isempty(component)
-                error("yamada:DocumentModel:UnknownComponent", ...
-                    "Component ID ""%s"" does not exist.", componentId);
-            end
-            entry = component.getProperty(path);
-            if isempty(entry)
-                return
-            end
-            if ~entry.IsEditable
-                error("yamada:DocumentModel:ReadOnlyProperty", ...
-                    "Property ""%s"" is source-backed and read-only.", path);
-            end
-            if entry.Origin == "parsed"
-                error("yamada:DocumentModel:ParsedPropertyResetUnsupported", ...
-                    "Parsed property ""%s"" cannot be removed safely yet.", path);
-            end
-
-            % Keep absence as a first-class history state instead of materializing a default.
-            oldValue = entry.LiteralValue;
-            oldEntry = entry.toStruct();
-            beforeSettings = component.settingSnapshot();
-            source = "";
-            if ~isempty(obj.CurrentSource)
-                edits = struct("Start", {}, "End", {}, "Text", {});
-                analysis = obj.sourceAnalysis();
-                for setting = component.getSettings(path)
-                    if setting.Method == "nameValue"
-                        statement = analysis.Statements(analysis.statementIndices(setting.SourceSpan));
-                        edits = [edits yamada.source.FactoryCallEditor.remove(statement, setting)]; %#ok<AGROW>
-                    elseif ~isempty(setting.SourceSpan)
-                        edits(end + 1) = struct("Start", setting.SourceSpan.StartOffset, ...
-                            "End", setting.SourceSpan.EndOffset, "Text", ""); %#ok<AGROW>
-                    end
-                end
-                edits = yamada.source.SourceFormatting.cleanDeletions(obj.CurrentText, edits);
-                source = yamada.source.SourcePatchBatch(obj.CurrentText, edits).AfterText;
-            end
-            component.removeProperty(path);
-            obj.recordHistory(struct("Kind", "reset-property", ...
-                "ComponentId", componentId, "Path", path, "OldValue", oldValue, ...
-                "OldEntry", oldEntry, "BeforeSettings", beforeSettings, "SourceCandidateText", source));
-        end
-
         function confirmSavedSource(obj, checkpoint, registry)
             % confirmSavedSource Attach confirmed saved positions while retaining the immutable edit baseline.
             arguments (Input)
@@ -1683,38 +1630,6 @@ classdef DocumentModel < handle
                     return
                 end
             end
-        end
-
-        function removeComponent(obj, id)
-            % removeComponent Remove one leaf component and retain its deletion intent.
-            arguments (Input)
-                obj (1, 1) yamada.model.DocumentModel
-                id string
-            end
-
-            obj.ensureCurrentSource(obj.SourceRegistry);
-            % Locate the record before changing its parent or document ordering.
-            component = obj.getComponent(id);
-            if isempty(component)
-                error("yamada:DocumentModel:UnknownComponent", ...
-                    "Component ID ""%s"" does not exist.", id);
-            end
-            if ~isempty(component.Children)
-                error("yamada:DocumentModel:NonLeafDeletion", ...
-                    "Component ""%s"" has children and cannot be deleted safely.", id);
-            end
-            if id == obj.RootComponentId
-                error("yamada:DocumentModel:RootDeletion", ...
-                    "The root component cannot be deleted.");
-            end
-
-            % Retain parsed records so the source generator can check ownership.
-            index = find(obj.Components == component, 1);
-            pendingIndex = obj.addDeletionIntent(component);
-            obj.removeComponentAt(component);
-            obj.recordHistory(struct("Kind", "delete", "Component", component, ...
-                "ParentId", component.ParentId, "Index", index, ...
-                "PendingIndex", pendingIndex));
         end
 
         function result = canUndo(obj)
@@ -1955,7 +1870,7 @@ classdef DocumentModel < handle
                 obj (1, 1) yamada.model.DocumentModel
                 componentId (1, 1) string
                 name (1, 1) string
-                action (1, 1) string {mustBeMember(action, ["Add", "Delete", "New", "Connect", "Disconnect"])}
+                action (1, 1) string {mustBeMember(action, ["New", "Connect", "Disconnect"])}
                 registry (1, 1) yamada.model.ComponentRegistry
                 requestedHandler (1, 1) string = ""
             end
@@ -1967,12 +1882,10 @@ classdef DocumentModel < handle
                 throw(addCause(failure, exception));
             end
             % Validate current availability before changing any document or history state.
-            bindingOnly = any(action == ["New", "Connect", "Disconnect"]);
-            states = obj.callbackStates(componentId, registry, bindingOnly);
+            % Callback commands edit bindings only; handler method bodies are never removed.
+            states = obj.callbackStates(componentId, registry);
             state = states(string({states.Name}) == name);
-            if numel(state) ~= 1 || ...
-                    ~(action == "Add" && state.State == "absent" || action == "Delete" && state.State == "editable" || ...
-                    bindingOnly && state.State ~= "unsupported")
+            if numel(state) ~= 1 || state.State == "unsupported"
                 error("yamada:DocumentModel:UnsafeCallbackEdit", "The callback action is unavailable or unsafe.");
             end
             if action == "Disconnect" && state.State == "absent", return, end
@@ -1984,7 +1897,7 @@ classdef DocumentModel < handle
             if ~isempty(existing)
                 prior = before(existing);
                 original = yamada.model.CallbackState(name, state.State, "", "", ...
-                    prior.BindingSpan, prior.MethodSpan, prior.BindingAnchor, prior.MethodAnchor);
+                    prior.BindingSpan, yamada.model.SourceSpan.empty, prior.BindingAnchor, prior.MethodAnchor);
                 after(existing) = [];
             end
             handler = "";
@@ -2000,30 +1913,27 @@ classdef DocumentModel < handle
                 expression = target.Expression;
                 if state.State == "editable" && state.HandlerName == handler, return, end
             end
-            if any(action == ["Add", "New"])
+            if action == "New"
                 parentFactory = "";
                 if component.ParentId ~= "", parentFactory = obj.getComponent(component.ParentId).Factory; end
                 definition = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
                 definition = definition(string({definition.Path}) == name);
-                % Share collision-aware naming with the callback name popup.
-                if action == "Add", handler = yamada.source.CallbackMethodTargets.defaultName(obj, componentId, name, registry); end
-                if action == "New"
-                    names = obj.sourceAnalysis().nameIndex();
-                    reserved = [string({obj.Components.Name}), string({after.HandlerName}), ...
-                        names.Members, obj.ClassName, "createComponents", "delete", "figureDeleted", ...
-                        string(properties("handle"))', string(methods("handle"))'];
-                    if ~isvarname(requestedHandler) || iskeyword(requestedHandler) || ...
-                            strlength(requestedHandler) > namelengthmax || any(reserved == requestedHandler)
-                        error("yamada:DocumentModel:CallbackNameCollision", "Enter a valid, unused callback method name.");
-                    end
-                    handler = requestedHandler;
+                % Reject names that collide with source members, components, or pending handlers.
+                names = obj.sourceAnalysis().nameIndex();
+                reserved = [string({obj.Components.Name}), string({after.HandlerName}), ...
+                    names.Members, obj.ClassName, "createComponents", "delete", "figureDeleted", ...
+                    string(properties("handle"))', string(methods("handle"))'];
+                if ~isvarname(requestedHandler) || iskeyword(requestedHandler) || ...
+                        strlength(requestedHandler) > namelengthmax || any(reserved == requestedHandler)
+                    error("yamada:DocumentModel:CallbackNameCollision", "Enter a valid, unused callback method name.");
                 end
+                handler = requestedHandler;
                 ending = string(newline);
                 if obj.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
                 method = yamada.source.CallbackSourceEdits.handlerText(handler, name, obj.ClassName, ending, ...
                     component.Factory == "uifigure" && name == "CloseRequestFcn", definition.CallbackSignature);
             end
-            if any(action == ["Add", "New", "Connect"]) || ~isempty(original.BindingSpan) || ~isempty(original.MethodSpan)
+            if any(action == ["New", "Connect"]) || ~isempty(original.BindingSpan)
                 after(end + 1) = yamada.model.CallbackEdit(componentId, name, action, handler, method, original, obj.CurrentText, expression);
             end
 
@@ -4084,17 +3994,6 @@ classdef DocumentModel < handle
             obj.Components(obj.Components == component) = [];
         end
 
-        function index = addDeletionIntent(obj, component)
-            % addDeletionIntent Retain a parsed deletion for conservative generation.
-            index = 0;
-            if ~yamada.model.SourceOwnership.hasSource(component)
-                return
-            end
-            pending = struct("Kind", "delete-component", "Record", yamada.model.SourceOwnership.snapshot(component));
-            obj.PendingEdits{end + 1} = pending;
-            index = numel(obj.PendingEdits);
-        end
-
         function recordHistory(obj, edit, preparedSource, parsedCandidate, preparedEdits)
             % recordHistory Publish an already prepared source candidate and retain only primary reversible edits.
             arguments (Input)
@@ -4242,14 +4141,6 @@ classdef DocumentModel < handle
                     else
                         obj.removeComponentAt(edit.Component);
                     end
-                case "delete"
-                    if forward
-                        obj.removeComponentAt(edit.Component);
-                        obj.addDeletionIntent(edit.Component);
-                    else
-                        obj.addComponentAt(edit.Component, edit.ParentId, edit.Index);
-                        obj.removeDeletionIntent(edit.Component);
-                    end
                 case "property"
                     component = obj.getComponent(edit.ComponentId);
                     obj.assertPropertySettingTarget(component, edit, forward);
@@ -4286,33 +4177,6 @@ classdef DocumentModel < handle
                             obj.restoreBatchValue(component, change);
                         end
                     end
-                case "reset-property"
-                    component = obj.getComponent(edit.ComponentId);
-                    if forward
-                        component.removeProperty(edit.Path);
-                    else
-                        if isfield(edit, "OldEntry")
-                            component.restoreProperty(edit.OldEntry);
-                            component.restoreSettings(edit.BeforeSettings);
-                        else
-                            component.setProperty(edit.Path, edit.OldValue);
-                        end
-                    end
-            end
-        end
-
-        function removeDeletionIntent(obj, component)
-            % removeDeletionIntent Remove only the matching parsed deletion record.
-            for index = numel(obj.PendingEdits):-1:1
-                pending = obj.PendingEdits{index};
-                if ~isstruct(pending) || ~isfield(pending, "Kind") || pending.Kind ~= "delete-component", continue, end
-                id = "";
-                if isfield(pending, "Record"), id = pending.Record.Id;
-                elseif isfield(pending, "Component"), id = pending.Component.Id; end
-                if id == component.Id
-                    obj.PendingEdits(index) = [];
-                    return
-                end
             end
         end
 

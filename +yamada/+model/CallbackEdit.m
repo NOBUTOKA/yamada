@@ -18,8 +18,6 @@ classdef CallbackEdit
         BindingExpression string = ""
         % BindingSpan - Original assignment replaced or removed by this edit.
         BindingSpan yamada.model.SourceSpan
-        % MethodSpan - Original handler span for legacy body-edit commands.
-        MethodSpan yamada.model.SourceSpan
         % BindingAnchor - Original creation offset used for insertion.
         BindingAnchor double
         % MethodAnchor - Original methods-block offset used for insertion.
@@ -34,7 +32,7 @@ classdef CallbackEdit
             arguments (Input)
                 componentId (1, 1) string
                 name (1, 1) string
-                action (1, 1) string {mustBeMember(action, ["Add", "Delete", "New", "Connect", "Disconnect"])}
+                action (1, 1) string {mustBeMember(action, ["New", "Connect", "Disconnect"])}
                 handlerName (1, 1) string
                 methodText (1, 1) string
                 state (1, 1) yamada.model.CallbackState
@@ -52,7 +50,6 @@ classdef CallbackEdit
             obj.MethodText = methodText;
             obj.BindingExpression = bindingExpression;
             obj.BindingSpan = state.BindingSpan;
-            obj.MethodSpan = state.MethodSpan;
             obj.BindingAnchor = state.BindingAnchor;
             obj.MethodAnchor = state.MethodAnchor;
             obj.OriginalSource = originalSource;

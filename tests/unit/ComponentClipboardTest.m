@@ -9,8 +9,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
             % cutCarriesBindingsAndRetainsHandlers Move the connections while leaving callback bodies in place.
             [document, registry, left, right] = ComponentClipboardTest.fixture();
             button = document.insertComponent(registry, "uibutton", left.Id);
-            document.applyCallbackAction(left.Id, "SizeChangedFcn", "Add", registry);
-            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+            document.applyCallbackAction(left.Id, "SizeChangedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, left.Id, "SizeChangedFcn", registry));
+            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "ButtonPushedFcn", registry));
             before = document.CurrentText;
             handler = regexp(before, 'function [^\r\n]*ButtonPushed[^\r\n]*', 'match', 'once');
             testCase.assertNotEmpty(handler);

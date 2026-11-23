@@ -85,7 +85,7 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
 
             % Mutate both returned registries; a third load must still match the files.
             revision = first.Revision;
-            first.register(first.getById("uilabel"));
+            first.setParentContextRules(yamada.model.ParentContextRule.empty);
             second.setParentContextRules(yamada.model.ParentContextRule.empty);
             third = yamada.catalog.ComponentCatalogLoader.load(root);
             testCase.verifyEqual(third.Revision, revision);

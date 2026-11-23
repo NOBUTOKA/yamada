@@ -394,7 +394,7 @@ classdef PreviewRenderer < handle
         end
     end
 
-    methods (Static)
+    methods (Static, Access = private)
         function handles = emptyHandles()
             % emptyHandles Return an empty map from component identity to native preview handle.
             arguments (Output)

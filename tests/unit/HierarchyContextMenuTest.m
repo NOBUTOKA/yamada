@@ -82,7 +82,7 @@ classdef (TestTags = {'ui', 'editorShell'}) HierarchyContextMenuTest < matlab.ui
             item.MenuSelectedFcn(item, []);
             testCase.verifyEqual(testCase.ReceivedId, "");
             menu.ContextMenuOpeningFcn(menu, struct("InteractionInformation", struct("Node", button)));
-            testCase.Document.removeComponent("button");
+            testCase.Document.removeSubtree("button", yamada.model.ComponentRegistry.createDefault());
             item.MenuSelectedFcn(item, []);
             testCase.verifyEqual(testCase.ReceivedId, "");
             testCase.verifyEqual(item.Enable, matlab.lang.OnOffSwitchState.off);

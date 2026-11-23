@@ -1,5 +1,5 @@
 classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < matlab.unittest.TestCase
-    % EditAvailabilityTest Verify condition-based eligibility without speculative edits.
+    % EditAvailabilityTest Verify condition-based command eligibility and execution-time checks.
     %   Queries must leave document and clipboard state intact, reject structural
     %   constraints, and avoid source generation even with a populated clipboard.
     methods (Test)
@@ -16,13 +16,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             cut = clipboard.availability("Cut", document, leaf.Id, registry);
             pasted = clipboard.availability("Paste", document, right.Id, registry);
             deleted = yamada.model.DocumentEditAvailability.deletion(document, leaf.Id, registry);
-            states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
             testCase.verifyTrue(copied.Enabled);
             testCase.verifyTrue(cut.Enabled);
             testCase.verifyTrue(pasted.Enabled);
             testCase.verifyTrue(deleted.Enabled);
-            testCase.verifyTrue(states(string({states.Id}) == right.Id).Enabled);
-            testCase.verifyFalse(states(string({states.Id}) == left.Id).Enabled);
+            testCase.verifyTrue(EditAvailabilityTest.movable(document, leaf.Id, right.Id, registry));
             testCase.verifyEqual(document.GeneratedText, before);
             testCase.verifyEqual(document.HistoryIndex, history);
             testCase.verifyTrue(clipboard.hasContents(document));
@@ -38,12 +36,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             leaf.IsEditable = false;
             testCase.verifyTrue(clipboard.availability("Copy", document, left.Id, registry).Enabled);
             testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, left.Id, registry).Enabled);
-            states = yamada.model.DocumentEditAvailability.reparenting(document, left.Id, registry);
-            testCase.verifyFalse(any([states.Enabled]));
+            testCase.verifyFalse(EditAvailabilityTest.movable(document, left.Id, right.Id, registry));
             leaf.IsEditable = true;
-            states = yamada.model.DocumentEditAvailability.reparenting(document, left.Id, registry);
-            testCase.verifyFalse(states(string({states.Id}) == leaf.Id).Enabled);
-            testCase.verifyTrue(states(string({states.Id}) == right.Id).Enabled);
+            testCase.verifyFalse(EditAvailabilityTest.movable(document, left.Id, leaf.Id, registry));
+            testCase.verifyTrue(EditAvailabilityTest.movable(document, left.Id, right.Id, registry));
         end
 
         function rootAndMissingTargetsHaveReasons(testCase)
@@ -75,8 +71,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             testCase.verifyTrue(clipboard.availability("Paste", document, grid.Id, registry).Enabled);
             inserted = clipboard.paste(document, grid.Id, registry);
             testCase.verifyTrue(clipboard.availability("Paste", document, grid.Id, registry).Enabled);
-            states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
-            testCase.verifyFalse(states(string({states.Id}) == grid.Id).Enabled);
             document.removeSubtree(inserted.Id, registry);
             testCase.verifyTrue(clipboard.availability("Paste", document, grid.Id, registry).Enabled);
         end
@@ -132,8 +126,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             second = yamada.model.ComponentRecord("second-group", "SecondGroup", "uitabgroup", "matlab.ui.container.TabGroup", "generated");
             second.setProperty("Position", [10 10 200 150]);
             document.addComponent(second, right.Id);
-            states = yamada.model.DocumentEditAvailability.reparenting(document, tab.Id, registry);
-            testCase.verifyFalse(states(string({states.Id}) == second.Id).Enabled);
+            testCase.verifyFalse(EditAvailabilityTest.movable(document, tab.Id, second.Id, registry));
             testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, tab.Id, registry).Enabled);
             testCase.verifyTrue(yamada.model.DocumentEditAvailability.deletion(document, group.Id, registry).Enabled);
             testCase.verifyError(@() document.reparentSubtree(tab.Id, second.Id, registry), "yamada:DocumentModel:UnsafeSubtreeEdit");
@@ -164,17 +157,14 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
         end
 
         function measuredGeometryParticipatesInReparentConditions(testCase)
-            % measuredGeometryParticipatesInReparentConditions Do not reuse a missing-geometry result for measured bounds.
+            % measuredGeometryParticipatesInReparentConditions Require measured bounds when moving a grid child to an absolute parent.
             % Guarantee and failure mode: shared with readOnlyStateOnlyRestrictsMoving.
             [document, registry, ~, right, leaf] = EditAvailabilityTest.fixture(false);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             document.reparentSubtree(leaf.Id, grid.Id, registry);
-            states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
-            testCase.verifyFalse(states(string({states.Id}) == right.Id).Enabled);
-            states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry, [10 20 90 25]);
-            testCase.verifyTrue(states(string({states.Id}) == right.Id).Enabled);
-            states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
-            testCase.verifyFalse(states(string({states.Id}) == right.Id).Enabled);
+            testCase.verifyFalse(EditAvailabilityTest.movable(document, leaf.Id, right.Id, registry));
+            testCase.verifyTrue(EditAvailabilityTest.movable(document, leaf.Id, right.Id, registry, [10 20 90 25]));
+            testCase.verifyFalse(EditAvailabilityTest.movable(document, leaf.Id, right.Id, registry));
         end
 
         function constructorConditionsSurviveDiagnosticRefresh(testCase)
@@ -197,8 +187,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             [document, registry, ~, right, leaf] = EditAvailabilityTest.fixture(true);
             before = document.OriginalText;
             history = document.HistoryIndex;
-            states = yamada.model.DocumentEditAvailability.reparenting(document, leaf.Id, registry);
-            testCase.assertTrue(states(string({states.Id}) == right.Id).Enabled);
+            testCase.assertTrue(EditAvailabilityTest.movable(document, leaf.Id, right.Id, registry));
             document.reparentSubtree(leaf.Id, right.Id, registry);
             testCase.verifyEqual(document.HistoryIndex, history + 1);
             document.undo();
@@ -212,6 +201,27 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
     end
 
     methods (Static, Access = private)
+        function result = movable(document, id, parentId, registry, measured)
+            % movable Report whether the drop-time reparent command accepts a destination on an independent candidate.
+            arguments (Input)
+                document (1, 1) yamada.model.DocumentModel
+                id (1, 1) string
+                parentId (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
+                measured double = []
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            candidate = document.structuralCandidate(registry);
+            try
+                candidate.reparentSubtree(id, parentId, registry, measured);
+                result = true;
+            catch
+                result = false;
+            end
+        end
+
         function [document, registry, left, right, leaf] = fixture(parsed)
             % fixture Create compatible absolute parents and an optional parsed source checkpoint.
             arguments (Input)

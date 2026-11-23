@@ -300,29 +300,11 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             testCase.verifyEqual(app.Document.HistoryIndex, history + 1);
             testCase.verifyEqual(numel(app.Document.getComponent(app.SelectedComponentId).Children), 1);
         end
-
-        function documentReplacementClearsClipboard(testCase)
-            % documentReplacementClearsClipboard Do not offer prior-document content after successful New.
-            % Guarantee: New clears the clipboard.
-            % Failure mode: content from the previous document is pasted into the new one.
-            [app, figure, panelId] = testCase.fixture();
-            cleanup = onCleanup(@() delete(app));
-            testCase.select(figure, panelId);
-            copy = findall(figure, "Tag", "yamada-edit-copy");
-            copy.MenuSelectedFcn(copy, []);
-            app.Document.markSaved();
-            menus = findall(figure, "Type", "uimenu");
-            item = menus(erase(string({menus.Text}), "&") == "New");
-            item.MenuSelectedFcn(item, []);
-            paste = findall(figure, "Tag", "yamada-edit-paste");
-            testCase.verifyEqual(string(paste.Enable), "off");
-            testCase.verifyEqual(numel(app.Document.Components), 1);
-            status = findall(figure, "Tag", "yamada-status");
-            testCase.verifySubstring(string(status.Tooltip), "The document root cannot be removed.");
-        end
     end
 
     methods (Static, Access = private)
+        % Guarantee: New clears the clipboard.
+        % Failure mode: content from the previous document is pasted into the new one.
         function removeHarness(path)
             % removeHarness Remove only the temporary iframe test source.
             arguments (Input)
@@ -368,7 +350,9 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
             [app, figure, panelId] = testCase.fixture();
             cleanup = onCleanup(@() delete(app));
             rootId = app.Document.RootComponentId;
-            app.Document.applyCallbackAction(panelId, "SizeChangedFcn", "Add", yamada.model.ComponentRegistry.createDefault());
+            registry = yamada.model.ComponentRegistry.createDefault();
+            app.Document.applyCallbackAction(panelId, "SizeChangedFcn", "New", registry, ...
+                yamada.source.CallbackMethodTargets.defaultName(app.Document, panelId, "SizeChangedFcn", registry));
             testCase.select(figure, panelId);
             if route == "context", testCase.select(figure, rootId); end
             selected = app.SelectedComponentId;

@@ -9,7 +9,7 @@ classdef (TestTags = {'fast', 'catalog'}) RefreshRequestTest < matlab.unittest.T
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("GeometryPolicyFixture", registry);
             label = document.insertComponent(registry, "uilabel", document.RootComponentId);
-            handles = yamada.ui.PreviewRenderer.emptyHandles();
+            handles = dictionary(string([]), gobjects(0));
             request = yamada.ui.RefreshRequest("properties", label.Id, "Text");
             testCase.verifyFalse(request.affectsGeometry(document, registry, handles));
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
@@ -43,7 +43,7 @@ classdef (TestTags = {'fast', 'catalog'}) RefreshRequestTest < matlab.unittest.T
             nativeInner = uigridlayout(nativeOuter, [1 1]);
             nativeOuter.RowHeight = {'fit'}; nativeOuter.ColumnWidth = {100};
             nativeInner.RowHeight = {100}; nativeInner.ColumnWidth = {100};
-            handles = yamada.ui.PreviewRenderer.emptyHandles();
+            handles = dictionary(string([]), gobjects(0));
             handles([outer.Id, inner.Id]) = [nativeOuter, nativeInner];
             request = yamada.ui.RefreshRequest("properties", label.Id, "Text");
             testCase.verifyTrue(request.affectsGeometry(document, registry, handles));

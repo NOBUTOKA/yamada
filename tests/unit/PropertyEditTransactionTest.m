@@ -168,30 +168,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) PropertyEditTransactionTes
             testCase.verifyFalse(document.IsDirty);
         end
 
-        function pendingSettingsRetainOriginalValuesAcrossResetUndo(testCase)
-            % pendingSettingsRetainOriginalValuesAcrossResetUndo Preserve generated occurrence identity.
-
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("PendingApp", registry);
-            component = document.insertComponent(registry, "uilabel", document.RootComponentId);
-            document.setProperty(component.Id, "Text", "First");
-            original = component.getSettings("Text");
-            testCase.verifyEqual(original.Method, "assignment");
-            testCase.verifyNotEmpty(original.SourceSpan);
-            document.setProperty(component.Id, "Text", "Second");
-            document.resetProperty(component.Id, "Text");
-            testCase.verifyEmpty(component.getSettings("Text"));
-            document.undo();
-            testCase.verifyEqual(component.getSettings("Text").Id, original.Id);
-            testCase.verifyEqual(component.getSettings("Text").LiteralValue, "Second");
-            testCase.verifyEqual(component.getProperty("Text").LiteralValue, "Second");
-            document.undo();
-            testCase.verifyEqual(component.getProperty("Text").LiteralValue, "First");
-            document.redo();
-            document.redo();
-            testCase.verifyEmpty(component.getProperty("Text"));
-        end
-
         function historyRefusesAReboundSourceOccurrence(testCase)
             % historyRefusesAReboundSourceOccurrence Leave the history cursor unchanged on stale targets.
 

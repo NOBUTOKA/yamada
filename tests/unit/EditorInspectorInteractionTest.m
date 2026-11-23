@@ -132,7 +132,7 @@ classdef EditorInspectorInteractionTest < matlab.unittest.TestCase
             controls = findall(canvas);
             nativeGrid = controls(arrayfun(@(item) isa(item, "matlab.ui.container.GridLayout"), controls));
             nativeField = controls(arrayfun(@(item) isa(item, "matlab.ui.control.NumericEditField"), controls));
-            handles = yamada.ui.PreviewRenderer.emptyHandles();
+            handles = dictionary(string([]), gobjects(0));
             handles(grid.Id) = nativeGrid;
             handles(field.Id) = nativeField;
             overlay = findall(figure, "Tag", "yamada-interaction-overlay");

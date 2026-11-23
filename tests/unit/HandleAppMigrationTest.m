@@ -56,11 +56,11 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTe
             document = yamada.source.AppSourceParser.parseText(source, registry);
             states = yamada.source.CallbackSourceAnalyzer.analyze(document, document.RootComponentId, registry);
             testCase.verifyEqual(states(string({states.Name}) == "CloseRequestFcn").State, "absent");
-            document.applyCallbackAction(document.RootComponentId, "CloseRequestFcn", "Add", registry);
+            document.applyCallbackAction(document.RootComponentId, "CloseRequestFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, document.RootComponentId, "CloseRequestFcn", registry));
             added = generator.generate(document);
             testCase.verifySubstring(added, "CloseRequestFcn = @app.");
             reopened = yamada.source.AppSourceParser.parseText(added, registry);
-            reopened.applyCallbackAction(reopened.RootComponentId, "CloseRequestFcn", "Delete", registry);
+            reopened.applyCallbackAction(reopened.RootComponentId, "CloseRequestFcn", "Disconnect", registry);
             restored = generator.generate(reopened);
             testCase.verifySubstring(restored, yamada.source.CallbackSourceEdits.defaultClose("UIFigure"));
             testCase.verifyEqual(count(restored, ".CloseRequestFcn ="), 1);
@@ -78,7 +78,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTe
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
             tag = document.ClassName + "-button";
             button.setProperty("Tag", tag);
-            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "ButtonPushedFcn", registry));
             source = yamada.source.NewAppGenerator(registry).generate(document);
             source = replace(source, "% Add callback behavior here.", ...
                 "source.UserData = event; app." + button.Name + ".Text = source.Text + "" changed"";");
@@ -149,7 +149,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTe
         function canceledCloseKeepsOwnerUntilExplicitDelete(testCase)
             % canceledCloseKeepsOwnerUntilExplicitDelete Keep the shutdown decision outside the destructor.
             [document, registry] = testCase.runtimeDocument();
-            document.applyCallbackAction(document.RootComponentId, "CloseRequestFcn", "Add", registry);
+            document.applyCallbackAction(document.RootComponentId, "CloseRequestFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, document.RootComponentId, "CloseRequestFcn", registry));
             source = yamada.source.NewAppGenerator(registry).generate(document);
             source = replace(source, "            delete(app);", "            return");
             app = testCase.instantiate(document, source);

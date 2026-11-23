@@ -3,8 +3,8 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
     %   Tests cover binding replacement, retained method bodies and atomic history.
 
     methods (Test)
-        % Guarantee: binding edits change only binding assignments and are single undo steps; method bodies are never removed.
-        % Failure mode: the first callback rewrites root values, or Disconnect deletes a body that another binding or the user still needs.
+        % Guarantee: New, Connect, and Disconnect change only binding assignments and inserted methods, each as one undo step.
+        % Failure mode: the first callback on a New document rewrites root values, a replacement edits another binding that shares the handler, or Undo needs several steps.
         function firstCallbackCreationPreservesRootAndHistory(testCase)
             % firstCallbackCreationPreservesRootAndHistory Preserve root values, identity and clean Undo on the first callback creation.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -72,7 +72,7 @@ classdef (TestTags = {'fast', 'parser', 'generation'}) CallbackBindingSelectionT
         end
 
         % Guarantee: later edits after a callback binding keep the binding and setting identities through Save As and replay.
-        % Failure mode: a subsequent literal edit or Save As reattaches the binding to a stale occurrence.
+        % Failure mode: Save As renames the class without rebasing the callback history entry, so Undo applies offsets from before the rename.
         function callbackThenLiteralEditSurvivesSaveAndHistory(testCase)
             % callbackThenLiteralEditSurvivesSaveAndHistory Preserve current callback and value bindings through Save As and replay.
             [document, registry, button] = CallbackBindingSelectionTest.fixture();

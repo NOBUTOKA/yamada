@@ -4,8 +4,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
     %   callback bodies, independent clipboard data and source safety failures.
 
     methods (Test)
-        % Guarantee: Copy and Paste keep callback bindings and opaque settings verbatim, sharing the original handler and never running it.
-        % Failure mode: Paste duplicates or rewrites the handler method, drops an opaque setting, or evaluates callback code.
+        % Guarantee: Copy and Paste carry every callback binding form and opaque setting verbatim and reuse the original handler method.
+        % Failure mode: Paste normalizes or drops a binding form it cannot model, such as a cell or char callback, or duplicates the handler method.
         function parsedBindingsShareOriginalHandlers(testCase)
             % parsedBindingsShareOriginalHandlers Preserve opaque bindings and bodies without copying or executing them.
             for binding = ["@app.OnPushed", "@(~, event) app.OnPushed(event)", ...
@@ -87,29 +87,6 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) CallbackCopyTest
                 document.undo();
                 testCase.verifyEqual(document.CurrentText, document.OriginalText);
             end
-        end
-
-        function parsedPendingCallbackEditsRemainIndependentOfCopy(testCase)
-            % parsedPendingCallbackEditsRemainIndependentOfCopy Retain original Add and Delete intentions across paste and undo.
-            % Guarantee: pending callback Add and Delete edits are not altered by Paste or its Undo.
-            % Failure mode: pasting a component copies or cancels pending callback intentions.
-            [document, registry, panel, button] = CallbackCopyTest.fixture("app.Button = uibutton(app.Panel);");
-            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-            document.applyCallbackAction(panel.Id, "SizeChangedFcn", "Delete", registry);
-            edits = document.CallbackEdits;
-            source = yamada.source.RoundTripGenerator(registry).generate(document);
-            clipboard = yamada.model.ComponentClipboard();
-            clipboard.copy(document, panel.Id, registry);
-            pasted = clipboard.paste(document, document.RootComponentId, registry);
-            copied = document.getComponent(pasted.Children(1));
-            testCase.verifyNotEmpty(copied.getProperty("ButtonPushedFcn"));
-            testCase.verifyEmpty(pasted.getProperty("SizeChangedFcn"));
-            testCase.verifyEqual(document.CallbackEdits, edits);
-            testCase.verifyEqual(count(document.GeneratedText, ".ButtonPushedFcn ="), 2);
-            testCase.verifyEqual(count(document.GeneratedText, ".SizeChangedFcn ="), 0);
-            document.undo();
-            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
-            testCase.verifyEqual(document.CallbackEdits, edits);
         end
     end
 

@@ -172,9 +172,10 @@ classdef (TestTags = {'fast', 'parser'}) CallbackSourceAnalyzerTest < matlab.uni
                 state = states(string({states.Name}) == name);
                 testCase.verifyEqual(state.State, "editable", name);
                 testCase.verifyEqual(state.HandlerName, handler);
-                document.applyCallbackAction(component.Id, name, "Delete", registry);
+                document.applyCallbackAction(component.Id, name, "Disconnect", registry);
                 removed = yamada.source.RoundTripGenerator(registry).generate(document);
-                testCase.verifyFalse(contains(removed, handler));
+                testCase.verifyFalse(contains(removed, "app.Button." + name + " ="));
+                testCase.verifySubstring(removed, "function " + handler + "(");
                 document.undo();
                 testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
             end

@@ -195,6 +195,11 @@ classdef ComponentRegistry < handle
 
         function register(obj, definition)
             % register Add or replace one complete component definition.
+            %   Call register only while building a registry: inside ComponentCatalogLoader before
+            %   it returns the registry, or on a new ComponentRegistry before it is passed to a
+            %   DocumentModel, parser, generator, or editor. Calling register on a registry that
+            %   has already been returned or passed to one of them is prohibited, because those
+            %   consumers and their caches assume a fixed definition set.
             arguments (Input)
                 obj (1, 1) yamada.model.ComponentRegistry
                 definition (1, 1) yamada.model.ComponentDefinition
@@ -269,19 +274,6 @@ classdef ComponentRegistry < handle
             end
             candidates = obj.Definitions(obj.FactoryVariantIds{factory});
             definition = obj.selectVariant(candidates, creationArguments, factory);
-        end
-
-        function factories = listFactories(obj)
-            % listFactories Return registered factory names in stable order.
-            arguments (Input)
-                obj (1, 1) yamada.model.ComponentRegistry
-            end
-            arguments (Output)
-                factories string
-            end
-
-            % Sorting makes palettes, tests, and generated output deterministic.
-            factories = sort(keys(obj.FactoryVariantIds))';
         end
 
         function ids = listVariantIds(obj)

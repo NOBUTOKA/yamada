@@ -129,7 +129,7 @@ classdef CallbackSourceAnalyzer
                 if ~isempty(pending)
                     edit = pending(end);
                     state = "absent";
-                    if any(edit.Action == ["Add", "New", "Connect"]), state = "editable"; end
+                    if any(edit.Action == ["New", "Connect"]), state = "editable"; end
                     reason = "";
                     handler = edit.HandlerName;
                     bindingSpan = edit.BindingSpan;

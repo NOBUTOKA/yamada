@@ -73,7 +73,7 @@ classdef (TestTags = {'fast', 'model', 'generation', 'gridOverlay'}) SubtreeRepa
             % preservesCallbackMethodsAndBindings Keep existing handler text while moving initialization.
             [original, registry, left, right] = SubtreeReparentTest.fixture();
             button = original.insertComponent(registry, "uibutton", left.Id);
-            original.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+            original.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(original, button.Id, "ButtonPushedFcn", registry));
             source = yamada.source.NewAppGenerator(registry).generate(original);
             source = replace(source, "% Add callback behavior here.", "error('callback-must-not-run');");
             document = yamada.source.AppSourceParser.parseText(source, registry);

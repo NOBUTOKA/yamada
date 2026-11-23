@@ -22,8 +22,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SettingIndexTest < matlab.
             current = owner.Settings;
             record = current(1).toStruct();
             independent = yamada.model.PropertySetting(record.Path, record.Value, record.Location);
-            independent = independent.withLocations(struct("SourceSpan", yamada.model.SourceSpan(1, 2)));
-            testCase.verifyNotEqual(owner.Settings(1).SourceSpan, independent.SourceSpan);
+            independent = independent.withLiteral("Independent copy");
+            testCase.verifyNotEqual(owner.Settings(1).LiteralValue, independent.LiteralValue);
             verifyIndexes(testCase, document, registry);
         end
 
