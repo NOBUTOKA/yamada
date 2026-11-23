@@ -1,6 +1,6 @@
 classdef CallbackEdit
     % CallbackEdit Retain one callback transaction against an original source snapshot.
-    %   This immutable value stores original deletion spans and generated handler
+    %   This immutable value stores original binding spans and generated handler
     %   text. Document history owns ordered snapshots of these pending intentions.
 
     properties (SetAccess = private)
@@ -8,7 +8,7 @@ classdef CallbackEdit
         ComponentId string
         % Name - Callback property name.
         Name string
-        % Action - Binding creation, connection, disconnection, or legacy body-edit intention.
+        % Action - Binding creation, connection, or disconnection intention.
         Action string
         % HandlerName - Method referenced by a creation or connection.
         HandlerName string
