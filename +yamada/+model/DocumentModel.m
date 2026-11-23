@@ -1072,7 +1072,7 @@ classdef DocumentModel < handle
             assert(~isempty(component) && component.IsEditable, ...
                 "yamada:DocumentModel:UnsafeAxesSource", "The selected axes cannot be edited.");
             [batch, requested, forward, inverse, paths] = yamada.source.AxesInspectorEdits.plan( ...
-                obj,component,path,value,action);
+                obj,component,path,value,action,registry.CatalogRoot);
             if batch.AfterText == obj.CurrentText, return, end
             before = obj.CurrentSource;
             [state, forward] = obj.publishAxesSource(component,batch,forward,"",paths, ...
@@ -1175,9 +1175,12 @@ classdef DocumentModel < handle
             end
             historyChanges = repmat(struct("Path", "", "HadOldValue", false, ...
                 "OldValue", [], "NewValue", [], "TargetSettingId", 0), 1, numel(changes));
+            implied = false(1, numel(changes));
             for index = 1:numel(changes)
                 entry = component.getProperty(paths(index));
-                if ~isempty(entry) && ~entry.IsEditable
+                % A call-implied value is superseded by an owned source insertion, never written in place.
+                implied(index) = yamada.source.AxesSettingPlacement.isImplied(entry);
+                if ~isempty(entry) && ~entry.IsEditable && ~implied(index)
                     error("yamada:DocumentModel:ReadOnlyProperty", ...
                         "Property ""%s"" is source-backed and read-only.", paths(index));
                 end
@@ -1187,6 +1190,14 @@ classdef DocumentModel < handle
                     historyChanges(index).OldValue = entry.LiteralValue;
                     historyChanges(index).TargetSettingId = obj.propertySettingId(entry);
                 end
+                % An implied value compares by the call's literal, which the entry does not expose.
+                if implied(index)
+                    settings = component.getSettings(paths(index));
+                    historyChanges(index).OldValue = settings(end).LiteralValue;
+                    if isstring(historyChanges(index).OldValue) && ischar(changes(index).Value)
+                        historyChanges(index).OldValue = char(historyChanges(index).OldValue);
+                    end
+                end
                 historyChanges(index).NewValue = changes(index).Value;
             end
 
@@ -1195,10 +1206,15 @@ classdef DocumentModel < handle
             requested = changes;
             historyChanges(unchanged) = [];
             changes(unchanged) = [];
+            implied(unchanged) = [];
             if ~isempty(changes) && obj.tryImmediateProperties(componentId, requested, registry)
                 entries = yamada.model.PropertyEntry.empty;
                 for path = string({changes.Path}), entries(end + 1) = component.getProperty(path); end %#ok<AGROW>
                 return
+            end
+            if any(implied)
+                error("yamada:DocumentModel:ReadOnlyProperty", ...
+                    "Property ""%s"" is implied by an axes call that cannot be superseded safely.", paths(find(implied, 1)));
             end
             if ~isempty(registry)
                 if ~isempty(changes)
@@ -3318,8 +3334,10 @@ classdef DocumentModel < handle
                         if startsWith(code, "app."), continue, end
                         [~, target, tokens, spans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry.CatalogRoot);
                         if target ~= name, continue, end
-                        [paths, values, argumentIndices] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
+                        [paths, values, argumentIndices, owned] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
                             forms, component.Factory, tokens, false);
+                        [ownedSpans, editable] = yamada.source.AxesSettingPlacement.ownership( ...
+                            component.Factory, paths, owned, argumentIndices, tokens, spans);
                     end
                     index = analysis.statementIndices(statement.Span); visit = find(execution.Trace.Order == index);
                     assert(isscalar(visit), "yamada:DocumentModel:UnsafeSubtreeEdit", "An emitted statement requires one initialization visit.");
@@ -3328,9 +3346,9 @@ classdef DocumentModel < handle
                         scope = scopes(string({scopes.Name}) == owner); assert(isscalar(scope));
                         for effect = 1:numel(paths)
                             location = struct("Method", "functionCall", "Syntax", "call", ...
-                                "SourceSpan", statement.Span, "ValueSpan", spans(argumentIndices(effect)), ...
+                                "SourceSpan", statement.Span, "ValueSpan", ownedSpans{effect}, ...
                                 "SourceSnapshotId", state.StateId, "Sequence", execution.Assignment(visit) + effect - 1, ...
-                                "IsEditable", false);
+                                "IsEditable", editable(effect));
                             setting = yamada.model.PropertySetting(paths(effect), values{effect}, location).withScope(owner, scope.Span);
                             old = previous(string({previous.Path}) == setting.Path & string({previous.Method}) == setting.Method);
                             if isscalar(old), setting = setting.withIdentity(old.Id, old.SourceSnapshotId); end
@@ -3631,9 +3649,12 @@ classdef DocumentModel < handle
             [state,settings,factoryArguments,execution] = yamada.model.IndexedSettingEdit.prepare( ...
                 obj,obj.CurrentSource,owner,batch,delta.Changes,delta.Placements,registry,delta.RemovedIds,stateId);
             if ~isempty(delta.Placements)
-                inserted = settings(arrayfun(@(setting) ...
-                    isequal(setting.SourceSpan,delta.Placements.Statement.Span),settings));
-                assert(numel(inserted) == numel(delta.Placements.Setting) && all([inserted.IsCertain]), ...
+                % A merged option shares its call statement with the call's earlier occurrences.
+                placed = delta.Placements.Setting;
+                inserted = settings(arrayfun(@(setting) isequal(setting.SourceSpan,placed(1).SourceSpan) && ...
+                    any(string({placed.Path}) == setting.Path) && isequal(setting.ValueSpan,placed( ...
+                    find(string({placed.Path}) == setting.Path,1)).ValueSpan),settings));
+                assert(numel(inserted) == numel(placed) && all([inserted.IsCertain]), ...
                     "yamada:DocumentModel:UnsafeAxesSource","The insertion must execute once in the owning initializer.");
                 delta.Placements.Setting = inserted;
             end
@@ -3740,7 +3761,7 @@ classdef DocumentModel < handle
             end
             batch = yamada.source.SourcePatchBatch(obj.CurrentText, edits);
             changes = struct("Path", {}, "Value", {});
-            placements = struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {});
+            placements = struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {}, "Form", {});
             if forward, placements = edit.Insertions; end
             for target = edit.SettingIdentities.Targets
                 if forward, id = target.AfterId; value = target.AfterValue;
@@ -3803,7 +3824,7 @@ classdef DocumentModel < handle
             for owned = edit.Owners
                 component = obj.getComponent(owned.ComponentId);
                 changes = struct("Path", {}, "Value", {});
-                placements = struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {});
+                placements = struct("Path", {}, "Method", {}, "Offset", {}, "OwnerMethod", {}, "Form", {});
                 if forward, placements = owned.Insertions; removed = owned.SettingIdentities.Removed;
                 else, removed = owned.SettingIdentities.Added; end
                 for target = owned.SettingIdentities.Targets

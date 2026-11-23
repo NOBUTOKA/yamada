@@ -388,7 +388,7 @@ classdef AppSourceParser
                         targetComponent = document.getComponentByName(target);
                         if ~isempty(tokens) && ~isempty(targetComponent) && any(created == targetComponent.Id) && ...
                                 ~any(blockedCallNames == name) && initializationCertain(visit) && nnz(initializationOrder == index) == 1
-                            [paths, values, argumentsUsed] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
+                            [paths, values, argumentsUsed, owned] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
                                 forms, targetComponent.Factory, tokens, implicit);
                             if ~isempty(paths)
                                 if implicit
@@ -398,13 +398,16 @@ classdef AppSourceParser
                                         targetComponent.Id, statement.Span);
                                 end
                                 document.Metadata.HasAxesSettingCalls = true;
+                                % Explicit targets own their replaceable value tokens; implied effects own none.
+                                [ownedSpans, editable] = yamada.source.AxesSettingPlacement.ownership( ...
+                                    targetComponent.Factory, paths, owned, argumentsUsed, tokens, valueSpans);
+                                editable = editable & ~implicit;
                                 for effect = 1:numel(paths)
                                     sequence = sequence + 1;
-                                    valueSpan = valueSpans(argumentsUsed(effect));
                                     location = struct("Method", "functionCall", "Syntax", "call", ...
-                                        "SourceSpan", statement.Span, "ValueSpan", valueSpan, ...
+                                        "SourceSpan", statement.Span, "ValueSpan", ownedSpans{effect}, ...
                                         "SourceSnapshotId", document.Metadata.SourceSnapshotId, ...
-                                        "Sequence", sequence, "IsEditable", false);
+                                        "Sequence", sequence, "IsEditable", editable(effect));
                                     setting = yamada.model.PropertySetting(paths(effect), values{effect}, location);
                                     targetComponent.recordSetting(yamada.source.AppSourceParser.scopedSetting(setting, initializationLayout, index));
                                 end

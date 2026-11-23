@@ -144,6 +144,20 @@ Model mutators implement insertion, subtree deletion and reparenting, Copy/Paste
 
 [`PropertyInsertionPlanner`](../+yamada/+source/PropertyInsertionPlanner.m) finds a proven initialization interval for new settings while holding existing occurrences fixed. New components use post-construction assignments by default; supported constructor-only components use name-value arguments. When constructor additions are not permitted, the planner inserts assignments after their prerequisites and before relevant modeled downstream setters. The default interval precedes the next unknown statement; prerequisites may select a later interval, ending at its next unknown statement.
 
+#### Axes setting function placement
+
+**Conditions to preserve**
+
+- A recognized call effect owns a replaceable value token only when it comes from an argument or option, that single-line token belongs to it alone, and the target is explicit. Implied literal effects, such as `XLimMode` from `xlim(ax, [0 1])`, have no `ValueSpan` and are never rewritten; a requested change supersedes them with a new setting after the implying call.
+- Placement follows one priority: an existing owned value is replaced in place; a dependent path of a catalog `settingGroups` entry follows the method of its main path's last setting; otherwise a form marked `insertion` precedes constructor arguments and assignments. A group exists only where the dependent path is meaningless without its main path, which currently means the axes text objects.
+- A dependent setting whose main path is a call joins the last certain call of that function that declares exactly one option for the path, then an earlier such call. A new call that would restate the main value is not emitted; the next candidate is the constructor or assignment.
+- An `insertion` form has one argument and owns exactly one path, and its implied effects must match a plain assignment of that path. Forms that also change other properties, such as `xticklabels`, `grid`, `xlim("tight")`, and `title` with a subtitle, are never chosen for new settings. A value that an inserted call already implies needs no statement of its own.
+- Call insertions, option additions, and their Undo use the indexed literal path. They do not reparse or validate the whole source: the call form supplies the owned and implied occurrences, each new or extended statement reports its event count to the execution index, and removing an option keeps the statement while another of its occurrences survives.
+
+**Explanation**
+
+[`AxesSettingFunctionCatalog`](../+yamada/+catalog/AxesSettingFunctionCatalog.m) loads each release's `axes-setting-functions.json` once per catalog root and indexes forms by name and identifier, insertion forms by factory and path, and setting groups. [`AxesSettingPlacement`](../+yamada/+source/AxesSettingPlacement.m) holds the ownership rule and builds call text and occurrences. [`AxesInspectorEdits`](../+yamada/+source/AxesInspectorEdits.m) applies the rules to specialized axes text, ruler, and geographic rows; the insertion planner applies the insertion-form rule to ordinary rows such as limits, ticks, scales, and `Box`.
+
 ### Subtree editing and clipboard ownership
 
 #### Subtree transactions

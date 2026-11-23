@@ -3,7 +3,7 @@ classdef AxesInspectorEdits
     %   Each patch carries typed occurrence changes for indexed publication and history.
 
     methods (Static)
-        function [batch, requested, forward, inverse, paths] = plan(document, component, path, value, action)
+        function [batch, requested, forward, inverse, paths] = plan(document, component, path, value, action, root)
             % plan Build a reversible patch against one exact source snapshot.
             arguments (Input)
                 document (1,1) yamada.model.DocumentModel
@@ -11,6 +11,7 @@ classdef AxesInspectorEdits
                 path (1,1) string
                 value
                 action (1,1) string {mustBeMember(action,["set","override","share"])}
+                root (1,1) string = ""
             end
             arguments (Output)
                 batch (1,1) yamada.source.SourcePatchBatch
@@ -22,7 +23,7 @@ classdef AxesInspectorEdits
 
             if path == "GeographicLimits" && component.Factory == "geoaxes" && action == "set"
                 [batch, requested, forward, inverse, paths] = ...
-                    yamada.source.AxesInspectorEdits.geographicLimits(document,component,value);
+                    yamada.source.AxesInspectorEdits.geographicLimits(document,component,value,root);
                 return
             end
             assert(any(yamada.model.AxesInspectorProperties.paths(component.Factory) == path), ...
@@ -60,7 +61,7 @@ classdef AxesInspectorEdits
                 encoded = yamada.source.LiteralEncoder.encode(requested);
                 if isempty(original) || action == "override"
                     [edits, placement] = yamada.source.AxesInspectorEdits.insert( ...
-                        document,component,path,encoded,requested,original);
+                        document,component,path,encoded,requested,original,root);
                     forward.Placements = placement;
                 else
                     assert(original.IsCertain && original.ValueKind == "literal" && ...
@@ -90,12 +91,13 @@ classdef AxesInspectorEdits
     end
 
     methods (Static, Access = private)
-        function [batch, requested, forward, inverse, paths] = geographicLimits(document,component,value)
+        function [batch, requested, forward, inverse, paths] = geographicLimits(document,component,value,root)
             % geographicLimits Replace two arguments from one owned call as a single transaction.
             arguments (Input)
                 document (1,1) yamada.model.DocumentModel
                 component (1,1) yamada.model.ComponentRecord
                 value (2,2) double {mustBeReal,mustBeFinite}
+                root (1,1) string
             end
             arguments (Output)
                 batch (1,1) yamada.source.SourcePatchBatch
@@ -119,7 +121,7 @@ classdef AxesInspectorEdits
                 yamada.source.LiteralEncoder.encode(value(2,:))];
             if isempty(latitude) && isempty(longitude)
                 [edits, forward.Placements] = yamada.source.AxesInspectorEdits.insert( ...
-                    document,component,"GeographicLimits",strjoin(encoded,", "),value,yamada.model.PropertySetting.empty);
+                    document,component,"GeographicLimits",strjoin(encoded,", "),value,yamada.model.PropertySetting.empty,root);
             else
                 assert(~isempty(latitude) && ~isempty(longitude) && ...
                     isequal(latitude(end).SourceSpan,longitude(end).SourceSpan), ...
@@ -222,7 +224,7 @@ classdef AxesInspectorEdits
             result = value;
         end
 
-        function [edit, placement] = insert(document,component,path,encoded,value,original)
+        function [edit, placement] = insert(document,component,path,encoded,value,original,root)
             % insert Emit one setting beside a proven initialization statement.
             arguments (Input)
                 document (1,1) yamada.model.DocumentModel
@@ -231,6 +233,7 @@ classdef AxesInspectorEdits
                 encoded (1,1) string
                 value
                 original yamada.model.PropertySetting
+                root (1,1) string
             end
             arguments (Output)
                 edit (1,1) struct
@@ -249,38 +252,56 @@ classdef AxesInspectorEdits
             end
             source = document.CurrentText;
             analysis = document.sourceAnalysis();
+            receiver = "app." + component.Name;
+            snapshot = "";
+            if isfield(document.Metadata,"SourceSnapshotId"), snapshot = document.Metadata.SourceSnapshotId; end
+
+            % A dependent setting follows its main path: an option joins the main call.
+            form = struct([]);
+            if isempty(original) && path ~= "GeographicLimits"
+                [main, groupForm] = yamada.catalog.AxesSettingFunctionCatalog.settingGroup(component.Factory,path,root);
+                mainSettings = yamada.model.PropertySetting.empty;
+                if ~isempty(main), mainSettings = component.getSettings(main); end
+                if ~isempty(mainSettings) && mainSettings(end).Method == "functionCall"
+                    [edit, merged, callEnd] = yamada.source.AxesSettingPlacement.optionMerge( ...
+                        document,component,path,value,groupForm,root);
+                    if ~isempty(edit)
+                        placement = struct("Statement",yamada.source.SourceStatement.empty, ...
+                            "Setting",merged,"Offset",callEnd);
+                        return
+                    end
+                end
+                % Without a main setting, a reviewed call form precedes an assignment unless a local method shadows it.
+                if isempty(mainSettings)
+                    form = yamada.source.AxesSettingPlacement.callForm(component.Factory,path,value,root);
+                    if ~isempty(form) && any(string({analysis.Layout.Methods.Name}) == string(form.name))
+                        form = struct([]);
+                    end
+                end
+            end
             index = analysis.statementIndices(span);
             assert(isscalar(index));
             owner = analysis.Layout.Owner(index);
             method = analysis.Layout.Methods(string({analysis.Layout.Methods.Name}) == owner);
             assert(isscalar(method));
-            receiver = "app." + component.Name;
             suffix = "";
             syntax = "assignment";
-            if isempty(original) && any(path == ["Title.String","Subtitle.String","XLabel.String","YLabel.String","ZLabel.String","TickLabelFormat","GeographicLimits"])
-                switch path
-                    case "Title.String"
-                        name = "title";
-                    case "Subtitle.String"
-                        name = "subtitle";
-                    case "XLabel.String"
-                        name = "xlabel";
-                    case "YLabel.String"
-                        name = "ylabel";
-                    case "ZLabel.String"
-                        name = "zlabel";
-                    case "TickLabelFormat"
-                        name = "geotickformat";
-                    case "GeographicLimits"
-                        name = "geolimits";
-                end
-                assert(~any(string({analysis.Layout.Methods.Name}) == name), ...
-                    "yamada:AxesInspectorEdits:ShadowedFunction", "A local method shadows this axes function.");
+            name = "";
+            if ~isempty(form)
+                name = string(form.name);
+                [prefix, suffix] = yamada.source.AxesSettingPlacement.callText(form,receiver);
+                syntax = "functionCall";
+            elseif isempty(original) && path == "GeographicLimits"
+                name = "geolimits";
                 prefix = name + "(" + receiver + ", ";
                 suffix = ")";
                 syntax = "functionCall";
             else
                 prefix = receiver + "." + path + " = ";
+            end
+            if syntax == "functionCall"
+                assert(~any(string({analysis.Layout.Methods.Name}) == name), ...
+                    "yamada:AxesInspectorEdits:ShadowedFunction", "A local method shadows this axes function.");
             end
 
             raw = prefix + encoded + suffix;
@@ -306,8 +327,6 @@ classdef AxesInspectorEdits
             first = offset + strlength(statement) - strlength(raw);
             sourceSpan = yamada.model.SourceSpan(first,first + strlength(raw));
             indexed = yamada.source.SourceStatement(raw,sourceSpan,first + (0:strlength(raw)-1));
-            snapshot = "";
-            if isfield(document.Metadata,"SourceSnapshotId"), snapshot = document.Metadata.SourceSnapshotId; end
             if syntax == "assignment"
                 setting = yamada.source.PropertySettingSyntax.assignment(indexed,snapshot,0);
             elseif path == "GeographicLimits"
@@ -326,10 +345,8 @@ classdef AxesInspectorEdits
                 end
             else
                 valueFirst = first + strlength(prefix);
-                location = struct("Method","functionCall","Syntax","call","SourceSpan",sourceSpan, ...
-                    "ValueSpan",yamada.model.SourceSpan(valueFirst,valueFirst+strlength(encoded)-1), ...
-                    "SourceSnapshotId",snapshot,"IsEditable",false);
-                setting = yamada.model.PropertySetting(path,value,location);
+                setting = yamada.source.AxesSettingPlacement.callSettings(component.Factory,form,value,path, ...
+                    sourceSpan,yamada.model.SourceSpan(valueFirst,valueFirst+strlength(encoded)-1),snapshot);
             end
             batch = yamada.source.SourcePatchBatch(source,edit);
             [scope, valid] = batch.mapSpan(method.Span);

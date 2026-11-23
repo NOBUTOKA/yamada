@@ -50,6 +50,7 @@ These conventions apply to project-owned source code.
 
 ## Verification
 
+- Add tests only when they protect a meaningful behavior or invariant against a concrete failure mode not adequately covered by existing tests. For each new test or test group, briefly comment on what it protects and how that guarantee could be broken.
 - Before each commit, run the test files or `area` profiles of `tests/runYamadaTests.m` that cover the changed code.
 - Before submitting a pull request, run the `full` profiles required by the Testing section of `CONTRIBUTING.md`, which also covers documentation-only changes, commands, and additional checks. Before a release, follow `doc/RELEASING.md`.
 - Report completed test results and identify checks that could not be run.
