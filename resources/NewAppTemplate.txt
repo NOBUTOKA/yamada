@@ -1,0 +1,63 @@
+# Copyright (C) 2026 Nobuto Kaitoh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# This file is part of yamada. See LICENSE for the license text.
+# NewAppGenerator removes these leading # lines; generated applications carry no project license notice.
+# A line that contains only {{Name}} expands to zero or more generated lines; other {{Name}} markers are replaced inline.
+classdef {{ClassName}} < handle
+    % {{ClassName}} Define a programmatic handle-based application.
+
+    properties (Access = private)
+{{Properties}}
+    end
+
+    methods (Access = private)
+
+        function createComponents(app)
+            % createComponents Create and configure UI components.
+            arguments (Input)
+                app (1, 1) {{ClassName}}
+            end
+
+{{CreateBody}}
+        end
+    end
+
+{{CallbackMethods}}
+    methods (Access = private)
+        function figureDeleted(app, ~, ~)
+            % figureDeleted Release the owner when its figure is destroyed.
+            arguments (Input)
+                app (1, 1) {{ClassName}}
+                ~
+                ~
+            end
+            if isvalid(app), delete(app); end
+        end
+    end
+
+    methods (Access = public)
+
+        function app = {{ClassName}}
+            % {{ClassName}} Construct the application.
+            arguments (Output)
+                app (1, 1) {{ClassName}}
+            end
+
+            try
+                createComponents(app);
+                addlistener(app.{{Root}}, "ObjectBeingDestroyed", @app.figureDeleted);
+                app.{{Root}}.Visible = {{Visible}};
+            catch exception
+                delete(app);
+                rethrow(exception);
+            end
+        end
+
+        function delete(app)
+            % delete Delete the application UI figure.
+            if ~isempty(app.{{Root}}) && isvalid(app.{{Root}})
+                delete(app.{{Root}});
+            end
+        end
+    end
+end

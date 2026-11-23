@@ -1064,7 +1064,7 @@ Shared boundaries: [Source publication and history](#source-publication-and-hist
 
 **Explanation**
 
-`NewAppGenerator` owns generated class documentation, and `CallbackSourceEdits` owns callback method templates. Newly generated templates omit extensive property help and routine implementation comments; their concise English documentation serves application users rather than documenting yamada internals.
+`NewAppGenerator` owns generated class documentation through `resources/NewAppTemplate.txt`, and `CallbackSourceEdits` owns callback method templates. Newly generated templates omit extensive property help and routine implementation comments; their concise English documentation serves application users rather than documenting yamada internals.
 
 ### Figure lifetime
 
@@ -1149,6 +1149,7 @@ Runtime code resolves resources relative to the project root:
 
 - the registry loads the newest catalog projection that is available to the running release. The sibling `availability.json` supplies release bounds for annotated variants, properties, and values. Source parsing also loads the bundled surface projection when it encounters a factory with a variant absent from the runtime catalog;
 - `resources/EditorInteractionOverlay.html`, `resources/RootResizeGuide.html`, and `resources/SourceDiffPreview.html` are loaded by `yamada`;
+- `resources/NewAppTemplate.txt` is the fixed new-app skeleton that `NewAppGenerator` fills; its leading `#` lines, including the project license notice, never reach generated source;
 - `+yamada/+ui/+layoutwait/waitForFigureLayout.js` is loaded by the bundled `waitForFigureLayout` and executed only in the editor-owned figure window; and
 - development ledgers and generation scripts under `dev/component-data` are not runtime dependencies.
 
@@ -1156,7 +1157,7 @@ The development ledger is the review surface for catalog research and audit deci
 
 Property descriptions are project-authored presentation text composed from API identifiers and reviewed contracts by `dev/component-data/ProjectPropertyText.ps1`. The ledger mirrors these descriptions, while promotion calls the same definitions directly so imported or stale reference headings cannot become runtime help text.
 
-`dev/release/yamadaToolboxFiles.m` implements this inclusion contract with a bounded user-document list, project-owned example, runtime MATLAB files, and JSON/HTML/JavaScript resources. The shared `toolbox.json` supplies the version and permanent Toolbox identity. The Apps gallery registers `yamada.m` directly, and only the root is added to the MATLAB path. `buildYamadaToolbox` captures input/configuration hashes and source identity, builds through the documented packager, and checks that inputs did not change during packaging.
+`dev/release/yamadaToolboxFiles.m` implements this inclusion contract with a bounded user-document list, project-owned example, runtime MATLAB files, and JSON/HTML/JavaScript/text resources. The shared `toolbox.json` supplies the version and permanent Toolbox identity. The Apps gallery registers `yamada.m` directly, and only the root is added to the MATLAB path. `buildYamadaToolbox` captures input/configuration hashes and source identity, builds through the documented packager, and checks that inputs did not change during packaging.
 
 ### Runtime and release boundaries
 
