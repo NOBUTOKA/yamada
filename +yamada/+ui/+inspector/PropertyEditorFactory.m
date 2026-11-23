@@ -1503,10 +1503,7 @@ classdef PropertyEditorFactory
                     all(isfinite(selected)) && all(selected >= 0) && all(selected <= 1)
                 commitFcn(selected);
             end
-            owner = ancestor(control, "figure");
-            if ~isempty(owner) && isvalid(owner)
-                focus(owner);
-            end
+            yamada.ui.DialogFocus.restore(ancestor(control, "figure"));
         end
 
         function text = listSummary(value)

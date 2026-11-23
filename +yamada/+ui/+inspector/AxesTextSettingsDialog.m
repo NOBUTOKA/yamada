@@ -41,7 +41,7 @@ classdef AxesTextSettingsDialog
                     index = indices;
                     field = yamada.ui.inspector.AxesTextSettingsDialog.createField(grid,members(index));
                     field.Layout.Row = line; field.Layout.Column = 2;
-                    yamada.ui.inspector.AxesTextSettingsDialog.bindField(field,members(index),@(value) change(index,value,"set"));
+                    yamada.ui.inspector.AxesTextSettingsDialog.bindField(field,members(index),@(value) change(index,value,"set"),owner);
                     fields(index) = field;
                     if subtitle
                         links(index) = linkButton(grid,index);
@@ -55,7 +55,7 @@ classdef AxesTextSettingsDialog
                     for item = 1:numel(indices)
                         index = indices(item);
                         field = yamada.ui.inspector.AxesTextSettingsDialog.createField(style,members(index));
-                        yamada.ui.inspector.AxesTextSettingsDialog.bindField(field,members(index),@(value) change(index,value,"set"));
+                        yamada.ui.inspector.AxesTextSettingsDialog.bindField(field,members(index),@(value) change(index,value,"set"),owner);
                         fields(index) = field;
                     end
                     % One Subtitle link shares or overrides both style values together.
@@ -189,12 +189,13 @@ classdef AxesTextSettingsDialog
             field.Tag = "yamada-axes-detail-" + member;
         end
 
-        function bindField(field,member,submit)
+        function bindField(field,member,submit,owner)
             % bindField Route one control's edit to the document as a typed value.
             arguments (Input)
                 field
                 member (1,1) string
                 submit (1,1) function_handle
+                owner (1,1) matlab.ui.Figure
             end
 
             switch member
@@ -223,9 +224,8 @@ classdef AxesTextSettingsDialog
                         all(isfinite(selected)) && all(selected >= 0) && all(selected <= 1)
                     submit(selected);
                 end
-                % The native picker returns focus to MATLAB; give it back to the dialog.
-                owner = ancestor(source,"figure");
-                if ~isempty(owner) && isvalid(owner), focus(owner); end
+                % The native picker returns focus to MATLAB; give it back to yamada and the dialog.
+                yamada.ui.DialogFocus.restore(owner,ancestor(source,"figure"));
             end
         end
 
