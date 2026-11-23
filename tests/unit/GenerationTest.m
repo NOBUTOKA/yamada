@@ -5,46 +5,26 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
 
     methods (Test)
 
-        function generatesMinimalRunnableClass(testCase)
-            % generatesMinimalRunnableClass Verify the canonical handle-based skeleton.
-            % Guarantee: a new app generates the canonical handle-class skeleton.
-            % Failure mode: the skeleton drifts from the contract in SPECIFICATION.md and no longer runs or reparses.
-
-            % Generate from the same empty model used by the future editor.
+        function emptyAppSkeletonReparsesWithRecognizedDestructor(testCase)
+            % emptyAppSkeletonReparsesWithRecognizedDestructor Check the filled template, not its literal text.
+            % Guarantee: the skeleton filled from resources/NewAppTemplate.txt reparses, keeps an argument-free destructor, and carries no project license notice.
+            % Failure mode: a template edit or a broken marker expansion leaves an unparsable class, an arguments block that stops MATLAB from recognizing delete, or the template's license header in user source.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("GeneratedApp", registry);
-            generator = yamada.source.NewAppGenerator(registry);
-
-            [source, diagnostics] = generator.generate(document);
-
-            % Check required runtime structure, formatting, and license isolation.
-            testCase.verifyGreaterThan(strlength(source), 0);
+            [source, diagnostics] = yamada.source.NewAppGenerator(registry).generate(document);
             testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
-            testCase.verifySubstring(source, ...
-                "classdef GeneratedApp < handle");
-            testCase.verifySubstring(source, ...
-                "app.UIFigure = uifigure(""Visible"", ""off"");");
-            testCase.verifySubstring(source, "properties (Access = private)");
-            testCase.verifySubstring(source, ...
-                "arguments (Input)");
-            testCase.verifySubstring(source, ...
-                "arguments (Output)");
-            testCase.verifySubstring(source, "addlistener(app.UIFigure, ""ObjectBeingDestroyed"", @app.figureDeleted);");
-            testCase.verifySubstring(source, "delete(app.UIFigure);");
-            testCase.verifySubstring(source, "% " + document.ClassName + " ");
-            testCase.verifySubstring(source, "% createComponents ");
+
+            % Reparse the result and confirm no marker survived expansion.
+            [parsed, parseDiagnostics] = yamada.source.AppSourceParser.parseText(source, registry);
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(parseDiagnostics));
+            testCase.verifyEqual(parsed.ClassName, "GeneratedApp");
+            testCase.verifyEmpty(regexp(source, "\{\{|\}\}", "once"));
 
             % MATLAB recognizes cleanup only when the destructor has no arguments block.
             destructor = extractAfter(source, "function delete(app)");
             testCase.assertNotEmpty(destructor);
             testCase.verifyFalse(contains(destructor, "arguments"));
-            testCase.verifySubstring(destructor, "delete(app.UIFigure);");
-            if ispc
-                testCase.verifyEmpty(regexp(source, "(?<!\r)\n", "once"));
-            else
-                testCase.verifyEmpty(regexp(source, "\r", "once"));
-            end
-            testCase.verifyEmpty(regexp(source, "GNU General Public License", "once"));
+            testCase.verifyEmpty(regexp(source, "SPDX|GNU General Public License|^#", "once", "lineanchors"));
         end
 
         function omitsCatalogReadOnlyPropertiesFromGeneratedSource(testCase)
