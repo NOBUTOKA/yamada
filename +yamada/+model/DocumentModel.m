@@ -1174,7 +1174,7 @@ classdef DocumentModel < handle
                     "Property batch paths must be nonempty and unique.");
             end
             historyChanges = repmat(struct("Path", "", "HadOldValue", false, ...
-                "OldValue", [], "NewValue", [], "TargetSettingId", 0), 1, numel(changes));
+                "OldValue", [], "NewValue", [], "TargetSettingId", 0, "OldEntry", []), 1, numel(changes));
             implied = false(1, numel(changes));
             for index = 1:numel(changes)
                 entry = component.getProperty(paths(index));
@@ -1192,6 +1192,7 @@ classdef DocumentModel < handle
                 end
                 % An implied value compares by the call's literal, which the entry does not expose.
                 if implied(index)
+                    historyChanges(index).OldEntry = entry.toStruct();
                     settings = component.getSettings(paths(index));
                     historyChanges(index).OldValue = settings(end).LiteralValue;
                     if isstring(historyChanges(index).OldValue) && ischar(changes(index).Value)
@@ -1212,10 +1213,8 @@ classdef DocumentModel < handle
                 for path = string({changes.Path}), entries(end + 1) = component.getProperty(path); end %#ok<AGROW>
                 return
             end
-            if any(implied)
-                error("yamada:DocumentModel:ReadOnlyProperty", ...
-                    "Property ""%s"" is implied by an axes call that cannot be superseded safely.", paths(find(implied, 1)));
-            end
+            % A call-implied value that needs the wider proof becomes an ordinary pending value;
+            % its call stays in source, and Undo restores the implied entry itself.
             if ~isempty(registry)
                 if ~isempty(changes)
                     obj.preflightPropertyChanges(componentId, requested, registry);
@@ -1229,6 +1228,7 @@ classdef DocumentModel < handle
             entries = yamada.model.PropertyEntry.empty;
             try
                 for index = 1:numel(changes)
+                    if implied(index), component.removeProperty(historyChanges(index).Path); end
                     entries(end + 1) = component.setProperty( ...
                         historyChanges(index).Path, historyChanges(index).NewValue); %#ok<AGROW>
                     historyChanges(index).TargetSettingId = obj.propertySettingId(entries(end));
@@ -3334,10 +3334,10 @@ classdef DocumentModel < handle
                         if startsWith(code, "app."), continue, end
                         [~, target, tokens, spans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry.CatalogRoot);
                         if target ~= name, continue, end
-                        [paths, values, argumentIndices, owned] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
+                        [paths, values, argumentIndices, owned, elements] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
                             forms, component.Factory, tokens, false);
                         [ownedSpans, editable] = yamada.source.AxesSettingPlacement.ownership( ...
-                            component.Factory, paths, owned, argumentIndices, tokens, spans);
+                            component.Factory, paths, owned, argumentIndices, tokens, spans, elements);
                     end
                     index = analysis.statementIndices(statement.Span); visit = find(execution.Trace.Order == index);
                     assert(isscalar(visit), "yamada:DocumentModel:UnsafeSubtreeEdit", "An emitted statement requires one initialization visit.");
@@ -3935,6 +3935,10 @@ classdef DocumentModel < handle
             candidate = obj.structuralCandidate(registry);
             component = candidate.getComponent(componentId);
             for change = changes
+                % A call-implied value is superseded by a new setting, as in the committed edit.
+                if yamada.source.AxesSettingPlacement.isImplied(component.getProperty(string(change.Path)))
+                    component.removeProperty(string(change.Path));
+                end
                 component.setProperty(string(change.Path), change.Value);
             end
             generator = yamada.source.RoundTripGenerator(registry);
@@ -4264,6 +4268,9 @@ classdef DocumentModel < handle
                     for index = 1:numel(edit.Changes)
                         change = edit.Changes(index);
                         if forward
+                            if isfield(change, "OldEntry") && ~isempty(change.OldEntry)
+                                component.removeProperty(change.Path);
+                            end
                             component.setProperty(change.Path, change.NewValue);
                         else
                             obj.restoreBatchValue(component, change);
@@ -4317,7 +4324,11 @@ classdef DocumentModel < handle
                 change (1, 1) struct
             end
 
-            if change.HadOldValue
+            if isfield(change, "OldEntry") && ~isempty(change.OldEntry)
+                % A superseded call-implied value returns to its read-only call binding.
+                component.removeProperty(change.Path);
+                component.restoreProperty(change.OldEntry);
+            elseif change.HadOldValue
                 component.setProperty(change.Path, change.OldValue);
             else
                 component.removeProperty(change.Path);

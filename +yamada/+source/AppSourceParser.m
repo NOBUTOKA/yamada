@@ -388,7 +388,7 @@ classdef AppSourceParser
                         targetComponent = document.getComponentByName(target);
                         if ~isempty(tokens) && ~isempty(targetComponent) && any(created == targetComponent.Id) && ...
                                 ~any(blockedCallNames == name) && initializationCertain(visit) && nnz(initializationOrder == index) == 1
-                            [paths, values, argumentsUsed, owned] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
+                            [paths, values, argumentsUsed, owned, elements] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
                                 forms, targetComponent.Factory, tokens, implicit);
                             if ~isempty(paths)
                                 if implicit
@@ -400,7 +400,7 @@ classdef AppSourceParser
                                 document.Metadata.HasAxesSettingCalls = true;
                                 % Explicit targets own their replaceable value tokens; implied effects own none.
                                 [ownedSpans, editable] = yamada.source.AxesSettingPlacement.ownership( ...
-                                    targetComponent.Factory, paths, owned, argumentsUsed, tokens, valueSpans);
+                                    targetComponent.Factory, paths, owned, argumentsUsed, tokens, valueSpans, elements);
                                 editable = editable & ~implicit;
                                 for effect = 1:numel(paths)
                                     sequence = sequence + 1;

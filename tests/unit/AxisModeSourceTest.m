@@ -342,6 +342,41 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
         end
 
+        % Guarantee: Editing one axis limit of an axis limits vector rewrites only its elements, and slice edits in one batch compose.
+        % Failure mode: Treating a slice as the whole token overwrites the other axes, two slice edits produce overlapping patches, or a stale span misplaces later edits.
+        function axisLimitSlicesShareOneVectorToken(testCase)
+            % axisLimitSlicesShareOneVectorToken Rewrite only the edited limits and keep the vector reloadable.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "axis(app.Control, [0 1 2 3]);"]);
+            document.setPropertyBatch(control.Id, struct("Path", "XLim", "Value", [5 9]), registry);
+            document.setPropertyBatch(control.Id, struct("Path", {"XLim", "YLim"}, "Value", {[1 2], [7 8]}), registry);
+            source = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifySubstring(source, "axis(app.Control, [1 2 7 8]);");
+            reloaded = yamada.source.AppSourceParser.parseText(source, registry).getComponentByName("Control");
+            testCase.verifyEqual([reloaded.getSettings("XLim").LiteralValue, reloaded.getSettings("YLim").LiteralValue], [1 2 7 8]);
+            document.undo(); document.undo();
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+        end
+
+        % Guarantee: A value whose call token also sets other paths, such as XLimitMethod of axis tight, is changed by a new setting after the call, and Undo and Redo restore both states.
+        % Failure mode: Rewriting the shared token changes the other axes, the coupled edit is rejected as read-only, or Undo leaves an ordinary value in place of the call binding.
+        function sharedCallTokenIsSupersededAfterItsCall(testCase)
+            % sharedCallTokenIsSupersededAfterItsCall Keep axis tight and add the requested method after it.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "axis(app.Control, ""tight"");"]);
+            document.setPropertyBatch(control.Id, struct("Path", "XLimitMethod", "Value", "padded"), registry);
+            edited = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifySubstring(edited, "axis(app.Control, ""tight"");" + sprintf('\r\n') + ...
+                "app.Control.XLimitMethod = ""padded"";");
+            states = document.getEffectivePropertyStates(registry, control.Id);
+            testCase.verifyEqual(string(testCase.state(states, "YLimitMethod").EffectiveValue), "tight");
+            document.undo();
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+            testCase.verifyFalse(control.getProperty("XLimitMethod").IsEditable);
+            document.redo();
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), edited);
+        end
+
         % Guarantee: Undoing an option added to an existing call removes only that option.
         % Failure mode: The option shares the call's statement, so dropping the statement also deletes the main text.
         function undoingAnAddedOptionKeepsItsCall(testCase)
