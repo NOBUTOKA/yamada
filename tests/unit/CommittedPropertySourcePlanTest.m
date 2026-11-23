@@ -70,11 +70,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             end
         end
 
-        % Guarantee: reused proofs are discarded after any semantic, catalog, or history change, and invalid values change nothing.
+        % Guarantee: reused proofs are discarded after any semantic or history change, and invalid values change nothing.
         % Failure mode: a stale plan or cached track list certifies a later edit, or an out-of-range value reaches the model.
         function commitValidationRejectsStaleProofs(testCase)
-            % commitValidationRejectsStaleProofs Revalidate semantic, catalog, history, and unpreflighted changes.
-            for kind = ["metadata", "entry", "registry", "history", "unproven", "structure"]
+            % commitValidationRejectsStaleProofs Revalidate semantic, history, and unpreflighted changes.
+            for kind = ["metadata", "entry", "history", "unproven", "structure"]
                 registry = yamada.model.ComponentRegistry.createDefault();
                 [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
                 document.setProperty(label.Id, "FontSize", 23, registry);
@@ -84,8 +84,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                         document.Metadata.ValidationProofInvalidation = true;
                     case "entry"
                         label.setProperty("Text", "Direct write");
-                    case "registry"
-                        registry.register(registry.get("uilabel"));
                     case "history"
                         document.undo();
                     case "unproven"
@@ -239,12 +237,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             states = document.getEffectivePropertyStates(registry, grid.Id);
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
                 {40, 80, "1x"});
-            previous = document.evaluationContext(registry);
-            registry.register(registry.get("uigridlayout"));
-            testCase.verifyNotEqual(document.evaluationContext(registry), previous);
-            states = document.getEffectivePropertyStates(registry, grid.Id);
-            testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
-                {40, 80, "1x"});
             document.Metadata.HasUnresolvedInitialization = true;
             states = document.getEffectivePropertyStates(registry, grid.Id);
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
@@ -299,13 +291,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             testCase.verifyEqual(second.Component.getProperty("FontSize").LiteralValue, 23);
             testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 23);
 
-            % Direct record writes and registry replacement both invalidate the shared plan.
+            % Direct record writes invalidate the shared plan.
             label.setProperty("FontSize", 31);
-            [~, found] = document.evaluationContext(registry).configuration("combined", label.Name);
-            testCase.verifyFalse(found);
-            updated = yamada.source.PropertySourcePlan.plan(document, label, registry);
-            testCase.verifyEqual(updated.Component.getProperty("FontSize").LiteralValue, 31);
-            registry.register(registry.get("uilabel"));
             [~, found] = document.evaluationContext(registry).configuration("combined", label.Name);
             testCase.verifyFalse(found);
             updated = yamada.source.PropertySourcePlan.plan(document, label, registry);

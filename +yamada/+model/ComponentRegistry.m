@@ -195,11 +195,10 @@ classdef ComponentRegistry < handle
 
         function register(obj, definition)
             % register Add or replace one complete component definition.
-            %   Call register only while building a registry: inside ComponentCatalogLoader before
-            %   it returns the registry, or on a new ComponentRegistry before it is passed to a
-            %   DocumentModel, parser, generator, or editor. Calling register on a registry that
-            %   has already been returned or passed to one of them is prohibited, because those
-            %   consumers and their caches assume a fixed definition set.
+            %   Call register only while building a registry, before it is first passed to a
+            %   DocumentModel, NewAppFactory, parser, generator, Preview renderer, or editor.
+            %   Calling register after that first use is prohibited, because those consumers
+            %   and their caches assume a fixed definition set for the lifetime of the registry.
             arguments (Input)
                 obj (1, 1) yamada.model.ComponentRegistry
                 definition (1, 1) yamada.model.ComponentDefinition

@@ -50,7 +50,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
         end
 
         % Guarantee: every input that can affect a resolution invalidates it.
-        % Failure mode: a coupled sibling, ancestor, source, registry, or history change leaves a cached value in use.
+        % Failure mode: a coupled sibling, ancestor, source, or history change leaves a cached value in use.
         function invalidIdentityGraphsKeepConservativeScopeBehavior(testCase)
             % invalidIdentityGraphsKeepConservativeScopeBehavior Preserve cycle invalidation and duplicate-id fallback.
             for kind = ["cycle", "duplicate"]
@@ -433,8 +433,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         % Guarantee: tokens and projections are accepted only for current, owned inputs.
         % Failure mode: a stale or foreign token certifies a projection of another document or revision.
-        function revisionTokensFollowWritesAndCatalogWithoutOwningRecords(testCase)
-            % revisionTokensFollowWritesAndCatalogWithoutOwningRecords Reject stale revisions and untracked live data.
+        function revisionTokensFollowWritesWithoutOwningRecords(testCase)
+            % revisionTokensFollowWritesWithoutOwningRecords Reject stale revisions and untracked live data.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("RevisionTokenFixture", registry);
             root = document.getComponent(document.RootComponentId);
@@ -450,10 +450,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.verifyTrue(tracked);
             testCase.verifyEqual(after.Clock, before.Clock);
             testCase.verifyGreaterThan(after.Revision, before.Revision);
-            registry.register(registry.get("uifigure"));
-            [changed, tracked] = document.evaluationContext(registry).revisionToken();
-            testCase.verifyTrue(tracked);
-            testCase.verifyGreaterThan(changed.RegistryRevision, after.RegistryRevision);
             document.Metadata.Live = containers.Map("live", 1);
             [~, tracked] = document.evaluationContext(registry).revisionToken();
             testCase.verifyFalse(tracked);
@@ -510,7 +506,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
 
         function gridProjectionRejectsStaleOrUnownedInputs(testCase)
             % gridProjectionRejectsStaleOrUnownedInputs Require current ownership, input state, and catalog revision.
-            for kind = ["foreign", "direct", "registry", "missing", "non-grid"]
+            for kind = ["foreign", "direct", "missing", "non-grid"]
                 registry = yamada.model.ComponentRegistry.createDefault();
                 document = yamada.model.NewAppFactory.createEmpty("GridProjectionFixture", registry);
                 grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
@@ -523,8 +519,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
                         grid = copy.getComponent(grid.Id);
                     case "direct"
                         grid.setProperty("RowHeight", {90});
-                    case "registry"
-                        registry.register(registry.get("uigridlayout"));
                     case "missing"
                         name = "missing";
                     case "non-grid"
@@ -578,8 +572,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
         end
 
         function configurationStatesRejectStaleInputsAndForeignRecords(testCase)
-            % configurationStatesRejectStaleInputsAndForeignRecords Require current document ownership and catalog revision.
-            % Guarantee and failure mode: shared with revisionTokensFollowWritesAndCatalogWithoutOwningRecords.
+            % configurationStatesRejectStaleInputsAndForeignRecords Require current document ownership and inputs.
+            % Guarantee and failure mode: shared with revisionTokensFollowWritesWithoutOwningRecords.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("StaleReadFixture", registry);
             root = document.getComponent(document.RootComponentId);
@@ -591,11 +585,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.verifyFalse(found);
             testCase.verifyEmpty(states); testCase.verifyEmpty(ids);
             root.setProperty("Name", "Direct edit");
-            [~, ~, found] = context.configurationStates("plan", root, definitions, document);
-            testCase.verifyFalse(found);
-            context = document.evaluationContext(registry);
-            context.rememberConfiguration("plan", document);
-            registry.register(registry.get("uifigure"));
             [~, ~, found] = context.configurationStates("plan", root, definitions, document);
             testCase.verifyFalse(found);
         end
@@ -611,16 +600,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             context.remember("sample", 1);
             [~, found] = context.lookup("sample");
             testCase.verifyFalse(found);
-            testCase.verifyFalse(context.matches(document, registry));
-        end
-
-        function registryChangesInvalidateContext(testCase)
-            % registryChangesInvalidateContext Detect registration even when its values are equal.
-            % Guarantee and failure mode: shared with invalidIdentityGraphsKeepConservativeScopeBehavior.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
-            context = document.evaluationContext(registry);
-            registry.register(registry.get("uilabel"));
             testCase.verifyFalse(context.matches(document, registry));
         end
 

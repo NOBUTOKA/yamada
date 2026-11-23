@@ -81,9 +81,9 @@ classdef (TestTags = {'ui', 'preview', 'rename'}) RenamePreviewUpdateTest < matl
 
         function acknowledgementRejectsUnrelatedInputs(testCase)
             % acknowledgementRejectsUnrelatedInputs Refuse visual, structural, source, and catalog changes.
-            % Guarantee: the rename-only fast path is refused when any visual, structural, source, or catalog input also changed.
+            % Guarantee: the rename-only fast path is refused when any visual, structural, or source input also changed.
             % Failure mode: a combined edit is acknowledged as a rename and Preview stays stale.
-            for change = ["property", "structure", "source", "catalog"]
+            for change = ["property", "structure", "source"]
                 registry = yamada.model.ComponentRegistry.createDefault();
                 document = yamada.source.AppSourceParser.parseText(renameFixture("absolute"), registry);
                 figure = uifigure(Visible="off"); cleanup = onCleanup(@() delete(figure));
@@ -97,8 +97,6 @@ classdef (TestTags = {'ui', 'preview', 'rename'}) RenamePreviewUpdateTest < matl
                         document.insertComponent(registry, "uilabel", document.RootComponentId);
                     case "source"
                         document.OriginalText = document.OriginalText + newline + "% Changed input";
-                    case "catalog"
-                        registry.register(registry.getById("uibutton-push"));
                 end
                 testCase.verifyFalse(renderer.acknowledgeRenameChanges(document), change);
                 clear cleanup

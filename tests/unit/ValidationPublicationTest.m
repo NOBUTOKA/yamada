@@ -4,7 +4,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) ValidationPublic
     %   no parser, cache or validation-call strategy is prescribed by these tests.
     methods (Test)
         % Guarantee: after any source publication, history step, save, or external change, semantic states bind to the current records as a fresh parse would.
-        % Failure mode: a published state keeps a pointer to a replaced setting or stale catalog value, so later edits modify the wrong span or show outdated values.
+        % Failure mode: a published state keeps a pointer to a replaced setting, so later edits modify the wrong span or show outdated values.
         function structuralAndCallbackEditsRetainIndependentBindings(testCase)
             % structuralAndCallbackEditsRetainIndependentBindings Follow each source transition with a distinct ordinary setting edit.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -76,12 +76,11 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) ValidationPublic
             end
         end
 
-        function changedCatalogAndLiveInputsCannotReuseStaleValues(testCase)
-            % changedCatalogAndLiveInputsCannotReuseStaleValues Keep independently parsed semantics after external low-level or catalog changes.
+        function changedLiveInputsCannotReuseStaleValues(testCase)
+            % changedLiveInputsCannotReuseStaleValues Keep independently parsed semantics after external low-level changes.
             registry = yamada.model.ComponentRegistry.createDefault(); document = fixture(registry);
             label = document.getComponentByName("TopLeftLabel");
             document.setProperty(label.Id, "Text", "First replacement", registry); document.validatePropertyCommit(registry);
-            registry.register(registry.get("uilabel"));
             document.undo(); document.validatePropertyCommit(registry); verifyStateBindings(testCase, document, registry);
             document.redo(); document.validatePropertyCommit(registry); verifyStateBindings(testCase, document, registry);
             label.getProperty("Text").setSourceExpression("userOwnedValue");

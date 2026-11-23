@@ -4,7 +4,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
     %   default child placement, copy configuration, and Preview projection.
 
     methods (Test, TestTags = {'fast', 'model', 'parser', 'generation', 'roundtrip'})
-        % Guarantee: shared grid results are invalidated by source, catalog, membership, and coupled changes.
+        % Guarantee: shared grid results are invalidated by source, membership, and coupled changes.
         % Failure mode: a cached grid state survives a change and certifies placement on stale tracks.
         function committedPlacementProjectsPrivateGridValues(testCase)
             % committedPlacementProjectsPrivateGridValues Preserve source identities and padded tracks without plan copies.
@@ -62,29 +62,6 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
-        end
-
-        function sharedUncertaintyFollowsCatalogRevisions(testCase)
-            % sharedUncertaintyFollowsCatalogRevisions Recompute a cached empty result after policy changes.
-            [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure);", ...
-                "app.First = uibutton(app.Grid);", "app.First.Text = 'before';"]);
-            first = document.getComponentByName("First");
-            testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
-            original = registry.get("uibutton");
-            property = original.getProperty("Text");
-            metadata = property.Metadata;
-            metadata.application.effectStatus = "unsupported";
-            metadata.application.affectedPaths = {"RowHeight", "Layout.Row"};
-            metadata.application.effectReason = "Synthetic layout dependency for cache validation.";
-            replacement = yamada.model.PropertyDefinition(property.Path, property.DefaultValue, ...
-                property.HasDefault, property.IsEditable, metadata);
-            testCase.replaceButtonProperty(registry, replacement);
-            actual = testCase.state(document, registry, grid, "RowHeight");
-            testCase.verifyFalse(actual.IsKnown);
-            setting = first.getSettings("Text");
-            testCase.verifyEqual(actual.EffectSettingId, setting(end).Id);
-            registry.register(original);
-            testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
         end
 
         function sharedUncertaintyTracksMembershipAndOrder(testCase)
@@ -583,24 +560,6 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
     end
 
     methods (Static, Access = private)
-        function replaceButtonProperty(registry, property)
-            % replaceButtonProperty Change one immutable policy while preserving the component variant.
-            arguments (Input)
-                registry (1, 1) yamada.model.ComponentRegistry
-                property (1, 1) yamada.model.PropertyDefinition
-            end
-            original = registry.get("uibutton");
-            definitions = original.Properties;
-            definitions(string({definitions.Path}) == property.Path) = property;
-            replacement = yamada.model.ComponentDefinition(original.Factory, original.DeclaredType, ...
-                original.AllowedParentFactories, original.IsRoot, original.CreationArguments, definitions, ...
-                original.DisplayName, original.Category, original.IsProgrammaticOnly, original.RequiresParentComponent, ...
-                original.SupportedStyles, original.DefaultStyle, original.DeclaredTypesByStyle, ...
-                original.OverlayShape, original.OverlayShapesByStyle, original.ResizeConstraint, ...
-                original.ResizeConstraintsByStyle, original.DefaultSize, original.Metadata);
-            registry.register(replacement);
-        end
-
         function [document, registry, grid] = fixture(body)
             % fixture Parse a literal owned handle-based initializer with up to three controls.
             arguments (Input)

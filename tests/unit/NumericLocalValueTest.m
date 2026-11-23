@@ -103,10 +103,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
         end
 
         % Guarantee: checkpoints are discarded after nonlocal changes and old versions stay unchanged.
-        % Failure mode: a checkpoint survives Undo, a grid change, or a catalog change and certifies stale state.
+        % Failure mode: a checkpoint survives Undo, a grid change, or a constraint change and certifies stale state.
         function numericStateReuseInvalidatesAfterHistoryAndGridChanges(testCase)
             % numericStateReuseInvalidatesAfterHistoryAndGridChanges Discard inherited logical states on nonlocal input changes.
-            for kind = ["history", "tracks", "registry"]
+            for kind = ["history", "tracks"]
                 document = testCase.fixture("flat", "app.First = uieditfield(PARENT,'numeric');");
                 first = document.getComponentByName("First");
                 grid = document.getComponentByName("Grid");
@@ -120,8 +120,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
                         document.undo();
                     case "tracks"
                         grid.setProperty("RowHeight", {25, 35});
-                    case "registry"
-                        testCase.Registry.register(testCase.Registry.get(grid.Factory, grid.CreationArguments));
                 end
                 actual = document.getEffectivePropertyStates(testCase.Registry, grid.Id);
                 target = document.getEffectivePropertyStates(testCase.Registry, first.Id);
@@ -289,28 +287,20 @@ classdef (TestTags = {'fast', 'model', 'generation'}) NumericLocalValueTest < ma
             end
         end
 
-        function changedConstraintsAndCatalogInvalidateTheCheckpoint(testCase)
-            % changedConstraintsAndCatalogInvalidateTheCheckpoint Re-enter full source validation after semantic changes.
+        function changedConstraintsInvalidateTheCheckpoint(testCase)
+            % changedConstraintsInvalidateTheCheckpoint Re-enter full source validation after semantic changes.
             % Guarantee and failure mode: shared with numericStateReuseInvalidatesAfterHistoryAndGridChanges.
-            for kind = ["limits", "registry"]
-                document = testCase.fixture("absolute", ...
-                    ["app.First = uieditfield(PARENT,'numeric');", "app.First.Limits = [0 10];", "app.First.Value = 1;"]);
-                first = document.getComponentByName("First");
-                document.setProperty(first.Id, "Value", 2, testCase.Registry);
-                document.validatePropertyCommit(testCase.Registry);
-                if kind == "limits"
-                    first.setProperty("Limits", [0 5]);
-                else
-                    testCase.Registry.register(testCase.Registry.get("uieditfield", {"numeric"}));
-                end
-                if kind == "limits"
-                    testCase.verifyError(@() document.setProperty(first.Id, "Value", 6, testCase.Registry), ...
-                        "yamada:DocumentModel:UnsafePropertyEdit");
-                end
-                document.setProperty(first.Id, "Value", 4, testCase.Registry);
-                document.validatePropertyCommit(testCase.Registry);
-                testCase.verifyEqual(first.getProperty("Value").LiteralValue, 4);
-            end
+            document = testCase.fixture("absolute", ...
+                ["app.First = uieditfield(PARENT,'numeric');", "app.First.Limits = [0 10];", "app.First.Value = 1;"]);
+            first = document.getComponentByName("First");
+            document.setProperty(first.Id, "Value", 2, testCase.Registry);
+            document.validatePropertyCommit(testCase.Registry);
+            first.setProperty("Limits", [0 5]);
+            testCase.verifyError(@() document.setProperty(first.Id, "Value", 6, testCase.Registry), ...
+                "yamada:DocumentModel:UnsafePropertyEdit");
+            document.setProperty(first.Id, "Value", 4, testCase.Registry);
+            document.validatePropertyCommit(testCase.Registry);
+            testCase.verifyEqual(first.getProperty("Value").LiteralValue, 4);
         end
 
         % Guarantee: local commits rewrite only the latest occurrence, and Save still validates by reparsing.

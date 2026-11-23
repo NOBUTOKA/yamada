@@ -33,7 +33,7 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
 
     methods (Test, TestTags = {'ui'})
         % Guarantee: overlay data is cached only while its logical and native inputs are unchanged.
-        % Failure mode: a cached payload survives fit growth, an ancestor change, or a catalog update, and the overlay shows stale tracks.
+        % Failure mode: a cached payload survives fit growth, an ancestor change, or live metadata, and the overlay shows stale tracks.
         function sharedSnapshotRemainsIndependentOfLaterNativeGeometry(testCase)
             % sharedSnapshotRemainsIndependentOfLaterNativeGeometry Use one observation for all grid consumers.
             [document, handles, panel, grid, first, ~, cleanup, registry] = ...
@@ -479,19 +479,15 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
     end
 
     methods (Test, TestTags = {'fast'})
-        function cacheInputsRejectLiveDataAndFollowCatalogRevision(testCase)
-            % cacheInputsRejectLiveDataAndFollowCatalogRevision Keep unresolved mutable inputs on the full path.
+        function cacheInputsRejectLiveData(testCase)
+            % cacheInputsRejectLiveData Keep unresolved mutable inputs on the full path.
             % Guarantee and failure mode: shared with sharedSnapshotRemainsIndependentOfLaterNativeGeometry.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("GridOverlayApp", registry);
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             builder = yamada.ui.GridLayoutOverlayDataBuilder();
-            [before, safe] = builder.cacheInputs(document, registry, grid.Id);
+            [~, safe] = builder.cacheInputs(document, registry, grid.Id);
             testCase.assertTrue(safe);
-            registry.register(registry.get("uigridlayout"));
-            [changed, safe] = builder.cacheInputs(document, registry, grid.Id);
-            testCase.verifyTrue(safe);
-            testCase.verifyNotEqual(changed, before);
             document.Metadata.Live = containers.Map("mutable", 1);
             [unknown, safe] = builder.cacheInputs(document, registry, grid.Id);
             testCase.verifyFalse(safe);

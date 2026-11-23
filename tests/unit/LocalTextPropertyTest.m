@@ -85,10 +85,10 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
         end
 
         % Guarantee: the local path is used only when its proof still holds.
-        % Failure mode: a stale proof after a metadata, catalog, or source change accepts an edit that full preflight would reject.
+        % Failure mode: a stale proof after a metadata or source change accepts an edit that full preflight would reject.
         function changedInputsReturnToFullPreflight(testCase)
             % changedInputsReturnToFullPreflight Reuse validated owner changes but discard stale metadata, catalog, or source proofs.
-            for kind = ["other-owner", "metadata", "registry", "source"]
+            for kind = ["other-owner", "metadata", "source"]
                 [document, first] = testCase.fixture("flat");
                 registry = yamada.model.ComponentRegistry.createDefault();
                 document.setProperty(first.Id, "Text", "Warm", registry);
@@ -100,8 +100,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) LocalTextPropertyTest < ma
                         document.validatePropertyCommit(registry);
                     case "metadata"
                         document.Metadata.RecheckText = true;
-                    case "registry"
-                        registry.register(registry.get("uilabel"));
                     case "source"
                         document.OriginalText = document.OriginalText + string(newline) + "% changed source";
                 end

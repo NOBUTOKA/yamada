@@ -4,21 +4,6 @@ classdef (TestTags = {'catalog'}) ComponentRegistryBaselineTest < matlab.unittes
     %   development ledger and checks that direct-parent projections remain
     %   deterministic across the complete audited release catalog.
 
-    methods (Test, TestTags = {'fast'})
-        function cachedParentProjectionIsInvalidatedByRules(testCase)
-            % cachedParentProjectionIsInvalidatedByRules Observe parent context rule changes after a cache hit.
-            % Guarantee: the parent projection cache is invalidated by parent context rule changes.
-            % Failure mode: a cached projection offers parents that are no longer allowed.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            first = registry.getEffectiveProperties("uilabel", "uigridlayout");
-            testCase.verifyTrue(any(string({first.Path}) == "Layout.Row"));
-            testCase.verifyEqual(registry.getEffectiveProperties("uilabel", "uigridlayout"), first);
-            registry.setParentContextRules(yamada.model.ParentContextRule.empty);
-            plain = registry.getEffectiveProperties("uilabel", "uigridlayout");
-            testCase.verifyFalse(any(string({plain.Path}) == "Layout.Row"));
-        end
-    end
-
     methods (Test, TestTags = {'exhaustive'})
         function runtimeRegistryMatchesAuditedLedger(testCase)
             % runtimeRegistryMatchesAuditedLedger Compare every variant with the audited ledger.

@@ -42,10 +42,10 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
         end
 
         % Guarantee: reuse applies only when the control was configured from identical inputs and is still alive.
-        % Failure mode: a Limits, format, parent, or catalog change, or a deleted handle, is reused and Preview shows a wrongly configured or invalid control.
-        function constraintFormatParentAndCatalogChangesFallBack(testCase)
-            % constraintFormatParentAndCatalogChangesFallBack Never reuse a widget configured from different inputs.
-            for kind = ["limits", "format", "parent", "registry"]
+        % Failure mode: a Limits, format, or parent change, or a deleted handle, is reused and Preview shows a wrongly configured or invalid control.
+        function constraintFormatAndParentChangesFallBack(testCase)
+            % constraintFormatAndParentChangesFallBack Never reuse a widget configured from different inputs.
+            for kind = ["limits", "format", "parent"]
                 [document, registry, first] = numericPreviewFixture("absolute");
                 figure = uifigure(Visible="off");
                 cleanup = onCleanup(@() delete(figure));
@@ -55,10 +55,8 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                     first.setProperty("Limits", [-10 10]);
                 elseif kind == "format"
                     first.setProperty("ValueDisplayFormat", "%.4f");
-                elseif kind == "parent"
-                    first.ParentId = "unproven-parent";
                 else
-                    registry.register(registry.get("uieditfield", {"numeric"}));
+                    first.ParentId = "unproven-parent";
                 end
                 first.setProperty("Value", 4);
                 applied = renderer.synchronize(document, handles, yamada.ui.RefreshRequest("properties", first.Id, "Value"));

@@ -33,6 +33,17 @@ classdef (TestTags = {'fast', 'catalog'}) RefreshRequestTest < matlab.unittest.T
         function followsAncestorFitAndCatalogOverrides(testCase)
             % followsAncestorFitAndCatalogOverrides Detect nested fit dependencies and avoid property-name rules.
             registry = yamada.model.ComponentRegistry.createDefault();
+            % Override catalog geometry metadata before any document uses the registry.
+            definition = registry.get("uilabel");
+            properties = definition.Properties;
+            index = find(string({properties.Path}) == "FontColor", 1);
+            metadata = properties(index).Metadata;
+            metadata.gridGeometryImpact = "required";
+            properties(index) = yamada.model.PropertyDefinition("FontColor", [], false, true, metadata);
+            properties(end + 1) = yamada.model.PropertyDefinition("Unusual", [], false, true, ...
+                struct("gridGeometryImpact", "none", "absoluteGeometryImpact", false));
+            registry.register(yamada.model.ComponentDefinition("uilabel", definition.DeclaredType, ...
+                definition.AllowedParentFactories, false, {}, properties));
             document = yamada.model.NewAppFactory.createEmpty("NestedGeometryFixture", registry);
             outer = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             inner = document.insertComponent(registry, "uigridlayout", outer.Id);
@@ -47,16 +58,6 @@ classdef (TestTags = {'fast', 'catalog'}) RefreshRequestTest < matlab.unittest.T
             handles([outer.Id, inner.Id]) = [nativeOuter, nativeInner];
             request = yamada.ui.RefreshRequest("properties", label.Id, "Text");
             testCase.verifyTrue(request.affectsGeometry(document, registry, handles));
-            definition = registry.get("uilabel");
-            properties = definition.Properties;
-            index = find(string({properties.Path}) == "FontColor", 1);
-            metadata = properties(index).Metadata;
-            metadata.gridGeometryImpact = "required";
-            properties(index) = yamada.model.PropertyDefinition("FontColor", [], false, true, metadata);
-            properties(end + 1) = yamada.model.PropertyDefinition("Unusual", [], false, true, ...
-                struct("gridGeometryImpact", "none", "absoluteGeometryImpact", false));
-            registry.register(yamada.model.ComponentDefinition("uilabel", definition.DeclaredType, ...
-                definition.AllowedParentFactories, false, {}, properties));
             testCase.verifyTrue(yamada.ui.RefreshRequest("properties", label.Id, "FontColor").affectsGeometry(document, registry, handles));
             testCase.verifyFalse(yamada.ui.RefreshRequest("properties", label.Id, "Unusual").affectsGeometry(document, registry, handles));
             testCase.verifyTrue(yamada.ui.RefreshRequest("properties", label.Id, "Missing").affectsGeometry(document, registry, handles));
