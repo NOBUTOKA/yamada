@@ -179,4 +179,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with yamada. If not, see <https://www.gnu.org/licenses/>.
+
+Additional permission: text that this file writes into generated application
+source may be used under any terms; see "Additional permission for generated
+application source" in README.md.
 %}

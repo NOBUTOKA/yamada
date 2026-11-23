@@ -1,6 +1,7 @@
 # Copyright (C) 2026 Nobuto Kaitoh
 # SPDX-License-Identifier: GPL-3.0-or-later
 # This file is part of yamada. See LICENSE for the license text.
+# Additional permission: the generated text below may be used under any terms; see "Additional permission for generated application source" in README.md.
 # NewAppGenerator removes these leading # lines; generated applications carry no project license notice.
 # A line that contains only {{Name}} expands to zero or more generated lines; other {{Name}} markers are replaced inline.
 classdef {{ClassName}} < handle

@@ -149,3 +149,7 @@ Bug reports, feature proposals, documentation improvements, and code contributio
 ## License
 
 This project is licensed under the GNU General Public License version 3 or later (`GPL-3.0-or-later`). See [LICENSE](LICENSE) for details.
+
+### Additional permission for generated application source
+
+As an additional permission under section 7 of the GNU General Public License version 3, the copyright holder grants you permission to use, modify, and distribute application source that yamada generates or edits, including any template text and code fragments that yamada copies into that source (such as the new-app skeleton in `resources/NewAppTemplate.txt` and generated callback methods), under terms of your choice. This permission does not apply to yamada itself. If you modify yamada, you may extend this permission to your version, but you are not obliged to do so; if you do not wish to, delete this permission from your version.
