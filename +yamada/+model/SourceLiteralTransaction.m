@@ -263,7 +263,36 @@ classdef SourceLiteralTransaction
                         "yamada:SourceLiteralTransaction:WiderProof", "Existing value ownership is not proven.");
                     span = entry.Metadata.ValueSpan;
                     assert(~isempty(span) && span.isKnown());
-                    edits(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, "Text", encoded); %#ok<AGROW>
+                    % A slice of a call's vector argument rewrites the whole vector, keeping the other
+                    % slices and any earlier slice change of the same token in this batch.
+                    existing = find([edits.Start] == span.StartOffset & [edits.End] == span.EndOffset, 1);
+                    if isfield(entry.Metadata, "SettingMethod") && entry.Metadata.SettingMethod == "functionCall"
+                        if isempty(existing)
+                            whole = extractBetween(source.Text, span.StartOffset, span.EndOffset);
+                        else
+                            whole = edits(existing).Text;
+                        end
+                        [current, safe] = yamada.source.MatlabLiteralParser.parse(whole);
+                        slice = zeros(1, 0);
+                        if safe
+                            slice = yamada.catalog.AxesSettingFunctionCatalog.elementSlice( ...
+                                component.Factory, path, current, registry.CatalogRoot);
+                        end
+                        if ~isempty(slice)
+                            assert(numel(change.Value) == numel(slice), ...
+                                "yamada:SourceLiteralTransaction:WiderProof", "The value does not fit its call argument.");
+                            current(slice) = change.Value;
+                            assert(~isempty(yamada.catalog.AxesSettingFunctionCatalog.elementSlice( ...
+                                component.Factory, path, current, registry.CatalogRoot)), ...
+                                "yamada:SourceLiteralTransaction:WiderProof", "The limits must stay increasing.");
+                            encoded = yamada.source.LiteralEncoder.encode(current);
+                        end
+                    end
+                    if isempty(existing)
+                        edits(end + 1) = struct("Start", span.StartOffset, "End", span.EndOffset, "Text", encoded); %#ok<AGROW>
+                    else
+                        edits(existing).Text = encoded;
+                    end
                 end
                 candidate.setProperty(path, change.Value);
             end

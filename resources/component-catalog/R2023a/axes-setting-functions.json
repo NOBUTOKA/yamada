@@ -1115,6 +1115,329 @@
       ]
     },
     {
+      "id": "axis.limits2d",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "limits",
+          "type": "axisLimits",
+          "count": 4
+        }
+      ],
+      "effects": [
+        {
+          "path": "XLim",
+          "argument": "limits",
+          "elements": [
+            1,
+            2
+          ]
+        },
+        {
+          "path": "YLim",
+          "argument": "limits",
+          "elements": [
+            3,
+            4
+          ]
+        },
+        {
+          "path": "XLimMode",
+          "literal": "manual"
+        },
+        {
+          "path": "YLimMode",
+          "literal": "manual"
+        }
+      ]
+    },
+    {
+      "id": "axis.limits3d",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "limits",
+          "type": "axisLimits",
+          "count": 6
+        }
+      ],
+      "effects": [
+        {
+          "path": "XLim",
+          "argument": "limits",
+          "elements": [
+            1,
+            2
+          ]
+        },
+        {
+          "path": "YLim",
+          "argument": "limits",
+          "elements": [
+            3,
+            4
+          ]
+        },
+        {
+          "path": "ZLim",
+          "argument": "limits",
+          "elements": [
+            5,
+            6
+          ]
+        },
+        {
+          "path": "XLimMode",
+          "literal": "manual"
+        },
+        {
+          "path": "YLimMode",
+          "literal": "manual"
+        },
+        {
+          "path": "ZLimMode",
+          "literal": "manual"
+        }
+      ]
+    },
+    {
+      "id": "axis.method",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "method",
+          "type": "enum",
+          "values": [
+            "tight",
+            "padded",
+            "tickaligned"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "path": "XLimitMethod",
+          "argument": "method"
+        },
+        {
+          "path": "YLimitMethod",
+          "argument": "method"
+        },
+        {
+          "path": "ZLimitMethod",
+          "argument": "method"
+        },
+        {
+          "path": "XLimMode",
+          "literal": "auto"
+        },
+        {
+          "path": "YLimMode",
+          "literal": "auto"
+        },
+        {
+          "path": "ZLimMode",
+          "literal": "auto"
+        }
+      ]
+    },
+    {
+      "id": "axis.auto",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "mode",
+          "type": "enum",
+          "values": [
+            "auto"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "path": "XLimMode",
+          "literal": "auto"
+        },
+        {
+          "path": "YLimMode",
+          "literal": "auto"
+        },
+        {
+          "path": "ZLimMode",
+          "literal": "auto"
+        },
+        {
+          "path": "XLimitMethod",
+          "literal": "tickaligned"
+        },
+        {
+          "path": "YLimitMethod",
+          "literal": "tickaligned"
+        },
+        {
+          "path": "ZLimitMethod",
+          "literal": "tickaligned"
+        }
+      ]
+    },
+    {
+      "id": "axis.manual",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "mode",
+          "type": "enum",
+          "values": [
+            "manual"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "path": "XLimMode",
+          "literal": "manual"
+        },
+        {
+          "path": "YLimMode",
+          "literal": "manual"
+        },
+        {
+          "path": "ZLimMode",
+          "literal": "manual"
+        }
+      ]
+    },
+    {
+      "id": "axis.ij",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "direction",
+          "type": "enum",
+          "values": [
+            "ij"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "path": "YDir",
+          "literal": "reverse"
+        }
+      ]
+    },
+    {
+      "id": "axis.xy",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "direction",
+          "type": "enum",
+          "values": [
+            "xy"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "path": "YDir",
+          "literal": "normal"
+        }
+      ]
+    },
+    {
+      "id": "axis.visibility",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "arguments": [
+        {
+          "id": "state",
+          "type": "enum",
+          "values": [
+            "on",
+            "off"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "path": "Visible",
+          "argument": "state"
+        }
+      ]
+    },
+    {
       "id": "xticks.ticks",
       "name": "xticks",
       "targetFactories": [
@@ -2051,7 +2374,6 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
-      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2062,6 +2384,10 @@
         {
           "path": "XAxis.TickLabelFormat",
           "argument": "format"
+        },
+        {
+          "path": "XTickLabelMode",
+          "literal": "auto"
         }
       ]
     },
@@ -2077,7 +2403,6 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
-      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2088,6 +2413,10 @@
         {
           "path": "YAxis.TickLabelFormat",
           "argument": "format"
+        },
+        {
+          "path": "YTickLabelMode",
+          "literal": "auto"
         }
       ]
     },
@@ -2103,7 +2432,6 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
-      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2114,6 +2442,10 @@
         {
           "path": "ZAxis.TickLabelFormat",
           "argument": "format"
+        },
+        {
+          "path": "ZTickLabelMode",
+          "literal": "auto"
         }
       ]
     },
@@ -2128,7 +2460,6 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
-      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2139,6 +2470,10 @@
         {
           "path": "RAxis.TickLabelFormat",
           "argument": "format"
+        },
+        {
+          "path": "RTickLabelMode",
+          "literal": "auto"
         }
       ]
     },
@@ -2153,7 +2488,6 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
-      "insertion": true,
       "arguments": [
         {
           "id": "format",
@@ -2164,6 +2498,10 @@
         {
           "path": "ThetaAxis.TickLabelFormat",
           "argument": "format"
+        },
+        {
+          "path": "ThetaTickLabelMode",
+          "literal": "auto"
         }
       ]
     },

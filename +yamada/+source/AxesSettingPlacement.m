@@ -13,11 +13,12 @@ classdef AxesSettingPlacement
     %           "uiaxes", "XLim", [0 1], registry.CatalogRoot);
 
     methods (Static)
-        function [valueSpans, editable] = ownership(factory, paths, owned, argumentsUsed, tokens, spans)
+        function [valueSpans, editable] = ownership(factory, paths, owned, argumentsUsed, tokens, spans, elements)
             % ownership Return each call effect's value token and whether it is replaceable in place.
-            %   An implied literal effect owns no token. An owned effect is replaceable only
-            %   when its single-line token belongs to it alone and no specialized Inspector
-            %   editor owns the path.
+            %   An implied literal effect owns no token, nor does an effect sharing its token
+            %   with other paths. An owned effect is replaceable only when its single-line
+            %   token belongs to it alone, or to effects owning disjoint element slices of it,
+            %   and no specialized Inspector editor owns the path.
             arguments (Input)
                 factory (1, 1) string
                 paths (1, :) string
@@ -25,6 +26,7 @@ classdef AxesSettingPlacement
                 argumentsUsed (1, :) double
                 tokens (1, :) string
                 spans yamada.model.SourceSpan
+                elements cell = {}
             end
             arguments (Output)
                 valueSpans cell
@@ -40,9 +42,22 @@ classdef AxesSettingPlacement
                 if ~owned(effect), valueSpans{effect} = yamada.model.SourceSpan.empty; continue, end
                 argument = argumentsUsed(effect);
                 valueSpans{effect} = spans(argument);
-                shared = nnz(owned & argumentsUsed == argument) > 1;
+                sharing = find(owned & argumentsUsed == argument);
+                shared = numel(sharing) > 1;
+                % Element effects share a vector token only when their slices are disjoint.
+                if shared && numel(elements) == count
+                    slices = elements(sharing);
+                    taken = [slices{:}];
+                    shared = any(cellfun(@isempty, slices)) || numel(unique(taken)) ~= numel(taken);
+                end
                 multiline = contains(tokens(argument), [string(newline), string(char(13))]);
-                editable(effect) = ~shared && ~multiline && ~any(specialized == paths(effect));
+                isSpecialized = any(specialized == paths(effect));
+                % A token that sets several paths, such as "tight" of axis, cannot change for one
+                % of them; like an implied effect, it owns no span and is superseded after the call.
+                if shared && ~isSpecialized
+                    valueSpans{effect} = yamada.model.SourceSpan.empty;
+                end
+                editable(effect) = ~shared && ~multiline && ~isSpecialized;
             end
         end
 

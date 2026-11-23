@@ -34,6 +34,38 @@ classdef AxesSettingFunctionCatalog
             if isKey(catalog.ById, id), form = catalog.ById{id}; end
         end
 
+        function elements = elementSlice(factory, path, current, root)
+            % elementSlice Return the slice of a vector argument that one path owns.
+            %   current is the whole decoded argument. The result is empty when no
+            %   element effect of a form for the factory accepts it for the path.
+            arguments (Input)
+                factory (1, 1) string
+                path (1, 1) string
+                current
+                root (1, 1) string
+            end
+            arguments (Output)
+                elements (1, :) double
+            end
+
+            elements = zeros(1, 0);
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            for item = values(catalog.ById)'
+                form = item{1};
+                if ~any(string(form.targetFactories) == factory), continue, end
+                args = yamada.catalog.AxesSettingFunctionCatalog.records(form.arguments);
+                for effect = yamada.catalog.AxesSettingFunctionCatalog.records(form.effects)
+                    effect = effect{1}; %#ok<FXSET>
+                    if ~isfield(effect, "elements") || string(effect.path) ~= path, continue, end
+                    spec = args{cellfun(@(argument) string(argument.id) == string(effect.argument), args)};
+                    if yamada.catalog.AxesSettingFunctionCatalog.accepts(spec, current)
+                        elements = reshape(double(effect.elements), 1, []);
+                        return
+                    end
+                end
+            end
+        end
+
         function form = insertionForm(factory, path, value, root)
             % insertionForm Select the reviewed call form that writes one new value for a property.
             %   Only forms whose single argument owns the path and whose implied effects
@@ -122,7 +154,9 @@ classdef AxesSettingFunctionCatalog
                 effect = item{1};
                 paths(end + 1) = string(effect.path); %#ok<AGROW>
                 owned(end + 1) = isfield(effect, "argument"); %#ok<AGROW>
-                if owned(end)
+                if owned(end) && isfield(effect, "elements") && ~isempty(value)
+                    values{end + 1} = value(reshape(double(effect.elements), 1, [])); %#ok<AGROW>
+                elseif owned(end)
                     values{end + 1} = value; %#ok<AGROW>
                 else
                     literal = effect.literal;
@@ -132,10 +166,11 @@ classdef AxesSettingFunctionCatalog
             end
         end
 
-        function [paths, values, argumentsUsed, owned] = match(forms, factory, tokens, implicit)
+        function [paths, values, argumentsUsed, owned, elements] = match(forms, factory, tokens, implicit)
             % match Resolve a unique literal form and its affected property paths.
             %   owned marks effects whose value belongs to their argument token; implied
-            %   literal effects have no token of their own.
+            %   literal effects have no token of their own. elements lists, per effect,
+            %   the slice of a vector argument it owns, or is empty for the whole token.
             arguments (Input)
                 forms cell
                 factory (1, 1) string
@@ -147,9 +182,10 @@ classdef AxesSettingFunctionCatalog
                 values cell
                 argumentsUsed (1, :) double
                 owned (1, :) logical
+                elements cell
             end
 
-            paths = strings(1,0); values = {}; argumentsUsed = []; owned = false(1,0);
+            paths = strings(1,0); values = {}; argumentsUsed = []; owned = false(1,0); elements = {};
             matched = false;
             for item = forms
                 form = item{1};
@@ -157,13 +193,13 @@ classdef AxesSettingFunctionCatalog
                         (implicit && string(form.target.implicit) ~= "inferWithWarning")
                     continue
                 end
-                [p, v, indices, o] = yamada.catalog.AxesSettingFunctionCatalog.decode(form,tokens);
+                [p, v, indices, o, e] = yamada.catalog.AxesSettingFunctionCatalog.decode(form,tokens);
                 if isempty(p), continue, end
                 if matched
-                    paths = strings(1,0); values = {}; argumentsUsed = []; owned = false(1,0);
+                    paths = strings(1,0); values = {}; argumentsUsed = []; owned = false(1,0); elements = {};
                     return
                 end
-                paths = p; values = v; argumentsUsed = indices; owned = o;
+                paths = p; values = v; argumentsUsed = indices; owned = o; elements = e;
                 matched = true;
             end
         end
@@ -220,6 +256,12 @@ classdef AxesSettingFunctionCatalog
                         (~fromArgument || any(names == string(effect.argument))), ...
                         "yamada:AxesSettingFunctionCatalog:Effect", "Invalid effect in axes setting form %s.",form.id);
                     if fromArgument, ownedPaths(end+1) = string(effect.path); end %#ok<AGROW>
+                    if isfield(effect,"elements")
+                        spec = args{names == string(effect.argument)};
+                        assert(fromArgument && string(spec.type) == "axisLimits" && ...
+                            all(ismember(effect.elements,1:spec.count)), ...
+                            "yamada:AxesSettingFunctionCatalog:Effect", "Invalid element effect in axes setting form %s.",form.id);
+                    end
                 end
                 % An insertion form writes exactly one owned path from its only argument.
                 if isfield(form,"insertion") && form.insertion
@@ -253,7 +295,7 @@ classdef AxesSettingFunctionCatalog
             end
         end
 
-        function [paths, values, indices, owned] = decode(form,tokens)
+        function [paths, values, indices, owned, elements] = decode(form,tokens)
             % decode Match positional literals and optional name-value arguments.
             arguments (Input)
                 form (1, 1) struct
@@ -264,9 +306,10 @@ classdef AxesSettingFunctionCatalog
                 values cell
                 indices (1, :) double
                 owned (1, :) logical
+                elements cell
             end
 
-            paths = strings(1,0); values = {}; indices = []; owned = false(1,0);
+            paths = strings(1,0); values = {}; indices = []; owned = false(1,0); elements = {};
             args = yamada.catalog.AxesSettingFunctionCatalog.records(form.arguments);
             count = numel(args);
             if numel(tokens) < count || (numel(tokens) > count && ~isfield(form,"options")), return, end
@@ -288,9 +331,16 @@ classdef AxesSettingFunctionCatalog
                 effect = item{1};
                 paths(end+1) = string(effect.path); %#ok<AGROW>
                 owned(end+1) = isfield(effect,"argument"); %#ok<AGROW>
+                elements{end+1} = zeros(1,0); %#ok<AGROW>
                 if owned(end)
                     index = find(names == string(effect.argument),1);
-                    values{end+1} = decoded{index}; %#ok<AGROW>
+                    value = decoded{index};
+                    % An element effect owns a slice of a vector argument, such as XLim of axis limits.
+                    if isfield(effect,"elements")
+                        elements{end} = reshape(double(effect.elements),1,[]);
+                        value = value(elements{end});
+                    end
+                    values{end+1} = value; %#ok<AGROW>
                     indices(end+1) = index; %#ok<AGROW>
                 else
                     value = effect.literal;
@@ -301,6 +351,7 @@ classdef AxesSettingFunctionCatalog
             end
             paths = [paths optionPaths]; values = [values optionValues]; indices = [indices optionIndices];
             owned = [owned true(size(optionPaths))];
+            elements = [elements repmat({zeros(1,0)},size(optionPaths))];
         end
 
         function [paths, values, indices, valid] = decodeOptions(form,tokens,count)
@@ -385,6 +436,10 @@ classdef AxesSettingFunctionCatalog
                     result = numeric && isrow(value) && numel(value) == 2 && value(1) < value(2);
                 case "increasingFiniteVector"
                     result = numeric && (isempty(value) || (isrow(value) && all(diff(value) > 0)));
+                case "axisLimits"
+                    % Consecutive pairs are increasing limits, for example [x1 x2 y1 y2].
+                    result = numeric && isrow(value) && numel(value) == spec.count && ...
+                        all(value(1:2:end) < value(2:2:end));
                 case "positiveNumber"
                     result = numeric && isscalar(value) && value > 0;
                 case "fontName"
