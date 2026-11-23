@@ -5,6 +5,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
         Widget = {"table", "axes", "html", "tabs"}
     end
     methods (Test)
+        % Guarantee: each layout wait completes only on its own reply, once.
+        % Failure mode: a stale or late reply from an earlier request completes a new wait before layout settles.
         function matchingReplyCompletesOnlyOnce(testCase)
             % matchingReplyCompletesOnlyOnce Reject stale tokens and retain the first matching response.
             reply = yamada.ui.layoutwait.FigureLayoutWaitReply("current");
@@ -28,6 +30,8 @@ classdef (TestTags = {'preview', 'ui'}) PreviewLayoutStabilizationTest < matlab.
             testCase.verifyTrue(isfield(expected, "error"));
         end
 
+        % Guarantee: layout waits return only after native layout, including throttled relayouts, has settled.
+        % Failure mode: geometry is measured before fit tracks or asynchronous widgets settle, or the wait falls back to polling or image capture.
         function mixedWidgetLayoutsSettleBeforeMeasurement(testCase, Widget)
             % mixedWidgetLayoutsSettleBeforeMeasurement Check fit content, resize, and native asynchronous widgets.
             figure = yamada.ui.createEditorFigure("Visible", "on", "Position", [100 100 500 400]);

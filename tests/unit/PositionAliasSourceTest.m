@@ -4,6 +4,8 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
     %   Native Preview checks use only the editor's safe renderer.
 
     methods (Test, TestTags = {'fast'})
+        % Guarantee: Preview applies known geometry safely and never runs constructor callbacks.
+        % Failure mode: Preview passes a skipped or expression-backed argument to native code, or executes a CreateFcn.
         function previewArgumentsRespectSkippedPropertiesAndKeepSource(testCase)
             % previewArgumentsRespectSkippedPropertiesAndKeepSource Filter native inputs without changing token ownership.
             cases = {"app.Control = uibutton(app.Left, Text='Owned', CreateFcn='disp(''owned'')', DeleteFcn='disp(''owned'')');", "uibutton-push"; ...
@@ -19,6 +21,8 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             end
         end
 
+        % Guarantee: Position aliases share one geometry state determined by the last effective write.
+        % Failure mode: an earlier numeric Position is shown after an unresolved alias, or grid placement is treated as known pixels.
         function laterAliasesKeepIndependentInputsAndSharedGetters(testCase)
             % laterAliasesKeepIndependentInputsAndSharedGetters Retain explicit source while the later alias determines geometry.
             [document, registry, control] = testCase.fixture([ ...
@@ -38,6 +42,8 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             testCase.verifyEqual(control.settingSnapshot(), before);
         end
 
+        % Guarantee: geometry edits are written at a slot after every alias that would override them.
+        % Failure mode: an edit to an earlier token is overridden at run time by a later InnerPosition or OuterPosition.
         function shadowedPositionEditsFailAtomically(testCase)
             % shadowedPositionEditsFailAtomically Refuse edits at an earlier token overridden by a later alias.
             [document, registry, control] = testCase.fixture([ ...
@@ -78,6 +84,8 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
             end
         end
 
+        % Guarantee: copies keep alias statements and apply the paste offset to the effective geometry.
+        % Failure mode: Paste offsets an overridden token, rejects zero sizes, or uses the rectangle a lamp ignores.
         function copiesPreserveAliasesAndApplyFinalOffset(testCase)
             % copiesPreserveAliasesAndApplyFinalOffset Keep aliases and apply placement after their original effects.
             bodies = {["app.Control = uibutton(app.Left);", "app.Control.Position = [10 20 130 35];", ...
@@ -103,6 +111,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
 
         function unresolvedAliasesInvalidateEveryGetterUntilAWriteRestoresThem(testCase)
             % unresolvedAliasesInvalidateEveryGetterUntilAWriteRestoresThem Avoid falling back to an earlier numeric position.
+            % Guarantee and failure mode: shared with laterAliasesKeepIndependentInputsAndSharedGetters.
             body = ["app.Control = uibutton(app.Left);", "app.Control.Position = [10 20 130 35];", ...
                 "app.Control.InnerPosition = [10 20 130 35] + [0 0 0 0];"];
             [document, registry, control] = testCase.fixture(body);
@@ -119,6 +128,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
 
         function zeroSizeCopiesKeepTheirKnownDimensions(testCase)
             % zeroSizeCopiesKeepTheirKnownDimensions Accept native nonnegative geometry when applying a paste offset.
+            % Guarantee and failure mode: shared with copiesPreserveAliasesAndApplyFinalOffset.
             [document, registry, control, target] = testCase.fixture( ...
                 "app.Control = uibutton(app.Left, InnerPosition=[10 20 0 0]);");
             copy = document.pasteSubtree(document.copySubtree(control.Id, registry), target.Id, registry);
@@ -128,6 +138,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
 
         function relocationPlacesRequestedPositionAfterPreservedAlias(testCase)
             % relocationPlacesRequestedPositionAfterPreservedAlias Compile final placement after retained aliases and restore exact source on Undo.
+            % Guarantee and failure mode: shared with shadowedPositionEditsFailAtomically.
             [document, registry, control, target] = testCase.fixture([ ...
                 "app.Control = uibutton(app.Left);", "app.Control.Position = [10 20 130 35];", ...
                 "app.Control.InnerPosition = [30 40 150 45];"]);
@@ -146,6 +157,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
 
         function lampCopiesUseTheCoercedSquareAndKeepOriginalVectors(testCase)
             % lampCopiesUseTheCoercedSquareAndKeepOriginalVectors Distinguish square getters from explicit rectangular input.
+            % Guarantee and failure mode: shared with copiesPreserveAliasesAndApplyFinalOffset.
             [document, registry, control, target] = testCase.fixture( ...
                 "app.Control = uilamp(app.Left, InnerPosition=[10 20 130 35]);", "uilamp");
             testCase.verifyEqual(control.getProperty("InnerPosition").LiteralValue, [10 20 130 35]);
@@ -157,6 +169,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
 
         function gridAliasesDoNotPretendToDetermineGeometry(testCase)
             % gridAliasesDoNotPretendToDetermineGeometry Copy grid placement and require measured geometry for absolute paste.
+            % Guarantee and failure mode: shared with laterAliasesKeepIndependentInputsAndSharedGetters.
             [document, registry, control, target] = testCase.fixture([ ...
                 "app.Control = uibutton(app.Grid);", "app.Control.InnerPosition = [10 20 130 35];", ...
                 "app.Control.Layout.Row = 1;", "app.Control.Layout.Column = 1;"], "uibutton-push", true);
@@ -171,6 +184,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
 
         function relocationUsesEffectiveGeometryAndRetainsAliasStatements(testCase)
             % relocationUsesEffectiveGeometryAndRetainsAliasStatements Add a destination position after a preserved sole alias.
+            % Guarantee and failure mode: shared with shadowedPositionEditsFailAtomically.
             [document, registry, control, target] = testCase.fixture([ ...
                 "app.Control = uibutton(app.Left);", "app.Control.InnerPosition = [30 40 150 45];"]);
             document.reparentSubtree(control.Id, target.Id, registry, [], [], [60 70 150 45]);
@@ -185,6 +199,7 @@ classdef (TestTags = {'model', 'parser', 'generation', 'preview'}) PositionAlias
     methods (Test, TestTags = {'ui'})
         function previewNeverInvokesOwnedConstructorCallbacks(testCase)
             % previewNeverInvokesOwnedConstructorCallbacks Check both creation and cleanup with an owned inert sentinel.
+            % Guarantee and failure mode: shared with previewArgumentsRespectSkippedPropertiesAndKeepSource.
             key = "yamadaPreview" + replace(string(java.util.UUID.randomUUID()), "-", "");
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() testCase.cleanProbe(figure, key));

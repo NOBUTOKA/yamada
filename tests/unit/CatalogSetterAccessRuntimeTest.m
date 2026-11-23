@@ -8,6 +8,8 @@ classdef (TestTags = {'catalog', 'ui'}) CatalogSetterAccessRuntimeTest < matlab.
     methods (Test)
         function recordedSetterAccessMatchesNativeMetadata(testCase)
             % recordedSetterAccessMatchesNativeMetadata Verify every recorded target after catalog correction.
+            % Guarantee: recorded catalog setter access matches the running release's native metadata.
+            % Failure mode: a catalog correction or MATLAB update makes the catalog claim a property is settable when it is not, or vice versa.
             root = fileparts(fileparts(fileparts(mfilename("fullpath"))));
             tools = fullfile(root, "dev", "component-data");
             testCase.applyFixture(matlab.unittest.fixtures.PathFixture(tools));

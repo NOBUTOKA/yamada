@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) OwnerLocalProper
     %   Fresh parsing provides an independent semantic oracle for each finite
     %   policy family, including effects that have no explicit source setting.
     methods (Test)
+        % Guarantee: component-local edits keep every effective state equal to a fresh parse, through history and later edits.
+        % Failure mode: a local fast path misses an implicit setter effect, such as rounding or a width follower, leaving stale Inspector state.
         function coupledEditsAndHistoryRetainAllEffectiveStates(testCase)
             % coupledEditsAndHistoryRetainAllEffectiveStates Match full initialization semantics for every local policy family.
             registry = yamada.model.ComponentRegistry.createDefault();

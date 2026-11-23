@@ -2,6 +2,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
     % TableDataEditorDialogTest Verify typed table drafts use nearby structural actions and one batch.
 
     methods (Test, TestTags = {'fast'})
+        % Guarantee: table edits, including names and column settings, stay a draft until Apply commits one consistent batch.
+        % Failure mode: data and names commit separately, or a column change leaves ColumnWidth with the wrong length.
         function addDeleteAndApplyCommitOneTableBatch(testCase)
             % addDeleteAndApplyCommitOneTableBatch Retain all row and column edits until Apply.
 
@@ -42,6 +44,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
 
         function keepsTableActionsInsideTheScrollableTableSurface(testCase)
             % keepsTableActionsInsideTheScrollableTableSurface Keep every structural action on one scroll canvas.
+            % Guarantee: structural actions stay reachable for large tables.
+            % Failure mode: add and delete controls are placed outside the scrollable area and become unreachable.
 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
@@ -68,6 +72,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
 
         function appliesNamesEditedInTheLeadingTableCells(testCase)
             % appliesNamesEditedInTheLeadingTableCells Commit first-row and first-column names with the data body.
+            % Guarantee and failure mode: shared with addDeleteAndApplyCommitOneTableBatch.
 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
@@ -176,6 +181,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
 
         function rejectsUnsupportedTableData(testCase)
             % rejectsUnsupportedTableData Defer table-class values instead of coercing them through the UI.
+            % Guarantee: table-class data is not edited through the cell editor.
+            % Failure mode: the dialog coerces table data to a cell array and changes its type.
 
             state = struct("Data", table([1; 2]), "ColumnName", [], "RowName", [], ...
                 "HasData", true, "HasColumnName", false, "HasRowName", false);

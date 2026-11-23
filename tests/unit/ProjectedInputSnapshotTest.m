@@ -1,6 +1,8 @@
 classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputSnapshotTest < matlab.unittest.TestCase
     % ProjectedInputSnapshotTest Verify incremental inputs against full capture and independent source parsing.
     methods (Test)
+        % Guarantee: incrementally projected inputs equal a full capture, keep literal classes, and keep the revision when nothing changed.
+        % Failure mode: a projection keeps a stale source range, treats "" and '' or single and double as equal, or invalidates caches on a no-op.
         function distinctChangesAndHistoryMatchFullCapture(testCase)
             % distinctChangesAndHistoryMatchFullCapture Preserve all values and source ranges across replacements and insertions.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -70,6 +72,8 @@ classdef (TestTags = {'fast', 'model', 'generation', 'preview'}) ProjectedInputS
             testCase.verifyEqual(entry.LiteralValue, settings(end).LiteralValue);
         end
 
+        % Guarantee: a transition token certifies only its own document and the state that issued it.
+        % Failure mode: equal revision numbers from another document or after a direct mutation let a stale token skip revalidation.
         function foreignDocumentTokensNeverCertifyTransitions(testCase)
             % foreignDocumentTokensNeverCertifyTransitions Require exact clock ownership even for identical revision numbers.
             registry = yamada.model.ComponentRegistry.createDefault();

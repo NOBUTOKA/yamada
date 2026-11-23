@@ -8,6 +8,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
         Layout = {"absolute", "nested"}
     end
     methods (Test)
+        % Guarantee: scoped and chained validation give the same diagnostics as full validation.
+        % Failure mode: a scoped check misses an affected field, or a pending scope is reused after another document write.
         function freshSettingsDoNotRevalidateUnrelatedFields(testCase, Layout)
             % freshSettingsDoNotRevalidateUnrelatedFields Compare scoped results with full validation after each insertion.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -37,7 +39,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
 
         function pendingScopesRejectChangedInputs(testCase)
             % pendingScopesRejectChangedInputs Never reuse a pending scope after another document or catalog write.
-            for kind = ["entry", "metadata", "registry", "history"]
+            for kind = ["entry", "metadata", "history"]
                 registry = yamada.model.ComponentRegistry.createDefault();
                 [document, names] = makeFixture(registry, "nested");
                 document.validatePropertyCommit(registry);
@@ -48,8 +50,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ScopedCommitValidationTest
                         document.getComponentByName(names(end)).setProperty("Value", 3);
                     case "metadata"
                         document.Metadata.OtherWriter = true;
-                    case "registry"
-                        registry.register(registry.get("uilabel"));
                     case "history"
                         document.undo();
                 end

@@ -5,6 +5,8 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
     methods (Test)
         function absolutePositionIsPreservedWithOptionalOffset(testCase)
             % absolutePositionIsPreservedWithOptionalOffset Keep parent-local geometry deterministic.
+            % Guarantee: moves between absolute parents keep parent-local geometry, plus an explicit offset.
+            % Failure mode: planning recomputes Position and shifts the moved component.
             [document, registry, left, right, leaf] = SubtreePlacementPlannerTest.fixture();
             snapshot = yamada.model.SubtreeSnapshot(document, leaf.Id);
             before = leaf.getProperty("Position").LiteralValue;
@@ -17,6 +19,8 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
 
         function rejectsCyclesRootAndInvalidParent(testCase)
             % rejectsCyclesRootAndInvalidParent Check root and construction parent restrictions.
+            % Guarantee: placement into a descendant, the root, or a parent that cannot construct the child is rejected.
+            % Failure mode: a reparent creates a cycle or a parent that MATLAB rejects at run time.
             [document, registry, left, ~, leaf] = SubtreePlacementPlannerTest.fixture();
             snapshot = yamada.model.SubtreeSnapshot(document, left.Id);
             testCase.verifyError(@() yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, leaf.Id, registry, ...
@@ -29,6 +33,8 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
                 "yamada:SubtreePlacementPlanner:RootOperation");
         end
 
+        % Guarantee: grid destinations get a free cell or the requested cell, keep span, and never change tracks.
+        % Failure mode: a move overlaps an occupied cell, silently picks another cell than the drop target, or leaves an obsolete Position.
         function absoluteToGridFindsFreeCellAndRemovesPosition(testCase)
             % absoluteToGridFindsFreeCellAndRemovesPosition Choose a free cell without altering tracks.
             [document, registry, ~, right, leaf] = SubtreePlacementPlannerTest.fixture();
@@ -64,6 +70,8 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
                 "yamada:SubtreePlacementPlanner:NoSpace");
         end
 
+        % Guarantee: placement that cannot be computed without guessing or evaluation is rejected without mutation.
+        % Failure mode: the planner guesses pixels from grid cells or drops an expression-backed placement.
         function gridToAbsoluteRequiresVerifiedGeometry(testCase)
             % gridToAbsoluteRequiresVerifiedGeometry Require explicit geometry rather than guessing grid pixels.
             [document, registry, left, right] = SubtreePlacementPlannerTest.fixture();
@@ -79,6 +87,7 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
 
         function resolvesGridConstructionAndCatalogDefaults(testCase)
             % resolvesGridConstructionAndCatalogDefaults Resolve tracks without requiring preview controls.
+            % Guarantee and failure mode: shared with absoluteToGridFindsFreeCellAndRemovesPosition.
             [document, registry, ~, right, leaf] = SubtreePlacementPlannerTest.fixture();
             grid = document.insertComponent(registry, "uigridlayout", right.Id);
             snapshot = yamada.model.SubtreeSnapshot(document, leaf.Id);
@@ -111,6 +120,7 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) SubtreePlacementPlannerTe
 
         function expressionPlacementRejectsWithoutMutation(testCase)
             % expressionPlacementRejectsWithoutMutation Do not silently discard unevaluated placement.
+            % Guarantee and failure mode: shared with gridToAbsoluteRequiresVerifiedGeometry.
             [document, registry, left, right, leaf] = SubtreePlacementPlannerTest.fixture();
             leaf.getProperty("Position").setSourceExpression("computePosition(app)");
             snapshot = yamada.model.SubtreeSnapshot(document, leaf.Id);

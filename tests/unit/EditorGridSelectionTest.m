@@ -2,6 +2,8 @@ classdef EditorGridSelectionTest < matlab.unittest.TestCase
     % EditorGridSelectionTest Verify selection across nested Grid Layout overlays.
 
     methods (Test, TestTags = {'gridOverlay', 'ui'})
+        % Guarantee: canvas clicks select the intended grid child at every nesting level without editing.
+        % Failure mode: a click selects the outer grid instead of a nested child, or selection changes the document.
         function gridOverlaySelectsAnImmediateChildWithoutEditingTheDocument(testCase)
             % gridOverlaySelectsAnImmediateChildWithoutEditingTheDocument Route one canvas selection safely.
 
@@ -93,6 +95,8 @@ classdef EditorGridSelectionTest < matlab.unittest.TestCase
 
         function gridOverlayRejectsStaleChildSelection(testCase)
             % gridOverlayRejectsStaleChildSelection Ignore an obsolete child-selection event.
+            % Guarantee: obsolete selection events are ignored.
+            % Failure mode: a delayed event selects a component that no longer occupies that cell.
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
@@ -135,6 +139,7 @@ classdef EditorGridSelectionTest < matlab.unittest.TestCase
 
         function gridOverlaySelectsOpenedFileChildBeforeAnyGridIsActive(testCase)
             % gridOverlaySelectsOpenedFileChildBeforeAnyGridIsActive Select parsed grid content from the root view.
+            % Guarantee and failure mode: shared with gridOverlaySelectsAnImmediateChildWithoutEditingTheDocument.
 
             testPath = mfilename("fullpath");
             projectRoot = fileparts(fileparts(fileparts(testPath)));
@@ -318,6 +323,8 @@ classdef EditorGridSelectionTest < matlab.unittest.TestCase
 
         function gridOverlayMovesChildIntoCollapsedFitTrack(testCase)
             % gridOverlayMovesChildIntoCollapsedFitTrack Treat a zero-height fit row as a move destination.
+            % Guarantee: a child can be moved through the overlay into a collapsed fit track, which then expands.
+            % Failure mode: the editor rejects a move into a zero-size track, or reads geometry before the track expands.
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));

@@ -51,18 +51,6 @@ classdef InspectorView < handle
             obj.layoutContent();
         end
 
-        function result = isScrollable(obj)
-            % isScrollable Return whether the native panel enables scrolling.
-            arguments (Input)
-                obj (1, 1) yamada.ui.inspector.InspectorView
-            end
-            arguments (Output)
-                result (1, 1) logical
-            end
-
-            result = obj.Panel.Scrollable == "on";
-        end
-
         function reveal(obj, row)
             % reveal Bring the settled editor row into the scrollable Inspector viewport.
             arguments (Input)
@@ -100,43 +88,6 @@ classdef InspectorView < handle
 
             obj.ContentHeight = value;
             obj.layoutContent();
-        end
-
-        function value = contentPixelHeight(obj)
-            % contentPixelHeight Return the current native scroll-content height.
-            arguments (Input)
-                obj (1, 1) yamada.ui.inspector.InspectorView
-            end
-            arguments (Output)
-                value (1, 1) double
-            end
-
-            value = obj.ContentPanel.Position(4);
-        end
-
-        function value = contentPixelWidth(obj)
-            % contentPixelWidth Return the current width reserved for inspector content.
-            arguments (Input)
-                obj (1, 1) yamada.ui.inspector.InspectorView
-            end
-            arguments (Output)
-                value (1, 1) double
-            end
-
-            value = obj.ContentPanel.Position(3);
-        end
-
-        function value = viewportPixelWidth(obj)
-            % viewportPixelWidth Return the scroll host width in its local coordinate system.
-            arguments (Input)
-                obj (1, 1) yamada.ui.inspector.InspectorView
-            end
-            arguments (Output)
-                value (1, 1) double
-            end
-
-            position = getpixelposition(obj.Panel, true);
-            value = position(3);
         end
 
         function delete(obj)

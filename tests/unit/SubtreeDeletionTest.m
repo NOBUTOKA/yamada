@@ -5,6 +5,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
     methods (Test)
         function deletesNestedTreeAsOneHistoryStep(testCase)
             % deletesNestedTreeAsOneHistoryStep Preserve exact collection and child ordering on undo.
+            % Guarantee: deleting a subtree is one undo step that restores exact collection and child order.
+            % Failure mode: Undo restores children in a different order or needs several steps.
             [document, registry, panel] = SubtreeDeletionTest.fixture();
             sibling = document.insertComponent(registry, "uilabel", document.RootComponentId);
             before = document.Components;
@@ -22,6 +24,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
             testCase.verifyEmpty(document.getComponent(panel.Id));
         end
 
+        % Guarantee: deletion removes exactly the subtree's owned source and treats only real code as external references.
+        % Failure mode: deletion leaves dangling app.<Name> lines, refuses because of a comment or string mention, or uses ownership changed after planning.
         function openedSourceAllowsInternalParentReferences(testCase)
             % openedSourceAllowsInternalParentReferences Remove all owned subtree spans together.
             [original, registry, panel] = SubtreeDeletionTest.fixture();
@@ -80,6 +84,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
 
         function candidateDoesNotShareComponentOrPropertyHandles(testCase)
             % candidateDoesNotShareComponentOrPropertyHandles Isolate speculative changes from the real document.
+            % Guarantee: speculative deletion candidates do not share handles with the document.
+            % Failure mode: a rejected candidate mutates the real document through a shared handle.
             [document, ~, panel] = SubtreeDeletionTest.fixture();
             panel.setProperty("Title", "Before");
             candidate = document.structuralCandidate();
@@ -92,6 +98,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeDeletionTest < matl
 
         function rootIsProtectedAndReadOnlyDescendantsCanBeDeleted(testCase)
             % rootIsProtectedAndReadOnlyDescendantsCanBeDeleted Check the complete subtree before mutation.
+            % Guarantee: the root is never deletable, while read-only descendants are deleted with their parent.
+            % Failure mode: the root is deleted, or a read-only child blocks deletion of its container.
             [document, registry, panel] = SubtreeDeletionTest.fixture();
             testCase.verifyError(@() document.removeSubtree(document.RootComponentId, registry), ...
                 "yamada:DocumentModel:RootDeletion");

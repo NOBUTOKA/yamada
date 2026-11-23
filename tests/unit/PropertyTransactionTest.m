@@ -5,6 +5,8 @@ classdef (TestTags = {'fast', 'inspector', 'model'}) PropertyTransactionTest < m
     %   document except through focused model coverage elsewhere.
 
     methods (Test)
+        % Guarantee: transactions stage values locally, without touching the snapshot or splitting values.
+        % Failure mode: staging mutates the document snapshot, or a multiline cell value becomes several changes.
         function optionalUnknownPathsHaveNoValue(testCase)
             % optionalUnknownPathsHaveNoValue Keep predicate queries safe for partial transaction surfaces.
             transaction = yamada.model.PropertyTransaction("Value", {20});
@@ -41,6 +43,8 @@ classdef (TestTags = {'fast', 'inspector', 'model'}) PropertyTransactionTest < m
             testCase.verifyEqual(changes.Value, lines);
         end
 
+        % Guarantee: a candidate is validated as a whole against cross-property rules before any mutation.
+        % Failure mode: Value is checked against old Items, or a malformed list reaches native controls.
         function validatesCrossPropertyConstraintsAgainstOneCandidate(testCase)
             % validatesCrossPropertyConstraintsAgainstOneCandidate Use staged references before document mutation.
 
@@ -122,6 +126,8 @@ classdef (TestTags = {'fast', 'inspector', 'model'}) PropertyTransactionTest < m
             testCase.verifyEqual(message, "");
         end
 
+        % Guarantee: cell editing parses each typed value safely and packs it into the documented container.
+        % Failure mode: a cell is evaluated, an error loses its coordinates, or numeric data is stored as a cell array.
         function typedCellCodecPreservesSafeTypesAndReportsCoordinates(testCase)
             % typedCellCodecPreservesSafeTypesAndReportsCoordinates Keep literal cell failures local.
 
@@ -190,6 +196,7 @@ classdef (TestTags = {'fast', 'inspector', 'model'}) PropertyTransactionTest < m
 
         function validatesDateTimeShapesAndCrossPropertyRules(testCase)
             % validatesDateTimeShapesAndCrossPropertyRules Check the audited date picker contract.
+            % Guarantee and failure mode: shared with validatesCrossPropertyConstraintsAgainstOneCandidate.
 
             valueDefinition = yamada.model.PropertyDefinition("Value", [], false, true, ...
                 struct("editor", "dateTime", "auditDisposition", "editable", ...

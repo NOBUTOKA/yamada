@@ -14,6 +14,8 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
     end
 
     methods (Test, TestTags = {'fast'})
+        % Guarantee: one shared candidate places every owner's pending values as independent placement would.
+        % Failure mode: one owner's insertion in a shared batch displaces another owner's slot or drops an existing occurrence.
         function pendingValuesRoundTripAcrossOwners(testCase)
             % pendingValuesRoundTripAcrossOwners Preserve distinct pending values across source owners.
             document = testCase.numericFixture(3);
@@ -31,6 +33,8 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
             testCase.verifyEmpty(document.History);
         end
 
+        % Guarantee: shared batches are private and follow the current history state.
+        % Failure mode: a caller mutates a cached plan, or Undo reuses a batch from a later state.
         function cachedGenerationKeepsPublicPlansIndependent(testCase)
             % cachedGenerationKeepsPublicPlansIndependent Reuse edits while protecting caller-owned parsed records.
             for count = [1 3]
@@ -112,6 +116,7 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
 
         function retainsExistingOccurrencesAndOtherUnsavedRequests(testCase)
             % retainsExistingOccurrencesAndOtherUnsavedRequests Preserve every original setting while replacing only the last.
+            % Guarantee and failure mode: shared with pendingValuesRoundTripAcrossOwners.
             document = testCase.fixture(["First", "Second"], ...
                 ["app.First = uieditfield(app.UIFigure,'numeric');", ...
                 "app.First.FontSize = 10; % earlier setting", ...
@@ -153,6 +158,8 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
             testCase.verifyEqual(second.getProperty("Value").LiteralValue, 10);
         end
 
+        % Guarantee: a failed tentative batch falls back to the later valid slot search.
+        % Failure mode: one invalid first attempt rejects an edit that a later slot would accept.
         function failedTentativeBatchKeepsTheEstablishedLaterSlotSearch(testCase)
             % failedTentativeBatchKeepsTheEstablishedLaterSlotSearch Preserve legal setter clamping and fallback.
             document = testCase.fixture(["First", "Second"], ...
@@ -174,6 +181,7 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
 
         function aggregatedOwnersMayFollowPrerequisitesBeyondOpaqueCode(testCase)
             % aggregatedOwnersMayFollowPrerequisitesBeyondOpaqueCode Respect dependency-directed insertion for every owner.
+            % Guarantee and failure mode: shared with pendingValuesRoundTripAcrossOwners.
             document = testCase.fixture(["First", "Second"], ...
                 ["app.First = uidropdown(app.UIFigure);", "observed = app.First.Value;", ...
                 "app.First.Items = [""A"" ""B""];", "app.First.ItemsData = [10 20];", ...
@@ -189,6 +197,7 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
 
         function undoAndRedoRebuildTheCorrectOwnerSet(testCase)
             % undoAndRedoRebuildTheCorrectOwnerSet Never reuse a batch from a later history state.
+            % Guarantee and failure mode: shared with cachedGenerationKeepsPublicPlansIndependent.
             document = testCase.numericFixture(2);
             first = document.getComponentByName("Field1");
             second = document.getComponentByName("Field2");
@@ -205,6 +214,8 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
             testCase.verifyEqual(document.HistoryIndex, 2);
         end
 
+        % Guarantee: a complete placement proof covers all generated components and is valid only for its inputs.
+        % Failure mode: a proof built from invalid or since-changed generated values certifies stale source.
         function generatedComponentsParticipateInOneCompletePlacementProof(testCase)
             % generatedComponentsParticipateInOneCompletePlacementProof Include additions while sharing all owned requests.
             for layout = ["absolute", "flat", "nested"]
@@ -237,6 +248,7 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
 
         function generatedComponentsKeepTheLaterSlotFallback(testCase)
             % generatedComponentsKeepTheLaterSlotFallback Reject an invalid first batch without losing a valid later placement.
+            % Guarantee and failure mode: shared with failedTentativeBatchKeepsTheEstablishedLaterSlotSearch.
             document = testCase.fixture(["First", "Second"], ...
                 ["app.First = uieditfield(app.UIFigure,'numeric');", "app.First.Value = 20;", ...
                 "app.Second = uieditfield(app.UIFigure,'numeric');"]);
@@ -256,6 +268,7 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
 
         function invalidGeneratedRequestsCannotPublishACompleteProof(testCase)
             % invalidGeneratedRequestsCannotPublishACompleteProof Validate generated settings before retaining source-wide evidence.
+            % Guarantee and failure mode: shared with generatedComponentsParticipateInOneCompletePlacementProof.
             document = testCase.numericFixture(2);
             first = document.getComponentByName("Field1");
             first.setProperty("Value", 3);
@@ -337,6 +350,8 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
     end
 
     methods (Test, TestTags = {'fast'})
+        % Guarantee: emitted source is reused only for identical, validated inputs.
+        % Failure mode: generation returns an earlier emission after values or the registry changed.
         function combinedPlansReuseExactCompleteEmissions(testCase)
             % combinedPlansReuseExactCompleteEmissions Parse and assemble one complete candidate across every layout.
             for layout = ["absolute", "flat", "nested"]
@@ -405,6 +420,7 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
 
         function partialPlacementsRetainCompleteSourceParsing(testCase)
             % partialPlacementsRetainCompleteSourceParsing Never treat a partial placement plan as verified emission.
+            % Guarantee and failure mode: shared with generatedComponentsParticipateInOneCompletePlacementProof.
             document = testCase.numericFixture(2);
             first = document.getComponentByName("Field1");
             first.setProperty("Value", 3);

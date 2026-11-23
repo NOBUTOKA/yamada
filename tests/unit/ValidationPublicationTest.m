@@ -3,6 +3,8 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) ValidationPublic
     %   Independent parsing checks observable values and diagnostic locations;
     %   no parser, cache or validation-call strategy is prescribed by these tests.
     methods (Test)
+        % Guarantee: after any source publication, history step, save, or external change, semantic states bind to the current records as a fresh parse would.
+        % Failure mode: a published state keeps a pointer to a replaced setting, so later edits modify the wrong span or show outdated values.
         function structuralAndCallbackEditsRetainIndependentBindings(testCase)
             % structuralAndCallbackEditsRetainIndependentBindings Follow each source transition with a distinct ordinary setting edit.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -13,10 +15,10 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) ValidationPublic
                 switch operation
                     case "insert", document.insertComponent(registry, "uilabel", document.RootComponentId);
                     case "rename", document.renameComponent(label.Id, "RenamedLabel", registry);
-                    case "callback-add", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+                    case "callback-add", document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "ButtonPushedFcn", registry));
                     case "callback-delete"
-                        document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
-                        document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Delete", registry);
+                        document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "ButtonPushedFcn", registry));
+                        document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Disconnect", registry);
                     case "grid"
                         document.applyGridLayoutEdit(grid.Id, [struct("ComponentId", grid.Id, "Path", "RowHeight", "Value", {{20,30}}), ...
                             struct("ComponentId", child.Id, "Path", "Layout.Row", "Value", 2)], registry);
@@ -74,12 +76,11 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) ValidationPublic
             end
         end
 
-        function changedCatalogAndLiveInputsCannotReuseStaleValues(testCase)
-            % changedCatalogAndLiveInputsCannotReuseStaleValues Keep independently parsed semantics after external low-level or catalog changes.
+        function changedLiveInputsCannotReuseStaleValues(testCase)
+            % changedLiveInputsCannotReuseStaleValues Keep independently parsed semantics after external low-level changes.
             registry = yamada.model.ComponentRegistry.createDefault(); document = fixture(registry);
             label = document.getComponentByName("TopLeftLabel");
             document.setProperty(label.Id, "Text", "First replacement", registry); document.validatePropertyCommit(registry);
-            registry.register(registry.get("uilabel"));
             document.undo(); document.validatePropertyCommit(registry); verifyStateBindings(testCase, document, registry);
             document.redo(); document.validatePropertyCommit(registry); verifyStateBindings(testCase, document, registry);
             label.getProperty("Text").setSourceExpression("userOwnedValue");

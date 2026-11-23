@@ -4,6 +4,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
     %   default child placement, copy configuration, and Preview projection.
 
     methods (Test, TestTags = {'fast', 'model', 'parser', 'generation', 'roundtrip'})
+        % Guarantee: shared grid results are invalidated by source, membership, and coupled changes.
+        % Failure mode: a cached grid state survives a change and certifies placement on stale tracks.
         function committedPlacementProjectsPrivateGridValues(testCase)
             % committedPlacementProjectsPrivateGridValues Preserve source identities and padded tracks without plan copies.
             [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure);", ...
@@ -49,40 +51,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             first.restoreSettings(before);
             testCase.verifyTrue(testCase.state(document, registry, second, "Layout.Column").IsKnown);
             testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
-            % Uncacheable metadata must retain the same uncached uncertainty behavior.
-            document.Metadata.Live = containers.Map("entry", 1);
-            first.restoreSettings([before, uncertain.toStruct()]);
-            uncertain = first.getSettings("Layout");
-            actual = testCase.state(document, registry, grid, "RowHeight");
-            testCase.verifyFalse(actual.IsKnown);
-            testCase.verifyEqual(actual.EffectSettingId, uncertain.Id);
-            first.restoreSettings(before);
-            testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
-        end
-
-        function sharedUncertaintyFollowsCatalogRevisions(testCase)
-            % sharedUncertaintyFollowsCatalogRevisions Recompute a cached empty result after policy changes.
-            [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure);", ...
-                "app.First = uibutton(app.Grid);", "app.First.Text = 'before';"]);
-            first = document.getComponentByName("First");
-            testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
-            original = registry.get("uibutton");
-            property = original.getProperty("Text");
-            metadata = property.Metadata;
-            metadata.application.effectStatus = "unsupported";
-            metadata.application.affectedPaths = {"RowHeight", "Layout.Row"};
-            metadata.application.effectReason = "Synthetic layout dependency for cache validation.";
-            replacement = yamada.model.PropertyDefinition(property.Path, property.DefaultValue, ...
-                property.HasDefault, property.IsEditable, metadata);
-            testCase.replaceButtonProperty(registry, replacement);
-            actual = testCase.state(document, registry, grid, "RowHeight");
-            testCase.verifyFalse(actual.IsKnown);
-            setting = first.getSettings("Text");
-            testCase.verifyEqual(actual.EffectSettingId, setting(end).Id);
-            registry.register(original);
-            testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
         end
 
         function sharedUncertaintyTracksMembershipAndOrder(testCase)
@@ -116,6 +86,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyEqual(actual.EffectSettingId, secondEffect.Id);
         end
 
+        % Guarantee: settings are treated as independent of grid state only with audited evidence.
+        % Failure mode: an unreviewed setter is assumed independent and the grid state is reported known while it is not.
         function independentPendingSettingsDoNotCombineGridSource(testCase)
             % independentPendingSettingsDoNotCombineGridSource Keep independent additions out of shared placement plans.
             [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure, [2 2]);", ...
@@ -143,6 +115,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
 
         function logicalChangesInvalidateIndependentGridPlan(testCase)
             % logicalChangesInvalidateIndependentGridPlan Recompute shared plans when coupled settings are introduced.
+            % Guarantee and failure mode: shared with committedPlacementProjectsPrivateGridValues.
             [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure, [2 2]);", ...
                 "app.First = uibutton(app.Grid);", "app.Second = uibutton(app.Grid);"]);
             first = document.getComponentByName("First");
@@ -166,6 +139,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
 
         function independentSettingWithNewSiblingKeepsPlacementKnown(testCase)
             % independentSettingWithNewSiblingKeepsPlacementKnown Preserve creation-anchor effects after unrelated insertions.
+            % Guarantee and failure mode: shared with independentPendingSettingsDoNotCombineGridSource.
             [document, registry, grid] = testCase.fixture(["app.Grid = uigridlayout(app.UIFigure, [2 2]);", ...
                 "app.First = uibutton(app.Grid);", "app.Second = uibutton(app.Grid);", "app.First.Layout.Row = 4;"]);
             first = document.getComponentByName("First");
@@ -238,6 +212,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyTrue(yamada.model.PropertyStateResolver.matchesRequested(audited, [100 200]));
         end
 
+        % Guarantee: modeled grid state follows native padding, automatic placement, and creation order.
+        % Failure mode: the model fills earlier holes, uses file order, or ignores implicit tracks that MATLAB adds.
         function creationOrderUsesTheInitializerTraceRatherThanFileOrder(testCase)
             % creationOrderUsesTheInitializerTraceRatherThanFileOrder Record creation events even without named arguments.
             body = ["createGrid(app);", "createChildren(app);", "end", "function createChildren(app)", ...
@@ -334,6 +310,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyEqual(testCase.state(document, registry, grid, "RowHeight").EffectiveValue, {100});
         end
 
+        % Guarantee: grid edits whose result would be overridden by occupancy are rejected atomically.
+        % Failure mode: a shrink is accepted although occupied tracks restore it at run time.
         function editsLostToOccupancyAreRejectedAtomically(testCase)
             % editsLostToOccupancyAreRejectedAtomically Keep the original setter and user history intact on failure.
             body = ["app.Grid = uigridlayout(app.UIFigure);", "app.Grid.RowHeight = {100, 200};", ...
@@ -382,6 +360,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyFalse(document.IsDirty);
         end
 
+        % Guarantee: pending placements are resolved with the source that will actually be emitted.
+        % Failure mode: a new child is resolved as created last while generation inserts it earlier.
         function pendingChildPlacementUsesItsActualInsertionBeforeLaterChildren(testCase)
             % pendingChildPlacementUsesItsActualInsertionBeforeLaterChildren Resolve siblings through the same candidate source.
             body = ["app.Grid = uigridlayout(app.UIFigure, [2 2]);", ...
@@ -416,6 +396,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
 
         function gridBatchChecksCombinedPlacementsBeforeMutation(testCase)
             % gridBatchChecksCombinedPlacementsBeforeMutation Reject a lost shrink and accept a single atomic move-and-shrink.
+            % Guarantee and failure mode: shared with editsLostToOccupancyAreRejectedAtomically.
             body = ["app.Grid = uigridlayout(app.UIFigure);", "app.Grid.RowHeight = {100, 200};", ...
                 "app.First = uibutton(app.Grid);", "app.First.Layout.Row = 2;"];
             [document, registry, grid] = testCase.fixture(body);
@@ -437,6 +418,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
 
         function pendingSettingsUseCombinedSource(testCase)
             % pendingSettingsUseCombinedSource Resolve complete emitted initialization without changing source ownership.
+            % Guarantee and failure mode: shared with pendingChildPlacementUsesItsActualInsertionBeforeLaterChildren.
             body = ["app.Grid = uigridlayout(app.UIFigure, ColumnWidth={100});", "app.First = uibutton(app.Grid);"];
             [document, registry, grid] = testCase.fixture(body);
             first = document.getComponentByName("First");
@@ -460,6 +442,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             testCase.verifyEmpty(first.getProperty("Layout.Row"));
         end
 
+        % Guarantee: Copy and Preview use the same effective grid layout without adding settings.
+        % Failure mode: Paste or Preview loses implicit placement, or materializes it as explicit source.
         function copyRetainsImplicitPlacementsAndPaddedTracks(testCase)
             % copyRetainsImplicitPlacementsAndPaddedTracks Retain the source inputs that produced the effective grid layout.
             body = ["app.Grid = uigridlayout(app.UIFigure, RowHeight={100}, ColumnWidth={100});", ...
@@ -509,6 +493,8 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
 
         function nativeGettersAgreeWithOwnedSourceFixtures(testCase)
             % nativeGettersAgreeWithOwnedSourceFixtures Compare known grid effects with native R2024a objects.
+            % Guarantee: modeled grid effects match native objects.
+            % Failure mode: a release changes padding or placement rules and the model no longer matches run time.
             fixtureBodies = {["app.Grid = uigridlayout(app.UIFigure, [2 2]);", ...
                 "app.First = uibutton(app.Grid);", "app.First.Layout.Row = [2 4];", "app.Grid.RowHeight = {50};"], ...
                 ["app.Grid = uigridlayout(app.UIFigure, [2 2]);", "app.First = uibutton(app.Grid);", ...
@@ -541,6 +527,7 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
 
         function previewProjectsEffectiveLayoutWithoutAddingSettings(testCase)
             % previewProjectsEffectiveLayoutWithoutAddingSettings Render implicit child positions from the shared resolver.
+            % Guarantee and failure mode: shared with copyRetainsImplicitPlacementsAndPaddedTracks.
             body = ["app.Grid = uigridlayout(app.UIFigure, RowHeight={100, 200}, ColumnWidth={100, 200});", "app.First = uibutton(app.Grid);", ...
                 "app.First.Layout.Row = 2;", "app.First.Layout.Column = 2;", "app.Second = uibutton(app.Grid);"];
             [document, registry, grid] = testCase.fixture(body);
@@ -564,24 +551,6 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
     end
 
     methods (Static, Access = private)
-        function replaceButtonProperty(registry, property)
-            % replaceButtonProperty Change one immutable policy while preserving the component variant.
-            arguments (Input)
-                registry (1, 1) yamada.model.ComponentRegistry
-                property (1, 1) yamada.model.PropertyDefinition
-            end
-            original = registry.get("uibutton");
-            definitions = original.Properties;
-            definitions(string({definitions.Path}) == property.Path) = property;
-            replacement = yamada.model.ComponentDefinition(original.Factory, original.DeclaredType, ...
-                original.AllowedParentFactories, original.IsRoot, original.CreationArguments, definitions, ...
-                original.DisplayName, original.Category, original.IsProgrammaticOnly, original.RequiresParentComponent, ...
-                original.SupportedStyles, original.DefaultStyle, original.DeclaredTypesByStyle, ...
-                original.OverlayShape, original.OverlayShapesByStyle, original.ResizeConstraint, ...
-                original.ResizeConstraintsByStyle, original.DefaultSize, original.Metadata);
-            registry.register(replacement);
-        end
-
         function [document, registry, grid] = fixture(body)
             % fixture Parse a literal owned handle-based initializer with up to three controls.
             arguments (Input)

@@ -4,6 +4,8 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTe
     %   preserve source without constructing the app or invoking its callbacks.
 
     methods (Test, TestTags = {'fast'})
+        % Guarantee: opened apps follow the handle app contract, including the close fallback and callback signature.
+        % Failure mode: unsupported class shapes are accepted, or edits break the shutdown fallback or callback convention.
         function cleanupRethrowPreservesCertainInitialization(testCase)
             % cleanupRethrowPreservesCertainInitialization Trace the successful constructor path only when proven.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -54,11 +56,11 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTe
             document = yamada.source.AppSourceParser.parseText(source, registry);
             states = yamada.source.CallbackSourceAnalyzer.analyze(document, document.RootComponentId, registry);
             testCase.verifyEqual(states(string({states.Name}) == "CloseRequestFcn").State, "absent");
-            document.applyCallbackAction(document.RootComponentId, "CloseRequestFcn", "Add", registry);
+            document.applyCallbackAction(document.RootComponentId, "CloseRequestFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, document.RootComponentId, "CloseRequestFcn", registry));
             added = generator.generate(document);
             testCase.verifySubstring(added, "CloseRequestFcn = @app.");
             reopened = yamada.source.AppSourceParser.parseText(added, registry);
-            reopened.applyCallbackAction(reopened.RootComponentId, "CloseRequestFcn", "Delete", registry);
+            reopened.applyCallbackAction(reopened.RootComponentId, "CloseRequestFcn", "Disconnect", registry);
             restored = generator.generate(reopened);
             testCase.verifySubstring(restored, yamada.source.CallbackSourceEdits.defaultClose("UIFigure"));
             testCase.verifyEqual(count(restored, ".CloseRequestFcn ="), 1);
@@ -76,7 +78,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTe
             button = document.insertComponent(registry, "uibutton", document.RootComponentId);
             tag = document.ClassName + "-button";
             button.setProperty("Tag", tag);
-            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "Add", registry);
+            document.applyCallbackAction(button.Id, "ButtonPushedFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, button.Id, "ButtonPushedFcn", registry));
             source = yamada.source.NewAppGenerator(registry).generate(document);
             source = replace(source, "% Add callback behavior here.", ...
                 "source.UserData = event; app." + button.Name + ".Text = source.Text + "" changed"";");
@@ -93,6 +95,8 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTe
             clear cleanup
         end
 
+        % Guarantee: a generated app's owner lives exactly as long as its figure.
+        % Failure mode: an outputless app is destroyed at once, a closed or failed app leaks its figure, or the user DeleteFcn is overwritten.
         function closeAndExplicitDeleteDestroyOwnerAndFigure(testCase)
             % closeAndExplicitDeleteDestroyOwnerAndFigure Cover normal close and programmatic owner deletion.
             for action = ["close", "delete"]
@@ -145,7 +149,7 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTe
         function canceledCloseKeepsOwnerUntilExplicitDelete(testCase)
             % canceledCloseKeepsOwnerUntilExplicitDelete Keep the shutdown decision outside the destructor.
             [document, registry] = testCase.runtimeDocument();
-            document.applyCallbackAction(document.RootComponentId, "CloseRequestFcn", "Add", registry);
+            document.applyCallbackAction(document.RootComponentId, "CloseRequestFcn", "New", registry, yamada.source.CallbackMethodTargets.defaultName(document, document.RootComponentId, "CloseRequestFcn", registry));
             source = yamada.source.NewAppGenerator(registry).generate(document);
             source = replace(source, "            delete(app);", "            return");
             app = testCase.instantiate(document, source);
@@ -177,6 +181,8 @@ classdef (TestTags = {'generation', 'parser', 'lifecycle'}) HandleAppMigrationTe
             end
         end
 
+        % Guarantee: the editor follows the same owner lifetime contract.
+        % Failure mode: an outputless editor closes immediately, or deleting its figure leaks editor state.
         function editorFigureDeletionReleasesOwner(testCase)
             % editorFigureDeletionReleasesOwner Dispose editor state when its figure is directly deleted.
             app = yamada();

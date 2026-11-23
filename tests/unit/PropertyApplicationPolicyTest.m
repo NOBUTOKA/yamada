@@ -6,6 +6,8 @@ classdef (TestTags = {'fast', 'catalog', 'model'}) PropertyApplicationPolicyTest
     methods (Test)
         function legacyPolicyRetainsConservativeDefaults(testCase)
             % legacyPolicyRetainsConservativeDefaults Preserve unknown setter effects without a constructor-support flag.
+            % Guarantee: catalog entries without policy metadata get conservative, unknown-effect defaults.
+            % Failure mode: missing metadata is read as "no effects", allowing unsafe reordering or omission of assignments.
 
             policy = yamada.model.PropertyApplicationPolicy();
             testCase.verifyEmpty(policy.ApplyAfter);
@@ -18,6 +20,8 @@ classdef (TestTags = {'fast', 'catalog', 'model'}) PropertyApplicationPolicyTest
             testCase.verifyEqual(yamada.model.PropertyApplicationPolicy.orderDefinitions(definitions), [1 2]);
         end
 
+        % Guarantee: property application follows declared prerequisites in stable order and rejects cyclic graphs.
+        % Failure mode: a dependent property is applied before its prerequisite, independent order churns, or a cycle hangs or is silently broken.
         function ordersDependenciesStablyAcrossIndependentProperties(testCase)
             % ordersDependenciesStablyAcrossIndependentProperties Respect prerequisites while retaining ready-node order.
 
@@ -33,6 +37,8 @@ classdef (TestTags = {'fast', 'catalog', 'model'}) PropertyApplicationPolicyTest
 
         function rejectsInvalidShapesDuplicatesAndSymbols(testCase)
             % rejectsInvalidShapesDuplicatesAndSymbols Reject malformed policies before application.
+            % Guarantee: malformed policy data fails at load time.
+            % Failure mode: a malformed or duplicate policy entry is accepted and misdirects application later.
 
             invalid = {[], struct("applyAfter", 'Items'), ...
                 struct("applyAfter", {{"Items", "Items"}}), ...
@@ -49,6 +55,7 @@ classdef (TestTags = {'fast', 'catalog', 'model'}) PropertyApplicationPolicyTest
 
         function rejectsSelfReferenceAndIndirectCycles(testCase)
             % rejectsSelfReferenceAndIndirectCycles Reject both immediate and transitive graph failures.
+            % Guarantee and failure mode: shared with ordersDependenciesStablyAcrossIndependentProperties.
 
             make = @(name, dependency) yamada.model.PropertyDefinition(name, [], false, true, ...
                 struct("application", struct("applyAfter", {{dependency}})));
@@ -61,6 +68,8 @@ classdef (TestTags = {'fast', 'catalog', 'model'}) PropertyApplicationPolicyTest
 
         function parsesOnlyAuditedInertDefaults(testCase)
             % parsesOnlyAuditedInertDefaults Keep seeds separate from source and reject executable expressions.
+            % Guarantee: catalog initial values are parsed only from audited inert forms.
+            % Failure mode: an executable catalog expression is evaluated as an initial value, breaking the no-arbitrary-code invariant.
             policy = yamada.model.PropertyApplicationPolicy(struct("defaultLiteral", "[-Inf Inf]"));
             testCase.verifyTrue(policy.HasInitialValue);
             testCase.verifyEqual(policy.InitialValue, [-Inf Inf]);

@@ -15,7 +15,6 @@ classdef EvaluationContext < handle
         % Cached results are heterogeneous, so each entry is one cell value.
         Values dictionary = dictionary(string([]), {})
         Plans dictionary = dictionary(string([]), {})
-        Cacheable logical = false
         ReadDepth double = 0
         TransitionToken struct = struct()
         TransitionOwner string = ""
@@ -29,7 +28,7 @@ classdef EvaluationContext < handle
                 obj (1, 1) yamada.model.EvaluationContext
                 previous (1, 1) yamada.model.EvaluationContext
             end
-            if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
+            if obj.Registry ~= previous.Registry || ...
                     obj.RegistryRevision ~= previous.RegistryRevision || ...
                     ~isequaln(rmfield(obj.Key, "Components"), rmfield(previous.Key, "Components"))
                 return
@@ -86,22 +85,19 @@ classdef EvaluationContext < handle
             end
             token = struct("Clock", obj.InputClock, "Revision", obj.InputRevision, ...
                 "Registry", obj.Registry, "RegistryRevision", obj.RegistryRevision);
-            tracked = obj.Cacheable && obj.InputClock.IsTracked && ...
+            tracked = obj.InputClock.IsTracked && ...
                 obj.InputClock.Revision == obj.InputRevision && obj.Registry.Revision == obj.RegistryRevision;
         end
 
-        function [inputs, safe] = inputs(obj)
+        function inputs = inputs(obj)
             % inputs Return independent semantic inputs for conservative view invalidation.
             arguments (Input)
                 obj (1, 1) yamada.model.EvaluationContext
             end
             arguments (Output)
                 inputs (1, 1) struct
-                safe (1, 1) logical
             end
-            safe = obj.Cacheable;
-            inputs = struct();
-            if safe, inputs = obj.Key; end
+            inputs = obj.Key;
         end
 
         function result = isLiteralTransition(obj, token, request)
@@ -130,7 +126,7 @@ classdef EvaluationContext < handle
             arguments (Output)
                 result (1, 1) logical
             end
-            result = obj.Cacheable && obj.ReadDepth > 0 && ...
+            result = obj.ReadDepth > 0 && ...
                 obj.Registry == registry && obj.RegistryRevision == registry.Revision && ...
                 obj.InputClock.IsTracked && obj.InputClock.Revision == obj.InputRevision;
         end
@@ -155,7 +151,7 @@ classdef EvaluationContext < handle
                 registry yamada.model.ComponentRegistry = yamada.model.ComponentRegistry.empty
             end
             if isempty(document), return, end
-            [obj.Key, obj.Cacheable] = yamada.model.EvaluationContext.capture(document);
+            obj.Key = yamada.model.EvaluationContext.capture(document);
             [obj.InputClock, obj.InputRevision] = document.inputStamp();
             obj.Registry = registry;
             obj.RegistryRevision = registry.Revision;
@@ -171,15 +167,14 @@ classdef EvaluationContext < handle
             arguments (Output)
                 result (1, 1) logical
             end
-            result = obj.Cacheable && obj.Registry == registry && obj.RegistryRevision == registry.Revision;
+            result = obj.Registry == registry && obj.RegistryRevision == registry.Revision;
             if result
                 [clock, revision, tracked] = document.inputStamp();
                 if tracked && obj.InputClock == clock
                     result = obj.InputRevision == revision;
                 else
-                    % Shared ownership and live inputs retain exact comparison.
-                    [key, cacheable] = yamada.model.EvaluationContext.capture(document);
-                    result = cacheable && isequaln(obj.Key, key);
+                    % Shared ownership retains exact comparison.
+                    result = isequaln(obj.Key, yamada.model.EvaluationContext.capture(document));
                 end
             end
         end
@@ -194,23 +189,19 @@ classdef EvaluationContext < handle
                 value
                 found (1, 1) logical
             end
-            found = obj.Cacheable && isKey(obj.Values, name);
+            found = isKey(obj.Values, name);
             value = [];
             if found, value = obj.Values{name}; end
         end
 
         function remember(obj, name, value)
-            % remember Retain independent evaluation values only when their classes are safe.
+            % remember Retain an independent value copy of one evaluation result.
             arguments (Input)
                 obj (1, 1) yamada.model.EvaluationContext
                 name (1, 1) string
                 value
             end
-            if ~obj.Cacheable, return, end
-            [independent, safe] = yamada.model.EvaluationContext.freeze(value, false, obj.Registry);
-            if safe
-                obj.Values{name} = independent;
-            end
+            obj.Values{name} = yamada.model.EvaluationContext.freeze(value, false);
         end
 
         function [plan, found] = configuration(obj, name, componentName)
@@ -224,7 +215,7 @@ classdef EvaluationContext < handle
                 plan (1, 1) struct
                 found (1, 1) logical
             end
-            found = obj.Cacheable && isKey(obj.Plans, name);
+            found = isKey(obj.Plans, name);
             plan = struct();
             if ~found, return, end
             saved = obj.Plans{name};
@@ -303,9 +294,7 @@ classdef EvaluationContext < handle
                 name (1, 1) string
                 document (1, 1) yamada.model.DocumentModel
             end
-            if obj.Cacheable
-                obj.Plans{name} = document.structuralCandidate();
-            end
+            obj.Plans{name} = document.structuralCandidate();
         end
     end
 
@@ -321,15 +310,12 @@ classdef EvaluationContext < handle
             end
             [clock, revision, tracked] = document.inputStamp();
             % DocumentModel calls this after a semantic join or an owned callback-only source projection.
-            safe = tracked && yamada.model.InputChangeClock.isValueData(document.Metadata) && ...
-                yamada.model.InputChangeClock.isValueData(document.UnknownRegions) && isempty(document.PendingEdits) && ...
+            safe = tracked && isempty(document.PendingEdits) && ...
                 isempty(document.CallbackEdits) && isempty(document.RenameEdits);
             components = struct([]);
             for component = document.Components
-                safe = safe && yamada.model.InputChangeClock.isValueData(component.Metadata);
                 properties = struct([]);
                 for entry = component.Properties
-                    safe = safe && yamada.model.InputChangeClock.isValueData(entry.Metadata);
                     value = rmfield(entry.toStruct(), "Diagnostics");
                     if isempty(properties), properties = value; else, properties(end + 1) = value; end %#ok<AGROW>
                 end
@@ -348,7 +334,7 @@ classdef EvaluationContext < handle
                 "Encoding", document.Encoding, "LineEnding", document.LineEnding, ...
                 "Metadata", document.Metadata, "UnknownRegions", document.UnknownRegions, ...
                 "PendingEdits", {document.PendingEdits}, "CallbackEdits", document.CallbackEdits, "RenameEdits", document.RenameEdits);
-            obj.Key.Components = components; obj.Cacheable = true;
+            obj.Key.Components = components;
             obj.InputClock = clock; obj.InputRevision = revision; obj.Registry = registry; obj.RegistryRevision = registry.Revision;
         end
 
@@ -368,7 +354,7 @@ classdef EvaluationContext < handle
             end
             [oldToken, ~] = previous.revisionToken();
             [clock, revision, tracked] = document.inputStamp();
-            reusable = previous.Cacheable && tracked && ~isempty(fieldnames(token)) && ...
+            reusable = tracked && ~isempty(fieldnames(token)) && ...
                 yamada.model.EvaluationContext.sameToken(oldToken, token) && clock == previous.InputClock && ...
                 registry == previous.Registry && registry.Revision == previous.RegistryRevision;
             if ~reusable
@@ -386,11 +372,7 @@ classdef EvaluationContext < handle
             end
             % Only the changed owner can introduce new values, types, or source occurrences.
             for id = ownerId
-                [owner, safe] = yamada.model.EvaluationContext.freeze(document.getComponent(id), true, registry);
-                if ~safe
-                    obj = yamada.model.EvaluationContext(document, registry); return
-                end
-                key.Components(ids == id) = owner;
+                key.Components(ids == id) = yamada.model.EvaluationContext.freeze(document.getComponent(id), true);
             end
             key.OriginalText = document.CurrentText;
             key.Metadata.SourceSnapshotText = document.Metadata.SourceSnapshotText;
@@ -404,7 +386,6 @@ classdef EvaluationContext < handle
             key.RenameEdits = document.RenameEdits;
             obj = yamada.model.EvaluationContext();
             obj.Key = key;
-            obj.Cacheable = true;
             obj.InputClock = clock;
             obj.InputRevision = revision;
             obj.Registry = registry;
@@ -474,7 +455,7 @@ classdef EvaluationContext < handle
                 affected (1, :) string
                 batch (1, 1) yamada.source.SourcePatchBatch
             end
-            if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
+            if obj.Registry ~= previous.Registry || ...
                     obj.RegistryRevision ~= previous.RegistryRevision, return, end
             values = previous.stateValues();
             for name = keys(obj.Values)'
@@ -515,7 +496,7 @@ classdef EvaluationContext < handle
                 changedIds (1, :) string
                 batch (1, 1) yamada.source.SourcePatchBatch
             end
-            if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
+            if obj.Registry ~= previous.Registry || ...
                     obj.RegistryRevision ~= previous.RegistryRevision, return, end
             before = previous.Key.Components; after = obj.Key.Components;
             if numel(before) ~= numel(after), return, end
@@ -547,7 +528,7 @@ classdef EvaluationContext < handle
                 id (1, 1) string
                 resolved (1, 1) struct
             end
-            if obj.Cacheable, obj.Values{"states:" + id} = resolved; end
+            obj.Values{"states:" + id} = resolved;
         end
 
         function rememberOwnedConfiguration(obj, name, document)
@@ -557,7 +538,6 @@ classdef EvaluationContext < handle
                 name (1, 1) string
                 document (1, 1) yamada.model.DocumentModel
             end
-            if ~obj.Cacheable, return, end
             try
                 snapshot = document.configurationSnapshot();
             catch exception
@@ -581,7 +561,7 @@ classdef EvaluationContext < handle
                 batch (1, 1) yamada.source.SourcePatchBatch
                 preserveDocumentStates (1, 1) logical = false
             end
-            if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
+            if obj.Registry ~= previous.Registry || ...
                     obj.RegistryRevision ~= previous.RegistryRevision
                 return
             end
@@ -608,7 +588,7 @@ classdef EvaluationContext < handle
                 obj (1, 1) yamada.model.EvaluationContext
                 previous (1, 1) yamada.model.EvaluationContext
             end
-            if ~obj.Cacheable || ~previous.Cacheable || obj.Registry ~= previous.Registry || ...
+            if obj.Registry ~= previous.Registry || ...
                     obj.RegistryRevision ~= previous.RegistryRevision
                 return
             end
@@ -677,25 +657,23 @@ classdef EvaluationContext < handle
                 first.Clock == second.Clock && first.Registry == second.Registry;
         end
 
-        function [key, safe] = capture(document)
+        function key = capture(document)
             % capture Snapshot all source and model inputs while excluding derived output diagnostics.
             arguments (Input)
                 document (1, 1) yamada.model.DocumentModel
             end
             arguments (Output)
                 key (1, 1) struct
-                safe (1, 1) logical
             end
-            [components, ownedSafe] = yamada.model.EvaluationContext.freeze(document.Components, true);
+            components = yamada.model.EvaluationContext.freeze(document.Components, true);
             key = struct("ClassName", document.ClassName, "FilePath", document.FilePath, ...
                 "OriginalText", document.CurrentText, "RootComponentId", document.RootComponentId, ...
                 "Encoding", document.Encoding, "LineEnding", document.LineEnding, ...
                 "Metadata", document.Metadata, "UnknownRegions", document.UnknownRegions, ...
                 "PendingEdits", {document.PendingEdits}, "CallbackEdits", document.CallbackEdits, ...
                 "RenameEdits", document.RenameEdits);
-            [key, safe] = yamada.model.EvaluationContext.freeze(key);
+            key = yamada.model.EvaluationContext.freeze(key);
             key.Components = components;
-            safe = safe && ownedSafe;
         end
 
         function groups = scopeGroups(components)
@@ -799,25 +777,23 @@ classdef EvaluationContext < handle
             indices = reshape(sort(indices), 1, []);
         end
 
-        function [value, safe] = freeze(value, owned, registry)
-            % freeze Convert known records by value and bypass caching for unrecognized live data.
+        function value = freeze(value, owned)
+            % freeze Convert owned model records to independent value structs.
+            %   Model inputs and cached results contain only value data and model records;
+            %   records outside the captured document are a programming error.
             arguments (Input)
                 value
                 owned (1, 1) logical = false
-                registry yamada.model.ComponentRegistry = yamada.model.ComponentRegistry.empty
             end
             arguments (Output)
                 value
-                safe (1, 1) logical
             end
-            safe = true;
             if isa(value, "yamada.model.ComponentRecord")
-                if ~owned, value = []; safe = false; return, end
+                assert(owned, "yamada:EvaluationContext:UnownedRecord", "Cached values must not retain component records.");
                 records = struct([]);
                 for index = 1:numel(value)
                     component = value(index);
-                    [properties, independent] = yamada.model.EvaluationContext.freeze(component.Properties, true, registry);
-                    safe = safe && independent;
+                    properties = yamada.model.EvaluationContext.freeze(component.Properties, true);
                     record = struct("Id", component.Id, "Name", component.Name, ...
                         "Factory", component.Factory, "DeclaredType", component.DeclaredType, ...
                         "Origin", component.Origin, "ParentId", component.ParentId, ...
@@ -825,47 +801,30 @@ classdef EvaluationContext < handle
                         "IsEditable", component.IsEditable, "Metadata", component.Metadata, ...
                         "SourceSpans", component.SourceSpans, ...
                         "Settings", component.settingSnapshot());
-                    [record, valid] = yamada.model.EvaluationContext.freeze(record, false, registry);
-                    safe = safe && valid;
                     record.Properties = properties;
                     if isempty(records), records = record; else, records(end + 1) = record; end %#ok<AGROW>
                 end
                 value = records;
             elseif isa(value, "yamada.model.PropertyEntry")
-                if ~owned, value = []; safe = false; return, end
+                assert(owned, "yamada:EvaluationContext:UnownedRecord", "Cached values must not retain property entries.");
                 records = struct([]);
                 for index = 1:numel(value)
                     record = value(index).toStruct();
                     record = rmfield(record, "Diagnostics");
                     if isempty(records), records = record; else, records(end + 1) = record; end %#ok<AGROW>
                 end
-                [value, safe] = yamada.model.EvaluationContext.freeze(records, false, registry);
+                value = records;
             elseif isstruct(value)
                 fields = fieldnames(value);
                 for index = 1:numel(value)
                     for field = 1:numel(fields)
-                        [value(index).(fields{field}), valid] = yamada.model.EvaluationContext.freeze(value(index).(fields{field}), false, registry);
-                        safe = safe && valid;
+                        value(index).(fields{field}) = yamada.model.EvaluationContext.freeze(value(index).(fields{field}));
                     end
                 end
             elseif iscell(value)
                 for index = 1:numel(value)
-                    [value{index}, valid] = yamada.model.EvaluationContext.freeze(value{index}, false, registry);
-                    safe = safe && valid;
+                    value{index} = yamada.model.EvaluationContext.freeze(value{index});
                 end
-            else
-                safe = isnumeric(value) || islogical(value) || ischar(value) || isstring(value) || ...
-                    isa(value, "datetime") || isa(value, "duration") || isa(value, "calendarDuration") || ...
-                    isa(value, "categorical") || isa(value, "yamada.model.SourceSpan") || ...
-                    isa(value, "yamada.model.UnknownSourceRegion") || isa(value, "yamada.model.Diagnostic") || ...
-                    isa(value, "yamada.model.PropertyState") || isa(value, "yamada.model.PropertyDefinition") || ...
-                    isa(value, "yamada.model.CallbackEdit") || isa(value, "yamada.source.CallbackMethodSignature");
-                if safe && isa(value, "yamada.model.PropertyDefinition") && ~isempty(registry)
-                    safe = registry.areIndependentDefinitions(value);
-                elseif safe && isobject(value)
-                    safe = yamada.model.InputChangeClock.isValueData(value);
-                end
-                if ~safe, value = []; end
             end
         end
     end

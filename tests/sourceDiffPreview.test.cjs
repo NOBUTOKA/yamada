@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // This file is part of yamada. See LICENSE for the license text.
 
+// Guarantee: the source diff aligns lines and maps changes to the correct side.
+// Failure mode: repeated lines, whitespace, or a final newline misalign the diff, hiding a real change.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');

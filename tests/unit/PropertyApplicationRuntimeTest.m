@@ -5,6 +5,8 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
 
     methods (Test)
 
+        % Guarantee: reviewed geometry and Units rules match native setters of the running release.
+        % Failure mode: a release changes alias access or conversion order, and generated source places controls differently from the model.
         function gridTracksSupportConstructorsAndOccupancyPadding(testCase)
             % gridTracksSupportConstructorsAndOccupancyPadding Verify constructor tokens and occupied-track release.
             [figure, ~] = testCase.environment();
@@ -123,6 +125,8 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             for id = missing, assumeCatalogSupports(testCase, id); end
         end
 
+        % Guarantee: domain properties are applied before values exactly where native controls require it.
+        % Failure mode: a value is assigned outside the default domain and MATLAB errors or clamps it.
         function itemDomainsAreEstablishedBeforeSelection(testCase)
             % itemDomainsAreEstablishedBeforeSelection Verify all six item-backed variants.
             [figure, registry] = testCase.environment();
@@ -185,6 +189,8 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
             end
         end
 
+        % Guarantee: reviewed axes mode rules match native setter and constructor behavior.
+        % Failure mode: generated order lets a tick or width setter switch a final auto mode to manual.
         function explicitFinalModesSurviveTickSetterEffects(testCase)
             % explicitFinalModesSurviveTickSetterEffects Restore final automatic modes after explicit tick arrays.
             [figure, registry] = testCase.environment();
@@ -354,6 +360,7 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
 
         function unitsAreEstablishedBeforeCoordinatesAndFontSize(testCase)
             % unitsAreEstablishedBeforeCoordinatesAndFontSize Avoid conversion of values assigned in old units.
+            % Guarantee and failure mode: shared with gridTracksSupportConstructorsAndOccupancyPadding.
             [figure, registry] = testCase.environment();
             for factory = ["uipanel", "uibuttongroup", "uitable", "uiaxes", "axes", "polaraxes"]
                 entries = [yamada.model.PropertyEntry("Position", [1 1 8 6]), ...
@@ -369,6 +376,8 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
 
         function previewPlanPreservesParsedSetterEffectsAndEarlierWrites(testCase)
             % previewPlanPreservesParsedSetterEffectsAndEarlierWrites Avoid treating canonical order as original execution order.
+            % Guarantee: Preview applies parsed settings in original execution order.
+            % Failure mode: Preview applies canonical order and shows a state that the source never produces.
             [figure, registry] = testCase.environment();
             definition = registry.get("uislider");
             component = yamada.model.ComponentRecord("owned-slider", "Slider", ...

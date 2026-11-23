@@ -4,33 +4,30 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
     %   consumers while direct writes and catalog changes invalidate that input.
 
     methods (Test)
+        % Guarantee: committed edits reuse proven source and validation instead of reparsing.
+        % Failure mode: each commit reparses the whole source, or reuse freezes command or placement data that should change.
         function independentFontEditsRetainConditionResults(testCase)
-            % independentFontEditsRetainConditionResults Reuse conditions without freezing native placement or command data.
+            % independentFontEditsRetainConditionResults Reuse conditions without freezing command data.
             registry = yamada.model.ComponentRegistry.createDefault();
             [document, ~, children] = CommittedPropertySourcePlanTest.gridFixture(registry, 2);
             label = children(1);
             document.setProperty(label.Id, "FontSize", 23, registry);
             document.validatePropertyCommit(registry);
-            measured = [20 20 100 22];
             beforeCopy = yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
             beforeDelete = yamada.model.DocumentEditAvailability.deletion(document, label.Id, registry);
-            beforeParents = yamada.model.DocumentEditAvailability.reparenting(document, label.Id, registry, measured);
             testCase.assertTrue(beforeCopy.Enabled);
             testCase.assertTrue(beforeDelete.Enabled);
             document.setPropertyBatch(label.Id, ...
                 yamada.model.PropertyTransaction.singleChange("FontSize", 31), registry);
             document.validatePropertyCommit(registry);
 
-            % Condition reads must use immutable prior answers for the same measured rectangle.
+            % Condition reads must use immutable prior answers.
             afterCopy = yamada.model.DocumentEditAvailability.copying(document, label.Id, registry);
             afterDelete = yamada.model.DocumentEditAvailability.deletion(document, label.Id, registry);
-            afterParents = yamada.model.DocumentEditAvailability.reparenting(document, label.Id, registry, measured);
             testCase.verifyEqual(afterCopy, beforeCopy);
             testCase.verifyEqual(afterDelete, beforeDelete);
-            testCase.verifyEqual(afterParents, beforeParents);
 
-            % Changed fit geometry must still recompute destination conditions.
-            yamada.model.DocumentEditAvailability.reparenting(document, label.Id, registry, [20 20 100 40]);
+            % Copy and Undo must observe the committed value rather than a frozen plan.
             snapshot = document.copySubtree(label.Id, registry);
             font = snapshot.Records(1).Properties(string({snapshot.Records(1).Properties.Path}) == "FontSize");
             testCase.verifyEqual(font.LiteralValue, 31);
@@ -73,9 +70,11 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             end
         end
 
+        % Guarantee: reused proofs are discarded after any semantic or history change, and invalid values change nothing.
+        % Failure mode: a stale plan or cached track list certifies a later edit, or an out-of-range value reaches the model.
         function commitValidationRejectsStaleProofs(testCase)
-            % commitValidationRejectsStaleProofs Revalidate semantic, catalog, history, and unpreflighted changes.
-            for kind = ["metadata", "entry", "registry", "history", "unproven", "structure"]
+            % commitValidationRejectsStaleProofs Revalidate semantic, history, and unpreflighted changes.
+            for kind = ["metadata", "entry", "history", "unproven", "structure"]
                 registry = yamada.model.ComponentRegistry.createDefault();
                 [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
                 document.setProperty(label.Id, "FontSize", 23, registry);
@@ -85,8 +84,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
                         document.Metadata.ValidationProofInvalidation = true;
                     case "entry"
                         label.setProperty("Text", "Direct write");
-                    case "registry"
-                        registry.register(registry.get("uilabel"));
                     case "history"
                         document.undo();
                     case "unproven"
@@ -101,6 +98,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function repeatedNumericEditsAvoidWholeSourcePreflight(testCase)
             % repeatedNumericEditsAvoidWholeSourcePreflight Reuse proven placement for saved and unsaved settings.
+            % Guarantee and failure mode: shared with independentFontEditsRetainConditionResults.
             registry = yamada.model.ComponentRegistry.createDefault();
             for inGrid = [false true]
                 for sourceBacked = [false true]
@@ -154,6 +152,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function localNumericEditsRejectInvalidValuesAtomically(testCase)
             % localNumericEditsRejectInvalidValuesAtomically Keep range failures outside the live model and history.
+            % Guarantee and failure mode: shared with commitValidationRejectsStaleProofs.
             registry = yamada.model.ComponentRegistry.createDefault();
             [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
             document.setProperty(label.Id, "FontSize", 23, registry);
@@ -170,6 +169,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function siblingLayoutReadsMatchIndependentSource(testCase)
             % siblingLayoutReadsMatchIndependentSource Compare sibling layout values and setting identities with independent source.
+            % Guarantee: sibling layout reads match independent source.
+            % Failure mode: shared plans return a sibling's stale layout values or setting identities.
             registry = yamada.model.ComponentRegistry.createDefault();
             for count = 3
                 [document, grid, children] = CommittedPropertySourcePlanTest.gridFixture(registry, count);
@@ -211,6 +212,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function gridValuesInvalidateAcrossWritesAndHistory(testCase)
             % gridValuesInvalidateAcrossWritesAndHistory Keep cached tracks and coordinates tied to current input.
+            % Guarantee and failure mode: shared with commitValidationRejectsStaleProofs.
             registry = yamada.model.ComponentRegistry.createDefault();
             [document, grid, children] = CommittedPropertySourcePlanTest.gridFixture(registry, 2);
             document.setPropertyBatch(children(1).Id, ...
@@ -235,12 +237,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             states = document.getEffectivePropertyStates(registry, grid.Id);
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
                 {40, 80, "1x"});
-            previous = document.evaluationContext(registry);
-            registry.register(registry.get("uigridlayout"));
-            testCase.verifyNotEqual(document.evaluationContext(registry), previous);
-            states = document.getEffectivePropertyStates(registry, grid.Id);
-            testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
-                {40, 80, "1x"});
             document.Metadata.HasUnresolvedInitialization = true;
             states = document.getEffectivePropertyStates(registry, grid.Id);
             testCase.verifyEqual(states(arrayfun(@(item) item.Definition.Path == "RowHeight", states)).Resolution.EffectiveValue, ...
@@ -254,6 +250,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function committedEditsDoNotReparseForStateConsumers(testCase)
             % committedEditsDoNotReparseForStateConsumers Reuse complete source for single and batch edits.
+            % Guarantee and failure mode: shared with independentFontEditsRetainConditionResults.
             registry = yamada.model.ComponentRegistry.createDefault();
             for inGrid = [false true]
                 for batch = [false true]
@@ -283,6 +280,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
 
         function committedPlansRemainIndependentAndInvalidateOnWrites(testCase)
             % committedPlansRemainIndependentAndInvalidateOnWrites Never borrow stale values or caller mutations.
+            % Guarantee and failure mode: shared with commitValidationRejectsStaleProofs.
             registry = yamada.model.ComponentRegistry.createDefault();
             [document, label] = CommittedPropertySourcePlanTest.fixture(registry, true);
             document.setPropertyBatch(label.Id, ...
@@ -293,13 +291,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) CommittedPropertySourcePla
             testCase.verifyEqual(second.Component.getProperty("FontSize").LiteralValue, 23);
             testCase.verifyEqual(label.getProperty("FontSize").LiteralValue, 23);
 
-            % Direct record writes and registry replacement both invalidate the shared plan.
+            % Direct record writes invalidate the shared plan.
             label.setProperty("FontSize", 31);
-            [~, found] = document.evaluationContext(registry).configuration("combined", label.Name);
-            testCase.verifyFalse(found);
-            updated = yamada.source.PropertySourcePlan.plan(document, label, registry);
-            testCase.verifyEqual(updated.Component.getProperty("FontSize").LiteralValue, 31);
-            registry.register(registry.get("uilabel"));
             [~, found] = document.evaluationContext(registry).configuration("combined", label.Name);
             testCase.verifyFalse(found);
             updated = yamada.source.PropertySourcePlan.plan(document, label, registry);

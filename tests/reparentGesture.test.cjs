@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // This file is part of yamada. See LICENSE for the license text.
 
+// Guarantee: cross-container drags compute target geometry, overlap, and clipped spans, and commit or cancel exactly once.
+// Failure mode: a drop reaches the wrong container or cell, or a cancelled gesture commits.
 // Exercise cross-container target geometry, overlap, clipped spans, commit and cancellation.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
