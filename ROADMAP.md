@@ -16,7 +16,8 @@ For users following planned features and contributors choosing work, this roadma
 ## Broader axes support
 
 - **Extend ruler details.** Add individual latitude and longitude ruler formats and type-specific controls for Cartesian datetime, duration, and categorical rulers when their types can be established.
-- **Recognize more axes setup calls.** Support the aspect-ratio forms of `axis`, such as `equal` and `square`, and absolute camera settings. Extend coverage of compound and data-dependent calls as their effects and ownership can be established. Recognized single-property calls such as `xlim`, `xticks`, and `box` are already editable in place and used for new settings, and the limits, limit-method, mode, direction, and visibility forms of `axis` are recognized.
+- **Recognize more axes setup calls.** Support absolute camera settings and the state-dependent `fill` form of `axis`. Extend coverage of compound and data-dependent calls as their effects and ownership can be established. Recognized single-property calls such as `xlim`, `xticks`, and `box` are already editable in place and used for new settings, and the limits, limit-method, mode, direction, visibility, and aspect-ratio forms of `axis` are recognized.
+- **Resolve conflicting axes settings.** When a later setting overrides an effect of an earlier call, such as an explicit `DataAspectRatio` after `axis equal`, let the user open the conflict from the Inspector and choose which setting comes last.
 
 ## More control when saving
 

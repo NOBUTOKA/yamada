@@ -395,6 +395,38 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), edited);
         end
 
+        % Guarantee: Choosing an axis style rewrites only the keyword of the last axis call, rebuilds that call's implied ratio and limit settings, leaves later overriding settings in place, writes a new call after every setting when none exists, and Undo restores the original call and its effects.
+        % Failure mode: The edit adds a second call, drops or duplicates the later assignment, keeps the old keyword's effects, changes the quote style, or Undo leaves the new effects recorded.
+        % sharedCallTokenIsSupersededAfterItsCall edits one effect after a call; this test detects a change of the call's own keyword and the effects it implies.
+        function axisStyleKeywordIsReplacedInPlace(testCase)
+            % axisStyleKeywordIsReplacedInPlace Switch equal to square and insert image where no call exists.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "axis(app.Control, 'equal');", ...
+                "app.Control.DataAspectRatio = [1 2 1];"]);
+            callPaths = @(component) string({component.Settings(arrayfun(@(setting) ...
+                isequal(setting.SourceSpan, component.getSettings("AxisStyle").SourceSpan), component.Settings)).Path});
+            document.editAxesInspector(control.Id, "AxisStyle", "square", "set", registry);
+            edited = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifySubstring(edited, "axis(app.Control, 'square');" + sprintf('\r\n') + ...
+                "app.Control.DataAspectRatio = [1 2 1];");
+            testCase.verifyEqual(count(edited, "axis("), 1);
+            testCase.verifyEqual(callPaths(control), ["AxisStyle","DataAspectRatioMode","PlotBoxAspectRatio","PlotBoxAspectRatioMode"]);
+            testCase.verifyEqual(control.getSettings("DataAspectRatio").Method, "assignment");
+            document.undo();
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+            testCase.verifyEqual(callPaths(control), ["AxisStyle","DataAspectRatio","DataAspectRatioMode","PlotBoxAspectRatioMode"]);
+            document.redo();
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), edited);
+
+            % Without a call, the chosen keyword is written after every certain setting.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "app.Control.Box = 'on';"]);
+            document.editAxesInspector(control.Id, "AxisStyle", "image", "set", registry);
+            testCase.verifySubstring(document.CurrentText, "app.Control.Box = 'on';" + sprintf('\r\n') + ...
+                "axis(app.Control, ""image"");");
+            testCase.verifyEqual(string(control.getSettings("YLimitMethod").LiteralValue), "tight");
+        end
+
         % Guarantee: Editing a setting that only shapes an automatic value, such as XLimitMethod or a tick label format, also turns that value's Auto on with one call placed after the manual setting, and Undo restores both.
         % Failure mode: The edit keeps the manual Mode so the choice has no visible effect, writes a separate Mode statement or a call before the manual setting that the setting then overrides, or Undo leaves the Mode changed.
         % pendingModeIsAddedAfterExistingConstructorValue edits a Mode directly; this test detects a parameter edit that must request the Mode itself.

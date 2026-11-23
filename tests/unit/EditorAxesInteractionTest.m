@@ -435,7 +435,74 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             clear cleanup
         end
 
+        % Guarantee: the Axis Style row shows the keyword of the last axis call, marks effects that later settings override, and Preview applies the call's ratio effects in source order.
+        % Failure mode: the row shows a guessed or stale keyword, the override goes unmarked or stays marked after it is resolved, or Preview ignores the call while applying the later assignment.
+        % editsGeographicLimitsTogetherThroughInspector covers a paired argument edit; this test detects the derived keyword state and its override marker.
+        function marksAxisStyleEffectsOverriddenByLaterSettings(testCase)
+            % marksAxisStyleEffectsOverriddenByLaterSettings Switch equal to square under a later explicit ratio.
+            folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture).Folder;
+            path = string(fullfile(folder, "ModeApp.m"));
+            writeModeApp(path, ["app.First.Position = [11 12 300 200];", "axis(app.First, ""equal"");", "app.First.DataAspectRatio = [1 2 1];"]);
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn",@() acceptedOpenPath(path)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = editorPalette();
+            open = findall(figure,"Type","uimenu","Text","&Open...");
+            open.MenuSelectedFcn(open,[]);
+            drawnow;
+            modeEditor(app,figure,"First","XLim");
+            [style, marker] = axisStyleRow(figure);
+            testCase.verifyEqual(string(style.Value),"equal");
+            testCase.verifyEqual(string(marker.Visible),"on");
+            testCase.verifySubstring(string(marker.Tooltip),"DataAspectRatio is overridden on line");
+            preview = firstPreview(figure);
+            testCase.verifyEqual(preview.DataAspectRatio,[1 2 1]);
+            testCase.verifyEqual(string(preview.PlotBoxAspectRatioMode),"manual");
+
+            % The later ratio still overrides the Mode that square returns to automatic.
+            style.Value = "square";
+            style.ValueChangedFcn(style,struct());
+            testCase.verifySubstring(app.Document.CurrentText, ...
+                "axis(app.First, ""square"");" + sprintf("\r\n") + "app.First.DataAspectRatio = [1 2 1];");
+            [style, marker] = axisStyleRow(figure);
+            testCase.verifyEqual(string(style.Value),"square");
+            testCase.verifySubstring(string(marker.Tooltip),"DataAspectRatioMode is overridden by DataAspectRatio");
+            preview = firstPreview(figure);
+            testCase.verifyEqual(preview.PlotBoxAspectRatio,[1 1 1]);
+            clear cleanup
+        end
+
     end
+end
+
+function preview = firstPreview(figure)
+% firstPreview Return the Preview axes placed at the First fixture position.
+arguments (Input)
+    figure (1,1) matlab.ui.Figure
+end
+arguments (Output)
+    preview (1,1) matlab.ui.control.UIAxes
+end
+
+handles = findall(figure,"-isa","matlab.ui.control.UIAxes");
+preview = handles(arrayfun(@(item) isequal(item.Position(1:2),[11 12]),handles));
+end
+
+function [style, marker] = axisStyleRow(figure)
+% axisStyleRow Return the Axis Style drop-down and its override marker.
+arguments (Input)
+    figure (1,1) matlab.ui.Figure
+end
+arguments (Output)
+    style (1,1) matlab.ui.control.DropDown
+    marker (1,1) matlab.ui.control.Label
+end
+
+labels = findall(figure,"Tag","yamada-inspector-property-label");
+row = labels(string({labels.Text}) == "Axis Style").Parent;
+style = findall(row,"Type","uidropdown");
+marker = findall(row,"Tag","yamada-inspector-conflict-indicator");
 end
 
 function writeModeApp(path, settings)

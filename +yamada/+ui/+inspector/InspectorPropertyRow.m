@@ -16,6 +16,8 @@ classdef InspectorPropertyRow < handle
         IsComposite logical = false
         BindingGeneration uint64 = uint64(0)
         SettingsButton
+        Grid
+        ConflictIndicator
     end
 
     methods
@@ -42,6 +44,7 @@ classdef InspectorPropertyRow < handle
             grid.ColumnSpacing = 4;
             grid.ColumnWidth = {105, "1x"};
             grid.RowHeight = {yamada.ui.inspector.InspectorPropertyRow.rowHeight(definition)};
+            obj.Grid = grid;
             obj.ComponentId = componentId;
             obj.IsComposite = isstruct(definition) && isfield(definition, "IsComposite") && ...
                 definition.IsComposite;
@@ -232,6 +235,9 @@ classdef InspectorPropertyRow < handle
                 if isfield(members, "Reason") && strlength(members.Reason) > 0
                     obj.Editor.Tooltip = members.Reason;
                 end
+                conflict = "";
+                if isfield(members, "Conflict"), conflict = string(members.Conflict); end
+                obj.showConflict(conflict);
                 return
             end
             obj.restoreNormalBackgroundColor();
@@ -339,6 +345,28 @@ classdef InspectorPropertyRow < handle
             obj.ErrorMessage = "";
             obj.Editor.Tooltip = "";
             obj.restoreNormalBackgroundColor();
+        end
+
+        function showConflict(obj, message)
+            % showConflict Mark a value that later settings partly override, explaining which by hover.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                message (1, 1) string
+            end
+
+            % Create the indicator column only for rows that have ever shown a conflict.
+            if strlength(message) == 0 && isempty(obj.ConflictIndicator), return, end
+            if isempty(obj.ConflictIndicator)
+                widths = obj.Grid.ColumnWidth;
+                obj.Grid.ColumnWidth = [widths {16}];
+                obj.ConflictIndicator = uilabel(obj.Grid, "Text", "✕", "FontColor", [0.85 0.1 0.1], ...
+                    "FontWeight", "bold", "HorizontalAlignment", "center", ...
+                    "Tag", "yamada-inspector-conflict-indicator");
+                obj.ConflictIndicator.Layout.Row = 1;
+                obj.ConflictIndicator.Layout.Column = numel(widths) + 1;
+            end
+            obj.ConflictIndicator.Visible = matlab.lang.OnOffSwitchState(strlength(message) > 0);
+            obj.ConflictIndicator.Tooltip = message;
         end
 
         function showError(obj, message)

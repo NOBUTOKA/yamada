@@ -37,6 +37,15 @@ classdef AxesInspectorProperties
             result = ["dd","dm","dms","-dd","-dm","-dms"];
         end
 
+        function result = axisStyles()
+            % axisStyles List the aspect-ratio keywords of axis offered in the Inspector.
+            %   normal also represents axes without such a call, whose ratios stay automatic.
+            arguments (Output)
+                result (1,:) string
+            end
+            result = ["normal","equal","image","square","vis3d"];
+        end
+
         function result = rulerPaths(factory)
             % rulerPaths Return the supported numeric ruler details on this factory.
             arguments (Input)
@@ -188,6 +197,13 @@ classdef AxesInspectorProperties
                     "editor",editor,"previewPolicy","apply", ...
                     "valueSchema",struct("kind","literal","shape","scalar","matlabClasses",valueClass));
                 definitionsOut(end+1) = yamada.model.PropertyDefinition(path,seed,false,true,metadata); %#ok<AGROW>
+            end
+            if any(factory == ["axes","uiaxes"])
+                % The keyword of the last axis call; its effects are recorded as separate settings.
+                metadata = struct("category","Position","displayName","Axis Style", ...
+                    "editor","enum","previewPolicy","skip", ...
+                    "valueSchema",struct("values",yamada.model.AxesInspectorProperties.axisStyles()));
+                definitionsOut(end+1) = yamada.model.PropertyDefinition("AxisStyle","normal",true,true,metadata);
             end
             if factory == "geoaxes"
                 metadata = struct("category","Maps","displayName","Geographic Limits", ...
