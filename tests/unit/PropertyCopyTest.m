@@ -50,6 +50,29 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyCopyTest
             end
         end
 
+        function opaqueSettingsAndCallbackBindingsAreCopiedVerbatim(testCase)
+            % opaqueSettingsAndCallbackBindingsAreCopiedVerbatim Copy callback bindings and unevaluated values as source text.
+            % Guarantee and failure mode: shared with constructorValuesKeepTheirSpellingAndOrder.
+            % Callbacks are ordinary opaque settings, so each binding form must survive without normalization.
+            % A button keeps geometry provable while a constructor argument stays unevaluated.
+            for body = { ...
+                    "app.Control = uibutton(app.Left, ButtonPushedFcn=@app.OnChanged, Text=computeText(app));", ...
+                    "app.Control = uibutton(app.Left, 'ButtonPushedFcn', @app.OnChanged, 'UnknownFcn', []);", ...
+                    ["app.Control = uibutton(app.Left);", "app.Control.ButtonPushedFcn = {@app.OnChanged, 42};"], ...
+                    ["app.Control = uibutton(app.Left);", "app.Control.ButtonPushedFcn = 'error(''callback-must-not-run'')';"], ...
+                    ["app.Control = uibutton(app.Left);", "app.Control.ButtonPushedFcn = @(~, event) app.OnChanged(event);"]}
+                [document, registry, component, target] = testCase.fixture(body{1}, "matlab.ui.control.Button");
+                original = document.CurrentText;
+                snapshot = document.copySubtree(component.Id, registry);
+                pasted = document.pasteSubtree(snapshot, target.Id, registry);
+                for statement = replace(body{1}, ["app.Control", "app.Left"], ["app." + pasted.Name, "app.Right"])
+                    testCase.verifySubstring(document.GeneratedText, statement);
+                end
+                document.undo();
+                testCase.verifyEqual(document.CurrentText, original);
+            end
+        end
+
         function mixedItemDomainCopiesFallbackSelection(testCase)
             % mixedItemDomainCopiesFallbackSelection Copy the selected data after a domain change rather than the old explicit Value.
             % Guarantee and failure mode: shared with copiesClampedValueAndRetainsOriginalHistory.
