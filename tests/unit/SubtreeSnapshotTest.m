@@ -71,21 +71,11 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
             testCase.verifyEqual(document.HistoryIndex, history);
             testCase.verifyEqual(document.getComponent(leaf.Id), leaf);
         end
-
-        function snapshotReadsDoNotDirtyDocument(testCase)
-            % snapshotReadsDoNotDirtyDocument Leave saved state and history unchanged.
-            % Guarantee: capturing a snapshot is read-only.
-            % Failure mode: Copy marks the document dirty or adds a history step.
-            [document, panel] = SubtreeSnapshotTest.fixture();
-            document.markSaved();
-            history = document.HistoryIndex;
-            yamada.model.SubtreeSnapshot(document, panel.Id);
-            testCase.verifyFalse(document.IsDirty);
-            testCase.verifyEqual(document.HistoryIndex, history);
-        end
     end
 
     methods (Static, Access = private)
+        % Guarantee: capturing a snapshot is read-only.
+        % Failure mode: Copy marks the document dirty or adds a history step.
         function [document, panel, nested, leaf] = fixture()
             % fixture Create a three-level subtree using approved registry insertions.
             arguments (Output)

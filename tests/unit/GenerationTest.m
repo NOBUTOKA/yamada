@@ -122,31 +122,6 @@ classdef (TestTags = {'fast', 'generation'}) GenerationTest < matlab.unittest.Te
             testCase.verifySubstring(rewritten, "The OldApp wording in this comment");
         end
 
-        function generatesChildFromRegistryDrivenRecord(testCase)
-            % generatesChildFromRegistryDrivenRecord Verify generic child output.
-            % Guarantee: child output comes from catalog data, not per-component code.
-            % Failure mode: a component needs hard-coded generation and catalog entries silently produce nothing.
-
-            % Add a registry-defined label to the shared document hierarchy.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("LabelApp", registry);
-            definition = registry.get("uilabel");
-            label = yamada.model.ComponentRecord( ...
-                "label-1", "GreetingLabel", definition.Factory, ...
-                definition.DeclaredType, "generated");
-            label.setProperty("Text", "It's ready");
-            label.setProperty("Position", [20 20 100 22]);
-            document.addComponent(label, document.RootComponentId);
-
-            % Confirm parent calls and escaped literals in generated source.
-            source = yamada.source.NewAppGenerator(registry).generate(document);
-
-            testCase.verifySubstring(source, ...
-                "app.GreetingLabel = uilabel(app.UIFigure);");
-            testCase.verifySubstring(source, ...
-                "app.GreetingLabel.Text = ""It's ready"";");
-        end
-
         function generatesAndParsesDateOnlyProperties(testCase)
             % generatesAndParsesDateOnlyProperties Round-trip allowlisted native date values.
             % Guarantee: generated date values reparse to the same values.

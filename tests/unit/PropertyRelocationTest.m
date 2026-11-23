@@ -73,8 +73,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation'}) PropertyRelocati
             testCase.verifyEqual(document.HistoryIndex, 0);
         end
 
-        % Guarantee: pending dependent edits are placed correctly in the relocated initialization.
-        % Failure mode: a pending Value is emitted before its relocated ItemsData or Limits and fails at run time.
+        % Guarantee: values added by earlier edits are emitted after their relocated prerequisites.
+        % Failure mode: an added Value is emitted before the relocated ItemsData or Limits it depends on, and the moved app fails at run time.
         function pendingSelectionUsesMovedDomainAndSharedState(testCase)
             % pendingSelectionUsesMovedDomainAndSharedState Place a pending Value after the relocated ItemsData write.
             [document, registry, component, target] = testCase.fixture([ ...

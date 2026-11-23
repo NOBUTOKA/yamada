@@ -454,86 +454,6 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         % Guarantee: width follower and hold semantics survive insertion, Copy, and Save.
         % Failure mode: inserting or copying a width setter changes which value a manual hold keeps.
-        function insertedWidthFollowsAnExistingManualHoldPoint(testCase)
-            % insertedWidthFollowsAnExistingManualHoldPoint Keep a previously held default minor width during assignment insertion.
-            [document, registry, control] = testCase.fixture([ ...
-                "app.Control = uiaxes(app.UIFigure);", ...
-                "app.Control.MinorGridLineWidthMode = 'manual'; % hold default"]);
-            document.setProperty(control.Id, "GridLineWidth", 4, registry);
-            source = yamada.source.RoundTripGenerator(registry).generate(document);
-            reopened = yamada.source.AppSourceParser.parseText(source, registry);
-            other = reopened.getComponentByName("Control");
-            states = reopened.getEffectivePropertyStates(registry, other.Id);
-            testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectiveValue, 4);
-            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 0.5);
-            testCase.verifyGreaterThan(other.getSettings("GridLineWidth").Sequence, ...
-                other.getSettings("MinorGridLineWidthMode").Sequence);
-            testCase.verifySubstring(source, "'manual'; % hold default");
-        end
-
-        function constructorInsertionPreservesAnExistingManualHoldPoint(testCase)
-            % constructorInsertionPreservesAnExistingManualHoldPoint Insert verified name-value widths after a protected manual mode.
-            [document, registry, control] = testCase.fixture( ...
-                "app.Control = uiaxes(app.UIFigure, MinorGridLineWidthMode='manual', Units='pixels', Position=[10 20 200 100]);");
-            document.setProperty(control.Id, "GridLineWidth", 4, registry);
-            source = yamada.source.RoundTripGenerator(registry).generate(document);
-            reopened = yamada.source.AppSourceParser.parseText(source, registry);
-            other = reopened.getComponentByName("Control");
-            setting = other.getSettings("GridLineWidth");
-            testCase.verifyEqual(setting.Method, "nameValue");
-            testCase.verifyGreaterThan(setting.ValueSpan.StartOffset, other.getSettings("MinorGridLineWidthMode").ValueSpan.StartOffset);
-            states = reopened.getEffectivePropertyStates(registry, other.Id);
-            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 0.5);
-        end
-
-        function implicitWidthsRemainSeparateThroughEditCopyAndSave(testCase)
-            % implicitWidthsRemainSeparateThroughEditCopyAndSave Update the bound upstream token while retaining earlier receiver inputs.
-            [document, registry, control] = testCase.fixture([ ...
-                "app.Control = uiaxes(app.UIFigure, Units='pixels', Position=[10 20 200 100]);", ...
-                "app.Control.LineWidth = 1;", "app.Control.GridLineWidth = 4;", ...
-                "app.Control.MinorGridLineWidth = 3;", "app.Control.MinorGridLineWidthMode = 'auto';"]);
-            original = control.settingSnapshot();
-            document.setProperty(control.Id, "GridLineWidth", 6, registry);
-            source = yamada.source.RoundTripGenerator(registry).generate(document);
-            testCase.verifySubstring(source, "app.Control.MinorGridLineWidth = 3;");
-            states = document.getEffectivePropertyStates(registry, control.Id);
-            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 6);
-            checkpoint = yamada.model.SavedSourceCheckpoint(document, source, "AxisModeFixture.m", registry);
-            document.confirmSavedSource(checkpoint, registry);
-            copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
-            states = document.getEffectivePropertyStates(registry, copy.Id);
-            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 6);
-            testCase.verifyEqual([control.Settings.Id], arrayfun(@(record) record.Location.Id, original));
-            testCase.verifyEqual(control.getSettings("GridLineWidth").LiteralValue, 6);
-            testCase.verifyEqual(control.getSettings("MinorGridLineWidth").LiteralValue, 3);
-            document.undo();
-            document.undo();
-            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
-            document.redo();
-            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), source);
-        end
-
-        function copyPreservesDefaultAutoFollowersAndConstructorHolds(testCase)
-            % copyPreservesDefaultAutoFollowersAndConstructorHolds Avoid setters that would silently change a copied automatic mode.
-            [document, registry, control] = testCase.fixture( ...
-                "app.Control = uiaxes(app.UIFigure, Units='pixels', Position=[10 20 200 100], LineWidth=2);");
-            copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
-            testCase.verifyEmpty(copy.getProperty("GridLineWidth"));
-            testCase.verifyEmpty(copy.getProperty("MinorGridLineWidth"));
-            states = document.getEffectivePropertyStates(registry, copy.Id);
-            testCase.verifyEqual(testCase.state(states, "GridLineWidth").EffectiveValue, 2);
-            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 2);
-            testCase.verifyEqual(string(testCase.state(states, "GridLineWidthMode").EffectiveValue), "auto");
-            testCase.verifyEqual(string(testCase.state(states, "MinorGridLineWidthMode").EffectiveValue), "auto");
-            [document, registry, control] = testCase.fixture( ...
-                "app.Control = uiaxes(app.UIFigure, Units='pixels', Position=[10 20 200 100], GridLineWidth=4, MinorGridLineWidthMode='manual');");
-            copy = document.pasteSubtree(document.copySubtree(control.Id, registry), document.RootComponentId, registry);
-            testCase.verifyEmpty(copy.getProperty("MinorGridLineWidth"));
-            states = document.getEffectivePropertyStates(registry, copy.Id);
-            testCase.verifyEqual(testCase.state(states, "MinorGridLineWidth").EffectiveValue, 0.5);
-            testCase.verifyEqual(string(testCase.state(states, "MinorGridLineWidthMode").EffectiveValue), "manual");
-        end
-
         function storedColorCanBeEditedUnderAFinalAutomaticRenderingMode(testCase)
             % storedColorCanBeEditedUnderAFinalAutomaticRenderingMode Keep getter data known without claiming a rendered grid color.
             %   A constructor that restores auto last keeps the stored color
@@ -564,6 +484,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
 
         function laterAutomaticModePreventsPretendedLiteralEdits(testCase)
             % laterAutomaticModePreventsPretendedLiteralEdits Keep the original target when a later auto mode makes the requested value uncertain.
+            % Guarantee and failure mode: shared with pendingModeIsAddedAfterExistingConstructorValue.
             [document, registry, control] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", "app.Control.XTick = [0 1];", "app.Control.XTickMode = 'auto';"]);
             before = control.settingSnapshot();

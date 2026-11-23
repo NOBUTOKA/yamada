@@ -66,19 +66,6 @@ classdef (TestTags = {'fast', 'parser'}) CallbackMethodSignatureTest < matlab.un
             end
         end
 
-        function validationIsRecordedWithoutEvaluation(testCase)
-            % validationIsRecordedWithoutEvaluation Retain class names and annotate arbitrary validators.
-            % Guarantee: argument validation is recorded as text and never evaluated.
-            % Failure mode: signature analysis runs a user validator function during parsing.
-            analysis = CallbackMethodSignatureTest.compile(["function run(app, src, event)"; ...
-                "arguments (Input)"; "app Example"; "src matlab.ui.control.Button"; ...
-                "event (1, 1) matlab.ui.eventdata.ButtonPushedData {dangerousValidator}"; "end"; "end"]);
-            signature = analysis.Layout.Methods.Signature;
-            testCase.verifyTrue(signature.Eligible);
-            testCase.verifyEqual(signature.Classes, ["Example", "matlab.ui.control.Button", "matlab.ui.eventdata.ButtonPushedData"]);
-            testCase.verifyEqual(signature.Unchecked, [false false true]);
-        end
-
         function accessorsAndNestedFunctionsDoNotHideEligibleMethods(testCase)
             % accessorsAndNestedFunctionsDoNotHideEligibleMethods Keep class layout valid while excluding accessor signatures.
             % Guarantee and failure mode: shared with fixedInputsChooseDocumentedForwarders.

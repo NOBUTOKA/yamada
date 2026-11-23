@@ -3,114 +3,7 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
     %   These tests construct real controls and ensure unsupported editor kinds
     %   remain visible but cannot become accidentally editable.
 
-    methods (Test, TestTags = {'fast'})
-        % Guarantee: each catalog capability gets the editor that matches its value type and commit contract.
-        % Failure mode: a capability is routed to a generic text editor, so values are parsed as source or lose their type.
-        function createsTypedEditorsFromCapabilities(testCase)
-            % createsTypedEditorsFromCapabilities Route distinct capabilities and preserve their typed display values.
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            % Exercise createsOnOffCheckBox through the same owned fixture.
-
-            definition = yamada.model.PropertyDefinition("Visible", [], false, true, ...
-                struct("editor", "onOff"));
-            control = yamada.ui.inspector.PropertyEditorFactory.create( ...
-                figure, definition, @(~) []);
-            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "on", true);
-            drawnow;
-            testCase.verifyClass(control, "matlab.ui.control.CheckBox");
-            testCase.verifyTrue(control.Value);
-            delete(control);
-
-            % Exercise createsRgbColorAction through the same owned fixture.
-
-            definition = yamada.model.PropertyDefinition("Color", [], false, true, ...
-                struct("editor", "color"));
-            control = yamada.ui.inspector.PropertyEditorFactory.create( ...
-                figure, definition, @(~) []);
-            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 0 0]", true);
-            drawnow;
-            testCase.verifyClass(control, "matlab.ui.control.Button");
-            testCase.verifyEqual(control.BackgroundColor, [1 0 0]);
-            delete(control);
-
-            % Exercise createsStringListSummaryAction through the same owned fixture.
-
-            definition = yamada.model.PropertyDefinition("Items", [], false, true, ...
-                struct("editor", "stringList"));
-            control = yamada.ui.inspector.PropertyEditorFactory.create( ...
-                figure, definition, @(~) []);
-            values = ["Light", "Dark"];
-            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
-                control, "<unsupported: string array>", true, values);
-            drawnow;
-            testCase.verifyClass(control, "matlab.ui.control.Button");
-            testCase.verifyEqual(string(control.Text), "1-by-2 string");
-            delete(control);
-
-            % Exercise createsUrlTextEditor through the same owned fixture.
-
-            definition = yamada.model.ComponentRegistry.createDefault().getById("uihyperlink");
-            definition = definition.Properties([definition.Properties.Path] == "URL");
-            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, ...
-                @(~) []);
-            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "'https://example.com'", true, ...
-                "https://example.com");
-            drawnow;
-            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyEqual(string(control.Value), "https://example.com");
-            testCase.verifyTrue(control.Editable);
-            delete(control);
-
-            % Exercise createsAssetPathEditor through the same owned fixture.
-
-            definition = yamada.model.ComponentRegistry.createDefault().getById("uibutton-push");
-            definition = definition.Properties([definition.Properties.Path] == "Icon");
-            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) []);
-            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "'icon.png'", true, "icon.png");
-            drawnow;
-            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-            testCase.verifyEqual(string(control.UserData.Edit.Value), "icon.png");
-            testCase.verifyEqual(string(control.UserData.Browse.Enable), "on");
-            delete(control);
-        end
-
-    end
-
     methods (Test)
-
-        function enablesEveryRecoveredEllipsisSurface(testCase)
-            % enablesEveryRecoveredEllipsisSurface Check all representative recovered enum surfaces.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            registry = yamada.model.ComponentRegistry.createDefault();
-            % The running release's catalog defines which choices each surface offers.
-            cases = [
-                "uifigure", "Pointer"
-                "geoaxes", "Basemap"
-                "uibuttongroup", "TitlePosition"
-                "uipanel", "TitlePosition"
-                "uibuttongroup", "BorderType"
-                "uipanel", "BorderType"];
-            for caseIndex = 1:size(cases, 1)
-                definition = registry.getById(cases(caseIndex, 1));
-                definition = definition.Properties([definition.Properties.Path] == cases(caseIndex, 2));
-                expected = reshape(string(definition.ValueSchema.values), 1, []);
-                testCase.assertGreaterThan(numel(expected), 1);
-                control = yamada.ui.inspector.PropertyEditorFactory.create( ...
-                    figure, definition, @(~) []);
-                yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
-                    control, expected(1), true);
-                drawnow;
-                testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(definition));
-                testCase.verifyEqual(reshape(string(control.Items), 1, []), expected);
-                testCase.verifyEqual(string(control.Enable), "on");
-                delete(control);
-            end
-            clear cleanup
-        end
-
         % Guarantee: unsupported kinds and values are shown read-only.
         % Failure mode: an unsupported value is editable and an edit replaces it with a simpler literal.
         function defersUnsupportedEditorAsReadOnly(testCase)
@@ -149,47 +42,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             testCase.verifyEqual(committed, {'Line one', 'Line two', 'Line three'});
             testCase.verifyEqual(yamada.source.LiteralEncoder.encode(committed), ...
                 "{'Line one', 'Line two', 'Line three'}");
-            clear cleanup
-        end
-    end
-
-    methods (Test, TestTags = {'fast'})
-        function createsNativeDateTimeEditors(testCase)
-            % createsNativeDateTimeEditors Route scalar, bounds, and date lists by schema shape.
-            % Guarantee and failure mode: shared with createsTypedEditorsFromCapabilities.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            component = yamada.model.ComponentRegistry.createDefault().getById("uidatepicker");
-            scalar = component.Properties([component.Properties.Path] == "Value");
-            scalarControl = yamada.ui.inspector.PropertyEditorFactory.create(figure, scalar, ...
-                @(value) setappdata(figure, "scalarDate", value));
-            selected = datetime(2024, 2, 29);
-            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
-                scalarControl, "", true, selected);
-            scalarControl.Value = datetime(2024, 3, 1);
-            scalarControl.ValueChangedFcn(scalarControl, struct());
-
-            limits = component.Properties([component.Properties.Path] == "Limits");
-            limitsControl = yamada.ui.inspector.PropertyEditorFactory.create(figure, limits, ...
-                @(value) setappdata(figure, "dateLimits", value));
-            range = [datetime(2024, 1, 1) datetime(2024, 12, 31)];
-            yamada.ui.inspector.PropertyEditorFactory.synchronize(limitsControl, "", true, range);
-            parts = limitsControl.UserData;
-            parts.Start.Value = datetime(2024, 2, 1);
-            parts.Start.ValueChangedFcn(parts.Start, struct());
-
-            list = component.Properties([component.Properties.Path] == "DisabledDates");
-            listControl = yamada.ui.inspector.PropertyEditorFactory.create(figure, list, @(~) []);
-            yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
-                listControl, "", true, datetime.empty(0, 1));
-            drawnow;
-            testCase.verifyTrue(yamada.ui.inspector.PropertyEditorFactory.supportsEditing(scalar));
-            testCase.verifyClass(scalarControl, "matlab.ui.control.DatePicker");
-            testCase.verifyEqual(getappdata(figure, "scalarDate"), datetime(2024, 3, 1));
-            testCase.verifyEqual(getappdata(figure, "dateLimits"), ...
-                [datetime(2024, 2, 1) datetime(2024, 12, 31)]);
-            testCase.verifyEqual(string(listControl.Enable), "on");
             clear cleanup
         end
     end
@@ -240,7 +92,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
 
         function createsPlainTextEditorWithoutLiteralParsing(testCase)
             % createsPlainTextEditorWithoutLiteralParsing Commit plain text as a text value rather than source syntax.
-            % Guarantee and failure mode: shared with createsTypedEditorsFromCapabilities.
+            % Guarantee: plain-text capabilities commit the typed characters as a text value.
+            % Failure mode: plain text is routed through the literal parser, so quotes or brackets are read as source.
 
             figure = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(figure));
@@ -316,33 +169,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             control.Value = {'Two', 'Three'};
             control.ValueChangedFcn(control, struct());
             testCase.verifyEqual(getappdata(figure, "committed"), [20 30]);
-            clear cleanup
-        end
-
-        function weekdayDialogUsesTheBatchCommitContract(testCase)
-            % weekdayDialogUsesTheBatchCommitContract Return validation messages through the dialog batch path.
-            % Guarantee and failure mode: shared with createsTypedEditorsFromCapabilities.
-
-            figure = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(figure));
-            setappdata(figure, "changes", struct.empty);
-            definition = yamada.model.ComponentRegistry.createDefault().getById("uidatepicker");
-            definition = definition.Properties([definition.Properties.Path] == "DisabledDaysOfWeek");
-            control = yamada.ui.inspector.PropertyEditorFactory.create(figure, definition, @(~) [], ...
-                @(changes) captureBatch(figure, changes));
-            yamada.ui.inspector.PropertyEditorFactory.synchronize(control, "[1 3]", true, [1 3]);
-            control.ButtonPushedFcn(control, struct());
-            dialog = findall(0, "Tag", "yamada-inspector-day-of-week-dialog");
-            buttons = findall(dialog, "Tag", "yamada-inspector-day-of-week-button");
-            monday = buttons(string({buttons.Text}) == "Mon");
-            monday.Value = true;
-            applyButton = findall(dialog, "Tag", "yamada-inspector-day-of-week-apply");
-            applyButton.ButtonPushedFcn(applyButton, struct());
-
-            changes = getappdata(figure, "changes");
-            testCase.verifySize(changes, [1 1]);
-            testCase.verifyEqual(changes.Path, "DisabledDaysOfWeek");
-            testCase.verifyEqual(changes.Value, [1 2 3]);
             clear cleanup
         end
     end

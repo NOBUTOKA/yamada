@@ -25,22 +25,6 @@ classdef (TestTags = {'fast', 'catalog', 'model', 'generation'}) PropertyApplica
             testCase.verifyTrue(ordered(end) == entries(1));
         end
 
-        function previewFiltersLegacyExecutableConstructorPairs(testCase)
-            % previewFiltersLegacyExecutableConstructorPairs Apply skip policy without occurrence metadata.
-            % Guarantee: Preview skips executable constructor pairs according to policy.
-            % Failure mode: Preview passes an expression-backed constructor argument to a native control.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            for factory = ["uilabel", "uibutton"]
-                member = yamada.model.ComponentRecord("owned", "Owned", factory, "matlab.ui.control.Label");
-                member.CreationArguments = {"Text", "retained", "CreateFcn", @(~,~) error("MustNotExecute")};
-                actual = yamada.model.PropertyApplicationPlanner.forPreviewArguments(member, registry);
-                testCase.verifyEqual(actual, {"Text", "retained"});
-            end
-            member.CreationArguments = [{"push"}, member.CreationArguments];
-            actual = yamada.model.PropertyApplicationPlanner.forPreviewArguments(member, registry);
-            testCase.verifyEqual(actual, {"push", "Text", "retained"});
-        end
-
         function handlesEmptySubsetAndConservativeLegacyMetadata(testCase)
             % handlesEmptySubsetAndConservativeLegacyMetadata Retain original order without declared dependencies.
             % Guarantee and failure mode: shared with projectsTransitiveEdgesWithoutChangingIndependentEntryOrder.

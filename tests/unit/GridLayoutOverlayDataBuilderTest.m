@@ -440,7 +440,7 @@ classdef (TestTags = {'gridOverlay', 'preview'}) GridLayoutOverlayDataBuilderTes
         function publishesAdjacentCollapsedFitTracks(testCase)
             % publishesAdjacentCollapsedFitTracks Keep every adjacent empty fit track addressable.
             % Guarantee: empty fit tracks, alone or adjacent, stay addressable at zero size and in the correct position.
-            % Failure mode: collapsed tracks get no bounds or overlap, so children cannot be moved into them.
+            % Failure mode: adjacent collapsed tracks get overlapping or shifted bounds, so the overlay addresses the wrong track.
 
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("AdjacentCollapsedFitGridApp", registry);

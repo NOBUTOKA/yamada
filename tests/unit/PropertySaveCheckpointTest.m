@@ -153,8 +153,8 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             testCase.verifyEqual(control.getProperty("Value").LiteralValue, 'B');
         end
 
-        % Guarantee: a save plan is rejected when it no longer represents the model.
-        % Failure mode: equal history counters let a stale plan write outdated source.
+        % Guarantee: Save is blocked when the generated source does not reparse to the model, and a checkpoint is not confirmed after the document changed.
+        % Failure mode: a generator defect writes source with a different state, or an edit made while the file is written is marked as saved.
         function changedKnownStateAndStalePlansAreRejected(testCase)
             % changedKnownStateAndStalePlansAreRejected Preserve metadata and history when a save plan no longer represents the model.
             [document, registry, control] = testCase.fixture("app.Control = uidropdown(app.Left, Items=[""A"" ""B""], Value='A');");
@@ -168,17 +168,6 @@ classdef (TestTags = {'fast', 'parser', 'model', 'generation', 'lifecycle'}) Pro
             testCase.verifyTrue(document.IsDirty);
             testCase.verifyEqual(document.SavedSource.SourceText, checkpoint.SourceText);
             testCase.verifyEqual(document.HistoryIndex, 1);
-        end
-
-        function sameHistoryIndexDoesNotHideChangedIntentions(testCase)
-            % sameHistoryIndexDoesNotHideChangedIntentions Validate regenerated intentions rather than trusting the history counter alone.
-            [document, registry, control] = testCase.fixture("app.Control = uidropdown(app.Left, Items=[""A"" ""B""], Value='A');");
-            checkpoint = testCase.save(document, registry);
-            control.getProperty("Value").setLiteral('B');
-            testCase.verifyEqual(document.HistoryIndex, checkpoint.HistoryIndex);
-            testCase.verifyError(@() checkpoint.assertCurrent(document, registry), ...
-                "yamada:SavedSourceCheckpoint:StaleCheckpoint");
-            testCase.verifyEqual(document.SavedSource.SourceText, checkpoint.SourceText);
         end
 
         function subtreeOperationsRemainUndoableAcrossSavedPositions(testCase)

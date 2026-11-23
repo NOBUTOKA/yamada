@@ -15,7 +15,7 @@ classdef (TestTags = {'parser', 'model', 'generation'}) PropertyInsertionBatchTe
 
     methods (Test, TestTags = {'fast'})
         % Guarantee: one shared candidate places every owner's pending values as independent placement would.
-        % Failure mode: batching lets one owner's insertion displace another's, or loses an unsaved request.
+        % Failure mode: one owner's insertion in a shared batch displaces another owner's slot or drops an existing occurrence.
         function pendingValuesRoundTripAcrossOwners(testCase)
             % pendingValuesRoundTripAcrossOwners Preserve distinct pending values across source owners.
             document = testCase.numericFixture(3);

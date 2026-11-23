@@ -323,8 +323,8 @@ classdef EditorGridSelectionTest < matlab.unittest.TestCase
 
         function gridOverlayMovesChildIntoCollapsedFitTrack(testCase)
             % gridOverlayMovesChildIntoCollapsedFitTrack Treat a zero-height fit row as a move destination.
-            % Guarantee: collapsed fit tracks remain valid move destinations.
-            % Failure mode: a zero-height fit row has no hit area, so children cannot be moved into it.
+            % Guarantee: a child can be moved through the overlay into a collapsed fit track, which then expands.
+            % Failure mode: the editor rejects a move into a zero-size track, or reads geometry before the track expands.
 
             app = yamada();
             cleanup = onCleanup(@() deleteIfValid(app));
