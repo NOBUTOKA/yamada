@@ -49,8 +49,8 @@ classdef PreviewRenderer < handle
             obj.FallbackReason = "unsupported-change";
             if request.Kind ~= "properties" || isempty(request.Paths) || isempty(request.ComponentIds), return, end
             context = document.evaluationContext(obj.Registry);
-            [inputs, safe] = context.inputs();
-            if ~safe || isempty(fieldnames(obj.RenderedInputs)) || ...
+            inputs = context.inputs();
+            if isempty(fieldnames(obj.RenderedInputs)) || ...
                     obj.RenderedRegistryRevision ~= obj.Registry.Revision
                 obj.FallbackReason = "untracked-inputs";
                 return
@@ -227,8 +227,7 @@ classdef PreviewRenderer < handle
             end
 
             context = document.evaluationContext(obj.Registry);
-            [inputs, safe] = context.inputs();
-            if ~safe, return, end
+            inputs = context.inputs();
             % The editor passes the accepted source configuration after publishing the structural edit.
             obj.Diagnostics = yamada.model.Diagnostic.empty;
             try
@@ -264,8 +263,8 @@ classdef PreviewRenderer < handle
                 applied (1, 1) logical
             end
             applied = false;
-            [inputs, safe] = document.evaluationContext(obj.Registry).inputs();
-            if ~safe || isempty(fieldnames(obj.RenderedInputs)) || obj.RenderedRegistryRevision ~= obj.Registry.Revision
+            inputs = document.evaluationContext(obj.Registry).inputs();
+            if isempty(fieldnames(obj.RenderedInputs)) || obj.RenderedRegistryRevision ~= obj.Registry.Revision
                 return
             end
             % Source position changes are harmless only for an exact published callback transaction.
@@ -290,8 +289,8 @@ classdef PreviewRenderer < handle
                 applied (1, 1) logical
             end
             applied = false;
-            [inputs, safe] = document.evaluationContext(obj.Registry).inputs();
-            if ~safe || isempty(fieldnames(obj.RenderedInputs)) || ...
+            inputs = document.evaluationContext(obj.Registry).inputs();
+            if isempty(fieldnames(obj.RenderedInputs)) || ...
                     obj.RenderedRegistryRevision ~= obj.Registry.Revision
                 return
             end
@@ -385,11 +384,9 @@ classdef PreviewRenderer < handle
             end
             diagnostics = obj.Diagnostics;
             obj.Diagnostics = yamada.model.Diagnostic.empty;
-            [inputs, safe] = document.evaluationContext(obj.Registry).inputs();
-            if safe
-                obj.RenderedInputs = inputs;
-                obj.RenderedToken = document.evaluationContext(obj.Registry).revisionToken();
-            end
+            inputs = document.evaluationContext(obj.Registry).inputs();
+            obj.RenderedInputs = inputs;
+            obj.RenderedToken = document.evaluationContext(obj.Registry).revisionToken();
             obj.RenderedRegistryRevision = obj.Registry.Revision;
         end
     end

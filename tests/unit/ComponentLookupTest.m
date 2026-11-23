@@ -15,16 +15,14 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
             document.Components = records;
             registry = yamada.model.ComponentRegistry.createDefault();
             context = document.evaluationContext(registry);
-            [before, safe] = context.inputs();
-            testCase.assertTrue(safe);
+            before = context.inputs();
             for repeat = 1:2
                 for index = 3:-1:1
                     testCase.verifyEqual(document.getComponent("id" + index), records(index));
                 end
             end
             testCase.verifyEqual(document.evaluationContext(registry), context);
-            [after, safe] = context.inputs();
-            testCase.verifyTrue(safe);
+            after = context.inputs();
             testCase.verifyEqual(after, before);
         end
 

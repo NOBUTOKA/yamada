@@ -24,8 +24,6 @@ classdef GridLayoutOverlayDataBuilder
             grid = document.getComponent(gridId);
             safe = ~isempty(grid) && grid.Factory == "uigridlayout";
             if ~safe, return, end
-            [~, safe] = document.evaluationContext(registry).inputs();
-            if ~safe, return, end
 
             % Effective tracks retain initialization effects; child placement stays source-explicit.
             states = yamada.ui.GridLayoutOverlayDataBuilder.trackStates(document, registry, grid);

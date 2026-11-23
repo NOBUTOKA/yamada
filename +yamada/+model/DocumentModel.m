@@ -516,7 +516,7 @@ classdef DocumentModel < handle
             end
             if ~isfield(projection, "Before"), return, end
             obj.SettingStore.publish(projection);
-            obj.noteInput([]);
+            obj.noteInput();
         end
     end
 
@@ -558,9 +558,6 @@ classdef DocumentModel < handle
                 "Diagnostics", "UnknownRegions", "Encoding", "LineEnding", "Metadata", ...
                 "CallbackEdits", "RenameEdits", "PendingEdits"];
             for field = fields, values.(field) = obj.(field); end
-            if ~yamada.model.InputChangeClock.isValueData(values)
-                error("yamada:DocumentModel:UnsafeConfigurationSnapshot", "Configuration fields contain mutable data.");
-            end
             snapshot = struct("ClassName", obj.ClassName, ...
                 "Components", yamada.model.SubtreeSnapshot(obj, obj.RootComponentId), ...
                 "Values", values, "Analysis", obj.SourceAnalysisData, "CurrentSource", obj.CurrentSource, "Registry", obj.SourceRegistry);
@@ -589,14 +586,13 @@ classdef DocumentModel < handle
     end
 
     methods (Access = private)
-        function noteInput(obj, value)
+        function noteInput(obj)
             % noteInput Notify the token only after evaluation has attached it to a complete object.
             arguments (Input)
                 obj (1, 1) yamada.model.DocumentModel
-                value
             end
             % Construction and materialization run without an attached token.
-            if ~isempty(obj.InputClock), obj.InputClock.touch(value); end
+            if ~isempty(obj.InputClock), obj.InputClock.touch(); end
         end
 
         function detachRemovedSettings(obj, components)
@@ -624,7 +620,7 @@ classdef DocumentModel < handle
                 item.bindSettingStore(obj.SettingStore);
                 item.bindInputClock(obj.InputClock);
             end
-            obj.InputClock.touch([]);
+            obj.InputClock.touch();
         end
     end
 
@@ -798,7 +794,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.ClassName = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.FilePath(obj, value)
@@ -808,7 +804,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.FilePath = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.OriginalText(obj, value)
@@ -819,7 +815,7 @@ classdef DocumentModel < handle
             end
             obj.OriginalText = value;
             obj.resetSourceInput();
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.Components(obj, value)
@@ -840,7 +836,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.RootComponentId = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.UnknownRegions(obj, value)
@@ -850,7 +846,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.UnknownRegions = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.PendingEdits(obj, value)
@@ -860,7 +856,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.PendingEdits = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.Encoding(obj, value)
@@ -870,7 +866,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.Encoding = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.LineEnding(obj, value)
@@ -880,7 +876,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.LineEnding = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.Metadata(obj, value)
@@ -890,7 +886,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.Metadata = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.RenameEdits(obj, value)
@@ -900,7 +896,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.RenameEdits = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function set.CallbackEdits(obj, value)
@@ -910,7 +906,7 @@ classdef DocumentModel < handle
                 value
             end
             obj.CallbackEdits = value;
-            obj.noteInput(value);
+            obj.noteInput();
         end
 
         function context = evaluationContext(obj, registry)
