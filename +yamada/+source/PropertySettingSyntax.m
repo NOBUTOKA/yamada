@@ -152,6 +152,26 @@ classdef PropertySettingSyntax
             end
         end
 
+        function name = axesCommand(statement, catalogRoot)
+            % axesCommand Return the name of a catalogued axes function used without parentheses.
+            %   Command syntax such as "axis tight" or a bare "box" has no target argument.
+            arguments (Input)
+                statement (1, 1) yamada.source.SourceStatement
+                catalogRoot (1, 1) string
+            end
+            arguments (Output)
+                name (1, 1) string
+            end
+
+            name = "";
+            % MATLAB character classes need an escaped parenthesis.
+            match = regexp(char(statement.Text), '^([A-Za-z]\w*)(\s+[^\s=\(].*)?$', 'tokens', 'once');
+            if isempty(match), return, end
+            if ~isempty(yamada.catalog.AxesSettingFunctionCatalog.forName(string(match{1}), catalogRoot))
+                name = string(match{1});
+            end
+        end
+
         function setting = assignment(statement, snapshotId, sequence, certain)
             % assignment Capture one direct component-property assignment and its value range.
             arguments (Input)

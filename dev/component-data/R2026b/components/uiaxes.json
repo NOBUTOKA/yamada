@@ -2527,12 +2527,21 @@
         "'tight'",
         "'padded'"
       ],
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "The method selects how automatic XLim is computed and is ignored while XLimMode is manual. Editing it therefore also selects automatic XLim, as the xlim method syntax does. This is an editor policy; the setter itself does not change the mode."
+        }
+      ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "none",
-        "effectStatus": "unknown",
-        "affectedPaths": [],
-        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+        "effectPolicy": "autoParameter",
+        "effectStatus": "modeled",
+        "affectedPaths": [
+          "XLim"
+        ],
+        "effectReason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic XLim, which remains runtime-derived, and has no effect while XLimMode is manual. Native R2023a and R2026b observations confirm both."
       },
       "gridGeometryImpact": "required",
       "absoluteGeometryImpact": true,
@@ -2577,12 +2586,21 @@
         "'tight'",
         "'padded'"
       ],
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "The method selects how automatic YLim is computed and is ignored while YLimMode is manual. Editing it therefore also selects automatic YLim, as the ylim method syntax does. This is an editor policy; the setter itself does not change the mode."
+        }
+      ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "none",
-        "effectStatus": "unknown",
-        "affectedPaths": [],
-        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+        "effectPolicy": "autoParameter",
+        "effectStatus": "modeled",
+        "affectedPaths": [
+          "YLim"
+        ],
+        "effectReason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic YLim, which remains runtime-derived, and has no effect while YLimMode is manual. Native R2023a and R2026b observations confirm both."
       },
       "gridGeometryImpact": "required",
       "absoluteGeometryImpact": true,
@@ -2627,12 +2645,21 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "The method selects how automatic ZLim is computed and is ignored while ZLimMode is manual. Editing it therefore also selects automatic ZLim, as the zlim method syntax does. This is an editor policy; the setter itself does not change the mode."
+        }
+      ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "none",
-        "effectStatus": "unknown",
-        "affectedPaths": [],
-        "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+        "effectPolicy": "autoParameter",
+        "effectStatus": "modeled",
+        "affectedPaths": [
+          "ZLim"
+        ],
+        "effectReason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic ZLim, which remains runtime-derived, and has no effect while ZLimMode is manual. Native R2023a and R2026b observations confirm both."
       },
       "gridGeometryImpact": "required",
       "absoluteGeometryImpact": true,

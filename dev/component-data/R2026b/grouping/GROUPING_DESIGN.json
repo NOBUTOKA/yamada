@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2026b",
-  "inputSha256": "a497bab150c9c352fe45ded0d0b4f51ce3f268f6c50e9486069f35de164c4656",
+  "inputSha256": "47616bbdbd21096196b39176523240eb0f8e5634241bf03fa10f40641e0849ff",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -3070,7 +3070,7 @@
       ]
     },
     {
-      "id": "exact.rulers.cb4ea02a63b1",
+      "id": "exact.rulers.5bb446a8b5e0",
       "kind": "exactCategory",
       "categoryId": "rulers",
       "capabilities": [
@@ -3295,10 +3295,12 @@
           },
           "application": {
             "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unknown",
-            "affectedPaths": [],
-            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            "effectPolicy": "autoParameter",
+            "effectStatus": "modeled",
+            "affectedPaths": [
+              "XLim"
+            ],
+            "effectReason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic XLim, which remains runtime-derived, and has no effect while XLimMode is manual. Native R2023a and R2026b observations confirm both."
           }
         },
         {
@@ -3329,10 +3331,12 @@
           },
           "application": {
             "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unknown",
-            "affectedPaths": [],
-            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            "effectPolicy": "autoParameter",
+            "effectStatus": "modeled",
+            "affectedPaths": [
+              "YLim"
+            ],
+            "effectReason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic YLim, which remains runtime-derived, and has no effect while YLimMode is manual. Native R2023a and R2026b observations confirm both."
           }
         },
         {
@@ -3363,10 +3367,12 @@
           },
           "application": {
             "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unknown",
-            "affectedPaths": [],
-            "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+            "effectPolicy": "autoParameter",
+            "effectStatus": "modeled",
+            "affectedPaths": [
+              "ZLim"
+            ],
+            "effectReason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic ZLim, which remains runtime-derived, and has no effect while ZLimMode is manual. Native R2023a and R2026b observations confirm both."
           }
         },
         {
@@ -46180,132 +46186,132 @@
       "propertyOwners": [
         {
           "path": "XLim",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLim",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLim",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XLimMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLimMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLimMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XLimitMethod",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLimitMethod",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLimitMethod",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XAxis",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YAxis",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "restricted"
         },
         {
           "path": "ZAxis",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XAxisLocation",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YAxisLocation",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XColor",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YColor",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZColor",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XColorMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YColorMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZColorMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XDir",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YDir",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZDir",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XScale",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YScale",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZScale",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         }
       ]
@@ -48712,132 +48718,132 @@
       "propertyOwners": [
         {
           "path": "XLim",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLim",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLim",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XLimMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLimMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLimMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XLimitMethod",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YLimitMethod",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZLimitMethod",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XAxis",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YAxis",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "restricted"
         },
         {
           "path": "ZAxis",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XAxisLocation",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YAxisLocation",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XColor",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YColor",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZColor",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XColorMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YColorMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZColorMode",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XDir",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YDir",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZDir",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "XScale",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "YScale",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         },
         {
           "path": "ZScale",
-          "groupId": "exact.rulers.cb4ea02a63b1",
+          "groupId": "exact.rulers.5bb446a8b5e0",
           "runtimeSetAccess": "public"
         }
       ]

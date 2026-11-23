@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2026a",
-  "inputSha256": "eb2c7fb68fb327f1dad5ba31ecea40788cced0094c2e613ce2b6f4d303b80488",
+  "inputSha256": "db3700a3b9461ce7089c445a5e7a802eb427a8772a7460376baf64e0ddebc5a6",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -2280,7 +2280,7 @@
       ]
     },
     {
-      "id": "exact.rulers.cb4ea02a63b1",
+      "id": "exact.rulers.5bb446a8b5e0",
       "kind": "exactCategory",
       "categoryId": "rulers",
       "entries": [

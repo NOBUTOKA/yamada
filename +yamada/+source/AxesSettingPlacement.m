@@ -61,13 +61,16 @@ classdef AxesSettingPlacement
             end
         end
 
-        function form = callForm(factory, path, value, root)
+        function form = callForm(factory, path, value, root, requested)
             % callForm Return the reviewed call form preferred for a new setting, or an empty struct.
+            %   requested lists the other values of the same edit, which a companion form
+            %   must imply exactly.
             arguments (Input)
                 factory (1, 1) string
                 path (1, 1) string
                 value
                 root (1, 1) string
+                requested struct = struct("Path", {}, "Value", {})
             end
             arguments (Output)
                 form struct
@@ -75,7 +78,7 @@ classdef AxesSettingPlacement
 
             form = struct([]);
             if ~any(factory == ["axes", "uiaxes", "polaraxes", "geoaxes"]) || strlength(root) == 0, return, end
-            form = yamada.catalog.AxesSettingFunctionCatalog.insertionForm(factory, path, value, root);
+            form = yamada.catalog.AxesSettingFunctionCatalog.insertionForm(factory, path, value, root, requested);
         end
 
         function [prefix, suffix] = callText(form, receiver)

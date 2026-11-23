@@ -1649,10 +1649,12 @@
             },
             "application": {
               "applyAfter": [],
-              "effectPolicy": "none",
-              "effectStatus": "unknown",
-              "affectedPaths": [],
-              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+              "effectPolicy": "autoParameter",
+              "effectStatus": "modeled",
+              "affectedPaths": [
+                "XLim"
+              ],
+              "effectReason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic XLim, which remains runtime-derived, and has no effect while XLimMode is manual. Native R2023a and R2026b observations confirm both."
             }
           }
         },
@@ -1689,10 +1691,12 @@
             },
             "application": {
               "applyAfter": [],
-              "effectPolicy": "none",
-              "effectStatus": "unknown",
-              "affectedPaths": [],
-              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+              "effectPolicy": "autoParameter",
+              "effectStatus": "modeled",
+              "affectedPaths": [
+                "YLim"
+              ],
+              "effectReason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic YLim, which remains runtime-derived, and has no effect while YLimMode is manual. Native R2023a and R2026b observations confirm both."
             }
           }
         },
@@ -1729,10 +1733,12 @@
             },
             "application": {
               "applyAfter": [],
-              "effectPolicy": "none",
-              "effectStatus": "unknown",
-              "affectedPaths": [],
-              "effectReason": "Setter interactions have not been reviewed; no independent effective state is asserted."
+              "effectPolicy": "autoParameter",
+              "effectStatus": "modeled",
+              "affectedPaths": [
+                "ZLim"
+              ],
+              "effectReason": "The setter retains this stored choice and changes no other stored value. It shapes only the automatic ZLim, which remains runtime-derived, and has no effect while ZLimMode is manual. Native R2023a and R2026b observations confirm both."
             }
           }
         },

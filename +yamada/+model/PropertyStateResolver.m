@@ -228,7 +228,7 @@ classdef PropertyStateResolver
             applications = [definitions.Application];
             policies = [applications.EffectPolicy]; statuses = [applications.EffectStatus];
             localPolicies = ["itemSelection", "boundedValue", "numericValue", "textValue", ...
-                "tickMode", "valueMode", "modeFlag", "setterModeFlag", "axisWidth"];
+                "tickMode", "valueMode", "modeFlag", "setterModeFlag", "axisWidth", "autoParameter"];
             local = (statuses == "independent" & policies == "none") | ...
                 (statuses == "modeled" & ismember(policies, localPolicies));
             companions = statuses == "modeled" & policies == "none";

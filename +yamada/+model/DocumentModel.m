@@ -1071,8 +1071,10 @@ classdef DocumentModel < handle
             component = obj.getComponent(id);
             assert(~isempty(component) && component.IsEditable, ...
                 "yamada:DocumentModel:UnsafeAxesSource", "The selected axes cannot be edited.");
+            % Effective Modes are resolved only when a companion call needs them.
+            effective = @(modePath) obj.effectiveValue(registry, id, modePath);
             [batch, requested, forward, inverse, paths] = yamada.source.AxesInspectorEdits.plan( ...
-                obj,component,path,value,action,registry.CatalogRoot);
+                obj,component,path,value,action,registry.CatalogRoot,effective);
             if batch.AfterText == obj.CurrentText, return, end
             before = obj.CurrentSource;
             [state, forward] = obj.publishAxesSource(component,batch,forward,"",paths, ...
@@ -1173,6 +1175,8 @@ classdef DocumentModel < handle
                 error("yamada:DocumentModel:InvalidPropertyBatch", ...
                     "Property batch paths must be nonempty and unique.");
             end
+            changes = obj.withAutomaticModes(component, changes, registry);
+            paths = string({changes.Path});
             historyChanges = repmat(struct("Path", "", "HadOldValue", false, ...
                 "OldValue", [], "NewValue", [], "TargetSettingId", 0, "OldEntry", []), 1, numel(changes));
             implied = false(1, numel(changes));
@@ -4313,6 +4317,74 @@ classdef DocumentModel < handle
                     obj.PendingEdits(index) = [];
                     return
                 end
+            end
+        end
+
+        function [value, known] = effectiveValue(obj, registry, id, path)
+            % effectiveValue Resolve one effective property value of a component.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                id (1, 1) string
+                path (1, 1) string
+            end
+            arguments (Output)
+                value
+                known (1, 1) logical
+            end
+
+            value = []; known = false;
+            states = obj.getEffectivePropertyStates(registry, id);
+            state = states(arrayfun(@(item) item.Definition.Path == path, states));
+            if isscalar(state) && state.Resolution.IsKnown
+                value = state.Resolution.EffectiveValue; known = true;
+            end
+        end
+
+        function changes = withAutomaticModes(obj, component, changes, registry)
+            % withAutomaticModes Select automatic values for edited parameters of their computation.
+            %   An autoParameter path, such as XLimitMethod, only shapes the automatic value of
+            %   its affected path, so editing it also requests that value's Mode as "auto"
+            %   unless the batch sets the Mode or the Mode is already known to be automatic.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                component (1, 1) yamada.model.ComponentRecord
+                changes (1, :) struct
+                registry yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                changes (1, :) struct
+            end
+
+            if isempty(registry), return, end
+            parent = obj.getComponent(component.ParentId);
+            parentFactory = "";
+            if ~isempty(parent), parentFactory = parent.Factory; end
+            definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
+            definitionPaths = string({definitions.Path});
+            paths = string({changes.Path});
+            modes = strings(1, 0);
+            for path = paths
+                definition = definitions(definitionPaths == path);
+                if ~isscalar(definition) || definition.Application.EffectPolicy ~= "autoParameter", continue, end
+                affected = definition.Application.AffectedPaths;
+                assert(isscalar(affected) && any(definitionPaths == affected + "Mode"), ...
+                    "yamada:DocumentModel:InvalidPropertyBatch", "An automatic parameter needs one reviewed Mode.");
+                if ~any(paths == affected + "Mode"), modes(end + 1) = affected + "Mode"; end %#ok<AGROW>
+            end
+            if isempty(modes), return, end
+            % Only a Mode that is not already known to be automatic needs a setting.
+            states = obj.getEffectivePropertyStates(registry, component.Id);
+            statePaths = arrayfun(@(state) state.Definition.Path, states);
+            for mode = unique(modes, "stable")
+                state = states(statePaths == mode);
+                if isscalar(state) && state.Resolution.IsKnown && ...
+                        string(state.Resolution.EffectiveValue) == "auto", continue, end
+                added = changes(1);
+                for field = reshape(string(fieldnames(added)), 1, []), added.(field) = []; end
+                added.Path = mode;
+                added.Value = 'auto';
+                changes(end + 1) = added; %#ok<AGROW>
             end
         end
 

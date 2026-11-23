@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2026b",
-  "inputSha256": "a48050127668c7875e4f412e2cbad7ceb5a979c0bef8fa07beef6d1e6547a216",
+  "inputSha256": "cc0d6163929f1e41a89abd6965da96b45efaad55e2dbd1aea068d4aca7ba9945",
   "step4CrossCuttingConflicts": [
     {
       "categoryId": "callbackexecutioncontrol",
@@ -6140,37 +6140,12 @@
           ]
         },
         {
-          "candidateId": "candidate.rulers.9adb45f1125e",
+          "candidateId": "candidate.rulers.5bb446a8b5e0",
           "categoryId": "rulers",
           "categoryDisplayName": "Rulers",
           "sharingScope": "familyScoped",
           "scopeRationale": "Axes-family ruler settings.",
-          "capabilitySha256": "9adb45f1125e6f623fbfffde88f9476a7b6610ee6d454d20903c0e1fb429ebf9",
-          "propertyPaths": [
-            "LatitudeAxis",
-            "LongitudeAxis",
-            "AxisColor"
-          ],
-          "propertyCapabilitySha256": [
-            "bc6216a7335c548f3dabd63fdf3e14c5501c5082d37d61c2a4e0a036847d2ce9",
-            "56dd732ba83c9a27f30555a6e9ec8d38ed6ecee91f10d4eb49a7949f53e2ace8",
-            "17e7208db32bcfddaa51465e8dc0d52ed8f3a063a9ee2830475ac53defd725d2"
-          ],
-          "memberVariantIds": [
-            "geoaxes"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            4
-          ]
-        },
-        {
-          "candidateId": "candidate.rulers.cb4ea02a63b1",
-          "categoryId": "rulers",
-          "categoryDisplayName": "Rulers",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Axes-family ruler settings.",
-          "capabilitySha256": "cb4ea02a63b1574149029ffaea0ec50a5a8e9d324ff18b469f91fce22d1d2c62",
+          "capabilitySha256": "5bb446a8b5e08b7c8335361db721a610bceefeb6a00afbec0f54345d649e8837",
           "propertyPaths": [
             "XLim",
             "YLim",
@@ -6206,9 +6181,9 @@
             "48cae320f38a25016b123610ae16c54fedfa323023ff15765c64aa59d174cbb4",
             "5441d17dc482b320329a3bca4567d49c9665a6781c3c8e3c52436ac290c25727",
             "7a9493ceb4f5bda24fcd7a4a4ece52f71b5ad296f6a627471a4c9631a15683ae",
-            "9ddc6ee842940eefc18d1c68eb8a6e726d7073665c4bc012f9344b1ae5a91520",
-            "dfc1353ff4713fbae8416896d245ba5f853dcdee3f085fcf7aa0d942d5f2bb65",
-            "d7c9d5dccbab22451e45b1196c7b1ed140f5150c639c9378c5f909f18c6cff72",
+            "ecf24ddd4a8ddccb339e4942a8eb8955d5d9cb9da08a5706ab1fd4afd2010d77",
+            "1db1985b35466ac19d65b0e2d6b566c55cb674a69b5f1efb741dc8d32384877e",
+            "d941d9d8e65adc66d34550b39c3734851cfe7b422417f10f840e6ae912f96b04",
             "bef092aa973bd142d24ea874e82a4ff7508684665583ccfa8896208175c01864",
             "52dc20414bed9668edbc44314efaacdf139084068cd9f242dc0c760c6ca82175",
             "503b93cf2d4160c220721439241ce194b4e27e1d26d05087fce614f8745dbb67",
@@ -6234,6 +6209,31 @@
           "reuseCount": 2,
           "documentedCategoryOrders": [
             3
+          ]
+        },
+        {
+          "candidateId": "candidate.rulers.9adb45f1125e",
+          "categoryId": "rulers",
+          "categoryDisplayName": "Rulers",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Axes-family ruler settings.",
+          "capabilitySha256": "9adb45f1125e6f623fbfffde88f9476a7b6610ee6d454d20903c0e1fb429ebf9",
+          "propertyPaths": [
+            "LatitudeAxis",
+            "LongitudeAxis",
+            "AxisColor"
+          ],
+          "propertyCapabilitySha256": [
+            "bc6216a7335c548f3dabd63fdf3e14c5501c5082d37d61c2a4e0a036847d2ce9",
+            "56dd732ba83c9a27f30555a6e9ec8d38ed6ecee91f10d4eb49a7949f53e2ace8",
+            "17e7208db32bcfddaa51465e8dc0d52ed8f3a063a9ee2830475ac53defd725d2"
+          ],
+          "memberVariantIds": [
+            "geoaxes"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            4
           ]
         }
       ],
@@ -6368,182 +6368,182 @@
           "path": "XAxis",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "XAxisLocation",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "XColor",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "XColorMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "XDir",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "XLim",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "XLimitMethod",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "XLimMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "XScale",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "YAxis",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "YAxisLocation",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "YColor",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "YColorMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "YDir",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "YLim",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "YLimitMethod",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "YLimMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "YScale",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "ZAxis",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "ZColor",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "ZColorMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "ZDir",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "ZLim",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "ZLimitMethod",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "ZLimMode",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         },
         {
           "path": "ZScale",
           "presentInSurfaceCount": 1,
           "presentInCandidateIds": [
-            "candidate.rulers.cb4ea02a63b1"
+            "candidate.rulers.5bb446a8b5e0"
           ]
         }
       ],
