@@ -75,6 +75,11 @@ classdef InspectorPropertyRow < handle
                     @(value) obj.commit(value), @(changes) obj.commitBatch(changes));
             end
             obj.Editor.Layout.Column = 2;
+            if ~obj.IsComposite && definition.Editor == "geographicLimits"
+                % The editor labels its two intervals itself, so it takes the whole row.
+                label.Visible = "off";
+                obj.Editor.Layout.Column = [1 2];
+            end
             if ~isempty(settingsFcn) && ~obj.IsComposite && ...
                     isfield(definition.Metadata,"axesTextMember") && definition.Metadata.axesTextMember == "String"
                 grid.ColumnWidth = {105,"1x",30};
@@ -86,9 +91,6 @@ classdef InspectorPropertyRow < handle
                 obj.SettingsButton.Layout.Row = 2;
                 group = definition.Metadata.axesTextGroup;
                 obj.SettingsButton.ButtonPushedFcn = @(~,~) settingsFcn(obj.ComponentId,group);
-            end
-            if ~isempty(settingsFcn) && ~obj.IsComposite && definition.Editor == "geographicLimits"
-                obj.Editor.ButtonPushedFcn = @(~,~) settingsFcn(obj.ComponentId,"GeographicLimits");
             end
             if ~isempty(settingsFcn) && ~obj.IsComposite && definition.Editor == "colormapPreview"
                 grid.RowHeight = {24, "1x"};
@@ -421,6 +423,8 @@ classdef InspectorPropertyRow < handle
                 height = 48;
             elseif definition.Editor == "position"
                 height = 102;
+            elseif definition.Editor == "geographicLimits"
+                height = 92;
             elseif definition.Editor == "multilineText"
                 height = 84;
                 if isfield(definition.Metadata,"axesTextMember"), height = 44; end

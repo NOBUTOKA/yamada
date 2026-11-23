@@ -3243,6 +3243,11 @@ classdef yamada < handle
                 message = "Selection changed before the edit could be applied.";
                 return
             end
+            % Geographic limits arrive as one parsed latitude and longitude pair.
+            if path == "GeographicLimits" && component.Factory == "geoaxes"
+                message = app.commitAxesSetting(app.Document,componentId,path,value,"set");
+                return
+            end
             if any(yamada.model.AxesInspectorProperties.paths(component.Factory) == path)
                 if path == "TickLabelFormat"
                     [value, safe] = yamada.source.MatlabLiteralParser.parse(string(value));
@@ -3485,27 +3490,6 @@ classdef yamada < handle
                 end
                 app.refreshEditCommands();
                 app.scheduleOverlayRefresh();
-                return
-            end
-            if group == "GeographicLimits"
-                component = document.getComponent(id);
-                latitude = component.getSettings("RequestedLatitudeLimits");
-                longitude = component.getSettings("RequestedLongitudeLimits");
-                inputs = ["",""];
-                if ~isempty(latitude) && ~isempty(longitude)
-                    inputs = [yamada.source.LiteralEncoder.encode(latitude(end).LiteralValue), ...
-                        yamada.source.LiteralEncoder.encode(longitude(end).LiteralValue)];
-                end
-                displayed = [];
-                if isKey(app.PreviewHandles,id)
-                    native = app.PreviewHandles(id);
-                    if isvalid(native) && isa(native,"matlab.graphics.axis.GeographicAxes")
-                        [lat,lon] = geolimits(native);
-                        displayed = [lat;lon];
-                    end
-                end
-                yamada.ui.inspector.GeographicLimitsDialog.open(app.UIFigure,inputs,displayed, ...
-                    @(value) app.commitAxesSetting(document,id,"GeographicLimits",value,"set"));
                 return
             end
             if group == "EditColormap"
@@ -4014,6 +3998,23 @@ classdef yamada < handle
                         native = app.PreviewHandles(axesId);
                         if isvalid(native), rawValue = native.Colormap; isKnown = true; end
                     end
+                end
+                if path == "GeographicLimits" && component.Factory == "geoaxes"
+                    % Pair source-requested limits with the extent MATLAB draws in Preview.
+                    rawValue = struct("Requested",[],"Displayed",[]);
+                    latitude = component.getSettings("RequestedLatitudeLimits");
+                    longitude = component.getSettings("RequestedLongitudeLimits");
+                    if ~isempty(latitude) && ~isempty(longitude)
+                        rawValue.Requested = [latitude(end).LiteralValue;longitude(end).LiteralValue];
+                    end
+                    if ~isempty(app.PreviewHandles) && isKey(app.PreviewHandles,component.Id)
+                        native = app.PreviewHandles(component.Id);
+                        if isvalid(native) && isa(native,"matlab.graphics.axis.GeographicAxes")
+                            [lat,lon] = geolimits(native);
+                            rawValue.Displayed = [lat;lon];
+                        end
+                    end
+                    isKnown = true;
                 end
                 members(index).Path = path;
                 members(index).Value = value;

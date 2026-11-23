@@ -5,7 +5,7 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
         % Guarantee: axes settings edited in the live Inspector commit correct source and refresh Preview without executing app code.
         % Failure mode: an Inspector route edits only one of a pair, or Preview stays stale after an axes edit.
         function editsGeographicLimitsTogetherThroughInspector(testCase)
-            % editsGeographicLimitsTogetherThroughInspector Save one paired edit and refresh the map preview.
+            % editsGeographicLimitsTogetherThroughInspector Edit one inline field and commit the requested pair.
             path = string(tempname()) + ".m";
             testCase.addTeardown(@() delete(path));
             [~,name] = fileparts(path);
@@ -28,23 +28,26 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             node = tree.Children(1).Children(string({tree.Children(1).Children.NodeData}) == component.Id);
             tree.SelectedNodes = node;
             tree.SelectionChangedFcn(tree,struct("SelectedNodes",node));
-            button = findall(figure,"Tag","yamada-edit-geographic-limits");
-            testCase.assertNumElements(button,1);
-            testCase.verifyEqual(string(button.Enable),"on");
-            button.ButtonPushedFcn(button,struct());
-            dialog = findall(0,"Tag","yamada-geographic-limits-dialog");
-            testCase.addTeardown(@() deleteIfValid(dialog));
-            latitude = findall(dialog,"Tag","yamada-geographic-latitude");
-            longitude = findall(dialog,"Tag","yamada-geographic-longitude");
+            % Edit only latitude; longitude starts from the extent Preview displays.
+            native = findall(figure,"-isa","matlab.graphics.axis.GeographicAxes");
+            [~,initial] = geolimits(native);
+            latitude = findall(figure,"Tag","yamada-geographic-latitude");
+            longitude = findall(figure,"Tag","yamada-geographic-longitude");
+            testCase.assertNumElements(latitude,1);
+            testCase.verifyEqual(sscanf(erase(longitude.Value,["[","]"]),"%f")',initial,RelTol=1e-5);
             latitude.Value = "[-15 15]";
+            latitude.ValueChangedFcn(latitude,struct());
+            testCase.verifySubstring(app.Document.CurrentText,"geolimits(app.Map, [-15 15], ");
+            % A later longitude edit keeps the requested latitude and refreshes the displayed extent.
+            longitude = findall(figure,"Tag","yamada-geographic-longitude");
             longitude.Value = "[170 190]";
-            apply = findall(dialog,"Tag","yamada-geographic-limits-apply");
-            apply.ButtonPushedFcn(apply,struct());
-            testCase.verifyFalse(isvalid(dialog));
+            longitude.ValueChangedFcn(longitude,struct());
             testCase.verifySubstring(app.Document.CurrentText,"geolimits(app.Map, [-15 15], [170 190]);");
             [~,shown] = geolimits(findall(figure,"-isa","matlab.graphics.axis.GeographicAxes"));
             testCase.verifyLessThanOrEqual(shown(1),170.001);
             testCase.verifyGreaterThanOrEqual(shown(2),189.999);
+            displayed = findall(figure,"Tag","yamada-geographic-longitude-displayed");
+            testCase.verifyEqual(string(displayed.Text),compose("Displayed: [%.4g %.4g]",shown(1),shown(2)));
         end
 
         function editsNumericRulerTickFormatThroughInspector(testCase)

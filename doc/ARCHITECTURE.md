@@ -688,7 +688,7 @@ Related interaction tests are in `tests/unit/EditorInteractionTest.m`.
 
 Shared boundaries: [Geometry invalidation](#geometry-invalidation) and [Preview Layout Completion](#preview-layout-completion).
 
-The geographic limits call catalog captures its requested latitude and longitude as separate source arguments of the same call. Safe Preview pairs those arguments by their source occurrence and invokes the allowlisted geographic limits operation in initialization order. Automatic and manual calls are separate operations. MATLAB computes the displayed limits from the preview geometry; the displayed values are never treated as source arguments.
+The geographic limits call catalog captures its requested latitude and longitude as separate source arguments of the same call. Safe Preview pairs those arguments by their source occurrence and invokes the allowlisted geographic limits operation in initialization order. Automatic and manual calls are separate operations. MATLAB computes the displayed limits from the preview geometry; the displayed values are never treated as source arguments. The Inspector edits both requested intervals inline and shows the displayed extent read from the Preview axes under each field. An edit to either field writes both arguments of one call; when no call exists yet, the fields start from the displayed extent, so the untouched interval keeps what Preview currently shows.
 
 ### Preview synchronization
 
