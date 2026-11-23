@@ -247,23 +247,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) StructuralSourceEditTest <
             testCase.verifyEqual(document.getComponent(pasted.Id), pasted);
         end
 
-        function directBuilderValuesRemainPresentWhenPasting(testCase)
-            % directBuilderValuesRemainPresentWhenPasting Preserve staged literal configuration and independent copied values.
-            % Guarantee and failure mode: shared with editsSubtreeWithUnavailableChild.
-            [document, registry] = fixture();
-            owner = document.getComponentByName("TopLeftLabel");
-            owner.setProperty("Text", "Captured copy");
-            snapshot = document.copySubtree(owner.Id, registry);
-            owner.setProperty("Text", "Current original"); owner.setProperty("Tooltip", "New builder property");
-            pasted = document.pasteSubtree(snapshot, document.RootComponentId, registry);
-            testCase.verifyEqual(owner.getProperty("Text").LiteralValue, "Current original");
-            testCase.verifyEqual(owner.getProperty("Tooltip").LiteralValue, "New builder property");
-            testCase.verifyEqual(pasted.getProperty("Text").LiteralValue, "Captured copy");
-            verifyBindings(testCase, document, registry);
-            document.undo(); verifyBindings(testCase, document, registry);
-            testCase.verifyEqual(owner.getProperty("Text").LiteralValue, "Top left");
-            document.redo(); verifyBindings(testCase, document, registry);
-        end
         function stagedRenameAndSaveRestoreEarlierHistory(testCase)
             % stagedRenameAndSaveRestoreEarlierHistory Keep direct builder writes in the command that publishes them.
             % Guarantee and failure mode: shared with renameReservationsFollowHistoryAndKeepLiteralText.

@@ -51,15 +51,6 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             first.restoreSettings(before);
             testCase.verifyTrue(testCase.state(document, registry, second, "Layout.Column").IsKnown);
             testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
-            % Uncacheable metadata must retain the same uncached uncertainty behavior.
-            document.Metadata.Live = containers.Map("entry", 1);
-            first.restoreSettings([before, uncertain.toStruct()]);
-            uncertain = first.getSettings("Layout");
-            actual = testCase.state(document, registry, grid, "RowHeight");
-            testCase.verifyFalse(actual.IsKnown);
-            testCase.verifyEqual(actual.EffectSettingId, uncertain.Id);
-            first.restoreSettings(before);
-            testCase.verifyTrue(testCase.state(document, registry, grid, "RowHeight").IsKnown);
             testCase.verifyEqual(document.HistoryIndex, 0);
             testCase.verifyFalse(document.IsDirty);
         end

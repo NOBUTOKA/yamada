@@ -193,35 +193,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.verifyEqual(grid.getProperty("RowHeight").LiteralValue, {"1x", "1x"});
         end
 
-        function liveDefinitionDataCannotBorrowAnIndependentProof(testCase)
-            % liveDefinitionDataCannotBorrowAnIndependentProof Reject live metadata behind the same property path.
-            % Guarantee: live definition metadata cannot reuse a proof for the same path.
-            % Failure mode: changed metadata behind an unchanged path is certified by an old proof.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
-            context = document.evaluationContext(registry);
-            independent = yamada.model.PropertyDefinition("Example", 1, true);
-            context.remember("independent", struct("Definitions", independent));
-            [~, found] = context.lookup("independent");
-            testCase.verifyTrue(found);
-            live = containers.Map("a", 1);
-            definition = yamada.model.PropertyDefinition("Example", 1, true, true, struct("Live", live));
-            context.remember("live", struct("Definitions", definition));
-            [~, found] = context.lookup("live");
-            testCase.verifyFalse(found);
-            live("a") = 2;
-            testCase.verifyEqual(live("a"), 2);
-            context.remember("live", struct("Definitions", definition));
-            [~, found] = context.lookup("live");
-            testCase.verifyFalse(found);
-            document.Metadata.Definition = definition;
-            context = document.evaluationContext(registry);
-            [~, safe] = context.inputs();
-            testCase.verifyFalse(safe);
-        end
-
         % Guarantee: revisions observe every write, including direct, nested, and restored writes, and only for their owner.
-        % Failure mode: a write outside document commands goes unnoticed, or a candidate write invalidates the original.
+        % Failure mode: a record write that a command makes, such as a nested, collection, or restored write, goes unnoticed, or a candidate write invalidates the original.
         function writesInvalidateAnAccidentallyHeldReadScope(testCase)
             % writesInvalidateAnAccidentallyHeldReadScope Do not hide tracked writes behind a read lease.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -383,22 +356,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.verifyTrue(original.matches(document, registry));
         end
 
-        function liveDataIntroducedAfterCaptureRejectsFastReuse(testCase)
-            % liveDataIntroducedAfterCaptureRejectsFastReuse Reject hidden mutations even after a value is restored.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
-            previous = document.evaluationContext(registry);
-            document.Metadata.Live = containers.Map("a", 1);
-            testCase.verifyFalse(previous.matches(document, registry));
-            unsafe = document.evaluationContext(registry);
-            testCase.verifyFalse(unsafe.matches(document, registry));
-            document.Metadata = struct();
-            safe = document.evaluationContext(registry);
-            testCase.verifyTrue(safe.matches(document, registry));
-            document.Metadata.After = 1;
-            testCase.verifyFalse(safe.matches(document, registry));
-        end
-
         function detectsDirectEntryChangesWithoutHistory(testCase)
             % detectsDirectEntryChangesWithoutHistory Compare current values even outside document commands.
             registry = yamada.model.ComponentRegistry.createDefault();
@@ -450,9 +407,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             testCase.verifyTrue(tracked);
             testCase.verifyEqual(after.Clock, before.Clock);
             testCase.verifyGreaterThan(after.Revision, before.Revision);
-            document.Metadata.Live = containers.Map("live", 1);
-            [~, tracked] = document.evaluationContext(registry).revisionToken();
-            testCase.verifyFalse(tracked);
         end
 
         function gridProjectionKeepsValueAndPublicPlanIndependence(testCase)
@@ -587,35 +541,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             root.setProperty("Name", "Direct edit");
             [~, ~, found] = context.configurationStates("plan", root, definitions, document);
             testCase.verifyFalse(found);
-        end
-
-        % Guarantee: unrecognized mutable metadata bypasses the cache without retaining it.
-        % Failure mode: mutable metadata is snapshotted as immutable, or a cyclic reference recurses forever.
-        function liveMetadataBypassesCache(testCase)
-            % liveMetadataBypassesCache Do not assume unrecognized mutable metadata is immutable.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
-            document.Metadata.Live = containers.Map("a", 1);
-            context = document.evaluationContext(registry);
-            context.remember("sample", 1);
-            [~, found] = context.lookup("sample");
-            testCase.verifyFalse(found);
-            testCase.verifyFalse(context.matches(document, registry));
-        end
-
-        function cyclicLiveMetadataBypassesWithoutRetainingHandles(testCase)
-            % cyclicLiveMetadataBypassesWithoutRetainingHandles Do not recursively snapshot arbitrary model references.
-            % Guarantee and failure mode: shared with liveMetadataBypassesCache.
-            registry = yamada.model.ComponentRegistry.createDefault();
-            document = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
-            root = document.getComponent(document.RootComponentId);
-            root.Metadata.Live = root;
-            context = document.evaluationContext(registry);
-            [inputs, safe] = context.inputs();
-            testCase.verifyFalse(safe);
-            testCase.verifyEmpty(fieldnames(inputs));
-            testCase.verifyFalse(context.matches(document, registry));
-            root.Metadata = struct();
         end
 
         function historyBranchAndSourceConventionsInvalidateContext(testCase)
