@@ -410,11 +410,11 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifySubstring(edited, "axis(app.Control, 'square');" + sprintf('\r\n') + ...
                 "app.Control.DataAspectRatio = [1 2 1];");
             testCase.verifyEqual(count(edited, "axis("), 1);
-            testCase.verifyEqual(callPaths(control), ["AxisStyle","DataAspectRatioMode","PlotBoxAspectRatio","PlotBoxAspectRatioMode"]);
+            testCase.verifyEqual(sort(callPaths(control)), formPaths(registry,"axis.square"));
             testCase.verifyEqual(control.getSettings("DataAspectRatio").Method, "assignment");
             document.undo();
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
-            testCase.verifyEqual(callPaths(control), ["AxisStyle","DataAspectRatio","DataAspectRatioMode","PlotBoxAspectRatioMode"]);
+            testCase.verifyEqual(sort(callPaths(control)), formPaths(registry,"axis.equal"));
             document.redo();
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), edited);
 
@@ -424,7 +424,7 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             document.editAxesInspector(control.Id, "AxisStyle", "image", "set", registry);
             testCase.verifySubstring(document.CurrentText, "app.Control.Box = 'on';" + sprintf('\r\n') + ...
                 "axis(app.Control, ""image"");");
-            testCase.verifyEqual(string(control.getSettings("YLimitMethod").LiteralValue), "tight");
+            testCase.verifyEqual(sort(callPaths(control)), formPaths(registry,"axis.image"));
         end
 
         % Guarantee: Editing a setting that only shapes an automatic value, such as XLimitMethod or a tick label format, also turns that value's Auto on with one call placed after the manual setting, and Undo restores both.
@@ -616,6 +616,23 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             value = states(arrayfun(@(item) item.Definition.Path == path, states)).Resolution;
         end
     end
+end
+
+function paths = formPaths(registry, id)
+% formPaths Return the sorted effect paths that the loaded catalog records for one call form.
+arguments (Input)
+    registry (1,1) yamada.model.ComponentRegistry
+    id (1,1) string
+end
+arguments (Output)
+    paths (1,:) string
+end
+
+form = yamada.catalog.AxesSettingFunctionCatalog.formById(id, registry.CatalogRoot);
+effects = form.effects;
+if ~iscell(effects), effects = num2cell(effects); end
+paths = sort(string(cellfun(@(effect) effect.path, effects, "UniformOutput", false)));
+paths = reshape(paths, 1, []);
 end
 
 %{

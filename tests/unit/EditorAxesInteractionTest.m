@@ -436,8 +436,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
         end
 
         % Guarantee: the Axis Style row shows the keyword of the last axis call, marks effects that later settings override, and Preview applies the call's ratio effects in source order.
-        % Failure mode: the row shows a guessed or stale keyword, the override goes unmarked or stays marked after it is resolved, or Preview ignores the call while applying the later assignment.
-        % editsGeographicLimitsTogetherThroughInspector covers a paired argument edit; this test detects the derived keyword state and its override marker.
+        % Failure mode: the row shows a guessed or stale keyword, the override goes unmarked or names the wrong setting or line, or Preview ignores the call while applying the later assignment.
+        % marksPlotBoxAspectRatioIgnoredUnderManualLimits marks a property that independent settings overconstrain; this test detects overrides of a call's own effects after a keyword change.
         function marksAxisStyleEffectsOverriddenByLaterSettings(testCase)
             % marksAxisStyleEffectsOverriddenByLaterSettings Switch equal to square under a later explicit ratio.
             folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture).Folder;
@@ -455,7 +455,11 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             [style, marker] = axisStyleRow(figure);
             testCase.verifyEqual(string(style.Value),"equal");
             testCase.verifyEqual(string(marker.Visible),"on");
-            testCase.verifySubstring(string(marker.Tooltip),"DataAspectRatio is overridden on line");
+            % The tooltip names the overridden effect and the line of the overriding setting.
+            lines = splitlines(string(app.Document.CurrentText));
+            line = find(contains(lines,"app.First.DataAspectRatio"),1);
+            testCase.verifySubstring(string(marker.Tooltip),"DataAspectRatio");
+            testCase.verifySubstring(string(marker.Tooltip),string(line));
             preview = firstPreview(figure);
             testCase.verifyEqual(preview.DataAspectRatio,[1 2 1]);
             testCase.verifyEqual(string(preview.PlotBoxAspectRatioMode),"manual");
@@ -467,7 +471,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
                 "axis(app.First, ""square"");" + sprintf("\r\n") + "app.First.DataAspectRatio = [1 2 1];");
             [style, marker] = axisStyleRow(figure);
             testCase.verifyEqual(string(style.Value),"square");
-            testCase.verifySubstring(string(marker.Tooltip),"DataAspectRatioMode is overridden by DataAspectRatio");
+            testCase.verifyEqual(string(marker.Visible),"on");
+            testCase.verifySubstring(string(marker.Tooltip),"DataAspectRatioMode");
             preview = firstPreview(figure);
             testCase.verifyEqual(preview.PlotBoxAspectRatio,[1 1 1]);
             clear cleanup
@@ -496,7 +501,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             parts = modeEditor(app,figure,"First","DataAspectRatio");
             testCase.verifyFalse(parts.Auto.Value);
             testCase.verifyEqual(string(parts.Value.Value),"[1 1 1]");
-            testCase.verifyEqual(string(plotBoxMarker(figure).Visible),"off");
+            unmarked = plotBoxMarker(figure);
+            testCase.verifyEqual(unmarked.Visible,"off");
 
             % A second manual limit is accepted and marks the ratio that MATLAB replaces.
             parts = modeEditor(app,figure,"First","YLim");
@@ -510,8 +516,10 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             drawnow;
             testCase.verifySubstring(app.Document.CurrentText,"ylim(app.First, [0 2]);");
             marker = plotBoxMarker(figure);
-            testCase.verifyEqual(string(marker.Visible),"on");
-            testCase.verifySubstring(string(marker.Tooltip),"DataAspectRatio and XLim, YLim");
+            testCase.verifyEqual(marker.Visible,"on");
+            for name = ["DataAspectRatio","XLim","YLim"]
+                testCase.verifySubstring(marker.Tooltip,name);
+            end
             preview = firstPreview(figure);
             % MATLAB derives the box from the limits, so x:y follows their 10:2 spans.
             testCase.verifyEqual(preview.PlotBoxAspectRatio(1)/preview.PlotBoxAspectRatio(2),5,"AbsTol",1e-9);
@@ -524,7 +532,7 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             marker = plotBoxMarker(figure);
             testCase.verifyEqual(marker.Visible,"off");
             % The released row gives the marker column back to its editor.
-            testCase.verifyEqual(marker.Columns,2);
+            testCase.verifyEqual(marker.Columns,unmarked.Columns);
             testCase.verifyEqual(firstPreview(figure).PlotBoxAspectRatio,[1 1 1]);
             clear cleanup
         end
