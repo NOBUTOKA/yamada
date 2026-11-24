@@ -474,6 +474,32 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEmpty(control.getSettings("AxisStyle"));
         end
 
+        % Guarantee: Command syntax such as axis equal vis3d or grid on is read as a read-only call on the current axes.
+        % Failure mode: Command syntax effects are dropped, attributed to no axes or the wrong one, rewritten by an edit, or words that MATLAB passes differently, such as [0 1], are modeled.
+        function commandSyntaxIsReadForCurrentAxes(testCase)
+            % commandSyntaxIsReadForCurrentAxes Read command words as character-vector arguments of the implicit target.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Other = uiaxes(app.UIFigure);", "app.Control = uiaxes(app.UIFigure);", ...
+                "axis equal vis3d", "grid on", "xlim [0 1]"]);
+            other = document.getComponentByName("Other");
+            call = control.getSettings("AxisStyle");
+            testCase.verifyNumElements(call, 2);
+            testCase.verifyFalse(any([call.IsEditable]));
+            [style, vis3d] = yamada.model.AxesInspectorProperties.axisKeywordState(call);
+            testCase.verifyEqual([style string(vis3d)], ["equal" "true"]);
+            testCase.verifyEqual(string(control.getSettings("XGrid").LiteralValue), "on");
+            testCase.verifyEmpty(control.getSettings("XLim"));
+            testCase.verifyEmpty(other.getSettings("AxisStyle"));
+            messages = string({document.Diagnostics.Message});
+            testCase.verifyEqual(nnz(contains(messages, "inferred as Control")), 2);
+            testCase.verifyEqual(nnz(contains(messages, """xlim"" has no explicit target")), 1);
+
+            % The command is never rewritten as if it owned an explicit target.
+            testCase.verifyError(@() document.editAxesInspector(control.Id, "AxisStyle", "square", "set", registry), ...
+                "yamada:AxesInspectorEdits:Ownership");
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+        end
+
         % Guarantee: Editing a setting that only shapes an automatic value, such as XLimitMethod or a tick label format, also turns that value's Auto on with one call placed after the manual setting, and Undo restores both.
         % Failure mode: The edit keeps the manual Mode so the choice has no visible effect, writes a separate Mode statement or a call before the manual setting that the setting then overrides, or Undo leaves the Mode changed.
         % pendingModeIsAddedAfterExistingConstructorValue edits a Mode directly; this test detects a parameter edit that must request the Mode itself.

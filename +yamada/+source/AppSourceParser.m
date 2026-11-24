@@ -361,15 +361,15 @@ classdef AppSourceParser
                 if isempty(assignment)
                     % Command syntax such as "axis tight" always targets the current axes implicitly.
                     command = yamada.source.PropertySettingSyntax.axesCommand(statement, registry.CatalogRoot);
-                    if strlength(command) > 0 && ~any(blockedCallNames == command)
-                        diagnostics(end + 1) = yamada.source.AppSourceParser.diagnostic( ...
-                            "implicit-axes-target", "warning", ...
-                            "Axes setting """ + command + """ has no explicit target; its effects are preserved but not modeled.", ...
-                            "", statement.Span);
-                    end
+                    if any(blockedCallNames == command), command = ""; end
+                    tokens = strings(1, 0); target = "";
                     % Capture reviewed call effects without executing source or granting write ownership.
-                    if contains(statement.Text,"(")
-                        [name, target, tokens, valueSpans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry.CatalogRoot);
+                    if strlength(command) > 0 || contains(statement.Text,"(")
+                        if strlength(command) > 0
+                            [name, tokens, valueSpans, forms] = yamada.source.PropertySettingSyntax.axesCommandCall(statement, registry.CatalogRoot);
+                        else
+                            [name, target, tokens, valueSpans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry.CatalogRoot);
+                        end
                         if name == "axes" && ~any(blockedCallNames == name) && ...
                                 strlength(target) > 0 && isempty(tokens)
                             selected = document.getComponentByName(target);
@@ -423,6 +423,13 @@ classdef AppSourceParser
                                 continue
                             end
                         end
+                    end
+                    % Report command syntax whose effects remain unmodeled, unless an unresolved target was reported.
+                    if strlength(command) > 0 && (isempty(tokens) || strlength(target) > 0)
+                        diagnostics(end + 1) = yamada.source.AppSourceParser.diagnostic( ...
+                            "implicit-axes-target", "warning", ...
+                            "Axes setting """ + command + """ has no explicit target; its effects are preserved but not modeled.", ...
+                            "", statement.Span);
                     end
                     if any(unresolvedOffsets == statement.Span.StartOffset)
                         currentAxes = "";
