@@ -217,6 +217,15 @@ classdef AxesInspectorEdits
             keywords = yamada.model.AxesInspectorProperties.axisKeywords(settings);
             styles = find(keywords ~= "vis3d");
             if isempty(styles), call = settings(end); else, call = settings(styles(end)); end
+            if call.Syntax == "implicitCall"
+                % normal also returns the vis3d Modes to auto, so an active vis3d follows it.
+                [~, vis3d] = yamada.model.AxesInspectorProperties.axisKeywordState(settings);
+                keywords = requested;
+                if requested == "normal" && vis3d, keywords(end+1) = "vis3d"; end
+                [batch, forward, inverse, paths] = ...
+                    yamada.source.AxesInspectorEdits.insertAxisCall(document,component,keywords,root);
+                return
+            end
             [tokens, starts] = yamada.source.AxesInspectorEdits.axisCallKeywords(document,component,call,root);
             if isempty(styles)
                 tokens = [requested tokens];
@@ -260,6 +269,22 @@ classdef AxesInspectorEdits
                 return
             end
 
+            % An inferred-target call is superseded by a new explicit call after it.
+            if requested && settings(end).Syntax == "implicitCall"
+                [batch, forward, inverse, paths] = ...
+                    yamada.source.AxesInspectorEdits.insertAxisCall(document,component,"vis3d",root);
+                return
+            end
+            if ~requested && any([settings(indices).Syntax] == "implicitCall")
+                % Only normal returns the vis3d Modes to auto, so the style is restated after it.
+                style = yamada.model.AxesInspectorProperties.axisKeywordState(settings);
+                keywords = "normal";
+                if style ~= "normal", keywords(end+1) = style; end
+                [batch, forward, inverse, paths] = ...
+                    yamada.source.AxesInspectorEdits.insertAxisCall(document,component,keywords,root);
+                return
+            end
+
             % Edit the keywords of one call; vis3d from several calls is left as source.
             if requested
                 call = settings(end);
@@ -278,12 +303,14 @@ classdef AxesInspectorEdits
                 yamada.source.AxesInspectorEdits.rewriteAxisCall(document,component,call,tokens,root);
         end
 
-        function [batch, forward, inverse, paths] = insertAxisCall(document,component,keyword,root)
-            % insertAxisCall Write a new single-keyword axis call after every certain setting.
+        function [batch, forward, inverse, paths] = insertAxisCall(document,component,keywords,root)
+            % insertAxisCall Write a new axis call with the given keywords after every certain setting.
+            %   Several keywords, as in axis(app.UIAxes,"normal","vis3d"), have their
+            %   effects rebuilt from the catalog forms of the whole keyword list.
             arguments (Input)
                 document (1,1) yamada.model.DocumentModel
                 component (1,1) yamada.model.ComponentRecord
-                keyword (1,1) string
+                keywords (1,:) string {mustBeNonempty}
                 root (1,1) string
             end
             arguments (Output)
@@ -293,13 +320,37 @@ classdef AxesInspectorEdits
                 paths (1,:) string
             end
 
-            form = yamada.source.AxesInspectorEdits.axisForm(component,keyword,root);
+            % Validate every keyword against the loaded release before writing.
+            for keyword = keywords
+                yamada.source.AxesInspectorEdits.axisForm(component,keyword,root);
+            end
+            form = yamada.source.AxesInspectorEdits.axisForm(component,keywords(1),root);
             forward = struct("Changes",struct("SettingId",{},"Value",{}), ...
                 "Placements",struct("Statement",{},"Setting",{},"Offset",{}),"RemovedIds",zeros(1,0));
             inverse = forward;
+            encoded = strjoin(arrayfun(@(keyword) yamada.source.LiteralEncoder.encode(keyword),keywords),", ");
             [edits, forward.Placements] = yamada.source.AxesInspectorEdits.insert(document,component, ...
-                "AxisStyle",yamada.source.LiteralEncoder.encode(keyword),keyword, ...
-                yamada.model.PropertySetting.empty,root,form);
+                "AxisStyle",encoded,keywords(1),yamada.model.PropertySetting.empty,root,form);
+
+            % Rebuild the effects of a keyword list from the inserted statement.
+            if numel(keywords) > 1
+                placement = forward.Placements;
+                [~, ~, tokens, spans, forms] = yamada.source.PropertySettingSyntax.axesCall(placement.Statement,root);
+                [effectPaths, values, used, owned, elements] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
+                    forms,component.Factory,tokens,false);
+                assert(~isempty(effectPaths),"yamada:AxesInspectorEdits:AxisStyle","This axis style is unavailable in the loaded release.");
+                [ownedSpans, editable] = yamada.source.AxesSettingPlacement.ownership( ...
+                    component.Factory,effectPaths,owned,used,tokens,spans,elements);
+                template = placement.Setting(1);
+                created = yamada.model.PropertySetting.empty;
+                for effect = 1:numel(effectPaths)
+                    location = struct("Method","functionCall","Syntax","call","SourceSpan",template.SourceSpan, ...
+                        "ValueSpan",ownedSpans{effect},"SourceSnapshotId",template.SourceSnapshotId,"IsEditable",editable(effect));
+                    setting = yamada.model.PropertySetting(effectPaths(effect),values{effect},location);
+                    created(end+1) = setting.withScope(template.OwnerMethod,template.ScopeSpan); %#ok<AGROW>
+                end
+                forward.Placements.Setting = created;
+            end
             paths = string({forward.Placements.Setting.Path});
             batch = yamada.source.SourcePatchBatch(document.CurrentText,edits);
         end
@@ -663,9 +714,12 @@ classdef AxesInspectorEdits
             raw = prefix + encoded + suffix;
             statement = raw + ";";
             % Keep a trailing comment attached to its original statement.
-            tail = char(extractAfter(source,span.EndOffset));
+            % A statement without a terminator ends at its line, so its span can include the CR.
+            last = span.EndOffset;
+            if last > 0 && extractBetween(source,last,last) == sprintf('\r'), last = last - 1; end
+            tail = char(extractAfter(source,last));
             lineBreak = regexp(tail,'\r?\n','start','once');
-            offset = span.EndOffset;
+            offset = last;
             ending = string(newline);
             if document.LineEnding == "CRLF", ending = string(sprintf("\r\n")); end
             if ~isempty(lineBreak)

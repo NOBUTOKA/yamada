@@ -4149,12 +4149,16 @@ classdef yamada < handle
                 return
             end
             calls = settings(active);
-            editable = editable && all(arrayfun(@(setting) isequal(setting.SourceSpan, calls(end).SourceSpan), calls)) && ...
-                app.ownsAxisCall(component, calls(end));
+            % An inferred-target vis3d is turned off by a new call after it.
+            editable = editable && (any([calls.Syntax] == "implicitCall") || ...
+                all(arrayfun(@(setting) isequal(setting.SourceSpan, calls(end).SourceSpan), calls)) && ...
+                app.ownsAxisCall(component, calls(end)));
         end
 
         function owned = ownsAxisCall(app, component, call)
-            % ownsAxisCall Report whether a certain axis call with an explicit target owns its keywords.
+            % ownsAxisCall Report whether the Inspector can edit the keywords of an axis call.
+            %   A certain call with an explicit target owns its keywords. A call whose
+            %   target is only inferred is superseded by a new explicit call instead.
             arguments (Input)
                 app (1, 1) yamada
                 component (1, 1) yamada.model.ComponentRecord
@@ -4164,6 +4168,10 @@ classdef yamada < handle
                 owned (1, 1) logical
             end
 
+            if call.Syntax == "implicitCall"
+                owned = true;
+                return
+            end
             text = app.Document.CurrentText;
             statement = extractBetween(text, call.SourceSpan.StartOffset, call.SourceSpan.EndOffset);
             receiver = "app." + app.Document.sourceComponentName(component.Id);
