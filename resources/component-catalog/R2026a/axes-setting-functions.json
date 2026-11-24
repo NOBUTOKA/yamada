@@ -1464,6 +1464,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "composable": true,
       "arguments": [
         {
           "id": "style",
@@ -1508,6 +1509,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "composable": true,
       "arguments": [
         {
           "id": "style",
@@ -1564,6 +1566,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "composable": true,
       "arguments": [
         {
           "id": "style",
@@ -1608,6 +1611,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "composable": true,
       "arguments": [
         {
           "id": "style",
@@ -1648,6 +1652,7 @@
         "implicit": "inferWithWarning"
       },
       "outputs": 0,
+      "composable": true,
       "arguments": [
         {
           "id": "style",

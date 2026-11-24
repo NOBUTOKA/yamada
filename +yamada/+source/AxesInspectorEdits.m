@@ -33,6 +33,11 @@ classdef AxesInspectorEdits
                     yamada.source.AxesInspectorEdits.axisStyle(document,component,value,root);
                 return
             end
+            if path == "AxisVis3d" && any(component.Factory == ["axes","uiaxes"]) && action == "set"
+                [batch, requested, forward, inverse, paths] = ...
+                    yamada.source.AxesInspectorEdits.axisVis3d(document,component,value,root);
+                return
+            end
             assert(any(yamada.model.AxesInspectorProperties.paths(component.Factory) == path), ...
                 "yamada:AxesInspectorEdits:Path", "This setting is unavailable for the selected axes.");
             settings = component.getSettings(path);
@@ -177,10 +182,11 @@ classdef AxesInspectorEdits
 
         function [batch, requested, forward, inverse, paths] = axisStyle(document,component,value,root)
             % axisStyle Select one aspect-ratio keyword of axis as a single reversible statement edit.
-            %   An existing call keeps its place and text; only its keyword token changes,
-            %   and the call's implied effects are rebuilt for the new keyword. Later
-            %   settings that override those effects are left in place. Without a call,
-            %   a new one is written after every certain setting.
+            %   The last style keyword is replaced in place, keeping its call's other
+            %   keywords such as vis3d. Without one, the keyword is added before the
+            %   keywords of the last call, so that a later vis3d still freezes its ratios,
+            %   or a new call is written after every certain setting. Later settings that
+            %   override the call's effects are left in place.
             arguments (Input)
                 document (1,1) yamada.model.DocumentModel
                 component (1,1) yamada.model.ComponentRecord
@@ -195,75 +201,255 @@ classdef AxesInspectorEdits
                 paths (1,:) string
             end
 
-            % Validate the keyword against the reviewed forms of this release.
+            % Validate the keyword against the offered styles.
             assert(((ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))) && ...
                 any(string(value) == yamada.model.AxesInspectorProperties.axisStyles()), ...
                 "yamada:AxesInspectorEdits:AxisStyle","Choose an axis style.");
-            form = yamada.catalog.AxesSettingFunctionCatalog.formById("axis." + string(value),root);
-            assert(isscalar(form) && any(string(form.targetFactories) == component.Factory), ...
-                "yamada:AxesInspectorEdits:AxisStyle","This axis style is unavailable in the loaded release.");
+            requested = string(value);
+            settings = component.getSettings("AxisStyle");
+            if isempty(settings)
+                [batch, forward, inverse, paths] = ...
+                    yamada.source.AxesInspectorEdits.insertAxisCall(document,component,requested,root);
+                return
+            end
+
+            % Replace the last style token, or lead the last call with the new keyword.
+            keywords = yamada.model.AxesInspectorProperties.axisKeywords(settings);
+            styles = find(keywords ~= "vis3d");
+            if isempty(styles), call = settings(end); else, call = settings(styles(end)); end
+            [tokens, starts] = yamada.source.AxesInspectorEdits.axisCallKeywords(document,component,call,root);
+            if isempty(styles)
+                tokens = [requested tokens];
+            else
+                tokens(starts == call.ValueSpan.StartOffset) = requested;
+            end
+            [batch, forward, inverse, paths] = ...
+                yamada.source.AxesInspectorEdits.rewriteAxisCall(document,component,call,tokens,root);
+        end
+
+        function [batch, requested, forward, inverse, paths] = axisVis3d(document,component,value,root)
+            % axisVis3d Add or remove the vis3d keyword of the last axis call.
+            %   Turning it on appends vis3d to the keywords of the last call, as in
+            %   axis(app.UIAxes,"equal","vis3d"), or writes axis(app.UIAxes,"vis3d").
+            %   Turning it off removes the vis3d keywords after the last normal, and
+            %   removes a call that has no other keyword.
+            arguments (Input)
+                document (1,1) yamada.model.DocumentModel
+                component (1,1) yamada.model.ComponentRecord
+                value
+                root (1,1) string
+            end
+            arguments (Output)
+                batch (1,1) yamada.source.SourcePatchBatch
+                requested
+                forward (1,1) struct
+                inverse (1,1) struct
+                paths (1,:) string
+            end
+
+            % Validate the toggle against the current keyword state.
+            assert(isscalar(value) && (islogical(value) || isnumeric(value)) && any(double(value) == [0 1]), ...
+                "yamada:AxesInspectorEdits:AxisVis3d","Choose whether vis3d applies.");
+            requested = logical(value);
+            settings = component.getSettings("AxisStyle");
+            [~, active, indices] = yamada.model.AxesInspectorProperties.axisKeywordState(settings);
+            assert(active ~= requested, "yamada:AxesInspectorEdits:AxisVis3d","The vis3d keyword is already in this state.");
+            if requested && isempty(settings)
+                [batch, forward, inverse, paths] = ...
+                    yamada.source.AxesInspectorEdits.insertAxisCall(document,component,"vis3d",root);
+                return
+            end
+
+            % Edit the keywords of one call; vis3d from several calls is left as source.
+            if requested
+                call = settings(end);
+                tokens = yamada.source.AxesInspectorEdits.axisCallKeywords(document,component,call,root);
+                tokens(end+1) = "vis3d";
+            else
+                calls = settings(indices);
+                call = calls(end);
+                assert(all(arrayfun(@(setting) isequal(setting.SourceSpan,call.SourceSpan),calls)), ...
+                    "yamada:AxesInspectorEdits:Ownership","The vis3d keyword is set by several axis calls.");
+                [tokens, starts] = yamada.source.AxesInspectorEdits.axisCallKeywords(document,component,call,root);
+                removed = arrayfun(@(setting) setting.ValueSpan.StartOffset,calls);
+                tokens = tokens(~ismember(starts,removed));
+            end
+            [batch, forward, inverse, paths] = ...
+                yamada.source.AxesInspectorEdits.rewriteAxisCall(document,component,call,tokens,root);
+        end
+
+        function [batch, forward, inverse, paths] = insertAxisCall(document,component,keyword,root)
+            % insertAxisCall Write a new single-keyword axis call after every certain setting.
+            arguments (Input)
+                document (1,1) yamada.model.DocumentModel
+                component (1,1) yamada.model.ComponentRecord
+                keyword (1,1) string
+                root (1,1) string
+            end
+            arguments (Output)
+                batch (1,1) yamada.source.SourcePatchBatch
+                forward (1,1) struct
+                inverse (1,1) struct
+                paths (1,:) string
+            end
+
+            form = yamada.source.AxesInspectorEdits.axisForm(component,keyword,root);
+            forward = struct("Changes",struct("SettingId",{},"Value",{}), ...
+                "Placements",struct("Statement",{},"Setting",{},"Offset",{}),"RemovedIds",zeros(1,0));
+            inverse = forward;
+            [edits, forward.Placements] = yamada.source.AxesInspectorEdits.insert(document,component, ...
+                "AxisStyle",yamada.source.LiteralEncoder.encode(keyword),keyword, ...
+                yamada.model.PropertySetting.empty,root,form);
+            paths = string({forward.Placements.Setting.Path});
+            batch = yamada.source.SourcePatchBatch(document.CurrentText,edits);
+        end
+
+        function [tokens, starts] = axisCallKeywords(document,component,call,root)
+            % axisCallKeywords Return the keywords of an explicit-target axis call and their offsets.
+            arguments (Input)
+                document (1,1) yamada.model.DocumentModel
+                component (1,1) yamada.model.ComponentRecord
+                call (1,1) yamada.model.PropertySetting
+                root (1,1) string
+            end
+            arguments (Output)
+                tokens (1,:) string
+                starts (1,:) double
+            end
+
+            % Only a certain call with an explicit target owns replaceable keywords.
+            assert(call.IsCertain && call.Method == "functionCall" && ~isempty(call.ValueSpan), ...
+                "yamada:AxesInspectorEdits:Ownership","This axis call cannot be replaced safely.");
+            statement = yamada.source.AxesInspectorEdits.callStatement(document,call);
+            [~, target, raw, spans] = yamada.source.PropertySettingSyntax.axesCall(statement,root);
+            receiver = "app." + document.sourceComponentName(component.Id);
+            assert(target == document.sourceComponentName(component.Id) && ...
+                startsWith(statement.Text,regexpPattern("axis\s*\(\s*" + regexptranslate("escape",receiver) + "\s*,")), ...
+                "yamada:AxesInspectorEdits:Ownership","An axis call without its explicit target is read-only.");
+            tokens = strings(1,numel(raw));
+            for index = 1:numel(raw)
+                [value, safe] = yamada.source.MatlabLiteralParser.parse(raw(index));
+                assert(safe && ((ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))), ...
+                    "yamada:AxesInspectorEdits:Ownership","This axis call cannot be replaced safely.");
+                tokens(index) = string(value);
+            end
+            starts = [spans.StartOffset];
+        end
+
+        function [batch, forward, inverse, paths] = rewriteAxisCall(document,component,call,tokens,root)
+            % rewriteAxisCall Replace the keyword list of one axis call as a reversible statement edit.
+            %   The call keeps its place, receiver and quote style; its implied effects
+            %   are rebuilt from the catalog forms of the new keywords. A call left
+            %   without keywords is removed with the line it vacates.
+            arguments (Input)
+                document (1,1) yamada.model.DocumentModel
+                component (1,1) yamada.model.ComponentRecord
+                call (1,1) yamada.model.PropertySetting
+                tokens (1,:) string
+                root (1,1) string
+            end
+            arguments (Output)
+                batch (1,1) yamada.source.SourcePatchBatch
+                forward (1,1) struct
+                inverse (1,1) struct
+                paths (1,:) string
+            end
+
             forward = struct("Changes",struct("SettingId",{},"Value",{}), ...
                 "Placements",struct("Statement",{},"Setting",{},"Offset",{}),"RemovedIds",zeros(1,0));
             inverse = forward;
             source = document.CurrentText;
-            settings = component.getSettings("AxisStyle");
-            if isempty(settings)
-                requested = string(value);
-                [edits, forward.Placements] = yamada.source.AxesInspectorEdits.insert(document,component, ...
-                    "AxisStyle",yamada.source.LiteralEncoder.encode(requested),requested, ...
-                    yamada.model.PropertySetting.empty,root,form);
-                paths = string({forward.Placements.Setting.Path});
+            statement = yamada.source.AxesInspectorEdits.callStatement(document,call);
+            [~, ~, raw, spans] = yamada.source.PropertySettingSyntax.axesCall(statement,root);
+            old = component.Settings(arrayfun(@(setting) isequal(setting.SourceSpan,call.SourceSpan),component.Settings));
+            forward.RemovedIds = [old.Id];
+            anchor = call.SourceSpan.StartOffset - 1;
+
+            % Remove a call without keywords together with the line it vacates.
+            if isempty(tokens)
+                edits = yamada.source.SourceFormatting.cleanDeletions(source, ...
+                    struct("Start",call.SourceSpan.StartOffset,"End",call.SourceSpan.EndOffset,"Text",""));
                 batch = yamada.source.SourcePatchBatch(source,edits);
+                inverse.Placements = struct("Statement",statement,"Setting",old,"Offset",edits(1).Start-1);
+                paths = unique(string({old.Path}),"stable");
                 return
             end
 
-            % Replace only the keyword token of the last call, keeping its quote style.
-            original = settings(end);
-            span = original.ValueSpan;
-            assert(original.IsCertain && original.Method == "functionCall" && ~isempty(span), ...
-                "yamada:AxesInspectorEdits:Ownership","This axis call cannot be replaced safely.");
-            before = extractBetween(source,span.StartOffset,span.EndOffset);
-            requested = string(value);
-            if startsWith(before,"'"), requested = char(value); end
-            encoded = yamada.source.LiteralEncoder.encode(requested);
-            analysis = document.sourceAnalysis();
-            index = analysis.statementIndices(original.SourceSpan);
-            assert(isscalar(index));
-            statement = analysis.Statements(index);
-            receiver = "app." + document.sourceComponentName(component.Id);
-            assert(startsWith(statement.Text,regexpPattern("axis\s*\(\s*" + regexptranslate("escape",receiver) + "\s*,")), ...
-                "yamada:AxesInspectorEdits:Ownership","An axis call without its explicit target is read-only.");
-            edits = struct("Start",span.StartOffset,"End",span.EndOffset,"Text",encoded);
-            batch = yamada.source.SourcePatchBatch(source,edits);
+            % Encode the keywords in the quote style of the call's first keyword.
+            encoded = strings(size(tokens));
+            for index = 1:numel(tokens)
+                yamada.source.AxesInspectorEdits.axisForm(component,tokens(index),root);
+                if startsWith(raw(1),"'"), encoded(index) = yamada.source.LiteralEncoder.encode(char(tokens(index)));
+                else, encoded(index) = yamada.source.LiteralEncoder.encode(tokens(index)); end
+            end
+            text = strjoin(encoded,", ");
+            first = spans(1).StartOffset;
+            last = spans(end).EndOffset;
+            batch = yamada.source.SourcePatchBatch(source,struct("Start",first,"End",last,"Text",text));
 
-            % Rebuild the statement in post-edit coordinates with the new keyword's effects.
+            % Rebuild the statement in post-edit coordinates with the new keywords' effects.
             offsets = statement.CodeOffsets;
-            first = find(offsets == span.StartOffset,1);
-            last = find(offsets == span.EndOffset,1);
-            assert(isscalar(first) && isscalar(last));
-            delta = strlength(encoded) - (span.EndOffset - span.StartOffset + 1);
-            text = extractBefore(statement.Text,first) + encoded + extractAfter(statement.Text,last);
-            newOffsets = [offsets(1:first-1), span.StartOffset + (0:strlength(encoded)-1), offsets(last+1:end) + delta];
-            sourceSpan = yamada.model.SourceSpan(original.SourceSpan.StartOffset,original.SourceSpan.EndOffset + delta);
-            valueSpan = yamada.model.SourceSpan(span.StartOffset,span.StartOffset + strlength(encoded) - 1);
-            replaced = yamada.source.SourceStatement(text,sourceSpan,newOffsets);
+            head = find(offsets == first,1);
+            tail = find(offsets == last,1);
+            assert(isscalar(head) && isscalar(tail));
+            delta = strlength(text) - (last - first + 1);
+            newText = extractBefore(statement.Text,head) + text + extractAfter(statement.Text,tail);
+            newOffsets = [offsets(1:head-1), first + (0:strlength(text)-1), offsets(tail+1:end) + delta];
+            sourceSpan = yamada.model.SourceSpan(call.SourceSpan.StartOffset,call.SourceSpan.EndOffset + delta);
+            replaced = yamada.source.SourceStatement(newText,sourceSpan,newOffsets);
+            [~, ~, newTokens, newSpans, forms] = yamada.source.PropertySettingSyntax.axesCall(replaced,root);
+            [effectPaths, values, used, owned, elements] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
+                forms,component.Factory,newTokens,false);
+            assert(~isempty(effectPaths),"yamada:AxesInspectorEdits:AxisStyle","This axis style is unavailable in the loaded release.");
+            [ownedSpans, editable] = yamada.source.AxesSettingPlacement.ownership( ...
+                component.Factory,effectPaths,owned,used,newTokens,newSpans,elements);
             snapshot = "";
             if isfield(document.Metadata,"SourceSnapshotId"), snapshot = document.Metadata.SourceSnapshotId; end
-            created = yamada.source.AxesSettingPlacement.callSettings(component.Factory,form,requested, ...
-                "AxisStyle",sourceSpan,valueSpan,snapshot);
-            method = analysis.Layout.Methods(string({analysis.Layout.Methods.Name}) == original.OwnerMethod);
+            analysis = document.sourceAnalysis();
+            method = analysis.Layout.Methods(string({analysis.Layout.Methods.Name}) == call.OwnerMethod);
             assert(isscalar(method));
             [scope, valid] = batch.mapSpan(method.Span);
             assert(valid);
-            for item = 1:numel(created)
-                created(item) = created(item).withScope(original.OwnerMethod,scope);
+            created = yamada.model.PropertySetting.empty;
+            for effect = 1:numel(effectPaths)
+                location = struct("Method","functionCall","Syntax","call","SourceSpan",sourceSpan, ...
+                    "ValueSpan",ownedSpans{effect},"SourceSnapshotId",snapshot,"IsEditable",editable(effect));
+                setting = yamada.model.PropertySetting(effectPaths(effect),values{effect},location);
+                created(end+1) = setting.withScope(call.OwnerMethod,scope); %#ok<AGROW>
             end
-            old = component.Settings(arrayfun(@(setting) isequal(setting.SourceSpan,original.SourceSpan),component.Settings));
-            anchor = original.SourceSpan.StartOffset - 1;
-            forward.RemovedIds = [old.Id];
             forward.Placements = struct("Statement",replaced,"Setting",created,"Offset",anchor);
             inverse.Placements = struct("Statement",statement,"Setting",old,"Offset",anchor);
             paths = unique([string({old.Path}) string({created.Path})],"stable");
+        end
+
+        function statement = callStatement(document,call)
+            % callStatement Return the one analyzed statement of a recorded call.
+            arguments (Input)
+                document (1,1) yamada.model.DocumentModel
+                call (1,1) yamada.model.PropertySetting
+            end
+            arguments (Output)
+                statement (1,1) yamada.source.SourceStatement
+            end
+            analysis = document.sourceAnalysis();
+            index = analysis.statementIndices(call.SourceSpan);
+            assert(isscalar(index),"yamada:AxesInspectorEdits:Ownership","This axis call cannot be replaced safely.");
+            statement = analysis.Statements(index);
+        end
+
+        function form = axisForm(component,keyword,root)
+            % axisForm Return the reviewed axis form of one keyword in the loaded release.
+            arguments (Input)
+                component (1,1) yamada.model.ComponentRecord
+                keyword (1,1) string
+                root (1,1) string
+            end
+            arguments (Output)
+                form (1,1) struct
+            end
+            form = yamada.catalog.AxesSettingFunctionCatalog.formById("axis." + keyword,root);
+            assert(isscalar(form) && any(string(form.targetFactories) == component.Factory), ...
+                "yamada:AxesInspectorEdits:AxisStyle","This axis style is unavailable in the loaded release.");
         end
 
         function result = checkedValue(path,value,original)

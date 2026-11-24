@@ -3559,11 +3559,11 @@ classdef DocumentModel < handle
             [state,settings,factoryArguments,execution] = yamada.model.IndexedSettingEdit.prepare( ...
                 obj,obj.CurrentSource,owner,batch,delta.Changes,delta.Placements,registry,delta.RemovedIds,stateId);
             if ~isempty(delta.Placements)
-                % A merged option shares its call statement with the call's earlier occurrences.
+                % A merged option shares its call statement with the call's earlier occurrences;
+                % several keywords of one call own separate tokens of the same path.
                 placed = delta.Placements.Setting;
                 inserted = settings(arrayfun(@(setting) isequal(setting.SourceSpan,placed(1).SourceSpan) && ...
-                    any(string({placed.Path}) == setting.Path) && isequal(setting.ValueSpan,placed( ...
-                    find(string({placed.Path}) == setting.Path,1)).ValueSpan),settings));
+                    any(arrayfun(@(item) item.Path == setting.Path && isequal(item.ValueSpan,setting.ValueSpan),placed)),settings));
                 assert(numel(inserted) == numel(placed) && all([inserted.IsCertain]), ...
                     "yamada:DocumentModel:UnsafeAxesSource","The insertion must execute once in the owning initializer.");
                 delta.Placements.Setting = inserted;
@@ -3575,6 +3575,13 @@ classdef DocumentModel < handle
                         isequaln(records(end).LiteralValue,expected.Value(index,:)), ...
                         "yamada:DocumentModel:UnsafeAxesSource","The geographic limits could not be verified.");
                 end
+            elseif isfield(expected,"Path") && any(expected.Path == ["AxisStyle","AxisVis3d"])
+                % An axis style and vis3d are resolved from all keyword tokens in order.
+                [style, vis3d] = yamada.model.AxesInspectorProperties.axisKeywordState( ...
+                    settings(string({settings.Path}) == "AxisStyle"));
+                if expected.Path == "AxisStyle", verified = style == expected.Value;
+                else, verified = vis3d == expected.Value; end
+                assert(verified,"yamada:DocumentModel:UnsafeAxesSource","The edited setting could not be verified.");
             elseif isfield(expected,"Path")
                 settingsForPath = settings(string({settings.Path}) == expected.Path);
                 assert(~isempty(settingsForPath) && settingsForPath(end).IsCertain && ...

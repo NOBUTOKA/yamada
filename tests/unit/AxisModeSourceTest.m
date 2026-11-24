@@ -427,6 +427,53 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(sort(callPaths(control)), formPaths(registry,"axis.image"));
         end
 
+        % Guarantee: An axis call of several aspect-ratio keywords, such as axis(ax, 'equal', 'vis3d'), is read as each keyword's catalog effects in order; the style and the vis3d toggle edit the keyword list of that one call in its quote style, a call left without keywords is removed, and Undo restores the call.
+        % Failure mode: The combined call is kept as unrecognized source, a later normal still shows vis3d in effect, the style edit drops vis3d, the toggle writes a second call or leaves an empty call, or Undo leaves the edited keywords.
+        % axisStyleKeywordIsReplacedInPlace edits a call of one keyword; this test detects the keyword list of a combined call.
+        function combinedAxisKeywordsAreReadAndEdited(testCase)
+            % combinedAxisKeywordsAreReadAndEdited Read equal with vis3d, then change the style and remove vis3d.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "axis(app.Control, 'equal', 'vis3d');"]);
+            call = control.getSettings("AxisStyle");
+            testCase.verifyNumElements(call, 2);
+            callPaths = string({control.Settings(arrayfun(@(setting) ...
+                isequal(setting.SourceSpan, call(1).SourceSpan), control.Settings)).Path});
+            testCase.verifyEqual(sort(callPaths), sort([formPaths(registry,"axis.equal") formPaths(registry,"axis.vis3d")]));
+            [style, vis3d] = yamada.model.AxesInspectorProperties.axisKeywordState(call);
+            testCase.verifyEqual([style string(vis3d)], ["equal" "true"]);
+
+            % The style keeps vis3d, and turning vis3d off removes only its keyword.
+            document.editAxesInspector(control.Id, "AxisStyle", "square", "set", registry);
+            testCase.verifySubstring(document.CurrentText, "axis(app.Control, 'square', 'vis3d');");
+            document.editAxesInspector(control.Id, "AxisVis3d", false, "set", registry);
+            edited = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifySubstring(edited, "axis(app.Control, 'square');");
+            testCase.verifyEqual(count(edited, "axis("), 1);
+            [~, vis3d] = yamada.model.AxesInspectorProperties.axisKeywordState(control.getSettings("AxisStyle"));
+            testCase.verifyFalse(vis3d);
+            document.undo();
+            document.undo();
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+
+            % A later normal returns the vis3d Modes to auto; turning vis3d on appends it after normal.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "axis(app.Control, ""vis3d"", ""normal"");"]);
+            [style, vis3d] = yamada.model.AxesInspectorProperties.axisKeywordState(control.getSettings("AxisStyle"));
+            testCase.verifyEqual([style string(vis3d)], ["normal" "false"]);
+            document.editAxesInspector(control.Id, "AxisVis3d", true, "set", registry);
+            testCase.verifySubstring(document.CurrentText, "axis(app.Control, ""vis3d"", ""normal"", ""vis3d"");");
+
+            % Without a call, vis3d writes a new call that turning it off removes again.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "app.Control.Box = 'on';"]);
+            document.editAxesInspector(control.Id, "AxisVis3d", true, "set", registry);
+            testCase.verifySubstring(document.CurrentText, "app.Control.Box = 'on';" + sprintf('\r\n') + ...
+                "axis(app.Control, ""vis3d"");");
+            document.editAxesInspector(control.Id, "AxisVis3d", false, "set", registry);
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+            testCase.verifyEmpty(control.getSettings("AxisStyle"));
+        end
+
         % Guarantee: Editing a setting that only shapes an automatic value, such as XLimitMethod or a tick label format, also turns that value's Auto on with one call placed after the manual setting, and Undo restores both.
         % Failure mode: The edit keeps the manual Mode so the choice has no visible effect, writes a separate Mode statement or a call before the manual setting that the setting then overrides, or Undo leaves the Mode changed.
         % pendingModeIsAddedAfterExistingConstructorValue edits a Mode directly; this test detects a parameter edit that must request the Mode itself.

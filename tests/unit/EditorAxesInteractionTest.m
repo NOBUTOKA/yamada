@@ -435,8 +435,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             clear cleanup
         end
 
-        % Guarantee: the Axis Style row shows the keyword of the last axis call, marks effects that later settings override, and Preview applies the call's ratio effects in source order.
-        % Failure mode: the row shows a guessed or stale keyword, the override goes unmarked or names the wrong setting or line, or Preview ignores the call while applying the later assignment.
+        % Guarantee: the Axis Style row shows the keyword of the last axis call, marks effects that later settings override, the Axis Vis3d toggle adds its keyword to that call, and Preview applies the call's effects in source order.
+        % Failure mode: the row shows a guessed or stale keyword, the override goes unmarked or names the wrong setting or line, the toggle does not commit or resets the style, or Preview ignores the call while applying the later assignment.
         % marksPlotBoxAspectRatioIgnoredUnderManualLimits marks a property that independent settings overconstrain; this test detects overrides of a call's own effects after a keyword change.
         function marksAxisStyleEffectsOverriddenByLaterSettings(testCase)
             % marksAxisStyleEffectsOverriddenByLaterSettings Switch equal to square under a later explicit ratio.
@@ -475,6 +475,17 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             testCase.verifySubstring(string(marker.Tooltip),"DataAspectRatioMode");
             preview = firstPreview(figure);
             testCase.verifyEqual(preview.PlotBoxAspectRatio,[1 1 1]);
+
+            % The vis3d toggle adds its keyword to the same call, which Preview applies.
+            vis3d = axisVis3dBox(figure);
+            testCase.verifyFalse(vis3d.Value);
+            vis3d.Value = true;
+            vis3d.ValueChangedFcn(vis3d,struct());
+            testCase.verifySubstring(app.Document.CurrentText,"axis(app.First, ""square"", ""vis3d"");");
+            testCase.verifyTrue(axisVis3dBox(figure).Value);
+            [style, ~] = axisStyleRow(figure);
+            testCase.verifyEqual(string(style.Value),"square");
+            testCase.verifyEqual(string(firstPreview(figure).CameraViewAngleMode),"manual");
             clear cleanup
         end
 
@@ -583,6 +594,20 @@ labels = findall(figure,"Tag","yamada-inspector-property-label");
 row = labels(string({labels.Text}) == "Axis Style").Parent;
 style = findall(row,"Type","uidropdown");
 marker = findall(row,"Tag","yamada-inspector-conflict-indicator");
+end
+
+function box = axisVis3dBox(figure)
+% axisVis3dBox Return the check box of the Axis Vis3d row.
+arguments (Input)
+    figure (1,1) matlab.ui.Figure
+end
+arguments (Output)
+    box (1,1) matlab.ui.control.CheckBox
+end
+
+labels = findall(figure,"Tag","yamada-inspector-property-label");
+row = labels(string({labels.Text}) == "Axis Vis3d").Parent;
+box = findall(row,"Type","uicheckbox");
 end
 
 function writeModeApp(path, settings)
