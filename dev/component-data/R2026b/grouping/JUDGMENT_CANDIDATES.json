@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2026b",
-  "inputSha256": "cc0d6163929f1e41a89abd6965da96b45efaad55e2dbd1aea068d4aca7ba9945",
+  "inputSha256": "8c4d5e652a21a3263538c8a1a7b6d36c2b9f90a902da21afd5a55c66ee0461d8",
   "step4CrossCuttingConflicts": [
     {
       "categoryId": "callbackexecutioncontrol",
@@ -5608,6 +5608,47 @@
           ]
         },
         {
+          "candidateId": "candidate.position.933f23196721",
+          "categoryId": "position",
+          "categoryDisplayName": "Position",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+          "capabilitySha256": "933f23196721ab5662cdf058394805eba6dabf27884bc46fd86df3938a3dd6cf",
+          "propertyPaths": [
+            "Position",
+            "InnerPosition",
+            "OuterPosition",
+            "TightInset",
+            "PositionConstraint",
+            "Units",
+            "DataAspectRatio",
+            "DataAspectRatioMode",
+            "PlotBoxAspectRatio",
+            "PlotBoxAspectRatioMode",
+            "Layout"
+          ],
+          "propertyCapabilitySha256": [
+            "7cba8bb132bee67ae02d7e70b3857cc493be48699956be9e10da8f1052c9c789",
+            "2ddd42489e0f284d88dd2c717587283d30af388d87d3518e5894d39256a4f4b6",
+            "68ec5f14c85e50ef9c899dc51b06c551d2701a3353545cfff9300f2937a4aa05",
+            "fbc788d93797b33e27ee5710caee989459a1754e42212c0a528ed6ce8d33acc5",
+            "19120b1ff5f2058ad93ec4f9510a687591a8fc97a3fcc7faaad0187113abdafb",
+            "f518e99b42077c60a28a0be37986d9bb9f8e0e1e51cf4e2f071a1ee9ebcab252",
+            "8de54b50ac063da23a693fb8da555c49468ba9214393cbe8d56658b16053d634",
+            "7748c667286273d8a7d41a34ae41ace5fc375bd971ad7cfa4a6fc591a119717d",
+            "3aab06ec0df85b623e1b5e074a4591cfa645858c09887c14b96870a75f4d2cc2",
+            "d1d93c236b0ad11b8b22b6eb2cad69d86c76ccce1bdb12aa5848821e19bf2935",
+            "4c312d9c4113011420b9220e08eb139f3a198fb218152be71e4178ae95a0f14f"
+          ],
+          "memberVariantIds": [
+            "uiaxes"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            9
+          ]
+        },
+        {
           "candidateId": "candidate.position.96aee8edb041",
           "categoryId": "position",
           "categoryDisplayName": "Position",
@@ -5687,6 +5728,47 @@
           ]
         },
         {
+          "candidateId": "candidate.position.ae27bc65da26",
+          "categoryId": "position",
+          "categoryDisplayName": "Position",
+          "sharingScope": "familyScoped",
+          "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
+          "capabilitySha256": "ae27bc65da2637e3034ef8b8d4ab0aca66eb30e7a32ee184006c8e291db938e4",
+          "propertyPaths": [
+            "OuterPosition",
+            "InnerPosition",
+            "Position",
+            "TightInset",
+            "PositionConstraint",
+            "Units",
+            "DataAspectRatio",
+            "DataAspectRatioMode",
+            "PlotBoxAspectRatio",
+            "PlotBoxAspectRatioMode",
+            "Layout"
+          ],
+          "propertyCapabilitySha256": [
+            "68ec5f14c85e50ef9c899dc51b06c551d2701a3353545cfff9300f2937a4aa05",
+            "2ddd42489e0f284d88dd2c717587283d30af388d87d3518e5894d39256a4f4b6",
+            "7cba8bb132bee67ae02d7e70b3857cc493be48699956be9e10da8f1052c9c789",
+            "fbc788d93797b33e27ee5710caee989459a1754e42212c0a528ed6ce8d33acc5",
+            "19120b1ff5f2058ad93ec4f9510a687591a8fc97a3fcc7faaad0187113abdafb",
+            "42b2b2b35b9f8029715b3becdbb7f304ebad28b4e207e74093d24fa7ed7018a0",
+            "8de54b50ac063da23a693fb8da555c49468ba9214393cbe8d56658b16053d634",
+            "7748c667286273d8a7d41a34ae41ace5fc375bd971ad7cfa4a6fc591a119717d",
+            "3aab06ec0df85b623e1b5e074a4591cfa645858c09887c14b96870a75f4d2cc2",
+            "d1d93c236b0ad11b8b22b6eb2cad69d86c76ccce1bdb12aa5848821e19bf2935",
+            "4c312d9c4113011420b9220e08eb139f3a198fb218152be71e4178ae95a0f14f"
+          ],
+          "memberVariantIds": [
+            "axes"
+          ],
+          "reuseCount": 1,
+          "documentedCategoryOrders": [
+            9
+          ]
+        },
+        {
           "candidateId": "candidate.position.bcafca50bdf9",
           "categoryId": "position",
           "categoryDisplayName": "Position",
@@ -5739,88 +5821,6 @@
           "reuseCount": 1,
           "documentedCategoryOrders": [
             4
-          ]
-        },
-        {
-          "candidateId": "candidate.position.c7f97547dbc1",
-          "categoryId": "position",
-          "categoryDisplayName": "Position",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-          "capabilitySha256": "c7f97547dbc14c83e3dacbb1d9d60464572de804bdf4f03d808dae97632f0aed",
-          "propertyPaths": [
-            "OuterPosition",
-            "InnerPosition",
-            "Position",
-            "TightInset",
-            "PositionConstraint",
-            "Units",
-            "DataAspectRatio",
-            "DataAspectRatioMode",
-            "PlotBoxAspectRatio",
-            "PlotBoxAspectRatioMode",
-            "Layout"
-          ],
-          "propertyCapabilitySha256": [
-            "68ec5f14c85e50ef9c899dc51b06c551d2701a3353545cfff9300f2937a4aa05",
-            "2ddd42489e0f284d88dd2c717587283d30af388d87d3518e5894d39256a4f4b6",
-            "7cba8bb132bee67ae02d7e70b3857cc493be48699956be9e10da8f1052c9c789",
-            "fbc788d93797b33e27ee5710caee989459a1754e42212c0a528ed6ce8d33acc5",
-            "19120b1ff5f2058ad93ec4f9510a687591a8fc97a3fcc7faaad0187113abdafb",
-            "42b2b2b35b9f8029715b3becdbb7f304ebad28b4e207e74093d24fa7ed7018a0",
-            "63c9b311381bb8a01926069a46dfaf9368dbe89e56b0a1fbf87e7824f79a81cd",
-            "8d0c625454c7a53f97614b7b3fa8e64aa9b7d5876db989d6b84217cea1e41723",
-            "273c333c33a6109989cfbd9425db15868f2027cd57749888598ae2560e07a513",
-            "0e93a4d989aef66d0e2eda94e6b17b7d7bbc6b42e26ca1a650c329fdaeeb2ea0",
-            "4c312d9c4113011420b9220e08eb139f3a198fb218152be71e4178ae95a0f14f"
-          ],
-          "memberVariantIds": [
-            "axes"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            9
-          ]
-        },
-        {
-          "candidateId": "candidate.position.d7f4a6fa54c1",
-          "categoryId": "position",
-          "categoryDisplayName": "Position",
-          "sharingScope": "familyScoped",
-          "scopeRationale": "Absolute geometry remains family-local; parent-contributed grid placement is defined separately, while Button-family alignment is a distinct reusable surface.",
-          "capabilitySha256": "d7f4a6fa54c14fed9541fdd11ca5beca82176b8d8690de6be506ba8e353248d0",
-          "propertyPaths": [
-            "Position",
-            "InnerPosition",
-            "OuterPosition",
-            "TightInset",
-            "PositionConstraint",
-            "Units",
-            "DataAspectRatio",
-            "DataAspectRatioMode",
-            "PlotBoxAspectRatio",
-            "PlotBoxAspectRatioMode",
-            "Layout"
-          ],
-          "propertyCapabilitySha256": [
-            "7cba8bb132bee67ae02d7e70b3857cc493be48699956be9e10da8f1052c9c789",
-            "2ddd42489e0f284d88dd2c717587283d30af388d87d3518e5894d39256a4f4b6",
-            "68ec5f14c85e50ef9c899dc51b06c551d2701a3353545cfff9300f2937a4aa05",
-            "fbc788d93797b33e27ee5710caee989459a1754e42212c0a528ed6ce8d33acc5",
-            "19120b1ff5f2058ad93ec4f9510a687591a8fc97a3fcc7faaad0187113abdafb",
-            "f518e99b42077c60a28a0be37986d9bb9f8e0e1e51cf4e2f071a1ee9ebcab252",
-            "63c9b311381bb8a01926069a46dfaf9368dbe89e56b0a1fbf87e7824f79a81cd",
-            "8d0c625454c7a53f97614b7b3fa8e64aa9b7d5876db989d6b84217cea1e41723",
-            "273c333c33a6109989cfbd9425db15868f2027cd57749888598ae2560e07a513",
-            "0e93a4d989aef66d0e2eda94e6b17b7d7bbc6b42e26ca1a650c329fdaeeb2ea0",
-            "4c312d9c4113011420b9220e08eb139f3a198fb218152be71e4178ae95a0f14f"
-          ],
-          "memberVariantIds": [
-            "uiaxes"
-          ],
-          "reuseCount": 1,
-          "documentedCategoryOrders": [
-            9
           ]
         },
         {
@@ -5883,16 +5883,16 @@
           "path": "DataAspectRatio",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.position.c7f97547dbc1",
-            "candidate.position.d7f4a6fa54c1"
+            "candidate.position.933f23196721",
+            "candidate.position.ae27bc65da26"
           ]
         },
         {
           "path": "DataAspectRatioMode",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.position.c7f97547dbc1",
-            "candidate.position.d7f4a6fa54c1"
+            "candidate.position.933f23196721",
+            "candidate.position.ae27bc65da26"
           ]
         },
         {
@@ -5928,13 +5928,13 @@
             "candidate.position.75e2ee3a1eb1",
             "candidate.position.7d3cbb62a1c8",
             "candidate.position.82012e5584f3",
+            "candidate.position.933f23196721",
             "candidate.position.96aee8edb041",
             "candidate.position.99a324b8369f",
             "candidate.position.aa472a5633dc",
+            "candidate.position.ae27bc65da26",
             "candidate.position.bcafca50bdf9",
             "candidate.position.bdeb102f4fc7",
-            "candidate.position.c7f97547dbc1",
-            "candidate.position.d7f4a6fa54c1",
             "candidate.position.e96191001822",
             "candidate.position.f0303ce6bbe2"
           ]
@@ -5952,11 +5952,11 @@
             "candidate.position.3fffd346682f",
             "candidate.position.7d3cbb62a1c8",
             "candidate.position.82012e5584f3",
+            "candidate.position.933f23196721",
             "candidate.position.99a324b8369f",
+            "candidate.position.ae27bc65da26",
             "candidate.position.bcafca50bdf9",
             "candidate.position.bdeb102f4fc7",
-            "candidate.position.c7f97547dbc1",
-            "candidate.position.d7f4a6fa54c1",
             "candidate.position.e96191001822",
             "candidate.position.f0303ce6bbe2"
           ]
@@ -5978,13 +5978,13 @@
             "candidate.position.75e2ee3a1eb1",
             "candidate.position.7d3cbb62a1c8",
             "candidate.position.82012e5584f3",
+            "candidate.position.933f23196721",
             "candidate.position.96aee8edb041",
             "candidate.position.99a324b8369f",
             "candidate.position.aa472a5633dc",
+            "candidate.position.ae27bc65da26",
             "candidate.position.bcafca50bdf9",
             "candidate.position.bdeb102f4fc7",
-            "candidate.position.c7f97547dbc1",
-            "candidate.position.d7f4a6fa54c1",
             "candidate.position.e96191001822",
             "candidate.position.f0303ce6bbe2"
           ]
@@ -5993,16 +5993,16 @@
           "path": "PlotBoxAspectRatio",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.position.c7f97547dbc1",
-            "candidate.position.d7f4a6fa54c1"
+            "candidate.position.933f23196721",
+            "candidate.position.ae27bc65da26"
           ]
         },
         {
           "path": "PlotBoxAspectRatioMode",
           "presentInSurfaceCount": 2,
           "presentInCandidateIds": [
-            "candidate.position.c7f97547dbc1",
-            "candidate.position.d7f4a6fa54c1"
+            "candidate.position.933f23196721",
+            "candidate.position.ae27bc65da26"
           ]
         },
         {
@@ -6022,13 +6022,13 @@
             "candidate.position.75e2ee3a1eb1",
             "candidate.position.7d3cbb62a1c8",
             "candidate.position.82012e5584f3",
+            "candidate.position.933f23196721",
             "candidate.position.96aee8edb041",
             "candidate.position.99a324b8369f",
             "candidate.position.aa472a5633dc",
+            "candidate.position.ae27bc65da26",
             "candidate.position.bcafca50bdf9",
             "candidate.position.bdeb102f4fc7",
-            "candidate.position.c7f97547dbc1",
-            "candidate.position.d7f4a6fa54c1",
             "candidate.position.e96191001822",
             "candidate.position.f0303ce6bbe2"
           ]
@@ -6038,8 +6038,8 @@
           "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
             "candidate.position.7d3cbb62a1c8",
-            "candidate.position.c7f97547dbc1",
-            "candidate.position.d7f4a6fa54c1"
+            "candidate.position.933f23196721",
+            "candidate.position.ae27bc65da26"
           ]
         },
         {
@@ -6047,8 +6047,8 @@
           "presentInSurfaceCount": 3,
           "presentInCandidateIds": [
             "candidate.position.7d3cbb62a1c8",
-            "candidate.position.c7f97547dbc1",
-            "candidate.position.d7f4a6fa54c1"
+            "candidate.position.933f23196721",
+            "candidate.position.ae27bc65da26"
           ]
         },
         {
@@ -6059,9 +6059,9 @@
             "candidate.position.3d46c70d110d",
             "candidate.position.73516064ddaf",
             "candidate.position.7d3cbb62a1c8",
+            "candidate.position.933f23196721",
             "candidate.position.aa472a5633dc",
-            "candidate.position.c7f97547dbc1",
-            "candidate.position.d7f4a6fa54c1"
+            "candidate.position.ae27bc65da26"
           ]
         },
         {
@@ -13401,7 +13401,7 @@
         "polaraxes"
       ],
       "baseReuseCount": 2,
-      "extendedCandidateId": "candidate.position.c7f97547dbc1",
+      "extendedCandidateId": "candidate.position.ae27bc65da26",
       "extendedVariantIds": [
         "axes"
       ],

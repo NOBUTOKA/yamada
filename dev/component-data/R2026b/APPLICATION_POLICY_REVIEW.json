@@ -685,6 +685,52 @@
         "axes",
         "uiaxes"
       ],
+      "path": "DataAspectRatio",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "documentation",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes. Specifying the ratio sets its mode to manual (daspect, pbaspect). A manual plot box ratio is overridden when the data aspect ratio and two or more axis limits are also manual; the editor marks that state rather than resolving the overridden getter."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "DataAspectRatioMode",
+      "applyAfter": [
+        "DataAspectRatio"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "PlotBoxAspectRatio",
+      "applyAfter": [],
+      "effectPolicy": "valueMode",
+      "kind": "documentation",
+      "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes. Specifying the ratio sets its mode to manual (daspect, pbaspect). A manual plot box ratio is overridden when the data aspect ratio and two or more axis limits are also manual; the editor marks that state rather than resolving the overridden getter."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
+      "path": "PlotBoxAspectRatioMode",
+      "applyAfter": [
+        "PlotBoxAspectRatio"
+      ],
+      "kind": "inference",
+      "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+    },
+    {
+      "variants": [
+        "axes",
+        "uiaxes"
+      ],
       "path": "XLim",
       "applyAfter": [],
       "effectPolicy": "valueMode",
@@ -1761,7 +1807,9 @@
         "ZTickLabelRotationMode": "'auto'",
         "XLimMode": "'auto'",
         "YLimMode": "'auto'",
-        "ZLimMode": "'auto'"
+        "ZLimMode": "'auto'",
+        "DataAspectRatioMode": "'auto'",
+        "PlotBoxAspectRatioMode": "'auto'"
       },
       "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
     },

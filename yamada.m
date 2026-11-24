@@ -4050,6 +4050,13 @@ classdef yamada < handle
                 settings = component.getSettings(path);
                 if ~isempty(settings), members(index).Sequence = settings(end).Sequence; end
             end
+            % MATLAB ignores a manual plot box ratio that manual limits and data ratio overconstrain.
+            if any(component.Factory == ["axes","uiaxes"])
+                target = find(string({members.Path}) == "PlotBoxAspectRatio", 1);
+                if ~isempty(target)
+                    members(target).Conflict = yamada.ui.inspector.AspectRatioOverride.message(members);
+                end
+            end
             for index = 1:numel(rows)
                 app.InspectorRows(index).synchronizeMembers( ...
                     members(rows(index).MemberIndices), relatedValues);

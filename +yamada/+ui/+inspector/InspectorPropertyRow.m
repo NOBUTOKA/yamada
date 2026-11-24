@@ -249,6 +249,13 @@ classdef InspectorPropertyRow < handle
                 reasons = string({members.Reason});
                 obj.Editor.Tooltip = strjoin(unique(reasons(strlength(reasons) > 0), "stable"), newline);
             end
+            % Any member's override marks the whole row, such as a value and its Mode.
+            conflict = "";
+            if isfield(members, "Conflict")
+                conflicts = string({members.Conflict});
+                conflict = strjoin(unique(conflicts(strlength(conflicts) > 0), "stable"), newline);
+            end
+            obj.showConflict(conflict);
             obj.captureNormalBackgroundColor();
         end
 

@@ -473,7 +473,76 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             clear cleanup
         end
 
+        % Guarantee: manual aspect ratios keep manual limits editable, and the PlotBoxAspectRatio row is marked exactly while MATLAB ignores it.
+        % Failure mode: a ratio setting locks the limits, the marker misses the overconstrained state that Preview shows, or it stays after the data ratio returns to Auto.
+        % marksAxisStyleEffectsOverriddenByLaterSettings marks overrides of a call's own effects; this test detects the coupling of ratios and limits across independent settings.
+        function marksPlotBoxAspectRatioIgnoredUnderManualLimits(testCase)
+            % marksPlotBoxAspectRatioIgnoredUnderManualLimits Overconstrain the plot box through a limit edit and release it with Auto.
+            folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture).Folder;
+            path = string(fullfile(folder, "ModeApp.m"));
+            writeModeApp(path, ["app.First.Position = [11 12 300 200];", ...
+                "app.First.DataAspectRatio = [1 1 1];", "app.First.PlotBoxAspectRatio = [1 1 1];", ...
+                "app.First.XLim = [0 10];"]);
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn",@() acceptedOpenPath(path)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = editorPalette();
+            open = findall(figure,"Type","uimenu","Text","&Open...");
+            open.MenuSelectedFcn(open,[]);
+            drawnow;
+
+            % One manual limit leaves the plot box ratio in effect.
+            parts = modeEditor(app,figure,"First","DataAspectRatio");
+            testCase.verifyFalse(parts.Auto.Value);
+            testCase.verifyEqual(string(parts.Value.Value),"[1 1 1]");
+            testCase.verifyEqual(string(plotBoxMarker(figure).Visible),"off");
+
+            % A second manual limit is accepted and marks the ratio that MATLAB replaces.
+            parts = modeEditor(app,figure,"First","YLim");
+            parts.Auto.Value = false;
+            parts.Auto.ValueChangedFcn(parts.Auto,struct());
+            parts = modeEditor(app,figure,"First","YLim");
+            testCase.assertEqual(string(parts.Value.Editable),"on");
+            previous = parts.Value.Value;
+            parts.Value.Value = "[0 2]";
+            parts.Value.ValueChangedFcn(parts.Value,struct("Value","[0 2]","PreviousValue",previous));
+            drawnow;
+            testCase.verifySubstring(app.Document.CurrentText,"ylim(app.First, [0 2]);");
+            marker = plotBoxMarker(figure);
+            testCase.verifyEqual(string(marker.Visible),"on");
+            testCase.verifySubstring(string(marker.Tooltip),"DataAspectRatio and XLim, YLim");
+            preview = firstPreview(figure);
+            % MATLAB derives the box from the limits, so x:y follows their 10:2 spans.
+            testCase.verifyEqual(preview.PlotBoxAspectRatio(1)/preview.PlotBoxAspectRatio(2),5,"AbsTol",1e-9);
+
+            % Returning the data ratio to Auto releases the plot box ratio again.
+            parts = modeEditor(app,figure,"First","DataAspectRatio");
+            parts.Auto.Value = true;
+            parts.Auto.ValueChangedFcn(parts.Auto,struct());
+            drawnow;
+            testCase.verifyEqual(string(plotBoxMarker(figure).Visible),"off");
+            testCase.verifyEqual(firstPreview(figure).PlotBoxAspectRatio,[1 1 1]);
+            clear cleanup
+        end
+
     end
+end
+
+function marker = plotBoxMarker(figure)
+% plotBoxMarker Return the override marker of the PlotBoxAspectRatio row, creating none.
+arguments (Input)
+    figure (1,1) matlab.ui.Figure
+end
+arguments (Output)
+    marker (1,1) struct
+end
+
+labels = findall(figure,"Tag","yamada-inspector-property-label");
+row = labels(string({labels.Text}) == "PlotBoxAspectRatio").Parent;
+found = findall(row,"Tag","yamada-inspector-conflict-indicator");
+marker = struct("Visible","off","Tooltip","");
+if ~isempty(found), marker = struct("Visible",string(found.Visible),"Tooltip",string(found.Tooltip)); end
 end
 
 function preview = firstPreview(figure)

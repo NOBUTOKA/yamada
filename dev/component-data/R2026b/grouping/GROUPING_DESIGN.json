@@ -1,7 +1,7 @@
 {
   "artifactVersion": 1,
   "matlabRelease": "R2026b",
-  "inputSha256": "47616bbdbd21096196b39176523240eb0f8e5634241bf03fa10f40641e0849ff",
+  "inputSha256": "44f426b8806faaed281dec721fd2cc7d395dde53855f1e6798189732764cd1e2",
   "groups": [
     {
       "id": "buttonAlignment",
@@ -7631,31 +7631,10 @@
           },
           "application": {
             "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
-            "affectedPaths": [
-              "CameraPosition",
-              "CameraPositionMode",
-              "CameraTarget",
-              "CameraTargetMode",
-              "CameraUpVector",
-              "CameraUpVectorMode",
-              "CameraViewAngle",
-              "CameraViewAngleMode",
-              "DataAspectRatio",
-              "DataAspectRatioMode",
-              "PlotBoxAspectRatio",
-              "PlotBoxAspectRatioMode",
-              "Projection",
-              "View",
-              "XLim",
-              "XLimMode",
-              "YLim",
-              "YLimMode",
-              "ZLim",
-              "ZLimMode"
-            ],
-            "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
+            "effectPolicy": "valueMode",
+            "effectStatus": "modeled",
+            "affectedPaths": [],
+            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator. A manual ratio fixes its own value; automatic values stay runtime-derived. Manual limits keep their values, and an overridden plot box ratio is marked in the Inspector."
           }
         },
         {
@@ -7684,32 +7663,14 @@
             "reasonCodes": []
           },
           "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
-            "affectedPaths": [
-              "CameraPosition",
-              "CameraPositionMode",
-              "CameraTarget",
-              "CameraTargetMode",
-              "CameraUpVector",
-              "CameraUpVectorMode",
-              "CameraViewAngle",
-              "CameraViewAngleMode",
-              "DataAspectRatio",
-              "DataAspectRatioMode",
-              "PlotBoxAspectRatio",
-              "PlotBoxAspectRatioMode",
-              "Projection",
-              "View",
-              "XLim",
-              "XLimMode",
-              "YLim",
-              "YLimMode",
-              "ZLim",
-              "ZLimMode"
+            "applyAfter": [
+              "DataAspectRatio"
             ],
-            "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'",
+            "effectStatus": "modeled",
+            "affectedPaths": [],
+            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator. A manual ratio fixes its own value; automatic values stay runtime-derived. Manual limits keep their values, and an overridden plot box ratio is marked in the Inspector."
           }
         },
         {
@@ -7735,31 +7696,10 @@
           },
           "application": {
             "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
-            "affectedPaths": [
-              "CameraPosition",
-              "CameraPositionMode",
-              "CameraTarget",
-              "CameraTargetMode",
-              "CameraUpVector",
-              "CameraUpVectorMode",
-              "CameraViewAngle",
-              "CameraViewAngleMode",
-              "DataAspectRatio",
-              "DataAspectRatioMode",
-              "PlotBoxAspectRatio",
-              "PlotBoxAspectRatioMode",
-              "Projection",
-              "View",
-              "XLim",
-              "XLimMode",
-              "YLim",
-              "YLimMode",
-              "ZLim",
-              "ZLimMode"
-            ],
-            "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
+            "effectPolicy": "valueMode",
+            "effectStatus": "modeled",
+            "affectedPaths": [],
+            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator. A manual ratio fixes its own value; automatic values stay runtime-derived. Manual limits keep their values, and an overridden plot box ratio is marked in the Inspector."
           }
         },
         {
@@ -7788,32 +7728,14 @@
             "reasonCodes": []
           },
           "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
-            "affectedPaths": [
-              "CameraPosition",
-              "CameraPositionMode",
-              "CameraTarget",
-              "CameraTargetMode",
-              "CameraUpVector",
-              "CameraUpVectorMode",
-              "CameraViewAngle",
-              "CameraViewAngleMode",
-              "DataAspectRatio",
-              "DataAspectRatioMode",
-              "PlotBoxAspectRatio",
-              "PlotBoxAspectRatioMode",
-              "Projection",
-              "View",
-              "XLim",
-              "XLimMode",
-              "YLim",
-              "YLimMode",
-              "ZLim",
-              "ZLimMode"
+            "applyAfter": [
+              "PlotBoxAspectRatio"
             ],
-            "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'",
+            "effectStatus": "modeled",
+            "affectedPaths": [],
+            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator. A manual ratio fixes its own value; automatic values stay runtime-derived. Manual limits keep their values, and an overridden plot box ratio is marked in the Inspector."
           }
         },
         {
@@ -15186,31 +15108,10 @@
           },
           "application": {
             "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
-            "affectedPaths": [
-              "CameraPosition",
-              "CameraPositionMode",
-              "CameraTarget",
-              "CameraTargetMode",
-              "CameraUpVector",
-              "CameraUpVectorMode",
-              "CameraViewAngle",
-              "CameraViewAngleMode",
-              "DataAspectRatio",
-              "DataAspectRatioMode",
-              "PlotBoxAspectRatio",
-              "PlotBoxAspectRatioMode",
-              "Projection",
-              "View",
-              "XLim",
-              "XLimMode",
-              "YLim",
-              "YLimMode",
-              "ZLim",
-              "ZLimMode"
-            ],
-            "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
+            "effectPolicy": "valueMode",
+            "effectStatus": "modeled",
+            "affectedPaths": [],
+            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator. A manual ratio fixes its own value; automatic values stay runtime-derived. Manual limits keep their values, and an overridden plot box ratio is marked in the Inspector."
           }
         },
         {
@@ -15239,32 +15140,14 @@
             "reasonCodes": []
           },
           "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
-            "affectedPaths": [
-              "CameraPosition",
-              "CameraPositionMode",
-              "CameraTarget",
-              "CameraTargetMode",
-              "CameraUpVector",
-              "CameraUpVectorMode",
-              "CameraViewAngle",
-              "CameraViewAngleMode",
-              "DataAspectRatio",
-              "DataAspectRatioMode",
-              "PlotBoxAspectRatio",
-              "PlotBoxAspectRatioMode",
-              "Projection",
-              "View",
-              "XLim",
-              "XLimMode",
-              "YLim",
-              "YLimMode",
-              "ZLim",
-              "ZLimMode"
+            "applyAfter": [
+              "DataAspectRatio"
             ],
-            "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'",
+            "effectStatus": "modeled",
+            "affectedPaths": [],
+            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator. A manual ratio fixes its own value; automatic values stay runtime-derived. Manual limits keep their values, and an overridden plot box ratio is marked in the Inspector."
           }
         },
         {
@@ -15290,31 +15173,10 @@
           },
           "application": {
             "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
-            "affectedPaths": [
-              "CameraPosition",
-              "CameraPositionMode",
-              "CameraTarget",
-              "CameraTargetMode",
-              "CameraUpVector",
-              "CameraUpVectorMode",
-              "CameraViewAngle",
-              "CameraViewAngleMode",
-              "DataAspectRatio",
-              "DataAspectRatioMode",
-              "PlotBoxAspectRatio",
-              "PlotBoxAspectRatioMode",
-              "Projection",
-              "View",
-              "XLim",
-              "XLimMode",
-              "YLim",
-              "YLimMode",
-              "ZLim",
-              "ZLimMode"
-            ],
-            "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
+            "effectPolicy": "valueMode",
+            "effectStatus": "modeled",
+            "affectedPaths": [],
+            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator. A manual ratio fixes its own value; automatic values stay runtime-derived. Manual limits keep their values, and an overridden plot box ratio is marked in the Inspector."
           }
         },
         {
@@ -15343,32 +15205,14 @@
             "reasonCodes": []
           },
           "application": {
-            "applyAfter": [],
-            "effectPolicy": "none",
-            "effectStatus": "unsupported",
-            "affectedPaths": [
-              "CameraPosition",
-              "CameraPositionMode",
-              "CameraTarget",
-              "CameraTargetMode",
-              "CameraUpVector",
-              "CameraUpVectorMode",
-              "CameraViewAngle",
-              "CameraViewAngleMode",
-              "DataAspectRatio",
-              "DataAspectRatioMode",
-              "PlotBoxAspectRatio",
-              "PlotBoxAspectRatioMode",
-              "Projection",
-              "View",
-              "XLim",
-              "XLimMode",
-              "YLim",
-              "YLimMode",
-              "ZLim",
-              "ZLimMode"
+            "applyAfter": [
+              "PlotBoxAspectRatio"
             ],
-            "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
+            "effectPolicy": "none",
+            "defaultLiteral": "'auto'",
+            "effectStatus": "modeled",
+            "affectedPaths": [],
+            "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator. A manual ratio fixes its own value; automatic values stay runtime-derived. Manual limits keep their values, and an overridden plot box ratio is marked in the Inspector."
           }
         },
         {
