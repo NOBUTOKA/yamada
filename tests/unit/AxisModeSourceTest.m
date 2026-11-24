@@ -474,6 +474,49 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEmpty(control.getSettings("AxisStyle"));
         end
 
+        % Guarantee: Command syntax such as axis equal vis3d or grid on is read as a call on the current axes, and editing its values, the axis style, or vis3d adds explicit calls after it that Undo removes.
+        % Failure mode: Command syntax effects are dropped, attributed to no axes or the wrong one, rewritten in place, left read-only, or overridden by a call that keeps vis3d on, or words that MATLAB passes differently, such as [0 1], are modeled.
+        function commandSyntaxIsReadForCurrentAxes(testCase)
+            % commandSyntaxIsReadForCurrentAxes Read command words as arguments of the inferred target and supersede them.
+            [document, registry, control] = testCase.fixture([ ...
+                "app.Other = uiaxes(app.UIFigure);", "app.Control = uiaxes(app.UIFigure);", ...
+                "axis equal vis3d", "grid on", "xlim [0 1]"]);
+            other = document.getComponentByName("Other");
+            call = control.getSettings("AxisStyle");
+            testCase.verifyNumElements(call, 2);
+            testCase.verifyFalse(any([call.IsEditable]));
+            [style, vis3d] = yamada.model.AxesInspectorProperties.axisKeywordState(call);
+            testCase.verifyEqual([style string(vis3d)], ["equal" "true"]);
+            testCase.verifyEqual(string(control.getSettings("XGrid").LiteralValue), "on");
+            testCase.verifyEmpty(control.getSettings("XLim"));
+            testCase.verifyEmpty(other.getSettings("AxisStyle"));
+            messages = string({document.Diagnostics.Message});
+            testCase.verifyEqual(nnz(contains(messages, "inferred as Control")), 2);
+            testCase.verifyEqual(nnz(contains(messages, """xlim"" has no explicit target")), 1);
+
+            % The command stays as written; explicit calls after it change the style and then turn vis3d off.
+            document.editAxesInspector(control.Id, "AxisStyle", "square", "set", registry);
+            testCase.verifySubstring(document.CurrentText, "grid on" + sprintf('\r\n') + "axis(app.Control, ""square"");");
+            [style, vis3d] = yamada.model.AxesInspectorProperties.axisKeywordState(control.getSettings("AxisStyle"));
+            testCase.verifyEqual([style string(vis3d)], ["square" "true"]);
+            document.editAxesInspector(control.Id, "AxisVis3d", false, "set", registry);
+            edited = yamada.source.RoundTripGenerator(registry).generate(document);
+            testCase.verifySubstring(edited, "axis(app.Control, ""normal"", ""square"");");
+            testCase.verifySubstring(edited, "axis equal vis3d");
+            [style, vis3d] = yamada.model.AxesInspectorProperties.axisKeywordState(control.getSettings("AxisStyle"));
+            testCase.verifyEqual([style string(vis3d)], ["square" "false"]);
+            document.undo();
+            document.undo();
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+
+            % A value that is an argument of an inferred-target call is superseded the same way.
+            [document, registry, control] = testCase.fixture(["app.Control = uiaxes(app.UIFigure);", "xlim auto"]);
+            document.setPropertyBatch(control.Id, struct("Path", "XLimMode", "Value", "manual"), registry);
+            testCase.verifySubstring(document.CurrentText, "xlim auto" + sprintf('\r\n') + "xlim(app.Control, ""manual"");");
+            document.undo();
+            testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), document.OriginalText);
+        end
+
         % Guarantee: Editing a setting that only shapes an automatic value, such as XLimitMethod or a tick label format, also turns that value's Auto on with one call placed after the manual setting, and Undo restores both.
         % Failure mode: The edit keeps the manual Mode so the choice has no visible effect, writes a separate Mode statement or a call before the manual setting that the setting then overrides, or Undo leaves the Mode changed.
         % pendingModeIsAddedAfterExistingConstructorValue edits a Mode directly; this test detects a parameter edit that must request the Mode itself.

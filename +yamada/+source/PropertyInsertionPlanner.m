@@ -284,9 +284,9 @@ classdef PropertyInsertionPlanner
             if isempty(entries), return, end
             entries = yamada.model.PropertyApplicationPlanner.order(entries, definitions);
             sourceSettings = component.Settings(string({component.Settings.Method}) ~= "generated");
-            % Only a value implied by a recognized call, which owns no token, is superseded by a later setting.
+            % Only a call value that owns no token, or whose target is only inferred, is superseded by a later setting.
             for setting = sourceSettings(ismember(string({sourceSettings.Path}), string({entries.Path})))
-                if setting.Method ~= "functionCall" || ~isempty(setting.ValueSpan)
+                if setting.Method ~= "functionCall" || (~isempty(setting.ValueSpan) && setting.Syntax ~= "implicitCall")
                     error("yamada:PropertyInsertionPlanner:UnsafePlacement", "A new setting would duplicate an existing source occurrence.");
                 end
             end

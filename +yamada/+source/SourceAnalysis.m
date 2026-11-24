@@ -739,6 +739,8 @@ classdef SourceAnalysis < handle
                 local = regexp(code, '^[A-Za-z]\w*\s*=\s*(.*)$', 'tokens', 'once');
                 if ~isempty(local), [~, facts.SafeLocal(index)] = yamada.source.MatlabLiteralParser.parse(string(local{1})); end
                 ending = statement.Span.EndOffset;
+                % A statement without a terminator ends at its line, so its span can include the CR.
+                if source(ending) == char(13), ending = ending - 1; end
                 following = lines(find(lines > ending, 1));
                 last = following - 1;
                 if last > ending && source(last) == char(13), last = last - 1; end

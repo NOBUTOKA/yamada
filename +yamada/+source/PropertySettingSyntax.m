@@ -172,6 +172,41 @@ classdef PropertySettingSyntax
             end
         end
 
+        function [name, tokens, spans, forms] = axesCommandCall(statement, catalogRoot)
+            % axesCommandCall Tokenize catalogued command syntax as character-vector arguments.
+            %   Each word of "axis equal vis3d" becomes the token 'equal' or 'vis3d',
+            %   as MATLAB passes it. Words with quotes, brackets, or other punctuation
+            %   yield no tokens, so their effects stay unmodeled.
+            arguments (Input)
+                statement (1, 1) yamada.source.SourceStatement
+                catalogRoot (1, 1) string
+            end
+            arguments (Output)
+                name (1, 1) string
+                tokens (1, :) string
+                spans yamada.model.SourceSpan
+                forms cell
+            end
+
+            tokens = strings(1,0); spans = yamada.model.SourceSpan.empty; forms = {};
+            name = yamada.source.PropertySettingSyntax.axesCommand(statement, catalogRoot);
+            if strlength(name) == 0, return, end
+            forms = yamada.catalog.AxesSettingFunctionCatalog.forName(name, catalogRoot);
+
+            % Accept only plain words so that each argument text is exactly the passed value.
+            text = char(statement.Text);
+            [firsts, lasts] = regexp(text, '\S+', 'start', 'end');
+            if numel(firsts) < 2, return, end
+            for index = 2:numel(firsts)
+                if isempty(regexp(text(firsts(index):lasts(index)), '^[A-Za-z]\w*$', 'once'))
+                    tokens = strings(1,0); spans = yamada.model.SourceSpan.empty;
+                    return
+                end
+                tokens(end+1) = "'" + string(text(firsts(index):lasts(index))) + "'"; %#ok<AGROW>
+                spans(end+1) = yamada.source.PropertySettingSyntax.span(statement, firsts(index), lasts(index)); %#ok<AGROW>
+            end
+        end
+
         function setting = assignment(statement, snapshotId, sequence, certain)
             % assignment Capture one direct component-property assignment and its value range.
             arguments (Input)

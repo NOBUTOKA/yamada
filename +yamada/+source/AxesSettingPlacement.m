@@ -219,8 +219,9 @@ classdef AxesSettingPlacement
         end
 
         function result = isImplied(entry)
-            % isImplied Identify a value implied by a recognized call without a token of its own.
-            %   Such a value is superseded by a new setting after the call instead of a rewrite.
+            % isImplied Identify a call value that a new setting supersedes instead of a rewrite.
+            %   The value is implied by a recognized call without a token of its own, or
+            %   set by a call whose axes target is only inferred, as in axis equal.
             arguments (Input)
                 entry yamada.model.PropertyEntry
             end
@@ -229,7 +230,8 @@ classdef AxesSettingPlacement
             end
             result = isscalar(entry) && isfield(entry.Metadata, "SettingMethod") && ...
                 entry.Metadata.SettingMethod == "functionCall" && isfield(entry.Metadata, "ValueSpan") && ...
-                isempty(entry.Metadata.ValueSpan);
+                (isempty(entry.Metadata.ValueSpan) || ...
+                (isfield(entry.Metadata, "SettingSyntax") && entry.Metadata.SettingSyntax == "implicitCall"));
         end
     end
 end
