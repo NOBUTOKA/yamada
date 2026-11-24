@@ -16,6 +16,8 @@ classdef InspectorPropertyRow < handle
         IsComposite logical = false
         BindingGeneration uint64 = uint64(0)
         SettingsButton
+        Grid
+        ConflictIndicator
     end
 
     methods
@@ -42,6 +44,7 @@ classdef InspectorPropertyRow < handle
             grid.ColumnSpacing = 4;
             grid.ColumnWidth = {105, "1x"};
             grid.RowHeight = {yamada.ui.inspector.InspectorPropertyRow.rowHeight(definition)};
+            obj.Grid = grid;
             obj.ComponentId = componentId;
             obj.IsComposite = isstruct(definition) && isfield(definition, "IsComposite") && ...
                 definition.IsComposite;
@@ -232,6 +235,9 @@ classdef InspectorPropertyRow < handle
                 if isfield(members, "Reason") && strlength(members.Reason) > 0
                     obj.Editor.Tooltip = members.Reason;
                 end
+                conflict = "";
+                if isfield(members, "Conflict"), conflict = string(members.Conflict); end
+                obj.showConflict(conflict);
                 return
             end
             obj.restoreNormalBackgroundColor();
@@ -243,6 +249,13 @@ classdef InspectorPropertyRow < handle
                 reasons = string({members.Reason});
                 obj.Editor.Tooltip = strjoin(unique(reasons(strlength(reasons) > 0), "stable"), newline);
             end
+            % Any member's override marks the whole row, such as a value and its Mode.
+            conflict = "";
+            if isfield(members, "Conflict")
+                conflicts = string({members.Conflict});
+                conflict = strjoin(unique(conflicts(strlength(conflicts) > 0), "stable"), newline);
+            end
+            obj.showConflict(conflict);
             obj.captureNormalBackgroundColor();
         end
 
@@ -339,6 +352,37 @@ classdef InspectorPropertyRow < handle
             obj.ErrorMessage = "";
             obj.Editor.Tooltip = "";
             obj.restoreNormalBackgroundColor();
+        end
+
+        function showConflict(obj, message)
+            % showConflict Mark a value that later settings partly override, explaining which by hover.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                message (1, 1) string
+            end
+
+            % Add the indicator column only while the row shows a conflict.
+            if strlength(message) == 0 && isempty(obj.ConflictIndicator), return, end
+            if isempty(obj.ConflictIndicator)
+                widths = obj.Grid.ColumnWidth;
+                obj.Grid.ColumnWidth = [widths {16}];
+                obj.ConflictIndicator = uilabel(obj.Grid, "Text", "✕", "FontColor", [0.85 0.1 0.1], ...
+                    "FontWeight", "bold", "HorizontalAlignment", "center", ...
+                    "Tag", "yamada-inspector-conflict-indicator");
+                obj.ConflictIndicator.Layout.Row = 1;
+                obj.ConflictIndicator.Layout.Column = numel(widths) + 1;
+            end
+            % A resolved conflict removes the marker and its column, including the column spacing.
+            if strlength(message) == 0
+                column = obj.ConflictIndicator.Layout.Column;
+                delete(obj.ConflictIndicator);
+                obj.ConflictIndicator = [];
+                widths = obj.Grid.ColumnWidth;
+                widths(column) = [];
+                obj.Grid.ColumnWidth = widths;
+                return
+            end
+            obj.ConflictIndicator.Tooltip = message;
         end
 
         function showError(obj, message)

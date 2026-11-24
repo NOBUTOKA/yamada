@@ -1453,6 +1453,235 @@
       ]
     },
     {
+      "id": "axis.equal",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "composable": true,
+      "arguments": [
+        {
+          "id": "style",
+          "type": "enum",
+          "values": [
+            "equal"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "path": "AxisStyle",
+          "argument": "style"
+        },
+        {
+          "path": "DataAspectRatio",
+          "literal": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "DataAspectRatioMode",
+          "literal": "manual"
+        },
+        {
+          "path": "PlotBoxAspectRatioMode",
+          "literal": "manual"
+        }
+      ]
+    },
+    {
+      "id": "axis.image",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "composable": true,
+      "arguments": [
+        {
+          "id": "style",
+          "type": "enum",
+          "values": [
+            "image"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "path": "AxisStyle",
+          "argument": "style"
+        },
+        {
+          "path": "DataAspectRatio",
+          "literal": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "DataAspectRatioMode",
+          "literal": "manual"
+        },
+        {
+          "path": "PlotBoxAspectRatioMode",
+          "literal": "manual"
+        },
+        {
+          "path": "XLimitMethod",
+          "literal": "tight"
+        },
+        {
+          "path": "YLimitMethod",
+          "literal": "tight"
+        },
+        {
+          "path": "ZLimitMethod",
+          "literal": "tight"
+        }
+      ]
+    },
+    {
+      "id": "axis.square",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "composable": true,
+      "arguments": [
+        {
+          "id": "style",
+          "type": "enum",
+          "values": [
+            "square"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "path": "AxisStyle",
+          "argument": "style"
+        },
+        {
+          "path": "DataAspectRatioMode",
+          "literal": "auto"
+        },
+        {
+          "path": "PlotBoxAspectRatio",
+          "literal": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "path": "PlotBoxAspectRatioMode",
+          "literal": "manual"
+        }
+      ]
+    },
+    {
+      "id": "axis.normal",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "composable": true,
+      "arguments": [
+        {
+          "id": "style",
+          "type": "enum",
+          "values": [
+            "normal"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "path": "AxisStyle",
+          "argument": "style"
+        },
+        {
+          "path": "DataAspectRatioMode",
+          "literal": "auto"
+        },
+        {
+          "path": "PlotBoxAspectRatioMode",
+          "literal": "auto"
+        },
+        {
+          "path": "CameraViewAngleMode",
+          "literal": "auto"
+        }
+      ]
+    },
+    {
+      "id": "axis.vis3d",
+      "name": "axis",
+      "targetFactories": [
+        "axes",
+        "uiaxes"
+      ],
+      "target": {
+        "position": 1,
+        "implicit": "inferWithWarning"
+      },
+      "outputs": 0,
+      "composable": true,
+      "arguments": [
+        {
+          "id": "style",
+          "type": "enum",
+          "values": [
+            "vis3d"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "path": "AxisStyle",
+          "argument": "style"
+        },
+        {
+          "path": "DataAspectRatioMode",
+          "literal": "manual"
+        },
+        {
+          "path": "PlotBoxAspectRatioMode",
+          "literal": "manual"
+        },
+        {
+          "path": "CameraViewAngleMode",
+          "literal": "manual"
+        }
+      ]
+    },
+    {
       "id": "xscale.scale",
       "name": "xscale",
       "targetFactories": [

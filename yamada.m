@@ -3248,6 +3248,18 @@ classdef yamada < handle
                 message = app.commitAxesSetting(app.Document,componentId,path,value,"set");
                 return
             end
+            % An axis style arrives as the encoded keyword chosen in its drop-down.
+            if path == "AxisStyle" && any(component.Factory == ["axes","uiaxes"])
+                [value, safe] = yamada.source.MatlabLiteralParser.parse(string(value));
+                if ~safe, message = "Choose an axis style."; return, end
+                message = app.commitAxesSetting(app.Document,componentId,path,value,"set");
+                return
+            end
+            % The vis3d toggle arrives as the check box state.
+            if path == "AxisVis3d" && any(component.Factory == ["axes","uiaxes"])
+                message = app.commitAxesSetting(app.Document,componentId,path,logical(value),"set");
+                return
+            end
             if any(yamada.model.AxesInspectorProperties.paths(component.Factory) == path)
                 if path == "TickLabelFormat"
                     [value, safe] = yamada.source.MatlabLiteralParser.parse(string(value));
@@ -3937,7 +3949,7 @@ classdef yamada < handle
             members = repmat(struct("Path", "", "Value", "", "RawValue", [], ...
                 "IsEditable", false, "IsKnown", false, "Reason", "", ...
                 "StoredValue", [], "HasStoredValue", false, "StoredEditable", false, ...
-                "Sequence", NaN), 1, numel(states));
+                "Sequence", NaN, "Conflict", ""), 1, numel(states));
             for index = 1:numel(states)
                 entry = states(index).Entry;
                 value = "";
@@ -4016,6 +4028,22 @@ classdef yamada < handle
                     end
                     isKnown = true;
                 end
+                if path == "AxisStyle" && any(component.Factory == ["axes","uiaxes"])
+                    % Show the last call's keyword and whether later settings override its effects.
+                    [rawValue, editable, members(index).Conflict] = app.axisStyleState(component);
+                    value = rawValue;
+                    isKnown = true;
+                    members(index).Reason = "";
+                    if ~editable, members(index).Reason = "This axis call has no explicit target and is read-only."; end
+                end
+                if path == "AxisVis3d" && any(component.Factory == ["axes","uiaxes"])
+                    % Show whether a vis3d keyword is in effect and whether its call can change.
+                    [rawValue, editable] = app.axisVis3dState(component);
+                    value = rawValue;
+                    isKnown = true;
+                    members(index).Reason = "";
+                    if ~editable, members(index).Reason = "This vis3d keyword is not owned by one explicit axis call and is read-only."; end
+                end
                 members(index).Path = path;
                 members(index).Value = value;
                 members(index).RawValue = rawValue;
@@ -4035,10 +4063,112 @@ classdef yamada < handle
                 settings = component.getSettings(path);
                 if ~isempty(settings), members(index).Sequence = settings(end).Sequence; end
             end
+            % MATLAB ignores a manual plot box ratio that manual limits and data ratio overconstrain.
+            if any(component.Factory == ["axes","uiaxes"])
+                target = find(string({members.Path}) == "PlotBoxAspectRatio", 1);
+                if ~isempty(target)
+                    members(target).Conflict = yamada.ui.inspector.AspectRatioOverride.message(members);
+                end
+            end
             for index = 1:numel(rows)
                 app.InspectorRows(index).synchronizeMembers( ...
                     members(rows(index).MemberIndices), relatedValues);
             end
+        end
+
+        function [style, editable, conflict] = axisStyleState(app, component)
+            % axisStyleState Return the last axis style keyword, its editability and any override.
+            %   A later setting of a path that the call writes, such as an explicit
+            %   DataAspectRatio after axis equal, leaves the keyword partly without effect.
+            arguments (Input)
+                app (1, 1) yamada
+                component (1, 1) yamada.model.ComponentRecord
+            end
+            arguments (Output)
+                style (1, 1) string
+                editable (1, 1) logical
+                conflict (1, 1) string
+            end
+
+            editable = component.IsEditable;
+            conflict = "";
+            settings = component.getSettings("AxisStyle");
+            style = yamada.model.AxesInspectorProperties.axisKeywordState(settings);
+            if isempty(settings), return, end
+            % The edited call holds the last style keyword, or else the last vis3d keyword.
+            keywords = yamada.model.AxesInspectorProperties.axisKeywords(settings);
+            styles = find(keywords ~= "vis3d");
+            if isempty(styles), call = settings(end); else, call = settings(styles(end)); end
+            text = app.Document.CurrentText;
+            editable = editable && app.ownsAxisCall(component, call);
+
+            % Name each effect that a later setting replaces.
+            effects = component.Settings(arrayfun(@(setting) isequal(setting.SourceSpan, call.SourceSpan) && ...
+                setting.Path ~= "AxisStyle", component.Settings));
+            lines = strings(1, 0);
+            for path = unique(string({effects.Path}), "stable")
+                % A value and its Mode override each other, as an explicit value selects manual.
+                related = unique([path, path + "Mode", replace(path, regexpPattern("Mode$"), "")]);
+                latest = yamada.model.PropertySetting.empty;
+                for other = related
+                    found = component.getSettings(other);
+                    if ~isempty(found) && (isempty(latest) || found(end).Sequence > latest.Sequence)
+                        latest = found(end);
+                    end
+                end
+                if isequal(latest.SourceSpan, call.SourceSpan), continue, end
+                line = numel(regexp(extractBefore(text, latest.SourceSpan.StartOffset), "\n")) + 1;
+                if latest.Path == path
+                    lines(end + 1) = sprintf("%s is overridden on line %d.", path, line); %#ok<AGROW>
+                else
+                    lines(end + 1) = sprintf("%s is overridden by %s on line %d.", path, latest.Path, line); %#ok<AGROW>
+                end
+            end
+            conflict = strjoin(lines, newline);
+        end
+
+        function [vis3d, editable] = axisVis3dState(app, component)
+            % axisVis3dState Return whether vis3d is in effect and whether the toggle can edit it.
+            %   Turning it on edits the last axis call, or writes a new one; turning it
+            %   off edits the one call that holds the vis3d keywords in effect.
+            arguments (Input)
+                app (1, 1) yamada
+                component (1, 1) yamada.model.ComponentRecord
+            end
+            arguments (Output)
+                vis3d (1, 1) logical
+                editable (1, 1) logical
+            end
+
+            settings = component.getSettings("AxisStyle");
+            [~, vis3d, active] = yamada.model.AxesInspectorProperties.axisKeywordState(settings);
+            editable = component.IsEditable;
+            if isempty(settings), return, end
+            if ~vis3d
+                editable = editable && app.ownsAxisCall(component, settings(end));
+                return
+            end
+            calls = settings(active);
+            editable = editable && all(arrayfun(@(setting) isequal(setting.SourceSpan, calls(end).SourceSpan), calls)) && ...
+                app.ownsAxisCall(component, calls(end));
+        end
+
+        function owned = ownsAxisCall(app, component, call)
+            % ownsAxisCall Report whether a certain axis call with an explicit target owns its keywords.
+            arguments (Input)
+                app (1, 1) yamada
+                component (1, 1) yamada.model.ComponentRecord
+                call (1, 1) yamada.model.PropertySetting
+            end
+            arguments (Output)
+                owned (1, 1) logical
+            end
+
+            text = app.Document.CurrentText;
+            statement = extractBetween(text, call.SourceSpan.StartOffset, call.SourceSpan.EndOffset);
+            receiver = "app." + app.Document.sourceComponentName(component.Id);
+            owned = call.IsCertain && ~isempty(call.ValueSpan) && ...
+                startsWith(statement, regexpPattern("axis\s*\(\s*" + regexptranslate("escape", receiver) + "\s*,"));
         end
 
         function key = inspectorSurfaceKey(app, component)

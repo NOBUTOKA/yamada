@@ -435,7 +435,179 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             clear cleanup
         end
 
+        % Guarantee: the Axis Style row shows the keyword of the last axis call, marks effects that later settings override, the Axis Vis3d toggle adds its keyword to that call, and Preview applies the call's effects in source order.
+        % Failure mode: the row shows a guessed or stale keyword, the override goes unmarked or names the wrong setting or line, the toggle does not commit or resets the style, or Preview ignores the call while applying the later assignment.
+        % marksPlotBoxAspectRatioIgnoredUnderManualLimits marks a property that independent settings overconstrain; this test detects overrides of a call's own effects after a keyword change.
+        function marksAxisStyleEffectsOverriddenByLaterSettings(testCase)
+            % marksAxisStyleEffectsOverriddenByLaterSettings Switch equal to square under a later explicit ratio.
+            folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture).Folder;
+            path = string(fullfile(folder, "ModeApp.m"));
+            writeModeApp(path, ["app.First.Position = [11 12 300 200];", "axis(app.First, ""equal"");", "app.First.DataAspectRatio = [1 2 1];"]);
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn",@() acceptedOpenPath(path)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = editorPalette();
+            open = findall(figure,"Type","uimenu","Text","&Open...");
+            open.MenuSelectedFcn(open,[]);
+            drawnow;
+            modeEditor(app,figure,"First","XLim");
+            [style, marker] = axisStyleRow(figure);
+            testCase.verifyEqual(string(style.Value),"equal");
+            testCase.verifyEqual(string(marker.Visible),"on");
+            % The tooltip names the overridden effect and the line of the overriding setting.
+            lines = splitlines(string(app.Document.CurrentText));
+            line = find(contains(lines,"app.First.DataAspectRatio"),1);
+            testCase.verifySubstring(string(marker.Tooltip),"DataAspectRatio");
+            testCase.verifySubstring(string(marker.Tooltip),string(line));
+            preview = firstPreview(figure);
+            testCase.verifyEqual(preview.DataAspectRatio,[1 2 1]);
+            testCase.verifyEqual(string(preview.PlotBoxAspectRatioMode),"manual");
+
+            % The later ratio still overrides the Mode that square returns to automatic.
+            style.Value = "square";
+            style.ValueChangedFcn(style,struct());
+            testCase.verifySubstring(app.Document.CurrentText, ...
+                "axis(app.First, ""square"");" + sprintf("\r\n") + "app.First.DataAspectRatio = [1 2 1];");
+            [style, marker] = axisStyleRow(figure);
+            testCase.verifyEqual(string(style.Value),"square");
+            testCase.verifyEqual(string(marker.Visible),"on");
+            testCase.verifySubstring(string(marker.Tooltip),"DataAspectRatioMode");
+            preview = firstPreview(figure);
+            testCase.verifyEqual(preview.PlotBoxAspectRatio,[1 1 1]);
+
+            % The vis3d toggle adds its keyword to the same call, which Preview applies.
+            vis3d = axisVis3dBox(figure);
+            testCase.verifyFalse(vis3d.Value);
+            vis3d.Value = true;
+            vis3d.ValueChangedFcn(vis3d,struct());
+            testCase.verifySubstring(app.Document.CurrentText,"axis(app.First, ""square"", ""vis3d"");");
+            testCase.verifyTrue(axisVis3dBox(figure).Value);
+            [style, ~] = axisStyleRow(figure);
+            testCase.verifyEqual(string(style.Value),"square");
+            testCase.verifyEqual(string(firstPreview(figure).CameraViewAngleMode),"manual");
+            clear cleanup
+        end
+
+        % Guarantee: manual aspect ratios keep manual limits editable, and the PlotBoxAspectRatio row is marked exactly while MATLAB ignores it.
+        % Failure mode: a ratio setting locks the limits, the marker misses the overconstrained state that Preview shows, or it or its empty column stays after the data ratio returns to Auto.
+        % marksAxisStyleEffectsOverriddenByLaterSettings marks overrides of a call's own effects; this test detects the coupling of ratios and limits across independent settings.
+        function marksPlotBoxAspectRatioIgnoredUnderManualLimits(testCase)
+            % marksPlotBoxAspectRatioIgnoredUnderManualLimits Overconstrain the plot box through a limit edit and release it with Auto.
+            folder = testCase.applyFixture(matlab.unittest.fixtures.TemporaryFolderFixture).Folder;
+            path = string(fullfile(folder, "ModeApp.m"));
+            writeModeApp(path, ["app.First.Position = [11 12 300 200];", ...
+                "app.First.DataAspectRatio = [1 1 1];", "app.First.PlotBoxAspectRatio = [1 1 1];", ...
+                "app.First.XLim = [0 10];"]);
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn",@() acceptedOpenPath(path)));
+            app = yamada(lifecycle);
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = editorPalette();
+            open = findall(figure,"Type","uimenu","Text","&Open...");
+            open.MenuSelectedFcn(open,[]);
+            drawnow;
+
+            % One manual limit leaves the plot box ratio in effect.
+            parts = modeEditor(app,figure,"First","DataAspectRatio");
+            testCase.verifyFalse(parts.Auto.Value);
+            testCase.verifyEqual(string(parts.Value.Value),"[1 1 1]");
+            unmarked = plotBoxMarker(figure);
+            testCase.verifyEqual(unmarked.Visible,"off");
+
+            % A second manual limit is accepted and marks the ratio that MATLAB replaces.
+            parts = modeEditor(app,figure,"First","YLim");
+            parts.Auto.Value = false;
+            parts.Auto.ValueChangedFcn(parts.Auto,struct());
+            parts = modeEditor(app,figure,"First","YLim");
+            testCase.assertEqual(string(parts.Value.Editable),"on");
+            previous = parts.Value.Value;
+            parts.Value.Value = "[0 2]";
+            parts.Value.ValueChangedFcn(parts.Value,struct("Value","[0 2]","PreviousValue",previous));
+            drawnow;
+            testCase.verifySubstring(app.Document.CurrentText,"ylim(app.First, [0 2]);");
+            marker = plotBoxMarker(figure);
+            testCase.verifyEqual(marker.Visible,"on");
+            for name = ["DataAspectRatio","XLim","YLim"]
+                testCase.verifySubstring(marker.Tooltip,name);
+            end
+            preview = firstPreview(figure);
+            % MATLAB derives the box from the limits, so x:y follows their 10:2 spans.
+            testCase.verifyEqual(preview.PlotBoxAspectRatio(1)/preview.PlotBoxAspectRatio(2),5,"AbsTol",1e-9);
+
+            % Returning the data ratio to Auto releases the plot box ratio again.
+            parts = modeEditor(app,figure,"First","DataAspectRatio");
+            parts.Auto.Value = true;
+            parts.Auto.ValueChangedFcn(parts.Auto,struct());
+            drawnow;
+            marker = plotBoxMarker(figure);
+            testCase.verifyEqual(marker.Visible,"off");
+            % The released row gives the marker column back to its editor.
+            testCase.verifyEqual(marker.Columns,unmarked.Columns);
+            testCase.verifyEqual(firstPreview(figure).PlotBoxAspectRatio,[1 1 1]);
+            clear cleanup
+        end
+
     end
+end
+
+function marker = plotBoxMarker(figure)
+% plotBoxMarker Return the override marker of the PlotBoxAspectRatio row, creating none.
+arguments (Input)
+    figure (1,1) matlab.ui.Figure
+end
+arguments (Output)
+    marker (1,1) struct
+end
+
+labels = findall(figure,"Tag","yamada-inspector-property-label");
+row = labels(string({labels.Text}) == "PlotBoxAspectRatio").Parent;
+found = findall(row,"Tag","yamada-inspector-conflict-indicator");
+marker = struct("Visible","off","Tooltip","","Columns",numel(row.ColumnWidth));
+if ~isempty(found), marker.Visible = string(found.Visible); marker.Tooltip = string(found.Tooltip); end
+end
+
+function preview = firstPreview(figure)
+% firstPreview Return the Preview axes placed at the First fixture position.
+arguments (Input)
+    figure (1,1) matlab.ui.Figure
+end
+arguments (Output)
+    preview (1,1) matlab.ui.control.UIAxes
+end
+
+handles = findall(figure,"-isa","matlab.ui.control.UIAxes");
+preview = handles(arrayfun(@(item) isequal(item.Position(1:2),[11 12]),handles));
+end
+
+function [style, marker] = axisStyleRow(figure)
+% axisStyleRow Return the Axis Style drop-down and its override marker.
+arguments (Input)
+    figure (1,1) matlab.ui.Figure
+end
+arguments (Output)
+    style (1,1) matlab.ui.control.DropDown
+    marker (1,1) matlab.ui.control.Label
+end
+
+labels = findall(figure,"Tag","yamada-inspector-property-label");
+row = labels(string({labels.Text}) == "Axis Style").Parent;
+style = findall(row,"Type","uidropdown");
+marker = findall(row,"Tag","yamada-inspector-conflict-indicator");
+end
+
+function box = axisVis3dBox(figure)
+% axisVis3dBox Return the check box of the Axis Vis3d row.
+arguments (Input)
+    figure (1,1) matlab.ui.Figure
+end
+arguments (Output)
+    box (1,1) matlab.ui.control.CheckBox
+end
+
+labels = findall(figure,"Tag","yamada-inspector-property-label");
+row = labels(string({labels.Text}) == "Axis Vis3d").Parent;
+box = findall(row,"Type","uicheckbox");
 end
 
 function writeModeApp(path, settings)

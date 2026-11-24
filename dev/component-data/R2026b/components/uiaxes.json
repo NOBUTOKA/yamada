@@ -7016,33 +7016,24 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes. Specifying the ratio sets its mode to manual (daspect, pbaspect). A manual plot box ratio is overridden when the data aspect ratio and two or more axis limits are also manual; the editor marks that state rather than resolving the overridden getter."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, camera and grid-width couplings are outside this coverage; an overridden manual plot box ratio is marked, not resolved."
+        }
+      ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "none",
-        "effectStatus": "unsupported",
-        "affectedPaths": [
-          "CameraPosition",
-          "CameraPositionMode",
-          "CameraTarget",
-          "CameraTargetMode",
-          "CameraUpVector",
-          "CameraUpVectorMode",
-          "CameraViewAngle",
-          "CameraViewAngleMode",
-          "DataAspectRatio",
-          "DataAspectRatioMode",
-          "PlotBoxAspectRatio",
-          "PlotBoxAspectRatioMode",
-          "Projection",
-          "View",
-          "XLim",
-          "XLimMode",
-          "YLim",
-          "YLimMode",
-          "ZLim",
-          "ZLimMode"
-        ],
-        "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator. A manual ratio fixes its own value; automatic values stay runtime-derived. Manual limits keep their values, and an overridden plot box ratio is marked in the Inspector."
       },
       "gridGeometryImpact": "required",
       "absoluteGeometryImpact": true,
@@ -7085,33 +7076,32 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, camera and grid-width couplings are outside this coverage; an overridden manual plot box ratio is marked, not resolved."
+        }
+      ],
       "application": {
-        "applyAfter": [],
-        "effectPolicy": "none",
-        "effectStatus": "unsupported",
-        "affectedPaths": [
-          "CameraPosition",
-          "CameraPositionMode",
-          "CameraTarget",
-          "CameraTargetMode",
-          "CameraUpVector",
-          "CameraUpVectorMode",
-          "CameraViewAngle",
-          "CameraViewAngleMode",
-          "DataAspectRatio",
-          "DataAspectRatioMode",
-          "PlotBoxAspectRatio",
-          "PlotBoxAspectRatioMode",
-          "Projection",
-          "View",
-          "XLim",
-          "XLimMode",
-          "YLim",
-          "YLimMode",
-          "ZLim",
-          "ZLimMode"
+        "applyAfter": [
+          "DataAspectRatio"
         ],
-        "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator. A manual ratio fixes its own value; automatic values stay runtime-derived. Manual limits keep their values, and an overridden plot box ratio is marked in the Inspector."
       },
       "gridGeometryImpact": "required",
       "absoluteGeometryImpact": true,
@@ -7149,33 +7139,24 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "The documented manual mode uses an explicitly assigned value; a value setter selects manual mode. Apply domain or unit prerequisites first. This adapter covers this reviewed pair only, and automatic values remain runtime-derived. Supplemental R2024a owned fixtures verify setter and constructor mode changes. Specifying the ratio sets its mode to manual (daspect, pbaspect). A manual plot box ratio is overridden when the data aspect ratio and two or more axis limits are also manual; the editor marks that state rather than resolving the overridden getter."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, camera and grid-width couplings are outside this coverage; an overridden manual plot box ratio is marked, not resolved."
+        }
+      ],
       "application": {
         "applyAfter": [],
-        "effectPolicy": "none",
-        "effectStatus": "unsupported",
-        "affectedPaths": [
-          "CameraPosition",
-          "CameraPositionMode",
-          "CameraTarget",
-          "CameraTargetMode",
-          "CameraUpVector",
-          "CameraUpVectorMode",
-          "CameraViewAngle",
-          "CameraViewAngleMode",
-          "DataAspectRatio",
-          "DataAspectRatioMode",
-          "PlotBoxAspectRatio",
-          "PlotBoxAspectRatioMode",
-          "Projection",
-          "View",
-          "XLim",
-          "XLimMode",
-          "YLim",
-          "YLimMode",
-          "ZLim",
-          "ZLimMode"
-        ],
-        "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
+        "effectPolicy": "valueMode",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator. A manual ratio fixes its own value; automatic values stay runtime-derived. Manual limits keep their values, and an overridden plot box ratio is marked in the Inspector."
       },
       "gridGeometryImpact": "required",
       "absoluteGeometryImpact": true,
@@ -7218,33 +7199,32 @@
         "reasonCodes": []
       },
       "runtimeSetAccess": "public",
+      "applicationEvidence": [
+        {
+          "kind": "inference",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "Apply a requested final mode after its corresponding explicit value, because the value setter selects manual mode. This canonical order does not authorize reordering preserved input."
+        },
+        {
+          "kind": "documentation",
+          "source": "https://www.mathworks.com/help/releases/r2024a/matlab/ref/matlab.ui.control.uiaxes-properties.html",
+          "detail": "These reviewed mode properties have documented automatic defaults, confirmed on owned R2024a axes. Automatic values themselves are not seeded or invented."
+        },
+        {
+          "kind": "runtime",
+          "source": "tests/unit/PropertyApplicationRuntimeTest.m#axisValueModesAreOrderedAndPreserved",
+          "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, camera and grid-width couplings are outside this coverage; an overridden manual plot box ratio is marked, not resolved."
+        }
+      ],
       "application": {
-        "applyAfter": [],
-        "effectPolicy": "none",
-        "effectStatus": "unsupported",
-        "affectedPaths": [
-          "CameraPosition",
-          "CameraPositionMode",
-          "CameraTarget",
-          "CameraTargetMode",
-          "CameraUpVector",
-          "CameraUpVectorMode",
-          "CameraViewAngle",
-          "CameraViewAngleMode",
-          "DataAspectRatio",
-          "DataAspectRatioMode",
-          "PlotBoxAspectRatio",
-          "PlotBoxAspectRatioMode",
-          "Projection",
-          "View",
-          "XLim",
-          "XLimMode",
-          "YLim",
-          "YLimMode",
-          "ZLim",
-          "ZLimMode"
+        "applyAfter": [
+          "PlotBoxAspectRatio"
         ],
-        "effectReason": "Aspect ratio and camera setters interact with limits and native layout; the coupled getter is not statically reproduced."
+        "effectPolicy": "none",
+        "defaultLiteral": "'auto'",
+        "effectStatus": "modeled",
+        "affectedPaths": [],
+        "effectReason": "Covered by the explicit application-policy review and its finite resolver or value validator. A manual ratio fixes its own value; automatic values stay runtime-derived. Manual limits keep their values, and an overridden plot box ratio is marked in the Inspector."
       },
       "gridGeometryImpact": "required",
       "absoluteGeometryImpact": true,

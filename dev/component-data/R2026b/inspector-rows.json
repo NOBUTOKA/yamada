@@ -81,6 +81,17 @@
       "match": { "componentIds": [], "parentContextIds": [] }
     },
     {
+      "id": "valueModeDataAspectRatio",
+      "displayName": "DataAspectRatio",
+      "editor": "valueMode",
+      "members": [
+        { "path": "DataAspectRatio", "role": "value" },
+        { "path": "DataAspectRatioMode", "role": "mode" }
+      ],
+      "orderAnchor": "DataAspectRatio",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
       "id": "valueModeFontSize",
       "displayName": "FontSize",
       "editor": "valueMode",
@@ -177,6 +188,17 @@
         { "path": "MinorTicksMode", "role": "mode" }
       ],
       "orderAnchor": "MinorTicks",
+      "match": { "componentIds": [], "parentContextIds": [] }
+    },
+    {
+      "id": "valueModePlotBoxAspectRatio",
+      "displayName": "PlotBoxAspectRatio",
+      "editor": "valueMode",
+      "members": [
+        { "path": "PlotBoxAspectRatio", "role": "value" },
+        { "path": "PlotBoxAspectRatioMode", "role": "mode" }
+      ],
+      "orderAnchor": "PlotBoxAspectRatio",
       "match": { "componentIds": [], "parentContextIds": [] }
     },
     {

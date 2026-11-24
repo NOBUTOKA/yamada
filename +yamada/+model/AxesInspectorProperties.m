@@ -37,6 +37,55 @@ classdef AxesInspectorProperties
             result = ["dd","dm","dms","-dd","-dm","-dms"];
         end
 
+        function result = axisStyles()
+            % axisStyles List the aspect-ratio keywords of axis offered in the Inspector.
+            %   normal also represents axes without such a call, whose ratios stay automatic.
+            %   vis3d is a separate toggle because it combines with these keywords.
+            arguments (Output)
+                result (1,:) string
+            end
+            result = ["normal","equal","image","square"];
+        end
+
+        function keywords = axisKeywords(settings)
+            % axisKeywords Return the keyword of each recorded axis style token.
+            arguments (Input)
+                settings yamada.model.PropertySetting
+            end
+            arguments (Output)
+                keywords (1,:) string
+            end
+            keywords = strings(1,numel(settings));
+            for index = 1:numel(settings)
+                keywords(index) = string(settings(index).LiteralValue);
+            end
+        end
+
+        function [style, vis3d, active] = axisKeywordState(settings)
+            % axisKeywordState Resolve the shown axis style and whether vis3d is in effect.
+            %   settings are the AxisStyle tokens in execution order. The style is the
+            %   last keyword other than vis3d, or normal without one. vis3d is in effect
+            %   when a vis3d token follows the last normal, which returns its Modes to
+            %   auto; active indexes those vis3d tokens.
+            arguments (Input)
+                settings yamada.model.PropertySetting
+            end
+            arguments (Output)
+                style (1,1) string
+                vis3d (1,1) logical
+                active (1,:) double
+            end
+            keywords = yamada.model.AxesInspectorProperties.axisKeywords(settings);
+            styles = keywords(keywords ~= "vis3d");
+            style = "normal";
+            if ~isempty(styles), style = styles(end); end
+            reset = find(keywords == "normal",1,"last");
+            if isempty(reset), reset = 0; end
+            active = find(keywords == "vis3d");
+            active = active(active > reset);
+            vis3d = ~isempty(active);
+        end
+
         function result = rulerPaths(factory)
             % rulerPaths Return the supported numeric ruler details on this factory.
             arguments (Input)
@@ -188,6 +237,17 @@ classdef AxesInspectorProperties
                     "editor",editor,"previewPolicy","apply", ...
                     "valueSchema",struct("kind","literal","shape","scalar","matlabClasses",valueClass));
                 definitionsOut(end+1) = yamada.model.PropertyDefinition(path,seed,false,true,metadata); %#ok<AGROW>
+            end
+            if any(factory == ["axes","uiaxes"])
+                % The keyword of the last axis call; its effects are recorded as separate settings.
+                metadata = struct("category","Position","displayName","Axis Style", ...
+                    "editor","enum","previewPolicy","skip", ...
+                    "valueSchema",struct("values",yamada.model.AxesInspectorProperties.axisStyles()));
+                definitionsOut(end+1) = yamada.model.PropertyDefinition("AxisStyle","normal",true,true,metadata);
+                % Whether a vis3d keyword after the last normal freezes the ratios and view angle.
+                metadata = struct("category","Position","displayName","Axis Vis3d", ...
+                    "editor","logical","previewPolicy","skip");
+                definitionsOut(end+1) = yamada.model.PropertyDefinition("AxisVis3d",false,true,true,metadata);
             end
             if factory == "geoaxes"
                 metadata = struct("category","Maps","displayName","Geographic Limits", ...

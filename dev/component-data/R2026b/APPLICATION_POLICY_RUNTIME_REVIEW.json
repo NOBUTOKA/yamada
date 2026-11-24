@@ -119,8 +119,12 @@
         "ALimMode",
         "CLim",
         "CLimMode",
+        "DataAspectRatio",
+        "DataAspectRatioMode",
         "FontSize",
         "FontSizeMode",
+        "PlotBoxAspectRatio",
+        "PlotBoxAspectRatioMode",
         "TickDir",
         "TickDirMode",
         "XLim",
@@ -149,7 +153,7 @@
         "ZTickMode"
       ],
       "result": "passed",
-      "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+      "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, camera and grid-width couplings are outside this coverage; an overridden manual plot box ratio is marked, not resolved."
     },
     {
       "testMethod": "axisValueModesAreOrderedAndPreserved",
@@ -161,8 +165,12 @@
         "ALimMode",
         "CLim",
         "CLimMode",
+        "DataAspectRatio",
+        "DataAspectRatioMode",
         "FontSize",
         "FontSizeMode",
+        "PlotBoxAspectRatio",
+        "PlotBoxAspectRatioMode",
         "TickDir",
         "TickDirMode",
         "XLim",
@@ -191,7 +199,7 @@
         "ZTickMode"
       ],
       "result": "passed",
-      "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+      "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, camera and grid-width couplings are outside this coverage; an overridden manual plot box ratio is marked, not resolved."
     },
     {
       "testMethod": "axisValueModesAreOrderedAndPreserved",
@@ -225,7 +233,7 @@
         "TickDirMode"
       ],
       "result": "passed",
-      "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+      "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, camera and grid-width couplings are outside this coverage; an overridden manual plot box ratio is marked, not resolved."
     },
     {
       "testMethod": "axisValueModesAreOrderedAndPreserved",
@@ -245,7 +253,7 @@
         "ZoomLevelMode"
       ],
       "result": "passed",
-      "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, aspect ratios, camera and grid-width couplings are outside this coverage."
+      "detail": "Owned R2024a axes fixtures verify all listed pairs: explicit values select manual mode, constructor argument order is preserved, and canonical setters restore the requested final automatic mode. Automatic getter values are not guessed. Geographic TickDir, colors, camera and grid-width couplings are outside this coverage; an overridden manual plot box ratio is marked, not resolved."
     },
     {
       "testMethod": "axisStoredColorModesPreserveGetterValues",

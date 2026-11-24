@@ -94,6 +94,7 @@ classdef PropertyApplicationPlanner
             settings = component.Settings;
             [~, order] = sort([settings.Sequence]);
             axesPaths = yamada.model.AxesInspectorProperties.paths(component.Factory);
+            definition = registry.get(component.Factory, component.CreationArguments);
             ordered = settings(order);
             for index = 1:numel(ordered)
                 setting = ordered(index);
@@ -120,6 +121,16 @@ classdef PropertyApplicationPlanner
                         any(setting.Method == ["functionCall","assignment"])
                     % Replay reviewed axes effects as native values without executing their source.
                     entries(end+1) = yamada.model.PropertyEntry(setting.Path,setting.LiteralValue,"parsed"); %#ok<AGROW>
+                    continue
+                end
+                if setting.Method == "functionCall" && setting.IsCertain && setting.ValueKind == "literal"
+                    % Other reviewed call effects, such as XLim of xlim or the ratios of axis equal,
+                    % follow the preview rules of an assignment to the same property.
+                    property = definition.getProperty(setting.Path);
+                    if ~isempty(property) && property.IsEditable && ...
+                            ~any(property.PreviewPolicy == ["skip", "notRendered"])
+                        entries(end+1) = yamada.model.PropertyEntry(setting.Path,setting.LiteralValue,"parsed"); %#ok<AGROW>
+                    end
                     continue
                 end
                 if setting.Method ~= "assignment", continue, end

@@ -17,9 +17,9 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
     methods (Test)
         % Guarantee: unknown effects stay unknown until a later write determines the value.
         % Failure mode: the resolver falls back to an earlier literal or invents data-dependent values.
-        function unsupportedAspectKeepsLimitsUnknown(testCase)
-            % unsupportedAspectKeepsLimitsUnknown Retain the identified unsupported aspect interaction across later limits.
-            for writes = {{"DataAspectRatio", [1 1 1]; "XLim", [1 10]; "FontName", "Helvetica"}}
+        function unsupportedCameraKeepsLimitsUnknown(testCase)
+            % unsupportedCameraKeepsLimitsUnknown Retain the identified unsupported camera interaction across later limits.
+            for writes = {{"CameraViewAngle", 10; "XLim", [1 10]; "FontName", "Helvetica"}}
                 [component, definitions] = testCase.fixture("uiaxes", writes{1});
                 states = yamada.model.PropertyStateResolver.resolve(component, definitions);
                 limits = testCase.state(states, "XLim");
@@ -134,7 +134,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function unresolvedEffectsStayUnknownAndLaterWritesCanRestoreKnowledge(testCase)
             % unresolvedEffectsStayUnknownAndLaterWritesCanRestoreKnowledge Never fall back to an earlier literal.
-            % Guarantee and failure mode: shared with unsupportedAspectKeepsLimitsUnknown.
+            % Guarantee and failure mode: shared with unsupportedCameraKeepsLimitsUnknown.
             [component, definitions] = testCase.fixture("uislider-slider", {"Value", 20});
             location = testCase.setting("Limits", [], 2).toStruct().Location;
             location.SourceExpression = "readLimits()";
@@ -185,7 +185,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function automaticLimitEndpointsAreNotPretendedToBeResolved(testCase)
             % automaticLimitEndpointsAreNotPretendedToBeResolved Retain the input but mark data-dependent output as unknown.
-            % Guarantee and failure mode: shared with unsupportedAspectKeepsLimitsUnknown.
+            % Guarantee and failure mode: shared with unsupportedCameraKeepsLimitsUnknown.
             [component, definitions] = testCase.fixture("uiaxes", {"XLim", [-Inf 10]});
             states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             testCase.verifyEqual(testCase.state(states, "XLim").ExplicitValue, [-Inf 10]);
@@ -231,7 +231,7 @@ classdef (TestTags = {'fast', 'model', 'parser', 'generation'}) PropertyStateRes
 
         function uncertainWidthModesPropagateUntilAnExplicitReceiverWrite(testCase)
             % uncertainWidthModesPropagateUntilAnExplicitReceiverWrite Never invent a held or followed getter when the mode is unknown.
-            % Guarantee and failure mode: shared with unsupportedAspectKeepsLimitsUnknown.
+            % Guarantee and failure mode: shared with unsupportedCameraKeepsLimitsUnknown.
             [component, definitions] = testCase.fixture("axes", {"GridLineWidth", 4});
             location = testCase.setting("GridLineWidthMode", [], 2).toStruct().Location;
             location.SourceExpression = "chooseMode()";

@@ -37,7 +37,7 @@ classdef AxesSettingPlacement
             valueSpans = cell(1, count);
             editable = false(1, count);
             specialized = [yamada.model.AxesInspectorProperties.paths(factory), ...
-                "RequestedLatitudeLimits", "RequestedLongitudeLimits"];
+                "RequestedLatitudeLimits", "RequestedLongitudeLimits", "AxisStyle"];
             for effect = 1:count
                 if ~owned(effect), valueSpans{effect} = yamada.model.SourceSpan.empty; continue, end
                 argument = argumentsUsed(effect);

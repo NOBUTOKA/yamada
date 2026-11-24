@@ -272,6 +272,21 @@ classdef AxesSettingFunctionCatalog
                 paths = p; values = v; argumentsUsed = indices; owned = o; elements = e;
                 matched = true;
             end
+            if matched || numel(tokens) < 2, return, end
+
+            % A call of several composable keywords, such as axis(ax,"equal","vis3d"),
+            % applies each keyword's form in order; each keyword owns its own token.
+            for index = 1:numel(tokens)
+                composable = forms(cellfun(@(form) isfield(form,"composable") && form.composable, forms));
+                [p, v, indices, o, e] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
+                    composable, factory, tokens(index), implicit);
+                if isempty(p)
+                    paths = strings(1,0); values = {}; argumentsUsed = []; owned = false(1,0); elements = {};
+                    return
+                end
+                paths = [paths p]; values = [values v]; argumentsUsed = [argumentsUsed indices + index - 1]; %#ok<AGROW>
+                owned = [owned o]; elements = [elements e]; %#ok<AGROW>
+            end
         end
     end
 

@@ -252,7 +252,7 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
 
             % Every reviewed pair is either a value mode or a stored rendering-mode flag.
             testCase.verifyEqual(checked + PropertyApplicationRuntimeTest.countPolicies(registry, results, ...
-                ["modeFlag", "setterModeFlag"]), 71);
+                ["modeFlag", "setterModeFlag"]), 75);
         end
 
         function axisStoredColorModesPreserveGetterValues(testCase)
@@ -298,7 +298,7 @@ classdef (TestTags = {'catalog', 'model', 'generation', 'preview', 'ui'}) Proper
                 end
                 checked = checked + 1;
             end
-            testCase.verifyEqual(checked + PropertyApplicationRuntimeTest.countPolicies(registry, results, "valueMode"), 71);
+            testCase.verifyEqual(checked + PropertyApplicationRuntimeTest.countPolicies(registry, results, "valueMode"), 75);
         end
 
         function axisWidthFollowersAgreeWithEveryNativeStep(testCase)
