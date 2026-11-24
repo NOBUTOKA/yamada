@@ -6,6 +6,7 @@ classdef InspectorPropertyRow < handle
     properties (Access = private)
         Editor
         ErrorMessage string = ""
+        WarningMessage string = ""
         NormalBackgroundColor double = [1 1 1]
         Definition yamada.model.PropertyDefinition
         CommitFcn function_handle
@@ -208,8 +209,9 @@ classdef InspectorPropertyRow < handle
                 error("yamada:InspectorPropertyRow:CompositeSynchronization", ...
                     "Composite rows require ordered member synchronization.");
             end
-            % Clear a stale error presentation before loading the current model value.
+            % Clear a stale error or warning presentation before loading the current model value.
             obj.restoreNormalBackgroundColor();
+            obj.WarningMessage = "";
             yamada.ui.inspector.PropertyEditorFactory.synchronize( ...
                 obj.Editor, value, isEditable && ...
                 yamada.ui.inspector.PropertyEditorFactory.supportsEditing(obj.Definition), rawValue, relatedValues);
@@ -238,6 +240,7 @@ classdef InspectorPropertyRow < handle
                 conflict = "";
                 if isfield(members, "Conflict"), conflict = string(members.Conflict); end
                 obj.showConflict(conflict);
+                if isfield(members, "Warning"), obj.showWarning(string(members.Warning)); end
                 return
             end
             obj.restoreNormalBackgroundColor();
@@ -385,6 +388,27 @@ classdef InspectorPropertyRow < handle
             obj.ConflictIndicator.Tooltip = message;
         end
 
+        function showWarning(obj, message)
+            % showWarning Tint the editor yellow for a non-blocking risk and explain it by hover.
+            %   An empty message leaves the synchronized presentation unchanged.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
+                message (1, 1) string
+            end
+
+            if strlength(message) == 0, return, end
+            obj.WarningMessage = message;
+            tooltip = string(obj.Editor.Tooltip);
+            if isempty(tooltip) || all(strlength(tooltip) == 0)
+                obj.Editor.Tooltip = message;
+            else
+                obj.Editor.Tooltip = strjoin([tooltip(:).' message], newline);
+            end
+            if isprop(obj.Editor, "BackgroundColor") && strlength(obj.ErrorMessage) == 0
+                obj.Editor.BackgroundColor = [1 0.97 0.7];
+            end
+        end
+
         function showError(obj, message)
             % showError Mark an invalid editor draft and expose its explanation by hover.
             arguments (Input)
@@ -408,7 +432,8 @@ classdef InspectorPropertyRow < handle
                 obj (1, 1) yamada.ui.inspector.InspectorPropertyRow
             end
 
-            if isprop(obj.Editor, "BackgroundColor")
+            % A warning tint is never the normal background.
+            if isprop(obj.Editor, "BackgroundColor") && strlength(obj.WarningMessage) == 0
                 obj.NormalBackgroundColor = obj.Editor.BackgroundColor;
             end
         end
