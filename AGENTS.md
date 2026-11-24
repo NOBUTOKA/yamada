@@ -52,7 +52,7 @@ These conventions apply to project-owned source code.
 
 - Add or keep a test only when it satisfies the Test Admission rules in the Testing section of `CONTRIBUTING.md`: its failure mode is reachable from a public command or input source, it does not mirror fixed text or data, and it does not duplicate a test of the same entry point. Give each new test or test group its `Guarantee:` and `Failure mode:` comment.
 - Before each commit, run the test files or `area` profiles of `tests/runYamadaTests.m` that cover the changed code.
-- Before submitting a pull request, run the `full` profiles required by the Testing section of `CONTRIBUTING.md`, which also covers documentation-only changes, commands, and additional checks. Before a release, follow `doc/RELEASING.md`.
+- After those checks pass, push and open the pull request; CI runs the `full` suites. Meanwhile, run the local R2023a UI subset required by the Testing section of `CONTRIBUTING.md`, plus its catalog checks for catalog changes, and add the results to the pull request. Before a release, follow `doc/RELEASING.md`.
 - Report completed test results and identify checks that could not be run.
 
 ### Long-Running Tests
