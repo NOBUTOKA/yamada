@@ -474,7 +474,7 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
         end
 
         % Guarantee: manual aspect ratios keep manual limits editable, and the PlotBoxAspectRatio row is marked exactly while MATLAB ignores it.
-        % Failure mode: a ratio setting locks the limits, the marker misses the overconstrained state that Preview shows, or it stays after the data ratio returns to Auto.
+        % Failure mode: a ratio setting locks the limits, the marker misses the overconstrained state that Preview shows, or it or its empty column stays after the data ratio returns to Auto.
         % marksAxisStyleEffectsOverriddenByLaterSettings marks overrides of a call's own effects; this test detects the coupling of ratios and limits across independent settings.
         function marksPlotBoxAspectRatioIgnoredUnderManualLimits(testCase)
             % marksPlotBoxAspectRatioIgnoredUnderManualLimits Overconstrain the plot box through a limit edit and release it with Auto.
@@ -521,7 +521,10 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             parts.Auto.Value = true;
             parts.Auto.ValueChangedFcn(parts.Auto,struct());
             drawnow;
-            testCase.verifyEqual(string(plotBoxMarker(figure).Visible),"off");
+            marker = plotBoxMarker(figure);
+            testCase.verifyEqual(marker.Visible,"off");
+            % The released row gives the marker column back to its editor.
+            testCase.verifyEqual(marker.Columns,2);
             testCase.verifyEqual(firstPreview(figure).PlotBoxAspectRatio,[1 1 1]);
             clear cleanup
         end
@@ -541,8 +544,8 @@ end
 labels = findall(figure,"Tag","yamada-inspector-property-label");
 row = labels(string({labels.Text}) == "PlotBoxAspectRatio").Parent;
 found = findall(row,"Tag","yamada-inspector-conflict-indicator");
-marker = struct("Visible","off","Tooltip","");
-if ~isempty(found), marker = struct("Visible",string(found.Visible),"Tooltip",string(found.Tooltip)); end
+marker = struct("Visible","off","Tooltip","","Columns",numel(row.ColumnWidth));
+if ~isempty(found), marker.Visible = string(found.Visible); marker.Tooltip = string(found.Tooltip); end
 end
 
 function preview = firstPreview(figure)

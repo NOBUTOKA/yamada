@@ -361,7 +361,7 @@ classdef InspectorPropertyRow < handle
                 message (1, 1) string
             end
 
-            % Create the indicator column only for rows that have ever shown a conflict.
+            % Add the indicator column only while the row shows a conflict.
             if strlength(message) == 0 && isempty(obj.ConflictIndicator), return, end
             if isempty(obj.ConflictIndicator)
                 widths = obj.Grid.ColumnWidth;
@@ -372,7 +372,16 @@ classdef InspectorPropertyRow < handle
                 obj.ConflictIndicator.Layout.Row = 1;
                 obj.ConflictIndicator.Layout.Column = numel(widths) + 1;
             end
-            obj.ConflictIndicator.Visible = matlab.lang.OnOffSwitchState(strlength(message) > 0);
+            % A resolved conflict removes the marker and its column, including the column spacing.
+            if strlength(message) == 0
+                column = obj.ConflictIndicator.Layout.Column;
+                delete(obj.ConflictIndicator);
+                obj.ConflictIndicator = [];
+                widths = obj.Grid.ColumnWidth;
+                widths(column) = [];
+                obj.Grid.ColumnWidth = widths;
+                return
+            end
             obj.ConflictIndicator.Tooltip = message;
         end
 
