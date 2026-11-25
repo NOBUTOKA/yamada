@@ -148,6 +148,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             tree.SelectionChangedFcn(tree,struct("SelectedNodes",barNode));
             link = findall(figure,"Tag","yamada-edit-axes-colormap");
             testCase.verifyEqual(string(link.Text),"Edit...");
+            % Scroll only after the rebuilt ColorBar Inspector has its final content height.
+            yamada.ui.waitForPreviewLayout(figure, link);
             scroll(host,"bottom");
             drawnow;
             testCase.press(link);
@@ -162,6 +164,7 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             end
             testCase.verifyTrue(colormapInViewport(host,picker));
             testCase.verifyTrue(colormapInViewport(host,strip));
+            % The gesture fails with OutOfViewport unless the revealed picker is rendered in view.
             testCase.choose(picker,"Turbo");
             testCase.assertNotEmpty(axesRecord.getSettings("Colormap"),string(picker.Parent.Tooltip));
             ax = findall(figure,"-isa","matlab.ui.control.UIAxes");
