@@ -54,7 +54,12 @@ function Get-Range {
 $releases = [IO.File]::ReadAllText((Join-Path $ToolDirectory 'releases.json')) | ConvertFrom-Json
 $surface = [string]$releases.surfaceRelease
 $ledger = Join-Path $ToolDirectory $surface
-$axesSettings = Get-Content -LiteralPath (Join-Path $ledger 'axes-setting-functions.json') -Raw | ConvertFrom-Json -AsHashtable
+# Validate the reviewed axes call forms before projecting them into any release.
+$axesSettingsText = [IO.File]::ReadAllText((Join-Path $ledger 'axes-setting-functions.json'))
+if (-not (Test-Json -Json $axesSettingsText -SchemaFile (Join-Path $ledger 'axes-setting-functions.schema.json') -ErrorAction SilentlyContinue)) {
+    throw 'axes-setting-functions.json does not satisfy axes-setting-functions.schema.json.'
+}
+$axesSettings = $axesSettingsText | ConvertFrom-Json -AsHashtable
 if ($axesSettings.matlabRelease -cne $surface) { throw 'Axes settings must describe the surface release.' }
 $releaseNames = @($releases.releases.release)
 & (Join-Path $ToolDirectory 'UpdateProjectPropertyText.ps1') -ReleaseDirectory $ledger | Out-Null
