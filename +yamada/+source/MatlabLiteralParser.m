@@ -60,6 +60,13 @@ classdef MatlabLiteralParser
                 isLiteral = true;
                 return
             end
+            % An on/off enumeration member is an inert value, not a call.
+            member = regexp(source, '^matlab\.lang\.OnOffSwitchState\.(on|off)$', 'tokens', 'once');
+            if ~isempty(member)
+                value = matlab.lang.OnOffSwitchState(member{1});
+                isLiteral = true;
+                return
+            end
 
             % Admit only generated date-only datetime syntax; never evaluate source text.
             [value, isLiteral] = yamada.source.MatlabLiteralParser.parseDateTimeScalar(source);
