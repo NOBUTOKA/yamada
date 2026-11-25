@@ -1,12 +1,8 @@
 classdef OnOffState
     % OnOffState Interpret and write on/off states in their source representations.
-    %   An on/off argument or property accepts a set of forms: "text" ("on" or
-    %   "off" in any letter case), "lowercaseText" ("on" or "off" only), "logical"
-    %   (true or false), "finiteNumber" (a real finite numeric scalar, on when
-    %   nonzero), "nonfiniteNumber" (NaN, Inf, or -Inf, which are on), and
-    %   "switchState" (a matlab.lang.OnOffSwitchState scalar). The forms are not
-    %   ordered: each place lists what it accepts, and every reader of an on/off
-    %   state uses this class.
+    %   Each place that accepts an on/off state lists the independent forms it
+    %   accepts as yamada.model.OnOffForm members, and every reader of an on/off
+    %   state uses this class. A value is read when its form is in the list.
     %
     %   Example:
     %       [state, known] = yamada.model.OnOffState.read(1, ["text", "finiteNumber"])  % "on", true
@@ -16,20 +12,22 @@ classdef OnOffState
         function forms = propertyForms()
             % propertyForms Return the forms that every on/off property assignment accepts.
             %   Native R2023a through R2026b observations: assignments and name-value
-            %   arguments accept all forms, and treat NaN and Inf as on.
+            %   arguments accept all forms except lowercase-only text, and treat NaN
+            %   and Inf as on.
             arguments (Output)
-                forms (1, :) string
+                forms (1, :) yamada.model.OnOffForm
             end
 
-            forms = ["text", "logical", "finiteNumber", "nonfiniteNumber", "switchState"];
+            forms = [yamada.model.OnOffForm.text, yamada.model.OnOffForm.logical, ...
+                yamada.model.OnOffForm.finiteNumber, yamada.model.OnOffForm.nonfiniteNumber, ...
+                yamada.model.OnOffForm.switchState];
         end
 
         function [state, known] = read(value, forms)
             % read Return "on" or "off" for a value whose form is one of the accepted forms.
             arguments (Input)
                 value
-                forms (1, :) string {mustBeMember(forms, ["text", "lowercaseText", "logical", ...
-                    "finiteNumber", "nonfiniteNumber", "switchState"])} = yamada.model.OnOffState.propertyForms()
+                forms (1, :) yamada.model.OnOffForm = yamada.model.OnOffState.propertyForms()
             end
             arguments (Output)
                 state (1, 1) string
@@ -38,35 +36,40 @@ classdef OnOffState
 
             state = "off";
             known = false;
-            % Identify the single form of the value; an OnOffSwitchState is also a logical.
-            if (ischar(value) && isrow(value)) || (isstring(value) && isscalar(value) && ~ismissing(value))
-                text = string(value);
-                if any(forms == "text"), text = lower(text); elseif ~any(forms == "lowercaseText"), return, end
-                known = any(text == ["on", "off"]);
-                if known, state = text; end
-                return
+            text = "";
+            isText = (ischar(value) && isrow(value)) || (isstring(value) && isscalar(value) && ~ismissing(value));
+            if isText, text = string(value); end
+            % Check the value against each accepted form; an OnOffSwitchState is not a plain logical.
+            for form = forms
+                switch form
+                    case yamada.model.OnOffForm.text
+                        known = isText && any(lower(text) == ["on", "off"]);
+                        if known, state = lower(text); end
+                    case yamada.model.OnOffForm.lowercaseText
+                        known = isText && any(text == ["on", "off"]);
+                        if known, state = text; end
+                    case yamada.model.OnOffForm.logical
+                        known = isscalar(value) && class(value) == "logical";
+                    case yamada.model.OnOffForm.finiteNumber
+                        known = isscalar(value) && isnumeric(value) && isreal(value) && isfinite(value);
+                    case yamada.model.OnOffForm.nonfiniteNumber
+                        known = isscalar(value) && isnumeric(value) && isreal(value) && ~isfinite(value);
+                    case yamada.model.OnOffForm.switchState
+                        known = isscalar(value) && isa(value, "matlab.lang.OnOffSwitchState");
+                end
+                if known
+                    % A nonzero state is on, including NaN.
+                    if ~isText && logical(value ~= 0), state = "on"; end
+                    return
+                end
             end
-            if ~isscalar(value), return, end
-            if isa(value, "matlab.lang.OnOffSwitchState")
-                form = "switchState";
-            elseif class(value) == "logical"
-                form = "logical";
-            elseif isnumeric(value) && isreal(value) && isfinite(value)
-                form = "finiteNumber";
-            elseif isnumeric(value) && isreal(value)
-                form = "nonfiniteNumber";
-            else
-                return
-            end
-            known = any(forms == form);
-            if known && logical(value ~= 0), state = "on"; end
         end
 
         function result = isOn(value, forms)
             % isOn Report whether a value is a known on state.
             arguments (Input)
                 value
-                forms (1, :) string = yamada.model.OnOffState.propertyForms()
+                forms (1, :) yamada.model.OnOffForm = yamada.model.OnOffState.propertyForms()
             end
             arguments (Output)
                 result (1, 1) logical
