@@ -3949,7 +3949,7 @@ classdef yamada < handle
             members = repmat(struct("Path", "", "Value", "", "RawValue", [], ...
                 "IsEditable", false, "IsKnown", false, "Reason", "", ...
                 "StoredValue", [], "HasStoredValue", false, "StoredEditable", false, ...
-                "Sequence", NaN, "Conflict", ""), 1, numel(states));
+                "Sequence", NaN, "Conflict", "", "Warning", ""), 1, numel(states));
             for index = 1:numel(states)
                 entry = states(index).Entry;
                 value = "";
@@ -4027,6 +4027,11 @@ classdef yamada < handle
                         end
                     end
                     isKnown = true;
+                end
+                if path == "Units" && resolved.IsKnown
+                    % Mark non-pixel Units inside a container that resizes its children.
+                    members(index).Warning = yamada.validation.ModelValidator.nonPixelUnitsWarning( ...
+                        component, resolved, app.Document, app.Registry);
                 end
                 if path == "AxisStyle" && any(component.Factory == ["axes","uiaxes"])
                     % Show the last call's keyword and whether later settings override its effects.

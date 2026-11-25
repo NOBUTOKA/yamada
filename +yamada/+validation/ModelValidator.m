@@ -168,6 +168,27 @@ classdef ModelValidator
             end
         end
 
+        function message = nonPixelUnitsWarning(component, unitsState, document, registry)
+            % nonPixelUnitsWarning Return the auto-resize warning text for one child's Units, or "".
+            %   The Inspector uses this to mark the Units editor with the same rule as validation.
+            arguments (Input)
+                component (1, 1) yamada.model.ComponentRecord
+                unitsState (1, 1) yamada.model.PropertyState
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                message (1, 1) string
+            end
+
+            message = "";
+            parent = document.getComponent(component.ParentId);
+            if isempty(parent), return, end
+            diagnostic = yamada.validation.ModelValidator.autoResizeUnits( ...
+                component, parent, unitsState, document, registry);
+            if ~isempty(diagnostic), message = diagnostic.Message; end
+        end
+
         function result = hasErrors(diagnostics)
             % hasErrors Return true when any diagnostic has error severity.
             arguments (Input)
@@ -354,6 +375,14 @@ classdef ModelValidator
             [transaction, resolved, stateDiagnostics] = yamada.validation.ModelValidator.propertyTransaction( ...
                 component, effectiveProperties, document, registry);
             diagnostics = [diagnostics stateDiagnostics];
+            % Warn when a resizing parent lays out a non-pixel direct child.
+            if ~isempty(parent)
+                unitsIndex = find(supportedPaths == "Units", 1);
+                if ~isempty(unitsIndex)
+                    diagnostics = [diagnostics yamada.validation.ModelValidator.autoResizeUnits( ...
+                        component, parent, resolved(unitsIndex), document, registry)]; %#ok<AGROW>
+                end
+            end
             for propertyIndex = 1:numel(component.Properties)
                 entry = component.Properties(propertyIndex);
                 if ~any(supportedPaths == entry.Path)
@@ -394,6 +423,50 @@ classdef ModelValidator
                     end
                 end
             end
+        end
+
+        function diagnostics = autoResizeUnits(component, parent, unitsState, document, registry)
+            % autoResizeUnits Report a non-pixel child of a container that resizes its children.
+            %   Child Units must be known. A parent without an AutoResizeChildren setting keeps the native 'on',
+            %   as in AncestorGeometryPolicy; the catalog decides which parents have the property.
+            arguments (Input)
+                component (1, 1) yamada.model.ComponentRecord
+                parent (1, 1) yamada.model.ComponentRecord
+                unitsState (1, 1) yamada.model.PropertyState
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                diagnostics yamada.model.Diagnostic
+            end
+
+            % Skip pixel or unresolved child units before resolving the parent.
+            diagnostics = yamada.model.Diagnostic.empty;
+            if ~unitsState.IsKnown || strcmpi(string(unitsState.EffectiveValue), "pixels") || ...
+                    parent.isReleaseUnavailable() || ~registry.contains(parent.Factory)
+                return
+            end
+            grandparentFactory = "";
+            grandparent = document.getComponent(parent.ParentId);
+            if ~isempty(grandparent), grandparentFactory = grandparent.Factory; end
+            parentProperties = registry.getEffectiveProperties(parent.Factory, grandparentFactory, ...
+                parent.CreationArguments);
+            autoDefinition = parentProperties([parentProperties.Path] == "AutoResizeChildren");
+            if isempty(autoDefinition), return, end
+
+            % An absent setting keeps the native 'on'; an unresolved explicit setting reports nothing.
+            autoState = yamada.model.PropertyStateResolver.resolve(parent, autoDefinition, document, registry);
+            if isempty(autoState), return, end
+            if autoState(1).IsKnown
+                isOn = strcmpi(string(autoState(1).EffectiveValue), "on");
+            else
+                isOn = autoState(1).ExplicitKind == "absent";
+            end
+            if ~isOn, return, end
+            diagnostics = yamada.model.Diagnostic("auto-resize-nonpixel-units", "warning", ...
+                sprintf("AutoResizeChildren 'on' in ""%s"" is recommended only with pixel Units; " + ...
+                "non-pixel Units might cause unexpected behavior. " + ...
+                "Set it to 'off' or use pixels.", parent.Name), component.Id);
         end
 
         function diagnostic = validateGeometry(entry, componentId, factory, definition)

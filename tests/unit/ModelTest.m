@@ -171,6 +171,33 @@ classdef (TestTags = {'fast', 'gridOverlay', 'model'}) ModelTest < matlab.unitte
             testCase.verifyTrue(yamada.validation.ModelValidator.hasErrors(diagnostics));
         end
 
+        % Guarantee: a container whose AutoResizeChildren is on, explicitly or by not setting it, warns about each direct child with known non-pixel Units.
+        % Failure mode: a normalized child of a resizing tab is drawn at the wrong size or not at all, and Preview hides it.
+        function autoResizeWithNonPixelUnitsWarns(testCase)
+            % autoResizeWithNonPixelUnitsWarns Warn for default or explicit resizing parents only.
+            registry = yamada.model.ComponentRegistry.createDefault();
+            document = yamada.model.NewAppFactory.createEmpty("ExampleApp", registry);
+            grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
+            group = document.insertComponent(registry, "uitabgroup", grid.Id);
+            tab = document.insertComponent(registry, "uitab", group.Id);
+            tabPanel = document.insertComponent(registry, "uipanel", tab.Id);
+            pixelPanel = document.insertComponent(registry, "uipanel", tab.Id);
+            rootPanel = document.insertComponent(registry, "uipanel", document.RootComponentId);
+            offPanel = document.insertComponent(registry, "uipanel", document.RootComponentId);
+            offChild = document.insertComponent(registry, "uipanel", offPanel.Id);
+            tabPanel.setProperty("Units", "normalized");
+            pixelPanel.setProperty("Units", "pixels");
+            rootPanel.setProperty("Units", "normalized");
+            offPanel.setProperty("AutoResizeChildren", "off");
+            offChild.setProperty("Units", "normalized");
+
+            % Only the tab child and the root-figure child sit in resizing parents.
+            diagnostics = yamada.validation.ModelValidator.validate(document, registry);
+            warned = [diagnostics([diagnostics.Code] == "auto-resize-nonpixel-units").ComponentId];
+            testCase.verifyEqual(sort(warned), sort([tabPanel.Id rootPanel.Id]));
+            testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+        end
+
         function geometryValidationAcceptsGridSpans(testCase)
             % geometryValidationAcceptsGridSpans Accept positive integer grid ranges.
 

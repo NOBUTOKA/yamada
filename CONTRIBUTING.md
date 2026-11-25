@@ -173,9 +173,17 @@ Apply these rules when adding a test and when reviewing existing tests. A test t
 - **No duplicate guarantees.** Do not add a test whose failure mode an existing test already detects. Before adding a test, search `tests` for the public entry point it exercises, such as the editor command, `DocumentModel` method, or parser or generator function. If a test exercises the same entry point, extend it with a case or state in the new comment what the new test detects that it does not. If no test exercises it, no reference is needed.
 - **Scratch checks stay local.** Checks written to observe behavior while developing are not regression tests. Commit a test only when it satisfies the rules above.
 
-Before submitting a pull request, run the tests relevant to your changes and include the results. If you could not run a test, name it and explain why in the pull request.
+Before each commit, run the tests relevant to your changes. Include the results in the pull request as described in Pull Request Validation. If you could not run a test, name it and explain why in the pull request.
 
 ### Pull Request Validation
+
+A typical pull request is validated in this order:
+
+1. Before each commit, run the area profiles or test files that cover the changed code.
+2. Push the branch and open the pull request. Opening it as ready for review starts the CI full suites.
+3. While CI runs, run the R2023a UI subset locally from the pull request revision, and record its result in the pull request.
+
+Running the full suites locally before opening a pull request is not required, because CI covers them.
 
 GitHub Actions starts **MATLAB tests** when a pull request to `main` or a maintenance branch is opened or reopened as ready for review, marked ready for review, or updated while ready. It runs the R2026b full suite in 20 jobs and then the R2023a full suite without the `ui` tag in 20 jobs. Each job runs one MATLAB session on its own Windows runner.
 

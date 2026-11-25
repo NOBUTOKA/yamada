@@ -27,6 +27,35 @@ classdef (TestTags = {'inspector', 'ui'}) InspectorPropertyRowTest < matlab.unit
     end
 
     methods (Test)
+        % Guarantee: the Units editor of a child inside a container that resizes its children turns yellow for non-pixel Units.
+        % Failure mode: the auto-resize risk appears only in the diagnostics list, or the tint stays after pixels are restored.
+        function nonPixelUnitsUnderAutoResizeTintsUnitsEditor(testCase)
+            % nonPixelUnitsUnderAutoResizeTintsUnitsEditor Tint and explain the Units dropdown of a figure child.
+            app = yamada(Visible="off");
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Tag", "yamada-editor");
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(item) any(string(item.ColumnName) == "Category"), tables));
+            index = find(string(palette.Data(:, 1)) == "Panel", 1);
+            palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", index)));
+
+            % Normalized units under the root figure, whose AutoResizeChildren stays 'on', warn.
+            editor = unitsEditor(figure);
+            normal = editor.BackgroundColor;
+            editor.Value = "normalized";
+            editor.ValueChangedFcn(editor, struct());
+            editor = unitsEditor(figure);
+            testCase.verifyNotEqual(editor.BackgroundColor, normal);
+            testCase.verifySubstring(string(editor.Tooltip), "AutoResizeChildren");
+
+            % Pixel units clear the tint.
+            editor.Value = "pixels";
+            editor.ValueChangedFcn(editor, struct());
+            editor = unitsEditor(figure);
+            testCase.verifyEqual(editor.BackgroundColor, normal);
+            clear cleanup
+        end
+
         function acceptedInspectorEditRetainsNativeEditor(testCase)
             % acceptedInspectorEditRetainsNativeEditor Avoid replacing rows during a value-only refresh.
             % Guarantee: a value-only refresh after an accepted edit reuses the native editor.
@@ -86,6 +115,19 @@ end
 if ~isempty(value) && isvalid(value)
     delete(value);
 end
+end
+
+function editor = unitsEditor(figure)
+% unitsEditor Return the Inspector editor of the Units row.
+arguments (Input)
+    figure (1, 1) matlab.ui.Figure
+end
+arguments (Output)
+    editor (1, 1)
+end
+labels = findall(figure, "Tag", "yamada-inspector-property-label");
+row = labels(string({labels.Text}) == "Units");
+editor = findall(row(1).Parent, "Tag", "yamada-inspector-property-editor");
 end
 
 %{

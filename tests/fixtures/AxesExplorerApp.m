@@ -14,6 +14,7 @@ classdef AxesExplorerApp < handle
             app.UIFigure.CloseRequestFcn = @(~, ~) delete(app);
             app.UIFigure.Position = [100 100 760 440];
             app.UIFigure.Name = "Axes Explorer";
+            app.UIFigure.AutoResizeChildren = "off";
 
             app.UIAxes = uiaxes(app.UIFigure);
             app.UIAxes.Position = [20 230 340 180];
