@@ -561,6 +561,8 @@ Shared boundaries: [Position geometry policies](#position-geometry-policies).
 
 [`PropertyEditorFactory`](../+yamada/+ui/+inspector/PropertyEditorFactory.m) maps an allowlisted editor ID to a native control or project-owned dialog.
 
+[`InspectorView.reveal`](../+yamada/+ui/+inspector/InspectorView.m) centers a row by moving an empty label, a direct child of the Inspector scroll host, over the row's bounds padded to the viewport height, and scrolling to that label. Numeric `scroll(container, x, y)` is not used: on R2024a and R2024b it updates only the model `ScrollableViewportLocation`, while the client receives only `ScrollTarget`, so the view never moves. Component targets reach the client in every supported release, but from R2024a the client resolves them among the host's direct children only, so the nested row itself cannot be the target. Verified on R2023a, R2024a, R2024b, and R2025a.
+
 Shared boundaries: [Insertion proof and validation scope](#insertion-proof-and-validation-scope).
 
 ## Editing and View Synchronization

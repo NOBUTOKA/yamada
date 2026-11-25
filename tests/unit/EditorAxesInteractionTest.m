@@ -165,6 +165,7 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             testCase.verifyTrue(colormapInViewport(host,picker));
             testCase.verifyTrue(colormapInViewport(host,strip));
             % The gesture fails with OutOfViewport unless the revealed picker is rendered in view.
+            % The gesture fails with OutOfViewport unless the revealed picker is rendered in view.
             testCase.choose(picker,"Turbo");
             testCase.assertNotEmpty(axesRecord.getSettings("Colormap"),string(picker.Parent.Tooltip));
             ax = findall(figure,"-isa","matlab.ui.control.UIAxes");
