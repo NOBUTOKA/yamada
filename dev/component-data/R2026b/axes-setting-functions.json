@@ -1496,6 +1496,12 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "finiteNumber",
+            "switchState"
           ]
         }
       ],
@@ -1503,6 +1509,60 @@
         {
           "path": "Visible",
           "argument": "state"
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2024a"
+          },
+          "patch": {
+            "arguments": [
+              {
+                "id": "state",
+                "type": "enum",
+                "values": [
+                  "on",
+                  "off"
+                ],
+                "onOffForms": [
+                  "text"
+                ]
+              }
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "observation",
+              "detail": "Native R2023a through R2026b: from R2024a, axis, grid, and box accept on and off in any letter case, true and false, a matlab.lang.OnOffSwitchState member, and a real finite numeric scalar, which is on when nonzero; NaN, Inf, and nonscalar values fail. Through R2023b, grid and box accept text in any letter case, logical values, and OnOffSwitchState members, while their numeric states give inconsistent results, such as box(ax, 1) failing and grid(ax, 0) leaving the y grid on. Through R2023b, axis accepts only text: in any letter case in R2023b and only lowercase in R2023a."
+            }
+          ]
+        },
+        {
+          "releases": {
+            "before": "R2023b"
+          },
+          "patch": {
+            "arguments": [
+              {
+                "id": "state",
+                "type": "enum",
+                "values": [
+                  "on",
+                  "off"
+                ],
+                "onOffForms": [
+                  "lowercaseText"
+                ]
+              }
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "observation",
+              "detail": "Native R2023a through R2026b: from R2024a, axis, grid, and box accept on and off in any letter case, true and false, a matlab.lang.OnOffSwitchState member, and a real finite numeric scalar, which is on when nonzero; NaN, Inf, and nonscalar values fail. Through R2023b, grid and box accept text in any letter case, logical values, and OnOffSwitchState members, while their numeric states give inconsistent results, such as box(ax, 1) failing and grid(ax, 0) leaving the y grid on. Through R2023b, axis accepts only text: in any letter case in R2023b and only lowercase in R2023a."
+            }
+          ]
         }
       ]
     },
@@ -2616,6 +2676,12 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "finiteNumber",
+            "switchState"
           ]
         }
       ],
@@ -2631,6 +2697,36 @@
         {
           "path": "ZGrid",
           "argument": "state"
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2024a"
+          },
+          "patch": {
+            "arguments": [
+              {
+                "id": "state",
+                "type": "enum",
+                "values": [
+                  "on",
+                  "off"
+                ],
+                "onOffForms": [
+                  "text",
+                  "logical",
+                  "switchState"
+                ]
+              }
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "observation",
+              "detail": "Native R2023a through R2026b: from R2024a, axis, grid, and box accept on and off in any letter case, true and false, a matlab.lang.OnOffSwitchState member, and a real finite numeric scalar, which is on when nonzero; NaN, Inf, and nonscalar values fail. Through R2023b, grid and box accept text in any letter case, logical values, and OnOffSwitchState members, while their numeric states give inconsistent results, such as box(ax, 1) failing and grid(ax, 0) leaving the y grid on. Through R2023b, axis accepts only text: in any letter case in R2023b and only lowercase in R2023a."
+            }
+          ]
         }
       ]
     },
@@ -2652,6 +2748,12 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "finiteNumber",
+            "switchState"
           ]
         }
       ],
@@ -2663,6 +2765,36 @@
         {
           "path": "RGrid",
           "argument": "state"
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2024a"
+          },
+          "patch": {
+            "arguments": [
+              {
+                "id": "state",
+                "type": "enum",
+                "values": [
+                  "on",
+                  "off"
+                ],
+                "onOffForms": [
+                  "text",
+                  "logical",
+                  "switchState"
+                ]
+              }
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "observation",
+              "detail": "Native R2023a through R2026b: from R2024a, axis, grid, and box accept on and off in any letter case, true and false, a matlab.lang.OnOffSwitchState member, and a real finite numeric scalar, which is on when nonzero; NaN, Inf, and nonscalar values fail. Through R2023b, grid and box accept text in any letter case, logical values, and OnOffSwitchState members, while their numeric states give inconsistent results, such as box(ax, 1) failing and grid(ax, 0) leaving the y grid on. Through R2023b, axis accepts only text: in any letter case in R2023b and only lowercase in R2023a."
+            }
+          ]
         }
       ]
     },
@@ -2684,6 +2816,12 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "finiteNumber",
+            "switchState"
           ]
         }
       ],
@@ -2691,6 +2829,36 @@
         {
           "path": "Grid",
           "argument": "state"
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2024a"
+          },
+          "patch": {
+            "arguments": [
+              {
+                "id": "state",
+                "type": "enum",
+                "values": [
+                  "on",
+                  "off"
+                ],
+                "onOffForms": [
+                  "text",
+                  "logical",
+                  "switchState"
+                ]
+              }
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "observation",
+              "detail": "Native R2023a through R2026b: from R2024a, axis, grid, and box accept on and off in any letter case, true and false, a matlab.lang.OnOffSwitchState member, and a real finite numeric scalar, which is on when nonzero; NaN, Inf, and nonscalar values fail. Through R2023b, grid and box accept text in any letter case, logical values, and OnOffSwitchState members, while their numeric states give inconsistent results, such as box(ax, 1) failing and grid(ax, 0) leaving the y grid on. Through R2023b, axis accepts only text: in any letter case in R2023b and only lowercase in R2023a."
+            }
+          ]
         }
       ]
     },
@@ -2716,6 +2884,12 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "finiteNumber",
+            "switchState"
           ]
         }
       ],
@@ -2723,6 +2897,36 @@
         {
           "path": "Box",
           "argument": "state"
+        }
+      ],
+      "overrides": [
+        {
+          "releases": {
+            "before": "R2024a"
+          },
+          "patch": {
+            "arguments": [
+              {
+                "id": "state",
+                "type": "enum",
+                "values": [
+                  "on",
+                  "off"
+                ],
+                "onOffForms": [
+                  "text",
+                  "logical",
+                  "switchState"
+                ]
+              }
+            ]
+          },
+          "evidence": [
+            {
+              "kind": "observation",
+              "detail": "Native R2023a through R2026b: from R2024a, axis, grid, and box accept on and off in any letter case, true and false, a matlab.lang.OnOffSwitchState member, and a real finite numeric scalar, which is on when nonzero; NaN, Inf, and nonscalar values fail. Through R2023b, grid and box accept text in any letter case, logical values, and OnOffSwitchState members, while their numeric states give inconsistent results, such as box(ax, 1) failing and grid(ax, 0) leaving the y grid on. Through R2023b, axis accepts only text: in any letter case in R2023b and only lowercase in R2023a."
+            }
+          ]
         }
       ]
     },

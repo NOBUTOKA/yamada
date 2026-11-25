@@ -522,7 +522,12 @@ classdef AxesSettingFunctionCatalog
                     % The separate Mode form owns these special tokens.
                     if scalarText && any(string(value) == ["auto","manual","mode"]), result = false; end
                 case "enum"
-                    result = scalarText && any(string(value) == string(spec.values));
+                    % An on/off argument lists every form it accepts; the value is kept as written.
+                    if isfield(spec, "onOffForms")
+                        [~, result] = yamada.model.OnOffState.read(value, reshape(string(spec.onOffForms), 1, []));
+                    else
+                        result = scalarText && any(string(value) == string(spec.values));
+                    end
                 case "finiteNumber"
                     result = numeric && isscalar(value);
                 case "latitudeLimits"
