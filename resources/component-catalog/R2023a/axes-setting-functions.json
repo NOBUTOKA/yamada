@@ -1439,6 +1439,9 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "lowercaseText"
           ]
         }
       ],
@@ -2433,6 +2436,11 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "switchState"
           ]
         }
       ],
@@ -2469,6 +2477,11 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "switchState"
           ]
         }
       ],
@@ -2501,6 +2514,11 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "switchState"
           ]
         }
       ],
@@ -2533,6 +2551,11 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "switchState"
           ]
         }
       ],

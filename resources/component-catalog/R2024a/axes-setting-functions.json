@@ -1439,6 +1439,12 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "finiteNumber",
+            "switchState"
           ]
         }
       ],
@@ -2523,6 +2529,12 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "finiteNumber",
+            "switchState"
           ]
         }
       ],
@@ -2559,6 +2571,12 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "finiteNumber",
+            "switchState"
           ]
         }
       ],
@@ -2591,6 +2609,12 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "finiteNumber",
+            "switchState"
           ]
         }
       ],
@@ -2623,6 +2647,12 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "finiteNumber",
+            "switchState"
           ]
         }
       ],

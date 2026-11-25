@@ -1439,6 +1439,9 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text"
           ]
         }
       ],
@@ -2523,6 +2526,11 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "switchState"
           ]
         }
       ],
@@ -2559,6 +2567,11 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "switchState"
           ]
         }
       ],
@@ -2591,6 +2604,11 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "switchState"
           ]
         }
       ],
@@ -2623,6 +2641,11 @@
           "values": [
             "on",
             "off"
+          ],
+          "onOffForms": [
+            "text",
+            "logical",
+            "switchState"
           ]
         }
       ],

@@ -40,6 +40,9 @@ classdef LiteralEncoder
                     rows(row) = "'" + string(strrep(value(row, :), '''', '''''')) + "'";
                 end
                 text = "[" + strjoin(rows, "; ") + "]";
+            elseif isa(value, "matlab.lang.OnOffSwitchState") && isscalar(value)
+                % An enumeration member is checked before the logical family it extends.
+                text = "matlab.lang.OnOffSwitchState." + string(value);
             elseif isdatetime(value) && ismatrix(value)
                 text = yamada.source.LiteralEncoder.encodeDateTime(value);
             elseif isnumeric(value) && isreal(value) && ismatrix(value)

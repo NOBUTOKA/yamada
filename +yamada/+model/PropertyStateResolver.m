@@ -1074,14 +1074,8 @@ end
 [raw, known] = stateValue(states, path);
 value = false;
 if known
-    if (islogical(raw) || isnumeric(raw)) && isscalar(raw)
-        value = logical(raw);
-    elseif (ischar(raw) && isrow(raw)) || (isstring(raw) && isscalar(raw))
-        value = string(raw) == "on";
-        known = any(string(raw) == ["on", "off"]);
-    else
-        known = false;
-    end
+    [state, known] = yamada.model.OnOffState.read(raw);
+    value = known && state == "on";
 end
 end
 

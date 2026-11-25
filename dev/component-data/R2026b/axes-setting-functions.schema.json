@@ -1,0 +1,261 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "yamada R2026b axes setting function ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "matlabRelease", "settingGroups", "forms"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "matlabRelease": { "const": "R2026b" },
+    "settingGroups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["main", "form"],
+        "properties": {
+          "main": { "$ref": "#/$defs/propertyPath" },
+          "form": { "$ref": "#/$defs/nonemptyString" }
+        }
+      }
+    },
+    "forms": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/form" }
+    }
+  },
+  "$defs": {
+    "nonemptyString": { "type": "string", "minLength": 1 },
+    "identifier": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$" },
+    "release": { "type": "string", "pattern": "^R[0-9]{4}[ab]$" },
+    "propertyPath": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)*$"
+    },
+    "propertyPaths": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/propertyPath" }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "detail"],
+        "properties": {
+          "kind": { "enum": ["observation", "documentation"] },
+          "source": { "$ref": "#/$defs/nonemptyString" },
+          "detail": { "$ref": "#/$defs/nonemptyString" }
+        }
+      }
+    },
+    "valueKind": {
+      "enum": [
+        "textLiteral", "textScalar", "textList", "enum", "finiteNumber", "positiveNumber",
+        "latitudeLimits", "longitudeLimits", "increasingFinitePair", "increasingFiniteVector",
+        "axisLimits", "fontName", "matlabColor"
+      ]
+    },
+    "onOffForms": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["text", "lowercaseText", "logical", "finiteNumber", "nonfiniteNumber", "switchState"]
+      }
+    },
+    "valueRules": {
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "enum" } } },
+          "then": { "required": ["values"] },
+          "else": { "not": { "anyOf": [{ "required": ["values"] }, { "required": ["onOffForms"] }] } }
+        },
+        {
+          "if": { "required": ["onOffForms"] },
+          "then": { "properties": { "values": { "const": ["on", "off"] } } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "textLiteral" } } },
+          "then": { "required": ["representations"] },
+          "else": { "not": { "required": ["representations"] } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "axisLimits" } } },
+          "then": { "required": ["count"] },
+          "else": { "not": { "required": ["count"] } }
+        },
+        {
+          "if": { "required": ["allowsEmpty"] },
+          "then": { "properties": { "type": { "enum": ["textList", "increasingFiniteVector"] } } }
+        }
+      ]
+    },
+    "argument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "type": { "$ref": "#/$defs/valueKind" },
+        "representations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["characterVector", "stringScalar", "stringVector", "cellOfCharacterVectors", "characterMatrix"]
+          }
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/nonemptyString" }
+        },
+        "onOffForms": { "$ref": "#/$defs/onOffForms" },
+        "count": { "type": "integer", "minimum": 1 },
+        "allowsEmpty": { "type": "boolean" }
+      },
+      "$ref": "#/$defs/valueRules"
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "paths"],
+      "properties": {
+        "name": { "$ref": "#/$defs/identifier" },
+        "type": { "$ref": "#/$defs/valueKind" },
+        "paths": { "$ref": "#/$defs/propertyPaths" },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/nonemptyString" }
+        },
+        "onOffForms": { "$ref": "#/$defs/onOffForms" }
+      },
+      "$ref": "#/$defs/valueRules"
+    },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": { "$ref": "#/$defs/propertyPath" },
+        "argument": { "$ref": "#/$defs/identifier" },
+        "literal": {
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "minItems": 1, "items": { "type": "number" } }
+          ]
+        },
+        "elements": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 1 }
+        }
+      },
+      "oneOf": [{ "required": ["argument"] }, { "required": ["literal"] }],
+      "dependentRequired": { "elements": ["argument"] }
+    },
+    "formFields": {
+      "id": { "$ref": "#/$defs/nonemptyString" },
+      "name": { "$ref": "#/$defs/identifier" },
+      "targetFactories": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": { "enum": ["axes", "uiaxes", "polaraxes", "geoaxes"] }
+      },
+      "target": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["position", "implicit"],
+        "properties": {
+          "position": { "const": 1 },
+          "implicit": { "enum": ["inferWithWarning", "explicitOnly"] }
+        }
+      },
+      "outputs": { "const": 0 },
+      "arguments": { "type": "array", "items": { "$ref": "#/$defs/argument" } },
+      "effects": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/effect" } },
+      "options": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/option" } },
+      "insertion": { "type": "boolean" },
+      "companionInsertion": { "type": "boolean" },
+      "composable": { "type": "boolean" },
+      "automaticPaths": { "$ref": "#/$defs/propertyPaths" }
+    },
+    "form": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "targetFactories", "target", "outputs", "arguments", "effects"],
+      "properties": {
+        "id": { "$ref": "#/$defs/formFields/id" },
+        "name": { "$ref": "#/$defs/formFields/name" },
+        "targetFactories": { "$ref": "#/$defs/formFields/targetFactories" },
+        "target": { "$ref": "#/$defs/formFields/target" },
+        "outputs": { "$ref": "#/$defs/formFields/outputs" },
+        "arguments": { "$ref": "#/$defs/formFields/arguments" },
+        "effects": { "$ref": "#/$defs/formFields/effects" },
+        "options": { "$ref": "#/$defs/formFields/options" },
+        "insertion": { "$ref": "#/$defs/formFields/insertion" },
+        "companionInsertion": { "$ref": "#/$defs/formFields/companionInsertion" },
+        "composable": { "$ref": "#/$defs/formFields/composable" },
+        "automaticPaths": { "$ref": "#/$defs/formFields/automaticPaths" },
+        "availability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["releases", "evidence"],
+          "properties": {
+            "releases": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["since"],
+              "properties": { "since": { "$ref": "#/$defs/release" } }
+            },
+            "evidence": { "$ref": "#/$defs/evidence" }
+          }
+        },
+        "overrides": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["releases", "patch", "evidence"],
+            "properties": {
+              "releases": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["before"],
+                "properties": { "before": { "$ref": "#/$defs/release" } }
+              },
+              "patch": {
+                "type": "object",
+                "additionalProperties": false,
+                "minProperties": 1,
+                "properties": {
+                  "targetFactories": { "$ref": "#/$defs/formFields/targetFactories" },
+                  "target": { "$ref": "#/$defs/formFields/target" },
+                  "arguments": { "$ref": "#/$defs/formFields/arguments" },
+                  "effects": { "$ref": "#/$defs/formFields/effects" },
+                  "options": { "$ref": "#/$defs/formFields/options" },
+                  "insertion": { "$ref": "#/$defs/formFields/insertion" },
+                  "companionInsertion": { "$ref": "#/$defs/formFields/companionInsertion" },
+                  "composable": { "$ref": "#/$defs/formFields/composable" },
+                  "automaticPaths": { "$ref": "#/$defs/formFields/automaticPaths" }
+                }
+              },
+              "evidence": { "$ref": "#/$defs/evidence" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

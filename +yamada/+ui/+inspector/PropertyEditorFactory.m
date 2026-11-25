@@ -414,11 +414,12 @@ classdef PropertyEditorFactory
                 parts.Edit.Editable = isEditable;
                 parts.Browse.Enable = yamada.ui.inspector.PropertyEditorFactory.onOff(isEditable);
             elseif isa(control, "matlab.ui.control.CheckBox")
-                logicalValue = value;
-                if ~isempty(rawValue)
-                    logicalValue = string(rawValue);
+                % The raw value is read like a native on/off state, such as 2 or 'On'.
+                if isempty(rawValue)
+                    control.Value = any(value == ["on", "true", "1"]);
+                else
+                    control.Value = yamada.model.OnOffState.isOn(rawValue);
                 end
-                control.Value = logicalValue == "on" || logicalValue == "true" || logicalValue == "1";
                 control.Enable = yamada.ui.inspector.PropertyEditorFactory.onOff(isEditable);
             elseif isa(control, "matlab.ui.control.DropDown")
                 % Prefer the raw char or string value over its inspector literal rendering.
@@ -728,7 +729,7 @@ classdef PropertyEditorFactory
                 property = string(schema.multiselectProperty);
                 [flag, hasFlag] = yamada.ui.inspector.PropertyEditorFactory.relatedKnownValue( ...
                     relatedValues, property, "off");
-                multiselect = hasFlag && yamada.ui.inspector.PropertyEditorFactory.isOn(flag);
+                multiselect = hasFlag && yamada.model.OnOffState.isOn(flag);
             end
             selectedIndices = yamada.ui.inspector.PropertyEditorFactory.itemSelectionIndices( ...
                 rawValue, values, multiselect);
@@ -855,13 +856,6 @@ classdef PropertyEditorFactory
             else
                 value = values;
             end
-        end
-
-        function result = isOn(value)
-            % isOn Interpret the documented logical and on/off representations.
-            result = (islogical(value) && isscalar(value) && value) || ...
-                ((ischar(value) && isrow(value) || (isstring(value) && isscalar(value))) && ...
-                lower(string(value)) == "on");
         end
 
         function result = isDayOfWeekSchema(definition)

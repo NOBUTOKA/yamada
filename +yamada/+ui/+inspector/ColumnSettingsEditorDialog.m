@@ -36,7 +36,7 @@ classdef ColumnSettingsEditorDialog
                 "ColumnWidth", {92, 92, 76, 76, 76, "1x"}, ...
                 "ColumnSpacing", 6);
             rearrange = uicheckbox(grid, "Text", "Allow column rearranging", ...
-                "Value", yamada.ui.inspector.ColumnSettingsEditorDialog.onOffValue( ...
+                "Value", yamada.model.OnOffState.isOn( ...
                 initial.ColumnRearrangeable), "Tag", "yamada-column-settings-rearrangeable");
             rearrange.Layout.Row = 1;
             rearrange.Layout.Column = [1 6];
@@ -365,14 +365,6 @@ classdef ColumnSettingsEditorDialog
                 value = original;
             else
                 value = values;
-            end
-        end
-
-        function result = onOffValue(value)
-            % onOffValue Normalize char, string, or logical on/off values for a checkbox.
-            result = islogical(value) && isscalar(value) && value;
-            if ischar(value) || (isstring(value) && isscalar(value))
-                result = lower(string(value)) == "on";
             end
         end
 

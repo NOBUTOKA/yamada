@@ -1107,6 +1107,8 @@ classdef DocumentModel < handle
             if component.isReleaseUnavailable()
                 error("yamada:DocumentModel:ReadOnlyProperty", "This component is unavailable in the loaded MATLAB release.");
             end
+            styled = obj.onOffInSourceStyle(component, struct("Path", string(path), "Value", {value}), registry);
+            value = styled.Value;
             oldEntry = component.getProperty(path);
             oldValue = [];
             hadOldValue = ~isempty(oldEntry);
@@ -1172,6 +1174,7 @@ classdef DocumentModel < handle
                     "Property batch paths must be nonempty and unique.");
             end
             changes = obj.withAutomaticModes(component, changes, registry);
+            changes = obj.onOffInSourceStyle(component, changes, registry);
             paths = string({changes.Path});
             historyChanges = repmat(struct("Path", "", "HadOldValue", false, ...
                 "OldValue", [], "NewValue", [], "TargetSettingId", 0, "OldEntry", []), 1, numel(changes));
@@ -4208,6 +4211,39 @@ classdef DocumentModel < handle
             code = state.Resolution.ReasonCode;
             if state.Resolution.IsKnown
                 value = state.Resolution.EffectiveValue; known = true;
+            end
+        end
+
+        function changes = onOffInSourceStyle(obj, component, changes, registry)
+            % onOffInSourceStyle Write requested on/off states in the form of the value they replace.
+            %   An owned value such as Enable = false or box(ax, 1) keeps its logical,
+            %   numeric, or text form. A new setting, or one superseding a value that a
+            %   call implies, is written as "on" or "off".
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                component (1, 1) yamada.model.ComponentRecord
+                changes (1, :) struct
+                registry yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                changes (1, :) struct
+            end
+
+            if isempty(registry), return, end
+            parent = obj.getComponent(component.ParentId);
+            parentFactory = "";
+            if ~isempty(parent), parentFactory = parent.Factory; end
+            definitions = registry.getEffectiveProperties(component.Factory, parentFactory, component.CreationArguments);
+            onOffPaths = string({definitions([definitions.Editor] == "onOff").Path});
+            for index = 1:numel(changes)
+                [~, known] = yamada.model.OnOffState.read(changes(index).Value);
+                if ~known || ~any(onOffPaths == string(changes(index).Path)), continue, end
+                entry = component.getProperty(string(changes(index).Path));
+                original = "";
+                if ~isempty(entry) && ~yamada.source.AxesSettingPlacement.isImplied(entry)
+                    original = entry.LiteralValue;
+                end
+                changes(index).Value = yamada.model.OnOffState.like(changes(index).Value, original);
             end
         end
 

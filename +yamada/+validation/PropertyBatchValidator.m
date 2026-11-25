@@ -54,7 +54,7 @@ classdef PropertyBatchValidator
             schema = definition.ValueSchema;
             if isempty(value) && isfield(schema, "allowsEmpty") && schema.allowsEmpty
                 if definition.Application.EffectPolicy == "numericValue" && ...
-                        (~transaction.hasValue("AllowEmpty") || ~yamada.validation.PropertyBatchValidator.isOn(transaction.value("AllowEmpty")))
+                        (~transaction.hasValue("AllowEmpty") || ~yamada.model.OnOffState.isOn(transaction.value("AllowEmpty")))
                     message = "An empty Value requires AllowEmpty on.";
                 end
                 return
@@ -274,7 +274,7 @@ classdef PropertyBatchValidator
 
             message = "";
             if transaction.hasValue("Editable") && ...
-                    yamada.validation.PropertyBatchValidator.isOn(transaction.value("Editable")) && ...
+                    yamada.model.OnOffState.isOn(transaction.value("Editable")) && ...
                     ((ischar(value) && (isrow(value) || isempty(value))) || (isstring(value) && isscalar(value)))
                 return
             end
@@ -306,7 +306,7 @@ classdef PropertyBatchValidator
             if isfield(schema, "multiselectProperty")
                 property = string(schema.multiselectProperty);
                 multiselect = transaction.hasValue(property) && ...
-                    yamada.validation.PropertyBatchValidator.isOn(transaction.value(property));
+                    yamada.model.OnOffState.isOn(transaction.value(property));
             end
             if ~multiselect && numel(selected) ~= 1
                 message = "Choose one item.";
@@ -340,13 +340,6 @@ classdef PropertyBatchValidator
             else
                 values = cell(1, 0);
             end
-        end
-
-        function result = isOn(value)
-            % isOn Interpret logical and documented on/off values for multi-selection state.
-            result = (islogical(value) && isscalar(value) && value) || ...
-                (((ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))) && ...
-                lower(string(value)) == "on");
         end
 
         function message = validateWithinDateLimits(value, limits)

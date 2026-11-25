@@ -669,6 +669,40 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             testCase.verifyEqual(control.getProperty("XTick").LiteralValue, [0 1]);
             testCase.verifyEqual(document.HistoryIndex, 0);
         end
+
+        % Guarantee: A logical, numeric, or OnOffSwitchState on/off state of axis, grid, or box is read where the loaded release's catalog lists its form, an edit keeps its form and replaces only its token, and other states stay preserved source.
+        % Failure mode: axis(ax, false) or box(ax, matlab.lang.OnOffSwitchState.on) is kept as unrecognized source, a nonzero number reads as off, an edit rewrites the call or another token, or a state that the release rejects, such as numeric grid states through R2023b or NaN, is modeled.
+        function logicalAndNumericOnOffStatesFollowTheRelease(testCase)
+            % logicalAndNumericOnOffStatesFollowTheRelease Read, edit, and preserve on/off states per release.
+            [fixtureDocument, registry] = testCase.fixture([ ...
+                "app.Control = uiaxes(app.UIFigure);", "axis(app.Control, false);", ...
+                "grid(app.Control, 2);", "box(app.Control, matlab.lang.OnOffSwitchState.on);", "box(app.Control, NaN);"]);
+            catalogs = fileparts(registry.CatalogRoot);
+            expected = struct("Release", {"R2023a", "R2023b", "R2026b"}, ...
+                "Visible", {strings(1,0), strings(1,0), "off"}, "XGrid", {strings(1,0), strings(1,0), "on"});
+            for item = expected
+                projected = yamada.catalog.ComponentCatalogLoader.load(fullfile(catalogs, item.Release));
+                document = yamada.source.AppSourceParser.parseText(fixtureDocument.OriginalText, projected);
+                control = document.getComponentByName("Control");
+                % Values are kept as written and read as native on/off states.
+                values = @(path) reshape(string(arrayfun(@(setting) yamada.model.OnOffState.read(setting.LiteralValue), ...
+                    control.getSettings(path), "UniformOutput", false)), 1, []);
+                testCase.verifyEqual(values("Visible"), item.Visible, item.Release);
+                testCase.verifyEqual(values("XGrid"), item.XGrid, item.Release);
+                % box(ax, NaN) fails natively, so only the enumeration state is modeled.
+                testCase.verifyEqual(values("Box"), "on", item.Release);
+                testCase.verifyTrue(any(contains(string({document.Diagnostics.Message}), "'box'")), item.Release);
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(projected).generate(document), fixtureDocument.OriginalText);
+                if item.Release ~= "R2026b", continue, end
+
+                % An edit keeps the logical form of the owned state token.
+                document.setPropertyBatch(control.Id, struct("Path", "Visible", "Value", "on"), projected);
+                edited = yamada.source.RoundTripGenerator(projected).generate(document);
+                testCase.verifyEqual(edited, replace(fixtureDocument.OriginalText, "axis(app.Control, false);", "axis(app.Control, true);"));
+                document.undo();
+                testCase.verifyEqual(yamada.source.RoundTripGenerator(projected).generate(document), fixtureDocument.OriginalText);
+            end
+        end
     end
 
     methods (Static, Access = private)
