@@ -164,7 +164,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             end
             testCase.verifyTrue(colormapInViewport(host,picker));
             testCase.verifyTrue(colormapInViewport(host,strip));
-            % The gesture fails with OutOfViewport unless the revealed picker is rendered in view.
+            % Only R2024a and R2024b reject this gesture with OutOfViewport when the picker is out of view;
+            % R2026a and later scroll it into view first, and other releases accept it unchecked.
             testCase.choose(picker,"Turbo");
             testCase.assertNotEmpty(axesRecord.getSettings("Colormap"),string(picker.Parent.Tooltip));
             ax = findall(figure,"-isa","matlab.ui.control.UIAxes");
