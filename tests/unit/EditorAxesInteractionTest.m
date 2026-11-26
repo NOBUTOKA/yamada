@@ -4,6 +4,7 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
     methods (Test, TestTags = {'inspector', 'editorShell', 'ui'})
         % Guarantee: axes settings edited in the live Inspector commit correct source and refresh Preview without executing app code.
         % Failure mode: an Inspector route edits only one of a pair, or Preview stays stale after an axes edit.
+        % Failure mode: the ColorBar Colormap Edit... link leaves the axes Colormap row outside the Inspector viewport; from R2024a this covers the rendered scroll, on R2023a and R2023b only the requested location.
         function editsGeographicLimitsTogetherThroughInspector(testCase)
             % editsGeographicLimitsTogetherThroughInspector Edit one inline field and commit the requested pair.
             path = string(tempname()) + ".m";
