@@ -4,6 +4,7 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
     methods (Test, TestTags = {'inspector', 'editorShell', 'ui'})
         % Guarantee: axes settings edited in the live Inspector commit correct source and refresh Preview without executing app code.
         % Failure mode: an Inspector route edits only one of a pair, or Preview stays stale after an axes edit.
+        % Failure mode: the ColorBar Colormap Edit... link leaves the axes Colormap row outside the Inspector viewport; from R2024a this covers the rendered scroll, on R2023a and R2023b only the requested location.
         function editsGeographicLimitsTogetherThroughInspector(testCase)
             % editsGeographicLimitsTogetherThroughInspector Edit one inline field and commit the requested pair.
             path = string(tempname()) + ".m";
@@ -148,6 +149,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             tree.SelectionChangedFcn(tree,struct("SelectedNodes",barNode));
             link = findall(figure,"Tag","yamada-edit-axes-colormap");
             testCase.verifyEqual(string(link.Text),"Edit...");
+            % Scroll only after the rebuilt ColorBar Inspector has its final content height.
+            yamada.ui.waitForPreviewLayout(figure, link);
             scroll(host,"bottom");
             drawnow;
             testCase.press(link);
@@ -162,6 +165,8 @@ classdef EditorAxesInteractionTest < matlab.uitest.TestCase
             end
             testCase.verifyTrue(colormapInViewport(host,picker));
             testCase.verifyTrue(colormapInViewport(host,strip));
+            % Only R2024a and R2024b reject this gesture with OutOfViewport when the picker is out of view;
+            % R2026a and later scroll it into view first, and other releases accept it unchecked.
             testCase.choose(picker,"Turbo");
             testCase.assertNotEmpty(axesRecord.getSettings("Colormap"),string(picker.Parent.Tooltip));
             ax = findall(figure,"-isa","matlab.ui.control.UIAxes");

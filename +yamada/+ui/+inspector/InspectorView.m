@@ -11,6 +11,8 @@ classdef InspectorView < handle
         ContentPanel matlab.ui.container.Panel
         Grid matlab.ui.container.GridLayout
         ContentHeight double = 1
+        Anchor matlab.ui.control.Label
+        LastRevealLocation double = []
     end
 
     methods
@@ -29,6 +31,9 @@ classdef InspectorView < handle
             obj.Panel.AutoResizeChildren = "off";
             obj.Panel.SizeChangedFcn = @(~, ~) obj.layoutContent();
             obj.ContentPanel = uipanel(obj.Panel, "BorderType", "none");
+            % An empty direct child of the scroll host gives reveal a renderable scroll target.
+            obj.Anchor = uilabel(obj.Panel, "Text", "", "Position", [1 1 1 1], ...
+                "Tag", "yamada-inspector-reveal-anchor");
             obj.Grid = uigridlayout(obj.ContentPanel, [1 1]);
             obj.Grid.Padding = [0 0 0 0];
             obj.Grid.RowSpacing = 0;
@@ -58,13 +63,29 @@ classdef InspectorView < handle
                 row (1, 1) matlab.ui.container.GridLayout
             end
 
-            % Scroll a nested row through the outer panel without scrolling its inner grids.
+            % Measure the row in scroll-content coordinates, padded to center it in the viewport.
             bounds = getpixelposition(row, true);
             content = getpixelposition(obj.ContentPanel, true);
             viewport = getpixelposition(obj.Panel);
-            bottom = bounds(2) - content(2) + obj.ContentPanel.Position(2);
-            bottom = bottom - max(0, (viewport(4) - bounds(4))/2);
-            scroll(obj.Panel, 0, max(0, round(bottom)));
+            padding = max(0, (viewport(4) - bounds(4))/2);
+            bottom = bounds(2) - content(2) + obj.ContentPanel.Position(2) - padding;
+            bottom = max(1, round(bottom));
+            top = min(obj.ContentPanel.Position(2) + obj.ContentPanel.Position(4) - 1, ...
+                round(bounds(2) - content(2) + obj.ContentPanel.Position(2) + bounds(4) + padding));
+
+            % Scroll to a direct-child anchor: numeric scroll never reaches the view on
+            % R2024a and R2024b, and component targets must be direct children of the host.
+            obj.Anchor.Position = [1 bottom 1 max(1, top - bottom)];
+            scroll(obj.Panel, obj.Anchor);
+
+            % R2023a and R2023b drop a location equal to the last one sent to the view,
+            % even after the user scrolled away, so a repeated reveal is nudged by 1 px.
+            location = obj.Panel.ScrollableViewportLocation;
+            if isMATLABReleaseOlderThan("R2024a") && isequal(location, obj.LastRevealLocation)
+                location(2) = location(2) + 1 - 2*(location(2) > 1);
+                scroll(obj.Panel, location(1), location(2));
+            end
+            obj.LastRevealLocation = location;
         end
 
         function grid = contentGrid(obj)
@@ -110,6 +131,12 @@ classdef InspectorView < handle
             contentWidth = max(position(3) - scrollbarWidth, 1);
             contentHeight = max(obj.ContentHeight, position(4) + 1);
             obj.ContentPanel.Position = [1 1 contentWidth contentHeight];
+
+            % Keep a stale reveal target from extending the scroll extent after content shrinks.
+            if ~isempty(obj.Anchor) && isvalid(obj.Anchor) && ...
+                    sum(obj.Anchor.Position([2 4])) > contentHeight + 1
+                obj.Anchor.Position = [1 1 1 1];
+            end
         end
     end
 end
