@@ -12,6 +12,7 @@ classdef InspectorView < handle
         Grid matlab.ui.container.GridLayout
         ContentHeight double = 1
         Anchor matlab.ui.control.Label
+        LastRevealLocation double = []
     end
 
     methods
@@ -76,6 +77,15 @@ classdef InspectorView < handle
             % R2024a and R2024b, and component targets must be direct children of the host.
             obj.Anchor.Position = [1 bottom 1 max(1, top - bottom)];
             scroll(obj.Panel, obj.Anchor);
+
+            % R2023a and R2023b drop a location equal to the last one sent to the view,
+            % even after the user scrolled away, so a repeated reveal is nudged by 1 px.
+            location = obj.Panel.ScrollableViewportLocation;
+            if isMATLABReleaseOlderThan("R2024a") && isequal(location, obj.LastRevealLocation)
+                location(2) = location(2) + 1 - 2*(location(2) > 1);
+                scroll(obj.Panel, location(1), location(2));
+            end
+            obj.LastRevealLocation = location;
         end
 
         function grid = contentGrid(obj)
