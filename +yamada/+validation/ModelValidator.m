@@ -268,7 +268,7 @@ classdef ModelValidator
                 if state.IsKnown && definitions(index).IsEditable && definitions(index).AuditDisposition == "editable"
                     value = state.EffectiveValue;
                     if requested, value = entry.LiteralValue; end
-                    transaction.stage(entry.Path, value);
+                    transaction = transaction.stage(entry.Path, value);
                 end
                 diagnostic = yamada.validation.ModelValidator.validateGeometry(entry, component.Id, component.Factory, definitions(index));
                 assert(isempty(diagnostic), "yamada:SourceLiteralTransaction:InvalidValue", ...
@@ -408,7 +408,7 @@ classdef ModelValidator
                         find(supportedPaths == entry.Path, 1));
                     state = resolved(find(supportedPaths == entry.Path, 1));
                     if definition.IsEditable && definition.AuditDisposition == "editable" && state.IsKnown
-                        transaction.stage(entry.Path, state.EffectiveValue);
+                        transaction = transaction.stage(entry.Path, state.EffectiveValue);
                         message = yamada.validation.PropertyBatchValidator.validate( ...
                             effectiveProperties, transaction);
                         if strlength(message) > 0

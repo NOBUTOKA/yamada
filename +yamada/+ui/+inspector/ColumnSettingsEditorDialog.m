@@ -179,14 +179,14 @@ classdef ColumnSettingsEditorDialog < yamada.ui.inspector.PropertyEditDialog
                 sortableValue = yamada.ui.inspector.ColumnSettingsEditorDialog.compactLogical( ...
                     sortableValue, initial.ColumnSortable);
                 format = yamada.ui.inspector.ColumnSettingsEditorDialog.compactFormat(format, initial.ColumnFormat);
-                if ~isequaln(width, initial.ColumnWidth), transaction.stage("ColumnWidth", width); end
-                if ~isequaln(editableValue, initial.ColumnEditable), transaction.stage("ColumnEditable", editableValue); end
-                if ~isequaln(sortableValue, initial.ColumnSortable), transaction.stage("ColumnSortable", sortableValue); end
+                if ~isequaln(width, initial.ColumnWidth), transaction = transaction.stage("ColumnWidth", width); end
+                if ~isequaln(editableValue, initial.ColumnEditable), transaction = transaction.stage("ColumnEditable", editableValue); end
+                if ~isequaln(sortableValue, initial.ColumnSortable), transaction = transaction.stage("ColumnSortable", sortableValue); end
                 rearrangeValue = logical(rearrange.Value);
                 if ~isequaln(rearrangeValue, initial.ColumnRearrangeable)
-                    transaction.stage("ColumnRearrangeable", rearrangeValue);
+                    transaction = transaction.stage("ColumnRearrangeable", rearrangeValue);
                 end
-                if ~isequaln(format, initial.ColumnFormat), transaction.stage("ColumnFormat", format); end
+                if ~isequaln(format, initial.ColumnFormat), transaction = transaction.stage("ColumnFormat", format); end
             end
 
             function showMessage(text)

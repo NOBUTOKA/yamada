@@ -81,7 +81,7 @@ classdef DateListEditorDialog < yamada.ui.inspector.PropertyEditDialog
                 message (1, 1) string
             end
 
-            transaction.stage(obj.Path, obj.Dates);
+            transaction = transaction.stage(obj.Path, obj.Dates);
             message = "";
         end
     end

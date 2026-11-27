@@ -20,8 +20,8 @@ classdef (TestTags = {'fast', 'inspector', 'model'}) PropertyTransactionTest < m
 
             transaction = yamada.model.PropertyTransaction(["Items", "ItemsData"], ...
                 {"First", [1 2]}, [true true]);
-            transaction.stage("Items", "Second");
-            transaction.clear("ItemsData");
+            transaction = transaction.stage("Items", "Second");
+            transaction = transaction.clear("ItemsData");
 
             testCase.verifyEqual(transaction.InitialValues{1}, "First");
             testCase.verifyEqual(transaction.value("Items"), "Second");
@@ -56,13 +56,13 @@ classdef (TestTags = {'fast', 'inspector', 'model'}) PropertyTransactionTest < m
                 "kind", "sameLengthAs", "property", "Items"))));
             transaction = yamada.model.PropertyTransaction(["Items", "ItemsData"], ...
                 {{"One", "Two"}, [1 2]}, [true true]);
-            transaction.stage("Items", {"One", "Two", "Three"});
-            transaction.stage("ItemsData", [1 2 3]);
+            transaction = transaction.stage("Items", {"One", "Two", "Three"});
+            transaction = transaction.stage("ItemsData", [1 2 3]);
 
             message = yamada.validation.PropertyBatchValidator.validate( ...
                 [itemDefinition dataDefinition], transaction);
             testCase.verifyEqual(message, "");
-            transaction.stage("ItemsData", [1 2]);
+            transaction = transaction.stage("ItemsData", [1 2]);
             message = yamada.validation.PropertyBatchValidator.validate( ...
                 [itemDefinition dataDefinition], transaction);
             testCase.verifyEqual(message, ...
@@ -71,7 +71,7 @@ classdef (TestTags = {'fast', 'inspector', 'model'}) PropertyTransactionTest < m
                 struct("editor", "structuredData", "auditDisposition", "editable", ...
                 "valueSchema", struct("allowsEmpty", true, "constraints", struct( ...
                 "kind", "sameLengthAs", "property", "Items"))));
-            transaction.clear("ItemsData");
+            transaction = transaction.clear("ItemsData");
             message = yamada.validation.PropertyBatchValidator.validate( ...
                 [itemDefinition dataDefinition], transaction);
             testCase.verifyEqual(message, "");
@@ -85,7 +85,7 @@ classdef (TestTags = {'fast', 'inspector', 'model'}) PropertyTransactionTest < m
                 "valueSchema", struct("shape", "fixedLengthVector", "fixedLength", 2, ...
                 "allowsEmpty", false, "constraints", [])));
             transaction = yamada.model.PropertyTransaction("Items", {{"Off", "On"}}, true);
-            transaction.stage("Items", ["Low", "Medium", "High"]);
+            transaction = transaction.stage("Items", ["Low", "Medium", "High"]);
 
             message = yamada.validation.PropertyBatchValidator.validate(definition, transaction);
             testCase.verifyEqual(message, "Enter a vector with the required number of values.");
@@ -107,7 +107,7 @@ classdef (TestTags = {'fast', 'inspector', 'model'}) PropertyTransactionTest < m
             message = yamada.validation.PropertyBatchValidator.validate( ...
                 [valueDefinition itemsDefinition dataDefinition], transaction);
             testCase.verifyEqual(message, "");
-            transaction.stage("Value", 30);
+            transaction = transaction.stage("Value", 30);
             message = yamada.validation.PropertyBatchValidator.validate( ...
                 [valueDefinition itemsDefinition dataDefinition], transaction);
             testCase.verifyEqual(message, "Choose a value represented by Items.");
@@ -211,15 +211,15 @@ classdef (TestTags = {'fast', 'inspector', 'model'}) PropertyTransactionTest < m
             transaction = yamada.model.PropertyTransaction(["Value", "Limits"], ...
                 {datetime(2024, 1, 2), [datetime(2024, 1, 1) datetime(2024, 1, 3)]});
 
-            transaction.stage("Value", datetime(2024, 1, 4));
+            transaction = transaction.stage("Value", datetime(2024, 1, 4));
             message = yamada.validation.PropertyBatchValidator.validate( ...
                 [valueDefinition limitsDefinition], transaction);
             testCase.verifyEqual(message, "The selected date must be within Limits.");
-            transaction.stage("Value", NaT);
+            transaction = transaction.stage("Value", NaT);
             message = yamada.validation.PropertyBatchValidator.validate( ...
                 [valueDefinition limitsDefinition], transaction);
             testCase.verifyEqual(message, "");
-            transaction.stage("Limits", [datetime(2024, 1, 3) datetime(2024, 1, 1)]);
+            transaction = transaction.stage("Limits", [datetime(2024, 1, 3) datetime(2024, 1, 1)]);
             message = yamada.validation.PropertyBatchValidator.validate( ...
                 [valueDefinition limitsDefinition], transaction);
             testCase.verifyEqual(message, "The end date must be later than the start date.");

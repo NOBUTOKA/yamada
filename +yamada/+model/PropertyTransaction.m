@@ -1,13 +1,14 @@
-classdef PropertyTransaction < handle
+classdef PropertyTransaction
     % PropertyTransaction Stage a typed property change-set without model mutation.
-    %   This UI-independent class copies a caller-provided effective property
-    %   snapshot, stages replacement or empty-value operations, and exposes the
-    %   resulting batch for one validated document mutation. It does not read a
-    %   catalog, validate values, or change a DocumentModel.
+    %   This UI-independent value class copies a caller-provided effective
+    %   property snapshot, stages replacement or empty-value operations, and
+    %   exposes the resulting batch for one validated document mutation. Staging
+    %   returns an updated copy, so a transaction held elsewhere never changes.
+    %   It does not read a catalog, validate values, or change a DocumentModel.
     %
     %   Example:
-    %       transaction = yamada.model.PropertyTransaction("Text", "Ready");
-    %       transaction.stage("Text", "Done");
+    %       transaction = yamada.model.PropertyTransaction("Text", {"Ready"});
+    %       transaction = transaction.stage("Text", "Done");
     %       changes = transaction.changes();
 
     properties (SetAccess = private)
@@ -53,12 +54,15 @@ classdef PropertyTransaction < handle
             obj.IsStaged = false(1, numel(paths));
         end
 
-        function stage(obj, path, value)
-            % stage Replace one candidate property value without changing the document.
+        function obj = stage(obj, path, value)
+            % stage Return a copy with one candidate property value replaced.
             arguments (Input)
                 obj (1, 1) yamada.model.PropertyTransaction
                 path (1, 1) string
                 value
+            end
+            arguments (Output)
+                obj (1, 1) yamada.model.PropertyTransaction
             end
 
             index = obj.pathIndex(path);
@@ -67,14 +71,17 @@ classdef PropertyTransaction < handle
             obj.IsStaged(index) = true;
         end
 
-        function clear(obj, path)
-            % clear Stage an empty literal value without removing the property path.
+        function obj = clear(obj, path)
+            % clear Return a copy with an empty literal value staged for the property path.
             arguments (Input)
                 obj (1, 1) yamada.model.PropertyTransaction
                 path (1, 1) string
             end
+            arguments (Output)
+                obj (1, 1) yamada.model.PropertyTransaction
+            end
 
-            obj.stage(path, []);
+            obj = obj.stage(path, []);
         end
 
         function value = value(obj, path)

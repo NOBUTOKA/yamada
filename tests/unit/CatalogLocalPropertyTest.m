@@ -188,7 +188,7 @@ end
 % Check schema and native setter acceptance before generating source fixtures.
 for value = {seed, replacement}
     transaction = yamada.model.PropertyTransaction(property.Path, value);
-    transaction.stage(property.Path, value{1});
+    transaction = transaction.stage(property.Path, value{1});
     if strlength(yamada.validation.PropertyBatchValidator.validate(property, transaction)) > 0, return, end
     try
         encoded = yamada.source.LiteralEncoder.encode(value{1});

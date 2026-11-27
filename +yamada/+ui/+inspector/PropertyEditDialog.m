@@ -129,11 +129,8 @@ classdef (Abstract) PropertyEditDialog < handle
                 obj (1, 1) yamada.ui.inspector.PropertyEditDialog
             end
 
-            % Stage each attempt into a fresh copy so an earlier rejected attempt leaves no stage behind.
-            snapshot = obj.Transaction;
-            candidate = yamada.model.PropertyTransaction(snapshot.Paths, ...
-                snapshot.InitialValues, snapshot.KnownValues);
-            [candidate, message] = obj.read(candidate);
+            % The snapshot is a value, so each attempt stages from the unchanged start.
+            [candidate, message] = obj.read(obj.Transaction);
             if strlength(message) == 0
                 changes = candidate.changes();
                 if isempty(changes)

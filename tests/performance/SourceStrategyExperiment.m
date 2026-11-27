@@ -120,7 +120,7 @@ classdef SourceStrategyExperiment < handle
             assert(~contains(encoded, string(newline)) && ~contains(encoded, string(char(13))));
             states = yamada.model.PropertyStateResolver.resolve(component, definitions);
             transaction = yamada.model.PropertyStateResolver.transaction(states);
-            transaction.stage(path, value);
+            transaction = transaction.stage(path, value);
             message = yamada.validation.PropertyBatchValidator.validate(definitions, transaction);
             assert(strlength(message) == 0, "%s", message);
             % Compute the patch before changing either model or source.
