@@ -60,7 +60,9 @@ classdef DayOfWeekEditorDialog < yamada.ui.inspector.PropertyEditDialog
         end
 
         function [transaction, message] = read(obj, transaction)
-            % read Stage the selected weekday numbers for the single commit.
+            % read Stage the selected weekday numbers unless they equal the normalized start.
+            %   Opening sorts and reshapes the selection, so the commit cannot compare
+            %   it with the effective value as written; an unchanged draft stages nothing.
             arguments (Input)
                 obj (1, 1) yamada.ui.inspector.DayOfWeekEditorDialog
                 transaction (1, 1) yamada.model.PropertyTransaction
@@ -70,8 +72,12 @@ classdef DayOfWeekEditorDialog < yamada.ui.inspector.PropertyEditDialog
                 message (1, 1) string
             end
 
-            transaction = transaction.stage(obj.Path, find([obj.Buttons.Value]));
             message = "";
+            selected = find([obj.Buttons.Value]);
+            if isequal(selected, obj.InitialDays)
+                return
+            end
+            transaction = transaction.stage(obj.Path, selected);
         end
     end
 end

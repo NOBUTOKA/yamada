@@ -111,6 +111,23 @@ classdef PropertyTransaction
             result = ~isempty(index) && obj.KnownValues(index);
         end
 
+        function result = matchesInitial(obj, path, value)
+            % matchesInitial Report whether value equals the known starting value of path.
+            %   An unknown path or an unknown starting value never matches.
+            arguments (Input)
+                obj (1, 1) yamada.model.PropertyTransaction
+                path (1, 1) string
+                value
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            index = find(obj.Paths == path, 1);
+            result = ~isempty(index) && obj.KnownValues(index) && ...
+                isequaln(obj.InitialValues{index}, value);
+        end
+
         function changes = changes(obj)
             % changes Return staged values as one typed property-batch structure.
             arguments (Input)

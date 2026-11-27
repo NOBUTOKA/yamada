@@ -4,7 +4,8 @@ classdef (Abstract) PropertyEditDialog < handle
     %   draft into a PropertyTransaction when asked. The commit function is a
     %   private property of this class, so a subclass cannot change the document:
     %   Apply is the only commit path, and Cancel or closing the window never
-    %   commits. An unchanged draft closes without committing. A rejected read
+    %   commits. A draft that stages nothing closes without committing; the
+    %   Inspector commit drops staged values equal to the effective value. A rejected read
     %   or commit keeps the dialog and its draft open; a subclass may override
     %   showRejection to present the message inside the dialog.
     %
@@ -134,7 +135,7 @@ classdef (Abstract) PropertyEditDialog < handle
             if strlength(message) == 0
                 changes = candidate.changes();
                 if isempty(changes)
-                    % An unchanged draft closes without a document edit.
+                    % A draft that stages nothing closes without a document edit.
                     obj.close();
                     return
                 end

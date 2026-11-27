@@ -173,6 +173,9 @@ classdef DefaultValueProvider < handle
                         value = readPath(target, results.Paths(index));
                         if isa(value, "matlab.lang.OnOffSwitchState")
                             value = string(value);
+                        elseif isa(value, "matlab.graphics.primitive.Text")
+                            % A label property holds a Text object; the Inspector edits its text.
+                            value = value.String;
                         end
                         results.Found(index) = yamada.ui.inspector.DefaultValueProvider.isDisplayValue(value);
                         if results.Found(index), results.Values{index} = value; end
@@ -204,6 +207,7 @@ switch parentFactory
     case "uigridlayout", parent = uigridlayout(figure, [2 2]);
     case "uitab", parent = uitab(uitabgroup(figure));
     case "uitabgroup", parent = uitabgroup(figure);
+    case "uitree", parent = uitree(figure);
     otherwise, error("yamada:DefaultValueProvider:UnsupportedParent", "Unsupported fixture parent.");
 end
 end

@@ -301,15 +301,9 @@ classdef TableDataEditorDialog < yamada.ui.inspector.PropertyEditDialog
                     columnLabels, initialColumnLabels, initialColumnName, columnNumbered);
                 rowName = yamada.ui.inspector.TableDataEditorDialog.nameOutput( ...
                     rowLabels, initialRowLabels, initialRowName, rowNumbered);
-                if ~isequaln(data, initialData)
-                    transaction = transaction.stage("Data", data);
-                end
-                if ~isequaln(columnName, initialColumnName)
-                    transaction = transaction.stage("ColumnName", columnName);
-                end
-                if ~isequaln(rowName, initialRowName)
-                    transaction = transaction.stage("RowName", rowName);
-                end
+                transaction = transaction.stage("Data", data);
+                transaction = transaction.stage("ColumnName", columnName);
+                transaction = transaction.stage("RowName", rowName);
                 previousColumnCount = size(initialData, 2);
                 currentColumnCount = size(data, 2);
                 if previousColumnCount ~= currentColumnCount || ...
@@ -321,9 +315,7 @@ classdef TableDataEditorDialog < yamada.ui.inspector.PropertyEditDialog
                         path = indexedPaths(settingIndex);
                         value = yamada.ui.inspector.TableDataEditorDialog.reconcileIndexedValue( ...
                             path, indexedInitial{settingIndex}, columnSourceIndices);
-                        if ~isequaln(value, indexedInitial{settingIndex})
-                            transaction = transaction.stage(path, value);
-                        end
+                        transaction = transaction.stage(path, value);
                     end
                 end
             end

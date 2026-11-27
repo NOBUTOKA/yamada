@@ -156,7 +156,7 @@ classdef ColumnSettingsEditorDialog < yamada.ui.inspector.PropertyEditDialog
             end
 
             function [transaction, failure] = readDraft(transaction)
-                % readDraft Parse every column field and stage only changed values.
+                % readDraft Parse every column field and stage the complete settings.
                 failure = "";
                 removeStyle(table);
                 [width, row, messageText] = yamada.ui.inspector.ColumnSettingsEditorDialog.parseWidths(table.Data(:, 4));
@@ -179,14 +179,16 @@ classdef ColumnSettingsEditorDialog < yamada.ui.inspector.PropertyEditDialog
                 sortableValue = yamada.ui.inspector.ColumnSettingsEditorDialog.compactLogical( ...
                     sortableValue, initial.ColumnSortable);
                 format = yamada.ui.inspector.ColumnSettingsEditorDialog.compactFormat(format, initial.ColumnFormat);
-                if ~isequaln(width, initial.ColumnWidth), transaction = transaction.stage("ColumnWidth", width); end
-                if ~isequaln(editableValue, initial.ColumnEditable), transaction = transaction.stage("ColumnEditable", editableValue); end
-                if ~isequaln(sortableValue, initial.ColumnSortable), transaction = transaction.stage("ColumnSortable", sortableValue); end
-                rearrangeValue = logical(rearrange.Value);
-                if ~isequaln(rearrangeValue, initial.ColumnRearrangeable)
-                    transaction = transaction.stage("ColumnRearrangeable", rearrangeValue);
+                transaction = transaction.stage("ColumnWidth", width);
+                transaction = transaction.stage("ColumnEditable", editableValue);
+                transaction = transaction.stage("ColumnSortable", sortableValue);
+                % Keep the starting value when its state is unchanged; otherwise write the new state in its form.
+                rearrangeValue = initial.ColumnRearrangeable;
+                if yamada.model.OnOffState.isOn(rearrangeValue) ~= rearrange.Value
+                    rearrangeValue = yamada.model.OnOffState.like(logical(rearrange.Value), rearrangeValue);
                 end
-                if ~isequaln(format, initial.ColumnFormat), transaction = transaction.stage("ColumnFormat", format); end
+                transaction = transaction.stage("ColumnRearrangeable", rearrangeValue);
+                transaction = transaction.stage("ColumnFormat", format);
             end
 
             function showMessage(text)

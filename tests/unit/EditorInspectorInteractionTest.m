@@ -247,6 +247,48 @@ classdef EditorInspectorInteractionTest < matlab.unittest.TestCase
             testCase.verifyEqual(string(entry.LiteralValue), "bold");
             clear cleanup
         end
+
+        % Guarantee: an Inspector commit equal to the effective value changes neither the source nor the history.
+        % Failure mode: re-entering a default, or a picker that returns the current value, writes an explicit setting and an Undo step.
+        function effectiveValueCommitIsNotAnEdit(testCase)
+            % effectiveValueCommitIsNotAnEdit Commit the displayed default, then a real change.
+
+            % Insert a button through the palette; its FontSize has no source setting.
+            app = yamada();
+            cleanup = onCleanup(@() deleteIfValid(app));
+            drawnow;
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
+            tables = findall(figure, "Type", "uitable");
+            palette = tables(arrayfun(@(table) any(string(table.ColumnName) == "Component") && ...
+                any(string(table.ColumnName) == "Category"), tables));
+            row = find(string(palette.Data(:, 1)) == "Button", 1);
+            palette.DoubleClickedFcn(palette, struct("InteractionInformation", struct("Row", row)));
+            drawnow;
+            document = app.Document;
+            component = document.getComponent(app.SelectedComponentId);
+            testCase.assertEmpty(component.getSettings("FontSize"));
+            historyIndex = document.HistoryIndex;
+            source = document.CurrentText;
+
+            % Committing the displayed default is not an edit.
+            labels = findall(figure, "Type", "uilabel", "Tag", "yamada-inspector-property-label");
+            label = labels(string({labels.Text}) == "FontSize");
+            editor = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
+            testCase.assertEqual(numel(editor), 1);
+            editor.ValueChangedFcn(editor, struct());
+            drawnow;
+            testCase.verifyEqual(document.HistoryIndex, historyIndex);
+            testCase.verifyEmpty(component.getSettings("FontSize"));
+            testCase.verifyEqual(document.CurrentText, source);
+
+            % A different value is still committed as one edit.
+            editor.Value = editor.Value + 2;
+            editor.ValueChangedFcn(editor, struct());
+            drawnow;
+            testCase.verifyEqual(document.HistoryIndex, historyIndex + 1);
+            testCase.verifyEqual(component.getProperty("FontSize").LiteralValue, editor.Value);
+            clear cleanup
+        end
     end
 
     methods (Test, TestTags = {'inspector', 'ui'})

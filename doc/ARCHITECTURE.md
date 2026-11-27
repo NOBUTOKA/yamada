@@ -556,6 +556,7 @@ Shared boundaries: [Position geometry policies](#position-geometry-policies).
 **Conditions to preserve**
 
 - Editors submit one or more changes through `PropertyTransaction`. The editor reconciles dependent values such as `Items`/`ItemsData`/`Value`, validates the candidate transaction with `PropertyBatchValidator`, and submits it to `DocumentModel.setPropertyBatch` for model acceptance. A batch that changes values produces one history record and updates the affected views; a rejected request does not partially commit.
+- A requested change equal to the property's known effective value, from the Inspector or a dialog, is not an edit: `inspectorValuesCommitted` drops it before validation, so it adds no source setting and no history step even when the source has no assignment. A value with a different representation, such as a cell where the effective value is a character vector, still commits.
 
 **Explanation**
 
@@ -1198,7 +1199,7 @@ The audited ledger is the authoring surface; release catalogs are generated runt
 
 - Define a typed value schema and symbolic editor/validator identifiers. Add the identifiers to the finite behavior allowlists.
 - Commit through `PropertyTransaction` and the shared batch validator; do not mutate a component record directly from a UI callback. Preserve source-backed values and test rejected drafts, atomic history, Preview refresh, and round-trip output.
-- A modal draft editor subclasses [`PropertyEditDialog`](../+yamada/+ui/+inspector/PropertyEditDialog.m) and implements only `buildContent` and `read`, which stages its draft. The base class holds the commit function privately and owns the frame, Apply, Cancel, closing, and keeping the draft after a rejected read or commit, so a subclass cannot change the document. An unchanged draft closes without a commit, and a subclass may present a rejection inside the dialog. The list, data, Items, table, column-settings, date-list, and weekday editors use it. The axes text settings dialog commits each row immediately and the custom colormap dialog commits one colormap value, so neither is a draft editor.
+- A modal draft editor subclasses [`PropertyEditDialog`](../+yamada/+ui/+inspector/PropertyEditDialog.m) and implements only `buildContent` and `read`, which stages its draft. The base class holds the commit function privately and owns the frame, Apply, Cancel, closing, and keeping the draft after a rejected read or commit, so a subclass cannot change the document. A draft that stages nothing closes without a commit; values equal to the effective value are dropped by the Inspector commit. An editor that normalizes its starting value, such as the date-list and weekday editors, compares its draft with the normalized start itself and stages nothing when they are equal. A subclass may present a rejection inside the dialog. The list, data, Items, table, column-settings, date-list, and weekday editors use it. The axes text settings dialog commits each row immediately and the custom colormap dialog commits one colormap value, so neither is a draft editor.
 
 **Explanation**
 

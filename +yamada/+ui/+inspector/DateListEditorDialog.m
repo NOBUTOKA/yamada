@@ -13,6 +13,8 @@ classdef DateListEditorDialog < yamada.ui.inspector.PropertyEditDialog
         Path string = ""
         % Dates - Normalized draft date column.
         Dates datetime = datetime.empty(0, 1)
+        % InitialDates - Normalized starting date column.
+        InitialDates datetime = datetime.empty(0, 1)
         % ListPanel - Scrollable panel that holds the date rows.
         ListPanel matlab.ui.container.Panel = matlab.ui.container.Panel.empty
     end
@@ -38,6 +40,7 @@ classdef DateListEditorDialog < yamada.ui.inspector.PropertyEditDialog
                 yamada.model.PropertyTransaction(path, {dates}));
             obj.Path = path;
             obj.Dates = dates;
+            obj.InitialDates = dates;
         end
     end
 
@@ -71,7 +74,9 @@ classdef DateListEditorDialog < yamada.ui.inspector.PropertyEditDialog
         end
 
         function [transaction, message] = read(obj, transaction)
-            % read Stage the complete date draft for the single commit.
+            % read Stage the date draft unless it still equals the normalized start.
+            %   Opening normalizes the list, so the commit cannot compare it with
+            %   the effective value as written; an unchanged draft stages nothing.
             arguments (Input)
                 obj (1, 1) yamada.ui.inspector.DateListEditorDialog
                 transaction (1, 1) yamada.model.PropertyTransaction
@@ -81,8 +86,11 @@ classdef DateListEditorDialog < yamada.ui.inspector.PropertyEditDialog
                 message (1, 1) string
             end
 
-            transaction = transaction.stage(obj.Path, obj.Dates);
             message = "";
+            if isequaln(obj.Dates, obj.InitialDates)
+                return
+            end
+            transaction = transaction.stage(obj.Path, obj.Dates);
         end
     end
 

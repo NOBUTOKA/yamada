@@ -202,9 +202,12 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) PropertyEditorFactoryTest < 
             applyButton = findall(dialog, "Tag", "yamada-table-data-apply");
             applyButton.ButtonPushedFcn(applyButton, struct());
 
+            % The batch carries every table surface; unchanged headings keep their starting values.
             changes = getappdata(figure, "changes");
-            testCase.verifyEqual(changes.Path, "Data");
-            testCase.verifyEqual(changes.Value, [3 4]);
+            data = changes(string({changes.Path}) == "Data");
+            testCase.verifyEqual(data.Value, [3 4]);
+            columnName = changes(string({changes.Path}) == "ColumnName");
+            testCase.verifyEqual(columnName.Value, {'First', 'Second'});
             clear cleanup
         end
     end
