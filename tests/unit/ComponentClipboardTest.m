@@ -67,7 +67,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
             testCase.verifyNotEqual(first.Name, second.Name);
             testCase.verifyEqual(second.getProperty("Position").LiteralValue(1:2), ...
                 first.getProperty("Position").LiteralValue(1:2) + [10 10]);
-            testCase.verifyTrue(clipboard.hasContents(document));
+            testCase.verifyTrue(clipboard.hasContents());
         end
 
         function longNamesRemainValidAcrossRepeatedPastes(testCase)
@@ -101,7 +101,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
             testCase.verifyEmpty(document.getComponent(pasted.Id));
             document.undo();
             testCase.verifyEqual(document.Components, before);
-            testCase.verifyTrue(clipboard.hasContents(document));
+            testCase.verifyTrue(clipboard.hasContents());
         end
 
         function cutReusesNamesAndNumbersRepeatedPastes(testCase)
@@ -180,18 +180,55 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
             testCase.verifyEqual(document.HistoryIndex, history + 1);
         end
 
-        function differentDocumentAndClearInvalidateClipboard(testCase)
-            % differentDocumentAndClearInvalidateClipboard Restrict clipboard to its owning document.
-            % Guarantee: clipboard contents apply only to their owning document.
-            % Failure mode: Paste into another document uses ids and references from the first one.
-            [document, registry, left] = ComponentClipboardTest.fixture();
-            other = yamada.model.NewAppFactory.createEmpty("OtherApp", registry);
+        % Guarantee: a subtree copied or cut from one document pastes into another, keeping external references and callback bindings as written and warning about the ones the destination does not define.
+        % Failure mode: Paste into another document is refused, resolves an external reference through an identity of the first document, drops a binding, or blocks editing with an error for a missing target.
+        function pasteIntoAnotherDocumentKeepsExternalReferences(testCase)
+            % pasteIntoAnotherDocumentKeepsExternalReferences Paste a source-backed subtree across documents.
+            registry = yamada.model.ComponentRegistry.createDefault();
+            source = strjoin(["classdef SourceApp < handle", "properties", ...
+                "UIFigure matlab.ui.Figure", "Menu matlab.ui.container.ContextMenu", ...
+                "Panel matlab.ui.container.Panel", "Button matlab.ui.control.Button", "end", ...
+                "methods", "function app = SourceApp", "createComponents(app);", "end", "end", ...
+                "methods (Access = private)", "function createComponents(app)", ...
+                "app.UIFigure = uifigure(Visible='off');", "app.Menu = uicontextmenu(app.UIFigure);", ...
+                "app.Panel = uipanel(app.UIFigure);", "app.Button = uibutton(app.Panel);", ...
+                "app.Button.ButtonPushedFcn = @app.ButtonPushed;", "app.Button.ContextMenu = app.Menu;", "end", ...
+                "function ButtonPushed(app, event)", "end", "end", "end"], sprintf("\r\n"));
+            document = yamada.source.AppSourceParser.parseText(source, registry);
+            empty = yamada.model.NewAppFactory.createEmpty("OtherApp", registry);
+            for action = ["copy", "cut"]
+                other = yamada.source.AppSourceParser.parseText(yamada.source.NewAppGenerator(registry).generate(empty), registry);
+                clipboard = yamada.model.ComponentClipboard();
+                clipboard.(action)(document, document.getComponentByName("Panel").Id, registry);
+                testCase.verifyTrue(clipboard.availability("Paste", other, other.RootComponentId, registry).Enabled);
+                pasted = clipboard.paste(other, other.RootComponentId, registry);
+                if action == "cut", testCase.verifyEqual(pasted.Name, "Panel"); end
+                button = other.getComponent(pasted.Children(1));
+                testCase.verifyEqual(button.getProperty("ContextMenu").SourceExpression, "app.Menu");
+                testCase.verifyEqual(button.getProperty("ButtonPushedFcn").SourceExpression, "@app.ButtonPushed");
+                diagnostics = yamada.validation.ModelValidator.validate(other, registry);
+                testCase.verifyFalse(yamada.validation.ModelValidator.hasErrors(diagnostics));
+                testCase.verifyEqual(sort(string({diagnostics(string({diagnostics.ComponentId}) == button.Id).Code})), ...
+                    ["missing-callback-method" "missing-reference-target"]);
+                reopened = yamada.source.AppSourceParser.parseText(other.GeneratedText, registry);
+                testCase.verifyNotEmpty(reopened.getComponentByName(button.Name));
+            end
+            % A renamed destination button keeps the parsed identity of the copied menu, but is no context menu.
+            other = yamada.source.AppSourceParser.parseText(replace(source, "classdef SourceApp", "classdef OtherApp"), registry);
+            other.removeSubtree(other.getComponentByName("Panel").Id, registry);
+            other.removeSubtree(other.getComponentByName("Menu").Id, registry);
+            button = other.insertComponent(registry, "uibutton", other.RootComponentId);
+            other.renameComponent(button.Id, "Menu", registry);
+            reopened = yamada.source.AppSourceParser.parseText(other.GeneratedText, registry);
+            reopened.renameComponent(reopened.getComponentByName("Menu").Id, "OkButton", registry);
             clipboard = yamada.model.ComponentClipboard();
-            clipboard.copy(document, left.Id, registry);
-            testCase.verifyFalse(clipboard.hasContents(other));
-            testCase.verifyError(@() clipboard.paste(other, other.RootComponentId, registry), "yamada:ComponentClipboard:Empty");
-            clipboard.clear();
-            testCase.verifyFalse(clipboard.hasContents(document));
+            original = yamada.source.AppSourceParser.parseText(source, registry);
+            clipboard.copy(original, original.getComponentByName("Panel").Id, registry);
+            pasted = clipboard.paste(reopened, reopened.RootComponentId, registry);
+            testCase.verifyEqual(reopened.getComponent(pasted.Children(1)).getProperty("ContextMenu").SourceExpression, "app.Menu");
+            % The source document itself defines both targets, so its own bindings do not warn.
+            diagnostics = yamada.validation.ModelValidator.validate(document, registry);
+            testCase.verifyEmpty(diagnostics(ismember(string({diagnostics.Code}), ["missing-callback-method" "missing-reference-target"])));
         end
 
         function sourceInsertionIncludesGeneratedDescendants(testCase)
@@ -241,7 +278,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
             testCase.verifyError(@() clipboard.paste(document, grid.Id, registry), "yamada:SubtreePlacementPlanner:NoSpace");
             testCase.verifyEqual(document.Components, before);
             testCase.verifyEqual(document.HistoryIndex, history);
-            testCase.verifyTrue(clipboard.hasContents(document));
+            testCase.verifyTrue(clipboard.hasContents());
         end
     end
 

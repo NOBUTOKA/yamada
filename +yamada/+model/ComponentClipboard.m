@@ -1,10 +1,11 @@
 classdef ComponentClipboard < handle
-    % ComponentClipboard Hold one independent subtree snapshot for a single document.
+    % ComponentClipboard Hold one independent subtree snapshot for an editor window.
     %   Copy does not edit history. Cut replaces clipboard contents only after
-    %   successful deletion, and Paste retains contents for repeated use.
+    %   successful deletion, and Paste retains contents for repeated use. The
+    %   snapshot holds values only, so it stays usable after the editor opens
+    %   another document, and Paste can insert it into any document.
 
     properties (Access = private)
-        Document yamada.model.DocumentModel = yamada.model.DocumentModel.empty
         Snapshot yamada.model.SubtreeSnapshot = yamada.model.SubtreeSnapshot.empty
         IsCut logical = false
         PasteCount double = 0
@@ -22,7 +23,6 @@ classdef ComponentClipboard < handle
                 measuredPosition double {mustBeFinite} = []
             end
             snapshot = document.copySubtree(id, registry);
-            obj.Document = document;
             obj.Snapshot = snapshot;
             obj.IsCut = false;
             obj.PasteCount = 0;
@@ -40,7 +40,6 @@ classdef ComponentClipboard < handle
             end
             snapshot = document.copySubtree(id, registry);
             document.removeSubtree(id, registry);
-            obj.Document = document;
             obj.Snapshot = snapshot;
             obj.IsCut = true;
             obj.PasteCount = 0;
@@ -59,8 +58,8 @@ classdef ComponentClipboard < handle
             arguments (Output)
                 component (1, 1) yamada.model.ComponentRecord
             end
-            if ~obj.hasContents(document)
-                error("yamada:ComponentClipboard:Empty", "No subtree is available for this document.");
+            if ~obj.hasContents()
+                error("yamada:ComponentClipboard:Empty", "No subtree is on the clipboard.");
             end
             parentId = obj.destination(document, targetId, registry);
             if isempty(measuredPosition), measuredPosition = obj.MeasuredPosition; end
@@ -88,8 +87,8 @@ classdef ComponentClipboard < handle
                 state.Reason = result.Reason;
                 return
             end
-            if ~obj.hasContents(document)
-                state.Reason = "No subtree is available for this document.";
+            if ~obj.hasContents()
+                state.Reason = "No subtree is on the clipboard.";
                 return
             end
             state.Enabled = ~isempty(document.getComponent(id));
@@ -108,7 +107,7 @@ classdef ComponentClipboard < handle
                 parentId (1, 1) string
             end
             parentId = "";
-            if ~obj.hasContents(document), return, end
+            if ~obj.hasContents(), return, end
             root = obj.Snapshot.Records(1);
             catalog = yamada.model.SubtreeCopyPlanner.sourceCatalog(obj.Snapshot, registry);
             definition = catalog.get(root.Factory, root.CreationArguments);
@@ -128,28 +127,15 @@ classdef ComponentClipboard < handle
             error("yamada:ComponentClipboard:InvalidDestination", "No compatible paste destination exists.");
         end
 
-        function result = hasContents(obj, document)
-            % hasContents Report whether the current document owns this clipboard snapshot.
+        function result = hasContents(obj)
+            % hasContents Report whether the clipboard holds a subtree snapshot.
             arguments (Input)
                 obj (1, 1) yamada.model.ComponentClipboard
-                document (1, 1) yamada.model.DocumentModel
             end
             arguments (Output)
                 result (1, 1) logical
             end
-            result = ~isempty(obj.Document) && obj.Document == document && ~isempty(obj.Snapshot);
-        end
-
-        function clear(obj)
-            % clear Release clipboard ownership after successful document replacement.
-            arguments (Input)
-                obj (1, 1) yamada.model.ComponentClipboard
-            end
-            obj.Document = yamada.model.DocumentModel.empty;
-            obj.Snapshot = yamada.model.SubtreeSnapshot.empty;
-            obj.IsCut = false;
-            obj.PasteCount = 0;
-            obj.MeasuredPosition = [];
+            result = ~isempty(obj.Snapshot);
         end
     end
 end

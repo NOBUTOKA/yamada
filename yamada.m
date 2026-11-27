@@ -493,7 +493,6 @@ classdef yamada < handle
             app.closeCallbackDialog();
             app.clearInspector();
             app.Document = document;
-            app.Clipboard.clear();
             app.SavedSourceText = document.OriginalText;
             app.DismissedExternalSourceText = string.empty;
             if ~isempty(document.Components)

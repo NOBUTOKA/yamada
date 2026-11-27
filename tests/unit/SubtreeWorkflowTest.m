@@ -54,7 +54,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeWorkflowTest < matl
             document.undo();
             document.undo();
             testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(document), original);
-            testCase.verifyTrue(clipboard.hasContents(document));
+            testCase.verifyTrue(clipboard.hasContents());
         end
 
         % Guarantee: generated source creates each parent before initializing its relocated or pasted children.
