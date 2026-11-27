@@ -73,7 +73,7 @@ classdef StringListEditorDialog < yamada.ui.inspector.PropertyEditDialog
                 message = "Enter a string array or row cell array literal.";
                 return
             end
-            transaction.stage(obj.Path, value);
+            transaction = transaction.stage(obj.Path, value);
         end
     end
 

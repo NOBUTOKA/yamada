@@ -439,7 +439,7 @@ classdef DocumentModel < handle
                 states = candidate.getEffectivePropertyStates(registry, spec.ComponentId);
                 definitions = [states.Definition]; resolutions = [states.Resolution];
                 transaction = yamada.model.PropertyStateResolver.transaction(resolutions);
-                for change = spec.Changes, transaction.stage(string(change.Path), change.Value); end
+                for change = spec.Changes, transaction = transaction.stage(string(change.Path), change.Value); end
                 message = yamada.validation.PropertyBatchValidator.validate(definitions, transaction);
                 assert(strlength(message) == 0, "yamada:SourceLiteralTransaction:InvalidValue", "%s", message);
                 obj.assertRequestedStates(states, spec.Changes);

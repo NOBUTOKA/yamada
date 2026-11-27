@@ -75,7 +75,7 @@ classdef StructuredDataEditorDialog < yamada.ui.inspector.PropertyEditDialog
                 message = "Enter a supported MATLAB literal.";
                 return
             end
-            transaction.stage(obj.Path, value);
+            transaction = transaction.stage(obj.Path, value);
         end
 
         function showRejection(obj, message)

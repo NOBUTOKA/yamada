@@ -137,17 +137,17 @@ classdef ItemsDataEditorDialog < yamada.ui.inspector.PropertyEditDialog
             % Stage only the properties the draft changed.
             if obj.Kind == "data"
                 if obj.Cleared || ~isequaln(itemData, obj.State.ItemsData)
-                    transaction.stage(obj.State.Path, itemData);
+                    transaction = transaction.stage(obj.State.Path, itemData);
                 end
                 return
             end
             items = yamada.ui.inspector.ItemsDataEditorDialog.itemOutput( ...
                 string(obj.Table.Data(:, 1)), obj.State.Items);
             if ~isequaln(items, obj.State.Items)
-                transaction.stage("Items", items);
+                transaction = transaction.stage("Items", items);
             end
             if ~isequaln(itemData, obj.State.ItemsData)
-                transaction.stage("ItemsData", itemData);
+                transaction = transaction.stage("ItemsData", itemData);
             end
         end
 

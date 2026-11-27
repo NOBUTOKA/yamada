@@ -3327,7 +3327,7 @@ classdef yamada < handle
             transaction = app.inspectorTransaction(component);
             try
                 for index = 1:numel(changes)
-                    transaction.stage(string(changes(index).Path), changes(index).Value);
+                    transaction = transaction.stage(string(changes(index).Path), changes(index).Value);
                 end
             catch exception
                 message = string(exception.message);
@@ -3343,7 +3343,7 @@ classdef yamada < handle
                 end
             end
             definitions = arrayfun(@(state) state.Definition, app.inspectorStates(component));
-            app.reconcileItemSelectionValues(transaction, definitions);
+            transaction = app.reconcileItemSelectionValues(transaction, definitions);
             message = yamada.validation.PropertyBatchValidator.validate(definitions, transaction);
             if strlength(message) > 0
                 app.setStatus(message);
@@ -3560,15 +3560,18 @@ classdef yamada < handle
             end
         end
 
-        function reconcileItemSelectionValues(app, transaction, definitions)
+        function transaction = reconcileItemSelectionValues(app, transaction, definitions)
             % reconcileItemSelectionValues Preserve selections across Items pair edits.
             %   ItemsData changes the value domain from display labels to paired
-            %   literals. Translate the current selection by its item index in the
-            %   same transaction, preventing an out-of-domain stale Value.
+            %   literals. Translate the current selection by its item index and
+            %   return the updated transaction, preventing an out-of-domain stale Value.
             arguments (Input)
                 app (1, 1) yamada
                 transaction (1, 1) yamada.model.PropertyTransaction
                 definitions yamada.model.PropertyDefinition
+            end
+            arguments (Output)
+                transaction (1, 1) yamada.model.PropertyTransaction
             end
 
             if isempty(app.Registry)
@@ -3611,7 +3614,7 @@ classdef yamada < handle
             end
             translated = itemSelectionOutput(newCandidates(indices));
             if ~isequaln(translated, transaction.value("Value"))
-                transaction.stage("Value", translated);
+                transaction = transaction.stage("Value", translated);
             end
         end
         function refreshInspector(app)

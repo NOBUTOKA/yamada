@@ -93,7 +93,7 @@ classdef SourceLiteralTransaction
                 transaction = yamada.model.PropertyStateResolver.transaction(states);
                 % Validate requested schemas against the proven final cross-property state.
                 for change = changes
-                    transaction.stage(string(change.Path), change.Value);
+                    transaction = transaction.stage(string(change.Path), change.Value);
                 end
                 message = yamada.validation.PropertyBatchValidator.validate(definitions, transaction);
                 assert(strlength(message) == 0, "yamada:SourceLiteralTransaction:InvalidValue", "%s", message);

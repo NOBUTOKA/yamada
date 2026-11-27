@@ -70,7 +70,7 @@ classdef DayOfWeekEditorDialog < yamada.ui.inspector.PropertyEditDialog
                 message (1, 1) string
             end
 
-            transaction.stage(obj.Path, find([obj.Buttons.Value]));
+            transaction = transaction.stage(obj.Path, find([obj.Buttons.Value]));
             message = "";
         end
     end

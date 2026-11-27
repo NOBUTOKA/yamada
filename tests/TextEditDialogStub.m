@@ -62,7 +62,7 @@ classdef TextEditDialogStub < yamada.ui.inspector.PropertyEditDialog
                 message = "Enter text.";
                 return
             end
-            transaction.stage("Text", string(obj.Field.Value));
+            transaction = transaction.stage("Text", string(obj.Field.Value));
         end
     end
 end
