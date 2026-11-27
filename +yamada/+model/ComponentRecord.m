@@ -649,6 +649,20 @@ classdef ComponentRecord < handle
             obj.Children(obj.Children == childId) = [];
         end
     end
+    methods (Static)
+        function id = newId()
+            % newId Create an opaque component identity that no document content determines.
+            %   Every new, inserted, pasted, and parsed component receives one, so an
+            %   identity found in another document never stands for an unrelated
+            %   component. A Java random UUID is independent of the MATLAB random
+            %   number state, which tests and user code may seed.
+            arguments (Output)
+                id (1, 1) string
+            end
+
+            id = "component-" + string(java.util.UUID.randomUUID());
+        end
+    end
 end
 
 %{

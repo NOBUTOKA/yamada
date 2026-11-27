@@ -166,11 +166,10 @@ classdef SubtreeSourceEdits
                     edits(end + 1) = struct("Start", fragment.Parent(1), "End", fragment.Parent(2), "Text", "app." + parent);
                 end
                 % Internal references follow their renamed copies, and an external target that
-                % the destination still holds follows its current name. Parsed identities derive
-                % from member names, so another document can hold the same identity for an
-                % unrelated component; the target must still pass the rule Copy applied.
-                % Otherwise the reference keeps its copied text and its target is the author's
-                % responsibility.
+                % the destination still holds follows its current name. Component identities are
+                % random, so a found identity is the copied target itself; it must still pass the
+                % rule Copy applied. Otherwise the reference keeps its copied text and its target
+                % is the author's responsibility.
                 for reference = fragment.References
                     mapped = find(ids == reference.Target, 1);
                     if isempty(mapped)
