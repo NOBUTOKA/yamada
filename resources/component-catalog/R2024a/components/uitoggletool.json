@@ -918,6 +918,7 @@
   "capabilities": {
     "displayName": "Toggle Tool",
     "category": "FigureTools",
-    "requiresParentComponent": true
+    "requiresParentComponent": true,
+    "figureTool": true
   }
 }

@@ -491,6 +491,7 @@
   ],
   "capabilities": {
     "displayName": "Context Menu",
-    "category": "FigureTools"
+    "category": "FigureTools",
+    "figureTool": true
   }
 }

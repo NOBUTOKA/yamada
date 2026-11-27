@@ -608,6 +608,7 @@
   ],
   "capabilities": {
     "displayName": "Toolbar",
-    "category": "FigureTools"
+    "category": "FigureTools",
+    "figureTool": true
   }
 }

@@ -845,6 +845,7 @@
   "capabilities": {
     "displayName": "Menu",
     "category": "FigureTools",
-    "requiresParentComponent": true
+    "requiresParentComponent": true,
+    "figureTool": true
   }
 }

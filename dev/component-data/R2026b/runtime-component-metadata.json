@@ -156,7 +156,8 @@
       "isRoot": false,
       "capabilities": {
         "displayName": "Context Menu",
-        "category": "FigureTools"
+        "category": "FigureTools",
+        "figureTool": true
       }
     },
     {
@@ -427,7 +428,8 @@
       "capabilities": {
         "displayName": "Menu",
         "category": "FigureTools",
-        "requiresParentComponent": true
+        "requiresParentComponent": true,
+        "figureTool": true
       }
     },
     {
@@ -454,7 +456,8 @@
       "capabilities": {
         "displayName": "Push Tool",
         "category": "FigureTools",
-        "requiresParentComponent": true
+        "requiresParentComponent": true,
+        "figureTool": true
       }
     },
     {
@@ -636,7 +639,8 @@
       "capabilities": {
         "displayName": "Toggle Tool",
         "category": "FigureTools",
-        "requiresParentComponent": true
+        "requiresParentComponent": true,
+        "figureTool": true
       }
     },
     {
@@ -647,7 +651,8 @@
       "isRoot": false,
       "capabilities": {
         "displayName": "Toolbar",
-        "category": "FigureTools"
+        "category": "FigureTools",
+        "figureTool": true
       }
     },
     {
