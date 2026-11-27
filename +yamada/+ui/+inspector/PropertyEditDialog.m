@@ -4,7 +4,9 @@ classdef (Abstract) PropertyEditDialog < handle
     %   draft into a PropertyTransaction when asked. The commit function is a
     %   private property of this class, so a subclass cannot change the document:
     %   Apply is the only commit path, and Cancel or closing the window never
-    %   commits. A rejected read or commit keeps the dialog and its draft open.
+    %   commits. An unchanged draft closes without committing. A rejected read
+    %   or commit keeps the dialog and its draft open; a subclass may override
+    %   showRejection to present the message inside the dialog.
     %
     %   Example:
     %       editor = yamada.ui.inspector.DayOfWeekEditorDialog([1 7], "DisabledDaysOfWeek");
@@ -63,6 +65,7 @@ classdef (Abstract) PropertyEditDialog < handle
             uibutton(actionGrid, "Text", "Apply", "Tag", spec.ApplyTag, ...
                 "ButtonPushedFcn", @(~, ~) editor.apply());
             if visible
+                editor.aboutToShow();
                 dialog.Visible = "on";
             end
         end
@@ -93,6 +96,23 @@ classdef (Abstract) PropertyEditDialog < handle
 
             actions = struct("Text", {}, "Tag", {}, "Callback", {});
         end
+
+        function aboutToShow(~)
+            % aboutToShow Prepare layout work that must start before a visible dialog appears.
+        end
+
+        function showRejection(obj, message)
+            % showRejection Present a rejected read or commit; the draft stays open either way.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.PropertyEditDialog
+                message (1, 1) string
+            end
+
+            % uialert requires a visible figure; a hidden dialog only keeps its draft.
+            if string(obj.Figure.Visible) == "on"
+                uialert(obj.Figure, message, obj.Spec.AlertTitle);
+            end
+        end
     end
 
     methods (Abstract, Access = protected)
@@ -109,15 +129,22 @@ classdef (Abstract) PropertyEditDialog < handle
                 obj (1, 1) yamada.ui.inspector.PropertyEditDialog
             end
 
-            [candidate, message] = obj.read(obj.Transaction);
+            % Stage each attempt into a fresh copy so an earlier rejected attempt leaves no stage behind.
+            snapshot = obj.Transaction;
+            candidate = yamada.model.PropertyTransaction(snapshot.Paths, ...
+                snapshot.InitialValues, snapshot.KnownValues);
+            [candidate, message] = obj.read(candidate);
             if strlength(message) == 0
-                message = obj.CommitFcn(candidate.changes());
+                changes = candidate.changes();
+                if isempty(changes)
+                    % An unchanged draft closes without a document edit.
+                    obj.close();
+                    return
+                end
+                message = obj.CommitFcn(changes);
             end
             if strlength(message) > 0
-                % uialert requires a visible figure; a hidden dialog only keeps its draft.
-                if string(obj.Figure.Visible) == "on"
-                    uialert(obj.Figure, message, obj.Spec.AlertTitle);
-                end
+                obj.showRejection(message);
                 return
             end
             obj.close();
