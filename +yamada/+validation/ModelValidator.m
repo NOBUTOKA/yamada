@@ -409,10 +409,10 @@ classdef ModelValidator
                     end
                 end
             end
-            diagnostics = [diagnostics yamada.validation.ModelValidator.referenceWarnings(component, document)];
+            diagnostics = [diagnostics yamada.validation.ModelValidator.referenceWarnings(component, document, registry, parentFactory)];
         end
 
-        function diagnostics = referenceWarnings(component, document)
+        function diagnostics = referenceWarnings(component, document, registry, parentFactory)
             % referenceWarnings Warn about copied references whose targets the class does not define.
             %   A pasted ContextMenu reference and a callback binding are copied as
             %   written, and keeping their targets is the source author's
@@ -421,6 +421,8 @@ classdef ModelValidator
             arguments (Input)
                 component (1, 1) yamada.model.ComponentRecord
                 document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                parentFactory (1, 1) string
             end
             arguments (Output)
                 diagnostics yamada.model.Diagnostic
@@ -428,6 +430,9 @@ classdef ModelValidator
 
             diagnostics = yamada.model.Diagnostic.empty;
             defined = strings(1, 0);
+            % Only catalog callback properties bind handlers; another property may hold any function handle.
+            callbacks = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+            callbackPaths = string({callbacks.Path});
             for entry = component.Properties(arrayfun(@(item) item.ValueKind == "expression", component.Properties))
                 % A static context menu reference must name a context menu of this document.
                 if entry.Path == "ContextMenu"
@@ -442,6 +447,7 @@ classdef ModelValidator
                     continue
                 end
                 % A callback binding must name a method of the class or one pending creation.
+                if ~any(callbackPaths == entry.Path), continue, end
                 handler = yamada.source.CallbackSourceAnalyzer.bindingHandler(entry.SourceExpression);
                 if strlength(handler) == 0 || any(handler == ["delete", "createComponents"]), continue, end
                 if isempty(defined)
