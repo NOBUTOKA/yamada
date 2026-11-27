@@ -38,8 +38,9 @@ classdef SourceStrategyExperiment < handle
             assert(~yamada.validation.ModelValidator.hasErrors(diagnostics));
             parsed = obj.Document;
             obj.Document = yamada.model.DocumentModel(parsed.ClassName);
-            obj.Document.Components = yamada.model.SubtreeSnapshot(parsed, parsed.RootComponentId).materialize();
-            obj.Document.RootComponentId = parsed.RootComponentId;
+            for component = yamada.model.SubtreeSnapshot(parsed, parsed.RootComponentId).materialize()
+                obj.Document.addComponent(component);
+            end
             obj.Document.OriginalText = source;
             obj.Document.Metadata = parsed.Metadata;
             obj.Document.Diagnostics = parsed.Diagnostics;

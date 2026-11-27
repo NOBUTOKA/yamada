@@ -13,7 +13,7 @@ classdef (TestTags = {'fast', 'catalog'}) RefreshRequestTest < matlab.unittest.T
             request = yamada.ui.RefreshRequest("properties", label.Id, "Text");
             testCase.verifyFalse(request.affectsGeometry(document, registry, handles));
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
-            label.ParentId = grid.Id;
+            document.reparentSubtree(label.Id, grid.Id, registry);
             figure = uifigure(Visible="off");
             cleanup = onCleanup(@() delete(figure));
             native = uigridlayout(figure, [1 1]);

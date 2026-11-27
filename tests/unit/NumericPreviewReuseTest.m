@@ -56,7 +56,8 @@ classdef (TestTags = {'preview', 'ui'}) NumericPreviewReuseTest < matlab.unittes
                 elseif kind == "format"
                     first.setProperty("ValueDisplayFormat", "%.4f");
                 else
-                    first.ParentId = "unproven-parent";
+                    panel = document.insertComponent(registry, "uipanel", document.RootComponentId);
+                    document.reparentSubtree(first.Id, panel.Id, registry, [], [], [10 10 100 22]);
                 end
                 first.setProperty("Value", 4);
                 applied = renderer.synchronize(document, handles, yamada.ui.RefreshRequest("properties", first.Id, "Value"));

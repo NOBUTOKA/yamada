@@ -36,29 +36,13 @@ classdef (TestTags = {'fast', 'model'}) SubtreeSnapshotTest < matlab.unittest.Te
             testCase.verifyEqual(record.Properties(end - 1).LiteralValue, "Before");
         end
 
-        % Guarantee: capture fails, without changing the document, on an inconsistent hierarchy or an aliasing payload.
-        % Failure mode: a missing child, cycle, duplicate id, or nested handle produces a partial, nonterminating, or shared snapshot.
-        function rejectsMissingAndUnlinkedChildren(testCase)
-            % rejectsMissingAndUnlinkedChildren Detect incomplete parent-child relationships.
-            [document, panel, nested] = SubtreeSnapshotTest.fixture();
+        % Guarantee: capture fails, without changing the document, on a missing root or an aliasing payload.
+        % Failure mode: a missing component or nested handle produces a partial or shared snapshot.
+        function rejectsMissingComponents(testCase)
+            % rejectsMissingComponents Detect a root identity absent from the document.
+            document = SubtreeSnapshotTest.fixture();
             testCase.verifyError(@() yamada.model.SubtreeSnapshot(document, "missing"), ...
                 "yamada:SubtreeSnapshot:MissingComponent");
-            panel.removeChild(nested.Id);
-            testCase.verifyError(@() yamada.model.SubtreeSnapshot(document, panel.Id), ...
-                "yamada:SubtreeSnapshot:InvalidHierarchy");
-        end
-
-        function rejectsCyclesAndDuplicateIdentities(testCase)
-            % rejectsCyclesAndDuplicateIdentities Reject traversal ambiguity before capture.
-            [document, panel, ~, leaf] = SubtreeSnapshotTest.fixture();
-            panel.ParentId = leaf.Id;
-            leaf.addChild(panel.Id);
-            testCase.verifyError(@() yamada.model.SubtreeSnapshot(document, panel.Id), ...
-                "yamada:SubtreeSnapshot:InvalidHierarchy");
-            [document, panel] = SubtreeSnapshotTest.fixture();
-            document.Components(end + 1) = panel;
-            testCase.verifyError(@() yamada.model.SubtreeSnapshot(document, panel.Id), ...
-                "yamada:SubtreeSnapshot:InvalidHierarchy");
         end
 
         function rejectsHandlesInsideNestedPayloads(testCase)

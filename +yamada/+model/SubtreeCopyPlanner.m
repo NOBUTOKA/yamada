@@ -70,8 +70,7 @@ classdef SubtreeCopyPlanner
                 if yamada.model.SourceOwnership.hasSource(component) && ~isempty(sources) && ~same
                     error("yamada:DocumentModel:UnsafeSubtreeCopy", "The unprepared snapshot belongs to a different source state.");
                 end
-                index = find(string({context.Components.Id}) == component.Id, 1);
-                if isempty(index), context.Components(end + 1) = component; else, context.Components(index) = component; end
+                context.substituteComponent(component);
             end
             configuration = struct("ComponentId", {}, "CreationArguments", {}, "Properties", {}, "Expected", {});
             for index = 1:numel(snapshot.Records)

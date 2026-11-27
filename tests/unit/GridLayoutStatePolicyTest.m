@@ -63,27 +63,23 @@ classdef GridLayoutStatePolicyTest < matlab.unittest.TestCase
             first = document.insertComponent(registry, "uibutton", firstGrid.Id);
             secondGrid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             second = document.insertComponent(registry, "uibutton", secondGrid.Id);
+            testCase.verifyTrue(testCase.state(document, registry, firstGrid, "RowHeight").IsKnown);
+            testCase.verifyTrue(testCase.state(document, registry, secondGrid, "RowHeight").IsKnown);
+            % Move before adding unreviewed effects; only source-backed records can be relocated.
+            document.reparentSubtree(first.Id, secondGrid.Id, registry);
             firstEffect = yamada.model.PropertySetting("Layout", [], struct( ...
                 "SourceSnapshotId", "first-layout", "SourceExpression", "firstLayout"));
             secondEffect = yamada.model.PropertySetting("Layout", [], struct( ...
                 "SourceSnapshotId", "second-layout", "SourceExpression", "secondLayout"));
             first.restoreSettings([first.settingSnapshot(), firstEffect.toStruct()]);
-            second.restoreSettings([second.settingSnapshot(), secondEffect.toStruct()]);
             firstEffect = first.getSettings("Layout");
-            secondEffect = second.getSettings("Layout");
-            testCase.verifyEqual(testCase.state(document, registry, firstGrid, "RowHeight").EffectSettingId, firstEffect.Id);
-            testCase.verifyEqual(testCase.state(document, registry, secondGrid, "RowHeight").EffectSettingId, secondEffect.Id);
-
-            % Moving the earlier record changes the first diagnostic in its destination group.
-            firstGrid.removeChild(first.Id);
-            secondGrid.addChild(first.Id);
-            first.ParentId = secondGrid.Id;
+            % The moved record leaves its old group and belongs to the destination group.
             testCase.verifyTrue(testCase.state(document, registry, firstGrid, "RowHeight").IsKnown);
-            actual = testCase.state(document, registry, secondGrid, "RowHeight");
-            testCase.verifyEqual(actual.EffectSettingId, firstEffect.Id);
-            document.Components = fliplr(document.Components);
-            actual = testCase.state(document, registry, secondGrid, "RowHeight");
-            testCase.verifyEqual(actual.EffectSettingId, secondEffect.Id);
+            testCase.verifyEqual(testCase.state(document, registry, secondGrid, "RowHeight").EffectSettingId, firstEffect.Id);
+            % It joined after the existing member, whose effect now comes first.
+            second.restoreSettings([second.settingSnapshot(), secondEffect.toStruct()]);
+            secondEffect = second.getSettings("Layout");
+            testCase.verifyEqual(testCase.state(document, registry, secondGrid, "RowHeight").EffectSettingId, secondEffect.Id);
         end
 
         % Guarantee: settings are treated as independent of grid state only with audited evidence.
