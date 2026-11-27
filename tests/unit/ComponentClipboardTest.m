@@ -214,7 +214,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) ComponentClipboardTest < m
                 reopened = yamada.source.AppSourceParser.parseText(other.GeneratedText, registry);
                 testCase.verifyNotEmpty(reopened.getComponentByName(button.Name));
             end
-            % A renamed destination button keeps the parsed identity of the copied menu, but is no context menu.
+            % A destination button parsed under the copied menu's name and then renamed is an unrelated component, not the target.
             other = yamada.source.AppSourceParser.parseText(replace(source, "classdef SourceApp", "classdef OtherApp"), registry);
             other.removeSubtree(other.getComponentByName("Panel").Id, registry);
             other.removeSubtree(other.getComponentByName("Menu").Id, registry);

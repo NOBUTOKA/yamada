@@ -109,7 +109,7 @@ Start with the feature you are changing. Its conditions and explanation are grou
 - diagnostics, unknown source regions, and pending source edits; and
 - bounded undo/redo history, including a conservative saved-history checkpoint and public dirty-state flag.
 
-[`ComponentRecord`](../+yamada/+model/ComponentRecord.m) represents one component instance. `ComponentRecord` stores stable identity, MATLAB property name, factory, declared type, creation arguments, parent/child IDs, origin, source spans, and ordered `PropertyEntry` objects.
+[`ComponentRecord`](../+yamada/+model/ComponentRecord.m) represents one component instance. `ComponentRecord` stores a stable identity, which `ComponentRecord.newId` assigns at random to every new, inserted, pasted, and parsed component so that no document content determines it and an identity never recurs in another document. It also stores the MATLAB property name, factory, declared type, creation arguments, parent/child IDs, origin, source spans, and ordered `PropertyEntry` objects.
 
 Model mutators implement insertion, subtree deletion and reparenting, Copy/Paste, individual and batch property changes, reset, undo, and redo.
 
@@ -228,7 +228,7 @@ If the whole-root capture cannot be proved, the planner uses the previous destin
 
 **Conditions to preserve**
 
-- Static `SelectedTab` and `SelectedObject` refer to eligible direct children. Static `ContextMenu` refers to a context menu under the document root. Paste maps internal references to fresh identities. An external reference follows its target's identity when the destination contains that identity and the target still passes the rule Copy applied (a context menu under the document root). Parsed identities derive from member names, so another document can hold the same identity for an unrelated component. Otherwise the reference keeps its copied text. `ModelValidator` warns (`missing-reference-target`, `missing-callback-method`) about a static `ContextMenu` reference or callback binding whose target the document does not define, without blocking edits or Save.
+- Static `SelectedTab` and `SelectedObject` refer to eligible direct children. Static `ContextMenu` refers to a context menu under the document root. Paste maps internal references to fresh identities. An external reference follows its target's identity when the destination contains that identity and the target still passes the rule Copy applied (a context menu under the document root). Otherwise the reference keeps its copied text. `ModelValidator` warns (`missing-reference-target`, `missing-callback-method`) about a static `ContextMenu` reference or callback binding whose target the document does not define, without blocking edits or Save.
 - Source-backed Copy and Cut retain callback registrations, constructor arguments, and opaque settings with the component's owned statements. Paste reuses existing callback methods. It allocates fresh setting identities when binding the inserted fragments. Delete and Cut remove the owned registration with the component and leave the existing handler method in place.
 - Reparenting may preserve owned callback source; pending callback edits on a parsed relocation target require Save + Reload Source or Undo before relocation. Arbitrary reference rewriting remains outside this boundary.
 
