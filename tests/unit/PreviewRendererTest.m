@@ -63,7 +63,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 document = yamada.source.AppSourceParser.parseFile(path, registry);
                 [handles, diagnostics] = renderer.render(document, panel);
                 testCase.verifyFalse(any(string({diagnostics.Code}) == "preview-render-failed"));
-                slider = handles("parsed-IntensitySlider");
+                slider = handles(document.getComponentByName("IntensitySlider").Id);
                 if index == 1
                     testCase.verifyClass(slider, "matlab.ui.control.Slider");
                 else
@@ -73,7 +73,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 testCase.verifyEqual(slider.Layout.Row, 4);
                 testCase.verifyEqual(slider.Layout.Column, [1 2]);
                 if index == 3
-                    picker = handles("parsed-AccentColorPicker");
+                    picker = handles(document.getComponentByName("AccentColorPicker").Id);
                     testCase.verifyClass(picker, "matlab.ui.control.Label");
                     testCase.verifySubstring(string(picker.Text), "R2024a");
                     testCase.verifyEqual(picker.Layout.Row, 2);
@@ -88,7 +88,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 "end", "end", "end"], newline);
             document = yamada.source.AppSourceParser.parseText(source, registry);
             handles = renderer.render(document, panel);
-            testCase.verifyEqual(handles("parsed-Picker").Position, [20 30 140 25]);
+            testCase.verifyEqual(handles(document.getComponentByName("Picker").Id).Position, [20 30 140 25]);
 
             % Replay implicit allocation before a sibling's later explicit move.
             source = join(["classdef ReleaseExample < handle", "methods", ...
@@ -99,10 +99,10 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 "app.Last = uilabel(app.Grid);", "end", "end", "end"], newline);
             document = yamada.source.AppSourceParser.parseText(source, registry);
             handles = renderer.render(document, panel);
-            testCase.verifyEqual(handles("parsed-Picker").Layout.Row, 1);
-            testCase.verifyEqual(handles("parsed-Picker").Layout.Column, 2);
-            testCase.verifyEqual(handles("parsed-Last").Layout.Row, 3);
-            testCase.verifyEqual(handles("parsed-Last").Layout.Column, 1);
+            testCase.verifyEqual(handles(document.getComponentByName("Picker").Id).Layout.Row, 1);
+            testCase.verifyEqual(handles(document.getComponentByName("Picker").Id).Layout.Column, 2);
+            testCase.verifyEqual(handles(document.getComponentByName("Last").Id).Layout.Row, 3);
+            testCase.verifyEqual(handles(document.getComponentByName("Last").Id).Layout.Column, 1);
             clear cleanup
         end
 
@@ -140,11 +140,11 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
                 if index == 1
                     testCase.verifyEqual(canvas.BackgroundColor, [0.88 0.92 0.96]);
                 end
-                testCase.verifyEqual(handles("parsed-BottomRightButton").Position, ...
+                testCase.verifyEqual(handles(document.getComponentByName("BottomRightButton").Id).Position, ...
                     cases{index, 3});
-                testCase.verifyEqual(handles("parsed-CenterPanel").Parent, canvas);
-                testCase.verifyEqual(handles("parsed-CenterGrid").Parent, ...
-                    handles("parsed-CenterPanel"));
+                testCase.verifyEqual(handles(document.getComponentByName("CenterPanel").Id).Parent, canvas);
+                testCase.verifyEqual(handles(document.getComponentByName("CenterGrid").Id).Parent, ...
+                    handles(document.getComponentByName("CenterPanel").Id));
                 clear panelCleanup
             end
             clear cleanup
@@ -169,15 +169,15 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             controlCleanup = onCleanup(@() deleteIfValid(controlPanel));
             testCase.verifyEmpty(controlDocument.Diagnostics);
             testCase.verifyEmpty(controlDiagnostics);
-            testCase.verifyEqual(string(controlHandles("parsed-ThemeDropDown").Items), ...
+            testCase.verifyEqual(string(controlHandles(controlDocument.getComponentByName("ThemeDropDown").Id).Items), ...
                 ["Light", "Dark", "System"]);
-            testCase.verifyEqual(string(controlHandles("parsed-NotesTextArea").Value), ...
+            testCase.verifyEqual(string(controlHandles(controlDocument.getComponentByName("NotesTextArea").Id).Value), ...
                 ["A multi-line"; "notes field"]);
-            testCase.verifyEqual(string(controlHandles("parsed-GainKnob").Items), ...
+            testCase.verifyEqual(string(controlHandles(controlDocument.getComponentByName("GainKnob").Id).Items), ...
                 ["0", "2", "4", "6", "8", "10"]);
-            testCase.verifyEqual(string(controlHandles("parsed-ModeSwitch").Items), ...
+            testCase.verifyEqual(string(controlHandles(controlDocument.getComponentByName("ModeSwitch").Id).Items), ...
                 ["Manual", "Auto"]);
-            previewSurface = controlHandles("parsed-MainGrid").Parent;
+            previewSurface = controlHandles(controlDocument.getComponentByName("MainGrid").Id).Parent;
             sourceSize = [580 460];
             testCase.verifyEqual(previewSurface.Position, [2 2 sourceSize]);
             testCase.verifyEqual(previewSurface.Parent.Position(3:4), sourceSize + 2);
@@ -189,9 +189,9 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             axesCleanup = onCleanup(@() deleteIfValid(axesPanel));
             testCase.verifyEmpty(axesDocument.Diagnostics);
             testCase.verifyEmpty(axesDiagnostics);
-            testCase.verifyEqual(axesHandles("parsed-UIAxes").Position, ...
+            testCase.verifyEqual(axesHandles(axesDocument.getComponentByName("UIAxes").Id).Position, ...
                 [20 230 340 180]);
-            testCase.verifyEqual(axesHandles("parsed-StandardAxes").Position, ...
+            testCase.verifyEqual(axesHandles(axesDocument.getComponentByName("StandardAxes").Id).Position, ...
                 [0.55 0.55 0.35 0.35]);
             clear axesCleanup
 
@@ -205,7 +205,7 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             testCase.verifyTrue(all(string({navigationDiagnostics.Severity}) == "warning"));
             testCase.verifyTrue(all(ismember(string({navigationDiagnostics.Code}), ...
                 ["preview-position-unknown", "preview-grid-unknown"])));
-            testCase.verifyEqual(string(navigationHandles("parsed-CatalogTable").ColumnName), ...
+            testCase.verifyEqual(string(navigationHandles(navigationDocument.getComponentByName("CatalogTable").Id).ColumnName), ...
                 ["Title"; "Rating"]);
             clear navigationCleanup
 
@@ -217,11 +217,11 @@ classdef (TestTags = {'preview', 'ui'}) PreviewRendererTest < matlab.unittest.Te
             testCase.verifyEqual(string({toolsDiagnostics.Code}), "preview-position-unknown");
             testCase.verifyEqual(string({toolsDiagnostics.Severity}), "warning");
             testCase.verifyEqual(numEntries(toolsHandles), 1);
-            testCase.verifyTrue(isKey(toolsHandles, "parsed-PreviewLabel"));
-            testCase.verifyEqual(string(toolsHandles("parsed-PreviewLabel").Text), ...
+            testCase.verifyTrue(isKey(toolsHandles, toolsDocument.getComponentByName("PreviewLabel").Id));
+            testCase.verifyEqual(string(toolsHandles(toolsDocument.getComponentByName("PreviewLabel").Id).Text), ...
                 "Figure tools are ignored in Safe Preview.");
-            testCase.verifyFalse(isKey(toolsHandles, "parsed-FileMenu"));
-            testCase.verifyFalse(isKey(toolsHandles, "parsed-Toolbar"));
+            testCase.verifyFalse(isKey(toolsHandles, toolsDocument.getComponentByName("FileMenu").Id));
+            testCase.verifyFalse(isKey(toolsHandles, toolsDocument.getComponentByName("Toolbar").Id));
             clear toolsCleanup previewCleanup
         end
 
