@@ -255,6 +255,7 @@ The shell resolves the command target and availability, while Hierarchy and the 
 - Variant selection prefers an exact creation-argument match, then the most specific prefix, then an unstyled default.
 - `PropertyDefinition` never stores an instance value. All consumers obtain the effective component/direct-parent property surface through `ComponentRegistry.getEffectiveProperties`. Catalog JSON is data, not executable configuration.
 - Loader validation rejects unknown fields, broken references, duplicate ownership, invalid ordering, and unknown behavior identifiers.
+- The `figureTool` component capability marks the figure tools that Safe Preview does not render: `uicontextmenu`, `uimenu`, `uitoolbar`, `uipushtool`, and `uitoggletool`. Source analysis, validation, and Preview ask `ComponentRegistry.isFigureTool` instead of listing factory names. yamada retains their source but does not render them, edit them in the Inspector, or probe their native defaults.
 
 **Explanation**
 

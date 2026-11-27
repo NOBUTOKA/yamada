@@ -192,7 +192,7 @@ classdef PreviewRenderer < handle
             end
             root = document.getComponent(id);
             if isempty(root) || root.Id == document.RootComponentId || ...
-                    any(root.Factory == ["colorbar", "uicontextmenu", "uimenu", "uitoolbar", "uipushtool", "uitoggletool"])
+                    root.Factory == "colorbar" || obj.Registry.isFigureTool(root.Factory)
                 return
             end
             parent = document.getComponent(root.ParentId);
@@ -788,8 +788,7 @@ classdef PreviewRenderer < handle
             if ~component.isReleaseUnavailable() && ~obj.Registry.contains(component.Factory)
                 return
             end
-            if any(component.Factory == ["uicontextmenu", "uimenu", "uitoolbar", ...
-                    "uipushtool", "uitoggletool"])
+            if obj.Registry.isFigureTool(component.Factory)
                 return
             end
             try
