@@ -1,76 +1,77 @@
-classdef DayOfWeekEditorDialog
+classdef DayOfWeekEditorDialog < yamada.ui.inspector.PropertyEditDialog
     % DayOfWeekEditorDialog Edit a weekday-selection draft with readable English state buttons.
-    %   The dialog retains its selection locally until Apply, allowing the narrow
-    %   inspector to summarize the value without truncating weekday labels.
+    %   The editor keeps its selection in native state buttons until Apply, so the
+    %   narrow Inspector can summarize the value without truncating weekday labels.
+    %   PropertyEditDialog owns Apply, Cancel, and the commit.
+    %
+    %   Example:
+    %       editor = yamada.ui.inspector.DayOfWeekEditorDialog([1 7], "DisabledDaysOfWeek");
+    %       dialog = yamada.ui.inspector.PropertyEditDialog.show(editor, commitFcn);
 
-    methods (Static)
-        function dialog = open(initialDays, path, commitFcn, visible)
-            % open Create a modal weekday editor with one delayed commit.
+    properties (Access = private)
+        % Path - Property path that receives the weekday numbers.
+        Path string = ""
+        % InitialDays - Sorted unique weekday numbers shown as selected.
+        InitialDays double = zeros(1, 0)
+        % Buttons - One state button per weekday, Sunday first.
+        Buttons matlab.ui.control.StateButton = matlab.ui.control.StateButton.empty
+    end
+
+    methods
+        function obj = DayOfWeekEditorDialog(initialDays, path)
+            % DayOfWeekEditorDialog Prepare a weekday draft for one property path.
             arguments (Input)
                 initialDays double
                 path (1, 1) string
-                commitFcn (1, 1) function_handle
-                visible (1, 1) logical = true
             end
             arguments (Output)
-                dialog (1, 1) matlab.ui.Figure
+                obj (1, 1) yamada.ui.inspector.DayOfWeekEditorDialog
             end
 
             initialDays = reshape(unique(initialDays), 1, []);
-            transaction = yamada.model.PropertyTransaction(path, {initialDays});
-            dialog = uifigure("Name", "Edit disabled weekdays", "Visible", "off", ...
-                "WindowStyle", "modal", "Position", [320 320 470 135], ...
-                "Tag", "yamada-inspector-day-of-week-dialog");
-            dialog.CloseRequestFcn = @(~, ~) closeDialog();
-            grid = uigridlayout(dialog, [2 1], "Padding", [12 12 12 12], ...
-                "RowHeight", {34, 30}, "RowSpacing", 10);
-            dayGrid = uigridlayout(grid, [1 7], "Padding", [0 0 0 0], ...
+            spec = struct("Name", "Edit disabled weekdays", ...
+                "Tag", "yamada-inspector-day-of-week-dialog", "Position", [320 320 470 135], ...
+                "ContentHeight", 34, "AlertTitle", "Invalid weekdays", ...
+                "ApplyTag", "yamada-inspector-day-of-week-apply", ...
+                "CancelTag", "yamada-inspector-day-of-week-cancel");
+            obj@yamada.ui.inspector.PropertyEditDialog(spec, ...
+                yamada.model.PropertyTransaction(path, {initialDays}));
+            obj.Path = path;
+            obj.InitialDays = initialDays;
+        end
+    end
+
+    methods (Access = protected)
+        function buildContent(obj, content)
+            % buildContent Create one readable English state button per weekday.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.DayOfWeekEditorDialog
+                content (1, 1) matlab.ui.container.GridLayout
+            end
+
+            dayGrid = uigridlayout(content, [1 7], "Padding", [0 0 0 0], ...
                 "ColumnSpacing", 5, "ColumnWidth", repmat({"1x"}, 1, 7));
             names = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-            buttons = matlab.ui.control.StateButton.empty;
             for dayIndex = 1:numel(names)
-                buttons(end + 1) = uibutton(dayGrid, "state", "Text", names(dayIndex), ...
-                    "FontWeight", "bold", "Tag", "yamada-inspector-day-of-week-button"); %#ok<AGROW>
-                buttons(end).Value = any(initialDays == dayIndex);
+                obj.Buttons(end + 1) = uibutton(dayGrid, "state", "Text", names(dayIndex), ...
+                    "FontWeight", "bold", "Tag", "yamada-inspector-day-of-week-button", ...
+                    "Value", any(obj.InitialDays == dayIndex));
             end
-            actions = uigridlayout(grid, [1 2], "Padding", [0 0 0 0], ...
-                "ColumnWidth", {"1x", "1x"}, "ColumnSpacing", 8);
-            uibutton(actions, "Text", "Cancel", ...
-                "Tag", "yamada-inspector-day-of-week-cancel", ...
-                "ButtonPushedFcn", @(~, ~) closeDialog());
-            uibutton(actions, "Text", "Apply", ...
-                "Tag", "yamada-inspector-day-of-week-apply", ...
-                "ButtonPushedFcn", @(~, ~) applyDays());
-            if visible
-                dialog.Visible = "on";
+        end
+
+        function [transaction, message] = read(obj, transaction)
+            % read Stage the selected weekday numbers for the single commit.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.DayOfWeekEditorDialog
+                transaction (1, 1) yamada.model.PropertyTransaction
+            end
+            arguments (Output)
+                transaction (1, 1) yamada.model.PropertyTransaction
+                message (1, 1) string
             end
 
-            function applyDays()
-                % applyDays Commit all selected weekdays at once after local editing.
-                selected = zeros(1, numel(buttons));
-                count = 0;
-                for buttonIndex = 1:numel(buttons)
-                    if buttons(buttonIndex).Value
-                        count = count + 1;
-                        selected(count) = buttonIndex;
-                    end
-                end
-                selected = selected(1:count);
-                transaction.stage(path, selected);
-                message = commitFcn(transaction.changes());
-                if strlength(message) > 0
-                    uialert(dialog, message, "Invalid weekdays");
-                    return
-                end
-                closeDialog();
-            end
-
-            function closeDialog()
-                % closeDialog Dispose the modal dialog without committing an unapplied draft.
-                if isvalid(dialog)
-                    delete(dialog);
-                end
-            end
+            transaction.stage(obj.Path, find([obj.Buttons.Value]));
+            message = "";
         end
     end
 end

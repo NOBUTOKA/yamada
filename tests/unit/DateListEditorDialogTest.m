@@ -1,19 +1,19 @@
 classdef (TestTags = {'dialog', 'inspector', 'ui'}) DateListEditorDialogTest < matlab.unittest.TestCase
-    % DateListEditorDialogTest Verify disabled-date drafts use one delayed atomic commit.
+    % DateListEditorDialogTest Verify date-list row actions produce the submitted date column.
     %   These tests construct the dialog hidden and invoke its bound callbacks,
     %   without opening a visible application window.
 
     methods (Test)
-        % Guarantee: date-list edits stay a draft until Apply commits exactly one change; Cancel commits nothing.
-        % Failure mode: row edits commit individually, producing several undo steps, or Cancel leaks the draft.
-        function addDeleteClearAndApplyUseOneDraftCommit(testCase)
-            % addDeleteClearAndApplyUseOneDraftCommit Keep date-list edits local until Apply.
+        % Guarantee: Add, Delete, Clear, and date edits produce the normalized date column that Apply submits.
+        % Failure mode: a row action edits the wrong row, Clear leaves stale rows, or the submitted value is not the edited list.
+        function rowActionsProduceTheSubmittedDateList(testCase)
+            % rowActionsProduceTheSubmittedDateList Keep date-list edits local until Apply.
 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
             setappdata(owner, "changes", struct.empty);
-            dialog = yamada.ui.inspector.DateListEditorDialog.open( ...
-                [datetime(2024, 3, 1); datetime(2024, 3, 2)], "DisabledDates", ...
+            dialog = yamada.ui.inspector.PropertyEditDialog.show(yamada.ui.inspector.DateListEditorDialog( ...
+                [datetime(2024, 3, 1); datetime(2024, 3, 2)], "DisabledDates"), ...
                 @(changes) captureChanges(owner, changes), false);
             clearButton = findall(dialog, "Tag", "yamada-inspector-date-list-clear");
             applyButton = findall(dialog, "Tag", "yamada-inspector-date-list-apply");
@@ -45,23 +45,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DateListEditorDialogTest < m
             clear cleanup
         end
 
-        function cancelDiscardsDateListDraft(testCase)
-            % cancelDiscardsDateListDraft Confirm added dates do not commit when the dialog closes.
-
-            owner = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(owner));
-            setappdata(owner, "changes", struct.empty);
-            dialog = yamada.ui.inspector.DateListEditorDialog.open( ...
-                datetime.empty(0, 1), "DisabledDates", ...
-                @(changes) captureChanges(owner, changes), false);
-            addButton = findall(dialog, "Tag", "yamada-inspector-date-list-add");
-            addButton.ButtonPushedFcn(addButton, struct());
-            dialog.CloseRequestFcn(dialog, struct());
-
-            testCase.verifyEmpty(getappdata(owner, "changes"));
-            testCase.verifyFalse(isvalid(dialog));
-            clear cleanup
-        end
     end
 end
 

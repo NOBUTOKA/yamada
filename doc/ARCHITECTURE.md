@@ -1198,6 +1198,7 @@ The audited ledger is the authoring surface; release catalogs are generated runt
 
 - Define a typed value schema and symbolic editor/validator identifiers. Add the identifiers to the finite behavior allowlists.
 - Commit through `PropertyTransaction` and the shared batch validator; do not mutate a component record directly from a UI callback. Preserve source-backed values and test rejected drafts, atomic history, Preview refresh, and round-trip output.
+- A modal draft editor subclasses [`PropertyEditDialog`](../+yamada/+ui/+inspector/PropertyEditDialog.m) and implements only `buildContent` and `read`, which stages its draft. The base class holds the commit function privately and owns the frame, Apply, Cancel, closing, and keeping the draft after a rejected read or commit, so a subclass cannot change the document. Date-list and weekday editors use it.
 
 **Explanation**
 

@@ -1,132 +1,182 @@
-classdef DateListEditorDialog
+classdef DateListEditorDialog < yamada.ui.inspector.PropertyEditDialog
     % DateListEditorDialog Edit a draft list of disabled calendar dates.
-    %   This modal adapter keeps a column datetime vector local until Apply. It
-    %   uses native date controls, so no locale-formatted date text is parsed.
+    %   This editor keeps a column datetime vector local until Apply. It uses
+    %   native date controls, so no locale-formatted date text is parsed.
+    %   PropertyEditDialog owns Apply, Cancel, and the commit.
+    %
+    %   Example:
+    %       editor = yamada.ui.inspector.DateListEditorDialog(dates, "DisabledDates");
+    %       dialog = yamada.ui.inspector.PropertyEditDialog.show(editor, commitFcn);
 
-    methods (Static)
-        function dialog = open(initialValue, path, commitFcn, visible)
-            % open Create a date-list dialog with Add, Delete, Clear, Apply, and Cancel actions.
+    properties (Access = private)
+        % Path - Property path that receives the date list.
+        Path string = ""
+        % Dates - Normalized draft date column.
+        Dates datetime = datetime.empty(0, 1)
+        % ListPanel - Scrollable panel that holds the date rows.
+        ListPanel matlab.ui.container.Panel = matlab.ui.container.Panel.empty
+    end
+
+    methods
+        function obj = DateListEditorDialog(initialValue, path)
+            % DateListEditorDialog Prepare a date-list draft for one property path.
             arguments (Input)
                 initialValue datetime
                 path (1, 1) string
-                commitFcn (1, 1) function_handle
-                visible (1, 1) logical = true
             end
             arguments (Output)
-                dialog (1, 1) matlab.ui.Figure
+                obj (1, 1) yamada.ui.inspector.DateListEditorDialog
             end
 
             dates = yamada.ui.inspector.DateListEditorDialog.normalize(initialValue);
-            transaction = yamada.model.PropertyTransaction(path, {dates});
-            dialog = uifigure("Name", "Edit disabled dates", "Visible", "off", ...
-                "WindowStyle", "modal", "Position", [300 300 360 330], ...
-                "Tag", "yamada-inspector-date-list-dialog");
-            dialog.CloseRequestFcn = @(~, ~) closeDialog();
-            grid = uigridlayout(dialog, [2 1], "Padding", [12 12 12 12], ...
-                "RowHeight", {"1x", 32}, "RowSpacing", 8);
-            listPanel = uipanel(grid, "BorderType", "line", ...
+            spec = struct("Name", "Edit disabled dates", ...
+                "Tag", "yamada-inspector-date-list-dialog", "Position", [300 300 360 330], ...
+                "ContentHeight", "1x", "AlertTitle", "Invalid dates", ...
+                "ApplyTag", "yamada-inspector-date-list-apply", ...
+                "CancelTag", "yamada-inspector-date-list-cancel");
+            obj@yamada.ui.inspector.PropertyEditDialog(spec, ...
+                yamada.model.PropertyTransaction(path, {dates}));
+            obj.Path = path;
+            obj.Dates = dates;
+        end
+    end
+
+    methods (Access = protected)
+        function buildContent(obj, content)
+            % buildContent Create the scrollable panel of date rows.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.DateListEditorDialog
+                content (1, 1) matlab.ui.container.GridLayout
+            end
+
+            obj.ListPanel = uipanel(content, "BorderType", "line", ...
                 "Tag", "yamada-inspector-date-list-values");
-            listPanel.Scrollable = "on";
-            listPanel.AutoResizeChildren = "off";
-            listPanel.SizeChangedFcn = @(~, ~) refreshRows();
-            buttons = uigridlayout(grid, [1 2], "Padding", [0 0 0 0], ...
-                "ColumnWidth", {90, "1x"}, "ColumnSpacing", 8);
-            uibutton(buttons, "Text", "Clear", ...
-                "Tag", "yamada-inspector-date-list-clear", ...
-                "ButtonPushedFcn", @(~, ~) clearDates());
-            uibutton(buttons, "Text", "Apply", ...
-                "Tag", "yamada-inspector-date-list-apply", ...
-                "ButtonPushedFcn", @(~, ~) applyDates());
-            refreshRows();
-            if visible
-                dialog.Visible = "on";
+            obj.ListPanel.Scrollable = "on";
+            obj.ListPanel.AutoResizeChildren = "off";
+            obj.ListPanel.SizeChangedFcn = @(~, ~) obj.refreshRows();
+            obj.refreshRows();
+        end
+
+        function actions = editorActions(obj)
+            % editorActions Offer Clear beside the shared Cancel and Apply.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.DateListEditorDialog
+            end
+            arguments (Output)
+                actions struct
             end
 
-            function addDate()
-                % addDate Insert one editable, nonduplicate calendar date into the local draft.
-                candidate = yamada.ui.inspector.DateListEditorDialog.nextSuggestedDate(dates);
-                dates = yamada.ui.inspector.DateListEditorDialog.normalize([dates; candidate]);
-                refreshRows();
+            actions = struct("Text", "Clear", "Tag", "yamada-inspector-date-list-clear", ...
+                "Callback", @(~, ~) obj.clearDates());
+        end
+
+        function [transaction, message] = read(obj, transaction)
+            % read Stage the complete date draft for the single commit.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.DateListEditorDialog
+                transaction (1, 1) yamada.model.PropertyTransaction
+            end
+            arguments (Output)
+                transaction (1, 1) yamada.model.PropertyTransaction
+                message (1, 1) string
             end
 
-            function deleteDate(source)
-                % deleteDate Remove one draft row without changing the document.
-                index = source.UserData;
-                dates(index) = [];
-                dates = reshape(dates, [], 1);
-                refreshRows();
+            transaction.stage(obj.Path, obj.Dates);
+            message = "";
+        end
+    end
+
+    methods (Access = private)
+        function addDate(obj)
+            % addDate Insert one editable, nonduplicate calendar date into the local draft.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.DateListEditorDialog
             end
 
-            function changeDate(source)
-                % changeDate Replace one draft date and retain the documented normalized order.
-                index = source.UserData;
-                candidate = source.Value;
-                if isnat(candidate)
-                    source.Value = dates(index);
-                    return
-                end
-                dates(index) = candidate;
-                dates = yamada.ui.inspector.DateListEditorDialog.normalize(dates);
-                refreshRows();
+            candidate = yamada.ui.inspector.DateListEditorDialog.nextSuggestedDate(obj.Dates);
+            obj.Dates = yamada.ui.inspector.DateListEditorDialog.normalize([obj.Dates; candidate]);
+            obj.refreshRows();
+        end
+
+        function deleteDate(obj, source)
+            % deleteDate Remove one draft row without changing the document.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.DateListEditorDialog
+                source (1, 1) matlab.ui.control.Button
             end
 
-            function clearDates()
-                % clearDates Stage the documented empty column vector until Apply.
-                dates = datetime.empty(0, 1);
-                refreshRows();
+            obj.Dates(source.UserData) = [];
+            obj.Dates = reshape(obj.Dates, [], 1);
+            obj.refreshRows();
+        end
+
+        function changeDate(obj, source)
+            % changeDate Replace one draft date and retain the documented normalized order.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.DateListEditorDialog
+                source (1, 1) matlab.ui.control.DatePicker
             end
 
-            function applyDates()
-                % applyDates Commit the complete draft as one atomic property batch.
-                transaction.stage(path, dates);
-                message = commitFcn(transaction.changes());
-                if strlength(message) > 0
-                    uialert(dialog, message, "Invalid dates");
-                    return
-                end
-                closeDialog();
+            index = source.UserData;
+            candidate = source.Value;
+            if isnat(candidate)
+                source.Value = obj.Dates(index);
+                return
+            end
+            obj.Dates(index) = candidate;
+            obj.Dates = yamada.ui.inspector.DateListEditorDialog.normalize(obj.Dates);
+            obj.refreshRows();
+        end
+
+        function clearDates(obj)
+            % clearDates Stage the documented empty column vector until Apply.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.DateListEditorDialog
             end
 
-            function refreshRows()
-                % refreshRows Rebuild native date rows from the dialog-owned draft only.
-                delete(listPanel.Children);
-                panelPosition = getpixelposition(listPanel, true);
-                rowCount = numel(dates) + 1;
-                contentHeight = max(6 + 33 * rowCount, panelPosition(4) + 1);
-                contentWidth = max(panelPosition(3) - 18, 1);
-                content = uipanel(listPanel, "BorderType", "none", ...
-                    "Position", [1 1 contentWidth contentHeight]);
-                rows = uigridlayout(content, [rowCount 2], "Padding", [3 3 3 3], ...
-                    "RowSpacing", 3, "ColumnSpacing", 6, ...
-                    "ColumnWidth", {"1x", 30}, ...
-                    "RowHeight", repmat({30}, 1, rowCount));
-                for index = 1:numel(dates)
-                    picker = uidatepicker(rows, "Value", dates(index), ...
-                        "Tag", "yamada-inspector-date-list-row-picker", ...
-                        "ValueChangedFcn", @(source, ~) changeDate(source));
-                    picker.UserData = index;
-                    picker.Layout.Row = index;
-                    remove = uibutton(rows, "Text", "−", "FontColor", [0.8 0 0], ...
-                        "FontSize", 18, "FontWeight", "bold", ...
-                        "Tag", "yamada-inspector-date-list-delete", ...
-                        "ButtonPushedFcn", @(source, ~) deleteDate(source));
-                    remove.UserData = index;
-                    remove.Layout.Row = index;
-                    remove.Layout.Column = 2;
-                end
-                add = uibutton(rows, "Text", "+", "FontColor", [0 0.55 0], ...
+            obj.Dates = datetime.empty(0, 1);
+            obj.refreshRows();
+        end
+
+        function refreshRows(obj)
+            % refreshRows Rebuild native date rows from the dialog-owned draft only.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.DateListEditorDialog
+            end
+
+            % Size the row content to the panel so it scrolls once rows exceed the viewport.
+            delete(obj.ListPanel.Children);
+            panelPosition = getpixelposition(obj.ListPanel, true);
+            rowCount = numel(obj.Dates) + 1;
+            contentHeight = max(6 + 33 * rowCount, panelPosition(4) + 1);
+            contentWidth = max(panelPosition(3) - 18, 1);
+            content = uipanel(obj.ListPanel, "BorderType", "none", ...
+                "Position", [1 1 contentWidth contentHeight]);
+            rows = uigridlayout(content, [rowCount 2], "Padding", [3 3 3 3], ...
+                "RowSpacing", 3, "ColumnSpacing", 6, ...
+                "ColumnWidth", {"1x", 30}, ...
+                "RowHeight", repmat({30}, 1, rowCount));
+
+            % Add one picker and delete button per date, then the add button.
+            for index = 1:numel(obj.Dates)
+                picker = uidatepicker(rows, "Value", obj.Dates(index), ...
+                    "Tag", "yamada-inspector-date-list-row-picker", ...
+                    "ValueChangedFcn", @(source, ~) obj.changeDate(source));
+                picker.UserData = index;
+                picker.Layout.Row = index;
+                remove = uibutton(rows, "Text", "−", "FontColor", [0.8 0 0], ...
                     "FontSize", 18, "FontWeight", "bold", ...
-                    "Tag", "yamada-inspector-date-list-add", ...
-                    "ButtonPushedFcn", @(~, ~) addDate());
-                add.Layout.Row = rowCount;
+                    "Tag", "yamada-inspector-date-list-delete", ...
+                    "ButtonPushedFcn", @(source, ~) obj.deleteDate(source));
+                remove.UserData = index;
+                remove.Layout.Row = index;
+                remove.Layout.Column = 2;
             end
-
-            function closeDialog()
-                % closeDialog Dispose the modal dialog without committing an un-applied draft.
-                if isvalid(dialog)
-                    delete(dialog);
-                end
-            end
+            add = uibutton(rows, "Text", "+", "FontColor", [0 0.55 0], ...
+                "FontSize", 18, "FontWeight", "bold", ...
+                "Tag", "yamada-inspector-date-list-add", ...
+                "ButtonPushedFcn", @(~, ~) obj.addDate());
+            add.Layout.Row = rowCount;
         end
     end
 
