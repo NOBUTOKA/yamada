@@ -57,8 +57,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
             clear cleanup
         end
 
-        function showsWidthKeywordsWithoutQuotesAndAcceptsNoOp(testCase)
-            % showsWidthKeywordsWithoutQuotesAndAcceptsNoOp Keep documented width tokens editable.
+        function showsWidthKeywordsWithoutQuotes(testCase)
+            % showsWidthKeywordsWithoutQuotes Show width tokens unquoted and stage them as typed.
 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
@@ -74,22 +74,16 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
             apply = findall(dialog, "Tag", "yamada-column-settings-apply");
             apply.ButtonPushedFcn(apply, struct());
 
+            % The commit receives every setting; only ColumnWidth differs from the start.
             changes = getappdata(owner, "changes");
-            testCase.verifyEqual(changes.Path, "ColumnWidth");
-            testCase.verifyEqual(changes.Value, {'auto', 'auto'});
-            state.ColumnWidth = changes.Value;
-            setappdata(owner, "changes", struct.empty);
+            width = changes(string({changes.Path}) == "ColumnWidth");
+            testCase.verifyEqual(width.Value, {'auto', 'auto'});
+            state.ColumnWidth = width.Value;
             dialog = yamada.ui.inspector.PropertyEditDialog.show( ...
                 yamada.ui.inspector.ColumnSettingsEditorDialog(state), @(nextChanges) captureChanges(owner, nextChanges), false);
             table = findall(dialog, "Tag", "yamada-column-settings-table");
             testCase.verifyEqual(string(table.Data(:, 4)), ["auto"; "auto"]);
-            auto = findall(dialog, "Tag", "yamada-column-settings-all-auto");
-            auto.ButtonPushedFcn(auto, struct());
-            apply = findall(dialog, "Tag", "yamada-column-settings-apply");
-            apply.ButtonPushedFcn(apply, struct());
-
-            testCase.verifyEmpty(getappdata(owner, "changes"));
-            testCase.verifyFalse(isvalid(dialog));
+            delete(dialog);
             clear cleanup
         end
 

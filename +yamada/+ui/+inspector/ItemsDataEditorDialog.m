@@ -18,8 +18,6 @@ classdef ItemsDataEditorDialog < yamada.ui.inspector.PropertyEditDialog
         Table matlab.ui.control.Table = matlab.ui.control.Table.empty
         % Message - Hint and validation message line.
         Message matlab.ui.control.Label = matlab.ui.control.Label.empty
-        % Cleared - Whether Clear staged an empty ItemsData in the data kind.
-        Cleared logical = false
     end
 
     methods
@@ -134,21 +132,15 @@ classdef ItemsDataEditorDialog < yamada.ui.inspector.PropertyEditDialog
                 itemData = yamada.ui.inspector.TypedCellCodec.packVector(values);
             end
 
-            % Stage only the properties the draft changed.
+            % Stage the complete draft; PropertyEditDialog drops unchanged values.
             if obj.Kind == "data"
-                if obj.Cleared || ~isequaln(itemData, obj.State.ItemsData)
-                    transaction = transaction.stage(obj.State.Path, itemData);
-                end
+                transaction = transaction.stage(obj.State.Path, itemData);
                 return
             end
             items = yamada.ui.inspector.ItemsDataEditorDialog.itemOutput( ...
                 string(obj.Table.Data(:, 1)), obj.State.Items);
-            if ~isequaln(items, obj.State.Items)
-                transaction = transaction.stage("Items", items);
-            end
-            if ~isequaln(itemData, obj.State.ItemsData)
-                transaction = transaction.stage("ItemsData", itemData);
-            end
+            transaction = transaction.stage("Items", items);
+            transaction = transaction.stage("ItemsData", itemData);
         end
 
         function showRejection(obj, message)
@@ -193,7 +185,6 @@ classdef ItemsDataEditorDialog < yamada.ui.inspector.PropertyEditDialog
             if obj.Kind == "data"
                 labels = yamada.ui.inspector.ItemsDataEditorDialog.itemLabels(obj.State.Items);
                 obj.Table.Data = yamada.ui.inspector.ItemsDataEditorDialog.tableData(labels, []);
-                obj.Cleared = true;
             else
                 obj.Table.Data = strings(0, 2);
             end
