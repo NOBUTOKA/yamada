@@ -654,13 +654,13 @@ classdef ComponentRecord < handle
             % newId Create an opaque component identity that no document content determines.
             %   Every new, inserted, pasted, and parsed component receives one, so an
             %   identity found in another document never stands for an unrelated
-            %   component. Two random 32-bit segments make a collision impractical.
+            %   component. A Java random UUID is independent of the MATLAB random
+            %   number state, which tests and user code may seed.
             arguments (Output)
                 id (1, 1) string
             end
 
-            id = string(sprintf("component-%08x-%08x", ...
-                randi([0 intmax("uint32")]), randi([0 intmax("uint32")])));
+            id = "component-" + string(java.util.UUID.randomUUID());
         end
     end
 end
