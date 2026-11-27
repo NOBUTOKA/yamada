@@ -168,7 +168,7 @@ Model mutators implement insertion, subtree deletion and reparenting, Copy/Paste
 **Conditions to preserve**
 
 - Structural edits prepare owned source patches and history before mutating the live document. Paste and reparenting plan placement against the live destination. Delete and Cut obtain removal ranges from existing bindings and repair owned direct-parent selection in the same transaction.
-- The detached transaction candidate must not share mutable component handles with the live document. Only a candidate whose patched source binds successfully permits one history record, clipboard publication, and selection/view changes; Paste from a literal copy configuration additionally verifies the emitted configuration. Failure preserves document state, diagnostics, generated source, history, clipboard, and selection.
+- The detached transaction candidate must not share mutable component handles with the live document. It reads the live document's accepted evaluation state only through the read-only `EvaluationBaseline`, and owns a separate `EvaluationContext` for its own results. It shares the published `SourceAnalysis` and the component registry by identity. A published analysis rejects any change to its cached execution events, because those events are determined by its text. Only a candidate whose patched source binds successfully permits one history record, clipboard publication, and selection/view changes; Paste from a literal copy configuration additionally verifies the emitted configuration. Failure preserves document state, diagnostics, generated source, history, clipboard, and selection.
 - Actual commands revalidate the current document even when availability results were previously computed.
 
 **Explanation**
