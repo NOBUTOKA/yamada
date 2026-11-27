@@ -96,6 +96,8 @@ Start with the feature you are changing. Its conditions and explanation are grou
   - a parsed or generated literal that the model may edit; or
   - a source-backed expression that remains read-only and retains its exact source.
 - A batch is preflighted before mutation and becomes one history entry. Parsed deletion also retains enough intent for undo to restore the source-generation state.
+- A property batch or grid layout edit that mutates records directly records each change in a partial history entry before applying it. If any change fails, the partial entry is reversed with the same `applyHistory` path as Undo, last change first, so a change interrupted between its removal and its setting is also restored. The partial entry is never added to the history.
+- Overlay move and resize gestures commit `Position` through the same batch path as Inspector rows and editor dialogs, so they pass the same batch validation, dependent restatement, and post-commit validation.
 
 **Explanation**
 
