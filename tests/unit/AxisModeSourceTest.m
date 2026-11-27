@@ -120,14 +120,14 @@ classdef (TestTags = {'fast', 'parser', 'catalog', 'model', 'generation'}) AxisM
             path = "XAxis.SecondaryLabel.String";
             document.editAxesInspector(component.Id,path,"units","set",registry);
             source = yamada.source.RoundTripGenerator(registry).generate(document);
-            if isempty(yamada.catalog.AxesSettingFunctionCatalog.forName("xsecondarylabel",registry.CatalogRoot))
+            if isempty(yamada.catalog.AxesSettingFunctionCatalog.forName("xsecondarylabel",registry))
                 testCase.verifySubstring(source,'app.Control.XAxis.SecondaryLabel.String = "units";');
             else
                 testCase.verifySubstring(source,'xsecondarylabel(app.Control, "units");');
             end
             [calls, registry, component] = testCase.fixture([ ...
                 "app.Control = uiaxes(app.UIFigure);", "xsecondarylabel(app.Control, 'units');"]);
-            if isempty(yamada.catalog.AxesSettingFunctionCatalog.forName("xsecondarylabel",registry.CatalogRoot))
+            if isempty(yamada.catalog.AxesSettingFunctionCatalog.forName("xsecondarylabel",registry))
                 testCase.verifyEmpty(component.getSettings(path));
                 testCase.verifyEqual(yamada.source.RoundTripGenerator(registry).generate(calls),calls.OriginalText);
             else
@@ -752,7 +752,7 @@ arguments (Output)
     paths (1,:) string
 end
 
-form = yamada.catalog.AxesSettingFunctionCatalog.formById(id, registry.CatalogRoot);
+form = yamada.catalog.AxesSettingFunctionCatalog.formById(id, registry);
 effects = form.effects;
 if ~iscell(effects), effects = num2cell(effects); end
 paths = sort(string(cellfun(@(effect) effect.path, effects, "UniformOutput", false)));

@@ -10,7 +10,7 @@ classdef AxesSettingPlacement
     %
     %   Example:
     %       form = yamada.source.AxesSettingPlacement.callForm( ...
-    %           "uiaxes", "XLim", [0 1], registry.CatalogRoot);
+    %           "uiaxes", "XLim", [0 1], registry);
 
     methods (Static)
         function [valueSpans, editable] = ownership(factory, paths, owned, argumentsUsed, tokens, spans, elements)
@@ -61,7 +61,7 @@ classdef AxesSettingPlacement
             end
         end
 
-        function form = callForm(factory, path, value, root, requested)
+        function form = callForm(factory, path, value, registry, requested)
             % callForm Return the reviewed call form preferred for a new setting, or an empty struct.
             %   requested lists the other values of the same edit, which a companion form
             %   must imply exactly.
@@ -69,7 +69,7 @@ classdef AxesSettingPlacement
                 factory (1, 1) string
                 path (1, 1) string
                 value
-                root (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
                 requested struct = struct("Path", {}, "Value", {})
             end
             arguments (Output)
@@ -77,8 +77,8 @@ classdef AxesSettingPlacement
             end
 
             form = struct([]);
-            if ~any(factory == ["axes", "uiaxes", "polaraxes", "geoaxes"]) || strlength(root) == 0, return, end
-            form = yamada.catalog.AxesSettingFunctionCatalog.insertionForm(factory, path, value, root, requested);
+            if ~any(factory == ["axes", "uiaxes", "polaraxes", "geoaxes"]) || strlength(registry.CatalogRoot) == 0, return, end
+            form = yamada.catalog.AxesSettingFunctionCatalog.insertionForm(factory, path, value, registry, requested);
         end
 
         function [prefix, suffix] = callText(form, receiver)
@@ -125,7 +125,7 @@ classdef AxesSettingPlacement
             end
         end
 
-        function [edit, settings, callEnd] = optionMerge(document, component, path, value, form, root)
+        function [edit, settings, callEnd] = optionMerge(document, component, path, value, form, registry)
             % optionMerge Add one option to an existing call of the main path's function.
             %   The last certain call that declares the option exactly is preferred; earlier
             %   calls of the same function follow. An empty edit means no call can hold it.
@@ -136,7 +136,7 @@ classdef AxesSettingPlacement
                 path (1, 1) string
                 value
                 form (1, 1) struct
-                root (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 edit struct
@@ -159,7 +159,7 @@ classdef AxesSettingPlacement
                 index = analysis.statementIndices(call.SourceSpan);
                 if ~isscalar(index), continue, end
                 statement = analysis.Statements(index);
-                [name, target, tokens, spans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, root);
+                [name, target, tokens, spans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry);
                 if name ~= string(form.name) || target ~= document.sourceComponentName(component.Id) || isempty(spans)
                     continue
                 end

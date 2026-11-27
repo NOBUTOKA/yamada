@@ -173,7 +173,7 @@ classdef PropertyStateResolver
                     % its own FontSize option follows as a later occurrence of the same call.
                     if setting.Method == "functionCall" && ~isempty(registry) && ~isempty(setting.ValueSpan)
                         for target = yamada.catalog.AxesSettingFunctionCatalog.automaticPaths( ...
-                                component.Factory, setting.Path, registry.CatalogRoot)
+                                component.Factory, setting.Path, registry)
                             states = setUnknown(states, target, setting.Id, ...
                                 "The call returns this value to automatic.", "automatic-text");
                         end

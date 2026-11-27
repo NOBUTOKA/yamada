@@ -34,6 +34,7 @@ classdef ComponentCatalogLoader
             % Validate from source, then retain a private copy that callers cannot mutate.
             registry = yamada.catalog.ComponentCatalogLoader.loadUncached(catalogRoot);
             yamada.catalog.ComponentCatalogLoader.loadSourceAvailability(registry, catalogRoot);
+            registry.loadAxesSettingCatalog();
             if strlength(fingerprint) > 0
                 yamada.catalog.ComponentCatalogLoader.validatedCache( ...
                     "set", catalogRoot, fingerprint, registry.duplicate());

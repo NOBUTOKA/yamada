@@ -109,11 +109,11 @@ classdef PropertySettingSyntax
             end
         end
 
-        function [name, target, tokens, spans, forms] = axesCall(statement, catalogRoot)
+        function [name, target, tokens, spans, forms] = axesCall(statement, registry)
             % axesCall Tokenize an exact catalogued axes call or an axes selection.
             arguments (Input)
                 statement (1, 1) yamada.source.SourceStatement
-                catalogRoot (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 name (1, 1) string
@@ -128,7 +128,7 @@ classdef PropertySettingSyntax
             text = char(statement.Text);
             [prefix, match] = regexp(text,'^(?<name>[A-Za-z]\w*)\s*\(','end','names','once');
             if isempty(prefix) || text(end) ~= ')', return, end
-            forms = yamada.catalog.AxesSettingFunctionCatalog.forName(string(match.name), catalogRoot);
+            forms = yamada.catalog.AxesSettingFunctionCatalog.forName(string(match.name), registry);
             if isempty(forms) && ~strcmp(match.name,'axes'), return, end
 
             % Keep each argument and its original value range independently.
@@ -152,12 +152,12 @@ classdef PropertySettingSyntax
             end
         end
 
-        function name = axesCommand(statement, catalogRoot)
+        function name = axesCommand(statement, registry)
             % axesCommand Return the name of a catalogued axes function used without parentheses.
             %   Command syntax such as "axis tight" or a bare "box" has no target argument.
             arguments (Input)
                 statement (1, 1) yamada.source.SourceStatement
-                catalogRoot (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 name (1, 1) string
@@ -167,19 +167,19 @@ classdef PropertySettingSyntax
             % MATLAB character classes need an escaped parenthesis.
             match = regexp(char(statement.Text), '^([A-Za-z]\w*)(\s+[^\s=\(].*)?$', 'tokens', 'once');
             if isempty(match), return, end
-            if ~isempty(yamada.catalog.AxesSettingFunctionCatalog.forName(string(match{1}), catalogRoot))
+            if ~isempty(yamada.catalog.AxesSettingFunctionCatalog.forName(string(match{1}), registry))
                 name = string(match{1});
             end
         end
 
-        function [name, tokens, spans, forms] = axesCommandCall(statement, catalogRoot)
+        function [name, tokens, spans, forms] = axesCommandCall(statement, registry)
             % axesCommandCall Tokenize catalogued command syntax as character-vector arguments.
             %   Each word of "axis equal vis3d" becomes the token 'equal' or 'vis3d',
             %   as MATLAB passes it. Words with quotes, brackets, or other punctuation
             %   yield no tokens, so their effects stay unmodeled.
             arguments (Input)
                 statement (1, 1) yamada.source.SourceStatement
-                catalogRoot (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 name (1, 1) string
@@ -189,9 +189,9 @@ classdef PropertySettingSyntax
             end
 
             tokens = strings(1,0); spans = yamada.model.SourceSpan.empty; forms = {};
-            name = yamada.source.PropertySettingSyntax.axesCommand(statement, catalogRoot);
+            name = yamada.source.PropertySettingSyntax.axesCommand(statement, registry);
             if strlength(name) == 0, return, end
-            forms = yamada.catalog.AxesSettingFunctionCatalog.forName(name, catalogRoot);
+            forms = yamada.catalog.AxesSettingFunctionCatalog.forName(name, registry);
 
             % Accept only plain words so that each argument text is exactly the passed value.
             text = char(statement.Text);

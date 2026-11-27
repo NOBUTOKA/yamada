@@ -322,7 +322,7 @@ classdef SourceAnalysis < handle
                     else
                         declared = regexp(code, '^([A-Za-z]\w*)\s+[A-Za-z]\w*(?:\.\w+)*$', 'tokens', 'once');
                         if isempty(declared)
-                            [~, owner, tokens, ~, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry.CatalogRoot);
+                            [~, owner, tokens, ~, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry);
                             component = document.getComponentByName(owner);
                             assert(any(names == owner) && ~isempty(component), "yamada:SourceAnalysis:StructuralPatch", ...
                                 "A copied axes call needs an explicit inserted target.");

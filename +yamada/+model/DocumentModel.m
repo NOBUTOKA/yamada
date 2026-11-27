@@ -1070,7 +1070,7 @@ classdef DocumentModel < handle
             % Effective Modes are resolved only when a companion call needs them.
             effective = @(modePath) obj.effectiveValue(registry, id, modePath);
             [batch, requested, forward, inverse, paths] = yamada.source.AxesInspectorEdits.plan( ...
-                obj,component,path,value,action,registry.CatalogRoot,effective);
+                obj,component,path,value,action,registry,effective);
             if batch.AfterText == obj.CurrentText, return, end
             before = obj.CurrentSource;
             [state, forward] = obj.publishAxesSource(component,batch,forward,"",paths, ...
@@ -3245,7 +3245,7 @@ classdef DocumentModel < handle
                     direct = ~isempty(regexp(code, '^app\.' + regexptranslate('escape',name) + '(?:\.|\s*=)', 'once'));
                     if ~direct
                         if startsWith(code, "app."), continue, end
-                        [~, target, tokens, spans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry.CatalogRoot);
+                        [~, target, tokens, spans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry);
                         if target ~= name, continue, end
                         [paths, values, argumentIndices, owned, elements] = yamada.catalog.AxesSettingFunctionCatalog.match( ...
                             forms, component.Factory, tokens, false);
