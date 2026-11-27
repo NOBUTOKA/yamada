@@ -89,6 +89,8 @@ classdef SubtreeSnapshot
             arguments (Output)
                 obj (1, 1) yamada.model.SubtreeSnapshot
             end
+            % Fragments outlive their document in the clipboard, so they must hold values only.
+            yamada.model.SubtreeSnapshot.validateValue(fragments);
             obj.SourceFragments = fragments;
             obj.SourceParentFactory = parentFactory;
             obj.SourcePosition = position;

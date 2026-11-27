@@ -21,6 +21,7 @@ classdef SourceAnalysis < handle
         TraceOffsets double = []
         Trace struct = struct()
         Execution struct = struct()
+        Published logical = false
         HasTrace logical = false
         CallbackDirectOffsets double = []
         HasCallbackIndex logical = false
@@ -74,9 +75,19 @@ classdef SourceAnalysis < handle
 
         function rememberExecution(obj, result)
             % rememberExecution Cache value-only execution events for this immutable source revision.
+            %   A command may refine the events of an analysis it is still preparing.
+            %   Once a document publishes the analysis as its current source, the
+            %   document and its structural candidates share it, so a different
+            %   result can only come from records that the text does not determine.
+            %   Such a result is rejected rather than allowed to replace the shared value.
             arguments (Input)
                 obj (1, 1) yamada.source.SourceAnalysis
                 result (1, 1) struct
+            end
+
+            if obj.Published && ~isempty(fieldnames(obj.Execution)) && ~isequaln(obj.Execution, result)
+                error("yamada:SourceAnalysis:ConflictingExecution", ...
+                    "Execution events of one source revision cannot change.");
             end
             obj.Execution = result;
         end
@@ -535,7 +546,9 @@ classdef SourceAnalysis < handle
                 analysis (1, 1) yamada.source.SourceAnalysis
             end
             [analysis, local] = obj.withPatches(batch, true); assert(local);
-            analysis.Execution = yamada.source.EditorSourceProjection.execution(obj, analysis, batch, components, registry);
+            % An empty batch returns this shared analysis, whose cached events already describe its text.
+            if analysis == obj && ~isempty(fieldnames(obj.Execution)) && obj.HasTrace, return, end
+            analysis.rememberExecution(yamada.source.EditorSourceProjection.execution(obj, analysis, batch, components, registry));
             analysis.Trace = analysis.Execution.Trace; analysis.HasTrace = true;
             owners = analysis.Execution.Owners;
             analysis.TraceOffsets = sort(arrayfun(@(item) item.Span.StartOffset, analysis.Statements(owners(owners > 0))));
@@ -675,6 +688,17 @@ classdef SourceAnalysis < handle
             obj.Trace = trace;
             obj.TraceOffsets = creationOffsets;
             obj.HasTrace = true;
+        end
+    end
+
+    methods (Access = ?yamada.model.DocumentModel)
+        function markPublished(obj)
+            % markPublished Freeze cached execution events once a document publishes this analysis.
+            arguments (Input)
+                obj (1, 1) yamada.source.SourceAnalysis
+            end
+
+            obj.Published = true;
         end
     end
 
