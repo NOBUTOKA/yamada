@@ -292,7 +292,9 @@ classdef AxesSettingFunctionCatalog
 
     methods (Static, Access = private)
         function catalog = index(root)
-            % index Load each packaged catalog root once and reuse its lookup tables.
+            % index Load each catalog root once and reload it when the component catalog reloads changed files.
+            %   The fingerprint comes from the component catalog loader's last load of
+            %   the root, so a lookup never hashes files.
             arguments (Input)
                 root (1, 1) string
             end
@@ -302,9 +304,12 @@ classdef AxesSettingFunctionCatalog
 
             persistent cached
             persistent catalogRoot
-            if isempty(cached) || catalogRoot ~= root
+            persistent catalogFingerprint
+            fingerprint = yamada.catalog.ComponentCatalogLoader.loadedFingerprint(root);
+            if isempty(cached) || catalogRoot ~= root || catalogFingerprint ~= fingerprint
                 cached = yamada.catalog.AxesSettingFunctionCatalog.load(root);
                 catalogRoot = root;
+                catalogFingerprint = fingerprint;
             end
             catalog = cached;
         end

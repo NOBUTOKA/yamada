@@ -120,6 +120,30 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
                 .get("uilabel").getProperty("Text").GridGeometryImpact, "fit");
         end
 
+        % Guarantee: axes setting call forms follow a component catalog reload of changed files, without hashing per lookup.
+        % Failure mode: an edited axes setting catalog keeps serving the forms of the first load for the same root.
+        function axesSettingFormsFollowCatalogReload(testCase)
+            % axesSettingFormsFollowCatalogReload Remove a call form, reload the catalog, and look it up again.
+            root = testCase.createCatalog();
+            [~, release] = fileparts(root);
+            packaged = jsondecode(fileread(fullfile(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot(), ...
+                "axes-setting-functions.json")));
+            forms = packaged.forms;
+            if ~iscell(forms), forms = num2cell(forms); end
+            names = string(cellfun(@(form) string(form.name), forms, "UniformOutput", false));
+            calls = struct("schemaVersion", 1, "matlabRelease", release, ...
+                "settingGroups", {{}}, "forms", {forms(names == "title")});
+            testCase.writeJson(root, "axes-setting-functions.json", calls);
+            yamada.catalog.ComponentCatalogLoader.load(root);
+            testCase.assertNotEmpty(yamada.catalog.AxesSettingFunctionCatalog.forName("title", root));
+
+            % After the file changes, the next catalog load also refreshes the call forms.
+            calls.forms = {};
+            testCase.writeJson(root, "axes-setting-functions.json", calls);
+            yamada.catalog.ComponentCatalogLoader.load(root);
+            testCase.verifyEmpty(yamada.catalog.AxesSettingFunctionCatalog.forName("title", root));
+        end
+
         function loadsApplicationPolicyWithoutChangingInspectorOrder(testCase)
             % loadsApplicationPolicyWithoutChangingInspectorOrder Keep execution and presentation distinct.
             % Guarantee and failure mode: shared with loadsAndValidatesGeometryMetadata.

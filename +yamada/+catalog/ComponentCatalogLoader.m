@@ -62,6 +62,21 @@ classdef ComponentCatalogLoader
         end
     end
 
+    methods (Static, Access = ?yamada.catalog.AxesSettingFunctionCatalog)
+        function fingerprint = loadedFingerprint(catalogRoot)
+            % loadedFingerprint Return the fingerprint of the last successful load of a root, or "".
+            %   Reading it hashes nothing, so per-lookup callers can follow catalog reloads.
+            arguments (Input)
+                catalogRoot (1, 1) string
+            end
+            arguments (Output)
+                fingerprint (1, 1) string
+            end
+
+            [~, fingerprint] = yamada.catalog.ComponentCatalogLoader.validatedCache("get", catalogRoot, "");
+        end
+    end
+
     methods (Static, Access = ?matlab.unittest.TestCase)
         function release = selectRelease(available, running)
             % selectRelease Choose the newest catalog release that is not newer than the running release.
@@ -267,8 +282,9 @@ classdef ComponentCatalogLoader
             end
         end
 
-        function registry = validatedCache(action, catalogRoot, fingerprint, registry)
+        function [registry, stored] = validatedCache(action, catalogRoot, fingerprint, registry)
             % validatedCache Get or store one validated registry per catalog root.
+            %   The second output is the fingerprint stored for the root, or "".
             arguments (Input)
                 action (1, 1) string {mustBeMember(action, ["get", "set"])}
                 catalogRoot (1, 1) string
@@ -277,6 +293,7 @@ classdef ComponentCatalogLoader
             end
             arguments (Output)
                 registry yamada.model.ComponentRegistry
+                stored (1, 1) string
             end
 
             % Process memory holds only successful loads; failures are never stored.
@@ -285,10 +302,12 @@ classdef ComponentCatalogLoader
                 entries = dictionary(string([]), struct("Fingerprint", {}, "Registry", {}));
             end
             key = catalogRoot;
+            stored = "";
             if action == "get"
                 registry = yamada.model.ComponentRegistry.empty;
                 if isKey(entries, key)
                     entry = entries(key);
+                    stored = entry.Fingerprint;
                     if entry.Fingerprint == fingerprint, registry = entry.Registry; end
                 end
                 return

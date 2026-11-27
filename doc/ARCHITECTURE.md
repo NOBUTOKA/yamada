@@ -315,6 +315,7 @@ The review applicator can retain passed, release-specific `setterAccess` evidenc
 
 - The loader reuses the remembered validated state only when the full catalog-root fingerprint is unchanged; otherwise it validates from source again. Any edit, added file or unreadable file therefore forces full validation, and a failed load is never remembered.
 - Every call returns a new, independent registry, so registration or other mutation by one caller never reaches the cache or another caller.
+- The axes setting function catalog of a root is reloaded when the loader records a new fingerprint for that root. It reads the fingerprint of the last successful load instead of hashing files, so a call-form lookup stays a dictionary access and an edited call-form file takes effect at the next catalog load.
 
 **Explanation**
 
