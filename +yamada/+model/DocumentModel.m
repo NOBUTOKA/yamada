@@ -849,6 +849,17 @@ classdef DocumentModel < handle
             obj.noteInput();
         end
 
+        function set.CurrentSource(obj, value)
+            % set.CurrentSource Freeze the shared analysis of every published source state.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                value yamada.model.CurrentSourceState
+            end
+
+            if ~isempty(value) && ~isempty(value.Analysis), value.Analysis.markPublished(); end
+            obj.CurrentSource = value;
+        end
+
         function set.PendingEdits(obj, value)
             % set.PendingEdits Track assignments that affect semantic evaluation inputs.
             arguments (Input)
