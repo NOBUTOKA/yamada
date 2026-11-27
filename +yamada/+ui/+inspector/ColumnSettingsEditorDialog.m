@@ -1,21 +1,57 @@
-classdef ColumnSettingsEditorDialog
+classdef ColumnSettingsEditorDialog < yamada.ui.inspector.PropertyEditDialog
     % ColumnSettingsEditorDialog Edit UITable column behavior as one atomic draft.
     %   The dialog derives its rows from the effective Data width and stages width,
     %   editability, sortability, display format, and rearrangeability together.
+    %   PropertyEditDialog owns Apply, Cancel, and the commit.
+    %
+    %   Example:
+    %       editor = yamada.ui.inspector.ColumnSettingsEditorDialog(state);
+    %       dialog = yamada.ui.inspector.PropertyEditDialog.show(editor, commitFcn);
 
-    methods (Static)
-        function dialog = open(state, commitFcn, visible)
-            % open Show the table-wide and per-column settings candidate editor.
+    properties (Access = private)
+        % Initial - Effective column settings with documented defaults filled in.
+        Initial struct = struct()
+        % ReadFcn - Draft reader bound to the controls that buildContent creates.
+        ReadFcn function_handle = function_handle.empty
+        % RejectFcn - Presents a rejection message in the dialog message line.
+        RejectFcn function_handle = function_handle.empty
+        % ClearFcn - Resets the local draft.
+        ClearFcn function_handle = function_handle.empty
+    end
+
+    methods
+        function obj = ColumnSettingsEditorDialog(state)
+            % ColumnSettingsEditorDialog Prepare a column-settings draft from effective table state.
             arguments (Input)
                 state (1, 1) struct
-                commitFcn (1, 1) function_handle
-                visible (1, 1) logical = true
             end
             arguments (Output)
-                dialog (1, 1) matlab.ui.Figure
+                obj (1, 1) yamada.ui.inspector.ColumnSettingsEditorDialog
             end
 
             initial = yamada.ui.inspector.ColumnSettingsEditorDialog.initialState(state);
+            spec = struct("Name", "Edit columns", "Tag", "yamada-column-settings-dialog", ...
+                "Position", [100 100 680 380], "ContentHeight", "1x", ...
+                "AlertTitle", "Invalid column settings", ...
+                "ApplyTag", "yamada-column-settings-apply", "CancelTag", "yamada-column-settings-cancel");
+            obj@yamada.ui.inspector.PropertyEditDialog(spec, yamada.model.PropertyTransaction( ...
+                ["ColumnWidth", "ColumnEditable", "ColumnRearrangeable", "ColumnSortable", "ColumnFormat"], ...
+                {initial.ColumnWidth, initial.ColumnEditable, initial.ColumnRearrangeable, ...
+                initial.ColumnSortable, initial.ColumnFormat}));
+            obj.Initial = initial;
+        end
+    end
+
+    methods (Access = protected)
+        function buildContent(obj, content)
+            % buildContent Create the rearrange option, column table, bulk actions, and message line.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.ColumnSettingsEditorDialog
+                content (1, 1) matlab.ui.container.GridLayout
+            end
+
+            % Derive the per-column draft rows from the effective settings.
+            initial = obj.Initial;
             columnCount = size(initial.Data, 2);
             names = yamada.ui.inspector.ColumnSettingsEditorDialog.columnNames( ...
                 initial.ColumnName, columnCount);
@@ -27,12 +63,8 @@ classdef ColumnSettingsEditorDialog
                 initial.ColumnSortable, columnCount);
             formats = yamada.ui.inspector.ColumnSettingsEditorDialog.formatValues( ...
                 initial.ColumnFormat, columnCount);
-            dialog = uifigure("Name", "Edit columns", "Position", [100 100 680 380], ...
-                "WindowStyle", "modal", "Visible", ...
-                yamada.ui.inspector.ColumnSettingsEditorDialog.onOff(visible), ...
-                "Tag", "yamada-column-settings-dialog");
-            grid = uigridlayout(dialog, [6 6], "Padding", [12 12 12 12], ...
-                "RowHeight", {24, "1x", 24, 24, 24, 30}, ...
+            grid = uigridlayout(content, [5 6], "Padding", [0 0 0 0], ...
+                "RowHeight", {24, "1x", 24, 24, 24}, ...
                 "ColumnWidth", {92, 92, 76, 76, 76, "1x"}, ...
                 "ColumnSpacing", 6);
             rearrange = uicheckbox(grid, "Text", "Allow column rearranging", ...
@@ -81,13 +113,9 @@ classdef ColumnSettingsEditorDialog
                 "FontColor", [0.3 0.3 0.3]);
             message.Layout.Row = 5;
             message.Layout.Column = [1 6];
-            clearButton = uibutton(grid, "Text", "Clear", "Tag", "yamada-column-settings-clear", ...
-                "ButtonPushedFcn", @(~, ~) clearDraft());
-            clearButton.Layout.Row = 6;
-            apply = uibutton(grid, "Text", "Apply", "Tag", "yamada-column-settings-apply", ...
-                "ButtonPushedFcn", @(~, ~) applyDraft());
-            apply.Layout.Row = 6;
-            apply.Layout.Column = [2 6];
+            obj.ReadFcn = @readDraft;
+            obj.RejectFcn = @showMessage;
+            obj.ClearFcn = @clearDraft;
             if columnCount == 0
                 table.Enable = "off";
                 allOn.Enable = "off";
@@ -127,25 +155,24 @@ classdef ColumnSettingsEditorDialog
                 message.FontColor = [0.3 0.3 0.3];
             end
 
-            function applyDraft()
-                % applyDraft Parse every column field and atomically submit only changed values.
+            function [transaction, failure] = readDraft(transaction)
+                % readDraft Parse every column field and stage only changed values.
+                failure = "";
                 removeStyle(table);
                 [width, row, messageText] = yamada.ui.inspector.ColumnSettingsEditorDialog.parseWidths(table.Data(:, 4));
                 if row > 0
                     markError(row, 4, messageText);
+                    failure = messageText;
                     return
                 end
                 [format, row, messageText] = yamada.ui.inspector.ColumnSettingsEditorDialog.parseFormats(table.Data(:, 5));
                 if row > 0
                     markError(row, 5, messageText);
+                    failure = messageText;
                     return
                 end
                 editableValue = logical(cell2mat(table.Data(:, 2))).';
                 sortableValue = logical(cell2mat(table.Data(:, 3))).';
-                transaction = yamada.model.PropertyTransaction( ...
-                    ["ColumnWidth", "ColumnEditable", "ColumnRearrangeable", "ColumnSortable", "ColumnFormat"], ...
-                    {initial.ColumnWidth, initial.ColumnEditable, initial.ColumnRearrangeable, ...
-                    initial.ColumnSortable, initial.ColumnFormat});
                 width = yamada.ui.inspector.ColumnSettingsEditorDialog.compactWidth(width, initial.ColumnWidth);
                 editableValue = yamada.ui.inspector.ColumnSettingsEditorDialog.compactLogical( ...
                     editableValue, initial.ColumnEditable);
@@ -160,20 +187,12 @@ classdef ColumnSettingsEditorDialog
                     transaction.stage("ColumnRearrangeable", rearrangeValue);
                 end
                 if ~isequaln(format, initial.ColumnFormat), transaction.stage("ColumnFormat", format); end
-                changes = transaction.changes();
-                if isempty(changes)
-                    delete(dialog);
-                    return
-                end
-                errorMessage = commitFcn(changes);
-                if strlength(errorMessage) > 0
-                    message.Text = errorMessage;
-                    message.FontColor = [0.7 0 0];
-                    return
-                end
-                if isvalid(dialog)
-                    delete(dialog);
-                end
+            end
+
+            function showMessage(text)
+                % showMessage Present one rejection in the message line and retain the draft.
+                message.Text = text;
+                message.FontColor = [0.7 0 0];
             end
 
             function markError(row, column, text)
@@ -182,6 +201,43 @@ classdef ColumnSettingsEditorDialog
                 message.Text = text;
                 message.FontColor = [0.7 0 0];
             end
+        end
+
+        function actions = editorActions(obj)
+            % editorActions Offer Clear beside the shared Cancel and Apply.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.ColumnSettingsEditorDialog
+            end
+            arguments (Output)
+                actions struct
+            end
+
+            actions = struct("Text", "Clear", "Tag", "yamada-column-settings-clear", ...
+                "Callback", @(~, ~) obj.ClearFcn());
+        end
+
+        function [transaction, message] = read(obj, transaction)
+            % read Stage the column draft, or return the validation message it shows.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.ColumnSettingsEditorDialog
+                transaction (1, 1) yamada.model.PropertyTransaction
+            end
+            arguments (Output)
+                transaction (1, 1) yamada.model.PropertyTransaction
+                message (1, 1) string
+            end
+
+            [transaction, message] = obj.ReadFcn(transaction);
+        end
+
+        function showRejection(obj, message)
+            % showRejection Show a rejection in the dialog message line.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.ColumnSettingsEditorDialog
+                message (1, 1) string
+            end
+
+            obj.RejectFcn(message);
         end
     end
 
@@ -365,15 +421,6 @@ classdef ColumnSettingsEditorDialog
                 value = original;
             else
                 value = values;
-            end
-        end
-
-        function value = onOff(enabled)
-            % onOff Convert a logical visibility flag to the native UI token.
-            if enabled
-                value = "on";
-            else
-                value = "off";
             end
         end
     end

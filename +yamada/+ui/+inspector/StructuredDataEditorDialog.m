@@ -1,54 +1,92 @@
-classdef StructuredDataEditorDialog
+classdef StructuredDataEditorDialog < yamada.ui.inspector.PropertyEditDialog
     % StructuredDataEditorDialog Edit finite safe MATLAB data literals in a modal dialog.
-    %   The dialog accepts only the non-evaluating literal subset implemented by
+    %   The editor accepts only the non-evaluating literal subset implemented by
     %   MatlabLiteralParser and never executes user-entered MATLAB expressions.
+    %   PropertyEditDialog owns Apply, Cancel, and the commit.
+    %
+    %   Example:
+    %       editor = yamada.ui.inspector.StructuredDataEditorDialog([1 2], "NodeData");
+    %       dialog = yamada.ui.inspector.PropertyEditDialog.show(editor, commitFcn);
 
-    methods (Static)
-        function open(currentValue, path, commitFcn)
-            % open Show a modal structured-data literal editor.
+    properties (Access = private)
+        % Path - Property path that receives the value.
+        Path string = ""
+        % CurrentValue - Value shown when the editor opens.
+        CurrentValue = []
+        % Area - Text area holding the literal draft.
+        Area matlab.ui.control.TextArea = matlab.ui.control.TextArea.empty
+        % Message - Validation message line.
+        Message matlab.ui.control.Label = matlab.ui.control.Label.empty
+    end
+
+    methods
+        function obj = StructuredDataEditorDialog(currentValue, path)
+            % StructuredDataEditorDialog Prepare a literal draft for one property path.
             arguments (Input)
                 currentValue
                 path (1, 1) string
-                commitFcn (1, 1) function_handle
+            end
+            arguments (Output)
+                obj (1, 1) yamada.ui.inspector.StructuredDataEditorDialog
             end
 
-            transaction = yamada.model.PropertyTransaction(path, {currentValue});
-            dialog = uifigure("Name", "Edit data", "Position", [100 100 500 300], ...
-                "WindowStyle", "modal");
-            grid = uigridlayout(dialog, [3 1], "Padding", [12 12 12 12], ...
-                "RowHeight", {"1x", 24, 30});
-            text = yamada.ui.inspector.StructuredDataEditorDialog.initialText(currentValue);
-            area = uitextarea(grid, "Value", {char(text)}, ...
+            spec = struct("Name", "Edit data", "Tag", "yamada-inspector-structured-data-dialog", ...
+                "Position", [100 100 500 300], "ContentHeight", "1x", "AlertTitle", "Invalid data", ...
+                "ApplyTag", "yamada-inspector-structured-data-apply", ...
+                "CancelTag", "yamada-inspector-structured-data-cancel");
+            obj@yamada.ui.inspector.PropertyEditDialog(spec, ...
+                yamada.model.PropertyTransaction(path, {currentValue}));
+            obj.Path = path;
+            obj.CurrentValue = currentValue;
+        end
+    end
+
+    methods (Access = protected)
+        function buildContent(obj, content)
+            % buildContent Create the literal text area and the message line.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.StructuredDataEditorDialog
+                content (1, 1) matlab.ui.container.GridLayout
+            end
+
+            grid = uigridlayout(content, [2 1], "Padding", [0 0 0 0], "RowHeight", {"1x", 24});
+            text = yamada.ui.inspector.StructuredDataEditorDialog.initialText(obj.CurrentValue);
+            obj.Area = uitextarea(grid, "Value", {char(text)}, ...
                 "Tag", "yamada-inspector-structured-data-text");
-            message = uilabel(grid, "Text", "", "FontColor", [0.7 0 0], ...
+            obj.Message = uilabel(grid, "Text", "", "FontColor", [0.7 0 0], ...
                 "Tag", "yamada-inspector-structured-data-error");
-            buttons = uigridlayout(grid, [1 2], "Padding", [0 0 0 0], ...
-                "ColumnWidth", {"1x", 90});
-            uibutton(buttons, "Text", "Cancel", "ButtonPushedFcn", @(~, ~) closeDialog());
-            uibutton(buttons, "Text", "Apply", "ButtonPushedFcn", @(~, ~) applyValue());
+        end
 
-            function applyValue()
-                source = strjoin(string(area.Value), newline);
-                [value, isLiteral] = yamada.source.MatlabLiteralParser.parse(source);
-                if ~isLiteral
-                    message.Text = "Enter a supported MATLAB literal.";
-                    area.BackgroundColor = [1 0.9 0.9];
-                    return
-                end
-                transaction.stage(path, value);
-                message.Text = commitFcn(transaction.changes());
-                if strlength(message.Text) > 0
-                    area.BackgroundColor = [1 0.9 0.9];
-                    return
-                end
-                close(dialog);
+        function [transaction, message] = read(obj, transaction)
+            % read Stage the draft only when it parses as a supported literal.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.StructuredDataEditorDialog
+                transaction (1, 1) yamada.model.PropertyTransaction
+            end
+            arguments (Output)
+                transaction (1, 1) yamada.model.PropertyTransaction
+                message (1, 1) string
             end
 
-            function closeDialog()
-                if isvalid(dialog)
-                    delete(dialog);
-                end
+            message = "";
+            source = strjoin(string(obj.Area.Value), newline);
+            [value, isLiteral] = yamada.source.MatlabLiteralParser.parse(source);
+            if ~isLiteral
+                message = "Enter a supported MATLAB literal.";
+                return
             end
+            transaction.stage(obj.Path, value);
+        end
+
+        function showRejection(obj, message)
+            % showRejection Show a rejection below the text and tint the text area.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.StructuredDataEditorDialog
+                message (1, 1) string
+            end
+
+            obj.Message.Text = message;
+            obj.Area.BackgroundColor = [1 0.9 0.9];
         end
     end
 
