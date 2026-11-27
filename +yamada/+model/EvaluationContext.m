@@ -396,7 +396,7 @@ classdef EvaluationContext < handle
         end
     end
 
-    methods (Access = ?yamada.model.DocumentModel)
+    methods (Access = {?yamada.model.DocumentModel, ?yamada.model.EvaluationBaseline})
         function plan = editScope(obj, document, changed)
             % editScope Derive checked owners and invalidated dependencies from a known edit footprint.
             arguments (Input)
@@ -447,14 +447,16 @@ classdef EvaluationContext < handle
             plan = struct("Checked", unique(checked, "stable"), "Invalidated", unique([affected removed], "stable"));
         end
 
-        function inheritPlannedStates(obj, previous, affected, batch)
+        function inheritPlannedStates(obj, baseline, affected, batch)
             % inheritPlannedStates Rebase independent cached states outside a certified edit's affected scope.
             arguments (Input)
                 obj (1, 1) yamada.model.EvaluationContext
-                previous (1, 1) yamada.model.EvaluationContext
+                baseline (1, 1) yamada.model.EvaluationBaseline
                 affected (1, :) string
                 batch (1, 1) yamada.source.SourcePatchBatch
             end
+            % Rebase only reads the baseline's context.
+            previous = baseline.context();
             if obj.Registry ~= previous.Registry || ...
                     obj.RegistryRevision ~= previous.RegistryRevision, return, end
             values = previous.stateValues();

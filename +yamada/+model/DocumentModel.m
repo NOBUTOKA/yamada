@@ -68,7 +68,7 @@ classdef DocumentModel < handle
         InputClock yamada.model.InputChangeClock = yamada.model.InputChangeClock.empty
         Evaluation yamada.model.EvaluationContext = yamada.model.EvaluationContext.empty
         CallbackPreparation struct = struct()
-        PlanBaseline yamada.model.EvaluationContext = yamada.model.EvaluationContext.empty
+        PlanBaseline yamada.model.EvaluationBaseline = yamada.model.EvaluationBaseline.empty
         PlannedValidation logical = false
         PlannedScope struct = struct()
         PropertyValidationNames string = strings(1, 0)
@@ -2008,7 +2008,11 @@ classdef DocumentModel < handle
             candidate.PlanBaseline = obj.PlanBaseline;
             catalog = registry; if isempty(catalog), catalog = obj.SourceRegistry; end
             if isempty(candidate.PlanBaseline) || ~isempty(catalog) && obj.hasCurrentValidation(catalog)
-                candidate.PlanBaseline = obj.Evaluation;
+                % The candidate reads the source document's state only through a read-only baseline.
+                candidate.PlanBaseline = yamada.model.EvaluationBaseline.empty;
+                if ~isempty(obj.Evaluation)
+                    candidate.PlanBaseline = yamada.model.EvaluationBaseline(obj.Evaluation);
+                end
             end
             % Resolver entries are independent values; mutation invalidates their normal scopes.
             if ~isempty(registry) && ~isempty(obj.Evaluation)
@@ -2016,7 +2020,8 @@ classdef DocumentModel < handle
                 current = candidate.evaluationContext(registry);
                 current.inheritStates(previous);
                 if obj.hasCurrentValidation(registry)
-                    current.inheritPlannedStates(previous, strings(1, 0), yamada.source.SourcePatchBatch(obj.CurrentText));
+                    current.inheritPlannedStates(yamada.model.EvaluationBaseline(previous), strings(1, 0), ...
+                        yamada.source.SourcePatchBatch(obj.CurrentText));
                     candidate.PropertyValidationContext = current; candidate.PropertyValidationNames = strings(1, 0);
                     candidate.PropertyValidationDiagnostics = obj.PropertyValidationDiagnostics;
                     candidate.PlannedValidation = true; candidate.PlannedScope = obj.PlannedScope;
@@ -2802,7 +2807,7 @@ classdef DocumentModel < handle
                 end
             end
             % Replayed primary changes use the same bounded accepted-input checks.
-            obj.finishPlannedValidation(registry, previous, ids, batch);
+            obj.finishPlannedValidation(registry, yamada.model.EvaluationBaseline(previous), ids, batch);
         end
 
         function adopted = adoptValidationProof(obj, proof, registry, context)
@@ -2939,11 +2944,14 @@ classdef DocumentModel < handle
                 registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
-                previous (1, 1) yamada.model.EvaluationContext
+                previous (1, 1) yamada.model.EvaluationBaseline
             end
             previous = obj.PlanBaseline;
-            if obj.hasCurrentValidation(registry) || isempty(previous), previous = obj.Evaluation; end
-            if isempty(previous), previous = obj.evaluationContext(registry); end
+            if obj.hasCurrentValidation(registry) || isempty(previous)
+                context = obj.Evaluation;
+                if isempty(context), context = obj.evaluationContext(registry); end
+                previous = yamada.model.EvaluationBaseline(context);
+            end
         end
 
         function diagnostics = finishPlannedValidation(obj, registry, previous, changed, batch)
@@ -2951,7 +2959,7 @@ classdef DocumentModel < handle
             arguments (Input)
                 obj (1, 1) yamada.model.DocumentModel
                 registry (1, 1) yamada.model.ComponentRegistry
-                previous (1, 1) yamada.model.EvaluationContext
+                previous (1, 1) yamada.model.EvaluationBaseline
                 changed (1, :) string
                 batch (1, 1) yamada.source.SourcePatchBatch
             end
