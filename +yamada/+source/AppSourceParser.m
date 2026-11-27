@@ -360,15 +360,15 @@ classdef AppSourceParser
                 end
                 if isempty(assignment)
                     % Command syntax such as "axis tight" always targets the current axes implicitly.
-                    command = yamada.source.PropertySettingSyntax.axesCommand(statement, registry.CatalogRoot);
+                    command = yamada.source.PropertySettingSyntax.axesCommand(statement, registry);
                     if any(blockedCallNames == command), command = ""; end
                     tokens = strings(1, 0); target = "";
                     % Capture reviewed call effects without executing source or granting write ownership.
                     if strlength(command) > 0 || contains(statement.Text,"(")
                         if strlength(command) > 0
-                            [name, tokens, valueSpans, forms] = yamada.source.PropertySettingSyntax.axesCommandCall(statement, registry.CatalogRoot);
+                            [name, tokens, valueSpans, forms] = yamada.source.PropertySettingSyntax.axesCommandCall(statement, registry);
                         else
-                            [name, target, tokens, valueSpans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry.CatalogRoot);
+                            [name, target, tokens, valueSpans, forms] = yamada.source.PropertySettingSyntax.axesCall(statement, registry);
                         end
                         if name == "axes" && ~any(blockedCallNames == name) && ...
                                 strlength(target) > 0 && isempty(tokens)

@@ -145,7 +145,7 @@ classdef IndexedSettingEdit
                         anchors(end + 1) = anchor; %#ok<AGROW>
                     elseif placement.Method == "functionCall"
                         % A reviewed call form owns its argument and records its implied effects.
-                        form = yamada.catalog.AxesSettingFunctionCatalog.formById(placement.Form, registry.CatalogRoot);
+                        form = yamada.catalog.AxesSettingFunctionCatalog.formById(placement.Form, registry);
                         assert(isscalar(form), "yamada:SourceLiteralTransaction:WiderProof", "The call form is unavailable.");
                         [prefix, suffix] = yamada.source.AxesSettingPlacement.callText(form, "app." + sourceName);
                         raw = prefix + encoded + suffix;

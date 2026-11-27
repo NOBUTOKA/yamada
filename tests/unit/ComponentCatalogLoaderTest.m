@@ -120,6 +120,37 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
                 .get("uilabel").getProperty("Text").GridGeometryImpact, "fit");
         end
 
+        % Guarantee: a registry carries the axes setting call forms read with its catalog, and a later load reads edited forms.
+        % Failure mode: an edited axes setting catalog keeps serving the forms of an earlier load of the same root.
+        function axesSettingFormsBelongToTheirRegistry(testCase)
+            % axesSettingFormsBelongToTheirRegistry Remove a call form between two loads of one root.
+            % Call forms belong to a release root with an availability index, like a packaged catalog.
+            release = "R2024a";
+            folder = string(tempname);
+            mkdir(folder);
+            testCase.addTeardown(@() rmdir(folder, "s"));
+            root = fullfile(folder, release);
+            copyfile(testCase.createCatalog(), root);
+            testCase.writeJson(folder, "availability.json", struct("properties", {{}}, "values", {{}}));
+            packaged = jsondecode(fileread(fullfile(yamada.catalog.ComponentCatalogLoader.defaultCatalogRoot(), ...
+                "axes-setting-functions.json")));
+            forms = packaged.forms;
+            if ~iscell(forms), forms = num2cell(forms); end
+            names = string(cellfun(@(form) string(form.name), forms, "UniformOutput", false));
+            calls = struct("schemaVersion", 1, "matlabRelease", release, ...
+                "settingGroups", {{}}, "forms", {forms(names == "title")});
+            testCase.writeJson(root, "axes-setting-functions.json", calls);
+            first = yamada.catalog.ComponentCatalogLoader.load(root);
+            testCase.assertNotEmpty(yamada.catalog.AxesSettingFunctionCatalog.forName("title", first));
+
+            % A load after the edit reads the new forms; the earlier registry keeps its own.
+            calls.forms = {};
+            testCase.writeJson(root, "axes-setting-functions.json", calls);
+            second = yamada.catalog.ComponentCatalogLoader.load(root);
+            testCase.verifyEmpty(yamada.catalog.AxesSettingFunctionCatalog.forName("title", second));
+            testCase.verifyNotEmpty(yamada.catalog.AxesSettingFunctionCatalog.forName("title", first));
+        end
+
         function loadsApplicationPolicyWithoutChangingInspectorOrder(testCase)
             % loadsApplicationPolicyWithoutChangingInspectorOrder Keep execution and presentation distinct.
             % Guarantee and failure mode: shared with loadsAndValidatesGeometryMetadata.

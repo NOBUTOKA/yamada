@@ -4,37 +4,37 @@ classdef AxesSettingFunctionCatalog
     %   callers retain statement ownership and decide when the target is certain.
 
     methods (Static)
-        function forms = forName(name, root)
+        function forms = forName(name, registry)
             % forName Look up the exact function name in the packaged catalog.
             arguments (Input)
                 name (1, 1) string
-                root (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 forms cell
             end
 
-            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(registry);
             forms = {};
             if isKey(catalog.ByName, name), forms = catalog.ByName{name}; end
         end
 
-        function form = formById(id, root)
+        function form = formById(id, registry)
             % formById Return one packaged call form, or an empty struct when the release lacks it.
             arguments (Input)
                 id (1, 1) string
-                root (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 form struct
             end
 
-            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(registry);
             form = struct([]);
             if isKey(catalog.ById, id), form = catalog.ById{id}; end
         end
 
-        function elements = elementSlice(factory, path, current, root)
+        function elements = elementSlice(factory, path, current, registry)
             % elementSlice Return the slice of a vector argument that one path owns.
             %   current is the whole decoded argument. The result is empty when no
             %   element effect of a form for the factory accepts it for the path.
@@ -42,14 +42,14 @@ classdef AxesSettingFunctionCatalog
                 factory (1, 1) string
                 path (1, 1) string
                 current
-                root (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 elements (1, :) double
             end
 
             elements = zeros(1, 0);
-            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(registry);
             for item = values(catalog.ById)'
                 form = item{1};
                 if ~any(string(form.targetFactories) == factory), continue, end
@@ -66,7 +66,7 @@ classdef AxesSettingFunctionCatalog
             end
         end
 
-        function form = insertionForm(factory, path, value, root, requested)
+        function form = insertionForm(factory, path, value, registry, requested)
             % insertionForm Select the reviewed call form that writes one new value for a property.
             %   An insertion form's implied effects match a plain assignment. A companion
             %   form, such as xlim(ax,"padded"), is used only when every value it implies,
@@ -75,14 +75,14 @@ classdef AxesSettingFunctionCatalog
                 factory (1, 1) string
                 path (1, 1) string
                 value
-                root (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
                 requested struct = struct("Path", {}, "Value", {})
             end
             arguments (Output)
                 form struct
             end
 
-            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(registry);
             form = struct([]);
             key = factory + " " + path;
             if isKey(catalog.Insertion, key)
@@ -105,37 +105,37 @@ classdef AxesSettingFunctionCatalog
             if yamada.catalog.AxesSettingFunctionCatalog.accepts(args{1}, value), form = candidate; end
         end
 
-        function paths = automaticPaths(factory, path, root)
+        function paths = automaticPaths(factory, path, registry)
             % automaticPaths Return the explicit values a call owning a path returns to automatic.
             arguments (Input)
                 factory (1, 1) string
                 path (1, 1) string
-                root (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 paths (1, :) string
             end
 
             paths = strings(1, 0);
-            if strlength(root) == 0, return, end
-            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            if strlength(registry.CatalogRoot) == 0, return, end
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(registry);
             key = factory + " " + path;
             if isKey(catalog.Automatic, key), paths = catalog.Automatic{key}; end
         end
 
-        function forms = formsWritingPath(factory, path, root)
+        function forms = formsWritingPath(factory, path, registry)
             % formsWritingPath Return the call forms for a factory whose argument owns a path.
             arguments (Input)
                 factory (1, 1) string
                 path (1, 1) string
-                root (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 forms cell
             end
 
             forms = {};
-            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(registry);
             key = factory + " " + path;
             if isKey(catalog.Companion, key), forms{end + 1} = catalog.ById{catalog.Companion(key)}; end
             if isKey(catalog.Insertion, key), forms{end + 1} = catalog.ById{catalog.Insertion(key)}; end
@@ -159,20 +159,20 @@ classdef AxesSettingFunctionCatalog
             end
         end
 
-        function [main, form] = settingGroup(factory, path, root)
+        function [main, form] = settingGroup(factory, path, registry)
             % settingGroup Return the main path and call form whose option owns a dependent path.
             %   A group exists only where the dependent setting is meaningless without its main path.
             arguments (Input)
                 factory (1, 1) string
                 path (1, 1) string
-                root (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 main string
                 form struct
             end
 
-            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(root);
+            catalog = yamada.catalog.AxesSettingFunctionCatalog.index(registry);
             main = strings(1, 0);
             form = struct([]);
             for group = catalog.Groups
@@ -291,24 +291,20 @@ classdef AxesSettingFunctionCatalog
     end
 
     methods (Static, Access = private)
-        function catalog = index(root)
-            % index Load each packaged catalog root once and reuse its lookup tables.
+        function catalog = index(registry)
+            % index Return the call forms that the registry loaded with its catalog.
             arguments (Input)
-                root (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 catalog (1, 1) struct
             end
 
-            persistent cached
-            persistent catalogRoot
-            if isempty(cached) || catalogRoot ~= root
-                cached = yamada.catalog.AxesSettingFunctionCatalog.load(root);
-                catalogRoot = root;
-            end
-            catalog = cached;
+            catalog = registry.axesSettingCatalog();
         end
+    end
 
+    methods (Static, Access = ?yamada.model.ComponentRegistry)
         function catalog = load(root)
             % load Index packaged call forms and check argument, insertion and group references.
             arguments (Input)
@@ -392,7 +388,9 @@ classdef AxesSettingFunctionCatalog
                 catalog.Groups(end+1) = struct("Main",main,"Form",id);
             end
         end
+    end
 
+    methods (Static, Access = private)
         function [paths, values, indices, owned, elements] = decode(form,tokens)
             % decode Match positional literals and optional name-value arguments.
             arguments (Input)

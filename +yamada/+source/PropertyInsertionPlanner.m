@@ -333,7 +333,7 @@ classdef PropertyInsertionPlanner
             end
             for index = 1:numel(entries)
                 form = yamada.source.AxesSettingPlacement.callForm(component.Factory, entries(index).Path, ...
-                    entries(index).LiteralValue, registry.CatalogRoot, pending([1:index - 1, index + 1:end]));
+                    entries(index).LiteralValue, registry, pending([1:index - 1, index + 1:end]));
                 if ~isempty(form) && any(methodNames == string(form.name)), form = struct([]); end
                 forms{index} = form;
             end

@@ -27,6 +27,8 @@ classdef ComponentRegistry < handle
         ParentContextRules yamada.model.ParentContextRule = yamada.model.ParentContextRule.empty
         InspectorRowDefinitions yamada.model.InspectorRowDefinition = ...
             yamada.model.InspectorRowDefinition.empty
+        % AxesSettingCatalog - Axes setting call forms of CatalogRoot, loaded once per registry.
+        AxesSettingCatalog struct = struct([])
     end
 
     methods (Access = ?yamada.catalog.ComponentCatalogLoader)
@@ -42,6 +44,18 @@ classdef ComponentRegistry < handle
             obj.CatalogRoot = root;
             obj.UnavailableSourceProperties = paths;
             obj.UnavailableSourceValues = values;
+            obj.AxesSettingCatalog = struct([]);
+        end
+
+        function loadAxesSettingCatalog(obj)
+            % loadAxesSettingCatalog Load the axes setting call forms of the catalog root now.
+            %   The loader calls this before it remembers a validated registry, so every
+            %   duplicate shares the forms that were read with the rest of the catalog.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+            end
+
+            obj.AxesSettingCatalog = yamada.catalog.AxesSettingFunctionCatalog.load(obj.CatalogRoot);
         end
 
         function copy = duplicate(obj)
@@ -63,7 +77,26 @@ classdef ComponentRegistry < handle
             copy.UnavailableSourceProperties = obj.UnavailableSourceProperties;
             copy.UnavailableSourceValues = obj.UnavailableSourceValues;
             copy.CatalogRoot = obj.CatalogRoot;
+            copy.AxesSettingCatalog = obj.AxesSettingCatalog;
             copy.Revision = obj.Revision;
+        end
+    end
+
+    methods (Access = ?yamada.catalog.AxesSettingFunctionCatalog)
+        function catalog = axesSettingCatalog(obj)
+            % axesSettingCatalog Return the axes setting call forms of this registry's catalog root.
+            %   A registry not produced by the loader reads them on first use.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                catalog (1, 1) struct
+            end
+
+            if isempty(obj.AxesSettingCatalog)
+                obj.AxesSettingCatalog = yamada.catalog.AxesSettingFunctionCatalog.load(obj.CatalogRoot);
+            end
+            catalog = obj.AxesSettingCatalog;
         end
     end
 

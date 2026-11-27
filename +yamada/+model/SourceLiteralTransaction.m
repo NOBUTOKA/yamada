@@ -276,14 +276,14 @@ classdef SourceLiteralTransaction
                         slice = zeros(1, 0);
                         if safe
                             slice = yamada.catalog.AxesSettingFunctionCatalog.elementSlice( ...
-                                component.Factory, path, current, registry.CatalogRoot);
+                                component.Factory, path, current, registry);
                         end
                         if ~isempty(slice)
                             assert(numel(change.Value) == numel(slice), ...
                                 "yamada:SourceLiteralTransaction:WiderProof", "The value does not fit its call argument.");
                             current(slice) = change.Value;
                             assert(~isempty(yamada.catalog.AxesSettingFunctionCatalog.elementSlice( ...
-                                component.Factory, path, current, registry.CatalogRoot)), ...
+                                component.Factory, path, current, registry)), ...
                                 "yamada:SourceLiteralTransaction:WiderProof", "The limits must stay increasing.");
                             encoded = yamada.source.LiteralEncoder.encode(current);
                         end

@@ -315,6 +315,7 @@ The review applicator can retain passed, release-specific `setterAccess` evidenc
 
 - The loader reuses the remembered validated state only when the full catalog-root fingerprint is unchanged; otherwise it validates from source again. Any edit, added file or unreadable file therefore forces full validation, and a failed load is never remembered.
 - Every call returns a new, independent registry, so registration or other mutation by one caller never reaches the cache or another caller.
+- A registry carries the axes setting call forms of its catalog root, read with the rest of the catalog and shared by its duplicates. Call-form lookups take the registry, so they follow its lifetime and need no cache of their own.
 
 **Explanation**
 
