@@ -28,7 +28,7 @@ classdef NewAppFactory
             document = yamada.model.DocumentModel(className);
             document.LineEnding = yamada.model.NewAppFactory.defaultLineEnding();
             root = yamada.model.ComponentRecord( ...
-                yamada.model.NewAppFactory.createId(), "UIFigure", ...
+                yamada.model.ComponentRecord.newId(), "UIFigure", ...
                 definition.Factory, definition.DeclaredType, "generated");
             root.CreationArguments = definition.CreationArguments;
 
@@ -55,17 +55,6 @@ classdef NewAppFactory
             else
                 result = "LF";
             end
-        end
-
-        function id = createId()
-            % createId Create a stable opaque identifier for a new component.
-            arguments (Output)
-                id string
-            end
-
-            % Two random 32-bit segments provide practical in-document uniqueness.
-            id = string(sprintf("component-%08x-%08x", ...
-                randi([0 intmax("uint32")]), randi([0 intmax("uint32")])));
         end
     end
 end

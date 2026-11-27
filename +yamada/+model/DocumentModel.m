@@ -1022,7 +1022,7 @@ classdef DocumentModel < handle
             baseName = obj.displayName(factory);
             if isColorbar, baseName = definition.DisplayName; end
             name = obj.uniqueComponentName(baseName);
-            component = yamada.model.ComponentRecord(obj.newComponentId(), name, ...
+            component = yamada.model.ComponentRecord(yamada.model.ComponentRecord.newId(), name, ...
                 definition.Factory, definition.DeclaredType, "generated");
             component.CreationArguments = definition.CreationArguments;
             effectiveProperties = registry.getEffectiveProperties(definition.Factory, parent.Factory, ...
@@ -2319,8 +2319,8 @@ classdef DocumentModel < handle
             usedNames = [usedNames, unique(existingIdentifiers(:)')];
             usedIds = string({obj.Components.Id});
             for index = 1:numel(oldIds)
-                newIds(index) = obj.newComponentId();
-                while any(usedIds == newIds(index)), newIds(index) = obj.newComponentId(); end
+                newIds(index) = yamada.model.ComponentRecord.newId();
+                while any(usedIds == newIds(index)), newIds(index) = yamada.model.ComponentRecord.newId(); end
                 usedIds(end + 1) = newIds(index); %#ok<AGROW>
                 stem = snapshot.Records(index).Name;
                 if ~preserveNames, stem = stem + "Copy"; end
@@ -4389,12 +4389,6 @@ classdef DocumentModel < handle
                 error("yamada:DocumentModel:InvalidGridLayoutEdit", ...
                     "Grid row and column values must be positive integer scalars or spans.");
             end
-        end
-
-        function id = newComponentId(~)
-            % newComponentId Create a practical opaque identity for one component.
-            id = "component-" + string(randi([0 intmax("uint32")])) + "-" + ...
-                string(randi([0 intmax("uint32")]));
         end
 
         function name = uniqueComponentName(obj, base)

@@ -649,6 +649,20 @@ classdef ComponentRecord < handle
             obj.Children(obj.Children == childId) = [];
         end
     end
+    methods (Static)
+        function id = newId()
+            % newId Create an opaque component identity that no document content determines.
+            %   Every new, inserted, pasted, and parsed component receives one, so an
+            %   identity found in another document never stands for an unrelated
+            %   component. Two random 32-bit segments make a collision impractical.
+            arguments (Output)
+                id (1, 1) string
+            end
+
+            id = string(sprintf("component-%08x-%08x", ...
+                randi([0 intmax("uint32")]), randi([0 intmax("uint32")])));
+        end
+    end
 end
 
 %{
