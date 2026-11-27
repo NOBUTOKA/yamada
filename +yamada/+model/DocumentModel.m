@@ -1227,20 +1227,25 @@ classdef DocumentModel < handle
                 end
             end
 
-            % Commit only after every target is known to be editable and reversible.
+            % Record each change before applying it, so a failure part-way through any change
+            % reverses through the same history path as Undo.
             entries = yamada.model.PropertyEntry.empty;
+            partial = struct("Kind", "property-batch", "ComponentId", componentId, ...
+                "Changes", historyChanges([]));
             try
                 for index = 1:numel(changes)
+                    % An unfinished change has no new setting to verify on reversal.
+                    recorded = historyChanges(index);
+                    recorded.TargetSettingId = 0;
+                    partial.Changes(end + 1) = recorded;
                     if implied(index), component.removeProperty(historyChanges(index).Path); end
                     entries(end + 1) = component.setProperty( ...
                         historyChanges(index).Path, historyChanges(index).NewValue); %#ok<AGROW>
                     historyChanges(index).TargetSettingId = obj.propertySettingId(entries(end));
+                    partial.Changes(end).TargetSettingId = historyChanges(index).TargetSettingId;
                 end
             catch exception
-                % Preserve all-or-nothing semantics even if a future entry setter can fail.
-                for rollbackIndex = index - 1:-1:1
-                    obj.restoreBatchValue(component, historyChanges(rollbackIndex));
-                end
+                obj.applyHistory(partial, false);
                 rethrow(exception)
             end
             if ~isempty(historyChanges)
@@ -1473,19 +1478,19 @@ classdef DocumentModel < handle
                 end
             end
 
-            % Commit once, and restore every prior entry if any future setter fails.
+            % Record each change before applying it, so a failure reverses through the Undo path.
             entries = yamada.model.PropertyEntry.empty;
+            partial = struct("Kind", "grid-layout-edit", "GridId", gridId, ...
+                "Changes", historyChanges([]));
             try
                 for index = 1:numel(historyChanges)
+                    partial.Changes(end + 1) = historyChanges(index);
                     component = obj.getComponent(historyChanges(index).ComponentId);
                     entries(end + 1) = component.setProperty( ...
                         historyChanges(index).Path, historyChanges(index).NewValue); %#ok<AGROW>
                 end
             catch exception
-                for rollbackIndex = index - 1:-1:1
-                    component = obj.getComponent(historyChanges(rollbackIndex).ComponentId);
-                    obj.restoreBatchValue(component, historyChanges(rollbackIndex));
-                end
+                obj.applyHistory(partial, false);
                 rethrow(exception)
             end
             obj.recordHistory(struct("Kind", "grid-layout-edit", ...
@@ -4166,7 +4171,7 @@ classdef DocumentModel < handle
                     for index = 1:numel(edit.Changes)
                         obj.assertPropertySettingTarget(component, edit.Changes(index), forward);
                     end
-                    for index = 1:numel(edit.Changes)
+                    for index = obj.historyOrder(numel(edit.Changes), forward)
                         change = edit.Changes(index);
                         if forward
                             if isfield(change, "OldEntry") && ~isempty(change.OldEntry)
@@ -4174,17 +4179,17 @@ classdef DocumentModel < handle
                             end
                             component.setProperty(change.Path, change.NewValue);
                         else
-                            obj.restoreBatchValue(component, change);
+                            obj.reversePropertyChange(component, change);
                         end
                     end
                 case "grid-layout-edit"
-                    for index = 1:numel(edit.Changes)
+                    for index = obj.historyOrder(numel(edit.Changes), forward)
                         change = edit.Changes(index);
                         component = obj.getComponent(change.ComponentId);
                         if forward
                             component.setProperty(change.Path, change.NewValue);
                         else
-                            obj.restoreBatchValue(component, change);
+                            obj.reversePropertyChange(component, change);
                         end
                     end
             end
@@ -4296,8 +4301,26 @@ classdef DocumentModel < handle
             end
         end
 
-        function restoreBatchValue(~, component, change)
-            % restoreBatchValue Restore one prior batch value or its absent-property state.
+        function order = historyOrder(~, count, forward)
+            % historyOrder Order the changes of one history record for replay or reversal.
+            %   Reversal runs last-to-first so a record captured part-way through a
+            %   commit is undone in the reverse of the order it was applied.
+            arguments (Input)
+                ~
+                count (1, 1) double
+                forward (1, 1) logical
+            end
+            arguments (Output)
+                order (1, :) double
+            end
+
+            if forward, order = 1:count; else, order = count:-1:1; end
+        end
+
+        function reversePropertyChange(~, component, change)
+            % reversePropertyChange Restore one prior property value or its absent-property state.
+            %   The restore holds whether or not the change was applied, so it also
+            %   reverses a change interrupted between its removal and its setting.
             arguments (Input)
                 ~
                 component (1, 1) yamada.model.ComponentRecord
