@@ -338,20 +338,6 @@ classdef ModelValidator
             [states, diagnostics] = yamada.model.PropertyStateResolver.resolve(component, definitions, document, registry);
             transaction = yamada.model.PropertyStateResolver.transaction(states);
         end
-
-        function result = isNotRenderedFigureTool(factory)
-            % isNotRenderedFigureTool Identify Figure Tools intentionally outside preview scope.
-            arguments (Input)
-                factory (1, 1) string
-            end
-            arguments (Output)
-                result (1, 1) logical
-            end
-
-            result = any(factory == ["uicontextmenu", "uimenu", "uitoolbar", ...
-                "uipushtool", "uitoggletool"]);
-        end
-
         function diagnostics = properties(component, document, registry)
             % properties Validate one owner's effective setting values and supported property schemas.
             arguments (Input)
@@ -392,7 +378,7 @@ classdef ModelValidator
                         any(entry.Path == ["RequestedLatitudeLimits","RequestedLongitudeLimits","GeographicLimitsMode"]) && ...
                         ~isempty(settings) && all(string({settings.Method}) == "functionCall");
                     if geographicArgument || any([settings.IsReleaseUnavailable]) || ...
-                            yamada.validation.ModelValidator.isNotRenderedFigureTool(component.Factory)
+                            registry.isFigureTool(component.Factory)
                         continue
                     end
                     diagnostics(end + 1) = yamada.model.Diagnostic( ...

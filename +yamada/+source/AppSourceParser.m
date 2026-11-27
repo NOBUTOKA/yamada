@@ -495,7 +495,7 @@ classdef AppSourceParser
                     record = setting.toStruct();
                     record.Location.IsEditable = false;
                     component.recordSetting(yamada.model.PropertySetting(record.Path, record.Value, record.Location));
-                    if ~setting.IsReleaseUnavailable && ~yamada.source.AppSourceParser.isNotRenderedFigureTool(component.Factory)
+                    if ~setting.IsReleaseUnavailable && ~registry.isFigureTool(component.Factory)
                         diagnostics(end + 1) = yamada.source.AppSourceParser.diagnostic( ...
                             "context-inapplicable-property", "warning", ...
                             "Property assignment is preserved read-only outside its direct-parent context.", ...
@@ -677,20 +677,6 @@ classdef AppSourceParser
             if isscalar(match), span = layout.Methods(match).Span; end
             setting = setting.withScope(owner, span);
         end
-
-        function result = isNotRenderedFigureTool(factory)
-            % isNotRenderedFigureTool Identify retained Figure Tools outside Safe Preview scope.
-            arguments (Input)
-                factory (1, 1) string
-            end
-            arguments (Output)
-                result (1, 1) logical
-            end
-
-            result = any(factory == ["uicontextmenu", "uimenu", "uitoolbar", ...
-                "uipushtool", "uitoggletool"]);
-        end
-
         function [bytes, diagnostic] = readBytes(filePath)
             % readBytes Read a file in binary mode without source execution.
             arguments (Input)

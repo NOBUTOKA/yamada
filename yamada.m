@@ -3982,6 +3982,10 @@ classdef yamada < handle
                     rawValue = defaults.Values{index};
                     isKnown = true;
                 end
+                % Only a value MATLAB defines but yamada could not read stays unknown here.
+                probeFailed = ~resolved.IsReleaseUnavailable && ~resolved.IsKnown && isempty(entry) && ...
+                    strlength(resolved.EffectKey) == 0 && ~defaults.Found(index) && ...
+                    states(index).Definition.Application.EffectStatus ~= "unsupported";
                 if isKnown
                     displayEntry = yamada.model.PropertyEntry(states(index).Definition.Path, rawValue);
                     value = yamada.ui.InspectorValueFormatter.format(displayEntry);
@@ -4058,6 +4062,11 @@ classdef yamada < handle
                     isKnown = true;
                     members(index).Reason = "";
                     if ~editable, members(index).Reason = "This vis3d keyword is not owned by one explicit axis call and is read-only."; end
+                end
+                if probeFailed && ~isKnown && editable
+                    % Editing from a placeholder could write it as the value; the probe is incomplete.
+                    editable = false;
+                    members(index).Reason = "yamada could not read the current value of this property.";
                 end
                 members(index).Path = path;
                 members(index).Value = value;

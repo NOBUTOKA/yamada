@@ -34,6 +34,10 @@ classdef ComponentDefinition
         IsProgrammaticOnly logical = false
         % RequiresParentComponent - Whether creation requires a nonroot parent.
         RequiresParentComponent logical = false
+        % IsFigureTool - Whether this is a figure tool, such as a menu or toolbar, outside Safe Preview.
+        %   yamada retains its source but does not render it, edit it in the Inspector,
+        %   or probe its native defaults.
+        IsFigureTool logical = false
         % SupportedStyles - Factory styles the editor can preserve and generate.
         SupportedStyles string = strings(1, 0)
         % DefaultStyle - Style used when a new component omits an explicit style.
@@ -242,6 +246,7 @@ classdef ComponentDefinition
                 yamada.model.ComponentDefinition.capability(capabilities, "ResizeConstraintsByStyle", struct()), ...
                 yamada.model.ComponentDefinition.capability(capabilities, "DefaultSize", [100 30]), ...
                 yamada.model.ComponentDefinition.extensionMetadata(capabilities));
+            result.IsFigureTool = yamada.model.ComponentDefinition.capability(capabilities, "FigureTool", false);
         end
 
     end
@@ -276,7 +281,7 @@ classdef ComponentDefinition
 
             metadata = capabilities;
             known = ["DisplayName", "Category", "ProgrammaticOnly", ...
-                "RequiresParentComponent", "SupportedStyles", "DefaultStyle", ...
+                "RequiresParentComponent", "FigureTool", "SupportedStyles", "DefaultStyle", ...
                 "DeclaredTypesByStyle", "OverlayShape", "OverlayShapesByStyle", ...
                 "ResizeConstraint", "ResizeConstraintsByStyle", "DefaultSize"];
             for index = 1:numel(known)

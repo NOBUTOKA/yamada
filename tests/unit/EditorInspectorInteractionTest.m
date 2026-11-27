@@ -248,6 +248,55 @@ classdef EditorInspectorInteractionTest < matlab.unittest.TestCase
             clear cleanup
         end
 
+        % Guarantee: a row whose value MATLAB defines but yamada could not read is read-only and says why.
+        % Failure mode: the Inspector edits from a placeholder, so committing it writes the placeholder as the value.
+        function unreadableDefaultRowIsReadOnly(testCase)
+            % unreadableDefaultRowIsReadOnly Select a toolbar tool, whose defaults are not probed.
+            source = strjoin(["classdef ToolbarDefaultsApp < handle", "properties", ...
+                "UIFigure matlab.ui.Figure", "Toolbar matlab.ui.container.Toolbar", ...
+                "Tool matlab.ui.container.toolbar.PushTool", "end", "methods", ...
+                "function app = ToolbarDefaultsApp", "createComponents(app);", "end", ...
+                "function createComponents(app)", "app.UIFigure = uifigure(Visible='off');", ...
+                "app.Toolbar = uitoolbar(app.UIFigure);", "app.Tool = uipushtool(app.Toolbar);", ...
+                "end", "end", "end"], sprintf("\r\n"));
+            folder = string(tempname());
+            mkdir(folder);
+            testCase.addTeardown(@() rmdir(folder, "s"));
+            fixture = fullfile(folder, "ToolbarDefaultsApp.m");
+            yamada.source.SourceWriter.write(fixture, source);
+            lifecycle = yamada.ui.DocumentLifecycleService(struct( ...
+                "RequestOpenPathFcn", @() acceptedOpenPath(fixture)));
+            app = yamada(lifecycle, Visible="off");
+            cleanup = onCleanup(@() deleteIfValid(app));
+            figure = findall(0, "Type", "figure", "Tag", "yamada-editor");
+            menus = findall(figure, "Type", "uimenu");
+            openMenu = menus(erase(string({menus.Text}), "&") == "Open...");
+            openMenu.MenuSelectedFcn(openMenu, struct());
+            tool = app.Document.getComponentByName("Tool");
+            tree = findall(figure, "Type", "uitree");
+            nodes = findall(tree(1), "Type", "uitreenode");
+            node = nodes(arrayfun(@(candidate) isequal(string(candidate.NodeData), tool.Id), nodes));
+            testCase.assertNumElements(node, 1);
+            tree(1).SelectedNodes = node;
+            tree(1).SelectionChangedFcn(tree(1), struct("SelectedNodes", node));
+            drawnow;
+
+            % An on/off row and a text row are both closed to editing, with the reason as tooltip.
+            labels = findall(figure, "Type", "uilabel", "Tag", "yamada-inspector-property-label");
+            for path = ["Enable", "Tooltip"]
+                label = labels(string({labels.Text}) == path);
+                editor = findall(label.Parent, "Tag", "yamada-inspector-property-editor");
+                testCase.assertNumElements(editor, 1, path);
+                if isprop(editor, "Editable")
+                    testCase.verifyEqual(string(editor.Editable), "off", path);
+                else
+                    testCase.verifyEqual(string(editor.Enable), "off", path);
+                end
+                testCase.verifySubstring(strjoin(string(editor.Tooltip), " "), "could not read", path);
+            end
+            clear cleanup
+        end
+
         % Guarantee: an Inspector commit equal to the effective value changes neither the source nor the history.
         % Failure mode: re-entering a default, or a picker that returns the current value, writes an explicit setting and an Undo step.
         function effectiveValueCommitIsNotAnEdit(testCase)

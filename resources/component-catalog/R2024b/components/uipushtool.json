@@ -796,6 +796,7 @@
   "capabilities": {
     "displayName": "Push Tool",
     "category": "FigureTools",
-    "requiresParentComponent": true
+    "requiresParentComponent": true,
+    "figureTool": true
   }
 }

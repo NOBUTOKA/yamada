@@ -255,6 +255,7 @@ The shell resolves the command target and availability, while Hierarchy and the 
 - Variant selection prefers an exact creation-argument match, then the most specific prefix, then an unstyled default.
 - `PropertyDefinition` never stores an instance value. All consumers obtain the effective component/direct-parent property surface through `ComponentRegistry.getEffectiveProperties`. Catalog JSON is data, not executable configuration.
 - Loader validation rejects unknown fields, broken references, duplicate ownership, invalid ordering, and unknown behavior identifiers.
+- The `figureTool` component capability marks the figure tools that Safe Preview does not render: `uicontextmenu`, `uimenu`, `uitoolbar`, `uipushtool`, and `uitoggletool`. Source analysis, validation, and Preview ask `ComponentRegistry.isFigureTool` instead of listing factory names. yamada retains their source but does not render them, edit them in the Inspector, or probe their native defaults.
 
 **Explanation**
 
@@ -557,6 +558,7 @@ Shared boundaries: [Position geometry policies](#position-geometry-policies).
 
 - Editors submit one or more changes through `PropertyTransaction`. The editor reconciles dependent values such as `Items`/`ItemsData`/`Value`, validates the candidate transaction with `PropertyBatchValidator`, and submits it to `DocumentModel.setPropertyBatch` for model acceptance. A batch that changes values produces one history record and updates the affected views; a rejected request does not partially commit.
 - A requested change equal to the property's known effective value, from the Inspector or a dialog, is not an edit: `inspectorValuesCommitted` drops it before validation, so it adds no source setting and no history step even when the source has no assignment. A value with a different representation, such as a cell where the effective value is a character vector, still commits.
+- A row whose value MATLAB defines but yamada could not read is read-only, with the reason as its tooltip: the property has no source assignment, no modeled upstream effect, no unsupported application status, and the `DefaultValueProvider` probe did not read it. Such a row indicates a catalog or probe defect; `CatalogDefaultProbeTest` requires the probe to read every editable property of every variant outside the figure tools. A value that is unknown because other settings may change it stays editable.
 
 **Explanation**
 

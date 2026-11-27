@@ -220,6 +220,19 @@ classdef ComponentRegistry < handle
                 (isscalar(factory) && ~isempty(obj.AxesAttachment) && obj.AxesAttachment.Factory == factory);
         end
 
+        function result = isFigureTool(obj, factory)
+            % isFigureTool Return true when a registered factory is a figure tool outside Safe Preview.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                factory (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = obj.contains(factory) && obj.get(factory).IsFigureTool;
+        end
+
         function definition = get(obj, factory, creationArguments)
             % get Return the concrete definition selected by factory arguments.
             arguments (Input)
