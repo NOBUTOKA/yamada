@@ -3325,6 +3325,13 @@ classdef yamada < handle
                 return
             end
             transaction = app.inspectorTransaction(component);
+            % A request equal to the effective value is not an edit, whatever the source holds.
+            unchanged = arrayfun(@(change) transaction.matchesInitial(string(change.Path), change.Value), changes);
+            changes = changes(~unchanged);
+            if isempty(changes)
+                message = "";
+                return
+            end
             try
                 for index = 1:numel(changes)
                     transaction = transaction.stage(string(changes(index).Path), changes(index).Value);
