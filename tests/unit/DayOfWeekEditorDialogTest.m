@@ -1,17 +1,17 @@
 classdef (TestTags = {'dialog', 'inspector', 'ui'}) DayOfWeekEditorDialogTest < matlab.unittest.TestCase
-    % DayOfWeekEditorDialogTest Verify weekday drafts are readable and delayed until Apply.
+    % DayOfWeekEditorDialogTest Verify weekday buttons are readable and submit day numbers.
 
     methods (Test)
-        % Guarantee: weekday edits stay a draft until Apply commits exactly one change; Cancel commits nothing.
-        % Failure mode: each toggle commits immediately, or Cancel leaks the draft into the document.
-        function usesEnglishStateButtonsAndOneApplyCommit(testCase)
-            % usesEnglishStateButtonsAndOneApplyCommit Keep state edits local until Apply.
+        % Guarantee: weekday buttons show readable English names and submit the selected day numbers in order.
+        % Failure mode: a label names the wrong day, or a toggled day is submitted as the wrong number.
+        function statesSubmitSelectedDayNumbers(testCase)
+            % statesSubmitSelectedDayNumbers Keep state edits local until Apply.
 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
             setappdata(owner, "changes", struct.empty);
-            dialog = yamada.ui.inspector.DayOfWeekEditorDialog.open([1 3], ...
-                "DisabledDaysOfWeek", @(changes) captureChanges(owner, changes), false);
+            dialog = yamada.ui.inspector.PropertyEditDialog.show(yamada.ui.inspector.DayOfWeekEditorDialog([1 3], ...
+                "DisabledDaysOfWeek"), @(changes) captureChanges(owner, changes), false);
             buttons = findall(dialog, "Tag", "yamada-inspector-day-of-week-button");
             testCase.verifyEqual(sort(string({buttons([buttons.Value]).Text})), ["Sun", "Tue"]);
             monday = buttons(string({buttons.Text}) == "Mon");
@@ -27,20 +27,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DayOfWeekEditorDialogTest < 
             clear cleanup
         end
 
-        function cancelDiscardsWeekdayDraft(testCase)
-            % cancelDiscardsWeekdayDraft Close without applying any edited state.
-
-            owner = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(owner));
-            setappdata(owner, "changes", struct.empty);
-            dialog = yamada.ui.inspector.DayOfWeekEditorDialog.open([], "DisabledDaysOfWeek", ...
-                @(changes) captureChanges(owner, changes), false);
-            dialog.CloseRequestFcn(dialog, struct());
-
-            testCase.verifyEmpty(getappdata(owner, "changes"));
-            testCase.verifyFalse(isvalid(dialog));
-            clear cleanup
-        end
     end
 end
 

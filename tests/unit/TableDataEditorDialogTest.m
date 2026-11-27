@@ -2,8 +2,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
     % TableDataEditorDialogTest Verify typed table drafts use nearby structural actions and one batch.
 
     methods (Test, TestTags = {'fast'})
-        % Guarantee: table edits, including names and column settings, stay a draft until Apply commits one consistent batch.
-        % Failure mode: data and names commit separately, or a column change leaves ColumnWidth with the wrong length.
+        % Guarantee: row, column, and name edits stage Data, names, and indexed column settings that agree in size.
+        % Failure mode: a deleted row or column is staged with stale names, or a column change leaves ColumnWidth with the wrong length.
         function addDeleteAndApplyCommitOneTableBatch(testCase)
             % addDeleteAndApplyCommitOneTableBatch Retain all row and column edits until Apply.
 
@@ -13,8 +13,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             state = struct("Data", {num2cell([1 2; 3 4])}, ...
                 "ColumnName", {{'First', 'Second'}}, "RowName", {{'One', 'Two'}}, ...
                 "HasData", true, "HasColumnName", true, "HasRowName", true);
-            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
-                state, @(changes) captureChanges(owner, changes), false);
+            dialog = yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.TableDataEditorDialog(state), @(changes) captureChanges(owner, changes), false);
             deleteRows = findall(dialog, "Tag", "yamada-table-data-delete-row");
             deleteRow = deleteRows([deleteRows.UserData] == 1);
             deleteRow.ButtonPushedFcn(deleteRow, struct());
@@ -52,8 +52,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             state = struct("Data", {num2cell(zeros(30, 7))}, "ColumnName", "numbered", ...
                 "RowName", "numbered", "HasData", true, ...
                 "HasColumnName", true, "HasRowName", true);
-            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
-                state, @(~) "", false);
+            dialog = yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.TableDataEditorDialog(state), @(~) "", false);
             drawnow;
             host = findall(dialog, "Tag", "yamada-table-data-scroll-host");
             content = findall(dialog, "Tag", "yamada-table-data-scroll-content");
@@ -79,8 +79,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             setappdata(owner, "changes", struct.empty);
             state = struct("Data", 1, "ColumnName", "numbered", "RowName", "numbered", ...
                 "HasData", true, "HasColumnName", true, "HasRowName", true);
-            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
-                state, @(changes) captureChanges(owner, changes), false);
+            dialog = yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.TableDataEditorDialog(state), @(changes) captureChanges(owner, changes), false);
             table = findall(dialog, "Tag", "yamada-table-data-editor-table");
             testCase.verifyEqual(table.Data(1, 2), "Column 1");
             testCase.verifyEqual(table.Data(2, 1), "Row 1");
@@ -106,8 +106,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             setappdata(owner, "changes", struct.empty);
             state = struct("Data", 1, "ColumnName", {{'Amount'}}, "RowName", {{'Total'}}, ...
                 "HasData", true, "HasColumnName", true, "HasRowName", true);
-            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
-                state, @(changes) captureChanges(owner, changes), false);
+            dialog = yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.TableDataEditorDialog(state), @(changes) captureChanges(owner, changes), false);
             rowButton = findall(dialog, "Tag", "yamada-table-data-numbered-rows");
             rowButton.Value = true;
             rowButton.ValueChangedFcn(rowButton, struct());
@@ -132,8 +132,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
             setappdata(owner, "changes", struct.empty);
             state = struct("Data", {num2cell([1 2])}, "ColumnName", {{'A', 'B'}}, ...
                 "RowName", {{'One'}}, "HasData", true, "HasColumnName", true, "HasRowName", true);
-            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
-                state, @(changes) captureChanges(owner, changes), false);
+            dialog = yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.TableDataEditorDialog(state), @(changes) captureChanges(owner, changes), false);
             clearButton = findall(dialog, "Tag", "yamada-table-data-clear");
             clearButton.ButtonPushedFcn(clearButton, struct());
 
@@ -162,8 +162,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
                 "ColumnFormat", {{'bank', 'char'}}, "HasColumnWidth", true, ...
                 "HasColumnEditable", true, "HasColumnSortable", true, ...
                 "HasColumnFormat", true);
-            dialog = yamada.ui.inspector.TableDataEditorDialog.open( ...
-                state, @(changes) captureChanges(owner, changes), false);
+            dialog = yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.TableDataEditorDialog(state), @(changes) captureChanges(owner, changes), false);
             buttons = findall(dialog, "Tag", "yamada-table-data-delete-column");
             button = buttons([buttons.UserData] == 1);
             button.ButtonPushedFcn(button, struct());
@@ -186,8 +186,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) TableDataEditorDialogTest < 
 
             state = struct("Data", table([1; 2]), "ColumnName", [], "RowName", [], ...
                 "HasData", true, "HasColumnName", false, "HasRowName", false);
-            testCase.verifyError(@() yamada.ui.inspector.TableDataEditorDialog.open( ...
-                state, @(~) "", false), "yamada:TableDataEditorDialog:UnsupportedData");
+            testCase.verifyError(@() yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.TableDataEditorDialog(state), @(~) "", false), "yamada:TableDataEditorDialog:UnsupportedData");
         end
 
     end

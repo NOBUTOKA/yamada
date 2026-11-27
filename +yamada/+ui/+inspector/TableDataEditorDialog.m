@@ -1,19 +1,35 @@
-classdef TableDataEditorDialog
+classdef TableDataEditorDialog < yamada.ui.inspector.PropertyEditDialog
     % TableDataEditorDialog Edit a supported UITable data draft and its visible headings.
     %   The dialog retains typed cell values and row/column names locally. It emits
     %   one property batch for Data, headings, and affected indexed column
-    %   settings only after Apply.
+    %   settings only after Apply. PropertyEditDialog owns Apply, Cancel, and
+    %   the commit.
+    %
+    %   Example:
+    %       editor = yamada.ui.inspector.TableDataEditorDialog(state);
+    %       dialog = yamada.ui.inspector.PropertyEditDialog.show(editor, commitFcn);
 
-    methods (Static)
-        function dialog = open(state, commitFcn, visible)
-            % open Create a table editor with row and column controls around one native UITable.
+    properties (Access = private)
+        % State - Effective table state that the draft starts from.
+        State struct = struct()
+        % ReadFcn - Draft reader bound to the controls that buildContent creates.
+        ReadFcn function_handle = function_handle.empty
+        % RejectFcn - Presents a rejection message in the dialog message line.
+        RejectFcn function_handle = function_handle.empty
+        % ClearFcn - Resets the local draft.
+        ClearFcn function_handle = function_handle.empty
+        % ShowFcn - Starts the relayout that waits for the visible grid extent.
+        ShowFcn function_handle = function_handle.empty
+    end
+
+    methods
+        function obj = TableDataEditorDialog(state)
+            % TableDataEditorDialog Prepare a table draft from supported effective table state.
             arguments (Input)
                 state (1, 1) struct
-                commitFcn (1, 1) function_handle
-                visible (1, 1) logical = true
             end
             arguments (Output)
-                dialog (1, 1) matlab.ui.Figure
+                obj (1, 1) yamada.ui.inspector.TableDataEditorDialog
             end
 
             if ~isfield(state, "HasData") || ~state.HasData || ...
@@ -21,6 +37,26 @@ classdef TableDataEditorDialog
                 error("yamada:TableDataEditorDialog:UnsupportedData", ...
                     "Table data must be an empty, numeric, logical, string, or safe cell matrix.");
             end
+            spec = struct("Name", "Edit table data", ...
+                "Tag", "yamada-inspector-table-data-dialog", "Position", [260 220 760 510], ...
+                "ContentHeight", "1x", "AlertTitle", "Invalid table data", ...
+                "ApplyTag", "yamada-table-data-apply", "CancelTag", "yamada-table-data-cancel");
+            obj@yamada.ui.inspector.PropertyEditDialog(spec, ...
+                yamada.ui.inspector.TableDataEditorDialog.initialTransaction(state));
+            obj.State = state;
+        end
+    end
+
+    methods (Access = protected)
+        function buildContent(obj, content)
+            % buildContent Create the scrollable table surface, name controls, type, and message line.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.TableDataEditorDialog
+                content (1, 1) matlab.ui.container.GridLayout
+            end
+
+            % Derive the local draft from the effective state.
+            state = obj.State;
             initialData = state.Data;
             initialColumnName = yamada.ui.inspector.TableDataEditorDialog.stateValue( ...
                 state, "ColumnName", []);
@@ -47,18 +83,10 @@ classdef TableDataEditorDialog
             columnSourceIndices = 1:size(initialData, 2);
             initialLayoutPending = false;
             initialHostPosition = zeros(1, 4);
-            transaction = yamada.model.PropertyTransaction( ...
-                ["Data", "ColumnName", "RowName", indexedPaths], ...
-                [{initialData, initialColumnName, initialRowName}, indexedInitial], ...
-                [true, isfield(state, "HasColumnName") && state.HasColumnName, ...
-                isfield(state, "HasRowName") && state.HasRowName, indexedKnown]);
 
-            dialog = uifigure("Name", "Edit table data", "Visible", "off", ...
-                "WindowStyle", "modal", "Position", [260 220 760 510], ...
-                "Tag", "yamada-inspector-table-data-dialog");
-            dialog.CloseRequestFcn = @(~, ~) closeDialog();
-            grid = uigridlayout(dialog, [5 1], "Padding", [12 12 12 12], ...
-                "RowHeight", {"1x", 32, 23.3, 23.3, 32}, "RowSpacing", 6);
+            % Build the table surface and its structural, type, and message rows.
+            grid = uigridlayout(content, [4 1], "Padding", [0 0 0 0], ...
+                "RowHeight", {"1x", 32, 23.3, 23.3}, "RowSpacing", 6);
             tableHost = uipanel(grid, "BorderType", "line", "Scrollable", "on", ...
                 "AutoResizeChildren", "off", "Tag", "yamada-table-data-scroll-host");
             tableContent = uipanel(tableHost, "BorderType", "none", "AutoResizeChildren", "off", ...
@@ -93,19 +121,17 @@ classdef TableDataEditorDialog
                 yamada.ui.inspector.TableDataEditorDialog.dataKindMessage(dataKind), ...
                 "FontColor", [0.3 0.3 0.3], "Tag", "yamada-table-data-message");
             message.Layout.Row = 4;
-            actions = uigridlayout(grid, [1 2], "Padding", [0 0 0 0], ...
-                "ColumnWidth", {90, "1x"}, "ColumnSpacing", 6);
-            actions.Layout.Row = 5;
-            uibutton(actions, "Text", "Clear", "Tag", "yamada-table-data-clear", ...
-                "ButtonPushedFcn", @(~, ~) clearDraft());
-            uibutton(actions, "Text", "Apply", "Tag", "yamada-table-data-apply", ...
-                "ButtonPushedFcn", @(~, ~) applyDraft());
             rebuildChrome();
-            if visible
+            obj.ReadFcn = @readDraft;
+            obj.RejectFcn = @(text) setMessage(text, [0.7 0 0]);
+            obj.ClearFcn = @clearDraft;
+            obj.ShowFcn = @prepareInitialLayout;
+
+            function prepareInitialLayout()
+                % prepareInitialLayout Relayout once the visible dialog resolves its real grid extent.
                 initialLayoutPending = true;
                 initialHostPosition = getpixelposition(tableHost, true);
                 tableHost.SizeChangedFcn = @(~, ~) finishInitialLayout();
-                dialog.Visible = "on";
             end
 
             function rebuildChrome()
@@ -263,10 +289,12 @@ classdef TableDataEditorDialog
                 result = true;
             end
 
-            function applyDraft()
-                % applyDraft Parse, type-pack, and atomically submit every changed table surface.
+            function [transaction, failure] = readDraft(transaction)
+                % readDraft Parse, type-pack, and stage every changed table surface.
+                failure = "";
                 [isValid, data] = captureTableData();
                 if ~isValid
+                    failure = string(message.Text);
                     return
                 end
                 columnName = yamada.ui.inspector.TableDataEditorDialog.nameOutput( ...
@@ -298,17 +326,6 @@ classdef TableDataEditorDialog
                         end
                     end
                 end
-                changes = transaction.changes();
-                if isempty(changes)
-                    closeDialog();
-                    return
-                end
-                errorMessage = commitFcn(changes);
-                if strlength(errorMessage) > 0
-                    setMessage(errorMessage, [0.7 0 0]);
-                    return
-                end
-                closeDialog();
             end
 
             function setRowNumbered(value)
@@ -347,15 +364,56 @@ classdef TableDataEditorDialog
                 message.Text = text;
                 message.FontColor = color;
             end
-
-            function closeDialog()
-                % closeDialog Dispose the modal editor without applying uncommitted draft values.
-                if isvalid(dialog)
-                    delete(dialog);
-                end
-            end
         end
 
+        function actions = editorActions(obj)
+            % editorActions Offer Clear beside the shared Cancel and Apply.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.TableDataEditorDialog
+            end
+            arguments (Output)
+                actions struct
+            end
+
+            actions = struct("Text", "Clear", "Tag", "yamada-table-data-clear", ...
+                "Callback", @(~, ~) obj.ClearFcn());
+        end
+
+        function [transaction, message] = read(obj, transaction)
+            % read Stage the table draft, or return the validation message it shows.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.TableDataEditorDialog
+                transaction (1, 1) yamada.model.PropertyTransaction
+            end
+            arguments (Output)
+                transaction (1, 1) yamada.model.PropertyTransaction
+                message (1, 1) string
+            end
+
+            [transaction, message] = obj.ReadFcn(transaction);
+        end
+
+        function showRejection(obj, message)
+            % showRejection Show a rejection in the dialog message line.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.TableDataEditorDialog
+                message (1, 1) string
+            end
+
+            obj.RejectFcn(message);
+        end
+
+        function aboutToShow(obj)
+            % aboutToShow Start the relayout that waits for the visible grid extent.
+            arguments (Input)
+                obj (1, 1) yamada.ui.inspector.TableDataEditorDialog
+            end
+
+            obj.ShowFcn();
+        end
+    end
+
+    methods (Static)
         function result = supportsData(value)
             % supportsData Report whether one table Data value has a finite editable matrix representation.
             arguments (Input)
@@ -399,6 +457,32 @@ classdef TableDataEditorDialog
     end
 
     methods (Static, Access = private)
+        function transaction = initialTransaction(state)
+            % initialTransaction Snapshot Data, headings, and indexed column settings with their availability.
+            arguments (Input)
+                state (1, 1) struct
+            end
+            arguments (Output)
+                transaction (1, 1) yamada.model.PropertyTransaction
+            end
+
+            indexedPaths = ["ColumnWidth", "ColumnEditable", "ColumnSortable", "ColumnFormat"];
+            indexedInitial = cell(1, numel(indexedPaths));
+            indexedKnown = false(1, numel(indexedPaths));
+            for index = 1:numel(indexedPaths)
+                path = indexedPaths(index);
+                indexedInitial{index} = yamada.ui.inspector.TableDataEditorDialog.stateValue(state, path, []);
+                indexedKnown(index) = isfield(state, char("Has" + path)) && state.(char("Has" + path));
+            end
+            initialColumnName = yamada.ui.inspector.TableDataEditorDialog.stateValue(state, "ColumnName", []);
+            initialRowName = yamada.ui.inspector.TableDataEditorDialog.stateValue(state, "RowName", []);
+            transaction = yamada.model.PropertyTransaction( ...
+                ["Data", "ColumnName", "RowName", indexedPaths], ...
+                [{state.Data, initialColumnName, initialRowName}, indexedInitial], ...
+                [true, isfield(state, "HasColumnName") && state.HasColumnName, ...
+                isfield(state, "HasRowName") && state.HasRowName, indexedKnown]);
+        end
+
         function value = stateValue(state, name, fallback)
             % stateValue Read one optional table state value without requiring a default provider entry.
             if isfield(state, name)

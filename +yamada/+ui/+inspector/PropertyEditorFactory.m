@@ -64,7 +64,7 @@ classdef PropertyEditorFactory
                     parts.Edit.ValueChangedFcn = @(source, ~) commitFcn(string(source.Value));
                     parts.Browse.ButtonPushedFcn = @(~, ~) yamada.ui.inspector.PropertyEditorFactory.browseAsset(control, commitFcn);
                 case "stringList"
-                    control.ButtonPushedFcn = @(source, ~) yamada.ui.inspector.StringListEditorDialog.open(source.UserData, definition.Path, batchCommitFcn);
+                    control.ButtonPushedFcn = @(source, ~) yamada.ui.inspector.PropertyEditDialog.show(yamada.ui.inspector.StringListEditorDialog(source.UserData, definition.Path), batchCommitFcn);
                 case "structuredData"
                     if yamada.ui.inspector.PropertyEditorFactory.isDayOfWeekSchema(definition)
                         control.ButtonPushedFcn = @(source, ~) yamada.ui.inspector.PropertyEditorFactory.openDayOfWeekEditor(source, definition.Path, batchCommitFcn);
@@ -82,7 +82,7 @@ classdef PropertyEditorFactory
                         parts.Start.ValueChangedFcn = @(source, ~) yamada.ui.inspector.PropertyEditorFactory.commitDateLimits(source, commitFcn);
                         parts.End.ValueChangedFcn = @(source, ~) yamada.ui.inspector.PropertyEditorFactory.commitDateLimits(source, commitFcn);
                     else
-                        control.ButtonPushedFcn = @(source, ~) yamada.ui.inspector.DateListEditorDialog.open(source.UserData, definition.Path, batchCommitFcn);
+                        control.ButtonPushedFcn = @(source, ~) yamada.ui.inspector.PropertyEditDialog.show(yamada.ui.inspector.DateListEditorDialog(source.UserData, definition.Path), batchCommitFcn);
                     end
             end
         end
@@ -145,8 +145,8 @@ classdef PropertyEditorFactory
                     control = uibutton(parent, "Text", "", ...
                         "Tag", "yamada-inspector-string-list-editor", ...
                         "ButtonPushedFcn", @(source, ~) ...
-                        yamada.ui.inspector.StringListEditorDialog.open( ...
-                        source.UserData, definition.Path, batchCommitFcn));
+                        yamada.ui.inspector.PropertyEditDialog.show( ...
+                        yamada.ui.inspector.StringListEditorDialog(source.UserData, definition.Path), batchCommitFcn));
                 case "multilineText"
                     control = uitextarea(parent, "Tag", "yamada-inspector-property-editor", ...
                         "ValueChangedFcn", @(source, ~) ...
@@ -882,7 +882,7 @@ classdef PropertyEditorFactory
             days = yamada.ui.inspector.PropertyEditorFactory.dayNumbers(original);
             owner = ancestor(control, "figure");
             visible = isempty(owner) || string(owner.Visible) == "on";
-            yamada.ui.inspector.DayOfWeekEditorDialog.open(days, path, @(changes) ...
+            yamada.ui.inspector.PropertyEditDialog.show(yamada.ui.inspector.DayOfWeekEditorDialog(days, path), @(changes) ...
                 batchCommitFcn(struct("Path", changes.Path, "Value", ...
                 yamada.ui.inspector.PropertyEditorFactory.dayValue(changes.Value, original))), visible);
         end
@@ -897,7 +897,7 @@ classdef PropertyEditorFactory
             state = control.UserData;
             owner = ancestor(control, "figure");
             visible = isempty(owner) || string(owner.Visible) == "on";
-            yamada.ui.inspector.TableDataEditorDialog.open(state, batchCommitFcn, visible);
+            yamada.ui.inspector.PropertyEditDialog.show(yamada.ui.inspector.TableDataEditorDialog(state), batchCommitFcn, visible);
         end
 
         function openColumnSettingsEditor(control, batchCommitFcn)
@@ -909,8 +909,8 @@ classdef PropertyEditorFactory
 
             owner = ancestor(control, "figure");
             visible = isempty(owner) || string(owner.Visible) == "on";
-            yamada.ui.inspector.ColumnSettingsEditorDialog.open( ...
-                control.UserData, batchCommitFcn, visible);
+            yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.ColumnSettingsEditorDialog(control.UserData), batchCommitFcn, visible);
         end
 
         function openItemsEditor(control, batchCommitFcn)
@@ -922,8 +922,8 @@ classdef PropertyEditorFactory
 
             owner = ancestor(control, "figure");
             visible = isempty(owner) || string(owner.Visible) == "on";
-            yamada.ui.inspector.ItemsDataEditorDialog.openComposite( ...
-                control.UserData, batchCommitFcn, visible);
+            yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.ItemsDataEditorDialog("paired", control.UserData), batchCommitFcn, visible);
         end
 
         function state = tableDataState(currentPath, rawValue, relatedValues)
@@ -1287,8 +1287,8 @@ classdef PropertyEditorFactory
                 control = uibutton(parent, "Text", "Edit dates", ...
                     "Tag", "yamada-inspector-date-list-editor", ...
                     "ButtonPushedFcn", @(source, ~) ...
-                    yamada.ui.inspector.DateListEditorDialog.open( ...
-                    source.UserData, definition.Path, batchCommitFcn));
+                    yamada.ui.inspector.PropertyEditDialog.show( ...
+                    yamada.ui.inspector.DateListEditorDialog(source.UserData, definition.Path), batchCommitFcn));
                 return
             end
             error("yamada:PropertyEditorFactory:UnsupportedDateTimeSchema", ...
@@ -1596,12 +1596,12 @@ classdef PropertyEditorFactory
         function openStructuredDataEditor(state, path, commitFcn)
             % openStructuredDataEditor Select the ItemsData or generic safe-literal editor.
             if isstruct(state) && isfield(state, "HasItems") && state.HasItems
-                yamada.ui.inspector.ItemsDataEditorDialog.open( ...
-                    state.Items{1}, state.Value, path, commitFcn);
+                yamada.ui.inspector.PropertyEditDialog.show(yamada.ui.inspector.ItemsDataEditorDialog("data", struct( ...
+                    "Items", {state.Items{1}}, "ItemsData", {state.Value}, "Path", path)), commitFcn);
             elseif isstruct(state) && isfield(state, "Value")
-                yamada.ui.inspector.StructuredDataEditorDialog.open(state.Value, path, commitFcn);
+                yamada.ui.inspector.PropertyEditDialog.show(yamada.ui.inspector.StructuredDataEditorDialog(state.Value, path), commitFcn);
             else
-                yamada.ui.inspector.StructuredDataEditorDialog.open(state, path, commitFcn);
+                yamada.ui.inspector.PropertyEditDialog.show(yamada.ui.inspector.StructuredDataEditorDialog(state, path), commitFcn);
             end
         end
 

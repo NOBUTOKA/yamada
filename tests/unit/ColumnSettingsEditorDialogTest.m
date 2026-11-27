@@ -2,8 +2,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
     % ColumnSettingsEditorDialogTest Verify staged UITable column-setting edits.
 
     methods (Test)
-        % Guarantee: column settings commit as one validated batch on Apply, with width keywords round-tripping as typed.
-        % Failure mode: each cell commits separately, malformed width text reaches the model, or "auto" is shown quoted and rewritten.
+        % Guarantee: column settings stage only validated values, with width keywords round-tripping as typed.
+        % Failure mode: malformed width text is staged, or "auto" is shown quoted and rewritten.
         function stagesPerColumnSettingsAsOneBatch(testCase)
             % stagesPerColumnSettingsAsOneBatch Preserve the complete candidate until Apply.
 
@@ -11,8 +11,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
             cleanup = onCleanup(@() deleteIfValid(owner));
             setappdata(owner, "changes", struct.empty);
             state = makeState();
-            dialog = yamada.ui.inspector.ColumnSettingsEditorDialog.open( ...
-                state, @(changes) captureChanges(owner, changes), false);
+            dialog = yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.ColumnSettingsEditorDialog(state), @(changes) captureChanges(owner, changes), false);
             table = findall(dialog, "Tag", "yamada-column-settings-table");
             oneX = findall(dialog, "Tag", "yamada-column-settings-all-1x");
             oneX.ButtonPushedFcn(oneX, struct());
@@ -44,8 +44,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
             setappdata(owner, "changes", struct.empty);
-            dialog = yamada.ui.inspector.ColumnSettingsEditorDialog.open( ...
-                makeState(), @(changes) captureChanges(owner, changes), false);
+            dialog = yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.ColumnSettingsEditorDialog(makeState()), @(changes) captureChanges(owner, changes), false);
             table = findall(dialog, "Tag", "yamada-column-settings-table");
             table.Data{1, 4} = 'wide';
             apply = findall(dialog, "Tag", "yamada-column-settings-apply");
@@ -65,8 +65,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
             setappdata(owner, "changes", struct.empty);
             state = makeState();
             state.ColumnWidth = {'1x', '1x'};
-            dialog = yamada.ui.inspector.ColumnSettingsEditorDialog.open( ...
-                state, @(changes) captureChanges(owner, changes), false);
+            dialog = yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.ColumnSettingsEditorDialog(state), @(changes) captureChanges(owner, changes), false);
             table = findall(dialog, "Tag", "yamada-column-settings-table");
             testCase.verifyEqual(string(table.Data(:, 4)), ["1x"; "1x"]);
             auto = findall(dialog, "Tag", "yamada-column-settings-all-auto");
@@ -79,8 +79,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) ColumnSettingsEditorDialogTe
             testCase.verifyEqual(changes.Value, {'auto', 'auto'});
             state.ColumnWidth = changes.Value;
             setappdata(owner, "changes", struct.empty);
-            dialog = yamada.ui.inspector.ColumnSettingsEditorDialog.open( ...
-                state, @(nextChanges) captureChanges(owner, nextChanges), false);
+            dialog = yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.ColumnSettingsEditorDialog(state), @(nextChanges) captureChanges(owner, nextChanges), false);
             table = findall(dialog, "Tag", "yamada-column-settings-table");
             testCase.verifyEqual(string(table.Data(:, 4)), ["auto"; "auto"]);
             auto = findall(dialog, "Tag", "yamada-column-settings-all-auto");

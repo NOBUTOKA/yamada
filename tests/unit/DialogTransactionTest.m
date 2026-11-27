@@ -1,19 +1,20 @@
 classdef (TestTags = {'dialog', 'inspector', 'ui'}) DialogTransactionTest < matlab.unittest.TestCase
     % DialogTransactionTest Verify existing modal editors use staged property batches.
     %   These tests construct hidden native dialogs, invoke their owned callbacks,
-    %   and prove that Apply alone emits one typed batch. They do not inspect a
-    %   visible application window or execute generated app source.
+    %   and check the typed batch that Apply submits. PropertyEditDialogTest
+    %   covers the shared Apply and Cancel contract.
 
     methods (Test)
-        % Guarantee: modal editors commit one typed batch on Apply, with paired properties together, and nothing on Cancel.
-        % Failure mode: Items and ItemsData commit separately and fail validation in between, or a cancelled draft is committed.
+        % Guarantee: modal editors stage typed values, with paired properties together and Clear staged as an empty value.
+        % Failure mode: Items and ItemsData are staged separately and fail validation in between, or text is staged untyped.
         function itemsDataClearStagesUntilApply(testCase)
             % itemsDataClearStagesUntilApply Keep Clear local until the user applies it.
 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
-            yamada.ui.inspector.ItemsDataEditorDialog.open( ...
-                ["One", "Two"], [1 2], "ItemsData", ...
+            yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.ItemsDataEditorDialog("data", struct( ...
+                "Items", ["One", "Two"], "ItemsData", [1 2], "Path", "ItemsData")), ...
                 @(changes) captureBatch(owner, changes));
             dialog = dialogByName("Edit item data");
             dialog.Visible = "off";
@@ -41,8 +42,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DialogTransactionTest < matl
             state = struct();
             state.Items = ["One", "Two"];
             state.ItemsData = [1 2];
-            yamada.ui.inspector.ItemsDataEditorDialog.openComposite( ...
-                state, @(changes) captureBatch(owner, changes), false);
+            yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.ItemsDataEditorDialog("paired", state), @(changes) captureBatch(owner, changes), false);
             dialog = findall(0, "Tag", "yamada-items-editor-dialog");
             table = findall(dialog, "Tag", "yamada-items-editor-table");
             table.Data(1, 1) = "Updated";
@@ -65,7 +66,8 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DialogTransactionTest < matl
 
             owner = uifigure("Visible", "off");
             cleanup = onCleanup(@() deleteIfValid(owner));
-            yamada.ui.inspector.StructuredDataEditorDialog.open([1 2], "NodeData", ...
+            yamada.ui.inspector.PropertyEditDialog.show( ...
+                yamada.ui.inspector.StructuredDataEditorDialog([1 2], "NodeData"), ...
                 @(changes) captureBatch(owner, changes));
             dialog = dialogByName("Edit data");
             dialog.Visible = "off";
@@ -78,26 +80,6 @@ classdef (TestTags = {'dialog', 'inspector', 'ui'}) DialogTransactionTest < matl
             changes = getappdata(owner, "batch");
             testCase.verifyEqual(changes.Path, "NodeData");
             testCase.verifyEqual(changes.Value, [3 4]);
-            testCase.verifyFalse(isvalid(dialog));
-            clear cleanup
-        end
-    end
-
-    methods (Test)
-        function stringListCancelEmitsNoBatch(testCase)
-            % stringListCancelEmitsNoBatch Discard local text when the dialog is cancelled.
-
-            owner = uifigure("Visible", "off");
-            cleanup = onCleanup(@() deleteIfValid(owner));
-            yamada.ui.inspector.StringListEditorDialog.open(["One", "Two"], "Items", ...
-                @(changes) captureBatch(owner, changes));
-            dialog = dialogByName("Edit list");
-            dialog.Visible = "off";
-            buttons = findall(dialog, "Type", "uibutton");
-            cancelButton = buttons(string({buttons.Text}) == "Cancel");
-            cancelButton.ButtonPushedFcn(cancelButton, struct());
-
-            testCase.verifyFalse(isappdata(owner, "batch"));
             testCase.verifyFalse(isvalid(dialog));
             clear cleanup
         end
