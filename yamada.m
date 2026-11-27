@@ -2678,14 +2678,31 @@ classdef yamada < handle
                 if ~isempty(transform)
                     position = app.interactionUnitPosition(position, transform);
                 end
-                try
-                    app.Document.setProperty(componentId, "Position", position, app.Registry);
-                catch exception
-                    app.setStatus(string(exception.message));
-                end
+                app.commitOverlayPosition(componentId, position);
             end
             app.LastOverlayValue = struct();
             app.refreshViews(yamada.ui.RefreshRequest("properties", componentId, "Position"));
+        end
+
+        function accepted = commitOverlayPosition(app, componentId, position)
+            % commitOverlayPosition Commit one finished gesture's Position as a validated property batch.
+            arguments (Input)
+                app (1, 1) yamada
+                componentId (1, 1) string
+                position (1, 4) double
+            end
+            arguments (Output)
+                accepted (1, 1) logical
+            end
+
+            component = app.Document.getComponent(componentId);
+            if isempty(component)
+                app.setStatus("The moved component no longer exists.");
+                accepted = false;
+                return
+            end
+            message = app.commitPropertyBatch(component, struct("Path", "Position", "Value", position));
+            accepted = strlength(message) == 0;
         end
 
         function position = movedPosition(app, componentId, startPosition, delta)
@@ -2900,11 +2917,8 @@ classdef yamada < handle
             app.ResizeTargetId = "";
             app.ResizeKind = "";
             if ~isequal(position, app.ResizeStartPosition)
-                try
-                    app.Document.setProperty(componentId, "Position", position, app.Registry);
-                catch exception
+                if ~app.commitOverlayPosition(componentId, position)
                     preview.Position = app.ResizeStartPosition;
-                    app.setStatus(string(exception.message));
                 end
             end
             app.LastOverlayValue = struct();
@@ -3215,11 +3229,8 @@ classdef yamada < handle
             app.UIFigure.WindowButtonUpFcn = [];
             app.DragComponentId = "";
             if ~isequal(sourcePosition, app.DragStartPosition)
-                try
-                    app.Document.setProperty(componentId, "Position", sourcePosition, app.Registry);
-                catch exception
+                if ~app.commitOverlayPosition(componentId, sourcePosition)
                     preview.Position = app.DragStartPosition;
-                    app.setStatus(string(exception.message));
                 end
             end
             app.LastOverlayValue = struct();
@@ -3324,6 +3335,30 @@ classdef yamada < handle
                 app.setStatus(message);
                 return
             end
+            [message, paths] = app.commitPropertyBatch(component, changes);
+            if ~isempty(paths)
+                app.refreshViews(yamada.ui.RefreshRequest("properties", component.Id, paths));
+            end
+        end
+
+        function [message, paths] = commitPropertyBatch(app, component, changes)
+            % commitPropertyBatch Validate and apply one requested property batch of a component.
+            %   Inspector rows, editor dialogs, and overlay gestures all commit through
+            %   this path, so every accepted request passes the same batch validation,
+            %   dependent restatement, and post-commit validation. It reports any
+            %   rejection in the status bar and returns the committed paths, which are
+            %   empty when nothing changed.
+            arguments (Input)
+                app (1, 1) yamada
+                component (1, 1) yamada.model.ComponentRecord
+                changes (1, :) struct
+            end
+            arguments (Output)
+                message (1, 1) string
+                paths (1, :) string
+            end
+
+            paths = strings(1, 0);
             transaction = app.inspectorTransaction(component);
             % A request equal to the effective value is not an edit, whatever the source holds.
             unchanged = arrayfun(@(change) transaction.matchesInitial(string(change.Path), change.Value), changes);
@@ -3367,9 +3402,9 @@ classdef yamada < handle
                 app.setStatus(message);
                 return
             end
-            % Revalidate and dispatch the accepted property impact without rebuilding the shell.
+            % Revalidate the accepted property impact; callers refresh without rebuilding the shell.
             app.Document.validatePropertyCommit(app.Registry);
-            app.refreshViews(yamada.ui.RefreshRequest("properties", component.Id, string({batch.Path})));
+            paths = string({batch.Path});
         end
 
         function changes = manualModeValueChanges(app, component, changes)
