@@ -23,7 +23,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             testCase.verifyTrue(EditAvailabilityTest.movable(document, leaf.Id, right.Id, registry));
             testCase.verifyEqual(document.GeneratedText, before);
             testCase.verifyEqual(document.HistoryIndex, history);
-            testCase.verifyTrue(clipboard.hasContents(document));
+            testCase.verifyTrue(clipboard.hasContents());
         end
 
         % Guarantee: each command is enabled exactly when its catalog and model conditions hold, with a reason otherwise.
@@ -153,7 +153,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             document.Components(document.Components == menu) = [];
             document.getComponent(document.RootComponentId).removeChild(menu.Id);
             testCase.verifyTrue(clipboard.availability("Paste", document, right.Id, registry).Enabled);
-            testCase.verifyTrue(clipboard.hasContents(document));
+            testCase.verifyTrue(clipboard.hasContents());
         end
 
         function measuredGeometryParticipatesInReparentConditions(testCase)

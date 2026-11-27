@@ -193,11 +193,11 @@ Shared boundaries: [Shared Document Model](#shared-document-model) and [Source p
 
 - Reparenting preserves IDs; Paste allocates new IDs and unique member names before remapping internal references. Copy uses a `Copy` suffix; Cut preserves original names unless they collide.
 - Paste is one transaction, not insertion followed by a separate reparent command. Undo/Redo restores IDs, document and child order, properties, and source intentions, but does not rewind clipboard contents.
-- Copy leaves document/history unchanged. Cut publishes the snapshot only after deletion succeeds. Paste retains the clipboard snapshot for repeated use. Successful New/Open/Reload clears the clipboard; failed or canceled document replacement preserves it.
+- Copy leaves document/history unchanged. Cut publishes the snapshot only after deletion succeeds. Paste retains the clipboard snapshot for repeated use. The clipboard is not tied to a document. New, Open, and Reload keep it, and Paste into another document follows the same rules.
 
 **Explanation**
 
-`ComponentClipboard` retains the prepared document-scoped snapshot. Document history restores the edited subtree independently of that snapshot, so Undo does not consume or rewind clipboard contents.
+`ComponentClipboard` retains the prepared snapshot, which holds values only. It keeps no reference to the document it was copied from. The component registry is shared by the editor window, so no document context needs checking at Paste. Document history restores the edited subtree independently of that snapshot, so Undo does not consume or rewind clipboard contents.
 
 The clipboard snapshot retains independent component records and owned initialization fragments in execution order. Each fragment carries relative ranges for tokens that Paste may rewrite. Copy, Cut, and Delete use the same non-root selection rule. Paste checks clipboard ownership and selection for availability, then resolves destination, occupancy, and name allocation when invoked. Descendants retain their internal parent context and original settings.
 
@@ -228,7 +228,7 @@ If the whole-root capture cannot be proved, the planner uses the previous destin
 
 **Conditions to preserve**
 
-- Static `SelectedTab` and `SelectedObject` refer to eligible direct children. Static `ContextMenu` refers to a context menu under the document root. Paste maps internal references to fresh identities and resolves external references to their existing targets.
+- Static `SelectedTab` and `SelectedObject` refer to eligible direct children. Static `ContextMenu` refers to a context menu under the document root. Paste maps internal references to fresh identities. An external reference follows its target's identity when the destination contains that identity and the target still passes the rule Copy applied (a context menu under the document root). Parsed identities derive from member names, so another document can hold the same identity for an unrelated component. Otherwise the reference keeps its copied text. `ModelValidator` warns (`missing-reference-target`, `missing-callback-method`) about a static `ContextMenu` reference or callback binding whose target the document does not define, without blocking edits or Save.
 - Source-backed Copy and Cut retain callback registrations, constructor arguments, and opaque settings with the component's owned statements. Paste reuses existing callback methods. It allocates fresh setting identities when binding the inserted fragments. Delete and Cut remove the owned registration with the component and leave the existing handler method in place.
 - Reparenting may preserve owned callback source; pending callback edits on a parsed relocation target require Save + Reload Source or Undo before relocation. Arbitrary reference rewriting remains outside this boundary.
 
@@ -242,7 +242,7 @@ Reference analysis distinguishes internal, outgoing external, and incoming refer
 
 - Edit commands, keyboard shortcuts, and Hierarchy context commands use the same dispatch and availability rules.
 - A context target is independent of selection and is invalidated on tree rebuild or document replacement. Preview forwards clipboard keys only outside text editing, popovers, and active gestures; MATLAB checks selection identity and revision.
-- Parent movement is exposed only through Preview drag gestures. The root UIFigure, unsupported construction families, cross-document copying, OS clipboard integration, and multiple selection retain their explicit supported-scope limits in the product specification.
+- Parent movement is exposed only through Preview drag gestures. The root UIFigure, unsupported construction families, OS clipboard integration, and multiple selection retain their explicit supported-scope limits in the product specification.
 
 **Explanation**
 

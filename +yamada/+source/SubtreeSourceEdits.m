@@ -78,7 +78,7 @@ classdef SubtreeSourceEdits
                         nameRange = statement.CodeOffsets([5 4 + strlength(string(name.name))]) - start + 1;
                     end
                     parentRange = []; path = "";
-                    references = struct("Range", {}, "Target", {});
+                    references = struct("Range", {}, "Target", {}, "Path", {});
                     placementArguments = struct("Start", {}, "End", {}, "Text", {}, "Path", {});
                     settings = current(arrayfun(@(item) ~isempty(item.SourceSpan) && ...
                         item.SourceSpan.StartOffset == start, current));
@@ -117,7 +117,7 @@ classdef SubtreeSourceEdits
                             document, record.Id, setting.Path, setting.SourceExpression);
                         if isempty(target), continue, end
                         range = [setting.ValueSpan.StartOffset setting.ValueSpan.EndOffset] - start + 1;
-                        references(end + 1) = struct("Range", range, "Target", target.Id); %#ok<AGROW>
+                        references(end + 1) = struct("Range", range, "Target", target.Id, "Path", setting.Path); %#ok<AGROW>
                     end
                     sequence = record.Metadata.InitializationCreationSequence;
                     if ~isempty(settings), sequence = min([settings.Sequence]); end
@@ -165,18 +165,26 @@ classdef SubtreeSourceEdits
                     end
                     edits(end + 1) = struct("Start", fragment.Parent(1), "End", fragment.Parent(2), "Text", "app." + parent);
                 end
+                % Internal references follow their renamed copies, and an external target that
+                % the destination still holds follows its current name. Parsed identities derive
+                % from member names, so another document can hold the same identity for an
+                % unrelated component; the target must still pass the rule Copy applied.
+                % Otherwise the reference keeps its copied text and its target is the author's
+                % responsibility.
                 for reference = fragment.References
                     mapped = find(ids == reference.Target, 1);
                     if isempty(mapped)
                         target = document.getComponent(reference.Target);
-                        if isempty(target)
-                            error("yamada:DocumentModel:UnsafeSubtreeCopy", "A copied reference target no longer exists.");
+                        if isempty(target) || reference.Path ~= "ContextMenu" || ...
+                                target.Factory ~= "uicontextmenu" || target.ParentId ~= document.RootComponentId
+                            continue
                         end
                         name = target.Name;
                     else
                         name = names(mapped);
                     end
-                    edits(end + 1) = struct("Start", reference.Range(1), "End", reference.Range(2), "Text", "app." + name);
+                    edits(end + 1) = struct("Start", reference.Range(1), "End", reference.Range(2), ...
+                        "Text", "app." + name); %#ok<AGROW>
                 end
                 removals = fragment.PlacementArguments;
                 if ~isempty(removals)

@@ -67,8 +67,8 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeReferenceTest < mat
             testCase.verifyEqual(document.CurrentText, after);
         end
 
-        % Guarantee: relocation and Paste emit references only after their targets exist, and otherwise reject without change.
-        % Failure mode: a move emits a forward reference, or Paste references a deleted external target.
+        % Guarantee: relocation emits references only after their targets exist, and otherwise rejects without change.
+        % Failure mode: a move emits a forward reference or relocates an unsupported internal reference.
         function parsedGroupMovesWithReferenceAfterTargetCreation(testCase)
             % parsedGroupMovesWithReferenceAfterTargetCreation Preserve initialization dependency order when relocating a group.
             [document, registry, group] = SubtreeReferenceTest.fixture();
@@ -94,21 +94,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) SubtreeReferenceTest < mat
             testCase.verifyError(@() document.reparentSubtree(group.Id, panel.Id, registry), "yamada:DocumentModel:UnsafeSubtreeEdit");
             testCase.verifyEqual(group.ParentId, parentId);
             testCase.verifyEqual(document.HistoryIndex, history);
-        end
-
-        function staleExternalTargetRejectsPasteWithoutChangingClipboard(testCase)
-            % staleExternalTargetRejectsPasteWithoutChangingClipboard Reject a snapshot whose external target no longer exists.
-            [document, registry, ~, button, menu] = SubtreeReferenceTest.fixture();
-            clipboard = yamada.model.ComponentClipboard();
-            clipboard.copy(document, button.Id, registry);
-            % Simulate a replaced external target without bypassing the paste validation gate.
-            document.Components(document.Components == menu) = [];
-            root = document.getComponent(document.RootComponentId);
-            root.removeChild(menu.Id);
-            history = document.HistoryIndex;
-            testCase.verifyError(@() clipboard.paste(document, root.Id, registry), "yamada:DocumentModel:UnsafeSubtreeCopy");
-            testCase.verifyEqual(document.HistoryIndex, history);
-            testCase.verifyTrue(clipboard.hasContents(document));
         end
     end
 

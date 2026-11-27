@@ -371,7 +371,7 @@ classdef CallbackSourceAnalyzer
         end
     end
 
-    methods (Static, Access = ?yamada.source.AppSourceParser)
+    methods (Static, Access = {?yamada.source.AppSourceParser, ?yamada.validation.ModelValidator})
         function handler = bindingHandler(expression)
             % bindingHandler Recognize bound methods or inert two-input forwarding wrappers.
             arguments (Input)

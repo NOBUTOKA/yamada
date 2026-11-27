@@ -303,8 +303,6 @@ classdef (TestTags = {'ui', 'editorShell'}) EditorClipboardTest < matlab.uitest.
     end
 
     methods (Static, Access = private)
-        % Guarantee: New clears the clipboard.
-        % Failure mode: content from the previous document is pasted into the new one.
         function removeHarness(path)
             % removeHarness Remove only the temporary iframe test source.
             arguments (Input)

@@ -409,6 +409,58 @@ classdef ModelValidator
                     end
                 end
             end
+            diagnostics = [diagnostics yamada.validation.ModelValidator.referenceWarnings(component, document, registry, parentFactory)];
+        end
+
+        function diagnostics = referenceWarnings(component, document, registry, parentFactory)
+            % referenceWarnings Warn about copied references whose targets the class does not define.
+            %   A pasted ContextMenu reference and a callback binding are copied as
+            %   written, and keeping their targets is the source author's
+            %   responsibility. A missing target only warns, so editing and saving
+            %   continue until the author connects or removes it.
+            arguments (Input)
+                component (1, 1) yamada.model.ComponentRecord
+                document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
+                parentFactory (1, 1) string
+            end
+            arguments (Output)
+                diagnostics yamada.model.Diagnostic
+            end
+
+            diagnostics = yamada.model.Diagnostic.empty;
+            defined = strings(1, 0);
+            % Only catalog callback properties bind handlers; another property may hold any function handle.
+            callbacks = registry.getEffectiveCallbacks(component.Factory, parentFactory, component.CreationArguments);
+            callbackPaths = string({callbacks.Path});
+            for entry = component.Properties(arrayfun(@(item) item.ValueKind == "expression", component.Properties))
+                % A static context menu reference must name a context menu of this document.
+                if entry.Path == "ContextMenu"
+                    token = regexp(entry.SourceExpression, '^\s*app\s*\.\s*([A-Za-z]\w*)\s*$', 'tokens', 'once');
+                    if isempty(token), continue, end
+                    target = document.getComponentByName(string(token{1}));
+                    if isempty(target) || target.Factory ~= "uicontextmenu"
+                        diagnostics(end + 1) = yamada.model.Diagnostic("missing-reference-target", "warning", ...
+                            sprintf("ContextMenu refers to ""%s"", which is not a context menu of this app.", token{1}), ...
+                            component.Id, entry.SourceSpan); %#ok<AGROW>
+                    end
+                    continue
+                end
+                % A callback binding must name a method of the class or one pending creation.
+                if ~any(callbackPaths == entry.Path), continue, end
+                handler = yamada.source.CallbackSourceAnalyzer.bindingHandler(entry.SourceExpression);
+                if strlength(handler) == 0 || any(handler == ["delete", "createComponents"]), continue, end
+                if isempty(defined)
+                    analysis = document.sourceAnalysis();
+                    if isfield(analysis.Layout, "Methods"), defined = string({analysis.Layout.Methods.Name}); end
+                    defined = [defined string({document.CallbackEdits.HandlerName})]; %#ok<AGROW>
+                end
+                if ~any(defined == handler) && ~any(defined == document.effectiveMemberName(handler))
+                    diagnostics(end + 1) = yamada.model.Diagnostic("missing-callback-method", "warning", ...
+                        sprintf("%s refers to method ""%s"", which this app does not define.", entry.Path, handler), ...
+                        component.Id, entry.SourceSpan); %#ok<AGROW>
+                end
+            end
         end
 
         function diagnostics = autoResizeUnits(component, parent, unitsState, document, registry)
