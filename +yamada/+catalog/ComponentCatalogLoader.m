@@ -224,6 +224,7 @@ classdef ComponentCatalogLoader
                 registry.register(definitions(index));
             end
             yamada.catalog.ComponentCatalogLoader.validateApplicationContexts(registry);
+            yamada.catalog.ComponentCatalogLoader.validateSelectionMembers(registry, catalogRoot);
         end
 
         function digest = fingerprint(catalogRoot)
@@ -355,6 +356,7 @@ classdef ComponentCatalogLoader
                 inspectorRows, variantIds, root + "/catalog.json.inspectorRowFiles");
             registry.setInspectorRowDefinitions(inspectorRows);
             yamada.catalog.ComponentCatalogLoader.validateApplicationContexts(registry);
+            yamada.catalog.ComponentCatalogLoader.validateSelectionMembers(registry, root);
         end
 
         function validateApplicationContexts(registry)
@@ -370,6 +372,29 @@ classdef ComponentCatalogLoader
                 if definition.IsRoot || isempty(parents), parents = ""; end
                 for parent = parents
                     registry.getEffectiveProperties(definition.Factory, parent, definition.CreationArguments);
+                end
+            end
+        end
+
+        function validateSelectionMembers(registry, root)
+            % validateSelectionMembers Reject selection members that cannot be children of their group.
+            arguments (Input)
+                registry (1, 1) yamada.model.ComponentRegistry
+                root (1, 1) string
+            end
+
+            % Every declared member must be a registered factory that accepts the group as its parent.
+            for id = registry.listVariantIds()
+                definition = registry.getById(id);
+                context = root + "/" + definition.Factory + ".capabilities.selectionMembers";
+                for member = definition.SelectionMembers
+                    if ~registry.contains(member)
+                        yamada.catalog.ComponentCatalogLoader.fail(context, "Unknown factory """ + member + """.");
+                    end
+                    if ~any(registry.get(member).AllowedParentFactories == definition.Factory)
+                        yamada.catalog.ComponentCatalogLoader.fail(context, ...
+                            """" + member + """ does not accept """ + definition.Factory + """ as its parent.");
+                    end
                 end
             end
         end
@@ -961,7 +986,8 @@ classdef ComponentCatalogLoader
                 yamada.catalog.ComponentCatalogLoader.fail(context, "Expected one object.");
             end
             allowed = ["displayName", "category", "programmaticOnly", ...
-                "requiresParentComponent", "figureTool", "supportedStyles", "defaultStyle", ...
+                "requiresParentComponent", "figureTool", "childStateCoupling", "childTopologyCoupling", ...
+                "selectionMembers", "supportedStyles", "defaultStyle", ...
                 "declaredTypesByStyle", "overlayShape", "overlayShapesByStyle", ...
                 "resizeConstraint", "resizeConstraintsByStyle", "defaultSize", "metadata"];
             yamada.catalog.ComponentCatalogLoader.requireFields(document, ["displayName", "category"], context);
@@ -976,6 +1002,12 @@ classdef ComponentCatalogLoader
                 "requiresParentComponent", false, context);
             result.FigureTool = yamada.catalog.ComponentCatalogLoader.optionalLogical(document, ...
                 "figureTool", false, context);
+            result.ChildStateCoupling = yamada.catalog.ComponentCatalogLoader.optionalLogical(document, ...
+                "childStateCoupling", false, context);
+            result.ChildTopologyCoupling = yamada.catalog.ComponentCatalogLoader.optionalLogical(document, ...
+                "childTopologyCoupling", false, context);
+            result.SelectionMembers = yamada.catalog.ComponentCatalogLoader.optionalStringList(document, ...
+                "selectionMembers", context);
             result.SupportedStyles = yamada.catalog.ComponentCatalogLoader.optionalStringList(document, ...
                 "supportedStyles", context);
             result.DefaultStyle = yamada.catalog.ComponentCatalogLoader.optionalString(document, ...

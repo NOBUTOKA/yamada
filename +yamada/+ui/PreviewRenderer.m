@@ -211,11 +211,14 @@ classdef PreviewRenderer < handle
             for parentId = parentIds
                 owner = document.getComponent(parentId);
                 if isempty(owner) || owner.isReleaseUnavailable() || ...
-                        any(owner.Factory == ["uibuttongroup", "uitabgroup"]) || ...
                         any(ismember(string({document.Components.Factory}), "colorbar"))
                     return
                 end
-                if owner.Factory ~= "uigridlayout", continue, end
+                % A grid with literal cells for every child is the only coupled parent proven deterministic.
+                if owner.Factory ~= "uigridlayout"
+                    if obj.Registry.couplesChildTopology(owner.Factory), return, end
+                    continue
+                end
                 for childId = owner.Children
                     child = document.getComponent(childId);
                     row = child.getProperty("Layout.Row");
@@ -364,7 +367,7 @@ classdef PreviewRenderer < handle
             % Cross-component pending grid writes share one complete parsed configuration.
             obj.UsesCombinedConfiguration = any(arrayfun(@(component) ...
                 (yamada.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document, obj.Registry) || ...
-                yamada.model.ButtonSelectionPolicy.requiresCombinedPlan(component, document)), document.Components));
+                yamada.model.ButtonSelectionPolicy.requiresCombinedPlan(component, document, obj.Registry)), document.Components));
             if obj.UsesCombinedConfiguration
                 try
                     plan = yamada.source.PropertySourcePlan.combined(document, root, obj.Registry);
@@ -732,7 +735,7 @@ classdef PreviewRenderer < handle
             obj.CombinedConfiguration = yamada.model.DocumentModel.empty;
             obj.UsesCombinedConfiguration = any(arrayfun(@(component) ...
                 yamada.model.GridLayoutStatePolicy.requiresCombinedPlan(component, document, obj.Registry) || ...
-                yamada.model.ButtonSelectionPolicy.requiresCombinedPlan(component, document), document.Components));
+                yamada.model.ButtonSelectionPolicy.requiresCombinedPlan(component, document, obj.Registry), document.Components));
             if obj.UsesCombinedConfiguration
                 root = document.getComponent(document.RootComponentId);
                 plan = yamada.source.PropertySourcePlan.combined(document, root, obj.Registry);
@@ -813,10 +816,11 @@ classdef PreviewRenderer < handle
                 for index = 1:numel(component.Children)
                     handles = obj.renderComponent(document, component.Children(index), preview, handles);
                 end
-                if component.Factory == "uibuttongroup"
+                members = obj.Registry.selectionMembers(component.Factory);
+                if ~isempty(members)
                     for childId = component.Children
                         child = configurationDocument.getComponentByName(document.getComponent(childId).Name);
-                        if isempty(child) || ~any(child.Factory == ["uiradiobutton", "uitogglebutton"]), continue, end
+                        if isempty(child) || ~any(members == child.Factory), continue, end
                         states = configurationDocument.getEffectivePropertyStates(obj.Registry, child.Id);
                         value = states(arrayfun(@(item) item.Definition.Path == "Value", states)).Resolution;
                         if value.IsKnown && logical(value.EffectiveValue) && isKey(handles, childId)

@@ -109,7 +109,13 @@
       "isRoot": false,
       "capabilities": {
         "displayName": "Button Group",
-        "category": "Container"
+        "category": "Container",
+        "childStateCoupling": true,
+        "childTopologyCoupling": true,
+        "selectionMembers": [
+          "uiradiobutton",
+          "uitogglebutton"
+        ]
       }
     },
     {
@@ -292,7 +298,9 @@
       "isRoot": false,
       "capabilities": {
         "displayName": "Grid Layout",
-        "category": "Container"
+        "category": "Container",
+        "childStateCoupling": true,
+        "childTopologyCoupling": true
       }
     },
     {
@@ -586,7 +594,8 @@
       "isRoot": false,
       "capabilities": {
         "displayName": "Tab Group",
-        "category": "Container"
+        "category": "Container",
+        "childTopologyCoupling": true
       }
     },
     {

@@ -310,7 +310,7 @@ classdef PropertyInsertionPlanner
             if ~isscalar(created) || ~certain(created) || ~layout.Valid
                 error("yamada:PropertyInsertionPlanner:UnsafePlacement", "The factory is conditional, repeated, or outside a proven initializer.");
             end
-            [selectionSettings, selectionCreations] = yamada.model.ButtonSelectionPolicy.insertionSurface(component, document);
+            [selectionSettings, selectionCreations] = yamada.model.ButtonSelectionPolicy.insertionSurface(component, document, registry);
             [anchors, boundary] = yamada.source.PropertyInsertionPlanner.anchors(statements, order, certain, returns, layout, created, ...
                 [sourceSettings selectionSettings], selectionCreations, analysis.Facts);
             paths = string({definitions.Path});

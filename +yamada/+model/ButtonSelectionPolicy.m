@@ -1,26 +1,28 @@
 classdef ButtonSelectionPolicy
     % ButtonSelectionPolicy Resolve finite button-group selection in initialization order.
-    %   Only radio buttons, legacy toggle buttons, and simple owned SelectedObject
-    %   references participate. App code, callbacks, and handle expressions are never run.
+    %   Only catalog selection members of a selection group, such as radio and legacy toggle buttons,
+    %   and simple owned SelectedObject references participate. App code, callbacks, and handle expressions are never run.
 
     methods (Static)
-        function result = deferValue(component, path)
+        function result = deferValue(component, path, registry)
             % deferValue Schedule generated exclusive values after sibling construction.
             arguments (Input)
                 component (1, 1) yamada.model.ComponentRecord
                 path (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 result (1, 1) logical
             end
-            result = path == "Value" && any(component.Factory == ["uiradiobutton", "uitogglebutton"]);
+            result = path == "Value" && yamada.model.ButtonSelectionPolicy.isMember(component.Factory, registry);
         end
 
-        function [settings, creations] = insertionSurface(component, document)
+        function [settings, creations] = insertionSurface(component, document, registry)
             % insertionSurface Expose only proven group events to the bounded insertion planner.
             arguments (Input)
                 component (1, 1) yamada.model.ComponentRecord
                 document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 settings yamada.model.PropertySetting
@@ -28,7 +30,7 @@ classdef ButtonSelectionPolicy
             end
             settings = yamada.model.PropertySetting.empty;
             creations = zeros(1, 0);
-            group = yamada.model.ButtonSelectionPolicy.group(component, document);
+            group = yamada.model.ButtonSelectionPolicy.group(component, document, registry);
             if isempty(group), return, end
             members = document.Components(string({document.Components.ParentId}) == group.Id | ...
                 string({document.Components.Id}) == group.Id);
@@ -54,16 +56,17 @@ classdef ButtonSelectionPolicy
             end
         end
 
-        function result = requiresCombinedPlan(component, document)
+        function result = requiresCombinedPlan(component, document, registry)
             % requiresCombinedPlan Require actual emitted ordering for pending group changes.
             arguments (Input)
                 component (1, 1) yamada.model.ComponentRecord
                 document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 result (1, 1) logical
             end
-            group = yamada.model.ButtonSelectionPolicy.group(component, document);
+            group = yamada.model.ButtonSelectionPolicy.group(component, document, registry);
             result = false;
             if isempty(group), return, end
             members = document.Components(string({document.Components.ParentId}) == group.Id | ...
@@ -85,7 +88,7 @@ classdef ButtonSelectionPolicy
                 diagnostics yamada.model.Diagnostic
             end
             diagnostics = yamada.model.Diagnostic.empty;
-            group = yamada.model.ButtonSelectionPolicy.group(component, document);
+            group = yamada.model.ButtonSelectionPolicy.group(component, document, registry);
             if isempty(group), return, end
             paths = string({states.Path});
             path = "Value";
@@ -93,13 +96,13 @@ classdef ButtonSelectionPolicy
             index = find(paths == path, 1);
             if isempty(index), return, end
             % Recursive generation uses conservative state until the complete source exists.
-            if yamada.model.ButtonSelectionPolicy.requiresCombinedPlan(component, document)
+            if yamada.model.ButtonSelectionPolicy.requiresCombinedPlan(component, document, registry)
                 states(index) = states(index).withEffective([], false, "", ...
                     "Button selection requires the complete emitted initialization candidate.", "button-selection");
                 return
             end
             children = document.Components(string({document.Components.ParentId}) == group.Id & ...
-                ismember(string({document.Components.Factory}), ["uiradiobutton", "uitogglebutton"]));
+                ismember(string({document.Components.Factory}), registry.selectionMembers(group.Factory)));
             if numel(unique(string({children.Factory}))) > 1
                 states(index) = states(index).withEffective([], false, "", ...
                     "RadioButton and ToggleButton cannot share one ButtonGroup.", "button-selection");
@@ -186,21 +189,36 @@ classdef ButtonSelectionPolicy
     end
 
     methods (Static, Access = private)
-        function group = group(component, document)
-            % group Find the managed parent of an eligible radio or toggle button.
+        function group = group(component, document, registry)
+            % group Find the selection group of a group or of one of its selection members.
             arguments (Input)
                 component (1, 1) yamada.model.ComponentRecord
                 document (1, 1) yamada.model.DocumentModel
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 group yamada.model.ComponentRecord
             end
             group = yamada.model.ComponentRecord.empty;
-            if component.Factory == "uibuttongroup"
-                group = component;
-            elseif any(component.Factory == ["uiradiobutton", "uitogglebutton"])
-                parent = document.getComponent(component.ParentId);
-                if ~isempty(parent) && parent.Factory == "uibuttongroup", group = parent; end
+            if ~isempty(registry.selectionMembers(component.Factory))
+                group = component; return
+            end
+            parent = document.getComponent(component.ParentId);
+            if ~isempty(parent) && any(registry.selectionMembers(parent.Factory) == component.Factory), group = parent; end
+        end
+
+        function result = isMember(factory, registry)
+            % isMember Return true when any registered selection group accepts the factory as a member.
+            arguments (Input)
+                factory (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+            result = false;
+            for id = registry.listVariantIds()
+                if any(registry.getById(id).SelectionMembers == factory), result = true; return, end
             end
         end
 

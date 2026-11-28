@@ -352,7 +352,7 @@ classdef RoundTripGenerator
                     end
                     assignment = eol + obj.indent(source, creationOffset) + ...
                         obj.assignmentText(component, entry, source, creationOffset);
-                    if yamada.model.ButtonSelectionPolicy.deferValue(component, entry.Path)
+                    if yamada.model.ButtonSelectionPolicy.deferValue(component, entry.Path, obj.Registry)
                         deferredSelection = deferredSelection + assignment;
                     else
                         creationText = creationText + assignment;

@@ -766,7 +766,7 @@ classdef yamada < handle
                 parent = app.Document.getComponent(id);
                 if ~isempty(parent) && parent.IsEditable
                     definition = app.Registry.get("colorbar");
-                    state.Enabled = yamada.model.SubtreePlacementPlanner.accepts(app.Document,parent,definition);
+                    state.Enabled = yamada.model.SubtreePlacementPlanner.accepts(app.Document,parent,definition,app.Registry);
                 end
                 return
             end
@@ -3464,7 +3464,7 @@ classdef yamada < handle
             original = preview.Units;
 
             % Measure each stored geometry literal in the new units, then restore the Preview.
-            for path = ["Position", "InnerPosition", "OuterPosition"]
+            for path = yamada.model.PositionGeometry.rectanglePaths()
                 entry = component.getProperty(path);
                 if any(paths == path) || isempty(entry) || ~entry.IsEditable || entry.ValueKind ~= "literal" || ...
                         ~isprop(preview, path)

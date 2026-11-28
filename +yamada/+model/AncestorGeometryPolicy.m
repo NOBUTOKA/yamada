@@ -8,7 +8,7 @@ classdef AncestorGeometryPolicy
             arguments (Output)
                 paths (1, :) string
             end
-            paths = ["Position", "InnerPosition", "OuterPosition", "AutoResizeChildren"];
+            paths = [yamada.model.PositionGeometry.rectanglePaths(), "AutoResizeChildren"];
         end
 
         function [offset, sequence] = creationAnchor(document)
@@ -53,7 +53,7 @@ classdef AncestorGeometryPolicy
                 parent = document.getComponent(member.ParentId);
                 while ~isempty(parent)
                     for setting = parent.Settings
-                        if ~any(setting.Path == ["Position", "InnerPosition", "OuterPosition"]) || ...
+                        if ~any(setting.Path == yamada.model.PositionGeometry.rectanglePaths()) || ...
                                 setting.Method == "generated" || setting.Sequence <= sequence, continue, end
                         if ~setting.IsCertain || setting.OwnerMethod ~= scope || ...
                                 isempty(setting.SourceSpan) || setting.SourceSpan.EndOffset < offset
@@ -102,7 +102,7 @@ classdef AncestorGeometryPolicy
                 states yamada.model.PropertyState
             end
             if ~yamada.model.SourceOwnership.hasSource(component), return, end
-            paths = ["Position", "InnerPosition", "OuterPosition"];
+            paths = yamada.model.PositionGeometry.rectanglePaths();
             sequence = 0;
             if isfield(component.Metadata, "InitializationCreationSequence")
                 sequence = component.Metadata.InitializationCreationSequence;

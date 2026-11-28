@@ -131,7 +131,7 @@ classdef NewAppGenerator
                         return
                     end
                     assignment = compose("            app.%s.%s = %s;", component.Name, entry.Path, valueText);
-                    if yamada.model.ButtonSelectionPolicy.deferValue(component, entry.Path)
+                    if yamada.model.ButtonSelectionPolicy.deferValue(component, entry.Path, obj.Registry)
                         deferredSelection(end + 1) = assignment; %#ok<AGROW>
                     else
                         lines(end + 1) = assignment; %#ok<AGROW>

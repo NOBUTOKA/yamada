@@ -1608,6 +1608,12 @@
   ],
   "capabilities": {
     "displayName": "Button Group",
-    "category": "Container"
+    "category": "Container",
+    "childStateCoupling": true,
+    "childTopologyCoupling": true,
+    "selectionMembers": [
+      "uiradiobutton",
+      "uitogglebutton"
+    ]
   }
 }
