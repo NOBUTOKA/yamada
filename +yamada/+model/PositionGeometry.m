@@ -3,23 +3,15 @@ classdef PositionGeometry
     %   Reviewed policies select fixed ratios, slider thickness, or independent
     %   linear gauge dimensions. Decoration and parent layout are not calculated.
 
+    properties (Constant)
+        % RectanglePaths - Properties that each set a component's rectangle.
+        RectanglePaths string = ["Position", "InnerPosition", "OuterPosition"]
+
+        % DerivedRectanglePaths - Rectangles whose value can depend on native decoration or layout.
+        DerivedRectanglePaths string = ["InnerPosition", "OuterPosition"]
+    end
+
     methods (Static)
-        function paths = rectanglePaths()
-            % rectanglePaths Name the properties that each set a component's rectangle.
-            arguments (Output)
-                paths (1, 3) string
-            end
-            paths = ["Position", "InnerPosition", "OuterPosition"];
-        end
-
-        function paths = derivedRectanglePaths()
-            % derivedRectanglePaths Name the rectangles whose value can depend on native decoration or layout.
-            arguments (Output)
-                paths (1, 2) string
-            end
-            paths = ["InnerPosition", "OuterPosition"];
-        end
-
         function result = applies(policy)
             % applies Identify reviewed native size constraints.
             arguments (Input)

@@ -3464,7 +3464,7 @@ classdef yamada < handle
             original = preview.Units;
 
             % Measure each stored geometry literal in the new units, then restore the Preview.
-            for path = yamada.model.PositionGeometry.rectanglePaths()
+            for path = yamada.model.PositionGeometry.RectanglePaths
                 entry = component.getProperty(path);
                 if any(paths == path) || isempty(entry) || ~entry.IsEditable || entry.ValueKind ~= "literal" || ...
                         ~isprop(preview, path)
@@ -3580,7 +3580,7 @@ classdef yamada < handle
             rows = struct("Path",{},"Value",{},"Editable",{},"Shared",{},"CanShare",{});
             if isempty(app.Document) || app.Document ~= document || app.SelectedComponentId ~= id, return, end
             component = document.getComponent(id);
-            for member = yamada.model.AxesInspectorProperties.names()
+            for member = yamada.model.AxesInspectorProperties.Names
                 path = group + "." + member;
                 settings = component.getSettings(path);
                 value = [];

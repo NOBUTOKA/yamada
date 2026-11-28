@@ -53,7 +53,7 @@ classdef SubtreeSourceEdits
             analysis = document.sourceAnalysis();
             fragments = struct("Offset", {}, "Owner", {}, "Text", {}, "Name", {}, ...
                 "Parent", {}, "References", {}, "Path", {}, "PlacementArguments", {}, "AxesCall", {}, "Sequence", {});
-            placement = [yamada.model.PositionGeometry.rectanglePaths(), "Layout.Row", "Layout.Column"];
+            placement = [yamada.model.PositionGeometry.RectanglePaths, "Layout.Row", "Layout.Column"];
             for record = snapshot.Records
                 % Use the statement index to deduplicate factory name-value settings.
                 current = document.getComponent(record.Id).Settings;

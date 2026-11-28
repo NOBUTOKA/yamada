@@ -76,8 +76,8 @@ classdef SourceLiteralTransaction
                 definition = definitions([definitions.Path] == string(change.Path));
                 affected = union(affected, definition.Application.AffectedPaths, "stable");
             end
-            dependent = [yamada.model.GridLayoutStatePolicy.inputPropertyPaths(), ...
-                yamada.model.AncestorGeometryPolicy.inputPropertyPaths()];
+            dependent = [yamada.model.GridLayoutStatePolicy.InputPropertyPaths, ...
+                yamada.model.AncestorGeometryPolicy.InputPropertyPaths];
             sameDefinitions = true;
             if ~isequaln(component.CreationArguments, obj.FactoryArguments)
                 afterDefinitions = registry.getEffectiveProperties(component.Factory, parentFactory, obj.FactoryArguments);
@@ -238,7 +238,7 @@ classdef SourceLiteralTransaction
                 needsDocumentValidation = needsDocumentValidation || ~ownerLocal;
                 canReuseStates = canReuseStates && ownerLocal && ...
                     (isempty(component.Children) || (~definition.AbsoluteGeometryImpact && definition.GridGeometryImpact ~= "required"));
-                dependencies = yamada.model.SubtreePlacementPlanner.inputPropertyPaths();
+                dependencies = yamada.model.SubtreePlacementPlanner.InputPropertyPaths;
                 canReuseEligibility = canReuseEligibility && ...
                     ~any(ismember([path policy.AffectedPaths], dependencies)) && ...
                     ~(isfield(definition.ValueSchema, "kind") && string(definition.ValueSchema.kind) == "callback");

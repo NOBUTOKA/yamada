@@ -248,8 +248,8 @@ classdef ModelValidator
                     affected = union(affected, current.Path, "stable");
                 end
             end
-            dependent = [yamada.model.GridLayoutStatePolicy.inputPropertyPaths(), ...
-                yamada.model.AncestorGeometryPolicy.inputPropertyPaths()];
+            dependent = [yamada.model.GridLayoutStatePolicy.InputPropertyPaths, ...
+                yamada.model.AncestorGeometryPolicy.InputPropertyPaths];
             if any(ismember(affected, dependent)), return, end
             for index = 1:numel(states)
                 if any(affected == states(index).Path), continue, end

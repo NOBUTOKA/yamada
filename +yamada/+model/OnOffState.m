@@ -8,26 +8,22 @@ classdef OnOffState
     %       [state, known] = yamada.model.OnOffState.read(1, ["text", "finiteNumber"])  % "on", true
     %       value = yamada.model.OnOffState.like("off", true)  % false
 
+    properties (Constant)
+        % PropertyForms - Forms that every on/off property assignment accepts.
+        %   Native R2023a through R2026b observations: assignments and name-value
+        %   arguments accept all forms except lowercase-only text, and treat NaN
+        %   and Inf as on.
+        PropertyForms yamada.model.OnOffForm = [yamada.model.OnOffForm.text, yamada.model.OnOffForm.logical, ...
+            yamada.model.OnOffForm.finiteNumber, yamada.model.OnOffForm.nonfiniteNumber, ...
+            yamada.model.OnOffForm.switchState]
+    end
+
     methods (Static)
-        function forms = propertyForms()
-            % propertyForms Return the forms that every on/off property assignment accepts.
-            %   Native R2023a through R2026b observations: assignments and name-value
-            %   arguments accept all forms except lowercase-only text, and treat NaN
-            %   and Inf as on.
-            arguments (Output)
-                forms (1, :) yamada.model.OnOffForm
-            end
-
-            forms = [yamada.model.OnOffForm.text, yamada.model.OnOffForm.logical, ...
-                yamada.model.OnOffForm.finiteNumber, yamada.model.OnOffForm.nonfiniteNumber, ...
-                yamada.model.OnOffForm.switchState];
-        end
-
         function [state, known] = read(value, forms)
             % read Return "on" or "off" for a value whose form is one of the accepted forms.
             arguments (Input)
                 value
-                forms (1, :) yamada.model.OnOffForm = yamada.model.OnOffState.propertyForms()
+                forms (1, :) yamada.model.OnOffForm = yamada.model.OnOffState.PropertyForms
             end
             arguments (Output)
                 state (1, 1) string
@@ -69,7 +65,7 @@ classdef OnOffState
             % isOn Report whether a value is a known on state.
             arguments (Input)
                 value
-                forms (1, :) yamada.model.OnOffForm = yamada.model.OnOffState.propertyForms()
+                forms (1, :) yamada.model.OnOffForm = yamada.model.OnOffState.PropertyForms
             end
             arguments (Output)
                 result (1, 1) logical

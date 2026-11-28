@@ -2,15 +2,12 @@ classdef AncestorGeometryPolicy
     % AncestorGeometryPolicy Bound geometry affected by later ancestor resizing.
     %   It preserves explicit inputs while leaving native child reflow unresolved.
 
-    methods (Static)
-        function paths = inputPropertyPaths()
-            % inputPropertyPaths Declare source settings that can change this policy's document-dependent result.
-            arguments (Output)
-                paths (1, :) string
-            end
-            paths = [yamada.model.PositionGeometry.rectanglePaths(), "AutoResizeChildren"];
-        end
+    properties (Constant)
+        % InputPropertyPaths - Source settings that can change this policy's document-dependent result.
+        InputPropertyPaths string = [yamada.model.PositionGeometry.RectanglePaths, "AutoResizeChildren"]
+    end
 
+    methods (Static)
         function [offset, sequence] = creationAnchor(document)
             % creationAnchor Place new blocks after proven geometry of existing ancestors.
             arguments (Input)
@@ -53,7 +50,7 @@ classdef AncestorGeometryPolicy
                 parent = document.getComponent(member.ParentId);
                 while ~isempty(parent)
                     for setting = parent.Settings
-                        if ~any(setting.Path == yamada.model.PositionGeometry.rectanglePaths()) || ...
+                        if ~any(setting.Path == yamada.model.PositionGeometry.RectanglePaths) || ...
                                 setting.Method == "generated" || setting.Sequence <= sequence, continue, end
                         if ~setting.IsCertain || setting.OwnerMethod ~= scope || ...
                                 isempty(setting.SourceSpan) || setting.SourceSpan.EndOffset < offset
@@ -102,7 +99,7 @@ classdef AncestorGeometryPolicy
                 states yamada.model.PropertyState
             end
             if ~yamada.model.SourceOwnership.hasSource(component), return, end
-            paths = yamada.model.PositionGeometry.rectanglePaths();
+            paths = yamada.model.PositionGeometry.RectanglePaths;
             sequence = 0;
             if isfield(component.Metadata, "InitializationCreationSequence")
                 sequence = component.Metadata.InitializationCreationSequence;

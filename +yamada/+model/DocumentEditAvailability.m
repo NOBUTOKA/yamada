@@ -63,7 +63,7 @@ classdef DocumentEditAvailability
             parentFactory = "";
             if ~isempty(parent), parentFactory = parent.Factory; end
             definitions = registry.getEffectiveProperties(source.Factory, parentFactory, source.CreationArguments);
-            dependencies = yamada.model.SubtreePlacementPlanner.inputPropertyPaths();
+            dependencies = yamada.model.SubtreePlacementPlanner.InputPropertyPaths;
             for path = paths
                 definition = definitions(string({definitions.Path}) == path);
                 if ~isscalar(definition), return, end

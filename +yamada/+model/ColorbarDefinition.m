@@ -3,6 +3,11 @@ classdef ColorbarDefinition
     %   The document parent is the colorbar factory target. MATLAB manages
     %   the resulting graphics object's physical parent.
 
+    properties (Constant)
+        % Targets - Supported factories that can own a ColorBar.
+        Targets string = ["axes","uiaxes","polaraxes","geoaxes"]
+    end
+
     methods (Static)
         function definition = create()
             % create Build the dedicated Inspector surface for an axes attachment.
@@ -19,16 +24,9 @@ classdef ColorbarDefinition
                 yamada.model.PropertyDefinition("FontSize",[],false,true,struct("editor","number", ...
                     "valueSchema",struct("minimum",0,"exclusiveMinimum",true)))];
             definition = yamada.model.ComponentDefinition("colorbar","matlab.graphics.illustration.ColorBar", ...
-                yamada.model.ColorbarDefinition.targets(),false,{},props,"ColorBar","Axes",true,true);
+                yamada.model.ColorbarDefinition.Targets,false,{},props,"ColorBar","Axes",true,true);
         end
 
-        function factories = targets()
-            % targets List supported factories that can own a ColorBar.
-            arguments (Output)
-                factories (1,:) string
-            end
-            factories = ["axes","uiaxes","polaraxes","geoaxes"];
-        end
     end
 
     methods (Static, Access = private)
