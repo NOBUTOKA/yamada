@@ -3464,7 +3464,7 @@ classdef yamada < handle
             original = preview.Units;
 
             % Measure each stored geometry literal in the new units, then restore the Preview.
-            for path = ["Position", "InnerPosition", "OuterPosition"]
+            for path = yamada.model.PositionGeometry.rectanglePaths()
                 entry = component.getProperty(path);
                 if any(paths == path) || isempty(entry) || ~entry.IsEditable || entry.ValueKind ~= "literal" || ...
                         ~isprop(preview, path)

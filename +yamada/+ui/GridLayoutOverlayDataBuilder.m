@@ -284,7 +284,7 @@ classdef GridLayoutOverlayDataBuilder
                 % A failed native observation prevents reuse until a complete observation succeeds.
             end
             if isprop(preview, "Parent"), item.parent = preview.Parent; end
-            for property = ["Position", "InnerPosition", "OuterPosition"]
+            for property = yamada.model.PositionGeometry.rectanglePaths()
                 if isprop(preview, property), item.(property) = double(preview.(property)); end
             end
             if isprop(preview, "Units"), item.units = string(preview.Units); end

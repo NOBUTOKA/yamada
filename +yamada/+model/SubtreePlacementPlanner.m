@@ -212,7 +212,7 @@ classdef SubtreePlacementPlanner
                 if any(paths == "Position") && definitions(find(paths == "Position", 1)).IsEditable
                     positionEntry = root.Properties(string({root.Properties.Path}) == "Position");
                     geometry = root.Properties(ismember(string({root.Properties.Path}), ...
-                        ["Position", "InnerPosition", "OuterPosition"]));
+                        yamada.model.PositionGeometry.rectanglePaths()));
                     if sourcePaste && isempty(snapshot.SourcePosition) && ...
                             any(string({geometry.ValueKind}) == "expression") && ~wasGrid && ~hasGridPlacement
                         plan = struct("ParentId", parentId, "Changes", changes);
