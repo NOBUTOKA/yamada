@@ -266,6 +266,46 @@ classdef ComponentRegistry < handle
             result = obj.contains(factory) && obj.get(factory).IsFigureTool;
         end
 
+        function result = couplesChildState(obj, factory)
+            % couplesChildState Return true when a registered container resolves its subtree state together.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                factory (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = obj.contains(factory) && obj.get(factory).ChildStateCoupling;
+        end
+
+        function result = couplesChildTopology(obj, factory)
+            % couplesChildTopology Return true when child membership or order changes a registered container's state.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                factory (1, 1) string
+            end
+            arguments (Output)
+                result (1, 1) logical
+            end
+
+            result = obj.contains(factory) && obj.get(factory).ChildTopologyCoupling;
+        end
+
+        function result = selectionMembers(obj, factory)
+            % selectionMembers Return the child factories that share a registered container's exclusive selection.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRegistry
+                factory (1, 1) string
+            end
+            arguments (Output)
+                result (1, :) string
+            end
+
+            result = strings(1, 0);
+            if obj.contains(factory), result = obj.get(factory).SelectionMembers; end
+        end
+
         function definition = get(obj, factory, creationArguments)
             % get Return the concrete definition selected by factory arguments.
             arguments (Input)

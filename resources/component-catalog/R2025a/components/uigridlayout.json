@@ -958,6 +958,8 @@
   ],
   "capabilities": {
     "displayName": "Grid Layout",
-    "category": "Container"
+    "category": "Container",
+    "childStateCoupling": true,
+    "childTopologyCoupling": true
   }
 }

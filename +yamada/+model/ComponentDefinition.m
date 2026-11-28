@@ -38,6 +38,14 @@ classdef ComponentDefinition
         %   yamada retains its source but does not render it, edit it in the Inspector,
         %   or probe its native defaults.
         IsFigureTool logical = false
+        % ChildStateCoupling - Whether direct and nested children resolve their state together.
+        %   An edit inside such a container reevaluates its whole subtree.
+        ChildStateCoupling logical = false
+        % ChildTopologyCoupling - Whether adding, removing, or reordering children changes container state.
+        ChildTopologyCoupling logical = false
+        % SelectionMembers - Child factories that share this container's mutually exclusive selection.
+        %   Members of one group must all have the same factory.
+        SelectionMembers string = strings(1, 0)
         % SupportedStyles - Factory styles the editor can preserve and generate.
         SupportedStyles string = strings(1, 0)
         % DefaultStyle - Style used when a new component omits an explicit style.
@@ -247,6 +255,10 @@ classdef ComponentDefinition
                 yamada.model.ComponentDefinition.capability(capabilities, "DefaultSize", [100 30]), ...
                 yamada.model.ComponentDefinition.extensionMetadata(capabilities));
             result.IsFigureTool = yamada.model.ComponentDefinition.capability(capabilities, "FigureTool", false);
+            result.ChildStateCoupling = yamada.model.ComponentDefinition.capability(capabilities, "ChildStateCoupling", false);
+            result.ChildTopologyCoupling = yamada.model.ComponentDefinition.capability(capabilities, "ChildTopologyCoupling", false);
+            result.SelectionMembers = reshape(string(yamada.model.ComponentDefinition.capability( ...
+                capabilities, "SelectionMembers", strings(1, 0))), 1, []);
         end
 
     end
@@ -281,7 +293,8 @@ classdef ComponentDefinition
 
             metadata = capabilities;
             known = ["DisplayName", "Category", "ProgrammaticOnly", ...
-                "RequiresParentComponent", "FigureTool", "SupportedStyles", "DefaultStyle", ...
+                "RequiresParentComponent", "FigureTool", "ChildStateCoupling", ...
+                "ChildTopologyCoupling", "SelectionMembers", "SupportedStyles", "DefaultStyle", ...
                 "DeclaredTypesByStyle", "OverlayShape", "OverlayShapesByStyle", ...
                 "ResizeConstraint", "ResizeConstraintsByStyle", "DefaultSize"];
             for index = 1:numel(known)

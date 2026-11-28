@@ -1029,6 +1029,7 @@
   ],
   "capabilities": {
     "displayName": "Tab Group",
-    "category": "Container"
+    "category": "Container",
+    "childTopologyCoupling": true
   }
 }

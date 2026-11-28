@@ -312,6 +312,30 @@ classdef (TestTags = {'fast', 'catalog'}) ComponentCatalogLoaderTest < matlab.un
             testCase.verifySubstring(string(exception.message), ".order");
         end
 
+        function rejectsInconsistentChildCouplingCapabilities(testCase)
+            % rejectsInconsistentChildCouplingCapabilities Require coherent child coupling and existing selection members.
+            % Guarantee and failure mode: shared with rejectsMalformedManifestRelease.
+
+            % Coupled child state without coupled membership would skip reevaluation after a child move.
+            root = testCase.createCatalog();
+            component = testCase.readJson(root, "components/uilabel.json");
+            component.capabilities.childStateCoupling = true;
+            testCase.writeJson(root, "components/uilabel.json", component);
+            exception = testCase.verifyCatalogFailure(root);
+            testCase.verifySubstring(string(exception.message), "requires child topology coupling");
+
+            % A selection member must exist and accept its group as a parent.
+            component.capabilities = rmfield(component.capabilities, "childStateCoupling");
+            component.capabilities.selectionMembers = {"uiradiobutton"};
+            testCase.writeJson(root, "components/uilabel.json", component);
+            exception = testCase.verifyCatalogFailure(root);
+            testCase.verifySubstring(string(exception.message), "Unknown factory ""uiradiobutton""");
+            component.capabilities.selectionMembers = {"uilabel"};
+            testCase.writeJson(root, "components/uilabel.json", component);
+            exception = testCase.verifyCatalogFailure(root);
+            testCase.verifySubstring(string(exception.message), "does not accept ""uilabel"" as its parent");
+        end
+
         function rejectsDuplicateExpandedProperties(testCase)
             % rejectsDuplicateExpandedProperties Reject duplicate paths after group expansion.
 
