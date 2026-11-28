@@ -137,7 +137,7 @@ classdef HierarchyContextMenu < handle
                 state = obj.AvailabilityFcn(actions(index), obj.TargetId);
                 obj.EditItems(index).Enable = state.Enabled;
                 if actions(index) == "Add Colorbar"
-                    obj.EditItems(index).Visible = any(component.Factory == yamada.model.ColorbarDefinition.targets());
+                    obj.EditItems(index).Visible = any(component.Factory == yamada.model.ColorbarDefinition.Targets);
                 end
                 obj.EditItems(index).UserData = state;
             end

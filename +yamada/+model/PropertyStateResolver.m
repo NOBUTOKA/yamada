@@ -560,7 +560,7 @@ classdef PropertyStateResolver
                 [states, message] = yamada.model.PositionAliasPolicy.apply(states, definitions, path, id);
             end
             if any(policy.EffectPolicy == ["positionInput", "sliderPosition", "squarePosition", "switchPosition", "semicircularPosition", "linearPosition"])
-                for alias = yamada.model.PositionGeometry.derivedRectanglePaths()
+                for alias = yamada.model.PositionGeometry.DerivedRectanglePaths
                     states = setUnknown(states, alias, id, "This getter depends on native decoration or container layout.", "native-geometry");
                 end
                 if known && (~isnumeric(value) || ~isreal(value) || numel(value) ~= 4 || ...
@@ -664,7 +664,7 @@ classdef PropertyStateResolver
                     else
                         states = setUnknown(states, "Position", id, "Orientation requires known prior geometry.", "native-geometry");
                     end
-                    for alias = yamada.model.PositionGeometry.derivedRectanglePaths()
+                    for alias = yamada.model.PositionGeometry.DerivedRectanglePaths
                         states = setUnknown(states, alias, id, "This getter depends on native decoration or container layout.", "native-geometry");
                     end
                 end
@@ -678,7 +678,7 @@ classdef PropertyStateResolver
 
             % Unit conversion depends on native parent geometry and display metrics.
             if any(path == ["Units", "FontUnits"])
-                targetPaths = yamada.model.PositionGeometry.rectanglePaths();
+                targetPaths = yamada.model.PositionGeometry.RectanglePaths;
                 if path == "FontUnits", targetPaths = "FontSize"; end
                 same = known && previous(index).IsKnown && ...
                     yamada.model.PropertyStateResolver.equivalent(value, previous(index).EffectiveValue);

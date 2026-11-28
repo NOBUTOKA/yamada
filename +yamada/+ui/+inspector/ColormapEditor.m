@@ -2,6 +2,12 @@ classdef ColormapEditor
     % ColormapEditor Display an RGB map and choose a built-in MATLAB preset.
     %   Presets are converted to literal RGB data before document editing.
 
+    properties (Constant)
+        % Presets - Built-in maps offered by the editor.
+        Presets string = ["Parula","Turbo","Gray","Hot","Cool","Bone","Copper","Pink", ...
+            "Spring","Summer","Autumn","Winter","Jet","HSV","Lines","Colorcube","Prism","Flag","White"]
+    end
+
     methods (Static)
         function control = create(parent, editable, commitFcn)
             % create Make a native gradient row with optional preset selection.
@@ -21,7 +27,7 @@ classdef ColormapEditor
                 control.RowHeight = {24, "1x"};
                 control.RowSpacing = 4;
                 control.ColumnWidth = {"1x","fit"};
-                picker = uidropdown(control,"Items",cellstr(yamada.ui.inspector.ColormapEditor.presets()), ...
+                picker = uidropdown(control,"Items",cellstr(yamada.ui.inspector.ColormapEditor.Presets), ...
                     "Tag","yamada-colormap-preset");
                 picker.Layout.Row = 1;
                 picker.Layout.Column = 1;
@@ -66,7 +72,7 @@ classdef ColormapEditor
                 parts.Strip.ImageSource = yamada.ui.inspector.ColormapEditor.gradient(map);
                 label = "Custom";
                 if ~isempty(parts.Picker)
-                    for preset = yamada.ui.inspector.ColormapEditor.presets()
+                    for preset = yamada.ui.inspector.ColormapEditor.Presets
                         expected = feval(char(lower(preset)),parts.Length);
                         if max(abs(double(map(:))-expected(:))) <= 1e-12
                             label = preset;
@@ -78,7 +84,7 @@ classdef ColormapEditor
                 parts.Strip.ImageSource = "";
             end
             if ~isempty(parts.Picker)
-                choices = yamada.ui.inspector.ColormapEditor.presets();
+                choices = yamada.ui.inspector.ColormapEditor.Presets;
                 if ~any(choices == label), choices = [label choices]; end
                 parts.Picker.Items = cellstr(choices);
                 parts.Picker.Value = label;
@@ -99,15 +105,6 @@ classdef ColormapEditor
             pixels = uint8(round(255*map(indices,:)));
             image = repmat(reshape(pixels,1,256,3),8,1,1);
         end
-        function names = presets()
-            % presets List the built-in maps offered by the editor.
-            arguments (Output)
-                names (1,:) string
-            end
-            names = ["Parula","Turbo","Gray","Hot","Cool","Bone","Copper","Pink", ...
-                "Spring","Summer","Autumn","Winter","Jet","HSV","Lines","Colorcube","Prism","Flag","White"];
-        end
-
     end
 
     methods (Static, Access = private)
@@ -120,7 +117,7 @@ classdef ColormapEditor
                 commitFcn (1,1) function_handle
             end
             choice = string(source.Value);
-            if ~any(yamada.ui.inspector.ColormapEditor.presets() == choice)
+            if ~any(yamada.ui.inspector.ColormapEditor.Presets == choice)
                 source.Value = event.PreviousValue;
                 return
             end

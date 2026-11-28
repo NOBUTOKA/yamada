@@ -203,7 +203,7 @@ classdef AxesInspectorEdits
 
             % Validate the keyword against the offered styles.
             assert(((ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))) && ...
-                any(string(value) == yamada.model.AxesInspectorProperties.axisStyles()), ...
+                any(string(value) == yamada.model.AxesInspectorProperties.AxisStyles), ...
                 "yamada:AxesInspectorEdits:AxisStyle","Choose an axis style.");
             requested = string(value);
             settings = component.getSettings("AxisStyle");
@@ -573,7 +573,7 @@ classdef AxesInspectorEdits
                     if ~isempty(original) && ischar(original.LiteralValue), value = char(value); end
                 case "TickLabelFormat"
                     if path == "TickLabelFormat"
-                        value = string(validatestring(value,yamada.model.AxesInspectorProperties.formats()));
+                        value = string(validatestring(value,yamada.model.AxesInspectorProperties.Formats));
                     else
                         value = string(value);
                         assert(isscalar(value) && ~ismissing(value) && strlength(value)>0, ...

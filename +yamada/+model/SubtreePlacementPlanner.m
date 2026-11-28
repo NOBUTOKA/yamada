@@ -3,6 +3,11 @@ classdef SubtreePlacementPlanner
     %   This utility never mutates records. Reparent and Paste share its catalog,
     %   grid occupancy, and absolute/grid conversion rules.
 
+    properties (Constant, GetAccess = {?yamada.model.DocumentEditAvailability, ?yamada.model.SourceLiteralTransaction})
+        % InputPropertyPaths - Stored settings consumed by placement and occupancy planning.
+        InputPropertyPaths string = ["Position", "Layout.Row", "Layout.Column", "RowHeight", "ColumnWidth"]
+    end
+
     methods (Static)
         function accepted = accepts(document, parent, definition, registry, excludedIds)
             % accepts Decide catalog and child-family compatibility before constructing a placement edit.
@@ -212,7 +217,7 @@ classdef SubtreePlacementPlanner
                 if any(paths == "Position") && definitions(find(paths == "Position", 1)).IsEditable
                     positionEntry = root.Properties(string({root.Properties.Path}) == "Position");
                     geometry = root.Properties(ismember(string({root.Properties.Path}), ...
-                        yamada.model.PositionGeometry.rectanglePaths()));
+                        yamada.model.PositionGeometry.RectanglePaths));
                     if sourcePaste && isempty(snapshot.SourcePosition) && ...
                             any(string({geometry.ValueKind}) == "expression") && ~wasGrid && ~hasGridPlacement
                         plan = struct("ParentId", parentId, "Changes", changes);
@@ -288,16 +293,6 @@ classdef SubtreePlacementPlanner
                 end
             end
             plan = struct("ParentId", parentId, "Changes", changes);
-        end
-    end
-
-    methods (Static, Access = {?yamada.model.DocumentEditAvailability, ?yamada.model.SourceLiteralTransaction})
-        function paths = inputPropertyPaths()
-            % inputPropertyPaths Identify stored settings consumed by placement and occupancy planning.
-            arguments (Output)
-                paths (1, :) string
-            end
-            paths = ["Position", "Layout.Row", "Layout.Column", "RowHeight", "ColumnWidth"];
         end
     end
 

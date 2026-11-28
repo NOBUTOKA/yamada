@@ -2,6 +2,19 @@ classdef AxesInspectorProperties
     % AxesInspectorProperties Define editable text members and geographic formatting.
     %   This surface describes owned axes settings without holding graphics handles.
 
+    properties (Constant)
+        % Names - Supported details in presentation order.
+        Names string = ["Color","FontName","FontSize","FontWeight","FontAngle","Interpreter"]
+
+        % Formats - Documented geographic tick label formats.
+        Formats string = ["dd","dm","dms","-dd","-dm","-dms"]
+
+        % AxisStyles - Aspect-ratio keywords of axis offered in the Inspector.
+        %   normal also represents axes without such a call, whose ratios stay automatic.
+        %   vis3d is a separate toggle because it combines with these keywords.
+        AxisStyles string = ["normal","equal","image","square"]
+    end
+
     methods (Static)
         function result = groups(factory)
             % groups List text objects available on the specified axes factory.
@@ -13,38 +26,12 @@ classdef AxesInspectorProperties
             end
             result = strings(1,0);
             if factory == "colorbar", result = "Label"; return, end
-            if any(factory == yamada.model.ColorbarDefinition.targets())
+            if any(factory == yamada.model.ColorbarDefinition.Targets)
                 result = ["Title","Subtitle"];
             end
             if any(factory == ["axes","uiaxes"])
                 result = [result "XLabel" "YLabel" "ZLabel"];
             end
-        end
-
-        function result = names()
-            % names List the supported details in presentation order.
-            arguments (Output)
-                result (1,:) string
-            end
-            result = ["Color","FontName","FontSize","FontWeight","FontAngle","Interpreter"];
-        end
-
-        function result = formats()
-            % formats List the documented geographic tick label formats.
-            arguments (Output)
-                result (1,:) string
-            end
-            result = ["dd","dm","dms","-dd","-dm","-dms"];
-        end
-
-        function result = axisStyles()
-            % axisStyles List the aspect-ratio keywords of axis offered in the Inspector.
-            %   normal also represents axes without such a call, whose ratios stay automatic.
-            %   vis3d is a separate toggle because it combines with these keywords.
-            arguments (Output)
-                result (1,:) string
-            end
-            result = ["normal","equal","image","square"];
         end
 
         function keywords = axisKeywords(settings)
@@ -114,11 +101,11 @@ classdef AxesInspectorProperties
             end
             result = strings(1,0);
             for group = yamada.model.AxesInspectorProperties.groups(factory)
-                result = [result group + "." + ["String" yamada.model.AxesInspectorProperties.names()]]; %#ok<AGROW>
+                result = [result group + "." + ["String" yamada.model.AxesInspectorProperties.Names]]; %#ok<AGROW>
             end
             result = [result yamada.model.AxesInspectorProperties.rulerPaths(factory)];
             if factory == "geoaxes", result(end+1) = "TickLabelFormat"; end
-            if any(factory == yamada.model.ColorbarDefinition.targets()), result(end+1) = "Colormap"; end
+            if any(factory == yamada.model.ColorbarDefinition.Targets), result(end+1) = "Colormap"; end
         end
 
         function texts = automaticTexts(factory, path)
@@ -161,7 +148,7 @@ classdef AxesInspectorProperties
             definitionsOut = reshape(definitions,1,[]);
             groups = yamada.model.AxesInspectorProperties.groups(factory);
             if isempty(groups), return, end
-            if any(factory == yamada.model.ColorbarDefinition.targets())
+            if any(factory == yamada.model.ColorbarDefinition.Targets)
                 mapIndex = find(string({definitionsOut.Path}) == "Colormap",1);
                 metadata = struct("category","Color and Transparency Maps","editor","colormap", ...
                     "previewPolicy","apply","absoluteGeometryImpact",false,"gridGeometryImpact","none", ...
@@ -180,7 +167,7 @@ classdef AxesInspectorProperties
             for index = 1:numel(groups)
                 group = groups(index);
                 display = replace(group,["XLabel","YLabel","ZLabel"],["X Label","Y Label","Z Label"]);
-                for member = ["String" yamada.model.AxesInspectorProperties.names()]
+                for member = ["String" yamada.model.AxesInspectorProperties.Names]
                     metadata = struct("category","Labels","displayName",display,"order",index, ...
                         "axesTextMember",member,"axesTextGroup",group,"editor","text");
                     seed = [];
@@ -242,7 +229,7 @@ classdef AxesInspectorProperties
                 % The keyword of the last axis call; its effects are recorded as separate settings.
                 metadata = struct("category","Position","displayName","Axis Style", ...
                     "editor","enum","previewPolicy","skip", ...
-                    "valueSchema",struct("values",yamada.model.AxesInspectorProperties.axisStyles()));
+                    "valueSchema",struct("values",yamada.model.AxesInspectorProperties.AxisStyles));
                 definitionsOut(end+1) = yamada.model.PropertyDefinition("AxisStyle","normal",true,true,metadata);
                 % Whether a vis3d keyword after the last normal freezes the ratios and view angle.
                 metadata = struct("category","Position","displayName","Axis Vis3d", ...
@@ -260,7 +247,7 @@ classdef AxesInspectorProperties
                     metadata.editor = "enum";
                     metadata.auditDisposition = "editable";
                     metadata.previewPolicy = "apply";
-                    metadata.valueSchema = struct("values",yamada.model.AxesInspectorProperties.formats());
+                    metadata.valueSchema = struct("values",yamada.model.AxesInspectorProperties.Formats);
                     definitionsOut(index) = yamada.model.PropertyDefinition(previous.Path,"dms",true,true,metadata);
                 end
             end
