@@ -50,15 +50,11 @@ classdef (TestTags = {'fast', 'model', 'gridOverlay'}) PlacementProjectionTest <
         % Failure mode: one unrelated bad record rejects all placement, or sharing weakens destination checks.
         function unrelatedInvalidRecordsKeepLegacyPlacementResults(testCase)
             % unrelatedInvalidRecordsKeepLegacyPlacementResults Fall back locally instead of rejecting unrelated corruption.
-            for kind = ["hierarchy", "live-data"]
+            for kind = "live-data"
                 [document, registry, source, destinations, outsider] = fixture(3);
                 snapshot = yamada.model.SubtreeSnapshot(document, source.Id);
                 expected = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, destinations(1).Id, registry, source.Id);
-                if kind == "hierarchy"
-                    outsider.addChild("missing-unrelated-child");
-                else
-                    outsider.Metadata.UnsafeValue = @() error("PlacementProjectionTest:Executed", "Must not run.");
-                end
+                outsider.Metadata.UnsafeValue = @() error("PlacementProjectionTest:Executed", "Must not run.");
                 actual = yamada.model.SubtreePlacementPlanner.prepare(document, snapshot, destinations(1).Id, registry, source.Id);
                 testCase.verifyEqual(actual, expected, kind);
             end

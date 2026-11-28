@@ -16,9 +16,6 @@ classdef DocumentModel < handle
         OriginalText string = ""
         % GeneratedText - Latest generated or rewritten source preview.
         GeneratedText string = ""
-        % Components - Ordered yamada.model.ComponentRecord handle objects.
-        Components yamada.model.ComponentRecord = ...
-            yamada.model.ComponentRecord.empty
         % RootComponentId - Stable identity of the root UI component.
         RootComponentId string = ""
         % Diagnostics - Current document-level diagnostics.
@@ -48,6 +45,11 @@ classdef DocumentModel < handle
     end
 
     properties (SetAccess = private)
+        % Components - Ordered yamada.model.ComponentRecord handle objects.
+        %   Only document methods change membership and order, so every such
+        %   write advances the structure revision.
+        Components yamada.model.ComponentRecord = ...
+            yamada.model.ComponentRecord.empty
         % RenameEdits - Simultaneous source member renames retained across generation.
         RenameEdits struct = struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {})
         % CallbackEdits - Source-owned callback intentions grouped by component and property.
@@ -77,7 +79,8 @@ classdef DocumentModel < handle
         SavedHistoryIndex double = NaN
         HasSavedHistoryCheckpoint logical = false
         ComponentLookup dictionary = dictionary(string([]), [])
-        ComponentLookupReady logical = false
+        ComponentLookupRevision uint64 = intmax("uint64")
+        StructureClock yamada.model.InputChangeClock = yamada.model.InputChangeClock.empty
         SettingStore yamada.model.SourceSettingStore = yamada.model.SourceSettingStore.empty
     end
 
@@ -613,7 +616,10 @@ classdef DocumentModel < handle
                 obj (1, 1) yamada.model.DocumentModel
                 value yamada.model.ComponentRecord
             end
-            obj.ComponentLookupReady = false;
+            % Membership, order, and hierarchy writes advance one document-owned structure revision.
+            if isempty(obj.StructureClock), obj.StructureClock = yamada.model.InputChangeClock(); end
+            for item = reshape(value, 1, []), item.bindStructureClock(obj.StructureClock); end
+            obj.StructureClock.touch();
             if isempty(obj.InputClock), return, end
             for item = reshape(value, 1, []), obj.SettingStore.reserveIds([item.Settings.Id]); end
             for item = reshape(value, 1, [])
@@ -621,6 +627,18 @@ classdef DocumentModel < handle
                 item.bindInputClock(obj.InputClock);
             end
             obj.InputClock.touch();
+        end
+    end
+
+    methods (Access = ?yamada.model.SubtreeCopyPlanner)
+        function substituteComponent(obj, component)
+            % substituteComponent Replace the record with the same identity, or append it, in a private planning copy.
+            arguments (Input)
+                obj (1, 1) yamada.model.DocumentModel
+                component (1, 1) yamada.model.ComponentRecord
+            end
+            index = find(string({obj.Components.Id}) == component.Id, 1);
+            if isempty(index), obj.Components(end + 1) = component; else, obj.Components(index) = component; end
         end
     end
 
@@ -947,8 +965,8 @@ classdef DocumentModel < handle
                 obj (1, 1) yamada.model.DocumentModel
             end
 
-            % Keep the identity map private to this document and normalize its class name.
-            obj.ComponentLookupReady = true;
+            % Keep the structure revision and identity map private to this document.
+            if isempty(obj.StructureClock), obj.StructureClock = yamada.model.InputChangeClock(); end
             obj.ClassName = className;
         end
 
@@ -1602,21 +1620,26 @@ classdef DocumentModel < handle
                 component
             end
 
-            % Reuse only successful identities; structural assignments invalidate numeric indices.
+            % Reuse only successful identities recorded at the current structure revision.
             component = [];
             reusable = isscalar(id) && ~ismissing(id) && strlength(id) > 0 && ...
                 all(isvalid(obj.Components), "all");
             if reusable
-                if ~obj.ComponentLookupReady
+                revision = obj.StructureClock.Revision;
+                if obj.ComponentLookupRevision ~= revision
                     if numEntries(obj.ComponentLookup) > 0
                         obj.ComponentLookup = dictionary(string([]), []);
                     end
-                    obj.ComponentLookupReady = true;
+                    obj.ComponentLookupRevision = revision;
                 end
                 key = id;
                 if isKey(obj.ComponentLookup, key)
-                    component = obj.Components(obj.ComponentLookup(key));
-                    return
+                    index = obj.ComponentLookup(key);
+                    % Confirm the identity so a missed revision can only cost a scan.
+                    if index <= numel(obj.Components) && obj.Components(index).Id == key
+                        component = obj.Components(index);
+                        return
+                    end
                 end
             end
             % Keep first-match order and legacy behavior for invalid handles or non-scalar IDs.
@@ -3383,8 +3406,7 @@ classdef DocumentModel < handle
                 order = edit.BeforeOrder; if forward, order = edit.AfterOrder; end
                 [~, indices] = ismember(order, string({candidate.Components.Id})); candidate.Components = candidate.Components(indices);
             end
-            for child = parent.Children, parent.removeChild(child); end
-            for child = children, parent.addChild(child); end
+            parent.replaceChildren(children);
             batch = yamada.source.SourcePatchBatch(base.CurrentText, edits);
             [candidate, state] = base.prepareComponentPublication(candidate, batch, names, obj.SourceRegistry, stateId, obj);
             if ~forward && ~isempty(edit.StagedEdit)
@@ -3403,8 +3425,7 @@ classdef DocumentModel < handle
                 [~, indices] = ismember(order, string({obj.Components.Id})); obj.Components = obj.Components(indices);
             end
             parent = obj.getComponent(edit.ParentId);
-            for child = parent.Children, parent.removeChild(child); end
-            for child = children, parent.addChild(child); end
+            parent.replaceChildren(children);
             obj.publishParsedSource(state, obj.SourceRegistry, candidate, true);
             if ~isempty(parentEdit), obj.refreshChildReferenceIdentity(parent); end
         end
@@ -4115,8 +4136,7 @@ classdef DocumentModel < handle
             root.ParentId = rootState.ParentId;
             for state = parentStates
                 parent = obj.getComponent(state.Id);
-                for child = parent.Children, parent.removeChild(child); end
-                for child = state.Children, parent.addChild(child); end
+                parent.replaceChildren(state.Children);
             end
             obj.PendingEdits = pending;
         end
@@ -4141,8 +4161,7 @@ classdef DocumentModel < handle
                         obj.Components = edit.BeforeComponents;
                         children = edit.BeforeChildren;
                     end
-                    for child = parent.Children, parent.removeChild(child); end
-                    for child = children, parent.addChild(child); end
+                    parent.replaceChildren(children);
                 case "subtree-delete"
                     parent = obj.getComponent(edit.ParentId);
                     if forward
@@ -4154,8 +4173,7 @@ classdef DocumentModel < handle
                         obj.PendingEdits = edit.BeforePending;
                         children = edit.BeforeChildren;
                     end
-                    for child = parent.Children, parent.removeChild(child); end
-                    for child = children, parent.addChild(child); end
+                    parent.replaceChildren(children);
                 case "rename"
                     component = obj.getComponent(edit.ComponentId);
                     if forward

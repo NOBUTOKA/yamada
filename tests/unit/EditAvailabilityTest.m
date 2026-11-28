@@ -132,30 +132,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EditAvailabilityTest < mat
             testCase.verifyError(@() document.reparentSubtree(tab.Id, second.Id, registry), "yamada:DocumentModel:UnsafeSubtreeEdit");
         end
 
-        function missingExternalReferenceIsRejectedAtPaste(testCase)
-            % missingExternalReferenceIsRejectedAtPaste Revalidate snapshot targets after direct model changes.
-            [document, registry, ~, right] = EditAvailabilityTest.fixture(false);
-            definition = registry.get("uicontextmenu");
-            menu = yamada.model.ComponentRecord("menu", "Menu", definition.Factory, definition.DeclaredType, "generated");
-            document.addComponent(menu, document.RootComponentId);
-            % Load this programmatic-only component before exercising editor insertion commands.
-            rightName = right.Name;
-            document = yamada.source.AppSourceParser.parseText(yamada.source.NewAppGenerator(registry).generate(document), registry);
-            right = document.getComponentByName(rightName);
-            menu = document.getComponentByName("Menu");
-            button = document.insertComponent(registry, "uibutton", document.RootComponentId);
-            entry = button.setProperty("ContextMenu", []);
-            entry.setSourceExpression("app." + menu.Name);
-            entry.Metadata.SubtreeReferenceId = menu.Id;
-            clipboard = yamada.model.ComponentClipboard();
-            clipboard.copy(document, button.Id, registry);
-            testCase.verifyTrue(clipboard.availability("Paste", document, right.Id, registry).Enabled);
-            document.Components(document.Components == menu) = [];
-            document.getComponent(document.RootComponentId).removeChild(menu.Id);
-            testCase.verifyTrue(clipboard.availability("Paste", document, right.Id, registry).Enabled);
-            testCase.verifyTrue(clipboard.hasContents());
-        end
-
         function measuredGeometryParticipatesInReparentConditions(testCase)
             % measuredGeometryParticipatesInReparentConditions Require measured bounds when moving a grid child to an absolute parent.
             % Guarantee and failure mode: shared with readOnlyStateOnlyRestrictsMoving.

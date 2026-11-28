@@ -4,7 +4,7 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
     %   without retaining stale matches or misses.
     methods (Test)
         % Guarantee: cached component lookups always return the current record, and reads never count as semantic mutations.
-        % Failure mode: the lookup index survives append, replacement, removal, rename, or Undo and returns a stale record or another document's component, or reads bump the input revision.
+        % Failure mode: the lookup index survives insertion, removal, rename, Undo, or Redo and returns a stale record or another document's component, or reads bump the input revision.
         function repeatedReadsKeepIdentityAndInputRevision(testCase)
             % repeatedReadsKeepIdentityAndInputRevision Return current records without semantic mutations.
             document = yamada.model.DocumentModel("LookupFixture");
@@ -12,7 +12,7 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
             for index = 1:3
                 records(end + 1) = ComponentLookupTest.record("id" + index, "Label" + index); %#ok<AGROW>
             end
-            document.Components = records;
+            for record = records, document.addComponent(record); end
             registry = yamada.model.ComponentRegistry.createDefault();
             context = document.evaluationContext(registry);
             before = context.inputs();
@@ -26,53 +26,37 @@ classdef (TestTags = {'fast', 'model'}) ComponentLookupTest < matlab.unittest.Te
             testCase.verifyEqual(after, before);
         end
 
-        function indexedAssignmentsInvalidateEveryAffectedResult(testCase)
-            % indexedAssignmentsInvalidateEveryAffectedResult Observe append, replacement, removal, and reshaping.
-            document = yamada.model.DocumentModel("CollectionLookupFixture");
-            first = ComponentLookupTest.record("one", "First");
-            second = ComponentLookupTest.record("two", "Second");
-            document.Components = [first second];
-            testCase.verifyEqual(document.getComponent("one"), first);
-            testCase.verifyEmpty(document.getComponent("three"));
-            third = ComponentLookupTest.record("three", "Third");
-            document.Components(end + 1) = third;
-            testCase.verifyEqual(document.getComponent("three"), third);
-            replacement = ComponentLookupTest.record("one", "Replacement");
-            document.Components(1) = replacement;
-            testCase.verifyEqual(document.getComponent("one"), replacement);
-            document.Components(2) = [];
-            testCase.verifyEmpty(document.getComponent("two"));
-            testCase.verifyEqual(document.getComponent("three"), third);
-            document.Components = reshape(document.Components, [], 1);
-            testCase.verifyEqual(document.getComponent("one"), replacement);
-            document.Components = yamada.model.ComponentRecord.empty;
-            testCase.verifyEmpty(document.getComponent("one"));
-        end
-
         function renamedRecordsAndDocumentsRemainIndependent(testCase)
             % renamedRecordsAndDocumentsRemainIndependent Store indices rather than stale objects or names.
             firstDocument = yamada.model.DocumentModel("FirstLookupFixture");
             secondDocument = yamada.model.DocumentModel("SecondLookupFixture");
             first = ComponentLookupTest.record("shared", "First");
             second = ComponentLookupTest.record("shared", "Second");
-            firstDocument.Components = first;
-            secondDocument.Components = second;
+            firstDocument.addComponent(first);
+            secondDocument.addComponent(second);
             testCase.verifyEqual(firstDocument.getComponent("shared"), first);
             testCase.verifyEqual(secondDocument.getComponent("shared"), second);
             first.Name = "Changed";
-            first.ParentId = "new-parent";
             testCase.verifyEqual(firstDocument.getComponent("shared").Name, "Changed");
-            testCase.verifyEqual(firstDocument.getComponent("shared").ParentId, "new-parent");
             testCase.verifyEqual(secondDocument.getComponent("shared").Name, "Second");
         end
 
-        function insertionHistoryReturnsTheCurrentCollection(testCase)
-            % insertionHistoryReturnsTheCurrentCollection Follow source-safe insertion, Undo, and Redo.
+        function structuralHistoryReturnsTheCurrentCollection(testCase)
+            % structuralHistoryReturnsTheCurrentCollection Follow insertion, removal, Undo, and Redo.
             registry = yamada.model.ComponentRegistry.createDefault();
             document = yamada.model.NewAppFactory.createEmpty("HistoryLookupFixture", registry);
             root = document.getComponent(document.RootComponentId);
             label = document.insertComponent(registry, "uilabel", root.Id);
+            last = document.insertComponent(registry, "uibutton", root.Id);
             testCase.verifyEqual(document.getComponent(label.Id), label);
+            % Removal shifts later indices, so a reused index must not return another record.
+            document.removeSubtree(label.Id, registry);
+            testCase.verifyEmpty(document.getComponent(label.Id));
+            testCase.verifyEqual(document.getComponent(last.Id), last);
+            document.undo();
+            testCase.verifyEqual(document.getComponent(label.Id), label);
+            testCase.verifyEqual(document.getComponent(last.Id), last);
+            document.undo();
             document.undo();
             testCase.verifyEmpty(document.getComponent(label.Id));
             testCase.verifyEqual(document.getComponent(root.Id), root);

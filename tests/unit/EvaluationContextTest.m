@@ -49,35 +49,6 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             end
         end
 
-        % Guarantee: every input that can affect a resolution invalidates it.
-        % Failure mode: a coupled sibling, ancestor, source, or history change leaves a cached value in use.
-        function invalidIdentityGraphsKeepConservativeScopeBehavior(testCase)
-            % invalidIdentityGraphsKeepConservativeScopeBehavior Preserve cycle invalidation and duplicate-id fallback.
-            for kind = ["cycle", "duplicate"]
-                registry = yamada.model.ComponentRegistry.createDefault();
-                document = yamada.model.NewAppFactory.createEmpty("InvalidScopeFixture", registry);
-                first = document.insertComponent(registry, "uilabel", document.RootComponentId);
-                second = document.insertComponent(registry, "uilabel", document.RootComponentId);
-                third = document.insertComponent(registry, "uilabel", document.RootComponentId);
-                if kind == "cycle"
-                    first.ParentId = second.Id;
-                    second.ParentId = first.Id;
-                else
-                    duplicate = yamada.model.ComponentRecord(first.Id, "Duplicate", "uilabel", ...
-                        "matlab.ui.control.Label", "generated");
-                    duplicate.ParentId = document.RootComponentId;
-                    document.Components(end + 1) = duplicate;
-                end
-                context = document.evaluationContext(registry);
-                context.remember("states:" + first.Id, struct("Marker", 1));
-                third.Metadata.ScopeChange = true;
-                next = document.evaluationContext(registry);
-                [value, found] = next.lookup("states:" + first.Id);
-                testCase.verifyEqual(found, kind == "duplicate");
-                if found, testCase.verifyEqual(value.Marker, 1); end
-            end
-        end
-
         function nestedGridInheritanceKeepsUnrelatedScopes(testCase)
             % nestedGridInheritanceKeepsUnrelatedScopes Invalidate coupled descendants while retaining separate groups.
             % Guarantee and failure mode: shared with manyChildrenShareExactNestedDependencyScopes.
@@ -320,10 +291,9 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             current = document.evaluationContext(registry);
             root.removeProperty("Tooltip");
             testCase.verifyFalse(current.matches(document, registry));
-            % Public component collections accept either array orientation.
+            % A record added through the document joins the tracked collection.
             document.addComponent(yamada.model.ComponentRecord("column-label", "ColumnLabel", ...
                 "uilabel", "matlab.ui.control.Label"), root.Id);
-            document.Components = reshape(document.Components, [], 1);
             current = document.evaluationContext(registry);
             root.setProperty("Name", "After collection replacement");
             testCase.verifyFalse(current.matches(document, registry));
@@ -335,8 +305,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             first = yamada.model.NewAppFactory.createEmpty("CacheFixture", registry);
             old = first.evaluationContext(registry);
             second = yamada.model.DocumentModel("CacheFixture");
-            second.Components = first.Components;
-            second.RootComponentId = first.RootComponentId;
+            for record = first.Components, second.addComponent(record); end
             other = second.evaluationContext(registry);
             % Sharing ownership may invalidate an unchanged cache; both owners must still observe writes.
             root = first.getComponent(first.RootComponentId);
@@ -446,8 +415,7 @@ classdef (TestTags = {'fast', 'model', 'generation'}) EvaluationContextTest < ma
             grid = document.insertComponent(registry, "uigridlayout", document.RootComponentId);
             child = document.insertComponent(registry, "uilabel", grid.Id);
             incomplete = document.structuralCandidate();
-            incomplete.Components(incomplete.Components == incomplete.getComponent(child.Id)) = [];
-            incomplete.getComponent(grid.Id).removeChild(child.Id);
+            incomplete.removeSubtree(child.Id, registry);
             context = document.evaluationContext(registry);
             context.rememberConfiguration("plan", incomplete);
             [publicPlan, found] = context.configuration("plan", child.Name);

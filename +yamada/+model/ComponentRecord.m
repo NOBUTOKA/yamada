@@ -28,8 +28,6 @@ classdef ComponentRecord < handle
     properties
         % Name - Editable MATLAB property name for the component.
         Name string = ""
-        % ParentId - Stable identity of the parent component, or empty for a root.
-        ParentId string = ""
         % IsEditable - Whether the component can be changed by the editor.
         IsEditable logical = true
         % Diagnostics - Diagnostics currently associated with this component.
@@ -38,6 +36,13 @@ classdef ComponentRecord < handle
         SourceSpans struct = struct("Declaration", yamada.model.SourceSpan.empty, "Creation", yamada.model.SourceSpan.empty)
         % Metadata - Extensible component-specific data not interpreted by the model.
         Metadata struct = struct()
+    end
+
+    properties (SetAccess = {?yamada.model.DocumentModel, ?yamada.model.SubtreeSnapshot, ?yamada.model.SourceLiteralTransaction})
+        % ParentId - Stable identity of the parent component, or empty for a root.
+        %   Documents own hierarchy writes; snapshots and literal transactions
+        %   only link detached records they construct.
+        ParentId string = ""
     end
 
     properties (Dependent, SetAccess = private)
@@ -52,6 +57,7 @@ classdef ComponentRecord < handle
 
     properties (Access = private)
         InputClock yamada.model.InputChangeClock = yamada.model.InputChangeClock.empty
+        StructureClock yamada.model.InputChangeClock = yamada.model.InputChangeClock.empty
         CreationArgumentData cell = {}
         SettingStore yamada.model.SourceSettingStore = yamada.model.SourceSettingStore.empty
         SettingSlots double = zeros(1, 0)
@@ -80,6 +86,17 @@ classdef ComponentRecord < handle
     end
 
     methods (Access = ?yamada.model.DocumentModel)
+        function bindStructureClock(obj, clock)
+            % bindStructureClock Report later hierarchy writes to the document that last adopted this record.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRecord
+                clock (1, 1) yamada.model.InputChangeClock
+            end
+            % A record adopted by another document invalidates its previous owner's structure.
+            if ~isempty(obj.StructureClock) && obj.StructureClock ~= clock, obj.StructureClock.touch(); end
+            obj.StructureClock = clock;
+        end
+
         function bindSettingStore(obj, store)
             % bindSettingStore Move detached value records into one acyclic document-owned canonical table.
             arguments (Input)
@@ -163,6 +180,15 @@ classdef ComponentRecord < handle
     end
 
     methods (Access = private)
+        function noteStructure(obj)
+            % noteStructure Advance the owning document's structure revision after a hierarchy write.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRecord
+            end
+            % Detached records under construction have no owning document yet.
+            if ~isempty(obj.StructureClock), obj.StructureClock.touch(); end
+        end
+
         function noteInput(obj)
             % noteInput Notify the token only after evaluation has attached it to a complete object.
             arguments (Input)
@@ -245,6 +271,7 @@ classdef ComponentRecord < handle
             end
             obj.Children = value;
             obj.noteInput();
+            obj.noteStructure();
         end
 
         function set.Properties(obj, value)
@@ -310,6 +337,7 @@ classdef ComponentRecord < handle
             end
             obj.ParentId = value;
             obj.noteInput();
+            obj.noteStructure();
         end
 
         function set.IsEditable(obj, value)
@@ -624,7 +652,9 @@ classdef ComponentRecord < handle
             pending = string({obj.Settings.Path}) == path & string({obj.Settings.Method}) == "generated";
             obj.Settings(pending) = [];
         end
+    end
 
+    methods (Access = {?yamada.model.DocumentModel, ?yamada.model.SubtreeSnapshot})
         function addChild(obj, childId)
             % addChild Append a child identifier unless it is already present.
             arguments (Input)
@@ -648,7 +678,17 @@ classdef ComponentRecord < handle
             % Keep the ordered hierarchy consistent with the document collection.
             obj.Children(obj.Children == childId) = [];
         end
+
+        function replaceChildren(obj, children)
+            % replaceChildren Restore one complete ordered child list in a single write.
+            arguments (Input)
+                obj (1, 1) yamada.model.ComponentRecord
+                children string
+            end
+            obj.Children = reshape(children, 1, []);
+        end
     end
+
     methods (Static)
         function id = newId()
             % newId Create an opaque component identity that no document content determines.

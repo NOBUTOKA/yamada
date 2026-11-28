@@ -98,6 +98,8 @@ Start with the feature you are changing. Its conditions and explanation are grou
 - A batch is preflighted before mutation and becomes one history entry. Parsed deletion also retains enough intent for undo to restore the source-generation state.
 - A property batch or grid layout edit that mutates records directly records each change in a partial history entry before applying it. If any change fails, the partial entry is reversed with the same `applyHistory` path as Undo, last change first, so a change interrupted between its removal and its setting is also restored. The partial entry is never added to the history.
 - Overlay move and resize gestures commit `Position` through the same batch path as Inspector rows and editor dialogs, so they pass the same batch validation, dependent restatement, and post-commit validation.
+- Only `DocumentModel` changes component membership, order, and hierarchy links. `Components` is readable but not settable from outside the document, and `ComponentRecord.ParentId`, `addChild`, `removeChild`, and `replaceChildren` are restricted to the document and to the snapshot and literal-transaction builders that link detached records they construct. The property set methods for `Components`, `ParentId`, and `Children` advance a document-owned structure revision, so a new structural mutator cannot forget to advance it. Value edits do not advance it.
+- The identity lookup behind `getComponent` is keyed by the structure revision and confirms the stored record's `Id` on a hit, so a stale index can cost only a scan, never a wrong record. A record adopted by another document advances its previous owner's structure revision.
 
 **Explanation**
 
