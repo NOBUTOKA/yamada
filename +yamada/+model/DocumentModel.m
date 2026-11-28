@@ -73,9 +73,7 @@ classdef DocumentModel < handle
         PlanBaseline yamada.model.EvaluationBaseline = yamada.model.EvaluationBaseline.empty
         PlannedValidation logical = false
         PlannedScope struct = struct()
-        PropertyValidationNames string = strings(1, 0)
-        PropertyValidationContext yamada.model.EvaluationContext = yamada.model.EvaluationContext.empty
-        PropertyValidationDiagnostics yamada.model.Diagnostic = yamada.model.Diagnostic.empty
+        Validation yamada.model.ValidationReuse = yamada.model.ValidationReuse.empty
         SavedHistoryIndex double = NaN
         HasSavedHistoryCheckpoint logical = false
         ComponentLookup dictionary = dictionary(string([]), [])
@@ -137,7 +135,7 @@ classdef DocumentModel < handle
                 diagnostics yamada.model.Diagnostic
             end
             if isempty(names) && obj.hasCurrentValidation(registry)
-                diagnostics = obj.PropertyValidationDiagnostics; return
+                diagnostics = obj.Validation.Diagnostics; return
             end
             if isempty(obj.PlanBaseline) && isempty(obj.Evaluation)
                 diagnostics = yamada.validation.ModelValidator.validate(obj, registry, names); return
@@ -335,9 +333,7 @@ classdef DocumentModel < handle
                 context = candidate.evaluationContext(registry);
                 context.inheritLiteralStates(callback.Context, callback.ComponentId, batch, true);
                 candidate.getEffectivePropertyStates(registry, callback.ComponentId);
-                candidate.PropertyValidationContext = context;
-                candidate.PropertyValidationNames = strings(1, 0);
-                candidate.PropertyValidationDiagnostics = candidate.Diagnostics;
+                candidate.Validation = yamada.model.ValidationReuse(candidate, context, candidate.Diagnostics);
                 diagnostics = candidate.Diagnostics;
             end
             if yamada.validation.ModelValidator.hasErrors(diagnostics)
@@ -357,15 +353,13 @@ classdef DocumentModel < handle
                 proof yamada.model.DocumentValidationProof
             end
             proof = yamada.model.DocumentValidationProof.empty;
-            context = obj.PropertyValidationContext;
-            if isempty(context) || ~isempty(obj.PropertyValidationNames) || ~context.matches(obj, registry) || ...
-                    yamada.validation.ModelValidator.hasErrors(obj.PropertyValidationDiagnostics), return, end
-            [~, tracked] = context.revisionToken(); if ~tracked, return, end
+            if ~obj.hasCurrentValidation(registry), return, end
+            context = obj.Validation.Context;
             for owner = obj.Components
                 [~, found] = context.lookup("states:" + owner.Id);
                 if ~found, return, end
             end
-            proof = yamada.model.DocumentValidationProof(obj, registry, obj.PropertyValidationDiagnostics);
+            proof = yamada.model.DocumentValidationProof(obj, registry, obj.Validation.Diagnostics);
         end
     end
 
@@ -467,15 +461,12 @@ classdef DocumentModel < handle
                 result (1, 1) struct
             end
             result = struct("Ready", false);
-            context = obj.PropertyValidationContext;
-            if isempty(context) || ~isempty(obj.PropertyValidationNames) || ~context.matches(obj, registry) || ...
-                    yamada.validation.ModelValidator.hasErrors(obj.PropertyValidationDiagnostics), return, end
-            [~, tracked] = context.revisionToken();
-            if ~tracked, return, end
+            if ~obj.hasCurrentValidation(registry), return, end
+            context = obj.Validation.Context;
             [previous, found] = context.lookup("states:" + component.Id);
             if ~found || ~isequaln(previous.Definitions, definitions), return, end
             result = yamada.validation.ModelValidator.prepareIndependentProperties(component, definitions, ...
-                states, previous.States, paths, obj.PropertyValidationDiagnostics, batch);
+                states, previous.States, paths, obj.Validation.Diagnostics, batch);
         end
 
         function projection = prepareSettingProjection(obj, batch, execution, excludedOwner)
@@ -659,9 +650,7 @@ classdef DocumentModel < handle
                     yamada.model.SourceSettingRebinder.executionSequences(obj, obj.CurrentSource, ...
                         yamada.source.SourcePatchBatch(obj.CurrentText), registry);
                 end
-                obj.PropertyValidationContext = obj.evaluationContext(registry);
-                obj.PropertyValidationNames = strings(1, 0);
-                obj.PropertyValidationDiagnostics = diagnostics;
+                obj.Validation = yamada.model.ValidationReuse(obj, obj.evaluationContext(registry), diagnostics);
             end
         end
 
@@ -1394,23 +1383,20 @@ classdef DocumentModel < handle
             end
 
             % Only this editor post-commit path consumes proof; generation and saving still validate fully.
-            if ~isempty(obj.PropertyValidationContext) && obj.PropertyValidationContext.matches(obj, registry)
-                if ~isempty(obj.PropertyValidationNames)
-                    ids = string({obj.Components(ismember(string({obj.Components.Name}), obj.PropertyValidationNames)).Id});
+            if ~isempty(obj.Validation) && obj.Validation.isCurrent(obj, registry)
+                if ~isempty(obj.Validation.Pending)
+                    ids = string({obj.Components(ismember(string({obj.Components.Name}), obj.Validation.Pending)).Id});
                     checked = yamada.validation.ModelValidator.validateOwners(obj, registry, ids);
-                    retained = obj.PropertyValidationDiagnostics;
+                    retained = obj.Validation.Diagnostics;
                     if ~isempty(retained), retained = retained(~ismember(string({retained.ComponentId}), ids)); end
-                    obj.PropertyValidationDiagnostics = [retained checked];
-                    obj.PropertyValidationNames = strings(1, 0);
+                    obj.Validation = obj.Validation.withChecked([retained checked]);
                 end
-                diagnostics = obj.PropertyValidationDiagnostics;
+                diagnostics = obj.Validation.Diagnostics;
                 obj.Diagnostics = diagnostics;
                 return
             end
             diagnostics = yamada.validation.ModelValidator.validate(obj, registry);
-            obj.PropertyValidationNames = strings(1, 0);
-            obj.PropertyValidationContext = obj.evaluationContext(registry);
-            obj.PropertyValidationDiagnostics = diagnostics;
+            obj.Validation = yamada.model.ValidationReuse(obj, obj.evaluationContext(registry), diagnostics);
         end
 
         function entries = applyGridLayoutEdit(obj, gridId, changes, registry)
@@ -2056,8 +2042,7 @@ classdef DocumentModel < handle
                 if obj.hasCurrentValidation(registry)
                     current.inheritPlannedStates(yamada.model.EvaluationBaseline(previous), strings(1, 0), ...
                         yamada.source.SourcePatchBatch(obj.CurrentText));
-                    candidate.PropertyValidationContext = current; candidate.PropertyValidationNames = strings(1, 0);
-                    candidate.PropertyValidationDiagnostics = obj.PropertyValidationDiagnostics;
+                    candidate.Validation = yamada.model.ValidationReuse(candidate, current, obj.Validation.Diagnostics);
                     candidate.PlannedValidation = true; candidate.PlannedScope = obj.PlannedScope;
                 end
             end
@@ -2655,10 +2640,9 @@ classdef DocumentModel < handle
             if ~obj.currentModelIsBound(), return, end
             component = obj.getComponent(id);
             previousContext = obj.evaluationContext(registry);
-            carryValidation = ~isempty(obj.PropertyValidationContext) && isempty(obj.PropertyValidationNames) && ...
-                obj.PropertyValidationContext.matches(obj, registry) && ...
-                ~yamada.validation.ModelValidator.hasErrors(obj.PropertyValidationDiagnostics);
-            previousDiagnostics = obj.PropertyValidationDiagnostics;
+            carryValidation = ~isempty(obj.Validation) && obj.Validation.isComplete(obj, registry);
+            previousDiagnostics = yamada.model.Diagnostic.empty;
+            if carryValidation, previousDiagnostics = obj.Validation.Diagnostics; end
             beforeSettings = component.Settings;
             before = obj.CurrentSource;
             if isfield(obj.Metadata, "SourceSnapshotText") && obj.Metadata.SourceSnapshotText ~= before.Text
@@ -2698,18 +2682,16 @@ classdef DocumentModel < handle
             elseif validation.Ready
                 currentContext.remember("states:" + id, struct("Definitions", validation.Definitions, ...
                     "States", validation.States, "Diagnostics", validation.StateDiagnostics));
-                obj.PropertyValidationContext = currentContext;
-                obj.PropertyValidationNames = strings(1, 0);
-                obj.PropertyValidationDiagnostics = validation.Diagnostics;
+                obj.Validation = yamada.model.ValidationReuse(obj, currentContext, validation.Diagnostics);
                 obj.Diagnostics = validation.Diagnostics;
             elseif carryValidation && prepared.CanReuseStates
-                obj.PropertyValidationContext = currentContext;
-                obj.PropertyValidationNames = component.Name;
+                pending = component.Name;
                 if all(ismember(string({changes.Path}), string({beforeSettings.Path})))
                     % Existing owned slots need no second check after their finite local proof.
-                    obj.PropertyValidationNames = strings(1, 0);
+                    pending = strings(1, 0);
                 end
-                obj.PropertyValidationDiagnostics = yamada.model.SourceLocationUpdate.relocateDiagnostics(previousDiagnostics, prepared.Batch);
+                obj.Validation = yamada.model.ValidationReuse(obj, currentContext, ...
+                    yamada.model.SourceLocationUpdate.relocateDiagnostics(previousDiagnostics, prepared.Batch), pending);
             end
             edit = struct("Kind", "source-property", "ComponentId", id, "Changes", changes, ...
                 "SettingIdentities", yamada.model.SourcePropertyHistory.capture(beforeSettings, component.Settings, string({changes.Path})), ...
@@ -2762,8 +2744,7 @@ classdef DocumentModel < handle
                     context.remember("states:" + owner.ComponentId, struct("Definitions", owner.Definitions, ...
                         "States", owner.States, "Diagnostics", yamada.model.Diagnostic.empty));
                 end
-                obj.PropertyValidationContext = context; obj.PropertyValidationNames = strings(1, 0);
-                obj.PropertyValidationDiagnostics = validation.Diagnostics;
+                obj.Validation = yamada.model.ValidationReuse(obj, context, validation.Diagnostics);
             end
             owners = struct("ComponentId", {}, "Changes", {}, "SettingIdentities", {}, "Insertions", {});
             for index = 1:numel(prepared.Specs)
@@ -2788,10 +2769,7 @@ classdef DocumentModel < handle
             arguments (Output)
                 ready (1, 1) logical
             end
-            ready = ~isempty(obj.PropertyValidationContext) && isempty(obj.PropertyValidationNames) && ...
-                obj.PropertyValidationContext.matches(obj, registry) && ...
-                ~yamada.validation.ModelValidator.hasErrors(obj.PropertyValidationDiagnostics);
-            if ready, [~, ready] = obj.PropertyValidationContext.revisionToken(); end
+            ready = ~isempty(obj.Validation) && obj.Validation.isComplete(obj, registry) && obj.Validation.isTracked();
         end
 
         function carryHistoryValidation(obj, previous, ready, diagnostics, batch, changes)
@@ -2833,8 +2811,8 @@ classdef DocumentModel < handle
                         if result.Ready
                             context.rememberValidatedStates(ids, struct("Definitions", definitions, "States", result.States, ...
                                 "Diagnostics", result.StateDiagnostics));
-                            obj.PropertyValidationContext = context; obj.PropertyValidationNames = strings(1, 0);
-                            obj.PropertyValidationDiagnostics = result.Diagnostics; obj.Diagnostics = result.Diagnostics;
+                            obj.Validation = yamada.model.ValidationReuse(obj, context, result.Diagnostics);
+                            obj.Diagnostics = result.Diagnostics;
                             return
                         end
                     end
@@ -2865,8 +2843,7 @@ classdef DocumentModel < handle
             [currentClock, currentRevision, currentTracked] = obj.inputStamp();
             if ~currentTracked || currentClock ~= clock || currentRevision ~= revision, return, end
             for owner = owners, context.rememberValidatedStates(owner.ComponentId, owner.Resolved); end
-            obj.Evaluation = context; obj.PropertyValidationContext = context;
-            obj.PropertyValidationNames = strings(1, 0); obj.PropertyValidationDiagnostics = diagnostics;
+            obj.Evaluation = context; obj.Validation = yamada.model.ValidationReuse(obj, context, diagnostics);
             obj.Diagnostics = diagnostics; adopted = true;
         end
 
@@ -2891,8 +2868,8 @@ classdef DocumentModel < handle
             obj.PendingEdits = {};
             obj.CallbackEdits = yamada.model.CallbackEdit.empty;
             obj.RenameEdits = struct("ComponentId", {}, "Kind", {}, "OldName", {}, "NewName", {});
-            obj.PropertyValidationContext = yamada.model.EvaluationContext.empty;
-            obj.PropertyValidationNames = strings(1, 0);
+            % Safety net: reads already reject results whose input token this publication advances.
+            obj.Validation = yamada.model.ValidationReuse.empty;
             obj.Metadata.SourceSnapshotText = state.Text;
             [clock, revision] = obj.inputStamp();
             obj.SourceInputRevision = revision;
@@ -2920,7 +2897,7 @@ classdef DocumentModel < handle
                     "An indexed structural publication requires its existing complete model proof.");
                 [parsed, diagnostics] = yamada.source.AppSourceParser.parseText(state.Text, registry);
             else
-                diagnostics = parsed.PropertyValidationDiagnostics;
+                diagnostics = parsed.Validation.Diagnostics;
             end
             if yamada.validation.ModelValidator.hasErrors(diagnostics)
                 error("yamada:DocumentModel:UnsafeSourceCommit", "%s", strjoin(string({diagnostics.Message}), newline));
@@ -3014,8 +2991,7 @@ classdef DocumentModel < handle
                     ismember(string({retained.ComponentId}), ["" string({obj.Components.Id})]));
             end
             diagnostics = [retained checked]; obj.Diagnostics = diagnostics;
-            obj.Evaluation = context; obj.PropertyValidationContext = context;
-            obj.PropertyValidationNames = strings(1, 0); obj.PropertyValidationDiagnostics = diagnostics;
+            obj.Evaluation = context; obj.Validation = yamada.model.ValidationReuse(obj, context, diagnostics);
             obj.PlannedValidation = true; obj.PlannedScope = scope;
         end
 
@@ -3041,8 +3017,7 @@ classdef DocumentModel < handle
             end
             if isempty(context), context = yamada.model.EvaluationContext.fromValidated(obj, registry); end
             for owner = plan.States, context.rememberValidatedStates(owner.ComponentId, owner.Resolved); end
-            obj.Evaluation = context; obj.PropertyValidationContext = context;
-            obj.PropertyValidationNames = strings(1, 0); obj.PropertyValidationDiagnostics = plan.Diagnostics;
+            obj.Evaluation = context; obj.Validation = yamada.model.ValidationReuse(obj, context, plan.Diagnostics);
             obj.Diagnostics = plan.Diagnostics; obj.PlannedValidation = true; obj.PlannedScope = plan.Scope;
         end
 
@@ -3089,8 +3064,7 @@ classdef DocumentModel < handle
             [resolved, found] = prepared.lookup("states:" + componentId);
             assert(found, "yamada:DocumentModel:MissingCallbackState", "The callback projection must retain its edited owner's states.");
             context.rememberValidatedStates(componentId, resolved);
-            obj.Evaluation = context; obj.PropertyValidationContext = context;
-            obj.PropertyValidationNames = strings(1, 0); obj.PropertyValidationDiagnostics = candidate.Diagnostics;
+            obj.Evaluation = context; obj.Validation = yamada.model.ValidationReuse(obj, context, candidate.Diagnostics);
         end
 
         function [candidate, staged] = prepareStagedLiterals(obj, registry)
@@ -3495,8 +3469,7 @@ classdef DocumentModel < handle
                     context.rememberValidatedStates(component.Id, resolved);
                 end
                 if ready
-                    obj.PropertyValidationContext = context; obj.PropertyValidationNames = strings(1, 0);
-                    obj.PropertyValidationDiagnostics = diagnostics;
+                    obj.Validation = yamada.model.ValidationReuse(obj, context, diagnostics);
                     obj.PlannedValidation = true; obj.PlannedScope = struct("Checked", strings(1, 0), "Invalidated", strings(1, 0));
                 end
             end
@@ -3702,7 +3675,8 @@ classdef DocumentModel < handle
                 forward (1, 1) logical
             end
             previousContext = obj.evaluationContext(obj.SourceRegistry);
-            carryValidation = obj.hasCurrentValidation(obj.SourceRegistry); previousDiagnostics = obj.PropertyValidationDiagnostics;
+            carryValidation = obj.hasCurrentValidation(obj.SourceRegistry); previousDiagnostics = yamada.model.Diagnostic.empty;
+            if carryValidation, previousDiagnostics = obj.Validation.Diagnostics; end
             [token, tracked] = previousContext.revisionToken();
             if ~tracked, token = struct(); end
             if forward
@@ -3780,7 +3754,8 @@ classdef DocumentModel < handle
                 forward (1, 1) logical
             end
             previousContext = obj.evaluationContext(obj.SourceRegistry);
-            carryValidation = obj.hasCurrentValidation(obj.SourceRegistry); previousDiagnostics = obj.PropertyValidationDiagnostics;
+            carryValidation = obj.hasCurrentValidation(obj.SourceRegistry); previousDiagnostics = yamada.model.Diagnostic.empty;
+            if carryValidation, previousDiagnostics = obj.Validation.Diagnostics; end
             [token, tracked] = previousContext.revisionToken(); if ~tracked, token = struct(); end
             if forward, edits = edit.SourceForward; stateId = edit.SourceAfterId;
             else, edits = edit.SourceInverse; stateId = edit.SourceBeforeId; end
