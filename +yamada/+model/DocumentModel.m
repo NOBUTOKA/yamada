@@ -1030,7 +1030,7 @@ classdef DocumentModel < handle
                 error("yamada:DocumentModel:UnknownParent", ...
                     "Parent component ID ""%s"" does not exist.", parentId);
             end
-            if ~yamada.model.SubtreePlacementPlanner.accepts(obj, parent, definition)
+            if ~yamada.model.SubtreePlacementPlanner.accepts(obj, parent, definition, registry)
                 error("yamada:DocumentModel:InvalidInsertionParent", ...
                     "Factory ""%s"" cannot be inserted under ""%s"".", ...
                     factory, parent.Factory);
@@ -3148,8 +3148,8 @@ classdef DocumentModel < handle
             target = yamada.model.ComponentRecord.empty;
             for id = choices
                 candidate = obj.getComponent(id);
-                if candidate.Factory == child.Factory || parent.Factory == "uibuttongroup" && ...
-                        any(candidate.Factory == ["uiradiobutton", "uitogglebutton"])
+                if candidate.Factory == child.Factory || ...
+                        any(registry.selectionMembers(parent.Factory) == candidate.Factory)
                     target = candidate;
                     break
                 end

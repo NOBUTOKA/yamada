@@ -766,7 +766,7 @@ classdef yamada < handle
                 parent = app.Document.getComponent(id);
                 if ~isempty(parent) && parent.IsEditable
                     definition = app.Registry.get("colorbar");
-                    state.Enabled = yamada.model.SubtreePlacementPlanner.accepts(app.Document,parent,definition);
+                    state.Enabled = yamada.model.SubtreePlacementPlanner.accepts(app.Document,parent,definition,app.Registry);
                 end
                 return
             end

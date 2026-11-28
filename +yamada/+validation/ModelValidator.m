@@ -64,10 +64,11 @@ classdef ModelValidator
                     continue
                 end
 
-                % Native groups accept one mutually exclusive child family at a time.
-                if component.Factory == "uibuttongroup"
+                % A selection group accepts one exclusive member factory at a time.
+                members = registry.selectionMembers(component.Factory);
+                if ~isempty(members)
                     children = document.Components(string({document.Components.ParentId}) == component.Id & ...
-                        ismember(string({document.Components.Factory}), ["uiradiobutton", "uitogglebutton"]));
+                        ismember(string({document.Components.Factory}), members));
                     if numel(unique(string({children.Factory}))) > 1
                         diagnostics(end + 1) = yamada.validation.ModelValidator.error( ...
                             "mixed-button-group", "RadioButton and ToggleButton cannot share one ButtonGroup.", component.Id); %#ok<AGROW>
@@ -156,9 +157,10 @@ classdef ModelValidator
                             "The destination does not accept this component.", component.Id); %#ok<AGROW>
                     end
                 end
-                if component.Factory == "uibuttongroup"
+                members = registry.selectionMembers(component.Factory);
+                if ~isempty(members)
                     children = document.Components(string({document.Components.ParentId}) == component.Id & ...
-                        ismember(string({document.Components.Factory}), ["uiradiobutton", "uitogglebutton"]));
+                        ismember(string({document.Components.Factory}), members));
                     if numel(unique(string({children.Factory}))) > 1
                         diagnostics(end + 1) = yamada.validation.ModelValidator.error("mixed-button-group", ...
                             "RadioButton and ToggleButton cannot share one ButtonGroup.", component.Id); %#ok<AGROW>

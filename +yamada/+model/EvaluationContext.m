@@ -51,7 +51,7 @@ classdef EvaluationContext < handle
                 changed(index) = ~isequaln(before(index), after(index));
             end
             % Nested coupled descendants share exactly the same complete dependency scope.
-            groups = yamada.model.EvaluationContext.scopeGroups(after);
+            groups = yamada.model.EvaluationContext.scopeGroups(after, obj.Registry);
             componentIds = string({after.Id});
             checked = false(1, numel(after));
             retained = false(1, numel(after));
@@ -63,7 +63,7 @@ classdef EvaluationContext < handle
                 if group > 0 && checked(group)
                     reuse = retained(group);
                 else
-                    indices = yamada.model.EvaluationContext.stateScope(after, id);
+                    indices = yamada.model.EvaluationContext.stateScope(after, id, obj.Registry);
                     reuse = ~isempty(indices) && ~any(changed(indices));
                     if group > 0
                         checked(group) = true;
@@ -419,20 +419,20 @@ classdef EvaluationContext < handle
                     ~isequaln(before(old).Children, member.Children);
                 if topology
                     affected(end + 1) = member.Id; %#ok<AGROW>
-                    if any(member.Factory == ["uigridlayout", "uibuttongroup", "uitabgroup"])
+                    if obj.Registry.couplesChildTopology(member.Factory)
                         checked(end + 1) = member.Id; %#ok<AGROW>
                         affected = union(affected, yamada.model.EvaluationContext.descendants(after, member.Id), "stable");
                     end
                 end
                 if ~any(checked == member.Id), continue, end
-                affected = union(affected, ids(yamada.model.EvaluationContext.stateScope(topologyRecords, member.Id)), "stable");
+                affected = union(affected, ids(yamada.model.EvaluationContext.stateScope(topologyRecords, member.Id, obj.Registry)), "stable");
                 affected = union(affected, yamada.model.EvaluationContext.descendants(after, member.Id), "stable");
                 parent = member.ParentId; visited = strings(1, 0);
                 while parent ~= ""
                     assert(~any(visited == parent), "yamada:DocumentModel:InvalidParent", "An edited parent chain must be acyclic.");
                     visited(end + 1) = parent; %#ok<AGROW>
                     owner = document.getComponent(parent); if isempty(owner), break, end
-                    if any(owner.Factory == ["uigridlayout", "uibuttongroup", "uitabgroup"])
+                    if obj.Registry.couplesChildTopology(owner.Factory)
                         checked(end + 1) = owner.Id; %#ok<AGROW>
                     end
                     parent = owner.ParentId;
@@ -505,7 +505,7 @@ classdef EvaluationContext < handle
             for field = ["Id", "Name", "Factory", "DeclaredType", "Origin", "ParentId", "Children"]
                 if ~isequaln({before.(field)}, {after.(field)}), return, end
             end
-            groups = yamada.model.EvaluationContext.scopeGroups(after);
+            groups = yamada.model.EvaluationContext.scopeGroups(after, obj.Registry);
             ids = string({after.Id}); checked = false(size(groups)); reusable = checked;
             for name = keys(previous.Values)'
                 if ~startsWith(name, "states:"), continue, end
@@ -513,7 +513,7 @@ classdef EvaluationContext < handle
                 if isempty(index) || groups(index) == 0, continue, end
                 group = groups(index);
                 if ~checked(group)
-                    scope = yamada.model.EvaluationContext.stateScope(after, ids(index));
+                    scope = yamada.model.EvaluationContext.stateScope(after, ids(index), obj.Registry);
                     reusable(group) = ~any(ismember(ids(scope), changedIds)); checked(group) = true;
                 end
                 if ~reusable(group), continue, end
@@ -678,10 +678,11 @@ classdef EvaluationContext < handle
             key.Components = components;
         end
 
-        function groups = scopeGroups(components)
+        function groups = scopeGroups(components, registry)
             % scopeGroups Group identical coupled scopes without changing their dependency membership.
             arguments (Input)
                 components struct
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 groups (1, :) double
@@ -693,7 +694,7 @@ classdef EvaluationContext < handle
                 groups(:) = 0;
                 return
             end
-            coupled = ismember(string({components.Factory}), ["uigridlayout", "uibuttongroup"]);
+            coupled = arrayfun(@(item) registry.couplesChildState(item.Factory), components);
             if ~any(coupled), return, end
             [~, parents] = ismember(string({components.ParentId}), ids);
             for index = 1:count
@@ -743,11 +744,12 @@ classdef EvaluationContext < handle
             end
         end
 
-        function indices = stateScope(components, id)
-            % stateScope Include ancestors and complete coupled grid or button-group subtrees.
+        function indices = stateScope(components, id, registry)
+            % stateScope Include ancestors and the complete subtrees of ancestors that couple child state.
             arguments (Input)
                 components struct
                 id (1, 1) string
+                registry (1, 1) yamada.model.ComponentRegistry
             end
             arguments (Output)
                 indices (1, :) double
@@ -767,7 +769,7 @@ classdef EvaluationContext < handle
             end
             indices = ancestors;
             for ancestor = ancestors
-                if ~any(components(ancestor).Factory == ["uigridlayout", "uibuttongroup"]), continue, end
+                if ~registry.couplesChildState(components(ancestor).Factory), continue, end
                 subtree = ancestor;
                 while true
                     expanded = union(subtree, find(ismember(parents, ids(subtree))));

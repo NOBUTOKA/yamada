@@ -4,12 +4,13 @@ classdef SubtreePlacementPlanner
     %   grid occupancy, and absolute/grid conversion rules.
 
     methods (Static)
-        function accepted = accepts(document, parent, definition, excludedIds)
+        function accepted = accepts(document, parent, definition, registry, excludedIds)
             % accepts Decide catalog and child-family compatibility before constructing a placement edit.
             arguments (Input)
                 document (1, 1) yamada.model.DocumentModel
                 parent (1, 1) yamada.model.ComponentRecord
                 definition (1, 1) yamada.model.ComponentDefinition
+                registry (1, 1) yamada.model.ComponentRegistry
                 excludedIds (1, :) string = strings(1, 0)
             end
             arguments (Output)
@@ -21,8 +22,9 @@ classdef SubtreePlacementPlanner
                     ~ismember(string({document.Components.Id}),excludedIds));
                 accepted = ~any(string({attached.Factory}) == "colorbar");
             end
-            family = ["uiradiobutton", "uitogglebutton"];
-            if ~accepted || parent.Factory ~= "uibuttongroup" || ~any(definition.Factory == family), return, end
+            % A selection group keeps one exclusive member factory at a time.
+            family = registry.selectionMembers(parent.Factory);
+            if ~accepted || ~any(definition.Factory == family), return, end
             members = document.Components;
             members = members(string({members.ParentId}) == parent.Id & ...
                 ~ismember(string({members.Id}), excludedIds) & ismember(string({members.Factory}), family));
@@ -102,7 +104,7 @@ classdef SubtreePlacementPlanner
                     parentFactory = ancestor.Factory;
                 end
                 if ~any(definition.AllowedParentFactories == parentFactory) || ...
-                        record.Id == root.Id && ~yamada.model.SubtreePlacementPlanner.accepts(document, parent, definition, excludedIds)
+                        record.Id == root.Id && ~yamada.model.SubtreePlacementPlanner.accepts(document, parent, definition, registry, excludedIds)
                     error("yamada:SubtreePlacementPlanner:InvalidParent", "The destination does not accept this construction style.");
                 end
             end
