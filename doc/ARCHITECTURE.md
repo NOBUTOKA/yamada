@@ -998,6 +998,7 @@ Generation consumes only the value-only edits of a successful insertion proof th
 - Changed dependency closures touching layout, ancestor geometry, or unsupported coupling retain the established broader validation path. Registry changes, management-free writes, missing baselines and unresolved proofs invalidate this reuse. Unchanged Grid configuration and unresolved-effect results are inherited only when their semantic dependencies are proven unchanged; pixel geometry and fit measurements keep their separate catalog-driven invalidation.
 - After all freshness checks succeed, the same prepared source, settings, effective states and diagnostics are published together.
 - Standalone callers without analysis retain the scanner-based path, and a supplied stale analysis is rejected.
+- Reusable validation results are one `ValidationReuse` value that names its issuing document, the evaluation context whose input and catalog token certifies it, and the owners still pending a bounded recheck. Readers accept it only for the same document and an unchanged token; a value issued for a candidate or another document, or before any input write, reads as absent. Writers replace the whole value rather than updating its parts. The clear in `publishCurrentSource` is a retained safety net, not the freshness mechanism.
 
 **Explanation**
 
